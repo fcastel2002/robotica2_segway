@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mecanismo Hoeken y parámetros DH</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #60708a;
+      --border: #d9e0ea;
+      --grid: #e8edf4;
+      --ground: #475569;
+      --crank: #2563eb;
+      --coupler: #ea580c;
+      --rocker: #7c3aed;
+      --wheel: #15803d;
+      --angle: #be123c;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --panel: #172033;
+        --text: #e8eef8;
+        --muted: #a8b3c5;
+        --border: #334155;
+        --grid: #263246;
+        --ground: #94a3b8;
+        --crank: #60a5fa;
+        --coupler: #fb923c;
+        --rocker: #c084fc;
+        --wheel: #4ade80;
+        --angle: #fb7185;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+    }
+
+    .intro {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .controls,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(230px, 1fr) minmax(230px, 1fr) auto;
+      gap: 16px;
+      align-items: end;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    input[type="range"] { width: 100%; }
+
+    select,
+    button {
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 7px 10px;
+      font: inherit;
+    }
+
+    button { cursor: pointer; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(310px, 0.8fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel { padding: 14px; }
+
+    .mechanism-panel { min-width: 0; }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 3;
+      background: var(--panel);
+    }
+
+    .grid-line { stroke: var(--grid); stroke-width: 1; }
+    .axis { stroke: var(--muted); stroke-width: 1.5; marker-end: url(#arrow-muted); }
+    .reference { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 5 5; }
+    .trace { fill: none; stroke: var(--wheel); stroke-width: 2; opacity: 0.28; stroke-dasharray: 4 5; }
+    .link { fill: none; stroke-linecap: round; stroke-width: 12; }
+    .ground { stroke: var(--ground); }
+    .crank { stroke: var(--crank); }
+    .coupler { stroke: var(--coupler); }
+    .rocker { stroke: var(--rocker); }
+    .extension { stroke: var(--coupler); stroke-width: 7; }
+    .joint { fill: var(--panel); stroke: var(--text); stroke-width: 3; }
+    .joint-center { fill: var(--text); }
+    .wheel { fill: none; stroke: var(--wheel); stroke-width: 8; }
+    .wheel-spoke { stroke: var(--wheel); stroke-width: 4; stroke-linecap: round; }
+    .angle-arc { fill: none; stroke: var(--angle); stroke-width: 2.5; marker-end: url(#arrow-angle); }
+    .closure-arc { fill: none; stroke: var(--rocker); stroke-width: 2; marker-end: url(#arrow-rocker); }
+    .svg-label {
+      fill: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      paint-order: stroke;
+      stroke: var(--panel);
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+    .svg-note {
+      fill: var(--muted);
+      font-size: 12px;
+      paint-order: stroke;
+      stroke: var(--panel);
+      stroke-width: 4px;
+    }
+    .angle-label { fill: var(--angle); }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 7px 12px;
+      margin: 0 0 16px;
+    }
+
+    .values dt { color: var(--muted); }
+    .values dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th,
+    td {
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th { color: var(--muted); font-weight: 600; }
+    td:first-child, th:first-child { text-align: left; }
+
+    .formula {
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: color-mix(in srgb, var(--crank) 8%, var(--panel));
+      border-left: 4px solid var(--crank);
+      border-radius: 6px;
+      line-height: 1.55;
+    }
+
+    code { font-family: "Cascadia Code", Consolas, monospace; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.87rem;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 18px;
+      height: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+      background: var(--legend-color);
+      border-radius: 3px;
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 820px) {
+      body { padding: 14px; }
+      .controls, .layout { grid-template-columns: 1fr; }
+      .controls { align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Hoeken: cierre geométrico y ángulos DH</h1>
+    <p class="intro">Cadena DH equivalente: <strong>H → K → W</strong>. La rama D–C cierra el cuatro barras y determina β(qₘ).</p>
+
+    <section class="controls" aria-label="Controles del mecanismo">
+      <label>
+        <span>Motor de cintura qₘ: <output id="qm-output">120.0°</output></span>
+        <input id="qm" type="range" min="0" max="360" step="0.2" value="120">
+      </label>
+      <label>
+        <span>Giro de rueda φ: <output id="phi-output">0.0°</output></span>
+        <input id="phi" type="range" min="-180" max="180" step="1" value="0">
+      </label>
+      <label>
+        Rama de montaje
+        <select id="branch">
+          <option value="1">Abierta (+)</option>
+          <option value="-1" selected>Cruzada (−)</option>
+        </select>
+      </label>
+    </section>
+
+    <div class="layout">
+      <section class="panel mechanism-panel">
+        <svg id="mechanism" viewBox="0 0 760 570" role="img" aria-labelledby="svg-title svg-desc">
+          <title id="svg-title">Mecanismo de cuatro barras Hoeken</title>
+          <desc id="svg-desc">Muestra la manivela HK, el acoplador KC prolongado hasta W, el balancín DC, el bastidor HD y los ángulos usados por la tabla DH tradicional.</desc>
+          <defs>
+            <marker id="arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--muted)"></path>
+            </marker>
+            <marker id="arrow-angle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--angle)"></path>
+            </marker>
+            <marker id="arrow-rocker" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--rocker)"></path>
+            </marker>
+          </defs>
+
+          <g id="grid"></g>
+          <path id="trajectory" class="trace"></path>
+
+          <line id="axis-x" class="axis"></line>
+          <line id="axis-y" class="axis"></line>
+          <text id="axis-x-label" class="svg-note">x₀</text>
+          <text id="axis-y-label" class="svg-note">y₀</text>
+
+          <line id="link-hd" class="link ground"></line>
+          <line id="link-hk" class="link crank"></line>
+          <line id="link-kc" class="link coupler"></line>
+          <line id="link-dc" class="link rocker"></line>
+          <line id="link-cw" class="link extension"></line>
+
+          <line id="ref-k-global" class="reference"></line>
+          <line id="ref-k-x1" class="reference"></line>
+          <line id="ref-w-coupler" class="reference"></line>
+
+          <path id="arc-qm" class="angle-arc"></path>
+          <path id="arc-beta" class="angle-arc"></path>
+          <path id="arc-theta2" class="angle-arc"></path>
+          <path id="arc-psi" class="closure-arc"></path>
+          <path id="arc-phi" class="angle-arc"></path>
+
+          <circle id="wheel" class="wheel" r="31"></circle>
+          <line id="wheel-spoke" class="wheel-spoke"></line>
+
+          <g id="joints"></g>
+
+          <text id="label-qm" class="svg-label angle-label">qₘ = θ₁</text>
+          <text id="label-beta" class="svg-label angle-label">β</text>
+          <text id="label-theta2" class="svg-label angle-label">θ₂ = β − qₘ</text>
+          <text id="label-psi" class="svg-label">ψ (cierre)</text>
+          <text id="label-phi" class="svg-label angle-label">φ = θ₃</text>
+          <text id="label-hk" class="svg-note">a₁ = HK = 40 mm</text>
+          <text id="label-kw" class="svg-note">a₂ = KW = 205.5 mm</text>
+        </svg>
+
+        <div class="legend" aria-label="Leyenda">
+          <span style="--legend-color: var(--ground)">Bastidor HD</span>
+          <span style="--legend-color: var(--crank)">Manivela HK</span>
+          <span style="--legend-color: var(--coupler)">Acoplador K–C–W</span>
+          <span style="--legend-color: var(--rocker)">Balancín DC</span>
+        </div>
+        <p id="status" class="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="panel">
+        <h2>Ángulos calculados</h2>
+        <dl class="values">
+          <dt>Entrada qₘ = θ₁</dt><dd id="value-qm">—</dd>
+          <dt>Acoplador absoluto β</dt><dd id="value-beta">—</dd>
+          <dt>DH relativa θ₂ = β − qₘ</dt><dd id="value-theta2">—</dd>
+          <dt>Balancín ψ</dt><dd id="value-psi">—</dd>
+          <dt>Rueda φ = θ₃</dt><dd id="value-phi">—</dd>
+          <dt>Centro W</dt><dd id="value-w">—</dd>
+        </dl>
+
+        <h2>Tabla DH tradicional</h2>
+        <table>
+          <thead>
+            <tr><th>Junta</th><th>θᵢ</th><th>dᵢ</th><th>aᵢ</th><th>αᵢ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>H</td><td id="table-theta1">qₘ</td><td>0</td><td>40</td><td>0</td></tr>
+            <tr><td>K</td><td id="table-theta2">β − qₘ</td><td>0</td><td>205.5</td><td>0</td></tr>
+            <tr><td>W</td><td id="table-theta3">φ</td><td>0</td><td>0</td><td>0</td></tr>
+          </tbody>
+        </table>
+
+        <div class="formula">
+          <div><strong>Convención:</strong> <code>Aᵢ = Rz(θᵢ) Tz(dᵢ) Tx(aᵢ) Rx(αᵢ)</code></div>
+          <div><strong>Centro:</strong> <code>Tᴴ_W = A₁(qₘ) A₂(β−qₘ)</code></div>
+          <div><strong>Rueda:</strong> <code>Tᴴ_rueda = A₁ A₂ A₃(φ)</code></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const lengths = Object.freeze({
+        ground: 83.6,
+        crank: 40.0,
+        coupler: 101.8,
+        rocker: 101.8,
+        tracer: 205.5
+      });
+
+      const svg = document.getElementById("mechanism");
+      const qmInput = document.getElementById("qm");
+      const phiInput = document.getElementById("phi");
+      const branchInput = document.getElementById("branch");
+      const scale = 1.35;
+      const origin = { x: 270, y: 285 };
+      const H = { x: 0, y: 0 };
+      const D = { x: lengths.ground, y: 0 };
+
+      const byId = id => document.getElementById(id);
+      const rad = degrees => degrees * Math.PI / 180;
+      const deg = radians => radians * 180 / Math.PI;
+      const wrapDegrees = angle => ((angle + 180) % 360 + 360) % 360 - 180;
+      const point = (x, y) => ({ x, y });
+      const screen = p => point(origin.x + scale * p.x, origin.y - scale * p.y);
+
+      function setLine(id, a, b) {
+        const line = byId(id);
+        const pa = screen(a);
+        const pb = screen(b);
+        line.setAttribute("x1", pa.x);
+        line.setAttribute("y1", pa.y);
+        line.setAttribute("x2", pb.x);
+        line.setAttribute("y2", pb.y);
+      }
+
+      function setText(id, p, dx = 0, dy = 0) {
+        const label = byId(id);
+        const sp = screen(p);
+        label.setAttribute("x", sp.x + dx);
+        label.setAttribute("y", sp.y + dy);
+      }
+
+      function solve(q, branch) {
+        const K = point(lengths.crank * Math.cos(q), lengths.crank * Math.sin(q));
+        const vx = D.x - K.x;
+        const vy = D.y - K.y;
+        const distance = Math.hypot(vx, vy);
+        const along = (lengths.coupler ** 2 - lengths.rocker ** 2 + distance ** 2) / (2 * distance);
+        const heightSquared = lengths.coupler ** 2 - along ** 2;
+
+        if (distance === 0 || heightSquared < -1e-8) return null;
+
+        const height = Math.sqrt(Math.max(0, heightSquared));
+        const mid = point(K.x + along * vx / distance, K.y + along * vy / distance);
+        const C = point(
+          mid.x + branch * height * (-vy / distance),
+          mid.y + branch * height * (vx / distance)
+        );
+        const beta = Math.atan2(C.y - K.y, C.x - K.x);
+        const psi = Math.atan2(C.y - D.y, C.x - D.x);
+        const W = point(
+          K.x + lengths.tracer * Math.cos(beta),
+          K.y + lengths.tracer * Math.sin(beta)
+        );
+
+        return { K, C, W, beta, psi };
+      }
+
+      function arcPath(center, radiusPx, startAngle, endAngle) {
+        let delta = endAngle - startAngle;
+        while (delta > Math.PI) delta -= 2 * Math.PI;
+        while (delta < -Math.PI) delta += 2 * Math.PI;
+        const end = startAngle + delta;
+        const c = screen(center);
+        const start = point(c.x + radiusPx * Math.cos(startAngle), c.y - radiusPx * Math.sin(startAngle));
+        const finish = point(c.x + radiusPx * Math.cos(end), c.y - radiusPx * Math.sin(end));
+        const largeArc = Math.abs(delta) > Math.PI ? 1 : 0;
+        const sweep = delta >= 0 ? 0 : 1;
+        return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${radiusPx} ${radiusPx} 0 ${largeArc} ${sweep} ${finish.x.toFixed(2)} ${finish.y.toFixed(2)}`;
+      }
+
+      function placeJoint(group, name, p) {
+        const sp = screen(p);
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("class", "joint");
+        circle.setAttribute("cx", sp.x);
+        circle.setAttribute("cy", sp.y);
+        circle.setAttribute("r", 10);
+        const center = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        center.setAttribute("class", "joint-center");
+        center.setAttribute("cx", sp.x);
+        center.setAttribute("cy", sp.y);
+        center.setAttribute("r", 2.5);
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("class", "svg-label");
+        label.setAttribute("x", sp.x + 12);
+        label.setAttribute("y", sp.y - 10);
+        label.textContent = name;
+        group.append(circle, center, label);
+      }
+
+      function drawGrid() {
+        const group = byId("grid");
+        for (let x = -160; x <= 280; x += 40) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          const a = screen(point(x, -190));
+          const b = screen(point(x, 190));
+          line.setAttribute("class", "grid-line");
+          line.setAttribute("x1", a.x); line.setAttribute("y1", a.y);
+          line.setAttribute("x2", b.x); line.setAttribute("y2", b.y);
+          group.appendChild(line);
+        }
+        for (let y = -160; y <= 160; y += 40) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          const a = screen(point(-180, y));
+          const b = screen(point(300, y));
+          line.setAttribute("class", "grid-line");
+          line.setAttribute("x1", a.x); line.setAttribute("y1", a.y);
+          line.setAttribute("x2", b.x); line.setAttribute("y2", b.y);
+          group.appendChild(line);
+        }
+      }
+
+      function drawTrajectory(branch) {
+        const samples = [];
+        for (let degrees = 0; degrees <= 360; degrees += 2) {
+          const solution = solve(rad(degrees), branch);
+          if (solution) samples.push(screen(solution.W));
+        }
+        byId("trajectory").setAttribute("d", samples.map((p, i) => `${i ? "L" : "M"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(" "));
+      }
+
+      function update() {
+        const qmDegrees = Number(qmInput.value);
+        const phiDegrees = Number(phiInput.value);
+        const branch = Number(branchInput.value);
+        const q = rad(qmDegrees);
+        const phi = rad(phiDegrees);
+        const solution = solve(q, branch);
+
+        byId("qm-output").textContent = `${qmDegrees.toFixed(1)}°`;
+        byId("phi-output").textContent = `${phiDegrees.toFixed(1)}°`;
+        drawTrajectory(branch);
+
+        if (!solution) {
+          byId("status").textContent = "La configuración elegida no puede cerrarse con estas longitudes.";
+          return;
+        }
+
+        const { K, C, W, beta, psi } = solution;
+        const betaDegrees = wrapDegrees(deg(beta));
+        const theta2Degrees = wrapDegrees(betaDegrees - qmDegrees);
+        const psiDegrees = wrapDegrees(deg(psi));
+        const wheelAngle = beta + phi;
+        const wheelScreen = screen(W);
+
+        setLine("link-hd", H, D);
+        setLine("link-hk", H, K);
+        setLine("link-kc", K, C);
+        setLine("link-dc", D, C);
+        setLine("link-cw", C, W);
+        setLine("axis-x", H, point(58, 0));
+        setLine("axis-y", H, point(0, 58));
+        setText("axis-x-label", point(60, 0), 3, 5);
+        setText("axis-y-label", point(0, 60), 5, -2);
+        setLine("ref-k-global", K, point(K.x + 45, K.y));
+        setLine("ref-k-x1", K, point(K.x + 45 * Math.cos(q), K.y + 45 * Math.sin(q)));
+        setLine("ref-w-coupler", W, point(W.x + 42 * Math.cos(beta), W.y + 42 * Math.sin(beta)));
+
+        byId("arc-qm").setAttribute("d", arcPath(H, 32, 0, q));
+        byId("arc-beta").setAttribute("d", arcPath(K, 42, 0, beta));
+        byId("arc-theta2").setAttribute("d", arcPath(K, 26, q, beta));
+        byId("arc-psi").setAttribute("d", arcPath(D, 30, Math.PI, psi));
+        byId("arc-phi").setAttribute("d", arcPath(W, 42, beta, wheelAngle));
+
+        byId("wheel").setAttribute("cx", wheelScreen.x);
+        byId("wheel").setAttribute("cy", wheelScreen.y);
+        const spokeEnd = point(W.x + 22 * Math.cos(wheelAngle), W.y + 22 * Math.sin(wheelAngle));
+        setLine("wheel-spoke", W, spokeEnd);
+
+        const joints = byId("joints");
+        joints.replaceChildren();
+        placeJoint(joints, "H", H);
+        placeJoint(joints, "D", D);
+        placeJoint(joints, "K", K);
+        placeJoint(joints, "C", C);
+        placeJoint(joints, "W", W);
+
+        setText("label-qm", H, -76, -38);
+        setText("label-beta", K, 42, -42);
+        setText("label-theta2", K, 42, 48);
+        setText("label-psi", D, 24, -30);
+        setText("label-phi", W, 46, -18);
+        setText("label-hk", point((H.x + K.x) / 2, (H.y + K.y) / 2), -100, 12);
+        setText("label-kw", point((K.x + W.x) / 2, (K.y + W.y) / 2), 10, -10);
+
+        byId("value-qm").textContent = `${qmDegrees.toFixed(1)}°`;
+        byId("value-beta").textContent = `${betaDegrees.toFixed(1)}°`;
+        byId("value-theta2").textContent = `${theta2Degrees.toFixed(1)}°`;
+        byId("value-psi").textContent = `${psiDegrees.toFixed(1)}°`;
+        byId("value-phi").textContent = `${phiDegrees.toFixed(1)}°`;
+        byId("value-w").textContent = `(${W.x.toFixed(1)}, ${W.y.toFixed(1)}) mm`;
+        byId("table-theta1").textContent = `${qmDegrees.toFixed(1)}°`;
+        byId("table-theta2").textContent = `${theta2Degrees.toFixed(1)}°`;
+        byId("table-theta3").textContent = `${phiDegrees.toFixed(1)}°`;
+        byId("status").textContent = "La traza punteada muestra el recorrido completo del punto W para la rama seleccionada.";
+      }
+
+      drawGrid();
+      [qmInput, phiInput, branchInput].forEach(control => control.addEventListener("input", update));
+      update();
+    })();
+  </script>
+</body>
+</html>

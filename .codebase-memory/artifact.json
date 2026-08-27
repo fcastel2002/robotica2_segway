@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "be546a286ad81819b5b649f96990bc10c1e443b2",
+    "indexed_at": "2026-08-27T11:49:36Z",
+    "project": "robotica2_segway",
+    "nodes": 29,
+    "edges": 28,
+    "original_size": 1572864,
+    "compressed_size": 6652,
+    "compression_level": 9
+}
