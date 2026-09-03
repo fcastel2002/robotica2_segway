@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "solidworks": {
+      "type": "stdio",
+      "command": "C:/Users/caste/AppData/Local/Python/pythoncore-3.14-64/python.exe",
+      "args": [
+        "C:/Users/caste/mcp-server-solidworks/adapters/claude/server.py"
+      ],
+      "cwd": "C:/Users/caste/mcp-server-solidworks/adapters/claude",
+      "timeout": 120000
+    }
+  }
+}
