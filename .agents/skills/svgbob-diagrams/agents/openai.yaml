@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diagramas Svgbob"
+  short_description: "Renderiza diagramas ASCII claros con svgbob"
+  default_prompt: "Usa $svgbob-diagrams para crear y mostrar un diagrama ASCII renderizado como SVG."
