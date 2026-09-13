@@ -12,5 +12,10 @@ function cargar_workspace(P, C, E)
   assignin('base', 'semilla', E.semilla);
   assignin('base', 'referencias_ts', E.ref);
   assignin('base', 'perturbaciones_ts', E.pert);
+  % condiciones iniciales de los Unit Delay del controlador por bloques (robot_segway_bloques)
+  assignin('base', 'encoders_iniciales', medidas0(4:5));
+  assignin('base', 'inclinacion_inicial_est', atan2(-medidas0(2), medidas0(3)));
+  l_ref0 = max(min(E.ref.signals.values(1,2), par.pata.l_max), par.pata.l_min);
+  assignin('base', 'angulo_servo_inicial', interp_lin(par.pata.tabla_l, par.pata.tabla_theta, l_ref0));
   assignin('base', 'P', P); assignin('base', 'C', C); assignin('base', 'E', E);
 end

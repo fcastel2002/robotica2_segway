@@ -3,7 +3,7 @@ function tests = test_base
 end
 function setupOnce(~)
   aqui = fileparts(mfilename('fullpath'));
-  addpath(fullfile(aqui,'..')); addpath(fullfile(aqui,'..','..','modelo_base'));
+  addpath(fullfile(aqui,'..'));
 end
 function test_parametros_y_struct(tc)
   P = parametros_robot('corregido'); par = parametros_simulink(P);
@@ -63,10 +63,6 @@ function test_dinamica_cuerpo(tc)
   tc.verifyEqual(Gv(2), (m_b + m_w)*g, 'RelTol', 1e-12);                     % el peso total cae sobre y
   tc.verifyEqual(Gv(3), -m_b*g*0.15*sin(0.1), 'RelTol', 1e-9);              % vuelco del pendulo
   tc.verifyEqual(Gv(4), m_b*g*cos(0.1), 'RelTol', 1e-9);
-  % las filas x y phi coinciden con la version plana (v1) en alpha = 0
-  addpath(fullfile(fileparts(mfilename('fullpath')),'..','..','planta_v1'));
-  [M1, C1, G1] = dinamica_v1_gen(0.1, 0.15, 0.3, 0.05, m_b, m_w, J_b, g, 0);
-  tc.verifyEqual(M([1 3 4],[1 3 4]), M1, 'AbsTol', 1e-12); tc.verifyEqual(C([1 3 4]), C1, 'AbsTol', 1e-12); tc.verifyEqual(Gv([1 3 4]), G1, 'AbsTol', 1e-12);
 end
 function ok = solo_numerico(s)
   ok = true; f = fieldnames(s);

@@ -2,7 +2,9 @@
 % VERIFICACIÓN Y ANIMACIÓN DE LA CINEMÁTICA DIRECTA (4 BARRAS - SEGWAY)
 % =========================================================================
 % Este script calcula y visualiza la cinemática directa de la pata del Segway
-% utilizando el método geométrico (intersección de circunferencias).
+% utilizando el método geométrico (intersección de circunferencias), con las ecuaciones y los
+% nombres de cinematica_directa.m (AB, AD, BC, CD, DP, beta, delta, theta) y las cotas del CAD en
+% parametros_geometria.m. Resumen de la deducción: cinematica_resumen.pdf
 %
 % Permite verificar visual y numéricamente:
 %   1. El cierre correcto del lazo cinemático (puntos A, B, C, D).
@@ -14,43 +16,26 @@
 
 clear; clc; close all;
 
-%% 1. PARÁMETROS GEOMÉTRICOS DEL MECANISMO
-% Escala y dimensiones según el dimensionamiento de la pata
-L = 10;                     % Longitud base de referencia (cm)
+%% 1. PARÁMETROS GEOMÉTRICOS DEL MECANISMO (mm y grados)
+% Una sola fuente de los valores: parametros_geometria.m (cotas del CAD).
+% Nombres: AB bancada, AD manivela, BC balancín, CD y DP acoplador rígido, beta ángulo de la
+% bancada, delta ángulo del acoplador en D, theta ángulo del servo. Ver ../geometria_robot.png
+G = parametros_geometria();
+AB = G.AB; AD = G.AD; BC = G.BC; CD = G.CD; DP = G.DP; beta = G.beta; delta = G.delta;
+A = [0, 0];                                   % Pivote motorizado (eje del servo)
+B = [AB * cosd(beta), AB * sind(beta)];       % Pivote pasivo del balancín, a AB de A y beta desde +x
+r_rueda = G.Rw;                               % Radio de la rueda (mm)
 
-% Posición de los apoyos fijos en el chasis:
-% Modo 1: Chasis alineado a la horizontal (como en la libreta)
-% A = [0, 0];
-% B = [L, 0];
-
-% Modo 2: Chasis inclinado a 45° (como en simular_pata_segway.m y CAD)
-ang_AB = 45; 
-A = [0, 0];                                 % Pivote motorizado
-B = [L * cosd(ang_AB), L * sind(ang_AB)];   % Pivote pasivo
-
-% Longitudes de las barras
-L_AD = 1.40 * L;            % Manivela motriz (A -> D)
-L_BC = 1.35 * L;            % Balancín oscilante (B -> C)
-L_CD = 0.51 * L;            % Acoplador (D -> C)
-L_DP = 1.40 * L;            % Extensión de la pata hacia la rueda (D -> P)
-
-% Ángulo de quiebre delta (grados)
-% Segmento DC levantado 16° en sentido antihorario respecto a la prolongación de PD
-% Es equivalente a un ángulo de deflexión delta = 180° - 16° = 164°
-delta_deg = 164;            
-r_rueda   = 3.75;            % Radio visual de la rueda (cm)
-
-% Rango de barrido del ángulo del motor theta_A (grados)
-% (Adaptado al rango del actuador en el chasis)
-theta_A_vals = [linspace(320, 350, 60), linspace(350, 320, 60)];
+% Rango de barrido del ángulo del servo theta (grados): ida y vuelta
+theta_vals = [linspace(G.theta(1), G.theta(2), 60), linspace(G.theta(2), G.theta(1), 60)];
 
 % --- PARÁMETROS PARA EL GRÁFICO DE PETER CORKE (graficar_robot_corke.m) ---
 cfg_corke = struct();
-cfg_corke.workspace       = [-15, 25, -35, 12, -5, 5]; % [xmin xmax ymin ymax zmin zmax]: Menos Y positivo, más Y negativo
+cfg_corke.workspace       = [-150, 250, -350, 120, -50, 50]; % [xmin xmax ymin ymax zmin zmax] en mm
 cfg_corke.delay           = 0.015;                     % Retardo entre cuadros de animación
 cfg_corke.trail           = {'m-', 'LineWidth', 2};    % Estela de trayectoria de la rueda
 cfg_corke.mostrar_trplot2 = true;                      % Superponer marcos coordenados {A, D, P}
-cfg_corke.longitud_ejes   = 2.5;                       % Longitud de flechas de trplot2
+cfg_corke.longitud_ejes   = 25;                        % Longitud de flechas de trplot2 (mm)
 cfg_corke.posicion_figura = [1060 100 800 700];        % Posición de la ventana
 
 %% 2. CONFIGURACIÓN DE LA VENTANA GRÁFICA (MECANISMO 4 BARRAS)
@@ -58,10 +43,10 @@ fig = figure('Name', 'Verificación Cinemática Directa - 4 Barras Segway', ...
              'Color', 'w', 'Position', [100 100 950 700]);
 ax = axes('Parent', fig);
 hold(ax, 'on'); grid(ax, 'on'); axis(ax, 'equal');
-xlabel(ax, 'X (cm)', 'FontSize', 11, 'FontWeight', 'bold');
-ylabel(ax, 'Y (cm)', 'FontSize', 11, 'FontWeight', 'bold');
+xlabel(ax, 'X (mm)  (positivo = hacia atrás)', 'FontSize', 11, 'FontWeight', 'bold');
+ylabel(ax, 'Y (mm)', 'FontSize', 11, 'FontWeight', 'bold');
 title(ax, 'Cinemática Directa del Mecanismo de 4 Barras', 'FontSize', 13);
-xlim(ax, [-15, 25]); ylim(ax, [-35, 12]);
+xlim(ax, [-150, 250]); ylim(ax, [-350, 120]);
 
 % Elementos gráficos persistentes
 color_chasis   = [0.2 0.2 0.2];
@@ -85,12 +70,12 @@ h_centro_rueda = plot(ax, NaN, NaN, 'ko', 'MarkerFaceColor', '#EDB120', 'MarkerS
 h_traj_P = plot(ax, NaN, NaN, 'm-', 'LineWidth', 1.8);
 
 % Texto informativo en pantalla
-h_info = text(ax, -13, 27, '', 'FontSize', 10, 'FontName', 'Consolas', ...
+h_info = text(ax, -140, 100, '', 'FontSize', 10, 'FontName', 'Consolas', ...
               'BackgroundColor', [0.95 0.95 0.95], 'EdgeColor', [0.7 0.7 0.7]);
 
 % Etiquetas de nodos fijos
-text(ax, A(1)-1.8, A(2)-0.8, 'A (Motor)', 'FontWeight', 'bold', 'FontSize', 10);
-text(ax, B(1)+0.5, B(2)+0.8, 'B (Pivote)', 'FontWeight', 'bold', 'FontSize', 10);
+text(ax, A(1)-18, A(2)-8, 'A (Servo)', 'FontWeight', 'bold', 'FontSize', 10);
+text(ax, B(1)+5, B(2)+8, 'B (Pivote)', 'FontWeight', 'bold', 'FontSize', 10);
 
 % Puntos auxiliares para dibujar la circunferencia de la rueda
 ang_circ = linspace(0, 2*pi, 50);
@@ -98,60 +83,39 @@ cos_circ = cos(ang_circ);
 sin_circ = sin(ang_circ);
 
 trayectoria_P = [];
-Q_rtb = zeros(length(theta_A_vals), 2);
+Q_rtb = zeros(length(theta_vals), 2);
 
 %% 3. BUCLE DE ANIMACIÓN Y VERIFICACIÓN CINEMÁTICA
 fprintf('============================================================\n');
 fprintf(' INICIANDO VERIFICACIÓN DE CINEMÁTICA DIRECTA (4 BARRAS)\n');
 fprintf('============================================================\n');
 
-for i = 1:length(theta_A_vals)
-    th_deg = theta_A_vals(i);
-    theta_A = deg2rad(th_deg);
-    
-    % --- PASO 1: Posición de D (Manivela motorizada desde A) ---
-    D = A + [L_AD * cos(theta_A), L_AD * sin(theta_A)];
-    
-    % --- PASO 2: Posición de C (Intersección de circunferencias) ---
-    % Centro 1: D con radio L_CD
-    % Centro 2: B con radio L_BC
-    vec_BD = B - D;
-    d_BD = norm(vec_BD);
-    
-    % Comprobar condición de cierre geométrico
-    if d_BD > (L_BC + L_CD) || d_BD < abs(L_BC - L_CD)
-        warning('Mecanismo fuera de rango en theta_A = %.1f° (no cierra)', th_deg);
+for i = 1:length(theta_vals)
+    th_deg = theta_vals(i);
+    theta = deg2rad(th_deg);
+
+    % --- PASOS 1 a 3: D, C y P con las ecuaciones de cinematica_directa.m ---
+    %   D = A + AD (cos theta, sin theta)
+    %   BD^2 = AB^2 + AD^2 - 2 AB AD cos(theta - beta) ;  alfa_DB = atan2(yB - yD, xB - xD)
+    %   cos gamma = (CD^2 + BD^2 - BC^2) / (2 CD BD) ;    theta_DC = alfa_DB - gamma
+    %   C = D + CD (cos theta_DC, sin theta_DC) ;  theta_DP = theta_DC + delta ;  P = D + DP (cos theta_DP, sin theta_DP)
+    K = cinematica_directa(th_deg, G);
+    if ~K.valido
+        warning('Mecanismo fuera de rango en theta = %.1f° (no cierra)', th_deg);
         continue;
     end
-    
-    % Distancia 'a' desde D hacia la proyección del punto C sobre BD
-    a_dist = (L_CD^2 - L_BC^2 + d_BD^2) / (2 * d_BD);
-    h_dist = sqrt(max(0, L_CD^2 - a_dist^2));
-    
-    u_BD = vec_BD / d_BD;
-    % Vector normal perpendicular a BD
-    v_perp = [u_BD(2), -u_BD(1)];
-    
-    % Punto base de intersección y posición de C
-    P_base = D + a_dist * u_BD;
-    C = [P_base(1) + h_dist * v_perp(1), P_base(2) + h_dist * v_perp(2)];
-    
-    % --- PASO 3: Posición de P (Eje de la rueda) ---
-    % Orientación absoluta del segmento D -> C
-    theta_DC = atan2(C(2) - D(2), C(1) - D(1));
-    
-    % Dirección hacia P con ángulo delta de quiebre (delta = 180° - 16° = 164°)
-    theta_DP = theta_DC + deg2rad(delta_deg);
-    P = D + [L_DP * cos(theta_DP), L_DP * sin(theta_DP)];
-    
+    D = K.D; C = K.C; P = K.P;
+    theta_DC = deg2rad(K.theta_DC);
+    theta_DP = deg2rad(K.theta_DP);
+
     % Variables articulares relativas para la cadena equivalente de Peter Corke
-    Q_rtb(i, :) = [theta_A, theta_DP - theta_A];
-    
+    Q_rtb(i, :) = [theta, theta_DP - theta];
+
     % --- PASO 4: Comprobación de invariantes rígidas (Tolerancia < 1e-9) ---
-    err_AD = abs(norm(D - A) - L_AD);
-    err_BC = abs(norm(C - B) - L_BC);
-    err_CD = abs(norm(C - D) - L_CD);
-    err_DP = abs(norm(P - D) - L_DP);
+    err_AD = abs(norm(D - A) - AD);
+    err_BC = abs(norm(C - B) - BC);
+    err_CD = abs(norm(C - D) - CD);
+    err_DP = abs(norm(P - D) - DP);
     
     if (err_AD > 1e-9 || err_BC > 1e-9 || err_CD > 1e-9 || err_DP > 1e-9)
         error('¡Alerta! Las longitudes de las barras no son constantes. Revisar ecuaciones.');
@@ -175,12 +139,12 @@ for i = 1:length(theta_A_vals)
     
     % Actualizar recuadro informativo
     set(h_info, 'String', sprintf(...
-        ['\\theta_A:  %6.1f°\n' ...
+        ['\\theta:  %6.1f°\n' ...
          '\\theta_{DC}: %6.1f°\n' ...
-         'D:  [%5.2f, %5.2f]\n' ...
-         'C:  [%5.2f, %5.2f]\n' ...
-         'P:  [%5.2f, %5.2f]\n' ...
-         'Error barras: < 1e-12 cm'], ...
+         'D:  [%6.1f, %6.1f] mm\n' ...
+         'C:  [%6.1f, %6.1f] mm\n' ...
+         'P:  [%6.1f, %6.1f] mm\n' ...
+         'Error barras: < 1e-9 mm'], ...
         th_deg, rad2deg(theta_DC), D(1), D(2), C(1), C(2), P(1), P(2)));
     
     drawnow;
@@ -200,8 +164,8 @@ if exist('SerialLink', 'class') == 8
     fprintf('\n--- VERIFICANDO CON PETER CORKE ROBOTICS TOOLBOX ---\n');
     
     % Definición de eslabones DH estándar
-    L1_rtb = Link('d', 0, 'a', L_AD, 'alpha', 0);
-    L2_rtb = Link('d', 0, 'a', L_DP, 'alpha', 0);
+    L1_rtb = Link('d', 0, 'a', AD, 'alpha', 0);
+    L2_rtb = Link('d', 0, 'a', DP, 'alpha', 0);
     robot_rtb = SerialLink([L1_rtb L2_rtb], 'name', 'Pata_Segway_Serial');
     robot_rtb.base = transl([A(1), A(2), 0]);
     
@@ -217,7 +181,7 @@ if exist('SerialLink', 'class') == 8
     
     fprintf('Punto P (Método Geométrico): [%.4f, %.4f]\n', P_geom_xy(1), P_geom_xy(2));
     fprintf('Punto P (Peter Corke fkine):  [%.4f, %.4f]\n', P_corke_xy(1), P_corke_xy(2));
-    fprintf('Diferencia real: %.2e cm\n', error_corke);
+    fprintf('Diferencia real: %.2e mm\n', error_corke);
     if error_corke < 1e-6
         fprintf('-> VERIFICACIÓN EXITOSA: Coincidencia milimétrica exacta (error < 1e-12).\n');
     end

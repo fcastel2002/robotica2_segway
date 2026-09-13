@@ -3,7 +3,7 @@ function tests = test_lazo
 end
 function setupOnce(~)
   aqui = fileparts(mfilename('fullpath'));
-  addpath(fullfile(aqui,'..')); addpath(fullfile(aqui,'..','..','modelo_base'));
+  addpath(fullfile(aqui,'..'));
 end
 function test_lista_y_estructura(tc)
   P = parametros_robot('cad');

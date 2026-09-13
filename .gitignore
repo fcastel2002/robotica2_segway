@@ -5,9 +5,6 @@ slprj/
 *.autosave
 *.mexw64
 
-# Resultados pesados de simulacion (las tablas .md si se versionan)
-simulacion/planta_v1/resultados/*.mat
-
 # LaTeX
 *.aux
 *.log

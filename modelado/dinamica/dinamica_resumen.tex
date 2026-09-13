@@ -1,0 +1,340 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage[margin=2.1cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{pdflscape}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+\newcommand{\dd}{\mathrm{d}}
+\title{Dinámica de la pata del Segway por Lagrange\\
+\large Pata con la cabina fija. Coordenada generalizada \(\theta\): ángulo de \(AD\) por debajo de la horizontal}
+\author{Proyecto Segway con patas -- Robótica II, UNCUYO}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+Cada pata es una cuatro barras \(ABCD\) con la bancada \(AB\) fija a la cabina. El servo en \(A\) gira la
+manivela \(AD\); el acoplador \(C\)--\(D\)--\(P\) lleva el eje de la rueda \(P\), que sube y baja casi en
+vertical. Con la cabina fija hay un solo grado de libertad, \(\theta\). Se obtiene la ecuación de movimiento
+por Lagrange en cuatro pasos: geometría, velocidades, energías y fuerzas generalizadas. Todo queda en
+función de las variables de la figura, así un cambio del CAD solo cambia los valores de la tabla.
+
+\section{Notación y parámetros}
+
+El dibujo (\texttt{fig\_dinamica.png}) está en la página siguiente. Ejes: origen en \(A\), \(x\) hacia la
+derecha del dibujo (hacia atrás del robot), \(y\) hacia arriba. Los ángulos absolutos se miden desde \(+x\) en
+sentido antihorario.
+
+\begin{center}\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l p{7.9cm} l}
+\toprule
+Símbolo & Qué es & Valor \\
+\midrule
+\(AB,\;AD,\;BC,\;CD,\;DP\) & largos de las barras & 100, 140, 135, 51, 140 mm \\
+\(45^\circ\) & inclinación de la bancada \(AB\) respecto de la horizontal & \\
+\(\delta\) & ángulo del acoplador en \(D\), de \(D\!\to\!C\) a \(D\!\to\!P\) & \(164^\circ\) \\
+\(\theta\) & \textbf{coordenada generalizada}: ángulo de \(AD\) bajo la horizontal, positivo horario & \(10^\circ\) plegada, \(40^\circ\) estirada \\
+\(\beta_1,\;\beta_2,\;\beta=\beta_1+\beta_2\) & ángulos en \(B\): \(\angle ABD\), \(\angle DBC\), \(\angle ABC\) & \\
+\(\alpha_1,\;\alpha_2\) & ángulos en \(D\): \(\angle ADB\), \(\angle BDC\) & \\
+\(\psi\) & giro del acoplador: dirección de \(D\!\to\!C\) & \\
+\(d_Q,\;\varepsilon_Q\) & posición de un punto \(Q\) del acoplador: distancia desde \(D\) y ángulo desde \(D\!\to\!C\) & \\
+\(m_{AD},\;m_{BC},\;m_{CDP}\) & masa de cada pieza & 29, 7, 19.5 g \\
+\(m_P\) & rueda + motor colgados de \(P\) & 30 + 95 = 125 g \\
+\(AG,\;BG\) & distancia de \(A\) a \(G_{AD}\) y de \(B\) a \(G_{BC}\) & \(0.428\,AD\), \(0.5\,BC\) \\
+\(d_G,\;\varepsilon_G\) & posición de \(G_{CDP}\) desde \(D\) (sobre la recta \(D\!\to\!P\)) & \(0.3145\,DP\), \(\delta\) \\
+\(I_{AD},\;I_{BC}\) & inercia de la manivela respecto de \(A\) y del balancín respecto de \(B\) & \\
+\(I_{CDP}\) & inercia del acoplador respecto de \(G_{CDP}\) & \\
+\(\tau\) & par del servo sobre \(AD\), positivo en el sentido en que crece \(\theta\) & \(\le 21\) kg\,cm \\
+\(N\) & reacción del piso sobre la rueda, hacia arriba (0 con la pata en el aire) & \\
+\(b\) & fricción viscosa en el eje del servo & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+El ángulo interior en \(A\) entre \(AB\) y \(AD\) es \(\theta+45^\circ\); el ángulo absoluto del servo que usa
+la cinemática (\texttt{cinematica\_directa.m}) es \(360^\circ-\theta\). Las masas e inercias son estimaciones
+del CAD; se reemplazan pesando las piezas impresas. Todos los valores están en la sección 1 de
+\texttt{dinamica\_pata.m}.
+
+\begin{landscape}
+\vspace*{\fill}
+\begin{center}
+\includegraphics[width=\linewidth]{fig_dinamica.png}
+\end{center}
+\vspace*{\fill}
+\end{landscape}
+
+\section{Geometría}
+
+\textbf{Diagonal.} Ley del coseno en \(ABD\), con el ángulo \(\theta+45^\circ\) en \(A\):
+\begin{equation}
+BD=\sqrt{AB^2+AD^2-2\,AB\,AD\cos(\theta+45^\circ)} .
+\label{eq:BD}
+\end{equation}
+
+\textbf{Ángulos en \(B\) y en \(D\).} Ley del coseno en los triángulos \(ABD\) y \(BDC\), que comparten
+\(BD\):
+\begin{align}
+\beta_1&=\cos^{-1}\!\left(\frac{AD^2-AB^2-BD^2}{-2\,AB\,BD}\right), &
+\beta_2&=\cos^{-1}\!\left(\frac{DC^2-BC^2-BD^2}{-2\,BC\,BD}\right), &
+\beta&=\beta_1+\beta_2, \label{eq:beta}\\
+\alpha_1&=\cos^{-1}\!\left(\frac{AB^2-BD^2-AD^2}{-2\,BD\,AD}\right), &
+\alpha_2&=\cos^{-1}\!\left(\frac{BC^2-BD^2-DC^2}{-2\,BD\,DC}\right). \label{eq:alfa}
+\end{align}
+\(\beta\) es el ángulo interior del balancín en \(B\). Las sumas valen en la configuración abierta, con \(D\)
+entre \(BA\) y \(BC\), que es la del CAD.
+
+\textbf{Giro del acoplador.} En \(D\), la dirección \(D\!\to\!A\) forma \(180^\circ-\theta\) con \(+x\)
+(ángulos alternos internos entre las horizontales por \(A\) y por \(D\); es el \(\theta\) chico dibujado en
+\(D\)). Girando \(\alpha_1\) en sentido horario se llega a \(D\!\to\!B\), y \(\alpha_2\) más a \(D\!\to\!C\):
+\begin{equation}
+\boxed{\;\psi=180^\circ-\theta-\alpha_1-\alpha_2\;}
+\label{eq:psi}
+\end{equation}
+Como \(C\)--\(D\)--\(P\) es una pieza rígida, \(\psi\) es el giro de todo el acoplador; el lado \(D\!\to\!P\)
+apunta en la dirección \(\psi+\delta\).
+
+\textbf{Posiciones.} \(A=(0,0)\), \(B=AB\,(\cos45^\circ,\;\sin45^\circ)\) y
+\begin{equation}
+D=\bigl(AD\cos\theta,\;-AD\sin\theta\bigr).
+\label{eq:D}
+\end{equation}
+Un punto \(Q\) del acoplador, a distancia \(d_Q\) de \(D\) y a un ángulo \(\varepsilon_Q\) desde \(D\!\to\!C\):
+\begin{equation}
+x_Q=AD\cos\theta+d_Q\cos(\psi+\varepsilon_Q),\qquad
+y_Q=-AD\sin\theta+d_Q\sin(\psi+\varepsilon_Q).
+\label{eq:Q}
+\end{equation}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+punto & \(d_Q\) & \(\varepsilon_Q\) \\
+\midrule
+\(C\) & \(CD\) & \(0\) \\
+\(P\), eje de la rueda & \(DP\) & \(\delta\) \\
+\(G_{CDP}\), centro de masa del acoplador & \(d_G\) & \(\varepsilon_G\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Los otros dos centros de masa giran alrededor de pivotes fijos:
+\(G_{AD}=AG\,(\cos\theta,\,-\sin\theta)\) y \(G_{BC}=B+BG\,(\cos(225^\circ+\beta),\,\sin(225^\circ+\beta))\),
+ya que \(B\!\to\!A\) apunta a \(225^\circ\) y \(B\!\to\!C\) está \(\beta\) más allá en sentido antihorario.
+Comprobación del cierre: \(C\) calculado con \eqref{eq:Q} y \(C=B+BC\,(\cos(225^\circ+\beta),\sin(225^\circ+\beta))\)
+coinciden para todo \(\theta\).
+
+\section{Velocidades}
+
+\(G_{AD}\) gira alrededor de \(A\) y \(G_{BC}\) alrededor de \(B\): \(v_{G_{AD}}=AG\,\dot\theta\),
+\(v_{G_{BC}}=BG\,\dot\beta\). Para el acoplador hay que derivar \eqref{eq:Q}, donde aparece \(\dot\psi\). Como
+\(\beta\) y \(\psi\) son funciones de \(\theta\), \(\dot\beta=\beta'\dot\theta\) y \(\dot\psi=\psi'\dot\theta\),
+con \(\beta'=\dd\beta/\dd\theta\) y \(\psi'=\dd\psi/\dd\theta\).
+
+\textbf{Derivada de la diagonal.} De \eqref{eq:BD}:
+\begin{equation}
+BD'=\frac{AB\,AD\,\sin(\theta+45^\circ)}{BD}.
+\label{eq:dBD}
+\end{equation}
+
+\textbf{Derivada de un ángulo respecto de un lado.} Los cuatro ángulos de \eqref{eq:beta}--\eqref{eq:alfa}
+dependen de \(\theta\) solo a través de \(BD\). En un triángulo de lados \(p\), \(q\), \(r\), sea \(\alpha\) el
+ángulo entre \(p\) y \(q\), y \(\alpha_q\) el ángulo del otro extremo de \(q\), entre \(q\) y \(r\). Derivando
+\(\cos\alpha=(p^2+q^2-r^2)/(2pq)\) respecto de \(q\), con \(p\) y \(r\) fijos, y usando
+\(p^2=q^2+r^2-2qr\cos\alpha_q\):
+\[
+-\sin\alpha\,\frac{\dd\alpha}{\dd q}=\frac{q^2+r^2-p^2}{2pq^2}=\frac{r\cos\alpha_q}{pq}.
+\]
+Con el teorema del seno, \(r/\sin\alpha=p/\sin\alpha_q\), queda
+\begin{equation}
+\frac{\dd\alpha}{\dd q}=-\frac{\cot\alpha_q}{q}:
+\qquad
+\frac{\dd\beta_1}{\dd BD}=-\frac{\cot\alpha_1}{BD},\quad
+\frac{\dd\beta_2}{\dd BD}=-\frac{\cot\alpha_2}{BD},\quad
+\frac{\dd\alpha_1}{\dd BD}=-\frac{\cot\beta_1}{BD},\quad
+\frac{\dd\alpha_2}{\dd BD}=-\frac{\cot\beta_2}{BD}.
+\label{eq:lema}
+\end{equation}
+
+\textbf{Derivadas de \(\beta\) y \(\psi\).} Regla de la cadena con \eqref{eq:dBD} y \eqref{eq:lema} sobre
+\(\beta=\beta_1+\beta_2\) y \(\psi=180^\circ-\theta-\alpha_1-\alpha_2\):
+\begin{equation}
+\boxed{\;
+\begin{aligned}
+\beta'(\theta)&=-\bigl(\cot\alpha_1+\cot\alpha_2\bigr)\,\frac{AB\,AD\,\sin(\theta+45^\circ)}{BD^2}\\[2pt]
+\psi'(\theta)&=-1+\bigl(\cot\beta_1+\cot\beta_2\bigr)\,\frac{AB\,AD\,\sin(\theta+45^\circ)}{BD^2}
+\end{aligned}
+\;}
+\label{eq:dbeta_dpsi}
+\end{equation}
+Son las relaciones de transmisión del mecanismo: \(\omega_{BC}=\beta'\dot\theta\) y
+\(\omega_{CDP}=\psi'\dot\theta\), positivas en sentido antihorario, mientras la manivela gira a \(\dot\theta\)
+en sentido horario.
+
+\textbf{Velocidad de un punto del acoplador.} Derivando \eqref{eq:Q}:
+\begin{equation}
+\dot x_Q=-AD\sin\theta\,\dot\theta-d_Q\sin(\psi+\varepsilon_Q)\,\dot\psi,\qquad
+\dot y_Q=-AD\cos\theta\,\dot\theta+d_Q\cos(\psi+\varepsilon_Q)\,\dot\psi .
+\label{eq:vQ}
+\end{equation}
+Elevando al cuadrado y sumando, el producto cruzado se agrupa con
+\(\sin\theta\sin(\psi+\varepsilon_Q)-\cos\theta\cos(\psi+\varepsilon_Q)=-\cos(\theta+\psi+\varepsilon_Q)\):
+\begin{equation}
+\boxed{\;
+v_Q^2=\Bigl[AD^2+d_Q^2\,\psi'^2-2\,AD\,d_Q\,\psi'\cos(\theta+\psi+\varepsilon_Q)\Bigr]\dot\theta^2
+\;}
+\label{eq:vQ2}
+\end{equation}
+Es una ley del coseno: la velocidad de \(Q\) es la de \(D\), de módulo \(AD\,\dot\theta\), más la de \(Q\)
+respecto de \(D\), de módulo \(d_Q\,\dot\psi\). Con \((DP,\delta)\) da la velocidad del eje de la rueda; con
+\((d_G,\varepsilon_G)\), la de \(G_{CDP}\).
+
+\section{Energía cinética}
+
+La manivela y el balancín giran alrededor de pivotes fijos, así que su energía es \(\tfrac12 I\omega^2\) con
+la inercia respecto del pivote (\(I_{AD}=I_{G_{AD}}+m_{AD}AG^2\), \(I_{BC}=I_{G_{BC}}+m_{BC}BG^2\)). El
+acoplador se traslada y gira (König). La rueda y el motor se trasladan con \(P\); el giro propio de la rueda,
+\(\tfrac12 I_P\omega^2\), lo impone el motor y no depende de \(\theta\), por lo que no entra en esta ecuación.
+\begin{equation}
+K=\tfrac12 I_{AD}\dot\theta^2+\tfrac12 I_{BC}\dot\beta^2+\tfrac12 m_{CDP}v_{G_{CDP}}^2+\tfrac12 I_{CDP}\dot\psi^2
++\tfrac12 m_P v_P^2 .
+\label{eq:K}
+\end{equation}
+Con \(\dot\beta=\beta'\dot\theta\), \(\dot\psi=\psi'\dot\theta\) y \eqref{eq:vQ2} para \(G_{CDP}\) y para \(P\),
+todo es proporcional a \(\dot\theta^2\):
+\begin{equation}
+K=\tfrac12\,I_{eq}(\theta)\,\dot\theta^2,
+\label{eq:KIeq}
+\end{equation}
+\begin{equation}
+\boxed{\;
+\begin{aligned}
+I_{eq}(\theta)={}&I_{AD}+I_{BC}\,\beta'^2+I_{CDP}\,\psi'^2\\
+&+m_{CDP}\Bigl[AD^2+d_G^2\,\psi'^2-2\,AD\,d_G\,\psi'\cos(\theta+\psi+\varepsilon_G)\Bigr]\\
+&+m_P\Bigl[AD^2+DP^2\,\psi'^2-2\,AD\,DP\,\psi'\cos(\theta+\psi+\delta)\Bigr]
+\end{aligned}
+\;}
+\label{eq:Ieq}
+\end{equation}
+\(I_{eq}(\theta)\) es la inercia de toda la pata vista desde el eje del servo. Depende de la posición porque
+las relaciones de transmisión \(\beta'\) y \(\psi'\) cambian con \(\theta\).
+
+\section{Energía potencial}
+
+Solo gravedad. Con \(y\) hacia arriba y las alturas de la sección 2:
+\begin{equation}
+V(\theta)=g\Bigl[m_{AD}\,y_{G_{AD}}+m_{BC}\,y_{G_{BC}}+m_{CDP}\,y_{G_{CDP}}+m_P\,y_P\Bigr],
+\label{eq:V}
+\end{equation}
+\begin{gather*}
+y_{G_{AD}}=-AG\sin\theta,\qquad
+y_{G_{BC}}=AB\sin45^\circ-BG\sin(45^\circ+\beta),\\
+y_{G_{CDP}}=-AD\sin\theta+d_G\sin(\psi+\varepsilon_G),\qquad
+y_P=-AD\sin\theta+DP\sin(\psi+\delta).
+\end{gather*}
+Su derivada, con \(\beta'\) y \(\psi'\) de \eqref{eq:dbeta_dpsi}:
+\begin{equation}
+\begin{aligned}
+V'(\theta)=g\Bigl[&-m_{AD}\,AG\cos\theta-m_{BC}\,BG\cos(45^\circ+\beta)\,\beta'\\
+&+m_{CDP}\bigl(-AD\cos\theta+d_G\cos(\psi+\varepsilon_G)\,\psi'\bigr)+m_P\,y_P'\Bigr],
+\end{aligned}
+\label{eq:dV}
+\end{equation}
+\begin{equation}
+y_P'(\theta)=-AD\cos\theta+DP\cos(\psi+\delta)\,\psi' .
+\label{eq:dyP}
+\end{equation}
+\(y_P'<0\) en toda la carrera: al crecer \(\theta\) la rueda baja y la pata se estira.
+
+\section{Fuerzas generalizadas}
+
+Lo que no deriva de \(V\) entra por su trabajo virtual, \(\delta W=Q_\theta\,\delta\theta\): el par del servo
+actúa directamente sobre \(\theta\); la fricción del eje da \(-b\,\dot\theta\); la reacción del piso \(N\),
+vertical, trabaja sobre el desplazamiento \(\delta y_P=y_P'\,\delta\theta\) de la rueda:
+\begin{equation}
+Q_\theta=\tau-b\,\dot\theta+N\,y_P'(\theta).
+\label{eq:Qtheta}
+\end{equation}
+Con la pata en el aire \(N=0\); con el robot parado sobre las dos ruedas, \(N\approx m_{robot}\,g/2\) por pata.
+
+\section{Ecuación de movimiento}
+
+Con \(L=K-V=\tfrac12 I_{eq}(\theta)\dot\theta^2-V(\theta)\):
+\begin{align}
+\frac{\dd}{\dd t}\frac{\partial L}{\partial\dot\theta}&=I_{eq}\,\ddot\theta+I_{eq}'\,\dot\theta^2,&
+\frac{\partial L}{\partial\theta}&=\tfrac12 I_{eq}'\,\dot\theta^2-V' ,
+\end{align}
+y la ecuación de Lagrange
+\(\dfrac{\dd}{\dd t}\dfrac{\partial L}{\partial\dot\theta}-\dfrac{\partial L}{\partial\theta}=Q_\theta\) da
+\begin{equation}
+\boxed{\;
+I_{eq}(\theta)\,\ddot\theta+\tfrac12\,I_{eq}'(\theta)\,\dot\theta^2+V'(\theta)=\tau-b\,\dot\theta+N\,y_P'(\theta)
+\;}
+\label{eq:final}
+\end{equation}
+con \(I_{eq}\) de \eqref{eq:Ieq}, \(V'\) de \eqref{eq:dV} y \(y_P'\) de \eqref{eq:dyP}. El término
+\(\tfrac12 I_{eq}'\dot\theta^2\) es el propio de un mecanismo con inercia variable; \(I_{eq}'\) se calcula
+numéricamente. Para simular, en forma de estado con \(x=(\theta,\dot\theta)\):
+\begin{equation}
+\ddot\theta=\frac{\tau-b\,\dot\theta+N\,y_P'-\tfrac12 I_{eq}'\,\dot\theta^2-V'}{I_{eq}} .
+\label{eq:estado}
+\end{equation}
+
+\textbf{Par estático.} Con la pata quieta, el servo tiene que dar
+\begin{equation}
+\tau_{est}(\theta)=V'(\theta)-N\,y_P'(\theta).
+\label{eq:tau_est}
+\end{equation}
+En el aire es solo el peso de la pata. Parado, \(-N\,y_P'\) es positivo y domina: el servo empuja la rueda
+contra el piso.
+
+\section{Valores numéricos}
+
+Con los parámetros de la tabla y \(N=m_{robot}\,g/2=5.05\) N (\(m_{robot}=1.03\) kg):
+
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule
+ & \(\theta=10^\circ\) (plegada) & \(\theta=25^\circ\) & \(\theta=40^\circ\) (estirada) \\
+\midrule
+\(BD\) [mm] & 116.4 & 141.5 & 164.8 \\
+\(\beta_1,\;\beta_2\) [\(^\circ\)] & 80.3, 21.8 & 68.4, 21.1 & 57.8, 16.0 \\
+\(\alpha_1,\;\alpha_2\) [\(^\circ\)] & 44.8, 100.1 & 41.6, 72.3 & 37.2, 46.7 \\
+\(\psi\) [\(^\circ\)] & 25.1 & 41.1 & 56.1 \\
+\(\beta'\), \(\psi'\) [rad/rad] & \(-0.703\), \(1.260\) & \(-0.950\), \(0.964\) & \(-1.161\), \(1.120\) \\
+\(y_P\) [mm] & \(-46.5\) & \(-118.6\) & \(-180.2\) \\
+\(y_P'\) [mm/rad] & \(-312\) & \(-249\) & \(-227\) \\
+\(I_{eq}\) [kg\,m\(^2\)] & \(13.2\cdot10^{-3}\) & \(8.60\cdot10^{-3}\) & \(7.26\cdot10^{-3}\) \\
+\(I_{eq}'\) [kg\,m\(^2\)/rad] & \(-32.1\cdot10^{-3}\) & \(-9.3\cdot10^{-3}\) & \(-0.10\cdot10^{-3}\) \\
+\(V'\) [N\,m] & \(-0.439\) & \(-0.356\) & \(-0.322\) \\
+\(\tau_{est}\) en el aire [N\,m] & \(-0.439\) & \(-0.356\) & \(-0.322\) \\
+\(\tau_{est}\) parado [N\,m] & \(1.137\) & \(0.903\) & \(0.826\) \\
+\(\tau_{est}\) parado [kg\,cm] & 11.6 & 9.2 & 8.4 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+El término de \(m_P\) es cerca del 90 por ciento de \(I_{eq}\): dinámicamente la pata es una rueda con motor
+movida por una palanca de brazo \(|y_P'|\) de 23 a 31 cm. \(V'<0\): el peso tiende a estirar la pata, y en el
+aire el servo hace un par chico hacia plegar. Parado, cada servo sostiene hasta 11.6 kg\,cm contra los
+21 kg\,cm nominales del DS3225MG. Las derivadas \eqref{eq:dbeta_dpsi}, \eqref{eq:vQ2} y \eqref{eq:dV} se
+comprobaron contra diferencias finitas.
+
+\section{Archivos}
+
+\begin{itemize}
+\item \texttt{dinamica\_pata.m}: script de MATLAB con toda la dinámica. Sección 1: todos los parámetros de la
+  tabla, para editar. Sección 2: \(I_{eq}\), \(\beta'\), \(\psi'\), \(y_P\) y \(\tau_{est}\) en función de
+  \(\theta\), tabla y curvas. Sección 3: ejemplo de simulación de una trayectoria con \texttt{ode45}. Las
+  funciones \texttt{terminos(theta, p)} (ecuaciones \eqref{eq:BD} a \eqref{eq:dyP}) y
+  \texttt{f\_pata(t, x, tau, N, p)} (ecuación \eqref{eq:estado}) están al final del archivo.
+\item \texttt{fig\_dinamica.py} \(\to\) \texttt{fig\_dinamica.png}: el dibujo de la sección 1.
+\item La geometría es la misma de \texttt{cinematica/parametros\_geometria.m}.
+\end{itemize}
+
+\end{document}

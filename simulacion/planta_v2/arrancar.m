@@ -1,9 +1,9 @@
 % ARRANCAR  Punto de entrada de la planta v2 (escalones, flexor, Simulink legible).
 %   1. parametros de la variante   2. LQR   3. un escenario en ode15s con graficos
-%   4. modelo Simulink robot_segway.slx   5. barrido de escenarios en Simulink
+%   4. modelos Simulink robot_segway.slx y robot_segway_bloques.slx   5. barrido de escenarios en Simulink
 clear; clc; close all;
 aqui = fileparts(mfilename('fullpath'));
-addpath(aqui); addpath(fullfile(aqui, '..', 'modelo_base'));
+addpath(aqui);
 
 % ================== LO QUE SE TOCA ==================
 variante  = 'corregido';     % 'cad' (tal como esta el CAD) o 'corregido' (bancada 100 mm a 45 grados)
@@ -21,6 +21,7 @@ fprintf('escenario %s: %d escalones de %.0f x %.0f cm, flexor %d, velocidad %.2f
 S = simular_ode(P, C, E);
 disp(S.resumen); graficar_corrida(S);
 
-construir_robot_slx(P, C, E);            % robot_segway.slx, listo para abrir y correr
+construir_robot_slx(P, C, E);            % robot_segway.slx (MATLAB Functions), listo para abrir y correr
+construir_robot_bloques(P, C, E);        % robot_segway_bloques.slx (solo bloques nativos, para ver las ecuaciones)
 R = correr_escenarios_robot(variante);   % todos los escenarios en Simulink
 disp(R.tabla);

@@ -3,7 +3,7 @@ function tests = test_simulink
 end
 function setupOnce(~)
   aqui = fileparts(mfilename('fullpath'));
-  addpath(fullfile(aqui,'..')); addpath(fullfile(aqui,'..','..','modelo_base'));
+  addpath(fullfile(aqui,'..'));
 end
 function test_construye_y_coincide_con_ode(tc)
   P = parametros_robot('corregido'); C = disenar_lqr_robot(P);

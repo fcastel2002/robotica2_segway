@@ -5,63 +5,12 @@ function P = parametros_robot(variante, varargin)
 %   P = parametros_robot('corregido')   bancada 100 mm a 45 grados, motor 280 rpm con encoder
 %   P = parametros_robot('cad','V_bat',9.6,'flexor',true,'piso_n',3)
 %   Los argumentos se dan en mm / g / grados; P queda en SI. Ver tambien parametros_simulink.
-  if nargin < 1 || isempty(variante), variante = 'cad'; end
+  if nargin < 1 || isempty(variante), variante = 'corregido'; end
   mm = 1e-3; gr = 1e-3; d2r = pi/180;
 
-  % ---------- geometria del cuatro barras (mm, grados) ----------
-  o.s_barras = 100;                 % escala de las barras impresas (CAD)
-  o.k_AD = 1.400; o.k_BC = 1.350; o.k_CD = 0.510; o.k_DP = 1.400;
-  o.delta = 164; o.th = [320 350]; o.rama = +1;
-  o.Rw = 33;                        % radio de rueda [mm], rueda comercial de 65
-  switch lower(variante)
-    case 'cad'
-      o.AB = 80;  o.ang_AB = 47.5; o.N = 100;  o.encoder = true;
-      o.nombre_motor = 'JGA25-370 12V 60rpm (1:100) + encoder';
-    case 'corregido'
-      o.AB = 100; o.ang_AB = 45;   o.N = 21.3; o.encoder = true;
-      o.nombre_motor = 'JGA25-371 12V 280rpm (1:21.3, con encoder)';
-    otherwise
-      error('parametros_robot: variante "%s" no definida', variante);
-  end
-  % ---------- masas [g], CoM respecto de A [mm] (x atras, y arriba), inercias propias [kg m2] ----------
-  o.m_cabina = 207;   o.r_cabina = [13.1 5.0];   o.J_cabina = 4.8477e8*1.2e-12;
-  o.m_tapa = 114;     o.r_tapa = [-28.1 47.2];   o.J_tapa = 2.7331e8*1.2e-12;
-  o.m_servo = 60;     o.r_servo = [-9.7 0];
-  o.m_bateria = 120;  o.r_bateria = [-18.5 21.0];
-  o.m_electronica = 60; o.r_electronica = [-18.5 21.0];
-  o.m_tornilleria = 50; o.r_tornilleria = [0 0];
-  o.m_AD = 29;    o.f_AD = 0.428;    o.J_AD = 6.4467e7*1.1e-12;
-  o.m_BC = 7;     o.f_BC = 0.5;      o.J_BC = 1.5631e7*1.1e-12;
-  o.m_CDP = 19.5; o.f_CDP = 0.3145;  o.J_CDP = 5.8125e7*1.1e-12;
-  o.m_rueda = 30; o.m_motor = 95;
-  o.m_mecanismo = 110;              % masa que mueve el servo cuando hay flexor (las barras) [g]
-  % ---------- rueda, contacto y piso ----------
-  o.b_w = 1e-4; o.mu = 0.7; o.v_s = 0.005; o.c_v = 0.5;
-  o.k_contacto = 30e3;              % rigidez del neumatico por rueda [N/m]
-  o.c_contacto = 60;                % amortiguacion del contacto por rueda [N s/m]
-  o.piso_x0 = 0.5;                  % donde empieza el primer escalon [m]
-  o.piso_alto = 0.16;               % alto de cada escalon [m]
-  o.piso_ancho = 0.30;              % ancho de cada descanso [m]
-  o.piso_n = 0;                     % cantidad de escalones que bajan (0 = piso plano)
-  % ---------- flexor de la pata (documento de dimensionamiento) ----------
-  o.flexor = false; o.k_flexor = 1080; o.c_flexor = 8; o.carrera_flexor = 40;   % N/m, N s/m, mm (por pata)
-  % ---------- motor DC + reductor ----------
-  o.R_m = 5.45; o.L_m = 1.5e-3; o.w_nl_motor_rpm = 6000; o.J_r = 6e-7;
-  o.tau_c = 0.0015; o.b_m = 1e-6;
-  o.gear_rigido = true; o.k_g = 50; o.c_g = 0.05; o.juego_deg = 1.5;
-  o.eta = 0.7;
-  % ---------- bateria ----------
-  o.V_bat = 11.1; o.R_bat = 0.05;
-  % ---------- servo DS3225MG ----------
-  o.tau_s_max = 2.4; o.w_nl_servo = 7.7; o.Kp_s = 45; o.Kd_s = 1.0; o.n_servos = 2;
-  % ---------- cuerpo ----------
-  o.b_pitch = 1e-3; o.b_pata = 8.0; o.k_tope = 2e4; o.c_tope = 60;
-  % ---------- sensores y control ----------
-  o.Ts = 5e-3; o.n_delay = 1; o.d_imu = [-18.5 21.0];
-  o.gyro_bias_dps = 0.5; o.gyro_rms_dps = 0.1; o.gyro_sat_dps = 2000; o.acc_rms_g = 0.02;
-  o.CPR_motor = 11; o.k_comp = 0.005; o.fc_vel = 20; o.semilla = 1; o.umbral_vuelo = 3;
-  o.g = 9.81;
-  % ---------- sobrescribir ----------
+  % ---------- TODOS los valores editables viven en parametros_editables.m ----------
+  o = parametros_editables(variante);
+  % ---------- sobrescribir con pares nombre/valor (para probar sin editar el archivo) ----------
   for i = 1:2:numel(varargin)
     if ~isfield(o, varargin{i}), error('parametros_robot: parametro desconocido "%s"', varargin{i}); end
     o.(varargin{i}) = varargin{i+1};
@@ -85,12 +34,15 @@ function P = parametros_robot(variante, varargin)
   v = K.valido;
   A_ = K.A(v,:); B_ = K.B(v,:); C_ = K.C(v,:); D_ = K.D(v,:); W_ = K.P(v,:);
   r_AD = A_ + o.f_AD*(D_ - A_); r_BC = (B_ + C_)/2; r_CDP = D_ + o.f_CDP*(W_ - D_);
+  % Cada fila: masa [g], posicion del CoM respecto de A [m], inercia propia respecto de su CoM [kg m2].
+  % Las cajas (servo, bateria, electronica) se toman como prismas: m (a^2 + b^2)/12.
   it = { o.m_cabina,      o.r_cabina*mm,      o.J_cabina;
          o.m_tapa,        o.r_tapa*mm,        o.J_tapa;
-         2*o.m_servo,     o.r_servo*mm,       2*0.060*(0.040^2+0.0405^2)/12;
-         o.m_bateria,     o.r_bateria*mm,     0.120*(0.100^2+0.035^2)/12;
-         o.m_electronica, o.r_electronica*mm, 0.060*(0.080^2+0.040^2)/12;
+         2*o.m_servo,     o.r_servo*mm,       2*(o.m_servo*gr)*(0.040^2+0.0405^2)/12;
+         o.m_bateria,     o.r_bateria*mm,     (o.m_bateria*gr)*(0.100^2+0.035^2)/12;
+         o.m_electronica, o.r_electronica*mm, (o.m_electronica*gr)*(0.080^2+0.040^2)/12;
          o.m_tornilleria, o.r_tornilleria*mm, 0;
+         o.m_carga,       o.r_carga*mm,       0;
          2*o.m_AD,        mean(r_AD,1),       2*o.J_AD;
          2*o.m_BC,        mean(r_BC,1),       2*o.J_BC;
          2*o.m_CDP,       mean(r_CDP,1),      2*o.J_CDP };
@@ -100,7 +52,9 @@ function P = parametros_robot(variante, varargin)
   for i = 1:size(it,1), m = it{i,1}*gr; dd = it{i,2} - r; J = J + it{i,3} + m*(dd*dd'); end
   P.din.m_b = mtot; P.din.r_com = r; P.din.J_b = J;
   P.din.m_w = 2*(o.m_rueda + o.m_motor)*gr;
-  P.din.J_w = 0.5*o.m_rueda*gr*P.Rw^2;
+  P.din.J_w = 0.5*o.m_rueda*gr*P.Rw^2;                 % rueda como disco macizo
+  if ~isempty(o.J_cuerpo), P.din.J_b = o.J_cuerpo; end  % inercia medida o impuesta
+  if ~isempty(o.J_rueda),  P.din.J_w = o.J_rueda;  end
   P.din.m_mec = o.m_mecanismo*gr;
   P.m.total = P.din.m_b + P.din.m_w;
 

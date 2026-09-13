@@ -3,7 +3,7 @@ function C = disenar_lqr_robot(P, w)
 %   C = disenar_lqr_robot(P)
 %   C = disenar_lqr_robot(P, struct('q_x',3,'q_phi',60,'q_dx',2,'q_dphi',2,'r',12))
 %   C.Kfit (2x4): K(l) = Kfit(1,:) + Kfit(2,:)*l ; C.l_lim rango del ajuste.
-%   Pesos por defecto segun la variante (barrido sobre equilibrio_8, ver README de planta_v1):
+%   Pesos por defecto segun la variante (barrido sobre equilibrio_8, ver docs/informe_planta_v1/informe.tex):
 %   cad (N = 100) necesita ganancias mucho mayores por la inercia reflejada del rotor.
   if nargin < 2, w = struct(); end
   d = @(c, v) get_def(w, c, v);

@@ -3,7 +3,7 @@ function tests = test_planta
 end
 function setupOnce(~)
   aqui = fileparts(mfilename('fullpath'));
-  addpath(fullfile(aqui,'..')); addpath(fullfile(aqui,'..','..','modelo_base'));
+  addpath(fullfile(aqui,'..'));
 end
 function [th_ref, tau_nec] = servo_que_sostiene(P, l, phi)
   th = interp_lin(P.tab.l, P.tab.th, l); dthdl = interp_lin(P.tab.l, P.tab.dthdl, l);

@@ -28,7 +28,7 @@ function [comandos, estimaciones] = robot_controlador(medidas, referencias, par,
     w_est = a*w_est + (1 - a)*dth/Ts;
     x_est = x_est + R*mean(dth);
     dx_est = R*mean(w_est);
-    b = exp(-2*pi*5*Ts);
+    b = exp(-2*pi*co.fc_acel*Ts);
     a_est = b*a_est + (1 - b)*(dx_est - dx_prev)/Ts; dx_prev = dx_est;
   else
     w_est = [0 0]; dx_est = 0; a_est = 0;
