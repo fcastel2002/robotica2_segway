@@ -2,7 +2,7 @@ function G = parametros_geometria()
 %PARAMETROS_GEOMETRIA  Cotas del cuatro barras de la pata segun el CAD (mm y grados).
 %   Unica fuente de los valores: si cambia el CAD, se cambia aca.
 %   A es el eje del servo (origen), B el pivote del balancin en la cabina, D el extremo de la
-%   manivela, C la union acoplador-balancin, P el eje de la rueda. Ver ../geometria_robot.png.
+%   manivela, C la union acoplador-balancin, P el eje de la rueda. Ver ../geometria/geometria_robot.png.
   G.AB    = 100;    % bancada A-B [mm]                     (cabeza_v31)
   G.beta  = 45;     % angulo de A->B desde +x [grados]     (cabeza_v31)
   G.AD    = 140;    % manivela, la mueve el servo [mm]     (eslabon_AD)

@@ -76,6 +76,38 @@ subplot(3,1,2); plot(t, tau/0.0981, 'LineWidth', 1.5); grid on; yline([-1 1]*p.t
 ylabel('\tau servo [kg cm]')
 subplot(3,1,3); plot(t, Ts.yP*1e3, 'LineWidth', 1.5); grid on; ylabel('y_P [mm]'); xlabel('t [s]')
 
+%% 4. Verificación con los diagramas de cuerpo libre (../dcl/dcl_pata.png) ==================
+% Robot parado (N = m_robot g/2) en la postura más desfavorable, theta = 10°. Equilibrio de los tres
+% cuerpos (sumatoria de fuerzas y de momentos en AD, BC y CDP+rueda): 9 ecuaciones, 9 incógnitas
+% [Ax Ay tau Bx By Cx Cy Dx Dy]. (Dx, Dy) es la fuerza del acoplador sobre AD en D y (Cx, Cy) la del
+% acoplador sobre BC en C; sobre el acoplador actúan con signo opuesto. tau positivo horario (crece theta).
+% El par que sale de las 9 ecuaciones tiene que coincidir con tau_est = V' - N yP' de Lagrange.
+th0 = deg2rad(10); T0 = terminos(th0, p); g = p.g; N0 = N_parado;
+A0 = T0.A'; B0 = T0.B'; C0 = T0.C'; D0 = T0.D'; P0 = T0.P'; GAD = T0.GAD'; GBC = T0.GBC'; GCDP = T0.GCDP';
+M9 = zeros(9); b9 = zeros(9, 1);                     % columnas: Ax Ay tau Bx By Cx Cy Dx Dy
+M9(1, [1 8]) = [1 1];                                                            % AD: suma Fx
+M9(2, [2 9]) = [1 1];                          b9(2) = p.m_AD*g;                 % AD: suma Fy
+M9(3, [3 8 9]) = [-1, -D0(2), D0(1)];          b9(3) = p.m_AD*g*GAD(1);          % AD: momentos en A
+M9(4, [4 6]) = [1 1];                                                            % BC: suma Fx
+M9(5, [5 7]) = [1 1];                          b9(5) = p.m_BC*g;                 % BC: suma Fy
+M9(6, [6 7]) = [-(C0(2) - B0(2)), C0(1) - B0(1)]; b9(6) = p.m_BC*g*(GBC(1) - B0(1));   % BC: momentos en B
+M9(7, [6 8]) = [-1 -1];                                                          % CDP: suma Fx
+M9(8, [7 9]) = [-1 -1];                        b9(8) = (p.m_CDP + p.m_P)*g - N0; % CDP: suma Fy
+M9(9, [6 7]) = [C0(2) - D0(2), -(C0(1) - D0(1))];                                % CDP: momentos en D
+b9(9) = p.m_CDP*g*(GCDP(1) - D0(1)) + p.m_P*g*(P0(1) - D0(1)) - N0*(P0(1) - D0(1));
+sol = M9\b9;
+tau_dcl = sol(3); tau_lag = T0.dV - N0*T0.dyP;
+fprintf('\nDCL en theta = 10°, N = %.2f N:  Ax %.2f  Ay %.2f  Bx %.2f  By %.2f  Cx %.2f  Cy %.2f  Dx %.2f  Dy %.2f  [N]\n', N0, sol([1 2 4 5 6 7 8 9]));
+fprintf('par del servo:  DCL %.4f N m (%.2f kg cm)  |  Lagrange V'' - N yP'' %.4f N m  |  diferencia %.1e\n', tau_dcl, tau_dcl/0.0981, tau_lag, tau_dcl - tau_lag);
+% A mano, en tres pasos, despreciando el peso del balancín (7 g): BC queda biarticulada y su fuerza va
+% a lo largo de BC. (1) momentos en D sobre el acoplador dan esa fuerza; (2) suma de fuerzas en el
+% acoplador da (Dx, Dy); (3) momentos en A sobre AD dan tau.
+u = (C0 - B0)/norm(C0 - B0);                                                     % versor B -> C
+s = (N0*(P0(1) - D0(1)) - p.m_CDP*g*(GCDP(1) - D0(1)) - p.m_P*g*(P0(1) - D0(1))) / ((C0(1) - D0(1))*u(2) - (C0(2) - D0(2))*u(1));
+Dm = [-s*u(1), N0 - (p.m_CDP + p.m_P)*g - s*u(2)];
+tau_mano = D0(1)*Dm(2) - D0(2)*Dm(1) - p.m_AD*g*GAD(1);
+fprintf('a mano (BC biarticulada): fuerza en BC %.2f N, (Dx, Dy) = (%.2f, %.2f) N, tau = %.4f N m (%.2f kg cm)\n', s, Dm, tau_mano, tau_mano/0.0981);
+
 %% Funciones ================================================================================
 function T = terminos(th, p)
 % Ecuaciones (1) a (18) del PDF para un vector fila de theta [rad]. Todo en SI, ángulos en rad.
@@ -121,7 +153,7 @@ function [Ieq, T] = nucleo(th, p)
              + p.m_CDP*(-AD*cos(th) + p.dG*cos(psi + p.epsG).*dpsi) + p.m_P*dyP);
   T = struct('theta', th, 'BD', BD, 'beta1', b1, 'beta2', b2, 'beta', beta, 'alfa1', a1, 'alfa2', a2, 'psi', psi, ...
              'dbeta', dbeta, 'dpsi', dpsi, 'V', V, 'dV', dV, 'xP', P(1,:), 'yP', P(2,:), 'dyP', dyP, ...
-             'A', A, 'B', B, 'C', C, 'D', D, 'P', P);
+             'A', A, 'B', B, 'C', C, 'D', D, 'P', P, 'GAD', GAD, 'GBC', GBC, 'GCDP', GCDP);
 end
 
 function dx = f_pata(~, x, tau, N, p)

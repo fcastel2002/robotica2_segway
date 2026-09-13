@@ -19,7 +19,7 @@ clear; clc; close all;
 %% 1. PARÁMETROS GEOMÉTRICOS DEL MECANISMO (mm y grados)
 % Una sola fuente de los valores: parametros_geometria.m (cotas del CAD).
 % Nombres: AB bancada, AD manivela, BC balancín, CD y DP acoplador rígido, beta ángulo de la
-% bancada, delta ángulo del acoplador en D, theta ángulo del servo. Ver ../geometria_robot.png
+% bancada, delta ángulo del acoplador en D, theta ángulo del servo. Ver ../geometria/geometria_robot.png
 G = parametros_geometria();
 AB = G.AB; AD = G.AD; BC = G.BC; CD = G.CD; DP = G.DP; beta = G.beta; delta = G.delta;
 A = [0, 0];                                   % Pivote motorizado (eje del servo)
