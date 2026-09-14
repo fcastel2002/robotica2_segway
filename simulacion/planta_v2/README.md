@@ -180,5 +180,6 @@ el flexor del documento de dimensionamiento baja la aceleración de la cabina de
 el golpe en la rueda, que depende del neumático. (3) La velocidad de aproximación y el largo de pata
 al bajar son parámetros de `escenarios_robot` para seguir explorando.
 
-Tests: `runtests('simulacion/planta_v2/tests')` el 2026-09-03: 22 de 22 pasan (115 s), incluidos los 5
-del modelo por bloques.
+Última regresión: `runtests('simulacion/planta_v2/tests')` el 2026-09-14: 21 de 22 pasan. El único fallo
+es `test_bloques/test_escalera_y_flexor`: diferencia de posición final `0,0670 m`, por encima de la
+tolerancia `0,05 m`. Los cinco tests base y las pruebas restantes de planta, lazo y Simulink pasan.

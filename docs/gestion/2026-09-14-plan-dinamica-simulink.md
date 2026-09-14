@@ -4,12 +4,16 @@ Fecha de revisión: 2026-09-14
 Backlog operativo: [`BACKLOG.md`](../../BACKLOG.md)  
 Alcance: continuar el trabajo del commit `c5602f1` sin perder la planta y las pruebas ya existentes.
 
+Estado de ejecución al 2026-09-14: entorno MCP actualizado; fases 2 y 3 completadas para el banco
+reducido; equivalencia numérica, energía y sensibilidad al solver de la fase 4 aprobadas (12/12 pruebas).
+Continúan pendientes la transición híbrida contacto-vuelo, los parámetros del CAD nuevo y `planta_v3`.
+
 ## 1. Conclusión ejecutiva
 
-La formulación nueva de la pata es una buena referencia reducida y está lista para convertirse en un
-banco Simulink verificable. No está lista todavía para pegarse directamente dentro de la planta completa:
-duplica parámetros, encapsula funciones dentro de un script, no implementa la transición contacto-vuelo y
-supone que la cabina no inclina mientras cambia la altura.
+La formulación nueva de la pata ya fue convertida en un banco Simulink verificable. La API MATLAB, las
+tablas y el `.slx` regenerable están implementados y pasan 12/12 pruebas propias. Aún no corresponde pegar
+este bloque directamente dentro de la planta completa: falta cerrar la transición contacto-vuelo, cargar
+los parámetros del CAD nuevo y derivar la planta sin contar masas dos veces.
 
 Además, el repositorio ya contiene dos modelos Simulink de una planta de 20 estados en
 `simulacion/planta_v2/`. Esa planta incluye motores, batería, contacto, escalones, flexor, sensores y LQR,
@@ -86,7 +90,12 @@ ODE de agacharse/pararse.
 - La maniobra nominal de 0,6 s alcanza `16,2 kg cm`, debajo del límite usado de `21 kg cm`; la normal
   mínima calculada es `1,40 N` por rueda.
 
-### 3.3 Límites y deudas antes de Simulink
+### 3.3 Hallazgos iniciales y estado de resolución
+
+La tabla siguiente conserva el diagnóstico que motivó el plan. Ya se resolvieron la extracción de
+funciones, la fuente MATLAB común, el factor `n_patas`, las tablas y los topes. Permanecen abiertas la
+transición automática contacto-vuelo, la identificación del servo y la actualización al CAD nuevo; el
+detalle operativo vigente está en `BACKLOG.md`.
 
 | Hallazgo | Consecuencia | Acción requerida |
 |---|---|---|
@@ -141,7 +150,7 @@ Crear `simulacion/dinamica_pata_v1/` como arnés de validación independiente de
 | Carpeta / archivo | Responsabilidad |
 |---|---|
 | `README.md` | Supuestos, instrucciones, interfaces y resultados vigentes |
-| `dinamica_pata.slx` | Ecuación común y variantes `banco`, `parado`, `aire` |
+| `dinamica_pata_simulink.slx` | Ecuación común y variantes `banco`, `parado`, `aire` |
 | `construir_dinamica_pata.m` | Construcción reproducible del `.slx` |
 | `escenarios_dinamica_pata.m` | Consignas, cargas y perturbaciones declarativas |
 | `simular_dinamica_pata.m` | Entrada única para correr una configuración |
@@ -192,8 +201,9 @@ Salida: un único conjunto nominal habilitado para resultados y otro, si se dese
 
 1. Con autorización explícita, conservar temporalmente el ejecutable v0.10.0 y usar el instalador oficial
    para MATLAB MCP Server v0.13.0 más Simulink Agentic Toolkit.
-2. Configurar Codex globalmente con el ejecutable nuevo, modo de sesión `new` para corridas reproducibles,
-   MATLAB R2023b, carpeta inicial del proyecto, `WINDIR` y timeout de al menos 600 s.
+2. Configurar Codex globalmente con el ejecutable nuevo, modo de sesión `existing` requerido por el flujo
+   instalado del toolkit, `WINDIR` y timeout de al menos 600 s. Inicializar la sesión MATLAB compartida
+   desde la raíz del proyecto mediante `satk_initialize`.
 3. Reiniciar el cliente Codex; una configuración nueva no añade herramientas a una sesión ya abierta.
 4. Verificar versión, conexión, toolboxes y llamadas `model_overview`, `model_read`, `model_check` y
    `model_test` sobre un modelo pequeño.
@@ -205,10 +215,8 @@ Configuración esperada, ajustando la ruta que deje el instalador:
 [mcp_servers.matlab]
 command = 'C:\Users\matia\.matlab\agentic-toolkits\bin\matlab-mcp-server.exe'
 args = [
-  '--matlab-root=C:\Program Files\MATLAB\R2023b',
-  '--matlab-session-mode=new',
-  '--matlab-display-mode=nodesktop',
-  '--initial-working-folder=D:\Usuario\Matias\Proyectos\robotica2_segway',
+  '--matlab-session-mode=existing',
+  '--extension-file=C:\Users\matia\.matlab\agentic-toolkits\simulink\tools\tools.json',
   '--disable-telemetry=true'
 ]
 env_vars = ['WINDIR']
@@ -313,15 +321,15 @@ Salida: planta no controlada físicamente coherente en piso, apoyo y vuelo.
   reducciones, energía, contacto y regresiones de lazo cerrado.
 - El README debe reflejar el resultado de la última ejecución, incluyendo fallos conocidos.
 
-## 9. Primer bloque de trabajo recomendado
+## 9. Siguiente bloque de trabajo
 
-En la próxima sesión, el orden concreto es:
+Completados MCP, API, tablas, banco, equivalencia MATLAB–Simulink y `TST-102`, el orden concreto
+siguiente es:
 
-1. actualizar MCP + toolkit y reiniciar Codex;
-2. registrar el conjunto de parámetros baseline de primera iteración y abrir `CAD-201` para el equipo;
-3. completar `DYN-101` a `DYN-104` con tests;
-4. construir `SIM-101` y ejecutar `TST-101`;
-5. diagnosticar `V2-001` y `V2-002` antes de comenzar `planta_v3`.
+1. completar `DYN-103` y `TST-103`: transición `parado` ↔ `aire`, topes y recontacto;
+2. cerrar `CAD-201` y terminar `PAR-001` con los datos de la segunda iteración;
+3. evaluar `CTL-101`, prealimentación de gravedad, sin mezclarla con la validación de planta;
+4. cerrar `V2-001` y `V2-002` antes de comenzar `planta_v3`.
 
 Este orden permite empezar simulaciones útiles sin confundir una validación de la pata con una validación
 del Segway completo.
