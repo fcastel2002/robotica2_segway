@@ -14,6 +14,13 @@
 - Mantener separados el diseño mecánico, la electrónica, la simulación y el firmware en sus respectivas carpetas.
 - Preferir Markdown para documentación que deba ser consultada por agentes o colaboradores.
 
+## Backlog persistente
+
+- Registrar en `BACKLOG.md` todo trabajo realizado, en curso o planificado que afecte al proyecto.
+- Actualizar el estado, la evidencia y la fecha de cada ítem al comenzar y al terminar una tarea.
+- No marcar una tarea como terminada sin enlazar el archivo, prueba, resultado o decisión que la verifica.
+- Mantener los planes extensos en `docs/gestion/` y enlazarlos desde `BACKLOG.md`.
+
 ## Diagramas ASCII con svgbob
 
 - Todo diagrama ASCII no trivial que se presente al usuario o se agregue a la documentación debe procesarse con la skill `$svgbob-diagrams`.

@@ -22,6 +22,11 @@ Este repositorio reúne la documentación, el diseño y el desarrollo de un Segw
 - [Procedimiento de dimensionamiento de batería](guias_catedra/procedimiento_dimensionamiento_bateria_robotica_II_UNCUYO.md)
 - [Procedimiento de preselección de servos](guias_catedra/procedimiento_preseleccion_servos_robotica_II_UNCUYO.md)
 
+## Gestión del trabajo
+
+- [Backlog persistente](BACKLOG.md)
+- [Plan de integración de la dinámica en Simulink](docs/gestion/2026-09-14-plan-dinamica-simulink.md)
+
 ## Convención para archivos PDF
 
 Los archivos PDF no se leen directamente. Si una respuesta necesita información contenida en un PDF, primero debe convertirse a Markdown siguiendo las reglas de [AGENTS.md](AGENTS.md); la consulta se realiza luego sobre el archivo `.md` generado.
