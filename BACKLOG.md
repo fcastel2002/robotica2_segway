@@ -51,7 +51,7 @@ Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14
 | TST-102 | P1 | HECHO | 2026-09-14 | Verificar energía y sensibilidad al solver | Deriva conservativa `7,79e-10`; residuo disipativo `3,76e-8`; comparación de tres configuraciones documentada |
 | RUN-101 | P1 | HECHO | 2026-09-14 | Ejecutar el primer barrido reproducible | `simulacion/dinamica_pata_v1/resultados/corridas_baseline_2026-09-14.mat` y resumen Markdown |
 | ARC-101 | P0 | HECHO | 2026-09-15 | Priorizar bloques nativos y legibilidad visual en el banco reducido | Cero bloques `MATLAB Function`; `test_construccion_reproducible` verifica la condición |
-| DOC-102 | P1 | HECHO | 2026-09-15 | Documentar apertura, ejecución, interpretación y QA del banco | [Guía de QA](docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md) con comandos, umbrales y checklist |
+| DOC-102 | P1 | HECHO | 2026-09-15 | Documentar apertura, ejecución, interpretación y QA del banco | [Guía de QA](docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md) con comandos copiables, diagnóstico de `Invalid expression`, umbrales y checklist |
 
 ## Próximo hito: banco Simulink de la dinámica de la pata
 

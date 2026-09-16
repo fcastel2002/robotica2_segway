@@ -35,13 +35,21 @@ documentos Markdown/TEX del repositorio.
 Ejecutar las dos suites:
 
 ```matlab
-r1 = runtests('modelado/dinamica/tests/test_dinamica_pata.m');
-r2 = runtests('simulacion/dinamica_pata_v1/tests/test_dinamica_pata_simulink.m');
+test_core = fullfile('modelado','dinamica','tests','test_dinamica_pata.m');
+test_slx = fullfile('simulacion','dinamica_pata_v1','tests', ...
+    'test_dinamica_pata_simulink.m');
+r1 = runtests(test_core);
+r2 = runtests(test_slx);
 r = [r1(:); r2(:)];
 disp(table(string({r.Name})', [r.Passed]', [r.Duration]', ...
     'VariableNames', {'Prueba','Paso','Duracion_s'}))
 assert(all([r.Passed]), 'Hay pruebas fallidas');
 ```
+
+Copiar el bloque sin los indicadores `>>` del Command Window. Los guiones bajos se escriben como `_`,
+sin barra previa. Si se introduce una instrucción en varias líneas, la línea anterior debe terminar en
+`...`; una línea confirmada que contenga solamente `r2 =` produce `Invalid expression` antes de ejecutar
+la segunda suite.
 
 Resultado esperado: 12 pruebas aprobadas y ninguna fallida. La suite comprueba:
 
@@ -57,6 +65,10 @@ Resultado esperado: 12 pruebas aprobadas y ninguna fallida. La suite comprueba:
 - ausencia de bloques `MATLAB Function`;
 - equivalencia ODE–Simulink;
 - estática, señales, energía y sensibilidad al solver.
+
+La prueba de construcción regenera el `.slx`. Aunque la lógica sea la misma, el empaquetado binario puede
+aparecer modificado en Git; si no se hicieron cambios deliberados al modelo, restaurar solo ese artefacto
+con `git restore -- simulacion/dinamica_pata_v1/dinamica_pata_simulink.slx`.
 
 ## 4. Regenerar y abrir el modelo
 
@@ -240,4 +252,3 @@ eventos para impacto, despegue y recontacto.
 - [ ] La normal solo se interpreta en `parado`.
 - [ ] Se documenta si una corrida activa los topes.
 - [ ] No se presenta este banco como validación de la planta completa del robot.
-
