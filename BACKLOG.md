@@ -1,6 +1,6 @@
 # Backlog persistente — Segway con piernas extensibles
 
-Última actualización: 2026-09-14. Este archivo es la fuente de verdad del trabajo realizado,
+Última actualización: 2026-09-15. Este archivo es la fuente de verdad del trabajo realizado,
 en curso y pendiente. Todo cambio futuro debe actualizar aquí su estado y adjuntar evidencia.
 
 Estados: `HECHO`, `EN CURSO`, `PENDIENTE`, `BLOQUEADO`. Prioridades: `P0` crítica, `P1` alta,
@@ -50,6 +50,8 @@ Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14
 | TST-101 | P0 | HECHO | 2026-09-14 | Verificar MATLAB vs Simulink | Errores suaves máximos por debajo de `1e-5 rad` y `1e-4 rad/s`; términos estáticos coincidentes |
 | TST-102 | P1 | HECHO | 2026-09-14 | Verificar energía y sensibilidad al solver | Deriva conservativa `7,79e-10`; residuo disipativo `3,76e-8`; comparación de tres configuraciones documentada |
 | RUN-101 | P1 | HECHO | 2026-09-14 | Ejecutar el primer barrido reproducible | `simulacion/dinamica_pata_v1/resultados/corridas_baseline_2026-09-14.mat` y resumen Markdown |
+| ARC-101 | P0 | HECHO | 2026-09-15 | Priorizar bloques nativos y legibilidad visual en el banco reducido | Cero bloques `MATLAB Function`; `test_construccion_reproducible` verifica la condición |
+| DOC-102 | P1 | HECHO | 2026-09-15 | Documentar apertura, ejecución, interpretación y QA del banco | [Guía de QA](docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md) con comandos, umbrales y checklist |
 
 ## Próximo hito: banco Simulink de la dinámica de la pata
 
@@ -59,7 +61,7 @@ Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14
 | PAR-001 | P0 | EN CURSO | CAD-201 o baseline declarado | Consolidar una única fuente de parámetros para geometría, masas, servo y ambiente | Fuente MATLAB común creada y probada; resta eliminar duplicados en Python/documentación y sumar la segunda iteración CAD |
 | MCP-002 | P0 | HECHO | 2026-09-14 | Instalar/actualizar MATLAB MCP Server v0.13.0 y Simulink Agentic Toolkit para Codex | Servidor v0.13.0, toolkit 2026.09, 24 skills; `detect_matlab_toolboxes` y `model_overview` invocados desde una sesión Codex nueva |
 | MCP-003 | P0 | HECHO | 2026-09-14 | Configurar Windows y tiempos de espera | Modo `existing`, `env_vars = ["WINDIR"]`, telemetría deshabilitada, `startup_timeout_sec = 60` y `tool_timeout_sec = 600`; ver [registro](docs/gestion/2026-09-14-entorno-matlab-mcp.md) |
-| DYN-101 | P0 | HECHO | PAR-001 | Separar el script monolítico en funciones reutilizables | API pública y demo disponibles; 7/7 tests del núcleo aprobados |
+| DYN-101 | P0 | HECHO | PAR-001 | Separar el script monolítico en funciones reutilizables | API pública y demo disponibles; 8/8 tests del núcleo aprobados |
 | DYN-102 | P0 | HECHO | DYN-101 | Eliminar supuestos codificados como `2` y formalizar `n_patas` | Resultados idénticos para `n_patas=2`; prueba coherente con `n_patas=3` aprobada |
 | DYN-103 | P0 | EN CURSO | DYN-101 | Añadir límites físicos y señal explícita de pérdida de contacto | Topes y supervisor MATLAB implementados; resta transición automática `parado` ↔ `aire` y prueba de recontacto en Simulink |
 | DYN-104 | P1 | HECHO | DYN-101 | Generar tablas trazables de `Ieq`, `dIeq`, `dV`, `wP` y cinemática | Error de tabla < 0,1 % frente a cálculo directo en toda la carrera; variante y datos fuente registrados |

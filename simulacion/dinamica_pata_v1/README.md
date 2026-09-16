@@ -10,6 +10,8 @@ tablas 2-D indexadas por `theta` y caso:
 El modelo incluye servo PD con límite par-velocidad, topes angulares, cálculo de normal y señal de contacto válido. Las
 tablas provienen de las funciones verificadas de `modelado/dinamica/`; el `.slx` se regenera desde código.
 El artefacto generado se llama `dinamica_pata_simulink.slx` para no sombrear el script MATLAB histórico.
+La decisión de arquitectura es mantener la dinámica visible con bloques nativos; la suite falla si aparece
+un bloque `MATLAB Function`.
 
 ```matlab
 addpath('simulacion/dinamica_pata_v1')
@@ -29,3 +31,6 @@ líneas desconectadas. Los resultados del primer barrido están en
 [`resultados/resumen_baseline_2026-09-14.md`](resultados/resumen_baseline_2026-09-14.md) y el estudio de
 energía/solver en
 [`resultados/resumen_energia_solver_2026-09-14.md`](resultados/resumen_energia_solver_2026-09-14.md).
+
+Para una revisión manual completa, consultar la
+[guía de QA](../../docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md).
