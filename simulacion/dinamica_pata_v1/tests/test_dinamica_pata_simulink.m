@@ -7,6 +7,7 @@ function setupOnce(tc)
   tc.TestData.banco = fileparts(carpeta);
   tc.TestData.repo = fileparts(fileparts(tc.TestData.banco));
   addpath(tc.TestData.banco);
+  addpath(fullfile(tc.TestData.banco, 'interno'));
   addpath(fullfile(tc.TestData.repo, 'modelado', 'dinamica'));
 end
 
@@ -15,13 +16,17 @@ function teardownOnce(~)
 end
 
 function test_construccion_reproducible(tc)
-  archivo = construir_dinamica_pata();
+  carpeta_temporal = tempname;
+  modelo_qa = 'dinamica_pata_simulink_qa';
+  mkdir(carpeta_temporal);
+  limpieza_temporal = onCleanup(@() limpiar_temporal(carpeta_temporal, modelo_qa)); %#ok<NASGU>
+  archivo = construir_dinamica_pata(carpeta_temporal, modelo_qa);
   tc.verifyTrue(isfile(archivo));
   load_system(archivo);
-  luts = find_system('dinamica_pata_simulink', 'LookUnderMasks', 'all', ...
+  luts = find_system(modelo_qa, 'LookUnderMasks', 'all', ...
     'BlockType', 'Lookup_n-D');
   tc.verifyEqual(numel(luts), 6);
-  matlabFunctions = find_system('dinamica_pata_simulink', 'LookUnderMasks', 'all', ...
+  matlabFunctions = find_system(modelo_qa, 'LookUnderMasks', 'all', ...
     'MaskType', 'MATLAB Function');
   tc.verifyEmpty(matlabFunctions);
   [par_pata, p] = parametros_simulink_dinamica_pata();
@@ -34,7 +39,8 @@ function test_construccion_reproducible(tc)
   for i = 1:size(asignar,1), assignin('base', asignar{i,1}, asignar{i,2}); end
   limpieza = onCleanup(@() evalin('base', ...
     'clear par_pata sim_pata theta_ref_ext tau_pert_ext normal_ext caso_ext'));
-  set_param('dinamica_pata_simulink', 'SimulationCommand', 'update');
+  set_param(modelo_qa, 'SimulationCommand', 'update');
+  close_system(modelo_qa, 0);
 end
 
 function test_tres_casos_contra_ode(tc)
@@ -66,4 +72,11 @@ function test_energia_y_sensibilidad_solver(tc)
   tc.verifyLessThan(A.metricas.residuo_disipativo_rel, 1e-5);
   tc.verifyLessThan(A.metricas.delta_estado_ode45, 1e-5);
   tc.verifyLessThan(A.metricas.delta_estado_ode23, 1e-4);
+end
+
+function limpiar_temporal(carpeta, modelo)
+  if bdIsLoaded(modelo)
+    close_system(modelo, 0);
+  end
+  if isfolder(carpeta), rmdir(carpeta, 's'); end
 end

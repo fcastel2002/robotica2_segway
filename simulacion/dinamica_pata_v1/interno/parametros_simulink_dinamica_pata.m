@@ -2,7 +2,8 @@ function [par_pata, p] = parametros_simulink_dinamica_pata(variante, n)
 %PARAMETROS_SIMULINK_DINAMICA_PATA Tablas y escalares numéricos del banco.
   if nargin < 1 || isempty(variante), variante = 'corregido'; end
   if nargin < 2 || isempty(n), n = 4001; end
-  raiz = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+  carpeta_banco = fileparts(fileparts(mfilename('fullpath')));
+  raiz = fileparts(fileparts(carpeta_banco));
   addpath(fullfile(raiz, 'modelado', 'dinamica'));
   p = parametros_dinamica_pata(variante);
   T = generar_tablas_dinamica_pata(p, n);

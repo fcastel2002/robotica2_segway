@@ -6,14 +6,15 @@ function R = simular_dinamica_pata(nombre, varargin)
   addParameter(ip, 'reconstruir', false, @islogical);
   parse(ip, nombre, varargin{:});
 
-  carpeta = fileparts(mfilename('fullpath'));
+  carpeta_interna = fileparts(mfilename('fullpath'));
+  carpeta = fileparts(carpeta_interna);
   raiz = fileparts(fileparts(carpeta));
-  addpath(carpeta);
+  addpath(carpeta_interna);
   addpath(fullfile(raiz, 'modelado', 'dinamica'));
   [par_pata, p] = parametros_simulink_dinamica_pata(ip.Results.variante);
   E = escenarios_dinamica_pata(nombre, p);
   archivo = fullfile(carpeta, 'dinamica_pata_simulink.slx');
-  if ip.Results.reconstruir || ~isfile(archivo), construir_dinamica_pata(); end
+  if ip.Results.reconstruir || ~isfile(archivo), construir_dinamica_pata(carpeta); end
 
   theta_ref_ext = timeseries(E.theta_ref, E.t);
   tau_pert_ext = timeseries(E.tau_perturbacion, E.t);

@@ -14,6 +14,8 @@ Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14
   cinemática y el DCL para los supuestos declarados.
 - El banco reducido `simulacion/dinamica_pata_v1/` ya está construido, es regenerable desde código y
   reproduce `banco`, `parado` y `aire`: 12/12 pruebas propias aprobadas.
+- El equipo dispone de un único acceso público, `INICIAR_DINAMICA_PATA.m`; el `.slx`, README, pruebas y
+  resultados quedan visibles, mientras que constructores y adaptadores se concentran en `interno/`.
 - Ya existe una planta completa en `simulacion/planta_v2/`; la integración nueva debe evolucionarla
   de forma controlada, no crear otra planta desconectada.
 - MATLAB R2023b Update 6, Simulink 23.2 y los toolboxes necesarios están instalados.
@@ -52,6 +54,7 @@ Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14
 | RUN-101 | P1 | HECHO | 2026-09-14 | Ejecutar el primer barrido reproducible | `simulacion/dinamica_pata_v1/resultados/corridas_baseline_2026-09-14.mat` y resumen Markdown |
 | ARC-101 | P0 | HECHO | 2026-09-15 | Priorizar bloques nativos y legibilidad visual en el banco reducido | Cero bloques `MATLAB Function`; `test_construccion_reproducible` verifica la condición |
 | DOC-102 | P1 | HECHO | 2026-09-15 | Documentar apertura, ejecución, interpretación y QA del banco | [Guía de QA](docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md) con comandos copiables, diagnóstico de `Invalid expression`, umbrales y checklist |
+| ORG-101 | P0 | HECHO | 2026-09-15 | Consolidar el banco en un punto de entrada único y separar detalles internos | [`INICIAR_DINAMICA_PATA.m`](simulacion/dinamica_pata_v1/INICIAR_DINAMICA_PATA.m), [`interno/`](simulacion/dinamica_pata_v1/interno/), 12/12 pruebas y ejecución directa con Run verificadas |
 
 ## Próximo hito: banco Simulink de la dinámica de la pata
 

@@ -54,7 +54,7 @@ Una sesión efímera nueva de Codex cargó el servidor y completó estas llamada
 
 La primera auditoría encontró tres líneas huérfanas, una en cada subsistema, con ambos extremos en `-1`.
 La causa era reproducible: el constructor eliminaba los bloques `In1`/`Out1` iniciales pero dejaba su
-línea. `construir_dinamica_pata.m` ahora elimina primero las líneas; la validación final pasó 12/12
+línea. `interno/construir_dinamica_pata.m` ahora elimina primero las líneas; la validación final pasó 12/12
 pruebas y dejó el modelo sin advertencias estructurales.
 
 Las skills globales registradas son 24, de los grupos:

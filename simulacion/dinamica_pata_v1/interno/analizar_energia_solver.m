@@ -1,12 +1,13 @@
 function A = analizar_energia_solver()
 %ANALIZAR_ENERGIA_SOLVER Conservación, disipación y sensibilidad numérica.
 %   Usa SimulationInput para no alterar la configuración guardada del modelo.
-  carpeta = fileparts(mfilename('fullpath'));
+  carpeta_interna = fileparts(mfilename('fullpath'));
+  carpeta = fileparts(carpeta_interna);
   raiz = fileparts(fileparts(carpeta));
-  addpath(carpeta);
+  addpath(carpeta_interna);
   addpath(fullfile(raiz, 'modelado', 'dinamica'));
   archivo = fullfile(carpeta, 'dinamica_pata_simulink.slx');
-  if ~isfile(archivo), construir_dinamica_pata(); end
+  if ~isfile(archivo), construir_dinamica_pata(carpeta); end
 
   [par_base, p_base] = parametros_simulink_dinamica_pata();
   t_entrada = (0:0.002:0.4)';

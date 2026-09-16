@@ -1,8 +1,11 @@
-function archivo = construir_dinamica_pata()
+function archivo = construir_dinamica_pata(carpeta_destino, nombre_modelo)
 %CONSTRUIR_DINAMICA_PATA Construye el banco Simulink con bloques nativos.
-  carpeta = fileparts(mfilename('fullpath'));
-  archivo = fullfile(carpeta, 'dinamica_pata_simulink.slx');
-  modelo = 'dinamica_pata_simulink';
+  carpeta_banco = fileparts(fileparts(mfilename('fullpath')));
+  if nargin < 1 || isempty(carpeta_destino), carpeta_destino = carpeta_banco; end
+  if nargin < 2 || isempty(nombre_modelo), nombre_modelo = 'dinamica_pata_simulink'; end
+  if ~isfolder(carpeta_destino), mkdir(carpeta_destino); end
+  modelo = char(nombre_modelo);
+  archivo = fullfile(carpeta_destino, [modelo '.slx']);
   if bdIsLoaded(modelo), close_system(modelo, 0); end
   if isfile(archivo), delete(archivo); end
   new_system(modelo);
@@ -44,7 +47,7 @@ function archivo = construir_dinamica_pata()
   Simulink.BlockDiagram.arrangeSystem(modelo);
   save_system(modelo, archivo);
   close_system(modelo, 0);
-  fprintf('Modelo %s creado en %s\n', [modelo '.slx'], carpeta);
+  fprintf('Modelo %s creado en %s\n', [modelo '.slx'], carpeta_destino);
 end
 
 function fuente(modelo, nombre, variable, posicion)

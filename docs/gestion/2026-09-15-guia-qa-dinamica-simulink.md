@@ -21,9 +21,6 @@ Abrir MATLAB R2023b y ejecutar:
 ```matlab
 repo = 'D:/Usuario/Matias/Proyectos/robotica2_segway';
 cd(repo)
-addpath('modelado/cinematica')
-addpath('modelado/dinamica')
-addpath('simulacion/planta_v2')
 addpath('simulacion/dinamica_pata_v1')
 ```
 
@@ -32,24 +29,14 @@ documentos Markdown/TEX del repositorio.
 
 ## 3. QA rápido automatizado
 
-Ejecutar las dos suites:
+Ejecutar el QA consolidado:
 
 ```matlab
-test_core = fullfile('modelado','dinamica','tests','test_dinamica_pata.m');
-test_slx = fullfile('simulacion','dinamica_pata_v1','tests', ...
-    'test_dinamica_pata_simulink.m');
-r1 = runtests(test_core);
-r2 = runtests(test_slx);
-r = [r1(:); r2(:)];
-disp(table(string({r.Name})', [r.Passed]', [r.Duration]', ...
-    'VariableNames', {'Prueba','Paso','Duracion_s'}))
-assert(all([r.Passed]), 'Hay pruebas fallidas');
+r = INICIAR_DINAMICA_PATA('qa');
 ```
 
-Copiar el bloque sin los indicadores `>>` del Command Window. Los guiones bajos se escriben como `_`,
-sin barra previa. Si se introduce una instrucción en varias líneas, la línea anterior debe terminar en
-`...`; una línea confirmada que contenga solamente `r2 =` produce `Invalid expression` antes de ejecutar
-la segunda suite.
+Copiar el comando sin los indicadores `>>` del Command Window. Los guiones bajos se escriben como `_`,
+sin barra previa.
 
 Resultado esperado: 12 pruebas aprobadas y ninguna fallida. La suite comprueba:
 
@@ -66,22 +53,24 @@ Resultado esperado: 12 pruebas aprobadas y ninguna fallida. La suite comprueba:
 - equivalencia ODE–Simulink;
 - estática, señales, energía y sensibilidad al solver.
 
-La prueba de construcción regenera el `.slx`. Aunque la lógica sea la misma, el empaquetado binario puede
-aparecer modificado en Git; si no se hicieron cambios deliberados al modelo, restaurar solo ese artefacto
-con `git restore -- simulacion/dinamica_pata_v1/dinamica_pata_simulink.slx`.
+La prueba de construcción trabaja sobre una copia temporal y no reemplaza el `.slx` versionado.
 
 ## 4. Regenerar y abrir el modelo
 
-El `.slx` está versionado, pero puede reconstruirse íntegramente:
+Para abrir el `.slx`, cargar `parado_nominal` y dejar el botón **Run** listo:
 
 ```matlab
-archivo = construir_dinamica_pata();
-open_system(archivo)
+INICIAR_DINAMICA_PATA
 ```
 
-La reconstrucción reemplaza únicamente `dinamica_pata_simulink.slx`. No ejecutarla si hay cambios
-manuales sin guardar que se quieran conservar; toda mejora permanente debe incorporarse también al
-constructor.
+Solo cuando se quiera regenerar íntegramente el modelo:
+
+```matlab
+INICIAR_DINAMICA_PATA('reconstruir')
+```
+
+La reconstrucción reemplaza `dinamica_pata_simulink.slx`. No ejecutarla si hay cambios manuales sin
+guardar; toda mejora estructural permanente debe incorporarse también al constructor de `interno/`.
 
 Para verificar que sigue compuesto solo por bloques nativos:
 
@@ -141,7 +130,7 @@ Seguir visualmente:
 Con el modelo abierto, ejecutar desde la consola:
 
 ```matlab
-R = simular_dinamica_pata('parado_nominal');
+R = INICIAR_DINAMICA_PATA('simular', 'parado_nominal');
 ```
 
 La función usa `Simulink.SimulationInput`: pasa parámetros y señales sin modificar permanentemente el
@@ -181,7 +170,7 @@ Referencia actual para `parado_nominal`:
 Para un caso suave, sin impacto con los topes:
 
 ```matlab
-R = simular_dinamica_pata('parado_validacion');
+R = INICIAR_DINAMICA_PATA('simular', 'parado_validacion');
 fprintf('error theta   = %.3e rad\n', R.error.theta_max)
 fprintf('error dtheta  = %.3e rad/s\n', R.error.dtheta_max)
 
@@ -199,14 +188,19 @@ Criterios de aceptación:
 - `R.error.theta_max < 1e-5 rad`;
 - `R.error.dtheta_max < 1e-4 rad/s`.
 
-Repetir con `banco_validacion` y `aire_validacion`.
+Repetir con:
+
+```matlab
+INICIAR_DINAMICA_PATA('simular', 'banco_validacion');
+INICIAR_DINAMICA_PATA('simular', 'aire_validacion');
+```
 
 ## 8. Ejecutar todos los escenarios
 
 ```matlab
-[resumen, corridas, archivo] = correr_escenarios_dinamica_pata();
-disp(resumen)
-disp(archivo)
+B = INICIAR_DINAMICA_PATA('barrido');
+disp(B.resumen)
+disp(B.archivo)
 ```
 
 Esto ejecuta estática, tres maniobras nominales y tres casos suaves de validación. El resultado se guarda
@@ -215,7 +209,7 @@ en `simulacion/dinamica_pata_v1/resultados/`.
 ## 9. QA de energía y solver
 
 ```matlab
-A = analizar_energia_solver();
+A = INICIAR_DINAMICA_PATA('energia');
 A.metricas
 ```
 
@@ -232,7 +226,7 @@ eventos para impacto, despegue y recontacto.
 
 | Síntoma | Revisar primero |
 |---|---|
-| El modelo pide variables inexistentes | Ejecutar mediante `simular_dinamica_pata`, no directamente con el botón Run sin inicialización |
+| El modelo pide variables inexistentes | Ejecutar primero `INICIAR_DINAMICA_PATA`; luego el botón Run queda inicializado |
 | El ángulo supera 10°–40° | Señal `tau_tope`, ganancias `k_tope/c_tope` y tamaño de paso |
 | Diferencia ODE–Simulink grande solo al tocar el tope | Localización temporal del evento; usar primero un escenario `*_validacion` |
 | Par recortado | `tau_max`, `w_nl` y bloques de la curva par–velocidad en `Servo PD` |

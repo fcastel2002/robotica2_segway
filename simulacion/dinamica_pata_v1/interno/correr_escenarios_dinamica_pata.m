@@ -13,7 +13,8 @@ function [resumen, corridas, archivo] = correr_escenarios_dinamica_pata()
   end
   resumen = cell2table(filas, 'VariableNames', {'escenario','theta_min_deg','theta_max_deg', ...
     'tau_pico_Nm','tau_pico_kgcm','normal_min_N','normal_max_N','error_theta_rad','error_dtheta_rad_s'});
-  carpeta = fullfile(fileparts(mfilename('fullpath')), 'resultados');
+  carpeta_banco = fileparts(fileparts(mfilename('fullpath')));
+  carpeta = fullfile(carpeta_banco, 'resultados');
   if ~isfolder(carpeta), mkdir(carpeta); end
   archivo = fullfile(carpeta, 'corridas_baseline_2026-09-14.mat');
   metadata = struct('fecha', '2026-09-14', 'matlab', version, ...

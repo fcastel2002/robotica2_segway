@@ -2,7 +2,7 @@
 
 Fecha: 2026-09-14  
 Modelo: `dinamica_pata_simulink.slx`  
-Función reproducible: `analizar_energia_solver.m`  
+Función reproducible: `interno/analizar_energia_solver.m`, expuesta por `INICIAR_DINAMICA_PATA('energia')`
 Datos completos: `energia_solver_2026-09-14.mat` (`A`, formato MAT v7)  
 Caso: `aire`, sin control, sin carga externa y sin topes; `theta(0)=25°`, `theta_dot(0)=0,4 rad/s`.
 

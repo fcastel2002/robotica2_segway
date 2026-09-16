@@ -150,10 +150,9 @@ Crear `simulacion/dinamica_pata_v1/` como arnés de validación independiente de
 | Carpeta / archivo | Responsabilidad |
 |---|---|
 | `README.md` | Supuestos, instrucciones, interfaces y resultados vigentes |
+| `INICIAR_DINAMICA_PATA.m` | Punto de entrada público para abrir, simular, probar y barrer |
 | `dinamica_pata_simulink.slx` | Ecuación común y variantes `banco`, `parado`, `aire` |
-| `construir_dinamica_pata.m` | Construcción reproducible del `.slx` |
-| `escenarios_dinamica_pata.m` | Consignas, cargas y perturbaciones declarativas |
-| `simular_dinamica_pata.m` | Entrada única para correr una configuración |
+| `interno/` | Constructor, escenarios, adaptadores y análisis ocultos de la interfaz cotidiana |
 | `tests/` | Tests de términos, equivalencia ODE/Simulink, energía, topes y modos |
 | `resultados/` | `.mat`, resúmenes `.md` y figuras generadas; nunca datos temporales sueltos |
 
@@ -254,7 +253,8 @@ Salida: núcleo MATLAB puro, reutilizable y cubierto por pruebas.
 6. Configurar solver de referencia variable-step y una configuración fixed-step separada para estudios de
    implementación.
 
-Salida: modelo reproducible desde `construir_dinamica_pata.m` y legible con herramientas MCP.
+Salida: modelo reproducible desde `interno/construir_dinamica_pata.m`, accesible mediante
+`INICIAR_DINAMICA_PATA.m` y legible con herramientas MCP.
 
 ### Fase 4 — Verificar el banco antes de barrer
 
