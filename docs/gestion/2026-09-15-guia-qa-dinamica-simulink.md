@@ -143,20 +143,15 @@ R.metricas
 R.error
 ```
 
-Y graficar:
+El comando abre y guarda automáticamente un dashboard compacto. La ruta queda disponible en:
 
 ```matlab
-tiledlayout(3,1)
-nexttile
-plot(R.t, rad2deg(R.theta), 'LineWidth', 1.2)
-ylabel('theta [deg]'); grid on
-nexttile
-plot(R.t, R.tau/0.0981, 'LineWidth', 1.2)
-ylabel('tau [kg cm]'); grid on
-nexttile
-plot(R.t, R.normal, 'LineWidth', 1.2)
-ylabel('N [N]'); xlabel('t [s]'); grid on
+R.figuras.png
 ```
+
+El dashboard conserva solamente seguimiento angular, esfuerzo del servo, contacto y cinco indicadores
+numéricos. Velocidad, aceleración, retrato de fase y series de error permanecen en `R`, pero no se grafican
+automáticamente. `ultimo_run.png` siempre apunta al último escenario ejecutado.
 
 Referencia actual para `parado_nominal`:
 
@@ -204,14 +199,25 @@ disp(B.archivo)
 ```
 
 Esto ejecuta estática, tres maniobras nominales y tres casos suaves de validación. El resultado se guarda
-en `simulacion/dinamica_pata_v1/resultados/`.
+en `simulacion/dinamica_pata_v1/resultados/`. También genera:
+
+```matlab
+B.figuras.resumen.png   % comparativo listo para compartir
+```
+
+El comparativo muestra únicamente uso del servo, carrera angular y margen de contacto. La tabla `B.resumen`
+conserva los errores Simulink–ODE y el resto de las métricas para un análisis puntual.
 
 ## 9. QA de energía y solver
 
 ```matlab
 A = INICIAR_DINAMICA_PATA('energia');
 A.metricas
+A.figuras.png
 ```
+
+La lámina resultante conserva dos verificaciones: deriva de energía y balance disipativo. La sensibilidad al
+solver se resume numéricamente en el título y permanece completa en `A.metricas`.
 
 Valores de referencia:
 
@@ -222,7 +228,22 @@ Valores de referencia:
 El ensayo es suave y no activa topes. Todavía debe hacerse un estudio específico de localización de
 eventos para impacto, despegue y recontacto.
 
-## 10. Cómo interpretar resultados anómalos
+## 10. Figuras después del botón Run
+
+Al abrir mediante `INICIAR_DINAMICA_PATA`, el botón **Run** queda configurado para exportar el dashboard al
+terminar. No hace falta copiar señales ni ejecutar otro script. Los archivos de consulta rápida son:
+
+- `resultados/figuras/ultimo_run.png`: última simulación individual;
+- `resultados/figuras/resumen_equipo.png`: último comparativo;
+- `resultados/figuras/energia_solver.png`: último análisis energético.
+
+Para regenerar la figura del Run más reciente sin volver a simular:
+
+```matlab
+G = INICIAR_DINAMICA_PATA('graficos');
+```
+
+## 11. Cómo interpretar resultados anómalos
 
 | Síntoma | Revisar primero |
 |---|---|
@@ -234,7 +255,7 @@ eventos para impacto, despegue y recontacto.
 | `contacto_valido` cae a cero | La normal estimada dejó de ser positiva; la transición automática a vuelo sigue pendiente |
 | El estático de 25° queda por debajo de 25° | El PD no tiene todavía prealimentación de gravedad (`CTL-101`) |
 
-## 11. Checklist de aceptación manual
+## 12. Checklist de aceptación manual
 
 - [ ] Las 12 pruebas pasan.
 - [ ] El modelo se regenera y abre sin errores.
@@ -246,3 +267,4 @@ eventos para impacto, despegue y recontacto.
 - [ ] La normal solo se interpreta en `parado`.
 - [ ] Se documenta si una corrida activa los topes.
 - [ ] No se presenta este banco como validación de la planta completa del robot.
+- [ ] `ultimo_run.png`, `resumen_equipo.png` y `energia_solver.png` abren y contienen ejes/leyendas legibles.

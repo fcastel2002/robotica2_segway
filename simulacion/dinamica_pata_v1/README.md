@@ -24,8 +24,23 @@ R = INICIAR_DINAMICA_PATA('simular', 'parado_nominal');
 r = INICIAR_DINAMICA_PATA('qa');
 B = INICIAR_DINAMICA_PATA('barrido');
 A = INICIAR_DINAMICA_PATA('energia');
+G = INICIAR_DINAMICA_PATA('graficos');
 INICIAR_DINAMICA_PATA('reconstruir');
 ```
+
+## Figuras automáticas para compartir
+
+Después de ejecutar el botón **Run**, `simular`, `barrido` o `energia`, el banco exporta figuras en
+`resultados/figuras/`. Cada producto se actualiza como PNG de alta resolución, listo para mensajes,
+documentos y presentaciones sin generar formatos redundantes.
+
+- `ultimo_run.png`: dashboard de la simulación más reciente.
+- `resumen_equipo.png`: comparación de los siete escenarios; es la figura principal para comunicar el estado.
+- `energia_solver.png`: conservación, disipación y sensibilidad numérica.
+
+Si el modelo ya se ejecutó, `G = INICIAR_DINAMICA_PATA('graficos')` regenera el dashboard desde las
+señales disponibles sin repetir la simulación. Sólo se mantienen esos tres PNG estables: no se crean copias
+por escenario ni gráficos auxiliares. Las métricas completas continúan disponibles en `R`, `B` y `A`.
 
 ## Qué debe mirar el equipo
 

@@ -7,6 +7,7 @@ Estados: `HECHO`, `EN CURSO`, `PENDIENTE`, `BLOQUEADO`. Prioridades: `P0` críti
 `P2` media, `P3` baja.
 
 Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14-plan-dinamica-simulink.md).
+Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handoff-dinamica-simulink.md).
 
 ## Estado ejecutivo
 
@@ -16,6 +17,8 @@ Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14
   reproduce `banco`, `parado` y `aire`: 12/12 pruebas propias aprobadas.
 - El equipo dispone de un único acceso público, `INICIAR_DINAMICA_PATA.m`; el `.slx`, README, pruebas y
   resultados quedan visibles, mientras que constructores y adaptadores se concentran en `interno/`.
+- La comunicación visual se limita a tres PNG estables: último Run, comparativo del barrido y validación
+  energética. Las métricas completas permanecen en MATLAB sin generar gráficos auxiliares.
 - Ya existe una planta completa en `simulacion/planta_v2/`; la integración nueva debe evolucionarla
   de forma controlada, no crear otra planta desconectada.
 - MATLAB R2023b Update 6, Simulink 23.2 y los toolboxes necesarios están instalados.
@@ -54,7 +57,11 @@ Plan vigente: [integración de la dinámica en Simulink](docs/gestion/2026-09-14
 | RUN-101 | P1 | HECHO | 2026-09-14 | Ejecutar el primer barrido reproducible | `simulacion/dinamica_pata_v1/resultados/corridas_baseline_2026-09-14.mat` y resumen Markdown |
 | ARC-101 | P0 | HECHO | 2026-09-15 | Priorizar bloques nativos y legibilidad visual en el banco reducido | Cero bloques `MATLAB Function`; `test_construccion_reproducible` verifica la condición |
 | DOC-102 | P1 | HECHO | 2026-09-15 | Documentar apertura, ejecución, interpretación y QA del banco | [Guía de QA](docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md) con comandos copiables, diagnóstico de `Invalid expression`, umbrales y checklist |
+| DOC-103 | P0 | HECHO | 2026-09-15 | Preparar traspaso autocontenido para continuar la dinámica Simulink en una sesión limpia | [Documento de traspaso](docs/gestion/2026-09-15-handoff-dinamica-simulink.md) con origen, arquitectura, comandos, evidencia, limitaciones, estado Git y próximos pasos; QA final 12/12 |
 | ORG-101 | P0 | HECHO | 2026-09-15 | Consolidar el banco en un punto de entrada único y separar detalles internos | [`INICIAR_DINAMICA_PATA.m`](simulacion/dinamica_pata_v1/INICIAR_DINAMICA_PATA.m), [`interno/`](simulacion/dinamica_pata_v1/interno/), 12/12 pruebas y ejecución directa con Run verificadas |
+| VIS-101 | P0 | HECHO | 2026-09-15 | Generar figuras automáticas y comunicables después de cada Run, barrido y análisis energético | [`resultados/figuras/README.md`](simulacion/dinamica_pata_v1/resultados/figuras/README.md), [`resumen_equipo.png`](simulacion/dinamica_pata_v1/resultados/figuras/resumen_equipo.png), [`energia_solver.png`](simulacion/dinamica_pata_v1/resultados/figuras/energia_solver.png); botón Run verificado y QA 12/12 aprobado |
+| VIS-102 | P1 | HECHO | 2026-09-15 | Simplificar la exportación visual para conservar únicamente PNG | Exportador validado con 0 avisos; regeneración produjo 12 PNG y ningún PDF/FIG; se retiraron 24 artefactos redundantes de [`resultados/figuras/`](simulacion/dinamica_pata_v1/resultados/figuras/) |
+| VIS-103 | P1 | HECHO | 2026-09-15 | Reducir sobregráficos y análisis visual redundante | Tres PNG estables en [`resultados/figuras/`](simulacion/dinamica_pata_v1/resultados/figuras/): Run con ángulo/esfuerzo/contacto/KPI, barrido con tres márgenes y energía con dos verificaciones; se retiraron nueve PNG redundantes |
 
 ## Próximo hito: banco Simulink de la dinámica de la pata
 

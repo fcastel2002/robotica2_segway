@@ -75,7 +75,8 @@ function R = correr(C, par_pata, p, t_entrada, theta0, dtheta0, b)
   in = Simulink.SimulationInput('dinamica_pata_simulink');
   in = in.setModelParameter('StopTime', num2str(t_entrada(end), 17), ...
     'Solver', C.solver, 'MaxStep', num2str(C.max_step, 17), ...
-    'RelTol', num2str(C.rel_tol, 17), 'AbsTol', num2str(C.abs_tol, 17));
+    'RelTol', num2str(C.rel_tol, 17), 'AbsTol', num2str(C.abs_tol, 17), ...
+    'ReturnWorkspaceOutputs', 'on');
   in = in.setVariable('par_pata', par_pata);
   in = in.setVariable('sim_pata', sim_pata);
   in = in.setVariable('theta_ref_ext', theta_ref_ext);

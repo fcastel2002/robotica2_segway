@@ -22,7 +22,8 @@ function R = simular_dinamica_pata(nombre, varargin)
   caso_ext = timeseries(E.caso_serie, E.t);
   sim_pata = struct('theta0', E.theta0, 'dtheta0', E.dtheta0, 't_final', E.t_final);
   in = Simulink.SimulationInput('dinamica_pata_simulink');
-  in = in.setModelParameter('StopTime', num2str(E.t_final, 17));
+  in = in.setModelParameter('StopTime', num2str(E.t_final, 17), ...
+    'ReturnWorkspaceOutputs', 'on');
   in = in.setVariable('par_pata', par_pata);
   in = in.setVariable('sim_pata', sim_pata);
   in = in.setVariable('theta_ref_ext', theta_ref_ext);
@@ -45,6 +46,10 @@ function R = simular_dinamica_pata(nombre, varargin)
   R.normal = out.normal_estimada_slx.Data;
   R.contacto_valido = logical(out.contacto_valido_slx.Data);
   R.tau_tope = out.tau_tope_slx.Data;
+  R.theta_ref = interp1(E.t, E.theta_ref, R.t, 'linear', 'extrap');
+  R.caso = E.caso;
+  R.limites = struct('theta_min', p.theta_min, 'theta_max', p.theta_max, ...
+    'tau_max', p.tau_max);
   R.ode = referencia_ode(E, p, R.t);
   R.error.theta_max = max(abs(R.theta-R.ode.theta));
   R.error.dtheta_max = max(abs(R.dtheta-R.ode.dtheta));
