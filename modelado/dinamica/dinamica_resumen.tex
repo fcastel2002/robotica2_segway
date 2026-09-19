@@ -379,11 +379,118 @@ disponibles, y la normal por rueda baja de 5.06 N a 1.40 N en el tramo de bajada
 queda a menos de una tercera parte de su peso de apoyo: en una maniobra más rápida despegaría, y ahí hay que
 pasar al caso (c).
 
+\section{Caída de un escalón}
+
+El robot rueda, sale de un escalón de altura \(h\) y cae. Es la maniobra que más exige al servo, porque la
+pata tiene que frenar a toda la cabina en la carrera que le queda. Se resuelve en tres fases, con el caso
+(c) para la caída y el caso (b) a partir del impacto.
+
+Hipótesis: el eje de la rueda baja exactamente \(h\); la pata llega al piso estirada (\(\theta=40^\circ\)),
+que es lo que deja toda la carrera disponible para absorber; las dos ruedas tocan a la vez; el piso y el
+neumático son rígidos durante el impacto.
+
+\textbf{Fase 1: caída libre.} Con la rueda en el aire vale el caso (c), y ahí la gravedad no actúa sobre
+\(\theta\): el servo solo tiene que mantener la postura. La rueda llega al piso con
+\begin{equation}
+v=\sqrt{2\,g\,h},\qquad t_{ca\text{í}da}=\frac{v}{g}.
+\label{eq:caida}
+\end{equation}
+
+\textbf{Fase 2: impacto.} Al tocar, la rueda se detiene de golpe pero la cabina sigue bajando, y eso arrastra
+a \(\theta\). Es un problema impulsivo, y para plantearlo hay que soltar la restricción por un instante: se
+usan dos coordenadas, la altura \(Y_A\) de la cabina y \(\theta\). La energía cinética por servo en esas
+coordenadas da la matriz de masa
+\begin{equation}
+M=\begin{pmatrix} m/n & S_y \\ S_y & I_{eq}^{\,\text{banco}}\end{pmatrix},
+\qquad S_y=\sum_j m_j\,c_{j,y},
+\label{eq:Mimpacto}
+\end{equation}
+donde la suma recorre las piezas de una pata. El impulso \(\hat J\) del piso es vertical y actúa sobre el
+punto de contacto, cuya altura es \(Y_A+y_P(\theta)-R_w\), así que se reparte como \((1,\;y_P')\):
+\begin{equation}
+M\bigl(\dot q^{+}-\dot q^{-}\bigr)=\hat J\begin{pmatrix}1\\ y_P'\end{pmatrix},
+\qquad \dot q^{-}=\begin{pmatrix}-v\\ 0\end{pmatrix},
+\qquad \dot q^{+}=\begin{pmatrix}-y_P'\,\dot\theta^{+}\\ \dot\theta^{+}\end{pmatrix},
+\label{eq:impulso}
+\end{equation}
+donde \(\dot q^{+}\) ya cumple la condición de apoyo. Eliminando \(\hat J\) entre las dos filas:
+\begin{equation}
+\boxed{\;
+\dot\theta^{+}=\frac{v\left(\dfrac{m}{n}\,y_P'-S_y\right)}{I_p},
+\qquad I_p=I_{eq}^{\,\text{banco}}-2\,S_y\,y_P'+\frac{m}{n}\,y_P'^{\,2}
+\;}
+\label{eq:dthimp}
+\end{equation}
+\(I_p\) es la inercia con la rueda apoyada, es decir el \(I_{eq}\) del caso (b). Como \(y_P'<0\),
+\(\dot\theta^{+}\) es negativa: la pata arranca a plegarse sola. La energía por servo pasa de
+\(K^{-}=\tfrac12\,(m/n)\,v^2\) a
+\begin{equation}
+K^{+}=\tfrac12\,I_p\,\bigl(\dot\theta^{+}\bigr)^2,
+\label{eq:Kimp}
+\end{equation}
+y la diferencia se pierde en el golpe: es el movimiento de la rueda y el motor, que se detienen de golpe.
+
+\textbf{Fase 3: absorción.} A partir de acá vale el caso (b). La pata se pliega de \(\theta_{land}\) hacia el
+tope \(\theta_{tope}\) y el servo tiene que frenarla. Como el peso de la cabina también empuja hacia el
+plegado, el servo debe disipar la energía del golpe \emph{más} la que suma la gravedad en toda la carrera:
+\begin{equation}
+E_{abs}=K^{+}+\Delta V,\qquad
+\Delta V=V(\theta_{land})-V(\theta_{tope})=\int_{\theta_{tope}}^{\theta_{land}}V'(\theta)\,\dd\theta,
+\label{eq:Eabs}
+\end{equation}
+y el par medio que hace falta sobre la carrera \(\Delta\theta=\theta_{land}-\theta_{tope}\) es
+\begin{equation}
+\boxed{\;\bar\tau=\frac{E_{abs}}{\Delta\theta}=\frac{K^{+}+\Delta V}{\theta_{land}-\theta_{tope}}\;}
+\label{eq:taumedio}
+\end{equation}
+Dando vuelta la cuenta sale el escalón más alto que el servo puede absorber frenando a fondo sin llegar al
+tope, de \(\tau_{max}\,\Delta\theta=K^{+}(h_{max})+\Delta V\). Como \(K^{+}\) es proporcional a \(h\),
+\begin{equation}
+h_{max}=h\;\frac{\tau_{max}\,\Delta\theta-\Delta V}{K^{+}(h)} .
+\label{eq:hmax}
+\end{equation}
+
+\textbf{Resultados para \(h=18\) cm}, con la pata llegando estirada y los dos servos frenando a fondo:
+
+\begin{center}\small
+\begin{tabular}{lrl}
+\toprule
+ & Valor & \\
+\midrule
+Tiempo de caída, velocidad al tocar & 192 ms, 1.88 m/s & \eqref{eq:caida} \\
+Velocidad de plegado tras el golpe & 8.4 rad/s = 479\(^\circ\)/s & \eqref{eq:dthimp} \\
+Energía por servo, antes \(\to\) después del golpe & 0.911 \(\to\) 0.663 J & \eqref{eq:Kimp} \\
+Energía que suma la gravedad al plegar, \(\Delta V\) & 0.487 J & \eqref{eq:Eabs} \\
+Energía a disipar por servo, \(E_{abs}\) & 1.149 J & \eqref{eq:Eabs} \\
+\textbf{Par medio necesario} \(\bar\tau\) & \textbf{2.20 N\,m = 22.4 kg\,cm} & \eqref{eq:taumedio} \\
+Par disponible (DS3225MG) & 21 kg\,cm & \\
+Escalón máximo absorbible \(h_{max}\) & 16 cm & \eqref{eq:hmax} \\
+Fuerza contra el piso mientras el servo frena & 10 N por rueda, 2.0 veces la estática & \eqref{eq:N} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Con 18 cm no alcanza.} Hacen falta 22.4 kg\,cm contra los 21 del servo, así que la pata llega al tope
+de plegado todavía a 2.0 rad/s, con el 11 por ciento de la energía del golpe sin disipar. Esos 0.074 J por
+rueda se los come el neumático: con la rigidez supuesta de 30 kN/m se hunde 2.2 mm y recibe 67 N, trece veces
+la carga estática. El límite de este servo queda en 16 cm.
+
+Dos números más que conviene mirar. La pata se pliega a \(479^\circ\)/s, más rápido que la velocidad en vacío
+del propio servo, que ronda los \(400^\circ\)/s: en el aterrizaje el servo no manda, lo manda el golpe, y solo
+puede frenar. Y mientras el servo frena, la fuerza contra el piso se queda en dos veces la carga estática, o
+sea que la pata cumple bien su función de suspensión; el pico grande aparece recién al tocar el tope.
+
+Para bajar los 18 cm hay cuatro caminos, de menor a mayor cambio: limitar el escalón a 15 cm; agregar el
+elemento elástico en serie del documento de dimensionamiento, que alarga la carrera efectiva sin pedirle más
+par al servo; usar un neumático más blando, que baja el pico del tope pero no el par medio; o pasar a un servo
+de más par.
+
 \section{Alcance}
 
 Los tres casos suponen que la cabina no gira mientras la pata se mueve, es decir que el control de equilibrio
 mantiene la inclinación, y que las \(n\) patas se mueven juntas. Con eso alcanza para dimensionar el servo,
-para elegir cuán rápido se puede agachar y pararse el robot, y para saber cuándo despega.
+para elegir cuán rápido se puede agachar y pararse el robot, para saber cuándo despega y para calcular
+qué escalón puede bajar.
 
 Lo que no cubre es el equilibrio en sí: cómo el movimiento de la pata perturba la inclinación y el avance.
 Para eso hace falta el modelo de tres grados de libertad \((x,\varphi,\theta)\) de la carpeta
@@ -395,7 +502,8 @@ acoplamiento entre la pata y la altura de la cabina.
 \begin{itemize}
 \item \texttt{dinamica\_pata.m}: script de MATLAB con toda la dinámica. Sección 1: los parámetros de la tabla,
   para editar. Sección 2: los tres casos, tabla y curvas. Sección 3: simulación de agacharse y pararse con la
-  normal del piso. Sección 4: verificación contra los diagramas de cuerpo libre. Las funciones
+  normal del piso. Sección 4: verificación contra los diagramas de cuerpo libre. Sección 5: caída de un
+  escalón, con la altura en la variable 	exttt{h\_escalon}. Las funciones
   \texttt{terminos(theta, p, caso)} (ecuaciones \eqref{eq:BD} a \eqref{eq:dV}) y
   \texttt{f\_pata(t, x, tau, N, p, caso)} (ecuación \eqref{eq:estado}) están al final del archivo. El caso se
   elige con la cadena \texttt{'banco'}, \texttt{'parado'} o \texttt{'aire'}.
