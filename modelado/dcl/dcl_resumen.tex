@@ -32,7 +32,7 @@ modelo de la planta tiene que reproducir.
 \end{center}
 
 \textbf{Configuración.} Cabina fija (pivotes \(A\) y \(B\)), pata plegada (\(\theta=10^\circ\)), robot parado
-sobre las dos ruedas: la reacción del piso por pata es \(N=m_{robot}\,g/2=5.05\) N, vertical, sin fuerza
+sobre las dos ruedas: la reacción del piso por pata es \(N=m_{robot}\,g/2=5.49\) N, vertical, sin fuerza
 horizontal. Es la postura en la que el servo pide más par, porque el brazo \(|y_P'|\) es máximo. Tres
 cuerpos: manivela \(AD\), balancín \(BC\), y el acoplador \(CDP\) con la rueda y el motor colgados de \(P\).
 
@@ -42,12 +42,12 @@ acoplador actúan con signo opuesto. \(\tau\) es el par del servo, positivo hora
 \(\theta\)); en las ecuaciones de momentos, antihorario positivo, entra como \(-\tau\). Ejes con origen en
 \(A\), \(y\) hacia arriba. Posiciones en \(\theta=10^\circ\) (de la cinemática), en mm:
 \[
-B=(70.7,\;70.7),\quad C=(184.0,\;-2.6),\quad D=(137.9,\;-24.3),\quad P=(-0.3,\;-46.5),
+B=(56.6,\;56.6),\quad C=(147.2,\;-2.1),\quad D=(110.3,\;-19.4),\quad P=(-0.3,\;-37.2),
 \]
 \[
-G_{AD}=(59.0,\;-10.4),\quad G_{BC}=(127.4,\;34.0),\quad G_{CDP}=(94.4,\;-31.3).
+G_{AD}=(47.2,\;-8.3),\quad G_{BC}=(101.9,\;27.2),\quad G_{CDP}=(75.5,\;-25.0).
 \]
-Pesos: \(m_{AD}g=0.285\) N, \(m_{BC}g=0.069\) N, \(m_{CDP}g=0.191\) N, \(m_Pg=1.226\) N.
+Pesos: \(m_{AD}g=0.228\) N, \(m_{BC}g=0.055\) N, \(m_{CDP}g=0.153\) N, \(m_Pg=1.785\) N.
 
 \textbf{Ecuaciones de equilibrio.} Suma de fuerzas y de momentos en cada cuerpo (momentos respecto del pivote
 de cada barra y respecto de \(D\) en el acoplador; el momento de una fuerza \((F_x,F_y)\) aplicada en
@@ -67,31 +67,31 @@ sección 4 de \texttt{dinamica\_pata.m}:
 \toprule
  & \(A_x\) & \(A_y\) & \(B_x\) & \(B_y\) & \(C_x\) & \(C_y\) & \(D_x\) & \(D_y\) & \(\tau\) \\
 \midrule
-valor & 10.13 N & \(-9.87\) N & \(-10.13\) N & 6.59 N & 10.13 N & \(-6.52\) N & \(-10.13\) N & 10.16 N & 1.137 N\,m \\
+valor & 9.84 N & \(-9.67\) N & \(-9.84\) N & 6.39 N & 9.84 N & \(-6.34\) N & \(-9.84\) N & 9.89 N & 0.889 N\,m \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\(\tau=1.137\) N\,m \(=11.6\) kg\,cm, igual al \(\tau_{est}=V'-N\,y_P'\) de Lagrange hasta el redondeo de
-máquina (\(10^{-15}\)): las dos formas de plantear la estática coinciden. La fuerza en \(BC\) vale 12.0 N y
+\(\tau=0.889\) N\,m \(=9.06\) kg\,cm, igual al \(\tau_{est}=V'-N\,y_P'\) de Lagrange hasta el redondeo de
+máquina (\(10^{-15}\)): las dos formas de plantear la estática coinciden. La fuerza en \(BC\) vale 11.7 N y
 va a lo largo de la barra (tracción); \(A_x+B_x=0\) porque no hay fuerza horizontal externa.
 
-\textbf{Cálculo a mano en tres pasos.} Despreciando el peso del balancín (7 g), \(BC\) es una barra
+\textbf{Cálculo a mano en tres pasos.} Despreciando el peso del balancín (5.6 g), \(BC\) es una barra
 biarticulada y su fuerza va a lo largo de \(BC\): \((C_x,C_y)=s\,\mathbf{u}\), con
-\(\mathbf{u}=(C-B)/|C-B|=(0.840,\,-0.543)\).
+\(\mathbf{u}=(C-B)/|C-B|=(0.839,\,-0.543)\).
 \begin{enumerate}
 \item Momentos en \(D\) sobre el acoplador, ecuación \eqref{eq:CDP}, con \(C_x=s\,u_x\), \(C_y=s\,u_y\):
 \begin{gather*}
 s=\frac{N\,(x_P-x_D)-m_{CDP}g\,(x_{G_{CDP}}-x_D)-m_Pg\,(x_P-x_D)}{(x_C-x_D)\,u_y-(y_C-y_D)\,u_x}\\
- =\frac{5.05\,(-0.1382)-0.191\,(-0.0435)-1.226\,(-0.1382)}{-0.0433}=\frac{-0.520}{-0.0433}=12.0\ \text{N}.
+ =\frac{5.49\,(-0.1106)-0.153\,(-0.0348)-1.785\,(-0.1106)}{-0.0346}=\frac{-0.405}{-0.0346}=11.7\ \text{N}.
 \end{gather*}
-\item Suma de fuerzas en el acoplador: \(D_x=-s\,u_x=-10.1\) N,
-\(D_y=N-(m_{CDP}+m_P)\,g-s\,u_y=5.05-1.418+6.54=10.17\) N.
+\item Suma de fuerzas en el acoplador: \(D_x=-s\,u_x=-9.8\) N,
+\(D_y=N-(m_{CDP}+m_P)\,g-s\,u_y=5.49-1.938+6.35=9.90\) N.
 \item Momentos en \(A\) sobre \(AD\), ecuación \eqref{eq:AD}:
-\(\tau=x_D D_y-y_D D_x-m_{AD}g\,x_{G_{AD}}=0.1379\cdot10.17-0.0243\cdot10.10-0.285\cdot0.059=1.140\) N\,m.
+\(\tau=x_D D_y-y_D D_x-m_{AD}g\,x_{G_{AD}}=0.1103\cdot9.90-0.0194\cdot9.8-0.228\cdot0.047=0.891\) N\,m.
 \end{enumerate}
 Diferencia con el valor exacto: 0.2 por ciento, que es el peso del balancín despreciado. Con el servo de
-21 kg\,cm el margen en esta postura es 1.8.
+40 kg\,cm el margen en esta postura es 4.4.
 
 \section{Péndulo invertido sobre ruedas}
 
@@ -134,7 +134,7 @@ La normal, que sirve para saber si la rueda sigue apoyada, es
 \(N=(m_b+m_w)\,g-m_b\,l\,(\sin\varphi\,\ddot\varphi+\cos\varphi\,\dot\varphi^2)\).
 
 Dos lecturas inmediatas. Sostener el cuerpo inclinado \(\varphi_0\) con las ruedas trabadas pide
-\(\tau_m=m_b\,g\,l\sin\varphi_0\): con \(m_b\approx0.97\) kg y \(l\approx0.14\) m, 0.19 N\,m para \(8^\circ\),
+\(\tau_m=m_b\,g\,l\sin\varphi_0\): con \(m_b\approx0.76\) kg y \(l\approx0.12\) m, 0.12 N\,m para \(8^\circ\),
 repartido entre los dos motores. Y sin par (\(\tau_m=0\)) el cuerpo se cae: linealizando la segunda ecuación
 queda \(\ddot\varphi\approx m_b\,g\,l\,\varphi/(J_b+m_b l^2)\), que crece como una exponencial. El modelo de
 la planta (\texttt{planta/}) deduce \eqref{eq:segway} por Lagrange y tiene que coincidir con esto término a

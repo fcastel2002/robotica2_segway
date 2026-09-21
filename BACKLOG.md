@@ -1,6 +1,6 @@
 # Backlog persistente — Segway con piernas extensibles
 
-Última actualización: 2026-09-15. Este archivo es la fuente de verdad del trabajo realizado,
+Última actualización: 2026-09-19. Este archivo es la fuente de verdad del trabajo realizado,
 en curso y pendiente. Todo cambio futuro debe actualizar aquí su estado y adjuntar evidencia.
 
 Estados: `HECHO`, `EN CURSO`, `PENDIENTE`, `BLOQUEADO`. Prioridades: `P0` crítica, `P1` alta,
@@ -19,18 +19,18 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
   resultados quedan visibles, mientras que constructores y adaptadores se concentran en `interno/`.
 - La comunicación visual se limita a tres PNG estables: último Run, comparativo del barrido y validación
   energética. Las métricas completas permanecen en MATLAB sin generar gráficos auxiliares.
-- Ya existe una planta completa en `simulacion/planta_v2/`; la integración nueva debe evolucionarla
-  de forma controlada, no crear otra planta desconectada.
+- `simulacion/planta_v2/` se eliminó el 19/9 por decisión de Joaquín: la planta completa se rehace a mano en
+  `modelado/planta/`. Queda el banco reducido de la pata como única simulación.
 - MATLAB R2023b Update 6, Simulink 23.2 y los toolboxes necesarios están instalados.
 - Codex usa MATLAB MCP Server v0.13.0 y Simulink Agentic Toolkit 2026.09. La compuerta de librerías
   devuelve `found=false`, `gatePass=true`; `model_overview`, `model_read` y `model_check` funcionan.
 - La auditoría MCP del banco terminó `healthy`: sin puertos ni líneas desconectadas. Se corrigieron
   tres líneas huérfanas creadas al vaciar los subsistemas predeterminados.
-- La regresión actual de `planta_v2` tiene 21/22 pruebas aprobadas. Falla la comparación del escenario
-  `escalera_flexor` entre el modelo de referencia y el modelo de bloques.
-- El CAD de `segunda_iteracion/` se agregó después de la dinámica y no tiene todavía una ficha
-  versionada de cotas, masas, centros de masa e inercias. No se deben publicar conclusiones finales
-  con parámetros de la primera iteración como si pertenecieran al CAD nuevo.
+- Desde el 19/9 la variante por defecto de `parametros_fisicos.m` es `segunda_iteracion` (barras a escala 80,
+  servo de 40 kg·cm, motor JGB37-520 de 152 g). Con ella pasan los 8 tests del núcleo y los 4 del banco Simulink.
+- El CAD de `segunda_iteracion/` tiene las barras a escala 80 (medido el 19/9 sobre los STEP con
+  `diseño_mecanico/medir_step/`); el modelado ya lo sigue. Faltan en el ensamble la rueda, el motor y la tapa,
+  así que las masas siguen siendo las de la primera iteración escaladas: pesar las piezas es la primera pendiente.
 
 ## Trabajo realizado
 
@@ -45,7 +45,7 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 | ENV-001 | P0 | HECHO | 2026-09-14 | Auditar MATLAB/Simulink y toolboxes | MATLAB R2023b Update 6; Simulink, Symbolic Math, Control System, Simscape Multibody y Simulink Test 23.2 |
 | MCP-001 | P0 | HECHO | 2026-09-14 | Auditar MCP instalado y versión upstream | Claude usa `C:/Users/matia/.claude/matlab-mcp-core-server.exe` v0.10.0; Codex: ninguno; upstream: v0.13.0 |
 | DOC-001 | P0 | HECHO | 2026-09-14 | Crear plan y backlog persistentes | Este archivo y `docs/gestion/2026-09-14-plan-dinamica-simulink.md` |
-| PAR-001 | P0 | EN CURSO | 2026-09-14 | Consolidar parámetros físicos compartidos | Fuente MATLAB común en `modelado/parametros/parametros_fisicos.m`; resta eliminar duplicados en Python/documentación y cargar el CAD nuevo |
+| PAR-001 | P0 | EN CURSO | 2026-09-19 | Consolidar parámetros físicos compartidos | Variante `segunda_iteracion` (escala 80, servo 40 kg·cm, JGB37-520) por defecto desde el 19/9; Python y `.tex` de `modelado/` actualizados; resta cargar masas pesadas y la relación del motor |
 | DYN-101 | P0 | HECHO | 2026-09-14 | Convertir la derivación en API reutilizable | Funciones públicas de parámetros, términos, estado, normal, modos y tablas en `modelado/dinamica/`; script histórico conservado como demo |
 | DYN-102 | P0 | HECHO | 2026-09-14 | Formalizar `n_patas` | Eliminado el factor fijo `2`; equivalencia para dos patas y caso de tres patas cubiertos por tests |
 | DYN-104 | P1 | HECHO | 2026-09-14 | Generar tablas trazables para Simulink | Seis tablas 2-D (`theta`, caso), comparadas contra las funciones directas con error controlado |
@@ -62,13 +62,17 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 | VIS-101 | P0 | HECHO | 2026-09-15 | Generar figuras automáticas y comunicables después de cada Run, barrido y análisis energético | [`resultados/figuras/README.md`](simulacion/dinamica_pata_v1/resultados/figuras/README.md), [`resumen_equipo.png`](simulacion/dinamica_pata_v1/resultados/figuras/resumen_equipo.png), [`energia_solver.png`](simulacion/dinamica_pata_v1/resultados/figuras/energia_solver.png); botón Run verificado y QA 12/12 aprobado |
 | VIS-102 | P1 | HECHO | 2026-09-15 | Simplificar la exportación visual para conservar únicamente PNG | Exportador validado con 0 avisos; regeneración produjo 12 PNG y ningún PDF/FIG; se retiraron 24 artefactos redundantes de [`resultados/figuras/`](simulacion/dinamica_pata_v1/resultados/figuras/) |
 | VIS-103 | P1 | HECHO | 2026-09-15 | Reducir sobregráficos y análisis visual redundante | Tres PNG estables en [`resultados/figuras/`](simulacion/dinamica_pata_v1/resultados/figuras/): Run con ángulo/esfuerzo/contacto/KPI, barrido con tres márgenes y energía con dos verificaciones; se retiraron nueve PNG redundantes |
+| AUD-007 | P0 | HECHO | 2026-09-19 | Auditar contenido obsoleto y coherencia CAD ↔ modelado | [Auditoría de limpieza](docs/gestion/2026-09-19-auditoria-limpieza.md): conflicto de git commiteado en `dinamica_pata.m` (`eca3ed4`, versión limpia en el stash `661c39f`); CAD de segunda iteración a escala 80 (AB 77,9 mm a 46,6°, AD 112, BC 108, CD 40,8, DP 112) contra modelado a escala 100; lista de borrado por nivel de seguridad. Nada borrado todavía |
+| FIX-001 | P0 | HECHO | 2026-09-19 | Resolver el conflicto de git commiteado en `dinamica_pata.m` | Restaurado desde el stash `661c39f` (444 líneas, sin marcadores); el demo de Matías quedó en `demo_api_dinamica_pata.m` |
+| LIM-001 | P0 | HECHO | 2026-09-19 | Borrar todo lo anterior al cuatro barras, las plantas descartadas y los duplicados | Corke vendoreado, OneNote, `proof_of_concept`, `4_bar_mechanism`, Hoeken, scripts de síntesis, `informe_planta_v1`, specs, `.codebase-memory`, locks de SolidWorks, primera iteración (salvo STEP y masas), `planta_v2` (su `git rm` lo ejecuta Joaquín: bloqueado por permisos del agente). README raíz y de cada carpeta reescritos |
+| PAR-002 | P0 | HECHO | 2026-09-19 | Pasar todo `modelado/` a la geometría del CAD (escala 80) con el motor y el servo elegidos | 7 figuras regeneradas, 4 PDF recompilados, `dinamica_pata.m` corrido: 9,06 kg·cm estático, 19,9 kg·cm para 18 cm de escalón (límite 47 cm con 40 kg·cm), tests 8/8 y Simulink 4/4 |
 
 ## Próximo hito: banco Simulink de la dinámica de la pata
 
 | ID | Pri. | Estado | Dependencias | Tarea | Criterio de aceptación |
 |---|---:|---|---|---|---|
-| CAD-201 | P0 | BLOQUEADO | Equipo mecánico | Exportar la segunda iteración a STEP y registrar cotas, masas, CoM e inercias por pieza | `base_conocimiento/dimensiones_cad_segunda_iteracion.md` revisado; unidades y sistema de ejes explícitos |
-| PAR-001 | P0 | EN CURSO | CAD-201 o baseline declarado | Consolidar una única fuente de parámetros para geometría, masas, servo y ambiente | Fuente MATLAB común creada y probada; resta eliminar duplicados en Python/documentación y sumar la segunda iteración CAD |
+| CAD-201 | P0 | EN CURSO | Equipo mecánico | Exportar la segunda iteración a STEP y registrar cotas, masas, CoM e inercias por pieza | Cotas medidas el 19/9 sobre los STEP del 14/9 (AD 112, BC 108, CD 40,8, DP 112; AB 77,9 mm a 46,6°, B 3 mm corto) con `diseño_mecanico/medir_step/`; faltan rueda, motor y tapa en el ensamble para las masas |
+| PAR-001 | P0 | EN CURSO | 2026-09-19 | Consolidar parámetros físicos compartidos | Variante `segunda_iteracion` (escala 80, servo 40 kg·cm, JGB37-520) por defecto desde el 19/9; Python y `.tex` de `modelado/` actualizados; resta cargar masas pesadas y la relación del motor |
 | MCP-002 | P0 | HECHO | 2026-09-14 | Instalar/actualizar MATLAB MCP Server v0.13.0 y Simulink Agentic Toolkit para Codex | Servidor v0.13.0, toolkit 2026.09, 24 skills; `detect_matlab_toolboxes` y `model_overview` invocados desde una sesión Codex nueva |
 | MCP-003 | P0 | HECHO | 2026-09-14 | Configurar Windows y tiempos de espera | Modo `existing`, `env_vars = ["WINDIR"]`, telemetría deshabilitada, `startup_timeout_sec = 60` y `tool_timeout_sec = 600`; ver [registro](docs/gestion/2026-09-14-entorno-matlab-mcp.md) |
 | DYN-101 | P0 | HECHO | PAR-001 | Separar el script monolítico en funciones reutilizables | API pública y demo disponibles; 8/8 tests del núcleo aprobados |
@@ -87,14 +91,14 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 
 | ID | Pri. | Estado | Dependencias | Tarea | Criterio de aceptación |
 |---|---:|---|---|---|---|
-| V2-001 | P0 | EN CURSO | — | Diagnosticar la prueba fallida `escalera_flexor` | Fallo reproducido y README actualizado; resta aislar la causa y corregir o justificar la tolerancia |
-| V2-002 | P0 | PENDIENTE | — | Resolver la edición manual del `.slx` no reflejada por su constructor | Reconstruir desde `.m` no cambia semántica; diferencia deliberada documentada o eliminada |
+| V2-001 | P0 | CANCELADO | — | Diagnosticar la prueba fallida `escalera_flexor` | `planta_v2` eliminada el 19/9 (decisión de Joaquín; ver [auditoría](docs/gestion/2026-09-19-auditoria-limpieza.md)) |
+| V2-002 | P0 | CANCELADO | — | Resolver la edición manual del `.slx` no reflejada por su constructor | `planta_v2` eliminada el 19/9 |
 | PLT-301 | P0 | PENDIENTE | TST-101, V2-001 | Especificar planta exacta con `q=[x_P,y_P,phi,theta]` | Documento de ecuaciones, convenciones y balance de energía aprobado |
 | PLT-302 | P0 | PENDIENTE | PLT-301 | Derivar/generar `M(q)`, términos centrífugos/Coriolis, gravedad y fuerzas generalizadas | Matriz simétrica definida positiva en toda la carrera; tres reducciones coinciden con DYN-101 |
-| PLT-303 | P0 | PENDIENTE | PLT-302 | Crear `simulacion/planta_v3/` preservando `planta_v2` como baseline | Piso plano sin control y casos reducidos pasan; artefactos regenerables desde código |
+| PLT-303 | P0 | PENDIENTE | PLT-302 | Crear la planta completa en `modelado/planta/` (a mano, sin heredar `planta_v2`) y después su banco en `simulacion/` | Piso plano sin control y casos reducidos pasan; artefactos regenerables desde código |
 | PLT-304 | P1 | PENDIENTE | PLT-303 | Integrar contacto, ruedas, motores, batería, sensores y controlador existentes | Interfaces equivalentes o migración documentada; sin señales algebraicas ocultas |
 | CTL-301 | P0 | PENDIENTE | PLT-304 | Relinealizar y rediseñar el LQR en varios largos de pata | Controlabilidad verificada; márgenes, saturación y puntos de operación versionados |
-| TST-301 | P0 | PENDIENTE | PLT-304 | Regresión `planta_v2` vs `planta_v3` en piso plano | Diferencias explicadas; ningún resultado heredado se presenta como validación de v3 |
+| TST-301 | P0 | CANCELADO | — | Regresión `planta_v2` vs `planta_v3` en piso plano | Sin `planta_v2` no hay regresión heredada; la planta nueva se valida contra el DCL y la dinámica de la pata |
 | RUN-301 | P1 | PENDIENTE | CTL-301, TST-301 | Simular equilibrio, empujones, agacharse/pararse y avance | Métricas y gráficas versionadas; casos nominales y extremos |
 | RUN-302 | P1 | PENDIENTE | RUN-301 | Simular escalón y escalera con/sin flexor | Solo después de validar contacto y piso plano; impacto y sensibilidad al paso documentados |
 | VAL-301 | P1 | PENDIENTE | Prototipo físico | Identificar parámetros reales de servo, rueda, contacto y masas | Ensayos y datos crudos versionados; parámetros actualizados con incertidumbre |

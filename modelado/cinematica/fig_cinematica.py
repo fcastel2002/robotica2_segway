@@ -7,7 +7,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc, FancyArrowPatch, Polygon, Circle
 
-AB, beta, AD, BC, CD, DP, delta, theta = 100.0, 45.0, 140.0, 135.0, 51.0, 140.0, 164.0, 335.0
+AB, beta, AD, BC, CD, DP, delta, theta = 80.0, 45.0, 112.0, 108.0, 40.8, 112.0, 164.0, 335.0
 r = math.radians
 A = (0.0, 0.0)
 B = (AB*math.cos(r(beta)), AB*math.sin(r(beta)))

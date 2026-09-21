@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Polygon, Circle, FancyArrowPatch
 
-AB, AD, BC, CD, DP = 100.0, 140.0, 135.0, 51.0, 140.0
+AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0
 A45, DELTA, THETA, Rw = math.radians(45), math.radians(164), math.radians(25), 33.0
 fAD, fBC, fCDP = 0.428, 0.5, 0.3145
 CAB = dict(cx=-18.5, fondo=142.0, bajo_A=29.0, alto=104.5)
@@ -152,7 +152,7 @@ rotulo(ax, "la rueda está fija", VERDE)
 fig.text(0.5, 0.014,
          r"Dibujado en $\theta=25^\circ$. Las flechas son coeficientes de velocidad, en mm por rad/s, "
          r"a escala " + f"{ESCALA:.2f}" + r" respecto de las longitudes." + "\n"
-         r"$|c_P|=249$ mm/rad: por cada radián que gira el servo, la rueda se aleja 249 mm de la cabina.",
+         r"$|c_P|=199$ mm/rad: por cada radián que gira el servo, la rueda se aleja 199 mm de la cabina.",
          fontsize=16, ha="center", va="bottom",
          bbox=dict(boxstyle="round,pad=0.6", facecolor="#fafafa", edgecolor="#999999"))
 fig.tight_layout(rect=(0, 0.06, 1, 1))

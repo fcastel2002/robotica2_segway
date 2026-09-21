@@ -18,7 +18,7 @@ function [resumen, corridas, archivo] = correr_escenarios_dinamica_pata()
   if ~isfolder(carpeta), mkdir(carpeta); end
   archivo = fullfile(carpeta, 'corridas_baseline_2026-09-14.mat');
   metadata = struct('fecha', '2026-09-14', 'matlab', version, ...
-    'modelo', 'dinamica_pata_simulink.slx', 'variante', 'corregido');
+    'modelo', 'dinamica_pata_simulink.slx', 'variante', 'segunda_iteracion');
   save(archivo, 'resumen', 'corridas', 'metadata');
   disp(resumen);
 end

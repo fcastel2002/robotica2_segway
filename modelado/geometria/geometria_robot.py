@@ -1,5 +1,5 @@
 """Dibuja la geometria del robot (plano lateral) con el nombre y el valor de cada cota, segun el CAD
-diseno_mecanico/primera_iteracion (barras a escala 100, bancada AB = 100 mm a 45 grados). Genera geometria_robot.png.
+diseno_mecanico/segunda_iteracion (barras a escala 80, bancada AB = 80 mm a 45 grados). Genera geometria_robot.png.
    python geometria_robot.py
 """
 import math, os
@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Polygon, FancyArrowPatch, Arc
 
 # ----------------------------- valores del CAD (mm, grados) -----------------------------
-AB, beta = 100.0, 45.0     # bancada A-B en la cabina y su angulo desde +x (cabeza_v31, CAD actual: todo a escala 100)
-AD, BC, CD, DP = 140.0, 135.0, 51.0, 140.0   # eslabon_AD, eslabon_BC, eslabon_CDP
+AB, beta = 80.0, 45.0      # bancada A-B en la cabina y su angulo desde +x (cabeza_v31: la intencion es 80 a 45; el STEP tiene 77.9 a 46.6)
+AD, BC, CD, DP = 112.0, 108.0, 40.8, 112.0   # eslabon_AD_v2, eslabon_BC, eslabon_CDP_v2 (escala 80, STEP del 14/9)
 delta = 164.0              # angulo en D, de D->C a D->P (eslabon_CDP)
 theta = 320.0              # angulo del servo en el dibujo: 320 = pata estirada (recorrido 320..350)
 Rw = 33.0                  # radio de rueda (wheel, diametro 66)
@@ -18,7 +18,7 @@ ancho_rueda, trocha = 25.0, 194.0
 cab_fondo, cab_ancho, cab_alto, cab_pared = 142.0, 150.0, 104.5, 3.0   # cabeza_v31
 cab_cx, cab_bajo_A = -18.5, 29.0                                        # centro de la cabina y fondo bajo A
 tapa_sobre_A = 74.5
-motor = "JGA25-370, cuerpo Ø25 x 70.5"
+motor = "JGB37-520 con encoder, cuerpo Ø37"
 servo = "DS3225MG, 40 x 20 x 40.5"
 
 # ----------------------------- cinematica: posiciones de los nudos -----------------------------
@@ -144,7 +144,7 @@ cota((-215, y_piso), (-215, tapa_sobre_A), f"altura total = {tapa_sobre_A - y_pi
 
 # servo en A
 ax.add_patch(plt.Rectangle((-9.7 - 20, -20.25), 40, 40.5, fill=False, color=gris, ls="--", lw=0.8, zorder=2))
-ax.text(-86, -4, "servo DS3225MG en A\n(eje del servo)\n40 x 20 x 40.5", fontsize=7.5, color=gris, ha="left", va="top", zorder=5)
+ax.text(-86, -4, "servo de 40 kg cm en A\n(eje del servo)\n40 x 20 x 40.5", fontsize=7.5, color=gris, ha="left", va="top", zorder=5)
 
 # recuadro con el resto de las cotas del CAD
 texto = (
@@ -165,7 +165,7 @@ ax.set_xlim(-235, 305)
 ax.set_ylim(y_piso - 28, tapa_sobre_A + 60)
 ax.set_xlabel("x [mm]   (x positivo = hacia atras; el robot avanza hacia la izquierda)")
 ax.set_ylabel("y [mm]")
-ax.set_title("Geometria del robot segun el CAD (primera_iteracion: barras a escala 100, AB = 100 mm a 45°) - plano lateral, origen en A",
+ax.set_title("Geometria del robot segun el CAD (segunda_iteracion: barras a escala 80, AB = 80 mm a 45°) - plano lateral, origen en A",
              fontsize=12.5, fontweight="bold")
 ax.grid(True, alpha=0.2)
 fig.tight_layout()

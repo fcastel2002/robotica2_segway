@@ -11,3 +11,11 @@ slprj/
 *.out
 *.toc
 *.synctex.gz
+
+# SolidWorks: archivos de bloqueo
+~$*
+
+# OneNote y caches de herramientas
+*.one
+*.onetoc2
+.codebase-memory/

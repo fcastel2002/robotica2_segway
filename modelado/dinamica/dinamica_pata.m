@@ -1,14 +1,3 @@
-<<<<<<< Updated upstream
-%% DINAMICA_PATA Demostración reproducible del modelo reducido de la pata.
-% La implementación reutilizable está en parametros_dinamica_pata,
-% terminos_dinamica_pata y estado_dinamica_pata.
-clear; clc; close all
-
-p = parametros_dinamica_pata('corregido');
-fprintf('Baseline %s: cabina %.0f g + %d patas de %.1f g = robot de %.0f g\n', ...
-  p.variante, p.m_cabina*1e3, p.n_patas, ...
-  (p.m_AD + p.m_BC + p.m_CDP + p.m_P)*1e3, p.m_total*1e3);
-=======
 %% DINAMICA_PATA  Dinámica de la pata del Segway por Lagrange. Un grado de libertad: theta
 %
 %   Ieq(th)·th'' + 1/2·Ieq'(th)·th'^2 + V'(th) = tau - b·th' + N·wP(th)            (ec. 23 del PDF)
@@ -32,27 +21,29 @@ fprintf('Baseline %s: cabina %.0f g + %d patas de %.1f g = robot de %.0f g\n', .
 clear; clc; close all
 
 %% 1. Parámetros (editar acá) ==============================================================
-% --- geometría de la pata [m, rad]  (mismos valores que ../cinematica/parametros_geometria.m)
-p.AB    = 100e-3;          % bancada, de A (servo) a B
-p.AD    = 140e-3;          % manivela
-p.BC    = 135e-3;          % balancín
-p.CD    = 51e-3;           % acoplador, lado D->C
-p.DP    = 140e-3;          % acoplador, de D al eje de la rueda P
+% --- geometría de la pata [m, rad]. Segunda iteración del CAD, barras a escala 80 (medidas sobre los STEP del 14/9).
+%     Mismos valores que ../parametros/parametros_fisicos.m, que es la fuente para todo el proyecto.
+p.AB    = 80e-3;           % bancada, de A (servo) a B (en el STEP está en 77.9 mm a 46.6°: B quedó 3 mm corto; se modela la intención)
+p.AD    = 112e-3;          % manivela
+p.BC    = 108e-3;          % balancín
+p.CD    = 40.8e-3;         % acoplador, lado D->C
+p.DP    = 112e-3;          % acoplador, de D al eje de la rueda P
 p.a45   = deg2rad(45);     % inclinación de AB respecto de la horizontal
 p.delta = deg2rad(164);    % ángulo del acoplador en D, de D->C a D->P
 p.Rw    = 33e-3;           % radio de la rueda
 p.theta_min = deg2rad(10); % carrera del servo: plegada
 p.theta_max = deg2rad(40); %                    estirada
 % --- piezas de la pata: masa [kg], centro de masa [m], inercia respecto de SU centro de masa [kg m^2]
-%     (estimadas del CAD con PLA; PESAR las piezas cuando estén impresas)
-p.m_AD  = 0.029;   p.AG = 0.428*p.AD;   p.IG_AD  = 7.09e-5;   % manivela:  masa, distancia A->G_AD, inercia
-p.m_BC  = 0.007;   p.BG = 0.5*p.BC;     p.IG_BC  = 1.72e-5;   % balancín:  masa, distancia B->G_BC, inercia
-p.m_CDP = 0.0195;  p.dG = 0.3145*p.DP;  p.IG_CDP = 6.39e-5;   % acoplador: masa, distancia D->G_CDP, inercia
+%     (las de la primera iteración escaladas a 80: la masa baja con el largo, x0.8, y la inercia x0.8^3;
+%      PESAR las piezas cuando estén impresas)
+p.m_AD  = 0.0232;  p.AG = 0.428*p.AD;   p.IG_AD  = 3.63e-5;   % manivela:  masa, distancia A->G_AD, inercia
+p.m_BC  = 0.0056;  p.BG = 0.5*p.BC;     p.IG_BC  = 0.88e-5;   % balancín:  masa, distancia B->G_BC, inercia
+p.m_CDP = 0.0156;  p.dG = 0.3145*p.DP;  p.IG_CDP = 3.27e-5;   % acoplador: masa, distancia D->G_CDP, inercia
 p.epsG  = p.delta;                                            % ángulo de D->G_CDP desde D->C (G sobre la recta D->P)
-p.m_P   = 0.030 + 0.095;   % rueda (30 g) + motorreductor (95 g) colgados de P
+p.m_P   = 0.030 + 0.152;   % rueda (30 g) + motorreductor JGB37-520 con encoder (152 g, ficha; PESAR) colgados de P
 % --- cabina: todo lo que NO es pata. Solo hace falta su masa, no dónde está su centro de masa,
 %     porque no gira (el control de equilibrio mantiene la inclinación) y solo se traslada.
-p.m_cabina = 0.207 + 0.114 + 2*0.060 + 0.120 + 0.060 + 0.050;  % cabeza + tapa + 2 servos + batería + electrónica + tornillería
+p.m_cabina = 0.207 + 0.114 + 2*0.058 + 0.120 + 0.060 + 0.050;  % cabeza + tapa + 2 servos de 40 kg cm (58 g) + batería + electrónica + tornillería
 p.n_patas  = 2;            % patas iguales, movidas a la vez por sus dos servos
 % --- fricción viscosa en cada articulación [N m s/rad]: par de roce = -b_eq(theta)*theta'
 %     NINGUNA está medida todavía, por eso valen cero y el modelo no tiene pérdidas. Para medirlas,
@@ -62,73 +53,57 @@ p.b_B     = 0;             % en B, entre la cabina y el balancín
 p.b_C     = 0;             % en C, entre el balancín y el acoplador
 p.b_D     = 0;             % en D, entre la manivela y el acoplador
 % --- servo y entorno
-p.tau_max = 21*0.0981;     % par máximo del servo DS3225MG [N m]  (21 kg cm)
+p.tau_max = 40*0.0981;     % par máximo del servo elegido [N m]  (40 kg cm; verificar a qué tensión lo da la ficha)
 p.k_rueda = 30e3;          % rigidez del neumático por rueda [N/m]. SUPUESTO: medir apretando la rueda
 p.g       = 9.81;
 p.m_total = p.m_cabina + p.n_patas*(p.m_AD + p.m_BC + p.m_CDP + p.m_P);   % masa del robot [kg] (derivada)
->>>>>>> Stashed changes
 
-%% Tres reducciones de la dinámica
-theta = linspace(p.theta_min, p.theta_max, 200);
-Rb = terminos_dinamica_pata(theta, p, 'banco');
-Rp = terminos_dinamica_pata(theta, p, 'parado');
-Ra = terminos_dinamica_pata(theta, p, 'aire');
-N_pie = p.m_total*p.g/p.n_patas;
-tau_b = Rb.dV - N_pie*Rb.wP;
-tau_p = Rp.dV;
-tau_a = Ra.dV;
+fprintf('cabina %.0f g + %d patas de %.1f g = robot de %.0f g\n', p.m_cabina*1e3, p.n_patas, ...
+        (p.m_AD + p.m_BC + p.m_CDP + p.m_P)*1e3, p.m_total*1e3);
+
+%% 2. Los tres casos ========================================================================
+th = linspace(p.theta_min, p.theta_max, 200);
+Rb = terminos(th, p, 'banco');  Rp = terminos(th, p, 'parado');  Ra = terminos(th, p, 'aire');
+N_pie = p.m_total*p.g/2;                 % reacción del piso por rueda, robot parado y quieto
+tau_b = Rb.dV - N_pie*Rb.wP;             % banco cargado con el peso del robot   (ec. 24)
+tau_p = Rp.dV;                           % parado: wP = 0, el peso de la cabina ya está en V
+tau_a = Ra.dV;                           % en el aire: vale 0
 
 figure('Name', 'Los tres casos')
-subplot(2,2,1); plot(rad2deg(theta), [Rb.Ieq; Rp.Ieq; Ra.Ieq]*1e3, 'LineWidth', 1.8); grid on
+subplot(2,2,1); plot(rad2deg(th), [Rb.Ieq; Rp.Ieq; Ra.Ieq]*1e3, 'LineWidth', 1.8); grid on
 xlabel('\theta [°]'); ylabel('I_{eq} [g m^2]'); title('Inercia equivalente vista por el servo')
-legend('banco', 'parado', 'aire', 'Location', 'best')
-subplot(2,2,2); plot(rad2deg(theta), [tau_b; tau_p; tau_a]/0.0981, 'LineWidth', 1.8); grid on
-yline(p.tau_max/0.0981, '--', 'límite nominal'); xlabel('\theta [°]'); ylabel('\tau estático [kg cm]')
-legend('banco con peso', 'parado', 'aire', 'Location', 'best'); title('Par estático')
-subplot(2,2,3); plot(rad2deg(theta), (p.Rw - Rp.yP)*1e3, 'LineWidth', 1.8); grid on
-xlabel('\theta [°]'); ylabel('h [mm]'); title('Altura de la cabina')
-subplot(2,2,4); plot(rad2deg(theta), [Rp.dbeta; Rp.dpsi], 'LineWidth', 1.8); grid on
-xlabel('\theta [°]'); ylabel('[rad/rad]'); legend('\beta''', '\psi''', 'Location', 'best')
+legend('banco (cabina sujeta)', 'parado (sube la cabina)', 'en el aire', 'Location', 'best')
+subplot(2,2,2); plot(rad2deg(th), [tau_b; tau_p; tau_a]/0.0981, 'LineWidth', 1.8); grid on
+yline(p.tau_max/0.0981, '--', 'servo servo'); xlabel('\theta [°]'); ylabel('\tau estático [kg cm]')
+legend('banco con el peso encima', 'parado', 'en el aire', 'Location', 'best'); title('Par estático (los dos primeros coinciden)')
+subplot(2,2,3); plot(rad2deg(th), (p.Rw - Rp.yP)*1e3, 'LineWidth', 1.8); grid on
+xlabel('\theta [°]'); ylabel('h [mm]'); title('Altura de la cabina sobre el piso: h = R_w - y_P(\theta)')
+subplot(2,2,4); plot(rad2deg(th), [Rp.dbeta; Rp.dpsi], 'LineWidth', 1.8); grid on
+xlabel('\theta [°]'); ylabel('[rad/rad]'); legend('\beta''', '\psi''', 'Location', 'best'); title('Relaciones de transmisión')
 
-theta_tabla = deg2rad([10 25 40]);
-Tb = terminos_dinamica_pata(theta_tabla, p, 'banco');
-Tp = terminos_dinamica_pata(theta_tabla, p, 'parado');
-Ta = terminos_dinamica_pata(theta_tabla, p, 'aire');
-fprintf('\n theta   h[mm]  | Ieq [g m2]: banco  parado   aire | tau [kg cm]: banco parado aire\n');
-for k = 1:numel(theta_tabla)
-  fprintf('%5.0f  %6.1f  |            %6.2f  %6.2f %6.2f |          %6.2f %6.2f %5.2f\n', ...
-    rad2deg(theta_tabla(k)), (p.Rw - Tp.yP(k))*1e3, Tb.Ieq(k)*1e3, ...
-    Tp.Ieq(k)*1e3, Ta.Ieq(k)*1e3, ...
-    (Tb.dV(k) - N_pie*Tb.wP(k))/0.0981, Tp.dV(k)/0.0981, Ta.dV(k)/0.0981);
+th_t = deg2rad([10 25 40]);
+Tb = terminos(th_t, p, 'banco'); Tp = terminos(th_t, p, 'parado'); Ta = terminos(th_t, p, 'aire');
+fprintf('\n theta   h[mm]  | Ieq [g m2]: banco  parado   aire | parado/banco aire/banco | tau [kg cm]: banco parado  aire\n');
+for k = 1:numel(th_t)
+  fprintf('%5.0f  %6.1f  |            %6.2f  %6.2f %6.2f |    %5.2f      %5.2f   |          %6.2f %6.2f %5.2f\n', ...
+    rad2deg(th_t(k)), (p.Rw - Tp.yP(k))*1e3, Tb.Ieq(k)*1e3, Tp.Ieq(k)*1e3, Ta.Ieq(k)*1e3, ...
+    Tp.Ieq(k)/Tb.Ieq(k), Ta.Ieq(k)/Tb.Ieq(k), (Tb.dV(k) - N_pie*Tb.wP(k))/0.0981, Tp.dV(k)/0.0981, Ta.dV(k)/0.0981);
 end
-fprintf('banco contra parado: diferencia máxima de par estático %.1e N m\n', max(abs(tau_b-tau_p)));
-fprintf('aire: max |V''| = %.1e N m\n', max(abs(Ra.dV)));
+% comprobaciones de consistencia entre los tres casos
+fprintf('banco con N = m g/n contra parado: diferencia máxima de par estático %.1e N m (deben coincidir)\n', ...
+        max(abs(tau_b - tau_p)));
+fprintf('en el aire la gravedad no actúa sobre theta: max |V''| = %.1e N m (debe ser cero)\n', max(abs(Ra.dV)));
 
-%% Maniobra nominal: agacharse y pararse
-caso = 'parado';
-suave = @(s) 0.5 - 0.5*cos(pi*min(max(s, 0), 1));
-theta_ref = @(t) p.theta_max + (p.theta_min-p.theta_max)*suave((t-0.2)/0.6) ...
-  + (p.theta_max-p.theta_min)*suave((t-1.2)/0.6);
-tau_servo = @(t,x) min(max(p.Kp*(theta_ref(t)-x(1))-p.Kd*x(2), -p.tau_max), p.tau_max);
-[t, x] = ode45(@(ti,xi) estado_dinamica_pata(ti, xi, tau_servo(ti,xi), 0, p, caso), ...
-  [0 2.5], [p.theta_max; 0]);
+%% 3. Simulación: agacharse y pararse, con el robot de pie ==================================
+% Servo modelado como control de posición con par saturado. Consigna: partir estirado (40°),
+% agacharse a 10° en 0.6 s, esperar, y volver a pararse en 0.6 s.
+caso = 'parado';  Kp = 30;  Kd = 0.5;  N_sim = 0;    % en 'parado' la normal no hace trabajo: N no entra
+suave  = @(s) 0.5 - 0.5*cos(pi*min(max(s, 0), 1));
+th_ref = @(t) p.theta_max + (p.theta_min - p.theta_max)*suave((t - 0.2)/0.6) ...
+                          + (p.theta_max - p.theta_min)*suave((t - 1.2)/0.6);
+tau_servo = @(t, x) min(max(Kp*(th_ref(t) - x(1)) - Kd*x(2), -p.tau_max), p.tau_max);
+[t, x] = ode45(@(t, x) f_pata(t, x, tau_servo(t, x), N_sim, p, caso), [0 2.5], [p.theta_max; 0]);
 tau = arrayfun(@(k) tau_servo(t(k), x(k,:)'), 1:numel(t))';
-<<<<<<< Updated upstream
-S = terminos_dinamica_pata(x(:,1)', p, caso);
-ddtheta = (tau' - p.b*x(:,2)' - 0.5*S.dIeq.*x(:,2)'.^2 - S.dV)./S.Ieq;
-N_rueda = normal_dinamica_pata(x(:,1)', x(:,2)', ddtheta, p);
-
-figure('Name', 'Agacharse y pararse')
-subplot(4,1,1); plot(t, rad2deg(x(:,1)), t, rad2deg(theta_ref(t)), '--', 'LineWidth', 1.5); grid on
-ylabel('\theta [°]'); legend('\theta', '\theta_{ref}', 'Location', 'best')
-subplot(4,1,2); plot(t, (p.Rw-S.yP)*1e3, 'LineWidth', 1.5); grid on; ylabel('altura [mm]')
-subplot(4,1,3); plot(t, tau/0.0981, 'LineWidth', 1.5); grid on; ylabel('\tau [kg cm]')
-subplot(4,1,4); plot(t, N_rueda, 'LineWidth', 1.5); grid on; yline(0, '--'); ylabel('N/rueda [N]'); xlabel('t [s]')
-fprintf('maniobra: par máximo %.1f kg cm de %.1f; normal entre %.2f y %.2f N\n', ...
-  max(abs(tau))/0.0981, p.tau_max/0.0981, min(N_rueda), max(N_rueda));
-if min(N_rueda) <= 0
-  fprintf('ATENCIÓN: el supervisor debe cambiar de parado a aire.\n');
-=======
 S = terminos(x(:,1)', p, caso);
 ddth = (tau' - S.beq.*x(:,2)' - 0.5*S.dIeq.*x(:,2)'.^2 - S.dV)./S.Ieq;      % ec. 23 despejada
 N_rueda = (p.m_total/2)*(p.g + S.cCoM.*ddth + S.dcCoM.*x(:,2)'.^2);         % ec. 25: si llega a 0, despega
@@ -218,7 +193,7 @@ fprintf('  2. impacto: la pata arranca a plegarse a %.1f rad/s (%.0f °/s). Ener
 fprintf('     (el golpe se lleva el %.0f por ciento, que es el momento de la rueda y el motor)\n', 100*(1 - K_desp/K_antes));
 fprintf('  3. absorción: hay que disipar %.3f J por servo (%.3f del golpe + %.3f que suma la gravedad) en %.0f° de carrera\n', ...
         E_abs, K_desp, DV, rad2deg(carrera));
-fprintf('     PAR MEDIO NECESARIO %.2f N m = %.1f kg cm por servo   (el DS3225MG da %.0f kg cm)\n', ...
+fprintf('     PAR MEDIO NECESARIO %.2f N m = %.1f kg cm por servo   (el servo da %.0f kg cm)\n', ...
         tau_med, tau_med/0.0981, p.tau_max/0.0981);
 fprintf('     frenando a fondo el servo absorbe %.3f J: le alcanza hasta un escalón de %.0f cm\n', E_servo, h_max*100);
 if x3(end,1) <= th_tope + 1e-9
@@ -250,7 +225,7 @@ ylabel('altura de la cabina [mm]'); xlabel('t [ms]'); title('La cabina baja mien
 subplot(2,2,3); plot(t3*1e3, N3, 'LineWidth', 1.5); grid on
 yline(N_est, ':', 'carga estática'); ylabel('N por rueda [N]'); xlabel('t [ms]'); title('Fuerza contra el piso')
 subplot(2,2,4); plot(h_barrido*100, tau_h/0.0981, 'LineWidth', 1.8); grid on
-yline(p.tau_max/0.0981, '--', 'DS3225MG'); xline(h_max*100, ':', sprintf('%.0f cm', h_max*100))
+yline(p.tau_max/0.0981, '--', 'servo'); xline(h_max*100, ':', sprintf('%.0f cm', h_max*100))
 xlabel('altura del escalón [cm]'); ylabel('\tau medio necesario [kg cm]'); title('Hasta qué escalón alcanza el servo')
 
 %% 6. Fuerza radial en el eje del servo durante la caída ====================================
@@ -468,5 +443,4 @@ function dx = f_pata(~, x, tau, N, p, caso)
 % Ecuación de movimiento en forma de estado (ec. 26): x = [theta; theta'].
   T  = terminos(x(1), p, caso);
   dx = [x(2); (tau - T.beq*x(2) + N*T.wP - 0.5*T.dIeq*x(2)^2 - T.dV)/T.Ieq];
->>>>>>> Stashed changes
 end

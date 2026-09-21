@@ -10,7 +10,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc, FancyArrowPatch, Polygon, Circle
 
-AB, AD, BC, CD, DP = 100.0, 140.0, 135.0, 51.0, 140.0     # mm
+AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0     # mm (escala 80, STEP del 14/9)
 ANG_AB, DELTA = 45.0, 164.0                                # grados
 THETA = 25.0                                               # angulo para el dibujo (40 = estirada, 10 = plegada)
 Rw = 33.0
@@ -121,7 +121,7 @@ notas = [
     (r"$\delta$: ángulo del acoplador, de $D\rightarrow C$ a $D\rightarrow P$", VERDE2),
     (r"$BD=\sqrt{AB^2+AD^2-2\,AB\,AD\cos(\theta+45°)}$", GRIS),
     (r"$G$: centro de masa de cada pieza;  $m_P$: rueda + motor en $P$", NEGRO),
-    (r"$AB=100,\ AD=140,\ BC=135,\ CD=51,\ DP=140$ mm,  $\delta=164°$", NEGRO),
+    (r"$AB=80,\ AD=112,\ BC=108,\ CD=40.8,\ DP=112$ mm,  $\delta=164°$", NEGRO),
     (r"dibujo con $\theta=25°$;  $\theta=40°$ estirada, $\theta=10°$ plegada", NEGRO),
 ]
 x0, y0 = 250, 95

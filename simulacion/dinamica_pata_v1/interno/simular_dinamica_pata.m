@@ -2,7 +2,7 @@ function R = simular_dinamica_pata(nombre, varargin)
 %SIMULAR_DINAMICA_PATA Ejecuta Simulink y el oráculo ODE con las mismas entradas.
   ip = inputParser;
   addRequired(ip, 'nombre', @(x) ischar(x) || isstring(x));
-  addParameter(ip, 'variante', 'corregido', @(x) ischar(x) || isstring(x));
+  addParameter(ip, 'variante', 'segunda_iteracion', @(x) ischar(x) || isstring(x));
   addParameter(ip, 'reconstruir', false, @islogical);
   parse(ip, nombre, varargin{:});
 

@@ -14,7 +14,6 @@ function varargout = INICIAR_DINAMICA_PATA(accion, escenario)
   addpath(carpeta_interna);
   addpath(fullfile(repo, 'modelado', 'cinematica'));
   addpath(fullfile(repo, 'modelado', 'dinamica'));
-  addpath(fullfile(repo, 'simulacion', 'planta_v2'));
   configurar_cache();
 
   archivo_modelo = fullfile(carpeta_banco, 'dinamica_pata_simulink.slx');

@@ -10,7 +10,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc, FancyArrowPatch, Polygon, Circle
 
-AB, AD, BC, CD, DP = 100.0, 140.0, 135.0, 51.0, 140.0     # mm
+AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0     # mm (escala 80, STEP del 14/9)
 ANG_AB, DELTA, THETA, Rw = 45.0, 164.0, 10.0, 33.0        # grados, mm
 fAD, fBC, fCDP = 0.428, 0.5, 0.3145
 r = math.radians
@@ -123,7 +123,7 @@ barra_BC(ax); punto(ax, B, "B", (-14, 10)); punto(ax, C, "C", (14, 6)); cm(ax, G
 fuerza(ax, B, (1, 0), r"$B_x$", AZUL); fuerza(ax, B, (0, 1), r"$B_y$", AZUL)
 fuerza(ax, GBC, (0, -1), r"$m_{BC}\,g$", ROJO, L=26, dtxt=(16, 0))
 fuerza(ax, C, (1, 0), r"$C_x$", AZUL); fuerza(ax, C, (0, 1), r"$C_y$", AZUL)
-ax.text(130, -55, "con m_BC = 7 g despreciable, BC es una barra biarticulada:\nsu fuerza va a lo largo de BC", fontsize=14, color=GRIS, ha="center", va="top")
+ax.text(130, -55, "con m_BC = 5.6 g despreciable, BC es una barra biarticulada:\nsu fuerza va a lo largo de BC", fontsize=14, color=GRIS, ha="center", va="top")
 ax.set_xlim(20, 260); ax.set_ylim(-90, 115)
 
 # ---------- (d) acoplador CDP + rueda ----------
@@ -141,7 +141,7 @@ ax.set_xlim(-75, 245); ax.set_ylim(-135, 60)
 
 fig.text(0.5, 0.015,
          r"$(A_x, A_y)$, $(B_x, B_y)$: reacciones de la cabina (fija).   $(D_x, D_y)$: fuerza del acoplador sobre AD en D.   "
-         r"$(C_x, C_y)$: fuerza del acoplador sobre BC en C.   $N = m_{robot}\,g/2 = 5.05$ N.   $\tau$: par del servo.",
+         r"$(C_x, C_y)$: fuerza del acoplador sobre BC en C.   $N = m_{robot}\,g/2 = 5.49$ N.   $\tau$: par del servo.",
          fontsize=15, ha="center", va="bottom", bbox=dict(boxstyle="round,pad=0.5", facecolor="#fafafa", edgecolor="#999999"))
 fig.tight_layout(rect=(0, 0.04, 1, 1))
 salida = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dcl_pata.png")

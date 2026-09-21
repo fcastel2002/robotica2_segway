@@ -26,7 +26,7 @@ vertical. El mecanismo tiene un solo grado de libertad, \(\theta\).
 
 Lo que cambia de una situación a otra no es el mecanismo sino \emph{qué está quieto}. En un banco de pruebas,
 con la cabina amurada, el servo mueve la rueda. Con el robot parado, la rueda apoya en el piso y el servo
-mueve la cabina, que pesa cuatro veces más. En el aire no hay nada quieto. Son tres dinámicas distintas con
+mueve la cabina, que pesa casi cuatro veces más. En el aire no hay nada quieto. Son tres dinámicas distintas con
 la misma geometría, y se obtienen todas de una sola ecuación cambiando un único vector.
 
 \section{Notación y parámetros}
@@ -40,7 +40,7 @@ hacia la derecha del dibujo (hacia atrás del robot), \(y\) hacia arriba. Los á
 \toprule
 Símbolo & Qué es & Valor \\
 \midrule
-\(AB,\;AD,\;BC,\;CD,\;DP\) & largos de las barras & 100, 140, 135, 51, 140 mm \\
+\(AB,\;AD,\;BC,\;CD,\;DP\) & largos de las barras & 80, 112, 108, 40.8, 112 mm \\
 \(45^\circ\) & inclinación de la bancada \(AB\) respecto de la horizontal & \\
 \(\delta\) & ángulo del acoplador en \(D\), de \(D\!\to\!C\) a \(D\!\to\!P\) & \(164^\circ\) \\
 \(R_w\) & radio de la rueda & 33 mm \\
@@ -49,15 +49,15 @@ Símbolo & Qué es & Valor \\
 \(\alpha_1,\;\alpha_2\) & ángulos en \(D\): \(\angle ADB\), \(\angle BDC\) & \\
 \(\psi\) & giro del acoplador: dirección de \(D\!\to\!C\) & \\
 \(d_Q,\;\varepsilon_Q\) & un punto \(Q\) del acoplador: distancia desde \(D\) y ángulo desde \(D\!\to\!C\) & \\
-\(m_{AD},\;m_{BC},\;m_{CDP}\) & masa de cada pieza de la pata & 29, 7, 19.5 g \\
-\(m_P\) & rueda + motor colgados de \(P\) & 30 + 95 = 125 g \\
-\(m_c\) & \textbf{cabina}: cabeza, tapa, servos, batería, electrónica, tornillería & 671 g \\
-\(m\) & masa del robot, \(m=m_c+n\,(m_{AD}+m_{BC}+m_{CDP}+m_P)\) & 1032 g \\
+\(m_{AD},\;m_{BC},\;m_{CDP}\) & masa de cada pieza de la pata & 23.2, 5.6, 15.6 g \\
+\(m_P\) & rueda + motor colgados de \(P\) & 30 + 152 = 182 g \\
+\(m_c\) & \textbf{cabina}: cabeza, tapa, servos, batería, electrónica, tornillería & 667 g \\
+\(m\) & masa del robot, \(m=m_c+n\,(m_{AD}+m_{BC}+m_{CDP}+m_P)\) & 1120 g \\
 \(n\) & patas iguales, movidas a la vez por sus \(n\) servos & 2 \\
 \(AG,\;BG\) & distancia de \(A\) a \(G_{AD}\) y de \(B\) a \(G_{BC}\) & \(0.428\,AD\), \(0.5\,BC\) \\
 \(d_G,\;\varepsilon_G\) & posición de \(G_{CDP}\) desde \(D\) (sobre la recta \(D\!\to\!P\)) & \(0.3145\,DP\), \(\delta\) \\
-\(I_{AD},I_{BC},I_{CDP}\) & inercia de cada pieza respecto de \emph{su propio} centro de masa & 7.1, 1.7, 6.4 \(\cdot10^{-5}\) kg\,m\(^2\) \\
-\(\tau\) & par de un servo sobre su manivela, positivo en el sentido en que crece \(\theta\) & \(\le 21\) kg\,cm \\
+\(I_{AD},I_{BC},I_{CDP}\) & inercia de cada pieza respecto de \emph{su propio} centro de masa & 3.6, 0.9, 3.3 \(\cdot10^{-5}\) kg\,m\(^2\) \\
+\(\tau\) & par de un servo sobre su manivela, positivo en el sentido en que crece \(\theta\) & \(\le 40\) kg\,cm \\
 \(N\) & reacción del piso sobre una rueda, hacia arriba & \\
 \(b\) & fricción viscosa en el eje del servo & \\
 \bottomrule
@@ -68,8 +68,8 @@ Todo se escribe \textbf{por servo}: las \(n\) patas se mueven juntas, así que l
 entre los \(n\) servos y por eso la cabina aparece como \(m_c/n\). El ángulo interior en \(A\) entre \(AB\) y
 \(AD\) es \(\theta+45^\circ\); el ángulo absoluto del servo que usa la cinemática es \(360^\circ-\theta\).
 De la cabina solo hace falta la masa, no dónde está su centro de masa, porque no gira: se supone que el
-control de equilibrio mantiene la inclinación del robot mientras la pata se mueve. Las masas e inercias son
-estimaciones del CAD; se reemplazan pesando las piezas impresas. Todos los valores están en la sección 1 de
+control de equilibrio mantiene la inclinación del robot mientras la pata se mueve. Las masas e inercias de las barras son
+las de la primera iteración del CAD escaladas a 80; el motor y el servo, los de sus fichas. Todo se reemplaza pesando. Todos los valores están en la sección 1 de
 \texttt{dinamica\_pata.m}.
 
 \begin{landscape}
@@ -259,15 +259,15 @@ Una sola fórmula para los tres casos: se reemplaza \(u\) por \eqref{eq:ubanco},
 \toprule
 Caso & Término dominante & Por qué \\
 \midrule
-Banco, \(u=0\) & \(m_P\,|c_P|^2\) & el servo acelera la rueda y el motor, 125 g \\
-Parado, \(u=-c_P\) & \(\dfrac{m_c}{n}\,|c_P|^2\) & la rueda está quieta y el servo acelera media cabina, 336 g \\
+Banco, \(u=0\) & \(m_P\,|c_P|^2\) & el servo acelera la rueda y el motor, 182 g \\
+Parado, \(u=-c_P\) & \(\dfrac{m_c}{n}\,|c_P|^2\) & la rueda está quieta y el servo acelera media cabina, 334 g \\
 En el aire & ninguno domina & la cabina retrocede y el conjunto se reparte el movimiento \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Parado, el término de \(m_P\) desaparece por completo (la rueda no se traslada) y lo reemplaza uno con casi
-tres veces más masa. Ese es el motivo de que la inercia vista por el servo sea 2.6 veces mayor que en el banco.
+el doble de masa. Ese es el motivo de que la inercia vista por el servo sea 1.85 veces mayor que en el banco.
 
 \section{Energía potencial}
 
@@ -344,39 +344,39 @@ Si \(N\) llega a cero el robot despega, y a partir de ahí vale el caso (c).
 
 \section{Valores numéricos}
 
-Con los parámetros de la tabla, \(n=2\), y \(N=m\,g/2=5.06\) N para el par estático del banco:
+Con los parámetros de la tabla, \(n=2\), y \(N=m\,g/2=5.49\) N para el par estático del banco:
 
 \begin{center}\small
 \begin{tabular}{lrrr}
 \toprule
  & \(\theta=10^\circ\) (plegada) & \(\theta=25^\circ\) & \(\theta=40^\circ\) (estirada) \\
 \midrule
-Altura de la cabina \(h=R_w-y_P\) [mm] & 79.5 & 151.6 & 213.2 \\
+Altura de la cabina \(h=R_w-y_P\) [mm] & 70.2 & 127.9 & 177.2 \\
 \(\beta'\), \(\psi'\) [rad/rad] & \(-0.703\), \(1.260\) & \(-0.950\), \(0.964\) & \(-1.161\), \(1.120\) \\
-\(y_P'\) [mm/rad] & \(-312\) & \(-249\) & \(-227\) \\
+\(y_P'\) [mm/rad] & \(-250\) & \(-199\) & \(-182\) \\
 \midrule
-\(I_{eq}\) banco [g\,m\(^2\)] & 13.20 & 8.60 & 7.26 \\
-\(I_{eq}\) parado [g\,m\(^2\)] & \textbf{35.51} & \textbf{22.55} & \textbf{19.07} \\
-\(I_{eq}\) en el aire [g\,m\(^2\)] & 9.32 & 6.04 & 5.17 \\
-parado / banco & 2.69 & 2.62 & 2.63 \\
+\(I_{eq}\) banco [g\,m\(^2\)] & 11.86 & 7.66 & 6.43 \\
+\(I_{eq}\) parado [g\,m\(^2\)] & \textbf{22.24} & \textbf{14.13} & \textbf{11.92} \\
+\(I_{eq}\) en el aire [g\,m\(^2\)] & 7.56 & 4.86 & 4.13 \\
+parado / banco & 1.87 & 1.84 & 1.85 \\
 \midrule
-\(\tau_{est}\) banco con \(N=m g/2\) [kg\,cm] & 11.62 & 9.23 & 8.44 \\
-\(\tau_{est}\) parado [kg\,cm] & 11.62 & 9.23 & 8.44 \\
+\(\tau_{est}\) banco con \(N=m g/2\) [kg\,cm] & 9.06 & 7.20 & 6.58 \\
+\(\tau_{est}\) parado [kg\,cm] & 9.06 & 7.20 & 6.58 \\
 \(\tau_{est}\) en el aire [kg\,cm] & 0 & 0 & 0 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Lecturas. El par estático es idéntico en los dos primeros casos, como anticipa \eqref{eq:tau_est}, y nulo en
-el tercero, como anticipa \eqref{eq:dV}. Parado, cada servo sostiene hasta 11.6 kg\,cm contra los 21 kg\,cm
-nominales del DS3225MG. La inercia del caso parado es 2.6 veces la del banco, así que un modelo hecho con la
-cabina fija subestima casi tres veces el par de aceleración: da igual en maniobras lentas y no da igual al
+el tercero, como anticipa \eqref{eq:dV}. Parado, cada servo sostiene hasta 9.1 kg\,cm contra los 40 kg\,cm
+nominales del servo elegido. La inercia del caso parado es 1.85 veces la del banco, así que un modelo hecho con la
+cabina fija subestima casi al doble el par de aceleración: da igual en maniobras lentas y no da igual al
 plegarse rápido o al aterrizar.
 
 \textbf{Agacharse y pararse} (sección 3 de \texttt{dinamica\_pata.m}): de \(40^\circ\) a \(10^\circ\) y de
-vuelta, en 0.6 s cada tramo, con el robot de pie. El par pico llega a 16.2 kg\,cm, dentro de los 21
-disponibles, y la normal por rueda baja de 5.06 N a 1.40 N en el tramo de bajada. El robot no despega, pero
-queda a menos de una tercera parte de su peso de apoyo: en una maniobra más rápida despegaría, y ahí hay que
+vuelta, en 0.6 s cada tramo, con el robot de pie. El par pico llega a 11.7 kg\,cm, dentro de los 40
+disponibles, y la normal por rueda baja de 5.49 N a 1.92 N en el tramo de bajada. El robot no despega, pero
+queda en poco más de una tercera parte de su peso de apoyo: en una maniobra más rápida despegaría, y ahí hay que
 pasar al caso (c).
 
 \section{Caída de un escalón}
@@ -458,32 +458,32 @@ h_{max}=h\;\frac{\tau_{max}\,\Delta\theta-\Delta V}{K^{+}(h)} .
  & Valor & \\
 \midrule
 Tiempo de caída, velocidad al tocar & 192 ms, 1.88 m/s & \eqref{eq:caida} \\
-Velocidad de plegado tras el golpe & 8.4 rad/s = 479\(^\circ\)/s & \eqref{eq:dthimp} \\
-Energía por servo, antes \(\to\) después del golpe & 0.911 \(\to\) 0.663 J & \eqref{eq:Kimp} \\
-Energía que suma la gravedad al plegar, \(\Delta V\) & 0.487 J & \eqref{eq:Eabs} \\
-Energía a disipar por servo, \(E_{abs}\) & 1.149 J & \eqref{eq:Eabs} \\
-\textbf{Par medio necesario} \(\bar\tau\) & \textbf{2.20 N\,m = 22.4 kg\,cm} & \eqref{eq:taumedio} \\
-Par disponible (DS3225MG) & 21 kg\,cm & \\
-Escalón máximo absorbible \(h_{max}\) & 16 cm & \eqref{eq:hmax} \\
-Fuerza contra el piso mientras el servo frena & 10 N por rueda, 2.0 veces la estática & \eqref{eq:N} \\
+Velocidad de plegado tras el golpe & 10.4 rad/s = 597\(^\circ\)/s & \eqref{eq:dthimp} \\
+Energía por servo, antes \(\to\) después del golpe & 0.989 \(\to\) 0.645 J & \eqref{eq:Kimp} \\
+Energía que suma la gravedad al plegar, \(\Delta V\) & 0.380 J & \eqref{eq:Eabs} \\
+Energía a disipar por servo, \(E_{abs}\) & 1.024 J & \eqref{eq:Eabs} \\
+\textbf{Par medio necesario} \(\bar\tau\) & \textbf{1.96 N\,m = 19.9 kg\,cm} & \eqref{eq:taumedio} \\
+Par disponible (servo elegido) & 40 kg\,cm & \\
+Escalón máximo absorbible \(h_{max}\) & 47 cm & \eqref{eq:hmax} \\
+Fuerza contra el piso mientras el servo frena & 23 N por rueda, 4.3 veces la estática & \eqref{eq:N} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\textbf{Con 18 cm no alcanza.} Hacen falta 22.4 kg\,cm contra los 21 del servo, así que la pata llega al tope
-de plegado todavía a 2.0 rad/s, con el 11 por ciento de la energía del golpe sin disipar. Esos 0.074 J por
-rueda se los come el neumático: con la rigidez supuesta de 30 kN/m se hunde 2.2 mm y recibe 67 N, trece veces
-la carga estática. El límite de este servo queda en 16 cm.
+\textbf{Con 18 cm alcanza, y sobra.} Hacen falta 19.9 kg\,cm contra los 40 del servo: frenando a fondo, la pata
+se detiene en 39 ms usando \(11.4^\circ\) de los \(30^\circ\) de carrera, sin llegar al tope. El límite teórico de este
+servo es un escalón de 47 cm, aunque mucho antes el problema deja de ser el servo y pasa a ser la estructura:
+a 40 kg\,cm el eje del servo ve 93 N durante el frenado (sección 6 de \texttt{dinamica\_pata.m}).
 
-Dos números más que conviene mirar. La pata se pliega a \(479^\circ\)/s, más rápido que la velocidad en vacío
+Dos números más que conviene mirar. La pata se pliega a \(597^\circ\)/s, más rápido que la velocidad en vacío
 del propio servo, que ronda los \(400^\circ\)/s: en el aterrizaje el servo no manda, lo manda el golpe, y solo
-puede frenar. Y mientras el servo frena, la fuerza contra el piso se queda en dos veces la carga estática, o
-sea que la pata cumple bien su función de suspensión; el pico grande aparece recién al tocar el tope.
+puede frenar. Y el golpe se lleva el 35 por ciento de la energía: es el momento de la rueda y el motor (182 g), que
+se detienen de golpe contra el piso. Ese instante, y no el frenado, es el que más carga la estructura: el
+neumático recibe unos 144 N (26 veces la carga estática) y el eje del servo, del orden de 460 N.
 
-Para bajar los 18 cm hay cuatro caminos, de menor a mayor cambio: limitar el escalón a 15 cm; agregar el
-elemento elástico en serie del documento de dimensionamiento, que alarga la carrera efectiva sin pedirle más
-par al servo; usar un neumático más blando, que baja el pico del tope pero no el par medio; o pasar a un servo
-de más par.
+Ese pico del toque no depende del servo sino de la masa que cuelga de \(P\): con el motor en la rueda (152 de
+los 182 g) el golpe se lleva el 35 por ciento de la energía; con el motor en la cabina y transmisión por correa se
+llevaría del orden del 10. Es la decisión de diseño que más cambia la carga sobre los pasadores y el neumático.
 
 \section{Alcance}
 
@@ -503,7 +503,7 @@ acoplamiento entre la pata y la altura de la cabina.
 \item \texttt{dinamica\_pata.m}: script de MATLAB con toda la dinámica. Sección 1: los parámetros de la tabla,
   para editar. Sección 2: los tres casos, tabla y curvas. Sección 3: simulación de agacharse y pararse con la
   normal del piso. Sección 4: verificación contra los diagramas de cuerpo libre. Sección 5: caída de un
-  escalón, con la altura en la variable 	exttt{h\_escalon}. Las funciones
+  escalón, con la altura en la variable \texttt{h\_escalon}. Sección 6: fuerza radial en el eje del servo. Las funciones
   \texttt{terminos(theta, p, caso)} (ecuaciones \eqref{eq:BD} a \eqref{eq:dV}) y
   \texttt{f\_pata(t, x, tau, N, p, caso)} (ecuación \eqref{eq:estado}) están al final del archivo. El caso se
   elige con la cadena \texttt{'banco'}, \texttt{'parado'} o \texttt{'aire'}.

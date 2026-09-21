@@ -8,7 +8,7 @@ function G = parametros_geometria()
   estaba = contains([path pathsep], [carpeta pathsep]);
   if ~estaba, addpath(carpeta); end
   limpieza = onCleanup(@() quitar_path_si_corresponde(carpeta, estaba));
-  o = parametros_fisicos('corregido');
+  o = parametros_fisicos();
   G.AB = o.AB;
   G.beta = o.ang_AB;
   G.AD = o.k_AD*o.s_barras;

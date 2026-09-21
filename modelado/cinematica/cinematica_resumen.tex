@@ -37,18 +37,22 @@ antihorarios desde \(+x\).
 \toprule
 Símbolo & Qué es & Valor CAD & Pieza \\
 \midrule
-\(AB\) & bancada: distancia entre los pivotes \(A\) y \(B\) de la cabina & 100 mm & \texttt{cabeza\_v31} \\
+\(AB\) & bancada: distancia entre los pivotes \(A\) y \(B\) de la cabina & 80 mm & \texttt{cabeza\_v31} \\
 \(\beta\) & ángulo de \(A\!\to\!B\) desde \(+x\) & \(45^\circ\) & \texttt{cabeza\_v31} \\
-\(AD\) & manivela (la mueve el servo) & 140 mm & \texttt{eslabon\_AD} \\
-\(BC\) & balancín & 135 mm & \texttt{eslabon\_BC} \\
-\(CD\) & acoplador, tramo \(C\)--\(D\) & 51 mm & \texttt{eslabon\_CDP} \\
-\(DP\) & acoplador, tramo \(D\)--\(P\) (hasta el eje de rueda) & 140 mm & \texttt{eslabon\_CDP} \\
+\(AD\) & manivela (la mueve el servo) & 112 mm & \texttt{eslabon\_AD\_v2} \\
+\(BC\) & balancín & 108 mm & \texttt{eslabon\_BC} \\
+\(CD\) & acoplador, tramo \(C\)--\(D\) & 40.8 mm & \texttt{eslabon\_CDP\_v2} \\
+\(DP\) & acoplador, tramo \(D\)--\(P\) (hasta el eje de rueda) & 112 mm & \texttt{eslabon\_CDP\_v2} \\
 \(\delta\) & ángulo del acoplador en \(D\), de \(D\!\to\!C\) a \(D\!\to\!P\) & \(164^\circ\) (plano: \(16^\circ\)) & \texttt{eslabon\_CDP} \\
 \(\theta\) & ángulo del servo: dirección de \(A\!\to\!D\) desde \(+x\) & \(320^\circ\) a \(350^\circ\) & servo en \(A\) \\
 \(R_w\) & radio de rueda & 33 mm & \texttt{wheel} \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+Cotas de la segunda iteración del CAD (\texttt{diseño\_mecanico/segunda\_iteracion}, STEP del 14/9/2026), medidas sobre
+los STEP de cada pieza y del ensamble. La bancada se toma como 80 mm a \(45^\circ\), que es la intención del diseño; en
+el STEP \(B\) está a 77.9 mm y \(46.6^\circ\) de \(A\) (a la altura justa, 3 mm corto en horizontal), pendiente de corregir.
 
 Variables intermedias que aparecen en la deducción: \(BD\) (diagonal), \(\alpha_{DB}\) (dirección de
 \(D\!\to\!B\)), \(\gamma\) (ángulo en \(D\) del triángulo \(BDC\)), \(\theta_{DC}\), \(\theta_{DP}\)
@@ -144,9 +148,9 @@ Con los valores del CAD, ecuación~\eqref{eq:final} evaluada en tres puntos del 
 \toprule
 \(\theta\) & \(BD\) & \(\alpha_{DB}\) & \(\gamma\) & \(\theta_{DC}\) & \(D\) & \(C\) & \(P\) & \(z_A\) \\
 \midrule
-320 & 164.8 & 102.8 & 46.7 & 56.1 & (107.3, \(-90.0\)) & (135.7, \(-47.6\)) & (0.2, \(-180.3\)) & 213.2 \\
-335 & 141.5 & 113.4 & 72.3 & 41.1 & (126.9, \(-59.2\)) & (165.3, \(-25.6\)) & (0.1, \(-118.6\)) & 151.6 \\
-350 & 116.4 & 125.3 & 100.1 & 25.1 & (137.9, \(-24.3\)) & (184.0, \(-2.6\)) & (\(-0.3\), \(-46.6\)) & 79.5 \\
+320 & 131.8 & 102.8 & 46.7 & 56.1 & (85.8, \(-72.0\)) & (108.5, \(-38.1\)) & (0.2, \(-144.2\)) & 177.2 \\
+335 & 113.2 & 113.4 & 72.3 & 41.1 & (101.5, \(-47.3\)) & (132.2, \(-20.5\)) & (0.1, \(-94.9\)) & 127.9 \\
+350 & 93.1 & 125.3 & 100.1 & 25.1 & (110.3, \(-19.4\)) & (147.2, \(-2.1\)) & (\(-0.3\), \(-37.2\)) & 70.2 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -155,12 +159,13 @@ Con los valores del CAD, ecuación~\eqref{eq:final} evaluada en tres puntos del 
 \item Las longitudes \(|AD|,|BC|,|CD|,|DP|\) recalculadas desde los puntos coinciden con las cotas con
 error menor que \(10^{-12}\) mm, y la ecuación~\eqref{eq:final} coincide con la construcción por
 intersección de circunferencias del script del grupo con error menor que \(10^{-12}\) mm.
-\item En todo el recorrido \(BD\in[116,\,165]\) mm, dentro de \([\,|BC-CD|,\,BC+CD\,]=[84,\,186]\) mm:
+\item En todo el recorrido \(BD\in[93,\,132]\) mm, dentro de \([\,|BC-CD|,\,BC+CD\,]=[67,\,149]\) mm:
 el mecanismo cierra siempre. El ángulo de transmisión en \(C\) va de \(63^\circ\) a \(58^\circ\)
 (mayor que \(40^\circ\): sin riesgo de trabarse).
-\item Carrera del eje de rueda entre \(320^\circ\) y \(350^\circ\): \(133.7\) mm vertical, con un desvío
-horizontal de sólo \(0.6\) mm. Con \(AB=100\) mm a \(45^\circ\) el mecanismo hace la línea recta
-para la que fue diseñado (con la bancada anterior, de 80 mm a \(47.5^\circ\), el desvío era de 9 mm).
+\item Carrera del eje de rueda entre \(320^\circ\) y \(350^\circ\): \(107.0\) mm vertical, con un desvío
+horizontal de sólo \(0.5\) mm. Con la bancada a escala con las barras (\(AB=80\) mm a \(45^\circ\)) el mecanismo
+hace la línea recta para la que fue diseñado (en la primera iteración, con barras de escala 100 y bancada de
+80 mm a \(47.5^\circ\), el desvío era de 9 mm).
 \end{itemize}
 
 \section{Revisión de la cinemática que estaba en \texttt{modelado/cinematica}}
@@ -187,8 +192,8 @@ reales del CAD y el radio de rueda de 33 mm (antes 37,5 mm).
 
 \subsection*{Archivos}
 \begin{itemize}[nosep]
-\item \texttt{modelado/geometria\_robot.png} (y \texttt{.py}): figura de la geometría con nombres y valores.
-\item \texttt{modelado/cinematica/parametros\_geometria.m}: las cotas (única fuente).
+\item \texttt{modelado/geometria/geometria\_robot.png} (y \texttt{.py}): figura de la geometría con nombres y valores.
+\item \texttt{modelado/cinematica/parametros\_geometria.m}: las cotas, leídas de \texttt{modelado/parametros/parametros\_fisicos.m} (la única fuente).
 \item \texttt{modelado/cinematica/cinematica\_directa.m}: ecuaciones \eqref{eq:BD} a \eqref{eq:final}.
 \item \texttt{modelado/cinematica/cinematica\_inversa.m}: \(\theta\) para una altura dada (bisección).
 \item \texttt{modelado/cinematica/verificar\_cinematica\_4barras.m}: la animación del grupo, usando lo anterior.

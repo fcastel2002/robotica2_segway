@@ -8,19 +8,21 @@ function setupOnce(tc)
   tc.TestData.repo = fileparts(fileparts(tc.TestData.dinamica));
   addpath(tc.TestData.dinamica);
   addpath(fullfile(tc.TestData.repo, 'modelado', 'cinematica'));
-  addpath(fullfile(tc.TestData.repo, 'simulacion', 'planta_v2'));
+  addpath(fullfile(tc.TestData.repo, 'modelado', 'parametros'));
 end
 
 function test_fuente_comun_de_parametros(tc)
-  p = parametros_dinamica_pata('corregido');
-  P = parametros_robot('corregido');
+  p = parametros_dinamica_pata();
+  o = parametros_fisicos();
   G = parametros_geometria();
-  tc.verifyEqual(p.m_total, P.m.total, 'AbsTol', 1e-12);
-  tc.verifyEqual(p.tau_max, P.servo.tau_max, 'AbsTol', 1e-12);
+  m_total = (o.m_cabina + o.m_tapa + 2*o.m_servo + o.m_bateria + o.m_electronica + o.m_tornilleria ...
+             + o.m_carga + o.n_servos*(o.m_AD + o.m_BC + o.m_CDP + o.m_rueda + o.m_motor))*1e-3;
+  tc.verifyEqual(p.m_total, m_total, 'AbsTol', 1e-12);
+  tc.verifyEqual(p.tau_max, o.tau_s_max, 'AbsTol', 1e-12);
   tc.verifyEqual([p.AB p.AD p.BC p.CD p.DP]*1e3, ...
     [G.AB G.AD G.BC G.CD G.DP], 'AbsTol', 1e-12);
   tc.verifyEqual(rad2deg(p.a45), G.beta, 'AbsTol', 1e-12);
-  tc.verifyEqual(p.m_total, 1.032, 'AbsTol', 1e-12);
+  tc.verifyEqual(p.m_total, 1.1198, 'AbsTol', 1e-9);   % segunda iteracion: cabina 667 g + 2 patas de 226.4 g
 end
 
 function test_cierre_y_cinematica_independiente(tc)

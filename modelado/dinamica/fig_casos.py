@@ -10,7 +10,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon, Circle, FancyArrowPatch
 
-AB, AD, BC, CD, DP = 100.0, 140.0, 135.0, 51.0, 140.0
+AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0
 A45, DELTA, THETA, Rw = math.radians(45), math.radians(164), math.radians(25), 33.0
 CAB = dict(cx=-18.5, fondo=142.0, bajo_A=29.0, alto=104.5)          # cabina como en ../geometria/geometria_robot.py
 NEGRO, GRIS, AZULC, NARANJA, VIOLETA, VERDE, ROJO, VERDE2 = "#1a1a1a", "#8a8a8a", "#1f5fa8", "#d9531e", "#7b2d8e", "#2e8b3a", "#c62828", "#1b5e20"

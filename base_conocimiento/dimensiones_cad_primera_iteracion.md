@@ -1,5 +1,10 @@
 # Dimensiones y propiedades másicas del CAD — `primera_iteracion` (2026-09-02)
 
+> **Nota (19/9/2026):** las cotas de este documento son de la primera iteración y quedaron superadas por
+> `diseño_mecanico/segunda_iteracion` (barras a escala 80: AD 112, BC 108, CD 40,8, DP 112; ver
+> `diseño_mecanico/README.md`). Las masas, centros de masa e inercias de las secciones 6 y 7 siguen siendo la
+> única fuente disponible; `modelado/parametros/parametros_fisicos.m` las escala a 80.
+
 Fuente: `diseño_mecanico/primera_iteracion/completo.STEP` (SolidWorks 2026, AP203).
 Método: parseo del STEP (posiciones de ensamble y centros de agujeros) + mallado tetraédrico en
 MATLAB R2023b (`importGeometry` + `generateMesh`) para volumen, centroide e inercia de cada pieza.

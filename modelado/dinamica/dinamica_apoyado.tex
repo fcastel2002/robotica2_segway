@@ -25,7 +25,7 @@
 
 El robot está de pie sobre sus dos ruedas. El servo gira la manivela y, como la rueda apoya en el piso y no
 se puede mover, lo que sube y baja es la cabina. Este es el caso que hay que resolver para saber qué par
-necesita el servo: es el que tiene la masa de verdad, porque la cabina pesa cuatro veces más que la rueda.
+necesita el servo: es el que tiene la masa de verdad, porque la cabina pesa casi cuatro veces más que la rueda.
 
 Hay un solo grado de libertad, \(\theta\) (el ángulo del servo), y el camino es el de siempre: ángulos,
 posiciones, velocidades, \(K\), \(U\), Lagrange. Lo que hay que mirar con cuidado es el paso de las
@@ -48,11 +48,11 @@ entre los dos.
 \midrule
 \multicolumn{2}{l}{\textbf{Las barras} (datos fijos del CAD)}\\
 \midrule
-\(AB\) & bancada, del eje del servo \(A\) al pivote \(B\). 100 mm, inclinada \(45^\circ\) \\
-\(AD\) & manivela, la que mueve el servo. 140 mm \\
-\(BC\) & balancín. 135 mm \\
-\(CD\) & lado del acoplador que va a \(C\). 51 mm \\
-\(DP\) & lado del acoplador que va al eje de la rueda \(P\). 140 mm \\
+\(AB\) & bancada, del eje del servo \(A\) al pivote \(B\). 80 mm, inclinada \(45^\circ\) \\
+\(AD\) & manivela, la que mueve el servo. 112 mm \\
+\(BC\) & balancín. 108 mm \\
+\(CD\) & lado del acoplador que va a \(C\). 40.8 mm \\
+\(DP\) & lado del acoplador que va al eje de la rueda \(P\). 112 mm \\
 \(\delta\) & ángulo del acoplador en \(D\), entre \(DC\) y \(DP\). \(164^\circ\) \\
 \(R_w\) & radio de la rueda. 33 mm \\
 \midrule
@@ -81,9 +81,9 @@ entre los dos.
 \midrule
 \multicolumn{2}{l}{\textbf{Las masas y las inercias}}\\
 \midrule
-\(m_{AD},\,m_{BC},\,m_{CDP}\) & masa de la manivela, del balancín y del acoplador. 29, 7 y 19.5 g \\
-\(m_P\) & rueda más motor, que cuelgan de \(P\). 125 g \\
-\(m_c\) & masa de la cabina, o sea todo lo que no es pata. 671 g \\
+\(m_{AD},\,m_{BC},\,m_{CDP}\) & masa de la manivela, del balancín y del acoplador. 23.2, 5.6 y 15.6 g \\
+\(m_P\) & rueda más motor, que cuelgan de \(P\). 182 g \\
+\(m_c\) & masa de la cabina, o sea todo lo que no es pata. 667 g \\
 \(n\) & cantidad de patas. 2 \\
 \(I_{AD},\,I_{BC},\,I_{CDP}\) & inercia de cada pieza respecto de \emph{su propio} centro de masa \\
 \midrule
@@ -177,8 +177,8 @@ c_{G_{AD}}&=-\,\mathbf{k}\times G_{AD}, & &\text{la manivela gira alrededor de }
 c_{G_{BC}}&=\beta'\,\mathbf{k}\times(G_{BC}-B), & &\text{el balancín gira alrededor de } B \text{ a } \beta'\dot\theta; \label{eq:cBC}\\
 c_Q&=c_D+\psi'\,\mathbf{k}\times(Q-D), & &\text{el acoplador, para } Q=P \text{ o } Q=G_{CDP}. \label{eq:cCDP}
 \end{align}
-El más grande es \(c_P\) (el del eje de la rueda): en \(\theta=25^\circ\) mide 249 mm/rad, o sea que por cada
-radián que gira el servo la rueda se aleja 249 mm de la cabina. Panel (b) de la figura.
+El más grande es \(c_P\) (el del eje de la rueda): en \(\theta=25^\circ\) mide 199 mm/rad, o sea que por cada
+radián que gira el servo la rueda se aleja 199 mm de la cabina. Panel (b) de la figura.
 
 \textbf{Ahora, desde el piso.} Llamamos \(u\) a la velocidad de la cabina por cada rad/s del servo. Como la
 cabina solo se traslada, la velocidad de cualquier punto \(Q\) de la pata vista desde el piso es la de la
@@ -249,7 +249,7 @@ I_{eq}(\theta)={}&I_{AD}+I_{BC}\,\beta'^2+I_{CDP}\,\psi'^2\\
 \end{equation}
 \(I_{eq}\) (la inercia equivalente) es lo que el servo siente en su eje. Depende de \(\theta\) porque las
 relaciones de transmisión \(\beta'\) y \(\psi'\) y el vector \(c_P\) cambian con la posición. El último
-término, el de la cabina, es casi el 90 por ciento del total.
+término, el de la cabina, es el 93 por ciento del total.
 
 \section{Paso 5: la energía potencial \(U\)}
 
@@ -363,7 +363,7 @@ Y para simular, despejando la aceleración, con el estado \(x=(\theta,\dot\theta
 \toprule
 \textbf{En \(K\)} & \\
 \midrule
-Entró la cabina & \(\tfrac12(m_c/n)|c_P|^2\dot\theta^2\). Es el término más grande, casi el 90 por ciento de
+Entró la cabina & \(\tfrac12(m_c/n)|c_P|^2\dot\theta^2\). Es el término más grande, el 93 por ciento de
   \(I_{eq}\). No estás subiendo la rueda, estás subiendo la cabina \\
 Salió la rueda & el término de \(m_P\) desaparece: con la rueda apoyada, \(P\) no se traslada \\
 Cambió la referencia & las velocidades pasan de \(c_Q\) a \(c_Q-c_P\): todo se mide respecto de \(P\) \\
@@ -398,11 +398,11 @@ Con los valores de la tabla de la sección 2, y \(n=2\):
 \toprule
  & \(\theta=10^\circ\) (plegada) & \(\theta=25^\circ\) & \(\theta=40^\circ\) (estirada) \\
 \midrule
-Altura de la cabina \(h\) [mm] & 79.5 & 151.6 & 213.2 \\
+Altura de la cabina \(h\) [mm] & 70.2 & 127.9 & 177.2 \\
 \(\beta'\), \(\psi'\) [rad/rad] & \(-0.703\), \(1.260\) & \(-0.950\), \(0.964\) & \(-1.161\), \(1.120\) \\
-\(|c_P|=|y_P'|\) [mm/rad] & 312 & 249 & 227 \\
-\(I_{eq}\) [g\,m\(^2\)] & 35.51 & 22.55 & 19.07 \\
-\(\tau_{est}=U'\) [kg\,cm] & 11.62 & 9.23 & 8.44 \\
+\(|c_P|=|y_P'|\) [mm/rad] & 250 & 199 & 182 \\
+\(I_{eq}\) [g\,m\(^2\)] & 22.24 & 14.13 & 11.92 \\
+\(\tau_{est}=U'\) [kg\,cm] & 9.06 & 7.20 & 6.58 \\
 \midrule
 Factor de \(b_C\) en \(b_{eq}\) & 3.85 & 3.66 & 5.20 \\
 Factor de \(b_D\) en \(b_{eq}\) & 5.11 & 3.86 & 4.49 \\
@@ -410,8 +410,8 @@ Factor de \(b_D\) en \(b_{eq}\) & 5.11 & 3.86 & 4.49 \\
 \end{tabular}
 \end{center}
 
-La postura más exigente es la plegada: ahí el brazo \(|c_P|\) es máximo y el servo tiene que dar 11.6 kg\,cm
-solo para sostener el robot quieto, contra los 21 kg\,cm del DS3225MG. La inercia también es máxima ahí, casi
+La postura más exigente es la plegada: ahí el brazo \(|c_P|\) es máximo y el servo tiene que dar 9.1 kg\,cm
+solo para sostener el robot quieto, contra los 40 kg\,cm del servo elegido. La inercia también es máxima ahí, casi
 el doble que estirada.
 
 \section{Qué no incluye este modelo}
@@ -425,7 +425,7 @@ Tampoco vale mientras el robot está en el aire, porque ahí la rueda no está q
 y el de la pata en un banco con la cabina amurada, están en \texttt{dinamica\_resumen.pdf} junto con el
 cálculo de la caída de un escalón.
 
-Las masas y las inercias son estimaciones del CAD, y las cuatro fricciones son cero. Los dos pendientes de
+Las masas y las inercias son estimaciones (la primera iteración del CAD escalada a 80, y las fichas del motor y del servo), y las cuatro fricciones son cero. Los dos pendientes de
 medición son pesar las piezas impresas y hacer el ensayo de caída libre de la pata.
 
 \section{Archivos}
@@ -433,7 +433,7 @@ medición son pesar las piezas impresas y hacer el ensayo de caída libre de la 
 \begin{itemize}
 \item \texttt{dinamica\_pata.m}: sección 1 los parámetros, para editar; sección 2 los tres casos; sección 3 una
   simulación de agacharse y pararse; sección 4 la verificación contra los diagramas de cuerpo libre; sección 5
-  la caída de un escalón. El caso de este documento se elige con la cadena \texttt{'parado'}.
+  la caída de un escalón; sección 6 la fuerza radial en el eje del servo. El caso de este documento se elige con la cadena \texttt{'parado'}.
 \item \texttt{fig\_dinamica.py} \(\to\) \texttt{fig\_dinamica.png}: los ángulos de la sección 3.
 \item \texttt{fig\_apoyado.py} \(\to\) \texttt{fig\_apoyado.png}: las alturas y los coeficientes de velocidad.
 \item \texttt{../cinematica/parametros\_geometria.m}: la geometría, misma fuente para todo el proyecto.

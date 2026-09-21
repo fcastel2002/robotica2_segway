@@ -1,10 +1,10 @@
 function p = parametros_dinamica_pata(variante, varargin)
 %PARAMETROS_DINAMICA_PATA Adapta la fuente física común al modelo reducido en SI.
-%   p = parametros_dinamica_pata() usa el baseline nominal 'corregido'.
+%   p = parametros_dinamica_pata() usa la variante por defecto de parametros_fisicos ('segunda_iteracion').
 %   p = parametros_dinamica_pata(variante, nombre, valor, ...) permite ensayos
 %   sin modificar la fuente; los overrides conservan las unidades de ingeniería
 %   declaradas en parametros_fisicos.m.
-  if nargin < 1 || isempty(variante), variante = 'corregido'; end
+  if nargin < 1 || isempty(variante), variante = 'segunda_iteracion'; end
   carpeta = fullfile(fileparts(mfilename('fullpath')), '..', 'parametros');
   carpeta = char(java.io.File(carpeta).getCanonicalPath());
   estaba = contains([path pathsep], [carpeta pathsep]);
