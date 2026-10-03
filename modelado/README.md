@@ -3,6 +3,7 @@
 Modelo del Segway con patas, ordenado como la checklist de la cátedra: una carpeta por tema. En cada
 carpeta hay a lo sumo tres tipos de archivo: un script de Python que genera la figura (`*.py` → `*.png`),
 el código MATLAB (`*.m`) y un PDF con la deducción (`*.tex` → `*.pdf`).
+El nuevo desarrollo del péndulo invertido se mantiene en Markdown, con ecuaciones y resultados enlazados.
 
 **Geometría vigente: la segunda iteración del CAD (barras a escala 80).** Todo lo de esta carpeta se
 actualizó a esa geometría el 19/9/2026. Los valores viven en `parametros/parametros_fisicos.m`; los
@@ -11,6 +12,7 @@ scripts de Python repiten las cinco cotas al principio porque no leen MATLAB.
 | Carpeta | Qué tiene | Ítem de la checklist que cierra |
 |---|---|---|
 | `parametros/` | `parametros_fisicos.m`: **la única fuente de valores** (geometría, masas, inercias, servo, motor, contacto, sensores). Variante por defecto `segunda_iteracion`; `corregido` es el baseline histórico a escala 100 | Parámetros consolidados |
+| `planta/pendulo_invertido/` | [Desarrollo matemático paso a paso](planta/pendulo_invertido/desarrollo_matematico.md), composición del cuerpo desde las piezas, dinámica no lineal sobre ruedas y linealización A/B. Dos coordenadas (`x`, `phi`), patas fijas en una postura configurable; [script de demostración](../simulacion/pendulo_invertido/SIMULAR_PENDULO_INVERTIDO.m) | Modelo dinámico del equilibrio y avance con patas fijas |
 | `geometria/` | `geometria_robot.png`: el robot de perfil con los nombres de las barras (AB, AD, BC, CD, DP), los ángulos (45°, δ, θ) y las cotas del CAD | Diagrama cinemático y grados de libertad |
 | `cinematica/` | `parametros_geometria.m` (adaptador de la fuente única, en mm y grados), `cinematica_directa.m` (θ → puntos A, B, C, D, P), `cinematica_inversa.m` (altura → θ), `cinematica_resumen.pdf`. Además `verificar_cinematica_4barras.m`, la verificación del grupo (anda sin el toolbox de Corke; si está instalado, además compara con él) | Cinemática directa e inversa |
 | `dcl/` | `dcl_pata.png` (pata parada, θ = 10°, los tres cuerpos separados), `dcl_segway.png` (rueda y cuerpo del péndulo invertido), `dcl_resumen.pdf` con las ecuaciones de equilibrio y el par del servo calculado a mano | Diagramas de cuerpo libre; caso reproducido mediante cálculo manual |
@@ -25,5 +27,7 @@ Hay dos implementaciones de la misma física en `dinamica/`: las funciones local
 (con fricción por pivote, caída de escalón y reacciones) y la API de Matías (más simple, con tablas para
 Simulink). Las dos leen los mismos parámetros. Si se cambia una ecuación, cambiarla en las dos.
 
-Siguiente carpeta, en este orden: `planta/` con el robot completo (péndulo invertido sobre ruedas con la
-altura del centro de masa en función de θ, LQR, motores, contacto).
+Desde el 1/10/2026, `planta/pendulo_invertido/` desarrolla el equilibrio con patas fijas. Recalcula el
+centro de masa y la inercia al elegir otra postura. El siguiente paso es la planta conjunta con flexión
+dinámica de patas, motor eléctrico y control; sustituir una altura variable en el modelo reducido no
+incorpora por sí solo ese acoplamiento.

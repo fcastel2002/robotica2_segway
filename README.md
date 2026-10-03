@@ -58,6 +58,11 @@ qué escalón se puede bajar, fuerzas en los pasadores) está en los PDF de `mod
 
 ## 4. Mapa del repositorio
 
+Nuevo el 1/10/2026: [**modelo dinámico del péndulo invertido, desarrollado paso a paso**](modelado/planta/pendulo_invertido/desarrollo_matematico.md).
+Representa el equilibrio y avance con las patas fijas en una postura configurable. La demostración
+en MATLAB está en [`simulacion/pendulo_invertido/`](simulacion/pendulo_invertido/README.md); abrir
+`SIMULAR_PENDULO_INVERTIDO.m` y pulsar Run. La planta conjunta con flexión dinámica sigue pendiente.
+
 | Carpeta | Qué hay | Responsable |
 |---|---|---|
 | [`modelado/`](modelado/) | **El modelo del robot.** Una carpeta por tema: `geometria/` (figura con nombres y cotas), `cinematica/` (θ → posiciones, directa e inversa), `dcl/` (diagramas de cuerpo libre), `dinamica/` (Lagrange de la pata, tres casos, caída de escalón, fuerza en el eje del servo), `parametros/` (la fuente única de valores). Cada tema tiene su PDF con la deducción. Ver [`modelado/README.md`](modelado/README.md) | Joaquín (modelado), Matías (API y `parametros/`) |

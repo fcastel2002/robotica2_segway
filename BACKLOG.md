@@ -1,6 +1,6 @@
 # Backlog persistente — Segway con piernas extensibles
 
-Última actualización: 2026-09-19. Este archivo es la fuente de verdad del trabajo realizado,
+Última actualización: 2026-10-01. Este archivo es la fuente de verdad del trabajo realizado,
 en curso y pendiente. Todo cambio futuro debe actualizar aquí su estado y adjuntar evidencia.
 
 Estados: `HECHO`, `EN CURSO`, `PENDIENTE`, `BLOQUEADO`. Prioridades: `P0` crítica, `P1` alta,
@@ -20,7 +20,12 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 - La comunicación visual se limita a tres PNG estables: último Run, comparativo del barrido y validación
   energética. Las métricas completas permanecen en MATLAB sin generar gráficos auxiliares.
 - `simulacion/planta_v2/` se eliminó el 19/9 por decisión de Joaquín: la planta completa se rehace a mano en
-  `modelado/planta/`. Queda el banco reducido de la pata como única simulación.
+  `modelado/planta/`. Desde el 1/10 se suma el péndulo invertido con patas fijas al banco de la pata.
+- El [péndulo invertido sobre ruedas](modelado/planta/pendulo_invertido/desarrollo_matematico.md) tiene
+  deducción completa, cuerpo equivalente calculado desde las piezas, modelo no lineal y linealización A/B.
+  [Demostración MATLAB](simulacion/pendulo_invertido/SIMULAR_PENDULO_INVERTIDO.m) ejecutada en R2025b:
+  [6/6 grupos físicos aprobados](simulacion/pendulo_invertido/resultados/verificacion.json), cinco archivos
+  sin avisos del analizador; faltan la flexión dinámica, la identificación del motor y el control.
 - MATLAB R2023b Update 6, Simulink 23.2 y los toolboxes necesarios están instalados.
 - Codex usa MATLAB MCP Server v0.13.0 y Simulink Agentic Toolkit 2026.09. La compuerta de librerías
   devuelve `found=false`, `gatePass=true`; `model_overview`, `model_read` y `model_check` funcionan.
@@ -36,6 +41,7 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 
 | ID | Pri. | Estado | Fecha | Tarea | Evidencia / resultado |
 |---|---:|---|---|---|---|
+| PEN-001 | P0 | HECHO | 2026-10-01 | Desarrollar el péndulo invertido sobre ruedas, con patas fijas configurables, deducción paso a paso y script MATLAB legible (Codex) | [Capítulo matemático](modelado/planta/pendulo_invertido/desarrollo_matematico.md), [script](simulacion/pendulo_invertido/SIMULAR_PENDULO_INVERTIDO.m), [corrida](simulacion/pendulo_invertido/resultados/resultado_base.md), [6/6 comprobaciones físicas](simulacion/pendulo_invertido/resultados/verificacion.json); MATLAB R2025b, cinco archivos con 0 avisos; CoM/inercia recalculados para 10°, 25° y 40°; alcance de patas fijas explícito |
 | AUD-001 | P0 | HECHO | 2026-09-14 | Inventariar repositorio, historia y estructura sin leer PDFs directamente | Revisión de archivos fuente `.md`, `.tex` y `.m`; PDFs omitidos según `AGENTS.md` |
 | AUD-002 | P0 | HECHO | 2026-09-14 | Revisar el commit de dinámica de `joacalde` | Commit `c5602f1`: tres casos `banco`, `parado`, `aire`; ecuación de Lagrange, DCL y simulación ODE |
 | AUD-003 | P0 | HECHO | 2026-09-14 | Ejecutar y analizar `dinamica_pata.m` | MATLAB sin errores ni avisos de `checkcode`; 11,62 kg·cm estático, 16,2 kg·cm pico en maniobra |
@@ -66,6 +72,18 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 | FIX-001 | P0 | HECHO | 2026-09-19 | Resolver el conflicto de git commiteado en `dinamica_pata.m` | Restaurado desde el stash `661c39f` (444 líneas, sin marcadores); el demo de Matías quedó en `demo_api_dinamica_pata.m` |
 | LIM-001 | P0 | HECHO | 2026-09-19 | Borrar todo lo anterior al cuatro barras, las plantas descartadas y los duplicados | Corke vendoreado, OneNote, `proof_of_concept`, `4_bar_mechanism`, Hoeken, scripts de síntesis, `informe_planta_v1`, specs, `.codebase-memory`, locks de SolidWorks, primera iteración (salvo STEP y masas), `planta_v2` (su `git rm` lo ejecuta Joaquín: bloqueado por permisos del agente). README raíz y de cada carpeta reescritos |
 | PAR-002 | P0 | HECHO | 2026-09-19 | Pasar todo `modelado/` a la geometría del CAD (escala 80) con el motor y el servo elegidos | 7 figuras regeneradas, 4 PDF recompilados, `dinamica_pata.m` corrido: 9,06 kg·cm estático, 19,9 kg·cm para 18 cm de escalón (límite 47 cm con 40 kg·cm), tests 8/8 y Simulink 4/4 |
+| ELE-001 | P1 | HECHO | 2026-09-22 | Investigar corriente del JGB37-520 y aptitud preliminar del DRV8871 | [Comparación con fichas de fabricante y TI](electronica/seleccion_driver_jgb37_520.md): 12 V/319 rpm ≈ 0,17 A nominales y 1,2 A bloqueado en una variante; 3,6 A del driver son de pico; confirmar bobinado real |
+| ELE-002 | P1 | PENDIENTE | 2026-09-22 | Confirmar la relación del motor elegido y validar driver con medidas eléctricas y térmicas | [Publicación concreta y criterios](electronica/seleccion_driver_jgb37_520.md): 12 V, ≤1 A nominal, 2,3 A bloqueado; anuncio ofrece varias relaciones sin fijar la entregada |
+| ELE-003 | P1 | HECHO | 2026-09-22 | Investigar corriente publicada del servo de 40 kg·cm elegido | [Registro de la publicación y comparación](electronica/servo_40kg_corriente.md): ficha «Genérica / Generic» sin tensión ni corriente; no hay máximo verificable para este producto |
+| ELE-004 | P1 | PENDIENTE | 2026-09-22 | Obtener ficha o medir el servo comprado y dimensionar su alimentación | [Datos pendientes y margen provisional](electronica/servo_40kg_corriente.md); dos servos por robot, medir pico y carga simultánea |
+| ELE-005 | P1 | HECHO | 2026-09-22 | Proponer fusibles de compra para LiPo 3S, motores y BEC | [Cálculo y ubicación](electronica/fusibles_propuesta_inicial.md): 15 A principal, 5 A por motor, 10 A entrada de BEC, sujetos a calibre de cables y corriente de entrada del BEC definitivo |
+| ELE-006 | P1 | HECHO | 2026-09-22 | Revisar conexión INA219 con ESP32 y compatibilidad del carrito | [Conexión, límites y ajustes de compra](electronica/ina219_esp32_y_carrito.md), basados en la [planilla de materiales](Materiales%20-%20Segway%20-%20Robotica%202.xlsx), las capturas y fichas oficiales de TI/Espressif; pendiente de validación física: corriente real y capacidad de los módulos genéricos |
+| ELE-007 | P1 | HECHO | 2026-09-22 | Definir alimentación de DRV8871 desde LiPo 3S y protección de batería | [Distribución, BMS y conector](electronica/alimentacion_lipo_3s.md): VM directo a 3S; balanceo y protección por subtensión externos; Mini-Tamiya de la batería elegida difiere del XT60 previsto |
+| ELE-008 | P1 | HECHO | 2026-09-22 | Verificar alcance de INA226, alarma y BMS 3S para LiPo del carrito | [Criterio revisado](electronica/ina226_bms_3s.md): foto confirma `R100`, `VBUS` y `ALERT`; válido como alarma de tensión total sin corriente por shunt; para corriente total requiere shunt y camino de potencia distintos; operación autónoma requiere corte por celda |
+| ELE-009 | P1 | HECHO | 2026-09-22 | Evaluar ACS712 para corriente de motores y batería con ESP32 | [Selección y conexión](electronica/medicion_corriente_acs712.md): dos ±5 A por motor y uno ±20 A total, condicionados a la capacidad de los módulos; divisores 1:2 a ADC1 del ESP32, calibración y filtrado |
+| ELE-010 | P2 | HECHO | 2026-09-22 | Aclarar mediciones simultáneas de tensión, corriente y potencia del INA226 en la rama de 5 V | [Funcionamiento y conexión](electronica/ina226_bms_3s.md): VBUS y shunt son mediciones directas; corriente/potencia requieren calibración; R100 útil en lógica 5 V solo si pico <0,819 A; dos módulos I²C requieren direcciones distintas |
+| ELE-011 | P1 | HECHO | 2026-09-22 | Dimensionar INA226 para dos ramas de motor y reutilizar VBUS para batería | [Propuesta de dos módulos](electronica/ina226_dos_motores.md): R010 por rama, VBUS común para LiPo, ubicación en VM, direcciones distintas; corriente medida es la entrada del driver, no la instantánea del bobinado |
+| ELE-012 | P1 | HECHO | 2026-09-22 | Evaluar resistencias de cemento de 5 W como shunts externos del INA226 | [Evaluación del surtido](electronica/ina226_dos_motores.md): 0,01 Ω/5 W utilizable para prototipo, condicionado a conexión Kelvin y calibración; preferir shunts de cuatro terminales y 1 % para montaje definitivo |
 
 ## Próximo hito: banco Simulink de la dinámica de la pata
 

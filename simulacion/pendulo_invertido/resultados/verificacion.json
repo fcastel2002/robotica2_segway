@@ -1,0 +1,16 @@
+{
+  "posturas_verificadas_deg": [
+    10,
+    25,
+    40
+  ],
+  "determinante_minimo": 0.0029342737496773495,
+  "error_A": 2.0747847884194925E-12,
+  "error_B": 1.1368683772161603E-13,
+  "error_potencia": 0,
+  "error_balance_horizontal": 5.5511151231257827E-17,
+  "deriva_energia_J": 1.1102230246251565E-16,
+  "grupos_aprobados": 6,
+  "fecha": "2026-10-01 10:48:51 -0300",
+  "matlab": "25.2.0.2998904 (R2025b)"
+}
