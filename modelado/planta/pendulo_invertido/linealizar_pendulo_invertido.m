@@ -4,10 +4,10 @@ function L = linealizar_pendulo_invertido(p)
 %   Entrada: par TOTAL en las dos ruedas. No requiere Control System Toolbox.
 
     %% Modelo de segundo orden M0*q_ddot + D*q_dot = gravedad + H*tau.
-    M0 = [p.a, p.h; p.h, p.j];
-    D = [p.b_x + p.b_eje / p.r^2, -p.b_eje / p.r; ...
-         -p.b_eje / p.r, p.b_eje + p.b_phi];
-    H = [1 / p.r; -1];
+    M0 = [p.a, -p.h; -p.h, p.j];
+    D = [p.b_x + p.b_eje / p.r^2, p.b_eje / p.r; ...
+         p.b_eje / p.r, p.b_eje + p.b_phi];
+    H = [-1 / p.r; -1];
     respuesta_gravedad = M0 \ [0; p.k];
     respuesta_velocidad = -(M0 \ D);
     respuesta_par = M0 \ H;

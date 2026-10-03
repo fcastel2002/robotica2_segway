@@ -1,8 +1,8 @@
 # Resultado del pendulo invertido
 
-- Corrida: 2026-10-01 10:56:42 -0300 (Buenos Aires).
+- Corrida: 2026-10-03 14:58:43 -0300 (Buenos Aires).
 - MATLAB: 25.2.0.2998904 (R2025b).
-- Commit base: `144bd76fb00666350281aac5323ba6f39f38d99a`; incorpora archivos locales del modelo nuevo.
+- Commit base: `2d2d49371fb23f0e366d05ca71a5e1090f9d3137`; incorpora archivos locales del modelo nuevo.
 - Variante: `segunda_iteracion`; postura fija: 25.0 grados.
 - Fuente: `modelado/parametros/parametros_fisicos.m`. Masas/CoM/inercias estimados; rotor y electricidad omitidos.
 - Solver: ode45; RelTol 1.0e-09; AbsTol 1.0e-11; MaxStep 1.0e-03 s.
@@ -15,7 +15,7 @@
 | Distancia P-G [m] | 0.074773119 |
 | J_G [kg m2] | 0.00439283676 |
 | J_ruedas [kg m2] | 3.267e-05 |
-| Chasis en equilibrio [grados] | 0.154442 |
+| Chasis en equilibrio [grados] | -0.154442 |
 | b_eje [N m s/rad] | 0.0002 |
 | b_phi [N m s/rad] | 0.001 |
 | b_x [N s/m] | 0 |
@@ -36,9 +36,9 @@ Orden de estado: `[x; v; phi; omega]`. Entrada: par total de las ruedas.
 
 ```text
 A =
-[0 1 0 0;0 -0.425355536 -11.0318789 0.0282276695;0 0 0 1;0 3.85413333 160.067211 -0.333090009]
+[0 1 0 0;0 -0.425355536 11.0318789 -0.0282276695;0 0 0 1;0 -3.85413333 160.067211 -0.333090009]
 B =
-[0;70.1836635;0;-635.931999]
+[0;-70.1836635;0;-635.931999]
 Autovalores =
 [0;-12.9571769;-0.159664985;12.3583963]
 ```

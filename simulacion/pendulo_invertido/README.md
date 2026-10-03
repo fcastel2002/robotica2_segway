@@ -30,7 +30,7 @@ En la sección 2 del script:
 - `p.b_eje`, `p.b_phi`, `p.b_x`: pérdidas viscosas en SI. Para conservación, poner las tres en cero.
 - Duración, tolerancias, paso máximo y corte angular de demostración.
 
-`phi` mide la inclinación de la línea eje–CoM. El ángulo del chasis es `beta = phi - p.delta_G`.
+`phi` mide la inclinación de la línea eje–CoM, positiva antihoraria (hacia atrás) vista desde el lado derecho; `tau_total_Nm` también es positivo antihorario, por lo que un par negativo hace avanzar. El ángulo del chasis es `beta = phi - p.delta_G`.
 Las masas e inercias de ruedas y el par son totales de las dos ruedas; la cabina se cuenta una vez.
 
 El script está dividido en pasos, con las ecuaciones visibles en los tres archivos del modelo.

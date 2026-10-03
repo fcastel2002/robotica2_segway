@@ -82,7 +82,8 @@ function p = parametros_pendulo_invertido(fisicos, theta_pata_deg)
     p.l = hypot(vector_PG(1), vector_PG(2));
     % phi = beta_chasis + delta_G. El equilibrio de gravedad es phi = 0,
     % por lo que el chasis debe estar en beta_chasis = -delta_G.
-    p.delta_G = atan2(vector_PG(1), vector_PG(2));
+    % phi es antihoraria: un CoM adelantado (x > 0) corresponde a phi < 0.
+    p.delta_G = atan2(-vector_PG(1), vector_PG(2));
     p.beta_equilibrio = -p.delta_G;
     assert(vector_PG(2) > 0, 'El CoM debe estar encima del eje en esta postura.');
 

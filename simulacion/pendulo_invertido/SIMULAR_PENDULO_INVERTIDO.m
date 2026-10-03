@@ -36,7 +36,7 @@ p = parametros_pendulo_invertido(fisicos, theta_pata_deg);
 tau_total_Nm = 0;        % par TOTAL constante en las ruedas; por motor = tau/2
 x_inicial_m = 0;
 velocidad_x_inicial = 0;
-phi_inicial_deg = 0.5;   % inclinacion de P->G, respecto del equilibrio
+phi_inicial_deg = 0.5;   % inclinacion de P->G, antihoraria (+ = hacia atras)
 velocidad_phi_inicial = 0;
 duracion_s = 1;
 limite_phi_deg = 20;     % corte de demostracion; NO es un limite medido del CAD
@@ -278,7 +278,7 @@ function dibujar_esquema(p, carpeta)
     naranja = [0.80, 0.30, 0.05];
     phi = deg2rad(15); % inclinacion ilustrativa, distinta de la condicion inicial
     P = [0, p.r];
-    G = P + p.l * [sin(phi), cos(phi)];
+    G = P + p.l * [-sin(phi), cos(phi)];
     plot(ax, [-0.11, 0.17], [0, 0], 'k-', 'LineWidth', 1.5);
     angulos = linspace(0, 2*pi, 150);
     plot(ax, p.r * cos(angulos), p.r + p.r * sin(angulos), ...
@@ -288,20 +288,20 @@ function dibujar_esquema(p, carpeta)
     plot(ax, P(1), P(2), 'ko', 'MarkerFaceColor', 'k', 'MarkerSize', 6);
     plot(ax, [-p.r, 0], [p.r, p.r], ':', 'Color', naranja, 'LineWidth', 1.2);
     plot(ax, G(1), G(2), 'o', 'Color', azul, 'MarkerFaceColor', azul, 'MarkerSize', 15);
-    arco = linspace(pi/2, pi/2-phi, 30);
+    arco = linspace(pi/2, pi/2+phi, 30);
     plot(ax, 0.55*p.l*cos(arco), p.r+0.55*p.l*sin(arco), 'k-', 'LineWidth', 1.5);
-    text(ax, -0.030, p.r+0.73*p.l, '$\varphi > 0$', 'Interpreter', 'latex', 'FontSize', 15);
-    text(ax, G(1)+0.014, G(2), 'G: masa m, inercia J_G', 'FontSize', 14, 'Color', azul);
+    text(ax, 0.004, p.r+0.73*p.l, '$\varphi > 0$', 'Interpreter', 'latex', 'FontSize', 15);
+    text(ax, G(1)-0.075, G(2)+0.012, 'G: masa m, inercia J_G', 'FontSize', 14, 'Color', azul);
     text(ax, -0.020, p.r+0.004, 'P', 'FontSize', 14);
-    text(ax, -0.008, p.r+0.35*p.l, '$\ell$', 'Interpreter', 'latex', 'FontSize', 17);
+    text(ax, 0.002, p.r+0.35*p.l, '$\ell$', 'Interpreter', 'latex', 'FontSize', 17);
     text(ax, -0.021, p.r-0.009, 'r', 'FontSize', 15);
     quiver(ax, G(1), G(2)-0.012, 0, -0.037, 0, 'Color', azul, 'LineWidth', 1.5);
-    text(ax, G(1)+0.006, G(2)-0.043, 'mg', 'FontSize', 14, 'Color', azul);
+    text(ax, G(1)-0.020, G(2)-0.043, 'mg', 'FontSize', 14, 'Color', azul);
     quiver(ax, 0.068, p.r, 0.065, 0, 0, 'k', 'LineWidth', 1.5);
     text(ax, 0.065, p.r+0.010, 'x positivo: avance', 'FontSize', 14);
-    dibujar_par(ax, [-0.055, p.r+0.015], 0.015, 160, -100, naranja, '+\tau');
-    dibujar_par(ax, [0.065, p.r+0.37*p.l], 0.015, -30, 220, azul, '-\tau');
-    text(ax, -0.10, -0.024, 'Dos ruedas equivalentes: m_w, J_w | rodadura: x = r\psi', 'FontSize', 13);
+    dibujar_par(ax, [-0.055, p.r+0.015], 0.015, -100, 160, naranja, '+\tau');
+    dibujar_par(ax, [0.065, p.r+0.37*p.l], 0.015, 220, -30, azul, '-\tau');
+    text(ax, -0.10, -0.024, 'Dos ruedas equivalentes: m_w, J_w | rodadura: x = -r\psi | angulos y pares + antihorarios', 'FontSize', 13);
     text(ax, -0.10, p.r+1.30*p.l, 'Patas bloqueadas en una postura \theta_0', 'FontSize', 17, 'FontWeight', 'bold');
     xlim(ax, [-0.12, 0.20]); ylim(ax, [-0.04, p.r+1.48*p.l]);
     exportgraphics(fig, fullfile(carpeta, 'esquema_modelo.png'), 'Resolution', 200);

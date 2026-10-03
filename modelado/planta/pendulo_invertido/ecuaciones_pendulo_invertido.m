@@ -2,7 +2,8 @@ function [derivada, R] = ecuaciones_pendulo_invertido(estado, tau_total, p)
 %ECUACIONES_PENDULO_INVERTIDO Modelo NO lineal, con las patas fijas.
 %   estado = [x; velocidad_x; phi; velocidad_phi], en SI.
 %   tau_total: suma de los pares aplicados A LAS RUEDAS [N m].
-%   phi: angulo horario de P->G desde la vertical hacia adelante [rad].
+%   phi: angulo ANTIHORARIO de P->G desde la vertical (positivo hacia atras) [rad].
+%   tau_total y todos los momentos tambien son positivos antihorarios.
 %   R entrega energias, fuerzas y balance de potencia para interpretar la ODE.
 
     velocidad_x = estado(2);
@@ -10,24 +11,24 @@ function [derivada, R] = ecuaciones_pendulo_invertido(estado, tau_total, p)
     velocidad_phi = estado(4);
 
     %% Matriz de masa: las aceleraciones del eje y del cuerpo estan acopladas.
-    acoplamiento = p.h * cos(phi);
+    acoplamiento = -p.h * cos(phi);
     matriz_masa = [p.a, acoplamiento; acoplamiento, p.j];
 
     %% Par motor y perdidas en el eje relativo rueda/cuerpo.
-    velocidad_relativa = velocidad_x / p.r - velocidad_phi;
+    velocidad_relativa = -velocidad_x / p.r - velocidad_phi;  % psi_dot = -x_dot/r
     par_friccion_eje = p.b_eje * velocidad_relativa;
     par_efectivo_ruedas = tau_total - par_friccion_eje;
     fuerza_arrastre = p.b_x * velocidad_x;
     par_arrastre_cuerpo = p.b_phi * velocidad_phi;
 
     % Fuerzas generalizadas. La reaccion del motor sobre el cuerpo es -tau.
-    Q_x = par_efectivo_ruedas / p.r - fuerza_arrastre;
+    Q_x = -par_efectivo_ruedas / p.r - fuerza_arrastre;
     Q_phi = -par_efectivo_ruedas - par_arrastre_cuerpo;
 
     %% Lagrange: llevar terminos centrifugo y gravitatorio al lado derecho.
     termino_centrifugo = p.h * sin(phi) * velocidad_phi^2;
     termino_gravedad = p.k * sin(phi);
-    lado_derecho = [Q_x + termino_centrifugo; Q_phi + termino_gravedad];
+    lado_derecho = [Q_x - termino_centrifugo; Q_phi + termino_gravedad];
 
     % Resolver el sistema 2 x 2. No se calcula inv(matriz_masa).
     aceleraciones = matriz_masa \ lado_derecho;
@@ -49,7 +50,7 @@ function [derivada, R] = ecuaciones_pendulo_invertido(estado, tau_total, p)
     aceleracion_vertical_G = -p.l * (sin(phi) * aceleracion_phi ...
         + cos(phi) * velocidad_phi^2);
     R.normal = p.m_total * p.g + p.m_cuerpo * aceleracion_vertical_G;
-    R.fuerza_tangencial = par_efectivo_ruedas / p.r ...
+    R.fuerza_tangencial = -par_efectivo_ruedas / p.r ...
         - p.J_ruedas * aceleracion_x / p.r^2;
     R.margen_adherencia = p.mu * R.normal - abs(R.fuerza_tangencial);
     R.contacto_valido = R.normal > 0 && R.margen_adherencia >= 0;

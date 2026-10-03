@@ -62,18 +62,23 @@ Agrupamos las dos ruedas como un cuerpo equivalente, y todo lo que se inclina co
 |---|---|---|
 | $x$ | posición horizontal del eje de ruedas $P$, positiva hacia adelante | m |
 | $r$ | radio de cada rueda | m |
-| $\psi$ | giro **absoluto** de las ruedas, positivo horario visto desde el lado derecho | rad |
-| $\varphi$ | ángulo de la recta $P\!\to G$ desde la vertical, positivo hacia adelante | rad |
-| $\beta$ | inclinación del chasis desde su orientación nominal, también positiva horaria | rad |
+| $\psi$ | giro **absoluto** de las ruedas, positivo antihorario visto desde el lado derecho | rad |
+| $\varphi$ | ángulo de la recta $P\!\to G$ desde la vertical, positivo antihorario (hacia atrás) | rad |
+| $\beta$ | inclinación del chasis desde su orientación nominal, también positiva antihoraria | rad |
 | $m$ | masa del cuerpo suspendido: cabina, patas, servos, batería, electrónica y motores; excluye ruedas | kg |
 | $m_w$ | suma de las masas de las dos ruedas | kg |
 | $J_w$ | suma de las inercias de las dos ruedas respecto de su eje de giro | kg·m² |
 | $J_G$ | inercia de cabeceo del cuerpo suspendido respecto de su propio centro de masa $G$ | kg·m² |
 | $\ell$ | distancia del eje $P$ al centro de masa $G$ del cuerpo suspendido | m |
 | $g$ | aceleración gravitatoria, positiva como magnitud | m/s² |
-| $\tau$ | suma de los pares que los motores aplican a las dos ruedas | N·m |
+| $\tau$ | suma de los pares que los motores aplican a las dos ruedas, positiva antihoraria | N·m |
 | $N$ | suma de las normales del piso sobre las dos ruedas | N |
 | $F$ | suma de las fuerzas tangenciales del piso sobre las dos ruedas, positiva hacia adelante | N |
+
+**Convención de signos.** El robot se mira desde su lado derecho, con el avance hacia la derecha
+del observador y la vertical hacia arriba. Así $(x,y)$ es un sistema plano directo y **todo ángulo,
+velocidad angular, par o momento se toma positivo en sentido antihorario**. En consecuencia, una
+inclinación positiva lleva el CoM hacia atrás, y las ruedas giran con $\dot\psi<0$ cuando el robot avanza.
 
 Si el par de **cada** motor es $\tau_m$, entonces
 
@@ -143,18 +148,18 @@ Si el CoM no está exactamente encima del eje cuando la cabina tiene su orientac
 el chasis y la línea $PG$ tienen ángulos distintos. Definimos
 
 $$
-\delta_G=\operatorname{atan2}(a_G,b_G),\qquad
+\delta_G=\operatorname{atan2}(-a_G,b_G),\qquad
 \varphi=\beta+\delta_G. \tag{8}
 $$
 
-Una rotación horaria $\beta$ transforma el vector anterior en
+Una rotación antihoraria $\beta$ transforma el vector anterior en
 
 $$
 \begin{bmatrix}
-a_G\cos\beta+b_G\sin\beta\\
--a_G\sin\beta+b_G\cos\beta
+a_G\cos\beta-b_G\sin\beta\\
+a_G\sin\beta+b_G\cos\beta
 \end{bmatrix}
-=\begin{bmatrix}\ell\sin\varphi\\\ell\cos\varphi\end{bmatrix}. \tag{9}
+=\begin{bmatrix}-\ell\sin\varphi\\\ell\cos\varphi\end{bmatrix}. \tag{9}
 $$
 
 Así, $\varphi=0$ significa que **el centro de masa está encima del eje**, y el ángulo correspondiente
@@ -174,23 +179,23 @@ $$
 El CoM del cuerpo se encuentra en
 
 $$
-x_G=x+\ell\sin\varphi,\qquad y_G=r+\ell\cos\varphi. \tag{10}
+x_G=x-\ell\sin\varphi,\qquad y_G=r+\ell\cos\varphi. \tag{10}
 $$
 
 Derivamos respecto del tiempo usando la regla de la cadena:
 
 $$
-\dot x_G=\dot x+\ell\cos\varphi\,\dot\varphi,\qquad
+\dot x_G=\dot x-\ell\cos\varphi\,\dot\varphi,\qquad
 \dot y_G=-\ell\sin\varphi\,\dot\varphi. \tag{11}
 $$
 
-La derivada de $\cos\varphi$ introduce $-\sin\varphi\,\dot\varphi$. Al volver a derivar aparece
+La derivada de $\sin\varphi$ introduce $\cos\varphi\,\dot\varphi$ y la de $\cos\varphi$ introduce $-\sin\varphi\,\dot\varphi$. Al volver a derivar aparece
 otro factor $\dot\varphi$:
 
 $$
 \begin{aligned}
-\ddot x_G&=\ddot x+\ell\cos\varphi\,\ddot\varphi
-             -\ell\sin\varphi\,\dot\varphi^2,\\
+\ddot x_G&=\ddot x-\ell\cos\varphi\,\ddot\varphi
+             +\ell\sin\varphi\,\dot\varphi^2,\\
 \ddot y_G&=-\ell\sin\varphi\,\ddot\varphi
              -\ell\cos\varphi\,\dot\varphi^2.
 \end{aligned} \tag{12}
@@ -199,13 +204,15 @@ $$
 El término proporcional a $\dot\varphi^2$ corresponde a la aceleración centrípeta del CoM.
 El término proporcional a $\ddot\varphi$ corresponde a la aceleración tangencial.
 
-La rodadura sin deslizamiento impone
+La rodadura sin deslizamiento impone, con $\psi$ antihorario y $x$ hacia adelante,
 
 $$
-x=r\psi+\text{constante},\qquad
-\dot\psi=\frac{\dot x}{r},\qquad
-\ddot\psi=\frac{\ddot x}{r}. \tag{13}
+x=-r\psi+\text{constante},\qquad
+\dot\psi=-\frac{\dot x}{r},\qquad
+\ddot\psi=-\frac{\ddot x}{r}. \tag{13}
 $$
+
+Para avanzar, las ruedas giran en sentido horario: de ahí el signo negativo.
 
 Por eso no hace falta agregar $\psi$ como tercera coordenada independiente. Sí debemos conservar
 la energía de giro de las ruedas al sustituir esta restricción.
@@ -225,11 +232,11 @@ Sustituyendo (11) y desarrollando los cuadrados:
 $$
 \begin{aligned}
 \dot x_G^2+\dot y_G^2
-&=(\dot x+\ell\cos\varphi\dot\varphi)^2
+&=(\dot x-\ell\cos\varphi\dot\varphi)^2
   +(-\ell\sin\varphi\dot\varphi)^2\\
-&=\dot x^2+2\ell\cos\varphi\dot x\dot\varphi
+&=\dot x^2-2\ell\cos\varphi\dot x\dot\varphi
   +\ell^2(\cos^2\varphi+\sin^2\varphi)\dot\varphi^2\\
-&=\dot x^2+2\ell\cos\varphi\dot x\dot\varphi+\ell^2\dot\varphi^2.
+&=\dot x^2-2\ell\cos\varphi\dot x\dot\varphi+\ell^2\dot\varphi^2.
 \end{aligned} \tag{14}
 $$
 
@@ -250,7 +257,8 @@ respecto del eje. Si se dispone de una inercia ya referida a $P$, no se vuelve a
 ### 7.3. Traslación y giro de las ruedas
 
 $$
-T_w=\frac12m_w\dot x^2+\frac12J_w\left(\frac{\dot x}{r}\right)^2. \tag{16}
+T_w=\frac12m_w\dot x^2+\frac12J_w\dot\psi^2
+=\frac12m_w\dot x^2+\frac12J_w\left(\frac{\dot x}{r}\right)^2. \tag{16}
 $$
 
 El giro hace que las ruedas aporten una masa efectiva adicional $J_w/r^2$ a la coordenada $x$.
@@ -270,7 +278,7 @@ $$
 Con estas abreviaturas,
 
 $$
-\boxed{T=\frac12a\dot x^2+h\cos\varphi\dot x\dot\varphi
+\boxed{T=\frac12a\dot x^2-h\cos\varphi\dot x\dot\varphi
              +\frac12j\dot\varphi^2.} \tag{18}
 $$
 
@@ -297,35 +305,36 @@ El lagrangiano es la diferencia entre energía cinética y potencial:
 
 $$
 \mathcal L=T-V
-=\frac12a\dot x^2+h\cos\varphi\dot x\dot\varphi
+=\frac12a\dot x^2-h\cos\varphi\dot x\dot\varphi
 +\frac12j\dot\varphi^2-k\cos\varphi. \tag{21}
 $$
 
 ## 9. Trabajo virtual: por qué el motor aparece en las dos ecuaciones
 
 El motor aplica $+\tau$ a las ruedas y, por reacción, $-\tau$ al cuerpo. Un par positivo es
-horario en ambos ángulos absolutos. Su trabajo virtual es
+antihorario en ambos ángulos absolutos. Su trabajo virtual es
 
 $$
 \delta W_m=\tau\,\delta\psi-\tau\,\delta\varphi.
 $$
 
-Usando $\delta\psi=\delta x/r$:
+Usando $\delta\psi=-\delta x/r$:
 
 $$
-\delta W_m=\frac\tau r\delta x-\tau\delta\varphi,\qquad
-\boxed{Q_x=\frac\tau r,\quad Q_\varphi=-\tau.} \tag{22}
+\delta W_m=-\frac\tau r\delta x-\tau\delta\varphi,\qquad
+\boxed{Q_x=-\frac\tau r,\quad Q_\varphi=-\tau.} \tag{22}
 $$
 
 Una fuerza generalizada es el coeficiente que multiplica la variación de su coordenada en el trabajo.
-$Q_x$ es una fuerza; $Q_\varphi$ es un par. El signo $-\tau$ es indispensable para representar el
-motor alojado en el propio robot.
+$Q_x$ es una fuerza; $Q_\varphi$ es un par. El signo de $Q_\varphi$ es indispensable para representar el
+motor alojado en el propio robot. Con esta convención, un par $\tau>0$ hace retroceder al robot;
+para avanzar se necesita $\tau<0$.
 
 La velocidad mecánica a través del motor/reductor es **relativa**:
 
 $$
 \omega_{\rm rel}=\dot\psi-\dot\varphi
-               =\frac{\dot x}{r}-\dot\varphi. \tag{23}
+               =-\frac{\dot x}{r}-\dot\varphi. \tag{23}
 $$
 
 La potencia mecánica total suministrada por los motores resulta
@@ -334,7 +343,7 @@ $$
 P_m=\tau\omega_{\rm rel}. \tag{24}
 $$
 
-No es, en general, $\tau\dot x/r$: esa expresión omitiría el trabajo de la reacción sobre el cuerpo.
+No es, en general, $-\tau\dot x/r$: esa expresión omitiría el trabajo de la reacción sobre el cuerpo.
 La fricción estática ideal del piso no agrega trabajo porque el punto instantáneo de contacto está
 en reposo respecto del suelo. Se elimina mediante la restricción de rodadura, pero después se
 reconstruye su fuerza para comprobar que la restricción era físicamente posible.
@@ -352,20 +361,20 @@ Para $x$, el lagrangiano no depende explícitamente de la posición horizontal: 
 Primero derivamos respecto de su velocidad:
 
 $$
-\frac{\partial\mathcal L}{\partial\dot x}=a\dot x+h\cos\varphi\dot\varphi.
+\frac{\partial\mathcal L}{\partial\dot x}=a\dot x-h\cos\varphi\dot\varphi.
 $$
 
 Luego derivamos respecto del tiempo, incluyendo la dependencia de $\cos\varphi$:
 
 $$
 \frac{d}{dt}\left(\frac{\partial\mathcal L}{\partial\dot x}\right)
-=a\ddot x+h\cos\varphi\ddot\varphi-h\sin\varphi\dot\varphi^2.
+=a\ddot x-h\cos\varphi\ddot\varphi+h\sin\varphi\dot\varphi^2.
 $$
 
 La primera ecuación de movimiento queda
 
 $$
-\boxed{a\ddot x+h\cos\varphi\ddot\varphi-h\sin\varphi\dot\varphi^2=\frac\tau r.} \tag{26}
+\boxed{a\ddot x-h\cos\varphi\ddot\varphi+h\sin\varphi\dot\varphi^2=-\frac\tau r.} \tag{26}
 $$
 
 La aceleración del eje exige mover todas las masas y hacer girar las ruedas; la aceleración angular
@@ -377,50 +386,51 @@ Derivamos respecto de $\dot\varphi$:
 
 $$
 \frac{\partial\mathcal L}{\partial\dot\varphi}
-=h\cos\varphi\dot x+j\dot\varphi.
+=-h\cos\varphi\dot x+j\dot\varphi.
 $$
 
 Su derivada temporal es
 
 $$
 \frac{d}{dt}\left(\frac{\partial\mathcal L}{\partial\dot\varphi}\right)
-=h\cos\varphi\ddot x-h\sin\varphi\dot x\dot\varphi+j\ddot\varphi.
+=-h\cos\varphi\ddot x+h\sin\varphi\dot x\dot\varphi+j\ddot\varphi.
 $$
 
 Por otra parte,
 
 $$
 \frac{\partial\mathcal L}{\partial\varphi}
-=-h\sin\varphi\dot x\dot\varphi+k\sin\varphi.
+=h\sin\varphi\dot x\dot\varphi+k\sin\varphi.
 $$
 
-Al restar, los términos $-h\sin\varphi\dot x\dot\varphi$ se cancelan exactamente. El resultado es
+Al restar, los términos $h\sin\varphi\dot x\dot\varphi$ se cancelan exactamente. El resultado es
 
 $$
-\boxed{h\cos\varphi\ddot x+j\ddot\varphi-k\sin\varphi=-\tau.} \tag{27}
+\boxed{-h\cos\varphi\ddot x+j\ddot\varphi-k\sin\varphi=-\tau.} \tag{27}
 $$
 
 La ausencia de un término explícito $\dot x\dot\varphi$ en esta ecuación se debe a esa cancelación;
 no es una aproximación. La gravedad tiende a aumentar una inclinación positiva.
 
 Juntas, (26) y (27) son la dinámica no lineal buscada. Al reemplazar (17), coinciden con las dos
-ecuaciones del DCL existente en [`../../dcl/dcl_resumen.tex`](../../dcl/dcl_resumen.tex).
+ecuaciones del DCL existente en [`../../dcl/dcl_resumen.tex`](../../dcl/dcl_resumen.tex) una vez
+que se invierten los signos de $\varphi$, $\psi$ y $\tau$, porque ese documento toma positivo el sentido horario.
 
 ## 12. Forma matricial y solución para las aceleraciones
 
 Agrupamos las ecuaciones como
 
 $$
-\underbrace{\begin{bmatrix}a&h\cos\varphi\\h\cos\varphi&j\end{bmatrix}}_{\mathbf M(\varphi)}
+\underbrace{\begin{bmatrix}a&-h\cos\varphi\\-h\cos\varphi&j\end{bmatrix}}_{\mathbf M(\varphi)}
 \begin{bmatrix}\ddot x\\\ddot\varphi\end{bmatrix}
-+\underbrace{\begin{bmatrix}-h\sin\varphi\dot\varphi^2\\0\end{bmatrix}}_{\mathbf c(\varphi,\dot\varphi)}
++\underbrace{\begin{bmatrix}h\sin\varphi\dot\varphi^2\\0\end{bmatrix}}_{\mathbf c(\varphi,\dot\varphi)}
 +\underbrace{\begin{bmatrix}0\\-k\sin\varphi\end{bmatrix}}_{\mathbf g(\varphi)}
-=\underbrace{\begin{bmatrix}1/r\\-1\end{bmatrix}}_{\mathbf H}\tau. \tag{28}
+=\underbrace{\begin{bmatrix}-1/r\\-1\end{bmatrix}}_{\mathbf H}\tau. \tag{28}
 $$
 
 $\mathbf M$ es la matriz de masa, $\mathbf c$ contiene el término centrífugo y $\mathbf g$ es el
 gradiente de la energía potencial. Una matriz de Coriolis posible es
-$\mathbf C=\begin{bmatrix}0&-h\sin\varphi\dot\varphi\\0&0\end{bmatrix}$, de modo que
+$\mathbf C=\begin{bmatrix}0&h\sin\varphi\dot\varphi\\0&0\end{bmatrix}$, de modo que
 $\mathbf C\dot{\mathbf q}=\mathbf c$. Su representación matricial no es única; el vector sí queda fijado.
 
 El determinante de la matriz de masa es
@@ -439,15 +449,15 @@ obtenerse de un sistema lineal bien definido. No hay una singularidad mecánica 
 Para leer la solución a mano, definimos
 
 $$
-f_1=\frac\tau r+h\sin\varphi\dot\varphi^2,\qquad
+f_1=-\frac\tau r-h\sin\varphi\dot\varphi^2,\qquad
 f_2=-\tau+k\sin\varphi.
 $$
 
 Entonces
 
 $$
-\boxed{\ddot x=\frac{j f_1-h\cos\varphi f_2}{\Delta(\varphi)},\qquad
-\ddot\varphi=\frac{-h\cos\varphi f_1+a f_2}{\Delta(\varphi)}.} \tag{30}
+\boxed{\ddot x=\frac{j f_1+h\cos\varphi f_2}{\Delta(\varphi)},\qquad
+\ddot\varphi=\frac{h\cos\varphi f_1+a f_2}{\Delta(\varphi)}.} \tag{30}
 $$
 
 En MATLAB se resuelve `matriz_masa \ lado_derecho`: se conserva la estructura visible de las
@@ -470,7 +480,7 @@ La función de disipación de Rayleigh es
 
 $$
 \mathcal R=\frac12b_x\dot x^2+
-\frac12b_e\left(\frac{\dot x}{r}-\dot\varphi\right)^2+
+\frac12b_e\left(\frac{\dot x}{r}+\dot\varphi\right)^2+
 \frac12b_\varphi\dot\varphi^2. \tag{31}
 $$
 
@@ -479,9 +489,9 @@ $\tau_e=\tau-b_e\omega_{\rm rel}$ al par después de la fricción del eje, las e
 
 $$
 \begin{aligned}
-a\ddot x+h\cos\varphi\ddot\varphi-h\sin\varphi\dot\varphi^2
-&=\frac{\tau_e}{r}-b_x\dot x,\\
-h\cos\varphi\ddot x+j\ddot\varphi-k\sin\varphi
+a\ddot x-h\cos\varphi\ddot\varphi+h\sin\varphi\dot\varphi^2
+&=-\frac{\tau_e}{r}-b_x\dot x,\\
+-h\cos\varphi\ddot x+j\ddot\varphi-k\sin\varphi
 &=-\tau_e-b_\varphi\dot\varphi.
 \end{aligned} \tag{32}
 $$
@@ -493,8 +503,8 @@ En forma matricial se añade $\mathbf D\dot{\mathbf q}$, con
 
 $$
 \mathbf D=\begin{bmatrix}
-b_x+b_e/r^2&-b_e/r\\
--b_e/r&b_e+b_\varphi
+b_x+b_e/r^2&b_e/r\\
+b_e/r&b_e+b_\varphi
 \end{bmatrix}. \tag{33}
 $$
 
@@ -508,23 +518,24 @@ $$
                     +\cos\varphi\dot\varphi^2\right).} \tag{34}
 $$
 
-La ecuación de giro de las ruedas, usando momento positivo horario, es
+La ecuación de giro de las ruedas, usando momento positivo antihorario, es
 
 $$
-J_w\frac{\ddot x}{r}=\tau_e-Fr.
+J_w\ddot\psi=-J_w\frac{\ddot x}{r}=\tau_e+Fr,
 $$
 
-Por lo tanto, la fuerza tangencial requerida para cumplir la rodadura es
+porque $F$, aplicada hacia adelante en el punto de contacto, que está a una distancia $r$ debajo del eje,
+produce un momento antihorario. Por lo tanto, la fuerza tangencial requerida para cumplir la rodadura es
 
 $$
-\boxed{F=\frac{\tau_e}{r}-\frac{J_w}{r^2}\ddot x.} \tag{35}
+\boxed{F=-\frac{\tau_e}{r}-\frac{J_w}{r^2}\ddot x.} \tag{35}
 $$
 
-En particular, $F$ no es siempre $\tau/r$: parte del par se utiliza en acelerar el giro de las ruedas.
+En particular, $F$ no es siempre $-\tau/r$: parte del par se utiliza en acelerar el giro de las ruedas.
 Como comprobación independiente, el balance horizontal de todo el robot debe dar
 
 $$
-(m+m_w)\ddot x+h\cos\varphi\ddot\varphi-h\sin\varphi\dot\varphi^2
+(m+m_w)\ddot x-h\cos\varphi\ddot\varphi+h\sin\varphi\dot\varphi^2
 =F-b_x\dot x. \tag{36}
 $$
 
@@ -559,9 +570,10 @@ la posición absoluta de equilibrio no queda determinada.
 
 Tres verificaciones ayudan a detectar un error de signo:
 
-1. Con $\varphi>0$ pequeña y $\tau=0$, debe resultar $\ddot\varphi>0$: el cuerpo cae hacia adelante.
-2. En $\varphi=0$, un par positivo debe dar $\ddot x>0$ y $\ddot\varphi<0$: las ruedas avanzan y
-   la reacción hace inclinar el cuerpo hacia atrás.
+1. Con $\varphi>0$ pequeña y $\tau=0$, debe resultar $\ddot\varphi>0$ y $\ddot x>0$: el cuerpo cae
+   hacia atrás mientras el eje se desplaza hacia adelante.
+2. En $\varphi=0$, un par positivo (antihorario) debe dar $\ddot x<0$ y $\ddot\varphi<0$: las ruedas
+   retroceden y la reacción horaria hace inclinar el cuerpo hacia adelante. Con $\tau<0$ ocurre lo contrario.
 3. En reposo y vertical, $N=(m+m_w)g$ y $F=0$.
 
 Un cuerpo inclinado no permanece estático sobre ruedas libres solo porque se aplique
@@ -582,25 +594,27 @@ Esto es una expansión de Taylor de primer orden: los productos de perturbacione
 El modelo lineal de segundo orden queda
 
 $$
-\underbrace{\begin{bmatrix}a&h\\h&j\end{bmatrix}}_{\mathbf M_0}
+\underbrace{\begin{bmatrix}a&-h\\-h&j\end{bmatrix}}_{\mathbf M_0}
 \begin{bmatrix}\ddot x\\\ddot\varphi\end{bmatrix}
 +\mathbf D\begin{bmatrix}\dot x\\\dot\varphi\end{bmatrix}
 =\begin{bmatrix}0\\k\varphi\end{bmatrix}
-+\begin{bmatrix}1/r\\-1\end{bmatrix}\tau. \tag{40}
++\begin{bmatrix}-1/r\\-1\end{bmatrix}\tau. \tag{40}
 $$
 
 Para interpretar los coeficientes, consideremos primero pérdidas nulas y definamos
 $\Delta_0=aj-h^2$. Al despejar:
 
 $$
-\ddot x=-\frac{hk}{\Delta_0}\varphi
-        +\frac{j/r+h}{\Delta_0}\tau,\qquad
+\ddot x=\frac{hk}{\Delta_0}\varphi
+        -\frac{j/r+h}{\Delta_0}\tau,\qquad
 \ddot\varphi=\frac{ak}{\Delta_0}\varphi
         -\frac{h/r+a}{\Delta_0}\tau. \tag{41}
 $$
 
 El coeficiente de gravedad angular es positivo. También aparece la influencia de la reacción
-directa del motor: los términos $+h$ y $+a$ de las ganancias de entrada provienen de $-\tau$.
+directa del motor: los términos $h$ y $a$ de las ganancias de entrada provienen de $Q_\varphi=-\tau$.
+Ambas ganancias de entrada son negativas: un par antihorario hace retroceder el eje e inclina el cuerpo
+en sentido horario.
 
 ## 17. Por qué es inestable y qué cambia si se fija el eje
 
@@ -655,18 +669,18 @@ Con pérdidas nulas sus matrices son
 $$
 \mathbf A=\begin{bmatrix}
 0&1&0&0\\
-0&0&-hk/\Delta_0&0\\
+0&0&hk/\Delta_0&0\\
 0&0&0&1\\
 0&0&ak/\Delta_0&0
 \end{bmatrix},\qquad
 \mathbf B=\begin{bmatrix}
-0\\(j/r+h)/\Delta_0\\0\\-(h/r+a)/\Delta_0
+0\\-(j/r+h)/\Delta_0\\0\\-(h/r+a)/\Delta_0
 \end{bmatrix}. \tag{47}
 $$
 
 Con pérdidas, se calcula $\mathbf S=-\mathbf M_0^{-1}\mathbf D$ y se insertan sus dos filas en
 las filas 2 y 4 de $\mathbf A$, columnas 2 y 4. Las columnas de gravedad y entrada siguen siendo
-$\mathbf M_0^{-1}[0,k]^T$ y $\mathbf M_0^{-1}[1/r,-1]^T$, respectivamente. Esto es exactamente
+$\mathbf M_0^{-1}[0,k]^T$ y $\mathbf M_0^{-1}[-1/r,-1]^T$, respectivamente. Esto es exactamente
 lo que hace `linealizar_pendulo_invertido.m`.
 
 Para diseñar un controlador se comprueba el rango de
@@ -688,7 +702,7 @@ que el cuerpo ejerce **sobre las ruedas** en el eje. Con pérdidas nulas, las ru
 $$
 m_w\ddot x=F+O_x,\qquad
 0=N-m_wg+O_y,\qquad
-J_w\ddot x/r=\tau-Fr. \tag{49}
+-J_w\ddot x/r=\tau+Fr. \tag{49}
 $$
 
 El cuerpo recibe $(-O_x,-O_y)$:
@@ -697,10 +711,11 @@ $$
 m\ddot x_G=-O_x,\qquad m\ddot y_G=-O_y-mg. \tag{50}
 $$
 
-El momento positivo horario respecto de $G$ es
+La fuerza $(-O_x,-O_y)$ actúa en $P$, y $\mathbf r_P-\mathbf r_G=(\ell\sin\varphi,-\ell\cos\varphi)$.
+El momento positivo antihorario respecto de $G$ es
 
 $$
-J_G\ddot\varphi=-\tau+\ell\cos\varphi O_x-\ell\sin\varphi O_y. \tag{51}
+J_G\ddot\varphi=-\tau-\ell\cos\varphi O_x-\ell\sin\varphi O_y. \tag{51}
 $$
 
 Al sumar los balances horizontales y eliminar $F$ mediante el giro de la rueda se obtiene (26).
@@ -708,7 +723,7 @@ Para la ecuación angular, sustituimos $O_x=-m\ddot x_G$ y $O_y=-m(\ddot y_G+g)$
 Al insertar (12), los términos centrípetos vuelven a cancelarse y queda
 
 $$
-(J_G+m\ell^2)\ddot\varphi+m\ell\cos\varphi\ddot x-mg\ell\sin\varphi=-\tau,
+(J_G+m\ell^2)\ddot\varphi-m\ell\cos\varphi\ddot x-mg\ell\sin\varphi=-\tau,
 $$
 
 que es (27). Los métodos de Lagrange y Newton–Euler llevan al mismo modelo con los mismos signos.
@@ -718,8 +733,8 @@ que es (27). Los métodos de Lagrange y Newton–Euler llevan al mismo modelo co
 La energía mecánica es $E=T+V$. Multiplicar las ecuaciones por las velocidades y sumarlas da
 
 $$
-\boxed{\dot E=\tau\left(\frac{\dot x}{r}-\dot\varphi\right)
--b_e\left(\frac{\dot x}{r}-\dot\varphi\right)^2
+\boxed{\dot E=-\tau\left(\frac{\dot x}{r}+\dot\varphi\right)
+-b_e\left(\frac{\dot x}{r}+\dot\varphi\right)^2
 -b_x\dot x^2-b_\varphi\dot\varphi^2.} \tag{52}
 $$
 
@@ -742,9 +757,9 @@ robot completo tiene $1.1198$ kg. Al cambiar únicamente la postura, se obtienen
 
 | Postura de pata $\theta_0$ | $\ell$ [cm] | $J_G$ [kg·m²] | $\beta_{\rm eq}$ [°] | Polo inestable con las pérdidas nominales [s⁻¹] |
 |---:|---:|---:|---:|---:|
-| 10° | 3.54 | 0.002448 | +1.456 | +11.66 |
-| 25° | 7.48 | 0.004393 | +0.154 | +12.36 |
-| 40° | 10.84 | 0.007138 | −0.308 | +11.53 |
+| 10° | 3.54 | 0.002448 | −1.456 | +11.66 |
+| 25° | 7.48 | 0.004393 | −0.154 | +12.36 |
+| 40° | 10.84 | 0.007138 | +0.308 | +11.53 |
 
 La variación del polo no es monótona con la altura en esta tabla: cambia la longitud, pero también
 cambia la inercia del conjunto. Es una razón concreta para recalcular el cuerpo completo.
@@ -754,15 +769,15 @@ $b_x=0$, las ecuaciones lineales de aceleración son aproximadamente
 
 $$
 \begin{aligned}
-\ddot x&=-0.42536\,v-11.03188\,\varphi+0.02823\,\omega+70.18366\,\tau,\\
-\ddot\varphi&=3.85413\,v+160.06721\,\varphi-0.33309\,\omega-635.93200\,\tau.
+\ddot x&=-0.42536\,v+11.03188\,\varphi-0.02823\,\omega-70.18366\,\tau,\\
+\ddot\varphi&=-3.85413\,v+160.06721\,\varphi-0.33309\,\omega-635.93200\,\tau.
 \end{aligned} \tag{56}
 $$
 
 Los estados y la entrada están en SI; en particular, $\varphi$ está en radianes. Si se aplica
-instantáneamente $\tau=+0.01$ N·m desde la vertical y el reposo, el modelo da
-$\ddot x\simeq+0.702$ m/s² y $\ddot\varphi\simeq-6.36$ rad/s²: avance de ruedas y reacción angular
-opuesta. Es un ejemplo del modelo de par ideal, no una especificación de corriente para el motor.
+instantáneamente $\tau=-0.01$ N·m (horario) desde la vertical y el reposo, el modelo da
+$\ddot x\simeq+0.702$ m/s² y $\ddot\varphi\simeq+6.36$ rad/s²: avance de ruedas y reacción angular
+opuesta, que inclina el cuerpo hacia atrás. Es un ejemplo del modelo de par ideal, no una especificación de corriente para el motor.
 
 La corrida libre predeterminada parte de $0.5^\circ$ y llega al corte de $20^\circ$ en $0.355549$ s.
 Hasta $5^\circ$, la diferencia angular entre ambos modelos es como máximo $0.011461^\circ$ en
@@ -836,15 +851,15 @@ La inercia rotacional del rotor fue omitida explícitamente en el modelo princip
 coaxial y un reductor ideal que conserva el sentido de giro, su velocidad **absoluta** es
 
 $$
-\dot\alpha_m=n_g\dot x/r+(1-n_g)\dot\varphi.
+\dot\alpha_m=n_g\dot\psi+(1-n_g)\dot\varphi=-n_g\dot x/r+(1-n_g)\dot\varphi.
 $$
 
 Para dos rotores de inercia $J_r$, se añade
 
 $$
-T_r=\frac12(2J_r)\left[n_g\dot x/r+(1-n_g)\dot\varphi\right]^2,\qquad
-\Delta\mathbf M=2J_r\begin{bmatrix}n_g/r\\1-n_g\end{bmatrix}
-\begin{bmatrix}n_g/r&1-n_g\end{bmatrix}. \tag{54}
+T_r=\frac12(2J_r)\left[-n_g\dot x/r+(1-n_g)\dot\varphi\right]^2,\qquad
+\Delta\mathbf M=2J_r\begin{bmatrix}-n_g/r\\1-n_g\end{bmatrix}
+\begin{bmatrix}-n_g/r&1-n_g\end{bmatrix}. \tag{54}
 $$
 
 La traslación de sus masas ya está en la masa de los motores; solo se agrega el giro que se había
@@ -862,12 +877,12 @@ Una fuerza horizontal $F_p$ aplicada en $G$ tiene trabajo virtual
 
 $$
 \delta W_p=F_p\delta x_G
-=F_p\delta x+F_p\ell\cos\varphi\delta\varphi. \tag{55}
+=F_p\delta x-F_p\ell\cos\varphi\delta\varphi. \tag{55}
 $$
 
-Por eso añade $[F_p,\,F_p\ell\cos\varphi]^T$ al lado derecho de (28). Para otro punto de
+Por eso añade $[F_p,\,-F_p\ell\cos\varphi]^T$ al lado derecho de (28). Para otro punto de
 aplicación se deriva la posición de ese punto. Una fuerza aplicada al eje añade $[F_p,0]^T$;
-un par externo puro añade $[0,\tau_p]^T$. La fuerza en $G$ no debe representarse únicamente como
+un par externo puro antihorario añade $[0,\tau_p]^T$. La fuerza en $G$ no debe representarse únicamente como
 una fuerza sobre $x$, porque también ejerce momento respecto del eje. Estos empujones no están
 activados en la demostración de par constante.
 

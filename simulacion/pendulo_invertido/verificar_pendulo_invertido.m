@@ -36,9 +36,9 @@ function informe = verificar_pendulo_invertido()
     assert(norm(dz, inf) < 1e-13, 'La vertical no es un equilibrio.');
     assert(abs(R.normal-p.m_total*p.g) < 1e-12, 'La normal estatica no coincide con el peso.');
     dz_par = ecuaciones_pendulo_invertido(zeros(4, 1), 0.01, p);
-    assert(dz_par(2) > 0 && dz_par(4) < 0, 'Signo incorrecto de accion/reaccion del motor.');
+    assert(dz_par(2) < 0 && dz_par(4) < 0, 'Signo incorrecto de accion/reaccion del motor.');
     dz_gravedad = ecuaciones_pendulo_invertido([0; 0; 0.01; 0], 0, p);
-    assert(dz_gravedad(4) > 0 && dz_gravedad(2) < 0, 'La gravedad debe desestabilizar el cuerpo.');
+    assert(dz_gravedad(4) > 0 && dz_gravedad(2) > 0, 'La gravedad debe desestabilizar el cuerpo.');
 
     %% 3. Linealizacion analitica contra el Jacobiano numerico de la ODE.
     L = linealizar_pendulo_invertido(p);
@@ -63,12 +63,12 @@ function informe = verificar_pendulo_invertido()
     z = [0.07; 0.12; 0.08; -0.3];
     tau = 0.015;
     [dz, R] = ecuaciones_pendulo_invertido(z, tau, p);
-    gradiente_E = [0; p.a*z(2)+p.h*cos(z(3))*z(4); ...
-        -p.h*sin(z(3))*z(2)*z(4)-p.k*sin(z(3)); ...
-        p.h*cos(z(3))*z(2)+p.j*z(4)];
+    gradiente_E = [0; p.a*z(2)-p.h*cos(z(3))*z(4); ...
+        p.h*sin(z(3))*z(2)*z(4)-p.k*sin(z(3)); ...
+        -p.h*cos(z(3))*z(2)+p.j*z(4)];
     informe.error_potencia = abs(gradiente_E.'*dz-R.potencia_neta);
     assert(informe.error_potencia < 1e-11, 'Se incumple el balance de potencia.');
-    aceleracion_Gx = dz(2)+p.l*cos(z(3))*dz(4)-p.l*sin(z(3))*z(4)^2;
+    aceleracion_Gx = dz(2)-p.l*cos(z(3))*dz(4)+p.l*sin(z(3))*z(4)^2;
     informe.error_balance_horizontal = abs(p.m_ruedas*dz(2)+p.m_cuerpo*aceleracion_Gx ...
         - R.fuerza_tangencial + p.b_x*z(2));
     assert(informe.error_balance_horizontal < 1e-11, 'Se incumple el balance horizontal de Newton.');
