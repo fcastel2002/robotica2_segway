@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1044" height="288" class="svgbob">
+  <style>.svgbob line, .svgbob path, .svgbob circle, .svgbob rect, .svgbob polygon {
+  stroke: #172033;
+  stroke-width: 2;
+  stroke-opacity: 1;
+  fill-opacity: 1;
+  stroke-linecap: round;
+  stroke-linejoin: miter;
+}
+
+.svgbob text {
+  white-space: pre;
+  fill: #172033;
+  font-family: Consolas, monospace;
+  font-size: 16px;
+}
+
+.svgbob rect.backdrop {
+  stroke: none;
+  fill: white;
+}
+
+.svgbob .broken {
+  stroke-dasharray: 8;
+}
+
+.svgbob .filled {
+  fill: #172033;
+}
+
+.svgbob .bg_filled {
+  fill: white;
+  stroke-width: 1;
+}
+
+.svgbob .nofill {
+  fill: white;
+}
+
+.svgbob .end_marked_arrow {
+  marker-end: url(#arrow);
+}
+
+.svgbob .start_marked_arrow {
+  marker-start: url(#arrow);
+}
+
+.svgbob .end_marked_diamond {
+  marker-end: url(#diamond);
+}
+
+.svgbob .start_marked_diamond {
+  marker-start: url(#diamond);
+}
+
+.svgbob .end_marked_circle {
+  marker-end: url(#circle);
+}
+
+.svgbob .start_marked_circle {
+  marker-start: url(#circle);
+}
+
+.svgbob .end_marked_open_circle {
+  marker-end: url(#open_circle);
+}
+
+.svgbob .start_marked_open_circle {
+  marker-start: url(#open_circle);
+}
+
+.svgbob .end_marked_big_open_circle {
+  marker-end: url(#big_open_circle);
+}
+
+.svgbob .start_marked_big_open_circle {
+  marker-start: url(#big_open_circle);
+}
+
+</style>
+  <defs>
+    <marker id="arrow" viewBox="-2 -2 8 8" refX="4" refY="2" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <polygon points="0,0 0,4 4,2 0,0"></polygon>
+    </marker>
+    <marker id="diamond" viewBox="-2 -2 8 8" refX="4" refY="2" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <polygon points="0,2 2,0 4,2 2,4 0,2"></polygon>
+    </marker>
+    <marker id="circle" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <circle cx="4" cy="4" r="2" class="filled"></circle>
+    </marker>
+    <marker id="open_circle" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <circle cx="4" cy="4" r="2" class="bg_filled"></circle>
+    </marker>
+    <marker id="big_open_circle" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <circle cx="4" cy="4" r="3" class="bg_filled"></circle>
+    </marker>
+  </defs>
+  <rect class="backdrop" x="0" y="0" width="1044" height="288"></rect>
+  <polygon points="84,30 96,36 84,42" class="filled"></polygon>
+  <polygon points="612,30 624,36 612,42" class="filled"></polygon>
+  <polygon points="816,174 828,174 822,192" class="filled"></polygon>
+  <polygon points="492,222 480,228 492,234" class="filled"></polygon>
+  <text x="543" y="18" >z</text>
+  <text x="123" y="42" >PLANTA</text>
+  <text x="651" y="42" >SENSORES</text>
+  <text x="123" y="66" >dz/dt = A z + B tau</text>
+  <text x="651" y="66" >IMU: phi, w</text>
+  <text x="123" y="90" >z = [x v phi w]</text>
+  <text x="651" y="90" >Encoders: theta_e, w_e</text>
+  <text x="63" y="162" >tau</text>
+  <text x="843" y="162" >y = C z + ruido</text>
+  <text x="507" y="210" >z_hat</text>
+  <text x="123" y="234" >GANANCIA  -K</text>
+  <text x="651" y="234" >FILTRO / ESTIMADOR</text>
+  <g>
+    <line x1="102" y1="12" x2="474" y2="12" class="solid"></line>
+    <line x1="102" y1="12" x2="102" y2="108" class="solid"></line>
+    <line x1="474" y1="12" x2="474" y2="108" class="solid"></line>
+    <line x1="474" y1="36" x2="612" y2="36" class="solid"></line>
+    <line x1="102" y1="108" x2="474" y2="108" class="solid"></line>
+  </g>
+  <g>
+    <line x1="630" y1="12" x2="1026" y2="12" class="solid"></line>
+    <line x1="630" y1="12" x2="630" y2="108" class="solid"></line>
+    <line x1="1026" y1="12" x2="1026" y2="108" class="solid"></line>
+    <line x1="630" y1="108" x2="1026" y2="108" class="solid"></line>
+    <line x1="822" y1="108" x2="822" y2="174" class="solid"></line>
+  </g>
+  <g>
+    <line x1="42" y1="36" x2="84" y2="36" class="solid"></line>
+    <line x1="42" y1="36" x2="42" y2="228" class="solid"></line>
+    <line x1="102" y1="204" x2="474" y2="204" class="solid"></line>
+    <line x1="102" y1="204" x2="102" y2="252" class="solid"></line>
+    <line x1="474" y1="204" x2="474" y2="252" class="solid"></line>
+    <line x1="42" y1="228" x2="102" y2="228" class="solid"></line>
+    <line x1="102" y1="252" x2="474" y2="252" class="solid"></line>
+  </g>
+  <g>
+    <line x1="630" y1="204" x2="1026" y2="204" class="solid"></line>
+    <line x1="630" y1="204" x2="630" y2="252" class="solid"></line>
+    <line x1="1026" y1="204" x2="1026" y2="252" class="solid"></line>
+    <line x1="492" y1="228" x2="630" y2="228" class="solid"></line>
+    <line x1="630" y1="252" x2="1026" y2="252" class="solid"></line>
+  </g>
+</svg>
