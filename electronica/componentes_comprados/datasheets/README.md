@@ -2,11 +2,11 @@
 
 Robótica Proyecto - Matías · Recopilación del 15 de octubre de 2026.
 
-**11 entradas de inventario · 24 unidades · 9 PDF originales descargados · 3 páginas comerciales archivadas.** Cada componente tiene una ficha local con fuentes y pendientes.
+**14 entradas · 27 dispositivos/conjuntos para el robot · 11 PDF originales descargados · 3 páginas comerciales archivadas.** El pack de batería contiene tres celdas y cuenta como un conjunto; se registra una ESP32 y una MPU6050 para el diseño. Cada componente tiene una ficha local con fuentes y pendientes.
 
 ## Qué se encontró
 
-- **4 datasheets oficiales de integrados:** LM2596, INA219, DRV8871 e INA226, descargados desde Texas Instruments.
+- **6 datasheets originales de fabricantes de integrados:** cuatro de Texas Instruments (LM2596, INA219, DRV8871 e INA226), uno de Espressif (ESP32 Series) y uno de InvenSense (MPU6050, copia alojada por SparkFun). La placa exacta de ESP32 y el módulo de MPU6050 aún deben identificarse.
 - **2 PDF del servo:** datasheet de la familia DS3240 y plano de dimensiones, publicados por Micro Robotics.
 - **1 PDF de BMS:** ficha de la familia 3S/40A y sus variantes, atribuida a Shenzhen Global Technology y alojada en Mantech. Coincidencia visual; revisión de la placa comprada no confirmada.
 - **1 PDF de motores:** tabla de referencia de la familia GA25-370. No documenta específicamente los motores comprados de 300 RPM.
@@ -28,6 +28,9 @@ Robótica Proyecto - Matías · Recopilación del 15 de octubre de 2026.
 | [ROB-009](ROB-009_INA226/FICHA_Y_FUENTES.md) | Sensor INA226 | 1 | Datasheet oficial del integrado; módulo genérico sin documentación propia identificada. | [INA226_TI_datasheet.pdf](ROB-009_INA226/INA226_TI_datasheet.pdf) |
 | [ROB-010](ROB-010_DS3240MG/FICHA_Y_FUENTES.md) | Servo DSSERVO DS3240 MG | 2 | Datasheet y plano de la familia DS3240 publicados por Micro Robotics; recorrido de los ejemplares pendiente. | [DS3240_serie_datasheet_2024_MicroRobotics.pdf](ROB-010_DS3240MG/DS3240_serie_datasheet_2024_MicroRobotics.pdf)<br>[DS3240_dimensiones_MicroRobotics.pdf](ROB-010_DS3240MG/DS3240_dimensiones_MicroRobotics.pdf) |
 | [ROB-011](ROB-011_GA25-370_300RPM/FICHA_Y_FUENTES.md) | Motor GA25-370 de 12 V y 300 RPM con encoder | 2 | Tabla de referencia de la familia; datasheet exacto de la versión comprada no localizado. | [GA25-370_familia_Makers_REFERENCIA.pdf](ROB-011_GA25-370_300RPM/GA25-370_familia_Makers_REFERENCIA.pdf) |
+| [ROB-012](ROB-012_ESP32/FICHA_Y_FUENTES.md) | Controladora ESP32 | 1 | Datasheet oficial de la serie ESP32 clásica; variante de placa pendiente | [PDF](ROB-012_ESP32/ESP32_Series_Espressif_datasheet.pdf) |
+| [ROB-013](ROB-013_MPU6050/FICHA_Y_FUENTES.md) | IMU MPU6050 | 1 | Datasheet original de InvenSense alojado por SparkFun; módulo pendiente | [PDF](ROB-013_MPU6050/MPU6000_MPU6050_InvenSense_datasheet.pdf) |
+| [ROB-014](ROB-014_Bateria_11V1/FICHA_Y_FUENTES.md) | Conjunto de tres celdas, fuente nominal de 11,1 V | 1 conjunto | Sin modelo de celdas/controlador; datasheet específico pendiente | Ficha local |
 
 ## Cómo interpretar la documentación
 
@@ -41,7 +44,7 @@ Para completar la correspondencia: fotos nítidas de ambas caras y códigos del 
 
 - [Inventario del proyecto](../inventario/inventario_robotica.md).
 - [Fuentes, revisiones, tamaños, páginas y SHA-256](fuentes_y_verificacion.json).
-- Los 9 PDF se abrieron correctamente y se recorrieron todas sus páginas con un lector PDF. Se revisaron visualmente las portadas y las imágenes relevantes para identificar servo, BMS y tabla del motor.
+- Los 11 PDF se abrieron correctamente y se recorrieron todas sus páginas con un lector PDF. Se revisaron visualmente las portadas y las imágenes relevantes para identificar servo, BMS y tabla del motor.
 - Se conservaron capturas/fotos aportadas por Matías junto a las fichas correspondientes. Los archivos sincronizados en `sources/` no se modificaron.
 
 ## Referencias descartadas

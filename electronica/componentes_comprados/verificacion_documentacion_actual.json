@@ -1,0 +1,287 @@
+{
+  "fecha": "2026-10-15",
+  "estado": "Documentación ampliada con ESP32, MPU6050 y conjunto de tres celdas; placas exactas y celdas/controlador por identificar.",
+  "pdf": 11,
+  "html": 3,
+  "fichas_locales": 14,
+  "entradas_inventario": 14,
+  "unidades_o_conjuntos": 27,
+  "criterio_conteo": "24 unidades iniciales + una ESP32 + una MPU6050 + un conjunto de tres celdas; repuestos de controladora/IMU no informados.",
+  "archivos": [
+    {
+      "archivo": "README.md",
+      "bytes": 2749,
+      "sha256": "5d5edb10968b2dccbc0c746ee4325ff510327e5ff5e15e98531029f18f0d6c20"
+    },
+    {
+      "archivo": "datasheets/README.md",
+      "bytes": 7168,
+      "sha256": "f7c213656726ec252311e140c9894df718066ee0d5a369ef33649d7be702a473"
+    },
+    {
+      "archivo": "datasheets/ROB-001_LM2596/FICHA_Y_FUENTES.md",
+      "bytes": 767,
+      "sha256": "7dfe7d0a0cf7b20046811bb9e67af6f80318121abc53bf7f7b51fe3a098639c9"
+    },
+    {
+      "archivo": "datasheets/ROB-001_LM2596/LM2596_TI_datasheet.pdf",
+      "bytes": 5095029,
+      "sha256": "2eec90879908cf711b84d4f0c5d534c3cd12c576d25254b7019247435af4ab0f"
+    },
+    {
+      "archivo": "datasheets/ROB-001_LM2596/referencia_compra.png",
+      "bytes": 1328106,
+      "sha256": "679d9f90dac8f0f7d22ba00b62a0d3163cfd775d182d27ebf4463ece324da2b7"
+    },
+    {
+      "archivo": "datasheets/ROB-002_INA219/FICHA_Y_FUENTES.md",
+      "bytes": 730,
+      "sha256": "1a195209615dc0c5d6e495afc9c684feceb5ee308929a35ac14c06f295a7c537"
+    },
+    {
+      "archivo": "datasheets/ROB-002_INA219/INA219_TI_datasheet.pdf",
+      "bytes": 892731,
+      "sha256": "58004eda854d07478e6fc6f4398c114f60a3bcf18d4877471c7c1a306d1fa1cb"
+    },
+    {
+      "archivo": "datasheets/ROB-002_INA219/referencia_compra.png",
+      "bytes": 1076777,
+      "sha256": "7165039a715af7bc6cc3d79eb5290b63111429cb2163ecb0515aad927953ae74"
+    },
+    {
+      "archivo": "datasheets/ROB-003_BMS_3S_40A/BMS_40A_3S_SGT_variantes_Mantech.pdf",
+      "bytes": 468109,
+      "sha256": "4ddb1d314269ee88daff16ef3ceba0c9851d6a42d0c1c1c1c5550fa4a9f955a4"
+    },
+    {
+      "archivo": "datasheets/ROB-003_BMS_3S_40A/FICHA_Y_FUENTES.md",
+      "bytes": 1103,
+      "sha256": "057cc9b5f7daf9486d6218c45f9f98f52d5af45a50e46f453c7571b691190acf"
+    },
+    {
+      "archivo": "datasheets/ROB-003_BMS_3S_40A/referencia_compra.png",
+      "bytes": 1875758,
+      "sha256": "dd3c7f022d979f35bfa7335e41787ffeecef76f84983db6c206591cc76541878"
+    },
+    {
+      "archivo": "datasheets/ROB-004_Voltimetro/FICHA_Y_FUENTES.md",
+      "bytes": 1144,
+      "sha256": "842ed3ea9fe59e86579b3c7e7ac771ee812266552f324368e4463ff463e6ab43"
+    },
+    {
+      "archivo": "datasheets/ROB-004_Voltimetro/ficha_comercial_DIYMORE_REFERENCIA.html",
+      "bytes": 452207,
+      "sha256": "3f5345ea6b341ae4744a26ad4ca9177e9feaafb7c950c0623deb200b5a31c918"
+    },
+    {
+      "archivo": "datasheets/ROB-004_Voltimetro/referencia_compra.png",
+      "bytes": 2021945,
+      "sha256": "871ecd5fa1fe31653eb3e3bb9fb952064ed172b65967cd4e635bd91980992aea"
+    },
+    {
+      "archivo": "datasheets/ROB-005_Mini_3V3/FICHA_Y_FUENTES.md",
+      "bytes": 1671,
+      "sha256": "f269b7c2c8f1dc713db6faf3f68f0e7ee63ca00b48a143027381d9d8552223c6"
+    },
+    {
+      "archivo": "datasheets/ROB-005_Mini_3V3/referencia_compra.png",
+      "bytes": 810604,
+      "sha256": "5158d7d3b58a58407df5dd6c31dedee860bc83354edd744357308731927b1cb2"
+    },
+    {
+      "archivo": "datasheets/ROB-006_Mini_5V/FICHA_Y_FUENTES.md",
+      "bytes": 1624,
+      "sha256": "ab37ccc543c805e1942298128cc8cbb461f64be61ea3e28a4be9be38a2baa9f4"
+    },
+    {
+      "archivo": "datasheets/ROB-006_Mini_5V/referencia_compra.png",
+      "bytes": 803915,
+      "sha256": "07e2adba4aeed2bf0c8908b1122bad0df6d973ebe57bc9b6ebcb85d8644b3892"
+    },
+    {
+      "archivo": "datasheets/ROB-007_YSIDO_UBEC_6A/FICHA_Y_FUENTES.md",
+      "bytes": 1087,
+      "sha256": "a0953a093bb6ad544bb538f28a24b339b44994dcaaf4655009e3813c236a18a7"
+    },
+    {
+      "archivo": "datasheets/ROB-007_YSIDO_UBEC_6A/ficha_comercial_Banggood_YSIDO.html",
+      "bytes": 265104,
+      "sha256": "5db71031146ef82ba0ebccf2f06516e78e5899574c8d1fc20258a56cc1624cce"
+    },
+    {
+      "archivo": "datasheets/ROB-007_YSIDO_UBEC_6A/referencia_compra.png",
+      "bytes": 1188159,
+      "sha256": "19ce54e18e5039d78d15617bc01ab93f78dfd9ec58600755831b52368729651d"
+    },
+    {
+      "archivo": "datasheets/ROB-008_DRV8871/DRV8871_TI_datasheet.pdf",
+      "bytes": 1582709,
+      "sha256": "09de551aa0c6d090fd14b000634cfd894d782a050eed13110fe2eb10f1b548bf"
+    },
+    {
+      "archivo": "datasheets/ROB-008_DRV8871/FICHA_Y_FUENTES.md",
+      "bytes": 790,
+      "sha256": "d4a381f273482d7928a6ce33d0adf5456a9874a740812440c77e8f6252cbc294"
+    },
+    {
+      "archivo": "datasheets/ROB-008_DRV8871/referencia_compra.png",
+      "bytes": 70510,
+      "sha256": "3314d9ab35b01196fce940c831c6fff3d5b8513e7d94d3b4457c4335329a8a58"
+    },
+    {
+      "archivo": "datasheets/ROB-009_INA226/FICHA_Y_FUENTES.md",
+      "bytes": 716,
+      "sha256": "a615a2b7df04cbaf0099666c38936dbf50def1999aefe0374719c7aa62f45787"
+    },
+    {
+      "archivo": "datasheets/ROB-009_INA226/INA226_TI_datasheet.pdf",
+      "bytes": 1516957,
+      "sha256": "c9b67f886d4a5241a5e070723f7b61867409eeb27eed768b9cdd9cb17e03ca2d"
+    },
+    {
+      "archivo": "datasheets/ROB-009_INA226/referencia_compra.png",
+      "bytes": 100285,
+      "sha256": "ce9e4f9d16cf726525f92d3e965283721ea553bdf6cb96a8cbba316543992b3f"
+    },
+    {
+      "archivo": "datasheets/ROB-010_DS3240MG/DS3240_dimensiones_MicroRobotics.pdf",
+      "bytes": 157606,
+      "sha256": "03328dd533bac6fef0cf99f620b6f5e768c2feac1dbb52f9c1d99fc20afaa54a"
+    },
+    {
+      "archivo": "datasheets/ROB-010_DS3240MG/DS3240_serie_datasheet_2024_MicroRobotics.pdf",
+      "bytes": 441976,
+      "sha256": "a6ce92c88173d9f50a6aba1a1f326c6a1ee0789bb8bed56df9e01438725b6b34"
+    },
+    {
+      "archivo": "datasheets/ROB-010_DS3240MG/FICHA_Y_FUENTES.md",
+      "bytes": 1481,
+      "sha256": "776f9dc97ec976a3f8b4d8e91c4f60d0c29cbbf96cc12f06e27203fc8de11baf"
+    },
+    {
+      "archivo": "datasheets/ROB-010_DS3240MG/referencia_compra.png",
+      "bytes": 1052513,
+      "sha256": "1a14e8fa282e4b07da474aefa76bb91630ff984f11057be9d759ba7c82c52835"
+    },
+    {
+      "archivo": "datasheets/ROB-010_DS3240MG/referencia_modelo.png",
+      "bytes": 968157,
+      "sha256": "7d529a21fa698e8e0d66be841a4cf6ad36566bdb285bab06cd460c2aa4635df4"
+    },
+    {
+      "archivo": "datasheets/ROB-011_GA25-370_300RPM/FICHA_Y_FUENTES.md",
+      "bytes": 1471,
+      "sha256": "efe82e6db9ebf4b5483f535427fe783be2f2439cdab5dcfe627e665c624ebf55"
+    },
+    {
+      "archivo": "datasheets/ROB-011_GA25-370_300RPM/GA25-370_familia_Makers_REFERENCIA.pdf",
+      "bytes": 46920,
+      "sha256": "d67030588dc5d80641f2d63c22e31071c7ce8cf71e17fdbbe2e8a9d019beb046"
+    },
+    {
+      "archivo": "datasheets/ROB-012_ESP32/ESP32_Series_Espressif_datasheet.pdf",
+      "bytes": 989523,
+      "sha256": "a7917e6b47528c9dcab06837a49d452e582751335797db879f1cf2d17cd29adf"
+    },
+    {
+      "archivo": "datasheets/ROB-012_ESP32/FICHA_Y_FUENTES.md",
+      "bytes": 653,
+      "sha256": "01973f0b1fa1022f2bb08895a47439391632fa327fcb71ca179e2d866d00bab4"
+    },
+    {
+      "archivo": "datasheets/ROB-013_MPU6050/FICHA_Y_FUENTES.md",
+      "bytes": 1038,
+      "sha256": "90585c7fe904daace938cb88c617b827a98c439aa9ac85806027761c441a57d4"
+    },
+    {
+      "archivo": "datasheets/ROB-013_MPU6050/MPU6000_MPU6050_InvenSense_datasheet.pdf",
+      "bytes": 1637351,
+      "sha256": "a4fdf69590b8cbab1cf0a5bcd359327b0ac022061fb233855aff2e191e7e3584"
+    },
+    {
+      "archivo": "datasheets/ROB-014_Bateria_11V1/FICHA_Y_FUENTES.md",
+      "bytes": 736,
+      "sha256": "069e5832e1676c6086949a721af72379d7df09b29b48458a8f5016f060158152"
+    },
+    {
+      "archivo": "datasheets/fuentes_y_verificacion.json",
+      "bytes": 7432,
+      "sha256": "733b7b383559605dea1ad6d7f8bee3d462b4991474c83bba3e7eccdd152703ba"
+    },
+    {
+      "archivo": "datasheets/referencias_no_confirmadas/MP1584_MPS_datasheet_REFERENCIA_NO_CONFIRMADA.pdf",
+      "bytes": 396535,
+      "sha256": "d56ebb4e03ba10553c0f2b13fab7222bf7ea962c950b4bd0ef259dce431601ff"
+    },
+    {
+      "archivo": "datasheets/referencias_no_confirmadas/ficha_comercial_Mini_MP1584_LazyAutomation.html",
+      "bytes": 314931,
+      "sha256": "bfe5d2e6a936b3e2ae2a48a665ae2755571332db07fc04dc5b4a1fe5713bc9ce"
+    },
+    {
+      "archivo": "inventario/inventario_robotica.md",
+      "bytes": 15374,
+      "sha256": "72dc1427f8fb21356e3f5ad33a1af64512bd1cb58b8e2ff2a650862c95e3b317"
+    },
+    {
+      "archivo": "inventario/referencias/01_lm2596.png",
+      "bytes": 1328106,
+      "sha256": "679d9f90dac8f0f7d22ba00b62a0d3163cfd775d182d27ebf4463ece324da2b7"
+    },
+    {
+      "archivo": "inventario/referencias/02_ina219.png",
+      "bytes": 1076777,
+      "sha256": "7165039a715af7bc6cc3d79eb5290b63111429cb2163ecb0515aad927953ae74"
+    },
+    {
+      "archivo": "inventario/referencias/03_bms_3s.png",
+      "bytes": 1875758,
+      "sha256": "dd3c7f022d979f35bfa7335e41787ffeecef76f84983db6c206591cc76541878"
+    },
+    {
+      "archivo": "inventario/referencias/04_voltimetro.png",
+      "bytes": 2021945,
+      "sha256": "871ecd5fa1fe31653eb3e3bb9fb952064ed172b65967cd4e635bd91980992aea"
+    },
+    {
+      "archivo": "inventario/referencias/05_reductor_3v3.png",
+      "bytes": 810604,
+      "sha256": "5158d7d3b58a58407df5dd6c31dedee860bc83354edd744357308731927b1cb2"
+    },
+    {
+      "archivo": "inventario/referencias/06_reductor_5v.png",
+      "bytes": 803915,
+      "sha256": "07e2adba4aeed2bf0c8908b1122bad0df6d973ebe57bc9b6ebcb85d8644b3892"
+    },
+    {
+      "archivo": "inventario/referencias/07_ubec_6a.png",
+      "bytes": 1188159,
+      "sha256": "19ce54e18e5039d78d15617bc01ab93f78dfd9ec58600755831b52368729651d"
+    },
+    {
+      "archivo": "inventario/referencias/08_drv8871.png",
+      "bytes": 70510,
+      "sha256": "3314d9ab35b01196fce940c831c6fff3d5b8513e7d94d3b4457c4335329a8a58"
+    },
+    {
+      "archivo": "inventario/referencias/09_ina226.png",
+      "bytes": 100285,
+      "sha256": "ce9e4f9d16cf726525f92d3e965283721ea553bdf6cb96a8cbba316543992b3f"
+    },
+    {
+      "archivo": "inventario/referencias/10a_servo_ds3240mg_lateral.png",
+      "bytes": 1052513,
+      "sha256": "1a14e8fa282e4b07da474aefa76bb91630ff984f11057be9d759ba7c82c52835"
+    },
+    {
+      "archivo": "inventario/referencias/10b_servo_ds3240mg_modelo.png",
+      "bytes": 968157,
+      "sha256": "7d529a21fa698e8e0d66be841a4cf6ad36566bdb285bab06cd460c2aa4635df4"
+    },
+    {
+      "archivo": "verificacion_organizacion.json",
+      "bytes": 9633,
+      "sha256": "628eb43c04d5c00a76a903d085f6d34053a8efd6340cd7ff9216c8106166502b"
+    }
+  ]
+}
