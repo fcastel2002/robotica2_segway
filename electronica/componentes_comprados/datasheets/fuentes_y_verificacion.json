@@ -1,0 +1,133 @@
+[
+  {
+    "archivo": "ROB-001_LM2596/LM2596_TI_datasheet.pdf",
+    "fuente": "https://www.ti.com/lit/ds/symlink/lm2596.pdf",
+    "publicador": "Texas Instruments",
+    "revision": "SNVS124G, marzo 2023",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 5095029,
+    "sha256": "2eec90879908cf711b84d4f0c5d534c3cd12c576d25254b7019247435af4ab0f",
+    "paginas": 47,
+    "alcance": "Integrado LM2596; no certifica los límites de la placa comprada."
+  },
+  {
+    "archivo": "ROB-002_INA219/INA219_TI_datasheet.pdf",
+    "fuente": "https://www.ti.com/lit/ds/symlink/ina219.pdf",
+    "publicador": "Texas Instruments",
+    "revision": "SBOS448G, diciembre 2015",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 892731,
+    "sha256": "58004eda854d07478e6fc6f4398c114f60a3bcf18d4877471c7c1a306d1fa1cb",
+    "paginas": 38,
+    "alcance": "Integrado INA219; pinout de la placa y shunt requieren comprobación."
+  },
+  {
+    "archivo": "ROB-003_BMS_3S_40A/BMS_40A_3S_SGT_variantes_Mantech.pdf",
+    "fuente": "https://www.mantech.co.za/Datasheets/Products/BMS-40A-3S_SGT.pdf",
+    "publicador": "Shenzhen Global Technology; copia en Mantech",
+    "revision": "Sin revisión inequívoca del documento",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 468109,
+    "sha256": "4ddb1d314269ee88daff16ef3ceba0c9851d6a42d0c1c1c1c5550fa4a9f955a4",
+    "paginas": 2,
+    "alcance": "Familia BMS-40A-3S-E/B/S; la versión B es la de balanceo. No confirma automáticamente el ejemplar de Temu."
+  },
+  {
+    "archivo": "ROB-004_Voltimetro/ficha_comercial_DIYMORE_REFERENCIA.html",
+    "fuente": "https://www.diymore.cc/products/0-28-3-wires-red-green-blue-yellow-white-led-display-voltmeter-volt-panel-meter",
+    "publicador": "DIYMORE",
+    "revision": "Página consultada el 15/10/2026",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 452207,
+    "sha256": "3f5345ea6b341ae4744a26ad4ca9177e9feaafb7c950c0623deb200b5a31c918",
+    "paginas": null,
+    "alcance": "Producto de referencia: voltímetro de tres cables y pantalla 0,28 pulgadas; equivalencia con Temu no demostrada."
+  },
+  {
+    "archivo": "referencias_no_confirmadas/MP1584_MPS_datasheet_REFERENCIA_NO_CONFIRMADA.pdf",
+    "fuente": "https://www.tim.pl/api/v1/assets/MDAwMS0wMDAyMC0yMzc5Mi8wMDAxLTAwMDIwLTIzNzkyXzIucGRm.pdf",
+    "publicador": "Monolithic Power Systems; copia en TIM",
+    "revision": "MP1584 Rev. 1.0, agosto 2011",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 396535,
+    "sha256": "d56ebb4e03ba10553c0f2b13fab7222bf7ea962c950b4bd0ef259dce431601ff",
+    "paginas": 17,
+    "alcance": "Candidato no confirmado: no atribuir estos límites al módulo de Temu."
+  },
+  {
+    "archivo": "ROB-007_YSIDO_UBEC_6A/ficha_comercial_Banggood_YSIDO.html",
+    "fuente": "https://www.banggood.com/YSido-4A-or-6A-or-8A-UBEC-5V-or-6V-or-7_4V-Output-2-6S-Brushless-BEC-Voltage-Stabilizer-for-RC-FPV-Racing-Drones-p-2051040.html",
+    "publicador": "Banggood, ficha de producto YSIDO",
+    "revision": "Página consultada el 15/10/2026",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 265104,
+    "sha256": "5db71031146ef82ba0ebccf2f06516e78e5899574c8d1fc20258a56cc1624cce",
+    "paginas": null,
+    "alcance": "Familia YSIDO 4/6/8 A, no manual oficial ni validación de la revisión comprada."
+  },
+  {
+    "archivo": "ROB-008_DRV8871/DRV8871_TI_datasheet.pdf",
+    "fuente": "https://www.ti.com/lit/ds/symlink/drv8871.pdf",
+    "publicador": "Texas Instruments",
+    "revision": "SLVSCY9B, julio 2016",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 1582709,
+    "sha256": "09de551aa0c6d090fd14b000634cfd894d782a050eed13110fe2eb10f1b548bf",
+    "paginas": 27,
+    "alcance": "Integrado DRV8871; la corriente utilizable del módulo depende de su diseño."
+  },
+  {
+    "archivo": "ROB-009_INA226/INA226_TI_datasheet.pdf",
+    "fuente": "https://www.ti.com/lit/ds/symlink/ina226.pdf",
+    "publicador": "Texas Instruments",
+    "revision": "SBOS547C, agosto 2026",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 1516957,
+    "sha256": "c9b67f886d4a5241a5e070723f7b61867409eeb27eed768b9cdd9cb17e03ca2d",
+    "paginas": 41,
+    "alcance": "Integrado INA226; no se incluye INA231 porque la variante comprada dice INA226."
+  },
+  {
+    "archivo": "ROB-010_DS3240MG/DS3240_serie_datasheet_2024_MicroRobotics.pdf",
+    "fuente": "https://raw.githubusercontent.com/microrobotics/DS3240/main/DS3240-datasheet-2024.pdf",
+    "publicador": "Micro Robotics",
+    "revision": "Edición 2024",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 441976,
+    "sha256": "a6ce92c88173d9f50a6aba1a1f326c6a1ee0789bb8bed56df9e01438725b6b34",
+    "paginas": 5,
+    "alcance": "La fotografía del PDF coincide con la etiqueta y carcasa DS3240MG. El documento incluye varias variantes angulares."
+  },
+  {
+    "archivo": "ROB-010_DS3240MG/DS3240_dimensiones_MicroRobotics.pdf",
+    "fuente": "https://raw.githubusercontent.com/microrobotics/DS3240/main/DS3240-dimensions.pdf",
+    "publicador": "Micro Robotics",
+    "revision": "Dimensions V1.0",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 157606,
+    "sha256": "03328dd533bac6fef0cf99f620b6f5e768c2feac1dbb52f9c1d99fc20afaa54a",
+    "paginas": 2,
+    "alcance": "Plano de dimensiones de la familia DS3240."
+  },
+  {
+    "archivo": "ROB-011_GA25-370_300RPM/GA25-370_familia_Makers_REFERENCIA.pdf",
+    "fuente": "https://makerselectronics.com/wp-content/uploads/2023/09/WhatsApp-Image-2026-06-17-at-4.04.41-PM.pdf",
+    "publicador": "Makers Electronics, distribuidor",
+    "revision": "Sin fecha o revisión impresa",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 46920,
+    "sha256": "d67030588dc5d80641f2d63c22e31071c7ce8cf71e17fdbbe2e8a9d019beb046",
+    "paginas": 1,
+    "alcance": "Tabla enlazada por el distribuidor para la familia; no es ficha exacta del motor de Mercado Libre de 300 RPM."
+  },
+  {
+    "archivo": "referencias_no_confirmadas/ficha_comercial_Mini_MP1584_LazyAutomation.html",
+    "fuente": "https://www.lazy-automation.com.au/product/mp1584en-mini-dc-dc-buck-converter-step-down-module-adjustable-3a-fixed-3-3v-5v-9v-12v",
+    "publicador": "Lazy Automation",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 314931,
+    "sha256": "bfe5d2e6a936b3e2ae2a48a665ae2755571332db07fc04dc5b4a1fe5713bc9ce",
+    "paginas": null,
+    "alcance": "Módulos similares; no identifica el integrado de ROB-005/006."
+  }
+]

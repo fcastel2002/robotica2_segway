@@ -1,6 +1,6 @@
 # Backlog persistente — Segway con piernas extensibles
 
-Última actualización: 2026-10-04. Este archivo es la fuente de verdad del trabajo realizado,
+Última actualización: 2026-10-15. Este archivo es la fuente de verdad del trabajo realizado,
 en curso y pendiente. Todo cambio futuro debe actualizar aquí su estado y adjuntar evidencia.
 
 Estados: `HECHO`, `EN CURSO`, `PENDIENTE`, `BLOQUEADO`. Prioridades: `P0` crítica, `P1` alta,
@@ -11,6 +11,7 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 
 ## Estado ejecutivo
 
+- Compras documentadas el 15/10: [11 entradas y 24 unidades](electronica/componentes_comprados/inventario/inventario_robotica.md), incluyendo dos DS3240 MG y dos GA25-370 de 12 V y 300 RPM con encoder. [Documentación recopilada](electronica/componentes_comprados/datasheets/README.md). El modelado todavía conserva el JGB37-520 anterior; conciliar mediante PAR-003.
 - La dinámica de la pata entregada en el commit `c5602f1` es ejecutable y consistente con la
   cinemática y el DCL para los supuestos declarados.
 - El banco reducido `simulacion/dinamica_pata_v1/` ya está construido, es regenerable desde código y
@@ -41,6 +42,9 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 
 | ID | Pri. | Estado | Fecha | Tarea | Evidencia / resultado |
 |---|---:|---|---|---|---|
+| DOC-105 | P2 | HECHO | 2026-10-15 | Organizar inventario, capturas y documentación de componentes comprados dentro del proyecto (Codex) | [Acceso principal](electronica/componentes_comprados/README.md), [inventario de 11 entradas/24 unidades](electronica/componentes_comprados/inventario/inventario_robotica.md), [9 PDF y 3 fichas comerciales](electronica/componentes_comprados/datasheets/README.md), [registro de hashes](electronica/componentes_comprados/verificacion_organizacion.json), [ZIP completo](electronica/componentes_comprados/paquetes/documentacion_robotica.zip), [registro de organización](docs/gestion/2026-10-15-documentacion-componentes.md); copias idénticas al origen, 67 enlaces locales comprobados, PDF legibles y ZIP íntegro |
+| ELE-013 | P1 | PENDIENTE | 2026-10-15 | Completar la identificación y documentación exacta de los componentes genéricos comprados y la variante angular del servo | [Fichas y límites de correspondencia](electronica/componentes_comprados/datasheets/README.md): fotos de códigos y ambas caras de BMS/reductores/voltímetro, revisión del UBEC, recorrido del DS3240 y especificaciones de encoder/motor de 300 RPM; MP1584 sigue siendo solo candidato |
+| PAR-003 | P1 | PENDIENTE | 2026-10-15 | Conciliar CAD, masas y parámetros de simulación con los motores efectivamente comprados GA25-370 de 12 V y 300 RPM con encoder | [ROB-011 y confirmación de Matías](electronica/componentes_comprados/inventario/inventario_robotica.md), [ficha del motor](electronica/componentes_comprados/datasheets/ROB-011_GA25-370_300RPM/FICHA_Y_FUENTES.md); sustituir la referencia anterior JGB37-520 solo con identificación y medidas adecuadas, conservando trazabilidad |
 | PEN-001 | P0 | HECHO | 2026-10-01 | Desarrollar el péndulo invertido sobre ruedas, con patas fijas configurables, deducción paso a paso y script MATLAB legible (Codex) | [Capítulo matemático](modelado/planta/pendulo_invertido/desarrollo_matematico.md), [script](simulacion/pendulo_invertido/SIMULAR_PENDULO_INVERTIDO.m), [corrida](simulacion/pendulo_invertido/resultados/resultado_base.md), [6/6 comprobaciones físicas](simulacion/pendulo_invertido/resultados/verificacion.json); MATLAB R2025b, cinco archivos con 0 avisos; CoM/inercia recalculados para 10°, 25° y 40°; alcance de patas fijas explícito |
 | PEN-002 | P1 | HECHO | 2026-10-03 | Cambiar la convención del péndulo invertido a sentido antihorario positivo (ángulos, pares y momentos) en el capítulo, el modelo MATLAB y la verificación | [Capítulo](modelado/planta/pendulo_invertido/desarrollo_matematico.md) §3 y ecs. (9)–(56), [verificación 6/6](simulacion/pendulo_invertido/resultados/verificacion.json), [corrida regenerada](simulacion/pendulo_invertido/resultados/resultado_base.md) con A/B iguales a (56); MATLAB R2025b |
 | PEN-003 | P1 | HECHO | 2026-10-04 | Redactar el desarrollo del péndulo invertido centrado en el espacio de estados (sin scripts), estilo libro, con diagramas svgbob; responde por qué el capítulo previo no lo usa, el atajo de linealización por energías y el seno como perturbación medida con IMU | [Capítulo](modelado/planta/pendulo_invertido/desarrollo_espacio_estados.md), [diagramas](modelado/planta/pendulo_invertido/diagramas/) (`.bob`/`.svg`/`.png`); A, B y autovalores iguales a la [corrida base](simulacion/pendulo_invertido/resultados/resultado_base.md); determinante de controlabilidad, cero RHP, observabilidad con solo IMU, cancelación de gravedad y ganancias del lazo interno verificados numéricamente con numpy (fuera del repo); contrastado el 2026-10-04 con las págs. 3-12/3-13, 7-4/7-5 y 14-11 a 14-15 del libro de Åström–Murray (sin discrepancias; se corrigió la cota del cero RHP a 0,6·z₀); sin ejecutar MATLAB |

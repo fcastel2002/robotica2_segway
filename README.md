@@ -9,6 +9,18 @@ Trabajo final de **Robótica II**, Universidad Nacional de Cuyo (UNCUYO). Grupo 
 (mecanismo de Hoeken, motores N20, plantas de simulación de agosto y principios de septiembre) se
 borró del árbol el 19/9/2026 y quedó solo en la historia de git; ver la sección 7.
 
+## Componentes comprados — actualización del 15/10/2026
+
+El [inventario confirmado](electronica/componentes_comprados/inventario/inventario_robotica.md)
+y los [datasheets y fichas recopilados](electronica/componentes_comprados/datasheets/README.md)
+están organizados en [electrónica](electronica/componentes_comprados/README.md).
+Se registran **11 entradas y 24 unidades**, incluidos **2 servos DSSERVO DS3240 MG** y
+**2 motores GA25-370 de 12 V y 300 RPM con encoder**.
+
+Las referencias al **JGB37-520** en las tablas históricas siguientes corresponden a la selección
+anterior y al modelado/CAD existente. La conciliación con los motores comprados queda pendiente
+(PAR-003 en el [backlog](BACKLOG.md)); esta organización documental no cambia los parámetros de simulación.
+
 ## 1. Qué es el robot
 
 Un robot de dos ruedas que se equilibra como un péndulo invertido (tipo Segway) y que además tiene
@@ -73,7 +85,8 @@ en MATLAB está en [`simulacion/pendulo_invertido/`](simulacion/pendulo_invertid
 | [`guias_catedra/`](guias_catedra/) | Procedimientos de la cátedra (dimensionamiento de batería, preselección de servos) | |
 | [`BACKLOG.md`](BACKLOG.md) | Lo hecho, lo en curso y lo pendiente, con evidencia. Es la lista de tareas del equipo | todos |
 | [`AGENTS.md`](AGENTS.md) | Reglas para agentes y colaboradores (PDF → Markdown antes de leer, backlog, diagramas) | |
-| `electronica/`, `firmware/`, `referencias/` | Vacías todavía | |
+| [`electronica/`](electronica/README.md) | Inventario de compras, capturas, datasheets, fichas y fuentes; integración eléctrica pendiente | Matías |
+| `firmware/`, `referencias/` | Firmware pendiente; referencias de apoyo | |
 
 ## 5. Qué falta (lo grande)
 
