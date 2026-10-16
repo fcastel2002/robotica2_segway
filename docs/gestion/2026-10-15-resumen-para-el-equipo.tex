@@ -261,21 +261,29 @@ Para correr todo, desde la raíz:
   ningún archivo.
 \end{enumerate}
 
-\section{Antes de hacer pull o push}
+\section{El merge ya est\'a hecho}
 
-\textbf{La rama local está un commit atrás de \texttt{origin}}: falta el commit de Matías con los
-datasheets de electrónica. Y hay cosas que se pisan, así que conviene no hacerlo con GitHub Desktop a
-ciegas, que es lo que en septiembre dejó un conflicto commiteado adentro de un archivo.
+Cuando escribimos esto la rama local estaba un commit atr\'as; ya se hizo el \texttt{merge} con el
+commit de Mat\'ias (\texttt{ff11061}, los datasheets de electr\'onica) y las pruebas siguen en 24 de 24.
+Git resolvi\'o solo el \texttt{BACKLOG} y el \texttt{README}, pero hubo dos cosas que el merge
+autom\'atico no pod\'ia ver y se arreglaron a mano:
 
 \begin{enumerate}[nosep]
-\item \texttt{BACKLOG.md} lo editamos los dos: va a dar conflicto y hay que resolverlo a mano
-  conservando las filas de ambos.
-\item Ya corregimos una colisión de identificadores: nuestras filas nuevas pasaron a
-  \texttt{ELE-014}, \texttt{ELE-015}, \texttt{ELE-016} y \texttt{DOC-108}.
-\item \texttt{README.md} también lo tocamos los dos.
+\item \textbf{Dos identificadores usados para cosas distintas.} Mat\'ias y nosotros usamos
+  \texttt{DOC-105} y \texttt{PAR-003} para \'items diferentes. Los nuestros pasaron a
+  \texttt{DOC-109} y \texttt{PAR-004}; tambi\'en hab\'iamos corrido antes \texttt{ELE-014} a
+  \texttt{ELE-016} y \texttt{DOC-108} por el mismo motivo.
+\item \textbf{El \texttt{PAR-003} de Mat\'ias ped\'ia justo lo que hicimos.} Dec\'ia
+  ``conciliar CAD, masas y par\'ametros de simulaci\'on con los motores comprados'' y estaba
+  pendiente. La parte de simulaci\'on ya est\'a; qued\'o marcado \textsc{en curso} con la parte de
+  CAD abierta, en vez de dejar dos filas diciendo lo mismo.
 \end{enumerate}
 
-El orden sugerido es: commitear lo nuestro primero, después traer lo de Matías, y resolver el
-\texttt{BACKLOG} con las dos partes.
+Falta \textbf{hacer el \texttt{push}}, que lo decide Joaqu\'in.
+
+Una cosa m\'as que sali\'o del commit de Mat\'ias y conviene saber: su ficha \texttt{ROB-011}
+avisa que \emph{falta la etiqueta del fabricante y la resoluci\'on del encoder}. El c\'alculo del
+ruido de cuantizaci\'on supone 11~PPR en el rotor, as\'i que \textbf{ese n\'umero hay que
+confirmarlo contando pulsos} antes de confiar en los 2,6~V por cuenta.
 
 \end{document}

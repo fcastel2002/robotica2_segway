@@ -17,9 +17,10 @@ están organizados en [electrónica](electronica/componentes_comprados/README.md
 Se registran **11 entradas y 24 unidades**, incluidos **2 servos DSSERVO DS3240 MG** y
 **2 motores GA25-370 de 12 V y 300 RPM con encoder**.
 
-Las referencias al **JGB37-520** en las tablas históricas siguientes corresponden a la selección
-anterior y al modelado/CAD existente. La conciliación con los motores comprados queda pendiente
-(PAR-003 en el [backlog](BACKLOG.md)); esta organización documental no cambia los parámetros de simulación.
+El modelo y la simulación **ya usan el motor comprado** desde el 15/10 (PAR-004 y ELE-014 en el
+[backlog](BACKLOG.md)). Lo que sigue pendiente es el CAD, que todavía tiene el motor anterior de 37 mm
+y al que le falta la rueda (CAD-202 y PAR-003). Cuidado con la ficha del vendedor: su columna de
+torsión se contradice con la eléctrica, así que el par del modelo está **calculado**, no leído.
 
 ## 1. Qué es el robot
 
