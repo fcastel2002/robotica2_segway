@@ -18,7 +18,7 @@ ancho_rueda, trocha = 25.0, 194.0
 cab_fondo, cab_ancho, cab_alto, cab_pared = 142.0, 150.0, 104.5, 3.0   # cabeza_v31
 cab_cx, cab_bajo_A = -18.5, 29.0                                        # centro de la cabina y fondo bajo A
 tapa_sobre_A = 74.5
-motor = "JGB37-520 con encoder, cuerpo Ø37"
+motor = "GA25-370 1:20 con encoder, cuerpo Ø25"
 servo = "DS3225MG, 40 x 20 x 40.5"
 
 # ----------------------------- cinematica: posiciones de los nudos -----------------------------

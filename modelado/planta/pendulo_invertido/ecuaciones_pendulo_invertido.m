@@ -5,13 +5,19 @@ function [derivada, R] = ecuaciones_pendulo_invertido(estado, tau_total, p)
 %   phi: angulo ANTIHORARIO de P->G desde la vertical (positivo hacia atras) [rad].
 %   tau_total y todos los momentos tambien son positivos antihorarios.
 %   R entrega energias, fuerzas y balance de potencia para interpretar la ODE.
+%
+%   Si p trae el campo e_acople (lo agrega motor_pendulo_invertido con la
+%   inercia del rotor), el acople de la matriz de masa vale -h*cos(phi)+e_acople.
+%   Sin ese campo vale 0 y el modelo es el de patas fijas sin motor. El termino
+%   es constante, asi que no cambia la fuerza centrifuga ni la gravedad.
 
     velocidad_x = estado(2);
     phi = estado(3);
     velocidad_phi = estado(4);
 
     %% Matriz de masa: las aceleraciones del eje y del cuerpo estan acopladas.
-    acoplamiento = -p.h * cos(phi);
+    if isfield(p, 'e_acople'), e_acople = p.e_acople; else, e_acople = 0; end
+    acoplamiento = -p.h * cos(phi) + e_acople;
     matriz_masa = [p.a, acoplamiento; acoplamiento, p.j];
 
     %% Par motor y perdidas en el eje relativo rueda/cuerpo.
@@ -50,8 +56,16 @@ function [derivada, R] = ecuaciones_pendulo_invertido(estado, tau_total, p)
     aceleracion_vertical_G = -p.l * (sin(phi) * aceleracion_phi ...
         + cos(phi) * velocidad_phi^2);
     R.normal = p.m_total * p.g + p.m_cuerpo * aceleracion_vertical_G;
-    R.fuerza_tangencial = -par_efectivo_ruedas / p.r ...
-        - p.J_ruedas * aceleracion_x / p.r^2;
+    % Fuerza tangencial por NEWTON SOBRE TODO EL ROBOT: la unica fuerza horizontal
+    % externa es el rozamiento del piso, asi que F = m_total * (aceleracion del CoM).
+    % Con x_CoM = x - (h/m_total) sin(phi):
+    %     F = m_total*x'' - h cos(phi) phi'' + h sin(phi) phi'^2
+    % Es equivalente a -tau_ef/r - (J_ruedas/r^2) x'' SOLO si no hay inercia de rotor.
+    % Con rotor hay que descontar ademas delta_M(1,1)*x'' y e_acople*phi'', y omitirlos
+    % daba errores de hasta el 200 %. Esta forma no depende de que terminos haya en la
+    % matriz de masa, asi que no se vuelve a romper al agregar inercias.
+    R.fuerza_tangencial = p.m_total*aceleracion_x ...
+        - p.h*cos(phi)*aceleracion_phi + p.h*sin(phi)*velocidad_phi^2;
     R.margen_adherencia = p.mu * R.normal - abs(R.fuerza_tangencial);
     R.contacto_valido = R.normal > 0 && R.margen_adherencia >= 0;
     R.matriz_masa = matriz_masa;

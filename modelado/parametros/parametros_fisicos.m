@@ -12,7 +12,7 @@ function o = parametros_fisicos(variante)
 %   Variantes:
 %     'segunda_iteracion' (DEFAULT) = el CAD actual, diseño_mecanico/segunda_iteracion (STEP del 14/9/2026):
 %                         barras a escala 80 (AD 112, BC 108, CD 40.8, DP 112), bancada 80 mm a 45 grados,
-%                         servo de 40 kg cm, motor de rueda JGB37-520 con encoder.
+%                         servo de 40 kg cm, motor de rueda GA25-370 1:20 con encoder (COMPRADO).
 %     'corregido'         = baseline histórico a escala 100 (AD 140, BC 135, CD 51, DP 140, bancada 100 a 45),
 %                         servo DS3225MG y motor JGA25-371. Es lo que usan los resultados del 14/9 en
 %                         simulacion/dinamica_pata_v1/resultados. No corresponde a ningún CAD construido.
@@ -35,9 +35,9 @@ function o = parametros_fisicos(variante)
       o.s_barras = 80;                  % escala de las barras [mm] -> AD 112, BC 108, CD 40.8, DP 112 (STEP del 14/9)
       o.AB = 80;   o.ang_AB = 45;       % bancada A-B [mm, grados]: la intencion del diseño. OJO: en el STEP B esta a 77.9 mm
                                         % y 46.6 grados de A (altura justa, 3 mm corto en horizontal). Corregir en cabeza_v31.
-      o.N = 30;    o.encoder = true;    % motor JGB37-520 12 V con encoder Hall (11 PPR). La pieza del CAD es la de 319 rpm;
-      o.nombre_motor = 'JGB37-520 12V con encoder (relacion de reduccion POR CONFIRMAR)';  % 1:30 es la que da ~320 rpm
-      o.m_motor = 152;                  % cada motorreductor JGB37-520 con encoder [g] (ficha del vendedor). PESAR.
+      o.N = 20;    o.encoder = true;    % GA25-370 COMPRADO: reductor 1:20, 300 rpm en vacio a 12 V
+      o.nombre_motor = 'GA25-370 12V 1:20 (300 rpm en vacio) con encoder de cuadratura, 11 PPR en el rotor';
+      o.m_motor = 95;                   % cada motorreductor GA25-370 [g] (cuerpo 25 mm, caja 21 mm; estimado). PESAR.
       o.m_servo = 58;                   % cada servo de 40 kg cm [g] (ficha tipo DS3240). PESAR.
       o.tau_s_max = 40*0.0981;          % par maximo del servo [N m] = 40 kg cm. Verificar a que tension lo da la publicacion
       o.w_nl_servo = 7.0;               % velocidad en vacio [rad/s] (0.15 s por 60 grados, tipico de esta clase; verificar)
@@ -104,12 +104,16 @@ function o = parametros_fisicos(variante)
   o.carrera_flexor = 40; % carrera maxima [mm]
 
   % ================================ 7. MOTOR DC + REDUCTOR ================================
-  % Parametros electricos tipicos de un motor 520/370 a 12 V. CARGAR LA HOJA DEL JGB37-520 COMPRADO (R, rpm en vacio,
-  % corriente de bloqueo 2.3 A segun la ficha) cuando se defina la relacion de reduccion.
-  o.R_m = 5.45;          % resistencia de armadura [ohm] (12 V / 2.2 A de bloqueo)
-  o.L_m = 1.5e-3;        % inductancia [H] (tipica; 0 = corriente algebraica, mas rapido)
-  o.w_nl_motor_rpm = 6000; % velocidad en vacio del motor SIN reductor a 12 V [rpm] -> Ke = Kt
-  o.J_r = 6e-7;          % inercia del rotor [kg m2] (tipica). Reflejada al eje vale N^2 * J_r
+  % Parametros del GA25-370 COMPRADO, deducidos de su ficha (ver eta_reductor abajo). La columna
+  % de torsion de esa ficha es inconsistente y NO se usa; la electrica si, y cierra consigo misma.
+  o.R_m = 10.28;         % resistencia de armadura [ohm]. DEDUCIDA de la ficha: resolviendo
+                         %   12 = R*i + Ke*N*w  en los puntos de vacio (300 rpm, 60 mA) y de carga
+                         %   (235 rpm, 300 mA). Predice 1.17 A de bloqueo contra los <=1.1 A de la
+                         %   ficha: la parte electrica de la tabla es coherente consigo misma.
+  o.i_vacio = 0.060;     % corriente en vacio [A] (ficha). Representa la friccion del conjunto.
+  o.L_m = 1.5e-3;        % inductancia [H] (tipica; su constante L/R = 0.15 ms se desprecia)
+  o.w_nl_motor_rpm = 6000; % velocidad en vacio del ROTOR a 12 V [rpm] = 300 rpm de salida x 20 -> Ke = Kt
+  o.J_r = 6e-7;          % inercia del rotor [kg m2] (tipica de un 370; NO medida). Reflejada vale N^2*J_r
   o.tau_c = 0.0015;      % friccion de Coulomb del rotor [N m] (da la corriente en vacio ~0.1 A)
   o.b_m = 1e-6;          % friccion viscosa del rotor [N m s/rad]
   o.gear_rigido = true;  % true = rotor solidario a la rueda; false = eje elastico con juego (mas lento)
@@ -117,6 +121,13 @@ function o = parametros_fisicos(variante)
   o.c_g = 0.05;          % amortiguacion del eje [N m s/rad]
   o.juego_deg = 1.5;     % juego total del reductor en la salida [grados] (tipico de reductores rectos)
   o.eta = 0.7;           % rendimiento que asume el CONTROLADOR para convertir par en tension
+  o.eta_reductor = 0.75; % rendimiento mecanico del reductor [-]. SUPUESTO tipico de engranajes rectos.
+                         % OJO: la columna de TORSION de la ficha no cierra con la electrica. El punto de
+                         % carga (160 g cm a 300 mA) exigiria 18 % de rendimiento y el de bloqueo
+                         % (5.6 kg cm a 1.1 A) exigiria 146 %, que es imposible. Ademas 160 g cm figura
+                         % identico para 1:44 y 1:20. Se le cree a la parte electrica, que SI es coherente,
+                         % y el par se calcula: eta*N*Kt*(i - i_vacio) = 3.1 kg cm por motor al bloqueo,
+                         % no los 5.6 que anuncia. MEDIR con un brazo y una balanza antes de confiar.
 
   % ===================================== 8. BATERIA =====================================
   o.V_bat = 11.1;        % tension [V] (LiPo 3S: 12.6 llena, 11.1 nominal, 9.6 baja)

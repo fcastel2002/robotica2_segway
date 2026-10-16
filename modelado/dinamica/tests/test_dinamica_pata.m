@@ -22,7 +22,10 @@ function test_fuente_comun_de_parametros(tc)
   tc.verifyEqual([p.AB p.AD p.BC p.CD p.DP]*1e3, ...
     [G.AB G.AD G.BC G.CD G.DP], 'AbsTol', 1e-12);
   tc.verifyEqual(rad2deg(p.a45), G.beta, 'AbsTol', 1e-12);
-  tc.verifyEqual(p.m_total, 1.1198, 'AbsTol', 1e-9);   % segunda iteracion: cabina 667 g + 2 patas de 226.4 g
+  % Valor fijado a proposito: si cambia una masa, este test tiene que fallar para que
+  % alguien lo mire. Ultima actualizacion 15/10/2026, al cargar el motor GA25-370 1:20
+  % comprado (95 g) en lugar del JGB37-520 (152 g) que se habia supuesto.
+  tc.verifyEqual(p.m_total, 1.0058, 'AbsTol', 1e-9);  % cabina 667 g + 2 patas de 169.4 g
 end
 
 function test_cierre_y_cinematica_independiente(tc)

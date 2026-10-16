@@ -28,6 +28,10 @@ Hay dos implementaciones de la misma física en `dinamica/`: las funciones local
 Simulink). Las dos leen los mismos parámetros. Si se cambia una ecuación, cambiarla en las dos.
 
 Desde el 1/10/2026, `planta/pendulo_invertido/` desarrolla el equilibrio con patas fijas. Recalcula el
-centro de masa y la inercia al elegir otra postura. El siguiente paso es la planta conjunta con flexión
-dinámica de patas, motor eléctrico y control; sustituir una altura variable en el modelo reducido no
-incorpora por sí solo ese acoplamiento.
+centro de masa y la inercia al elegir otra postura. El 15/10 se le agregaron el **motor eléctrico** (entrada de
+tensión, contraelectromotriz e inercia del rotor) y el **LQR**, y todo eso corre en Simulink con solo bloques
+nativos desde [`simulacion/pendulo_invertido/`](../simulacion/pendulo_invertido/).
+
+El siguiente paso es la planta conjunta **con flexión dinámica de patas**: sustituir una altura variable en el
+modelo reducido no incorpora por sí solo ese acoplamiento, porque aparecen términos cruzados entre la
+velocidad de la pata y las otras dos coordenadas. Después vienen los sensores y la identificación del motor.
