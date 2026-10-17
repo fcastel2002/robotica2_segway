@@ -24,6 +24,7 @@ La fecha indica cuándo se consolidó el registro en este proyecto. Los antecede
 | 18 | 2026-10-17 | Matías aclaró que no usará la Blue Pill: placa ESP32 de desarrollo estándar como versión provisoria, abierta a cambiar, incluso a una Nucleo | DEC-11 reemplaza PEND-01; siguiente: variante de referencia y símbolo provisorio de la controladora |
 | 19 | 2026-10-17 | Prueba en vivo de Konnect con Matías frente a KiCad | La API no respondía porque KiCad se había abierto con doble clic y la primera instancia ya estaba cerrada; resuelto abriendo desde el menú Inicio. PCB editada en vivo, DRC y Gerbers correctos ([prueba](../2026-10-17-prueba-mcp-konnect.md)); faltan ida y vuelta de guardado y recuperación |
 | 20 | 2026-10-17 | Matías pidió trabajar con autonomía en diagramas y conexionado. Flujo de 11 agentes: fuentes (placa ESP32-DevKitC V4 oficial, pinouts de módulos, conectores, GPIO, auxiliares), síntesis, tres revisiones y corrección | [Especificación v0.2](../../cad/segway_base/especificacion_v0.2.json) y [diseño](../../cad/segway_base/diseno_v0.2.md); esquema generado con `generar_esquema.py` (DNP nativo y títulos de bloque); ERC 0/0 y netlist coincidente; PDF y listas de materiales en evidencia; 24 puntos abiertos, 19 propuestas a ratificar |
+| 21 | 2026-10-17 | Matías aclaró que la controladora es la Blue Pill STM32F103C8T6 (no ESP32) y pidió pines de 2,54 mm para todos los módulos y borneras para los motores | DEC-12 y DEC-13; el esquema v0.2 se rehace como v0.3 |
 
 ## Formato de las siguientes entradas
 

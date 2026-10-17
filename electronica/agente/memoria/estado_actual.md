@@ -9,7 +9,7 @@ Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Cl
 - [Inventario](../../componentes_comprados/inventario/inventario_robotica.md): 14 entradas y 27 dispositivos o conjuntos. Un solo DRV8871 para dos motores: falta elegir el segundo canal.
 - KiCad 10.0.7 instalado por Matías el 17/10. Konnect 0.13.0 instalado y registrado en `.mcp.json`. Funcionan la edición del esquemático por archivo, la PCB en vivo por la API, `kicad-cli` y el comparador de netlist. Para la API, abrir KiCad desde el menú Inicio, nunca con doble clic en el proyecto. `firmware/` vacío, sin GPIO asignados.
 - MPU6050 en formato módulo de 8 pines (DEC-09). Alimentación fija de 11,1 V; la batería se itera después (DEC-10).
-- **Controladora (DEC-11):** placa ESP32 de desarrollo estándar como versión provisoria, sin Blue Pill; puede cambiar, incluso a una Nucleo. Elegir una variante de referencia documentada y aislar su dependencia en un solo símbolo.
+- **Controladora (DEC-12):** Blue Pill STM32F103C8T6. Módulos sobre la placa con pines de 2,54 mm y motores con borneras (DEC-13). El esquema v0.2 con ESP32 queda superado; se rehace como v0.3.
 
 ## Producido el 17/10/2026
 
