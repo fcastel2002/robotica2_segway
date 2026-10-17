@@ -26,7 +26,7 @@ La imagen de búsqueda de MPU6050 aportada como aclaración es ilustrativa del f
 | ROB-010 | Servo digital DSSERVO DS3240 MG, etiqueta 40 kg | 2 servos confirmados por Matías | 2 | No informado | 10a, 10b |
 | ROB-011 | Motorreductor DC con escobillas GA25-370, 12 V, 300 RPM, con encoder | 2 motores confirmados por Matías | 2 | No informado | Publicación Mercado Libre y confirmación de Matías |
 | ROB-012 | Controladora ESP32, placa/variante exacta pendiente | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
-| ROB-013 | IMU MPU6050, módulo exacto pendiente | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
+| ROB-013 | IMU MPU6050, módulo de 8 pines formato GY-521 según imagen de Matías; ejemplar sin medir | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
 | ROB-014 | Conjunto de tres celdas conectado al controlador de batería | 1 conjunto de 3 celdas; modelo nominal 11,1 V | 1 conjunto | No informado | Confirmación de Matías, 15/10/2026 |
 
 Total actualizado: **14 entradas y 27 dispositivos/conjuntos para el robot**: 24 unidades registradas inicialmente, una controladora ESP32, una IMU MPU6050 y un conjunto de batería que contiene 3 celdas. Se registra una controladora y una IMU para el diseño; repuestos adicionales no informados. El pack cuenta como un conjunto, no como una sola celda. Los accesorios no se cuentan por separado.
@@ -167,6 +167,7 @@ Suma de los siete precios de las capturas iniciales: **ARS 59.254**. Es una refe
 - Sensor inercial MPU6050; modelo de módulo/PCB todavía pendiente. No se asume GY-521.
 - Archivado el datasheet original de InvenSense, **PS-MPU-6000A-00 Rev. 3.4**, copia alojada por SparkFun. La descarga directa de TDK redirige o devuelve acceso denegado; se conserva el enlace oficial y la procedencia de la copia.
 - Pendiente: pinout del módulo, alimentación, regulación/pull-ups, orientación, calibración y fijación en la cabina.
+- 17/10/2026: Matías confirmó el formato módulo y aportó una imagen de referencia de 8 pines (INT, AD0, XCL, XDA, SDA, SCL, GND, VCC), serigrafía "ITG/MPU". Detalle y pendientes en la ficha.
 - [Ficha y fuentes](../datasheets/ROB-013_MPU6050/FICHA_Y_FUENTES.md).
 
 ### ROB-014 — Conjunto de batería de tres celdas

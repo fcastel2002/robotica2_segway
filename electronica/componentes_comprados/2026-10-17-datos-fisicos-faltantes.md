@@ -222,6 +222,8 @@ Lo que se sabe: Matías confirmó el 15/10/2026 tres celdas conectadas al contro
 
 ## 4. Preguntas para Matías
 
+**Actualización del 17/10/2026.** MPU6050: formato confirmado con imagen de referencia (DEC-09); siguen pendientes las medidas del ejemplar. Batería: Matías fijó 11,1 V para trabajar y dejó la química y el BMS para iterar después (DEC-10), así que B4 a B6 no bloquean. Controladora: falta aclarar si es una Blue Pill STM32 o una placa ESP32 (PEND-01).
+
 Solo lo que no puede derivarse del material existente. Ordenadas por lo que desbloquean.
 
 ### A. Identificación de placas (desbloquea huellas, pinout y rama lógica: ELE-013, ELE-015, REQ-01, REQ-02, REQ-22)
