@@ -9,7 +9,7 @@ Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Cl
 - [Inventario](../../componentes_comprados/inventario/inventario_robotica.md): 14 entradas y 27 dispositivos o conjuntos. Un solo DRV8871 para dos motores: falta elegir el segundo canal.
 - KiCad 10.0.7 instalado por Matías el 17/10. Konnect 0.13.0 instalado y registrado en `.mcp.json`. Funcionan la edición del esquemático por archivo, la PCB en vivo por la API, `kicad-cli` y el comparador de netlist. Para la API, abrir KiCad desde el menú Inicio, nunca con doble clic en el proyecto. `firmware/` vacío, sin GPIO asignados.
 - MPU6050 en formato módulo de 8 pines (DEC-09). Alimentación fija de 11,1 V; la batería se itera después (DEC-10).
-- **Controladora (DEC-12):** Blue Pill STM32F103C8T6. Módulos sobre la placa con pines de 2,54 mm y motores con borneras (DEC-13). El esquema v0.2 con ESP32 queda superado; se rehace como v0.3.
+- **Controladora (DEC-12):** Blue Pill STM32F103C8T6. Módulos sobre la placa con pines de 2,54 mm y motores con borneras (DEC-13). Esquema v0.3 generado y verificado.
 
 ## Producido el 17/10/2026
 
@@ -23,11 +23,11 @@ Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Cl
 | [Distribución de energía](../../interfaces/2026-10-17-distribucion-energia-borrador.md) | Borrador revisado, valores pendientes de ensayo |
 | [Datos físicos faltantes y preguntas](../../componentes_comprados/2026-10-17-datos-fisicos-faltantes.md) | Lista única de preguntas a Matías |
 | Paquete del agente revisado: skill, CLAUDE.md, INICIAR_AQUI, referencias | Ver cronología, entrada 13 |
-| [Esquema de la placa base v0.2](../../cad/segway_base/segway_base.kicad_sch) | 145 componentes, ERC 0, netlist verificada; propuestas pendientes de Matías |
+| [Esquema de la placa base v0.3](../../cad/segway_base/segway_base.kicad_sch) | Blue Pill, 153 componentes, ERC 0, netlist verificada; 20 propuestas pendientes de Matías |
 
 ## Próximo paso
 
-1. **Matías revisa el esquema v0.2** ([PDF](../../cad/segway_base/evidencia/segway_base_v0.2.pdf), [diseño](../../cad/segway_base/diseno_v0.2.md)) y ratifica o cambia las propuestas de la §4 y el punto abierto 15 de la especificación.
+1. **Matías revisa el esquema v0.3** ([PDF](../../cad/segway_base/evidencia/segway_base_v0.3.pdf), [diseño](../../cad/segway_base/diseno_v0.3.md)) y ratifica o cambia las 20 propuestas de la §6.
 2. Con las respuestas: corregir la especificación, regenerar con `agente/generar_esquema.py` y repetir ERC y comparación de netlist.
 3. **Para pasar a PCB** faltan las huellas de la ESP32 y del mini buck (medida del ejemplar), el conector del motor (mazo real) y el contorno con fijaciones (mecánica). Mientras tanto se puede preparar la PCB con los módulos de header estándar.
 4. Cerrar ELE-027: ida y vuelta de guardado y recuperación con KiCad cerrado.
