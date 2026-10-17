@@ -8,9 +8,9 @@ Actualizado el 17/10/2026. Tarea: ELE-027. Matías instala KiCad (DEC-07). Este 
 |---|---|---|
 | Windows y repositorio | Windows 11 Home 10.0.26200; repo en `D:\Usuario\Matias\Proyectos\robotica2_segway` | [Informe de entorno](2026-10-17-informe-entorno-windows.md) |
 | Claude Code | 2.1.291, sesión abierta desde la raíz | Informe de entorno |
-| KiCad | **No instalado**. Estable vigente: 10.0.7 (07/10/2026) | Informe de entorno |
-| Servidor MCP | Evaluado en documentos; ninguno instalado ni probado | [Evaluación de MCP](2026-10-17-evaluacion-mcp-kicad.md) |
-| Archivos de KiCad | Ninguno en el repositorio | `git ls-files "*.kicad_*"` vacío |
+| KiCad | 10.0.7 instalado por Matías; `kicad-cli` en `C:\Program Files\KiCad\10.0\bin`; API todavía sin habilitar | [Prueba de Konnect](2026-10-17-prueba-mcp-konnect.md) |
+| Servidor MCP | Konnect 0.13.0 instalado y en `.mcp.json`; edición de esquemático probada; PCB en vivo pendiente | [Prueba de Konnect](2026-10-17-prueba-mcp-konnect.md) |
+| Archivos de KiCad | Proyecto de prueba en `cad/_prueba_mcp/` | Prueba de Konnect |
 
 Los datos del equipo macOS que preparó el paquete el 15/10 quedaron solo en la cronología como antecedente.
 

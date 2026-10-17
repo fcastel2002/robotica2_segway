@@ -27,7 +27,11 @@ Tarea: ELE-027 (parte de verificación de entorno). Relevado por el agente de el
 | resvg | 0.45.1, instalado hoy con `cargo install resvg --version 0.45.1 --locked` | El script `.agents/skills/svgbob-diagrams/scripts/render.ps1` produjo SVG y PNG en una prueba mínima |
 | MATLAB MCP | Servidor registrado a nivel de usuario (herramientas `mcp__matlab__*` visibles en la sesión) | No interviene en electrónica; se documenta por completitud |
 
-## KiCad: no instalado
+## Actualización del mismo día: KiCad instalado
+
+Matías instaló KiCad más tarde el 17/10/2026. Versión 10.0.7 en `C:\Program Files\KiCad\10.0`, `kicad-cli` en `bin\` fuera del PATH y Python 3.11.5 propio. Konnect 0.13.0 quedó instalado y registrado en `.mcp.json`. Detalle en la [prueba de Konnect](2026-10-17-prueba-mcp-konnect.md). La sección siguiente queda como registro de la primera revisión.
+
+## KiCad: no instalado (primera revisión del día)
 
 Comprobaciones realizadas, todas negativas:
 
