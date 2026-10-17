@@ -1,6 +1,6 @@
 # Requisitos y decisiones de electrónica
 
-Actualizado: 15/10/2026. Responsable: Matías. Plan: [electrónica y PCB](planificacion/2026-10-15-plan-electronica-pcb.md).
+Actualizado: 15/10/2026; notas del 17/10/2026 al final. Responsable: Matías. Plan: [electrónica y PCB](planificacion/2026-10-15-plan-electronica-pcb.md).
 
 Estado inicial de diseño; **no contiene resultados de ensayos físicos**. Los valores de simulación no se convierten automáticamente en especificaciones de compra.
 
@@ -56,3 +56,9 @@ En el primer diseño prever cuatro salidas para dos DRV8871, dos señales de ser
 - No usar 320–350 grados del CAD como pulsos o ángulos absolutos del servo: determinar offset de montaje y recorrido útil.
 
 Fuentes: [inventario](componentes_comprados/inventario/inventario_robotica.md), [datasheets](componentes_comprados/datasheets/README.md) y [parámetros actuales](../modelado/parametros/parametros_fisicos.m).
+
+## Notas del 17/10/2026
+
+- REQ-04, REQ-14 y REQ-15 tienen antecedentes de septiembre en el backlog (ELE-005 a ELE-012): LiPo 3S con conector Mini-Tamiya, fusibles 15/5/10 A, ACS712 e INA226 con R010. Su documentación de respaldo no existe en el repositorio, por lo que se tratan como antecedentes no verificados ([decisiones](agente/memoria/decisiones.md)).
+- El desarrollo de REQ-09, REQ-11, REQ-12, REQ-15 y REQ-16 está en los borradores de [interfaces](interfaces/2026-10-17-contrato-interfaces-borrador.md) y [energía](interfaces/2026-10-17-distribucion-energia-borrador.md).
+- REQ-23: la estable vigente de KiCad es 10.0.7; la evaluación de servidores MCP está en [agente](agente/2026-10-17-evaluacion-mcp-kicad.md).

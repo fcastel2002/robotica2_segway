@@ -19,3 +19,10 @@ slprj/
 *.one
 *.onetoc2
 .codebase-memory/
+
+# KiCad: respaldos, autoguardado, caches y estado local
+*-backups/
+_autosave-*
+fp-info-cache
+*.lck
+*.kicad_prl

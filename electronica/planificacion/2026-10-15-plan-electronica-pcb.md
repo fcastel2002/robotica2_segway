@@ -97,7 +97,7 @@ No hace falta esperar a un LQR definitivo para dibujar la PCB: sí hace falta va
 
 ## 6–8. Esquemático, PCB y montaje
 
-Herramienta confirmada por Matías: **KiCad + IA + MCP**, con trabajo en Windows e instalación de KiCad a su cargo. La elección y prueba del servidor MCP siguen pendientes (ELE-027). Separar hojas de entrada/protección, fuentes, motores, servos, control/IMU y conectores. Añadir referencias, valores, variantes no montadas, programación, estados por defecto, puntos de prueba y una lista de cables con pin 1 y vista de cada conector.
+Herramienta confirmada por Matías: **KiCad + IA + MCP**, con trabajo en Windows e instalación de KiCad a su cargo. La elección y prueba del servidor MCP siguen pendientes (ELE-027). Revisión del 17/10/2026: en KiCad 10 la API IPC no edita esquemáticos y no exporta; el esquemático se edita por archivo y ERC, DRC, BOM y archivos de fabricación salen de `kicad-cli` (TEC-03, [flujo KiCad de la skill](../.claude/skills/segway-electronica/referencia/flujo_kicad.md)). Separar hojas de entrada/protección, fuentes, motores, servos, control/IMU y conectores. Añadir referencias, valores, variantes no montadas, programación, estados por defecto, puntos de prueba y una lista de cables con pin 1 y vista de cada conector.
 
 Medir los módulos físicos para crear sus huellas; comprobar con impresión 1:1 y montaje provisional. Para la PCB revisar espacio y accesos en CAD, fijaciones, vibración, altura de módulos, antena de la ESP32, acceso USB, conectores y disipación. Elegir capas, cobre, anchos de pista y vías con corriente medida y reglas del fabricante. Usar las recomendaciones de retornos, condensadores y térmica de TI. La elección de una placa de dos capas queda condicionada a esas comprobaciones.
 
@@ -130,6 +130,10 @@ Montar y energizar por bloques: inspección y continuidad; entrada; reguladores 
 
 Las medidas físicas, compras y fabricación quedan pendientes de ejecución; este documento organiza el trabajo, no afirma haber realizado esos ensayos.
 
+## Revisión del 17/10/2026
+
+Los borradores de [interfaces](../interfaces/2026-10-17-contrato-interfaces-borrador.md) y de [distribución de energía](../interfaces/2026-10-17-distribucion-energia-borrador.md) detallan los §3 y §4 de este plan con datos de los datasheets archivados. Agregan criterios que este plan no fijaba: pull-down externo en IN1/IN2 de cada driver contra los pull-ups de arranque de la ESP32, pines de arranque a evitar, presupuesto del bus I²C con las pull-ups de cada módulo, térmica del DRV8871, protección de polaridad compatible con el frenado regenerativo, corriente de conexión al cerrar el interruptor, referencia de instrumentos y USB a P−, nivel de los encoders en la primera energización y paro de potencia por hardware como hipótesis de REQ-17. Las preguntas a Matías se concentran en la [lista de datos faltantes](../componentes_comprados/2026-10-17-datos-fisicos-faltantes.md).
+
 ## Fuentes
 
 - [Inventario](../componentes_comprados/inventario/inventario_robotica.md) y [documentación por componente](../componentes_comprados/datasheets/README.md).
@@ -138,4 +142,4 @@ Las medidas físicas, compras y fabricación quedan pendientes de ejecución; es
 - [Guía de batería de la cátedra](../../guias_catedra/procedimiento_dimensionamiento_bateria_robotica_II_UNCUYO.md).
 - [DRV8871 — Texas Instruments](https://www.ti.com/product/DRV8871): puente H para un motor y corriente de pico.
 - [Buenas prácticas de PCB para drivers — TI](https://www.ti.com/document-viewer/lit/html/SLVA959): retornos, térmica, desacoplamiento y rutas de corriente.
-- [Documentación de KiCad](https://docs.kicad.org/9.0/en/getting_started_in_kicad/getting_started_in_kicad.html): secuencia esquemático/ERC, PCB/DRC y fabricación; la versión instalada aún no se definió.
+- [Documentación de KiCad 10.0](https://docs.kicad.org/10.0/en/getting_started_in_kicad/getting_started_in_kicad.html) y [kicad-cli 10.0](https://docs.kicad.org/10.0/en/cli/cli.html): secuencia esquemático/ERC, PCB/DRC y fabricación. Estable vigente al 17/10/2026: 10.0.7. El enlace original apuntaba a la rama 9.0.
