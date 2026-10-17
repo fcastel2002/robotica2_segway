@@ -8,7 +8,7 @@ Ejecutar en este orden al terminar una tarea, antes de una pausa larga o antes d
 4. **Cronología** (`agente/memoria/cronologia.md`): una fila por sesión con el formato de [plantillas](plantillas.md).
 5. **Datos faltantes**: agregar las preguntas nuevas y tachar las respondidas.
 6. **Enlaces**: correr `python -I -X utf8 electronica/agente/verificar_enlaces.py` desde la raíz y corregir los enlaces rotos que introdujo la sesión.
-7. **Git**: `git status` limpio de archivos generados que no corresponden. Commit solo si Matías lo pidió.
+7. **Git**: por pedido de Matías del 17/10/2026, hacer commit y push a `origin/main` al cerrar cada bloque de trabajo. Antes: `git fetch` y revisar que no haya trabajo nuevo del equipo; agregar solo archivos propios de la tarea, nunca generados ni ajenos; mensaje en español con el ID de la tarea. No usar `--force`.
 
 ## Memoria documental y memoria automática
 
