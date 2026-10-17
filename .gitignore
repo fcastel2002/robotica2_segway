@@ -27,3 +27,6 @@ fp-info-cache
 *.lck
 *.kicad_prl
 .history/
+
+# Python
+__pycache__/
