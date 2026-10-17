@@ -89,6 +89,50 @@ def ubicar(spec, pines_por_ref):
     return pos
 
 
+TITULOS = {
+    "entrada_potencia": "ENTRADA DE POTENCIA Y PROTECCIONES",
+    "motores": "MOTORES: DRV8871 + INA219",
+    "servos": "SERVOS: UBEC Y CONECTORES",
+    "logica": "RAMA LOGICA: INA226, BUCK 5 V",
+    "controlador": "CONTROLADOR ESP32 (PROVISORIO)",
+    "sensores": "SENSORES I2C: MPU6050, INA",
+    "conectores": "CONECTORES DE SEÑAL",
+    "prueba": "PUNTOS DE PRUEBA",
+}
+
+
+def posprocesar(sch, spec, pos):
+    """Marca DNP con el atributo nativo de KiCad y agrega títulos de bloque."""
+    import uuid
+    texto = sch.read_text(encoding="utf-8")
+    dnp = {c["ref"] for c in spec["components"] if c.get("dnp")}
+    partes = texto.split("\n\t(symbol\n")
+    for i in range(1, len(partes)):
+        m = partes[i]
+        ref = None
+        k = m.find('(property "Reference" "')
+        if k >= 0:
+            ref = m[k + 23:m.index('"', k + 23)]
+        if ref in dnp:
+            partes[i] = m.replace("(dnp no)", "(dnp yes)", 1)
+    texto = "\n\t(symbol\n".join(partes)
+    xs = {}
+    for c in spec["components"]:
+        x, _ = pos[c["ref"]]
+        b = c["block"]
+        xs[b] = min(xs.get(b, x), x)
+    textos = []
+    for b, x in xs.items():
+        titulo = TITULOS.get(b, b.upper()).replace('"', "'")
+        textos.append(f'\t(text "{titulo}"\n\t\t(exclude_from_sim no)\n\t\t(at {x - 10:.2f} 33.02 0)\n'
+                      f'\t\t(effects\n\t\t\t(font\n\t\t\t\t(size 2.54 2.54)\n\t\t\t\t(thickness 0.508)\n\t\t\t\t(bold yes)\n\t\t\t)\n'
+                      f'\t\t\t(justify left bottom)\n\t\t)\n\t\t(uuid "{uuid.uuid4()}")\n\t)\n')
+    fin = texto.rstrip().rindex(")")
+    texto = texto[:fin] + "".join(textos) + texto[fin:]
+    sch.write_text(texto, encoding="utf-8")
+    p(f"   {len(dnp)} DNP nativos, {len(textos)} títulos")
+
+
 def main():
     spec_path, carpeta = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     rehacer = "--rehacer" in sys.argv
@@ -162,7 +206,10 @@ def main():
                     k.llamar("add_no_connect", schematic=str(sch), x=u["x"], y=u["y"])
         p(f"   {len(pin_net)} pines conectados, {flg} PWR_FLAG, {len(spec.get('no_connect', []))} sin conexión")
 
-    p("5. Verificación")
+    p("5. Posprocesado: DNP nativo y títulos de bloque")
+    posprocesar(sch, spec, pos)
+
+    p("6. Verificación")
     evid = carpeta / "evidencia"
     evid.mkdir(exist_ok=True)
     erc = evid / "erc.json"

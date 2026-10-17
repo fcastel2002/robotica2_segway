@@ -23,13 +23,14 @@ Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Cl
 | [Distribución de energía](../../interfaces/2026-10-17-distribucion-energia-borrador.md) | Borrador revisado, valores pendientes de ensayo |
 | [Datos físicos faltantes y preguntas](../../componentes_comprados/2026-10-17-datos-fisicos-faltantes.md) | Lista única de preguntas a Matías |
 | Paquete del agente revisado: skill, CLAUDE.md, INICIAR_AQUI, referencias | Ver cronología, entrada 13 |
+| [Esquema de la placa base v0.2](../../cad/segway_base/segway_base.kicad_sch) | 145 componentes, ERC 0, netlist verificada; propuestas pendientes de Matías |
 
 ## Próximo paso
 
-1. **Cerrar ELE-027:** con KiCad cerrado, ida y vuelta de guardado y recuperación con git en `cad/_prueba_mcp/`.
-2. **Sin esperar a eso:** seguir la biblioteca [`segway_modulos.kicad_sym`](../../cad/bibliotecas/segway_modulos.kicad_sym), que ya tiene el símbolo del MPU6050 de 8 pines [V] ([vista](../../cad/bibliotecas/vistas/ROB-013_MPU6050_modulo_8p.png)). Agregar los módulos con pinout visible en sus capturas, cada uno verificado con `kicad-cli sym export svg`.
-3. **Controladora provisoria (DEC-11):** elegir una variante ESP32 de referencia con pinout documentado por su fabricante o distribuidor, crear su símbolo marcado como provisorio y aplicar las restricciones de pines del contrato de interfaces.
-4. Las huellas esperan las medidas de los ejemplares.
+1. **Matías revisa el esquema v0.2** ([PDF](../../cad/segway_base/evidencia/segway_base_v0.2.pdf), [diseño](../../cad/segway_base/diseno_v0.2.md)) y ratifica o cambia las propuestas de la §4 y el punto abierto 15 de la especificación.
+2. Con las respuestas: corregir la especificación, regenerar con `agente/generar_esquema.py` y repetir ERC y comparación de netlist.
+3. **Para pasar a PCB** faltan las huellas de la ESP32 y del mini buck (medida del ejemplar), el conector del motor (mazo real) y el contorno con fijaciones (mecánica). Mientras tanto se puede preparar la PCB con los módulos de header estándar.
+4. Cerrar ELE-027: ida y vuelta de guardado y recuperación con KiCad cerrado.
 
 ## Bloqueos e incógnitas que condicionan el diseño
 

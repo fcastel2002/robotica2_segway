@@ -1,0 +1,2923 @@
+{
+ "revision": "v0.2 (2026-10-17): corrección final tras tres revisiones. Verificación por script sin errores; esquema regenerado en una copia aislada: ERC con 0 errores y 0 avisos, netlist coincidente",
+ "custom_symbols": [
+  {
+   "name": "ROB-012_ESP32-DevKitC-V4_38p",
+   "reference_prefix": "A",
+   "value": "ESP32-DevKitC V4 (DevKitC-32E, WROOM-32E 4 MB)",
+   "description": "ROB-012 provisoria (DEC-11). Placa de referencia Espressif ESP32-DevKitC V4, variante DevKitC-32E (WROOM-32E, 4 MB, sin PSRAM). Pines 1-19 = J2-1..J2-19; pines 20-38 = J3-1..J3-19 (guia oficial docs.espressif.com esp32-devkitc user_guide, tablas J2/J3, consultada 17/10/2026). 3V3 tipo passive: es salida del AMS1117 de la placa y se declara passive para que el ERC no choque con PWR_FLAG. Huella pendiente: 2x19 P2.54 con hileras a 25,40 mm (plano oficial de dimensiones), crear tras medir el ejemplar (E-01). Reemplazable: si cambia la controladora se cambia este simbolo y su huella; las nets de la placa base no cambian.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "3V3",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "EN",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "GPIO36/VP",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "4",
+     "name": "GPIO39/VN",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "5",
+     "name": "GPIO34",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "6",
+     "name": "GPIO35",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "7",
+     "name": "GPIO32",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "8",
+     "name": "GPIO33",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "9",
+     "name": "GPIO25",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "10",
+     "name": "GPIO26",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "11",
+     "name": "GPIO27",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "12",
+     "name": "GPIO14/MTMS",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "13",
+     "name": "GPIO12/MTDI",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "14",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "15",
+     "name": "GPIO13/MTCK",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "16",
+     "name": "GPIO9/SD2",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "17",
+     "name": "GPIO10/SD3",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "18",
+     "name": "GPIO11/CMD",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "19",
+     "name": "5V",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "20",
+     "name": "GND",
+     "type": "power_in",
+     "side": "right"
+    },
+    {
+     "number": "21",
+     "name": "GPIO23",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "22",
+     "name": "GPIO22",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "23",
+     "name": "GPIO1/TX",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "24",
+     "name": "GPIO3/RX",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "25",
+     "name": "GPIO21",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "26",
+     "name": "GND",
+     "type": "power_in",
+     "side": "right"
+    },
+    {
+     "number": "27",
+     "name": "GPIO19",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "28",
+     "name": "GPIO18",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "29",
+     "name": "GPIO5",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "30",
+     "name": "GPIO17",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "31",
+     "name": "GPIO16",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "32",
+     "name": "GPIO4",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "33",
+     "name": "GPIO0",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "34",
+     "name": "GPIO2",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "35",
+     "name": "GPIO15/MTDO",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "36",
+     "name": "GPIO8/SD1",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "37",
+     "name": "GPIO7/SD0",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "38",
+     "name": "GPIO6/CLK",
+     "type": "bidirectional",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "name": "ROB-013_MPU6050_modulo_8p",
+   "reference_prefix": "A",
+   "value": "MPU6050 modulo 8p",
+   "description": "ROB-013. Modulo MPU6050 de 8 pines, formato GY-521 segun imagen de Matias del 17/10/2026. Orden VCC,GND,SCL,SDA,XDA,XCL,AD0,INT leido de la serigrafia [V]; numeracion 1=VCC provisoria hasta ver el pad cuadrado del ejemplar. Sin huella propia hasta medir (REQ-22); en la placa base se monta en zocalo 1x08 de 2,54 mm.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "VCC",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "SCL",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "4",
+     "name": "SDA",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "5",
+     "name": "XDA",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "6",
+     "name": "XCL",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "7",
+     "name": "AD0",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "8",
+     "name": "INT",
+     "type": "output",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "name": "ROB-008_DRV8871_modulo_4p",
+   "reference_prefix": "A",
+   "value": "DRV8871 modulo (header logico)",
+   "description": "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]). Solo el header logico de 4 pines que se enchufa en la placa base: 1=GND, 2=VM, 3=IN1, 4=IN2, contiguos en ese orden (Adafruit-DRV8871-Breakout-PCB, drv.brd: JP2 pad1 GND, pad2 VMOTOR, pad3 IN1, pad4 IN2 [D-ref]). La captura de compra del clon muestra 4 pads con serigrafia IN2, IN1, VM, GND en dos filas alternadas, igual que Adafruit [V]; pad cuadrado sin ver. Las borneras POWER y MOTOR del modulo se cablean: POWER desde J5/J6 de la placa base y MOTOR directo al motor. VM declarado passive porque en la placa base queda sin conexion. Riesgo: el modulo girado 180 grados lleva VM a la posicion de IN1; la PCB lleva marca de pin 1 y contorno del modulo. Pinout PENDIENTE de E-01.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "VM",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "IN1",
+     "type": "input",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "IN2",
+     "type": "input",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "name": "ROB-002_INA219_MCU-219_6p",
+   "reference_prefix": "A",
+   "value": "INA219 MCU-219 (R100)",
+   "description": "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]). Tira de 6 pines en orden Vcc, Gnd, Scl, Sda, Vin-, Vin+ leido de la captura de compra [V]. Vin-/Vin+ de la tira unidos a la bornera Vin-/Vin+ del modulo [V]. En la placa base los pines 5-6 quedan sin conexion: la corriente de la rama pasa por la bornera del modulo, cableada a J21/J22, y no por contactos de 2,54 mm. Direccion por puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "Vcc",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "Gnd",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "Scl",
+     "type": "input",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "Sda",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "5",
+     "name": "Vin-",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "6",
+     "name": "Vin+",
+     "type": "passive",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "name": "ROB-009_INA226_modulo_8p",
+   "reference_prefix": "A",
+   "value": "INA226 modulo 8p (R100)",
+   "description": "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "IN+",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "IN-",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "VBS",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "4",
+     "name": "ALE",
+     "type": "open_collector",
+     "side": "right"
+    },
+    {
+     "number": "5",
+     "name": "SCL",
+     "type": "input",
+     "side": "right"
+    },
+    {
+     "number": "6",
+     "name": "SDA",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "7",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "8",
+     "name": "VCC",
+     "type": "power_in",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "name": "ROB-005-006_MiniBuck_modulo_4p",
+   "reference_prefix": "A",
+   "value": "Mini buck fijo (5 V ROB-006 / 3,3 V ROB-005)",
+   "description": "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). OUT+ declarado passive para el ERC. Huella PENDIENTE de medir (paso entre pads, agujero o almenado, contorno).",
+   "pins": [
+    {
+     "number": "1",
+     "name": "IN+",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "IN-",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "OUT+",
+     "type": "passive",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "OUT-",
+     "type": "power_in",
+     "side": "right"
+    }
+   ]
+  }
+ ],
+ "components": [
+  {
+   "ref": "A1",
+   "lib_id": "segway_modulos:ROB-012_ESP32-DevKitC-V4_38p",
+   "value": "ESP32-DevKitC-32E (prov.)",
+   "footprint": "",
+   "block": "controlador",
+   "dnp": false,
+   "source": "[UG-DevKitC] (tablas J2/J3, notas [2][3], Power Supply Options); [SCH-DevKitC]; [DS-ESP32] p.22, p.52, p.69",
+   "status": "provisorio [H] (DEC-11: placa de referencia elegida; ejemplar ROB-012 sin identificar; huella 2x19 con hileras a 25,40 mm pendiente de medida)"
+  },
+  {
+   "ref": "A2",
+   "lib_id": "segway_modulos:ROB-013_MPU6050_modulo_8p",
+   "value": "GY-521 MPU6050 0x68",
+   "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical",
+   "block": "sensores",
+   "dnp": false,
+   "source": "DEC-09 [M]; [CAP]/ROB-013_MPU6050/referencia_modulo_matias_2026-10-17.png [V]; [DS-MPU] p.14, p.15, p.21, p.33",
+   "status": "provisorio [H] (orden de pines [V]/[M]; zócalo estándar 1x08; contorno del módulo pendiente de medida)"
+  },
+  {
+   "ref": "A3",
+   "lib_id": "segway_modulos:ROB-008_DRV8871_modulo_4p",
+   "value": "DRV8871 mód. IZQ",
+   "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical",
+   "block": "motores",
+   "dnp": false,
+   "source": "[CAP]/ROB-008_DRV8871/referencia_compra.png (serigrafía IN2, IN1, VM, GND) [V]; [DS-DRV] p.3, p.5; github.com/adafruit/Adafruit-DRV8871-Breakout-PCB, drv.brd: JP2 pad1 GND, pad2 VMOTOR, pad3 IN1, pad4 IN2 [D-ref]",
+   "status": "pendiente de medida (orden GND-VM-IN1-IN2 coherente con Adafruit JP2 y con la captura [V]; pad cuadrado y equivalencia con Adafruit 3190 [H], E-01; marca de pin 1 y contorno en la serigrafía)"
+  },
+  {
+   "ref": "A4",
+   "lib_id": "segway_modulos:ROB-008_DRV8871_modulo_4p",
+   "value": "DRV8871 mód. DER (prov.)",
+   "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que A3; [ENERGIA] §10 decisión 10 (segundo DRV8871 idéntico)",
+   "status": "provisorio [H] (módulo no comprado, REQ-06; segundo DRV8871 idéntico = decisión 10 de [ENERGIA] §10, pendiente de Matías)"
+  },
+  {
+   "ref": "A5",
+   "lib_id": "segway_modulos:ROB-002_INA219_MCU-219_6p",
+   "value": "INA219 MCU-219 0x41 IZQ",
+   "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x06_P2.54mm_Vertical",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[CAP]/ROB-002_INA219/referencia_compra.png (tira Vcc-Gnd-Scl-Sda-Vin−-Vin+ y bornera Vin−/Vin+) [V]; [DS-219] p.3, p.4, p.14 Tabla 1; [ENERGIA] §5.1-5.2",
+   "status": "provisorio [H] (orden [V]; dirección 0x41 por puente A0 [H], sujeta a aprobar el cambio del contrato §4.1; pines 5-6 sin conexión: la corriente pasa por la bornera del módulo y J21; uso en rama de motor = decisión 4 de [ENERGIA] §10, pendiente de Matías y de E-04)"
+  },
+  {
+   "ref": "A6",
+   "lib_id": "segway_modulos:ROB-002_INA219_MCU-219_6p",
+   "value": "INA219 MCU-219 0x44 DER",
+   "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x06_P2.54mm_Vertical",
+   "block": "sensores",
+   "dnp": false,
+   "source": "Igual que A5; dirección 0x44 por puente A1 del módulo ([DS-219] p.14 Tabla 1)",
+   "status": "provisorio [H] (dirección 0x44 sujeta a aprobar el cambio del contrato §4.1; pines 5-6 sin conexión, corriente por la bornera del módulo y J22)"
+  },
+  {
+   "ref": "A7",
+   "lib_id": "segway_modulos:ROB-009_INA226_modulo_8p",
+   "value": "INA226 0x40 lógica+bus",
+   "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[CAP]/ROB-009_INA226/referencia_compra.png [V]; [DS-226] p.3, p.5, p.15, p.18 Tabla 6-2, p.26-28; [ENERGIA] §5.1 (R100 solo apto para lógica)",
+   "status": "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01)"
+  },
+  {
+   "ref": "A8",
+   "lib_id": "segway_modulos:ROB-005-006_MiniBuck_modulo_4p",
+   "value": "Mini buck 5V ROB-006",
+   "footprint": "",
+   "block": "logica",
+   "dnp": false,
+   "source": "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)",
+   "status": "pendiente de medida (propuesta de [ENERGIA] §10.1, pendiente de Matías; chip no identificado; huella sin medir; validar en E-02)"
+  },
+  {
+   "ref": "J1",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "XT60PW-M 1=P− 2=P+",
+   "footprint": "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Connector_AMASS.pretty/AMASS_XT60PW-M .kicad_mod (pad 1 junto a '−', pad 2 junto a '+'; descr 'PCB Female'); [DS-XT60] (45 A); [ENERGIA] §2.4(a)",
+   "status": "provisorio [H] (polaridad de la huella verificada; género a confirmar: el código XT60PW-M es macho y el descr de la huella dice 'Female'; debe acoplar con el enchufe del pack)"
+  },
+  {
+   "ref": "J2",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "MKDS3 batería alt.",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": true,
+   "source": "TerminalBlock_Phoenix_MKDS-3-2-5.08 .kicad_mod; catálogo Phoenix 1711725 (24 A)",
+   "status": "provisorio [H] (DNP; solo si el pack no usa XT60; no polarizada: no montar sin Q1)"
+  },
+  {
+   "ref": "F1",
+   "lib_id": "Device:Fuse",
+   "value": "ATO lento PEND (antec. 15A)",
+   "footprint": "Fuse:Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[ENERGIA] §2, §2.3; [DS-BMS] p.2 (54-90 A)",
+   "status": "provisorio [H] (valor tras E-08; ubicación en la placa = desvío del contrato §2.9 (fusible cerca del pack), pendiente de Matías; si queda en la placa, agregar un fusible en línea junto al pack)"
+  },
+  {
+   "ref": "J3",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Lazo interruptor+paro",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[CONTRATO] §2.9, §2.12; [ENERGIA] §2, §8",
+   "status": "provisorio [H] (REQ-17 abierto)"
+  },
+  {
+   "ref": "Q1",
+   "lib_id": "Transistor_FET:IRF4905",
+   "value": "IRF4905",
+   "footprint": "Package_TO_SOT_THT:TO-220-3_Vertical",
+   "block": "entrada_potencia",
+   "dnp": true,
+   "source": "[DS-IRF4905] p.1-2 (RDS(on) 20 mΩ a VGS −10 V; RθJA 62 °C/W); Transistor_FET.kicad_sym (1=G, 2=D, 3=S); [ENERGIA] §2.4(c)",
+   "status": "provisorio [H] (DNP; decisiones 3 y 9 de [ENERGIA] §10; a 15 A disipa 4,5-6,8 W: sin disipador no es viable)"
+  },
+  {
+   "ref": "R29",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "entrada_potencia",
+   "dnp": true,
+   "source": "[ENERGIA] §2.4(c)",
+   "status": "provisorio [H] (DNP con Q1)"
+  },
+  {
+   "ref": "D3",
+   "lib_id": "Device:D_Zener",
+   "value": "BZX79-C12",
+   "footprint": "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": true,
+   "source": "Infineon IRF4905 p.1 (VGS ±20 V); Device.kicad_sym D_Zener 1=K 2=A",
+   "status": "provisorio [H] (DNP con Q1)"
+  },
+  {
+   "ref": "JP1",
+   "lib_id": "Jumper:Jumper_2_Bridged",
+   "value": "Puente 2,5 mm²",
+   "footprint": "Connector_Wire:SolderWire-2.5sqmm_1x02_P7.2mm_D2.4mm_OD3.6mm",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[ENERGIA] §2.4",
+   "status": "provisorio [H] (excluyente con Q1; con JP1 la única protección de polaridad real es el XT60 polarizado)"
+  },
+  {
+   "ref": "C1",
+   "lib_id": "Device:C_Polarized",
+   "value": "470µ/35V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D10.0mm_P5.00mm",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Criterio [DS-DRV] p.14 §9.1 (bulk según VM y corriente); 35 V por el clamp de [DS-SMAJ] p.2 (24,4 V); valor 470 µF [H]",
+   "status": "provisorio [H] (valor tras E-04/E-08; decisión 9 de [ENERGIA] §10)"
+  },
+  {
+   "ref": "C2",
+   "lib_id": "Device:C_Polarized",
+   "value": "470µ/35V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D10.0mm_P5.00mm",
+   "block": "entrada_potencia",
+   "dnp": true,
+   "source": "Criterio [ENERGIA] §7, §8 (bulk adicional e inrush); valor 470 µF [H]",
+   "status": "provisorio [H] (DNP hasta E-08)"
+  },
+  {
+   "ref": "C3",
+   "lib_id": "Device:C",
+   "value": "10µ/50V X7R",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-BMS] p.2 nota 3; [ENERGIA] §7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "D1",
+   "lib_id": "Diode:SMAJ15A",
+   "value": "SMAJ15A",
+   "footprint": "Diode_SMD:D_SMA",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-SMAJ] p.2 (VWM 15 V, VC 24,4 V, IFSM 40 A/8,3 ms); Diode.kicad_sym: SMAJ15A extends SM6T6V8A (unidireccional), pin 1 = cátodo por dibujo (barra en x = −1,27, del lado del pin 1), nombres A1/A2 heredados; D_SMA pad 1 = cátodo",
+   "status": "provisorio [H] (estrategia de regeneración pendiente, decisión 9; verificar la banda contra el pad 1 en la serigrafía)"
+  },
+  {
+   "ref": "R28",
+   "lib_id": "Device:R",
+   "value": "5k1",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[ENERGIA] §8 (apagado)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "D4",
+   "lib_id": "Device:LED",
+   "value": "LED rojo 3mm VM",
+   "footprint": "LED_THT:LED_D3.0mm",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Device.kicad_sym LED 1=K 2=A",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "R22",
+   "lib_id": "Device:R",
+   "value": "100k 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-ESP32] p.43 Tabla 4-3, p.44 Tabla 4-4, p.52",
+   "status": "provisorio [H] (química del pack pendiente)"
+  },
+  {
+   "ref": "R23",
+   "lib_id": "Device:R",
+   "value": "12k 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Igual que R22 (k = 0,1071; 24,4 V → 2,61 V)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C14",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-ESP32] p.43 Tabla 4-3 (100 nF de ensayo)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "F2",
+   "lib_id": "Device:Fuse",
+   "value": "ATM lento PEND (antec. 5A)",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "motores",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)",
+   "status": "provisorio [H] (valor tras E-04 y ≤ corriente admisible de la bornera Vin−/Vin+ del INA219 (E-01); corriente del portafusible sin verificar; decisión 8 de [ENERGIA] §10)"
+  },
+  {
+   "ref": "J5",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "POWER DRV IZQ",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "[CAP]/ROB-008_DRV8871/referencia_compra.png (bornera POWER) [V]; MKDS 1,5/2-5,08 17,5 A",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C4",
+   "lib_id": "Device:C_Polarized",
+   "value": "47µ/35V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "block": "motores",
+   "dnp": false,
+   "source": "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar",
+   "status": "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04)"
+  },
+  {
+   "ref": "C6",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "motores",
+   "dnp": false,
+   "source": "[DS-DRV] p.3, p.11 Fig.7",
+   "status": "provisorio [H] (criterio de chip [DS-DRV] p.3, p.11 Fig.7; 100 nF propio del módulo pendiente E-01)"
+  },
+  {
+   "ref": "R1",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "motores",
+   "dnp": false,
+   "source": "[ENERGIA] §8.1; [CONTRATO] §5.3; [DS-ESP32] p.52; [DS-DRV] p.5",
+   "status": "provisorio [H] (decisión 14 de [ENERGIA] §10 pendiente de Matías; E-01: resistencias propias del módulo en IN1/IN2)"
+  },
+  {
+   "ref": "R2",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R1",
+   "status": "provisorio [H] (decisión 14 de [ENERGIA] §10 pendiente de Matías; E-01: resistencias propias del módulo en IN1/IN2)"
+  },
+  {
+   "ref": "JP6",
+   "lib_id": "Jumper:Jumper_2_Open",
+   "value": "Bypass shunt IZQ",
+   "footprint": "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm",
+   "block": "motores",
+   "dnp": true,
+   "source": "[ENERGIA] §5.1 (R100 satura a 3,2 A)",
+   "status": "provisorio [H] (DNP; montar solo sin A5/A6)"
+  },
+  {
+   "ref": "J21",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Shunt INA219 IZQ 1=Vin− 2=Vin+",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "[CAP]/ROB-002_INA219/referencia_compra.png (bornera Vin−/Vin+ del módulo) [V]; [FLUJO] l.72; MKDS 1,5/2-5,08 17,5 A",
+   "status": "provisorio [H] (cable a la bornera del módulo A5; corriente admisible de esa bornera pendiente E-01)"
+  },
+  {
+   "ref": "J9",
+   "lib_id": "Connector_Generic:Conn_01x06",
+   "value": "XH-6 mot+enc IZQ",
+   "footprint": "Connector_JST:JST_XH_B6B-XH-A_1x06_P2.50mm_Vertical",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[INV] ROB-011; [JST-XH]",
+   "status": "pendiente de medida (DNP; orden 1=M1, 2=M2, 3=V_ENC, 4=GND, 5=A, 6=B es hipótesis [H] sin fuente y no sigue la convención pin 1 = GND; reasignar con el mazo real del GA25-370 en E-01)"
+  },
+  {
+   "ref": "J11",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Motor IZQ a módulo",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[DS-DRV] p.3 (OUT1/OUT2); [INV] ROB-011 (rojo M+, blanco M−) [V]",
+   "status": "provisorio [H] (DNP; solo con J9/J10, cuyo orden es [H])"
+  },
+  {
+   "ref": "F3",
+   "lib_id": "Device:Fuse",
+   "value": "ATM lento PEND (antec. 5A)",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "motores",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)",
+   "status": "provisorio [H] (valor tras E-04 y ≤ corriente admisible de la bornera Vin−/Vin+ del INA219 (E-01); corriente del portafusible sin verificar; decisión 8 de [ENERGIA] §10)"
+  },
+  {
+   "ref": "J6",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "POWER DRV DER",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "[CAP]/ROB-008_DRV8871/referencia_compra.png (bornera POWER) [V]; MKDS 1,5/2-5,08 17,5 A",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C5",
+   "lib_id": "Device:C_Polarized",
+   "value": "47µ/35V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "block": "motores",
+   "dnp": false,
+   "source": "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar",
+   "status": "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04)"
+  },
+  {
+   "ref": "C7",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "motores",
+   "dnp": false,
+   "source": "[DS-DRV] p.3, p.11 Fig.7",
+   "status": "provisorio [H] (criterio de chip [DS-DRV] p.3, p.11 Fig.7; 100 nF propio del módulo pendiente E-01)"
+  },
+  {
+   "ref": "R3",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "motores",
+   "dnp": false,
+   "source": "[ENERGIA] §8.1; [CONTRATO] §5.3; [DS-ESP32] p.52; [DS-DRV] p.5",
+   "status": "provisorio [H] (decisión 14 de [ENERGIA] §10 pendiente de Matías; E-01: resistencias propias del módulo en IN1/IN2)"
+  },
+  {
+   "ref": "R4",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R1",
+   "status": "provisorio [H] (decisión 14 de [ENERGIA] §10 pendiente de Matías; E-01: resistencias propias del módulo en IN1/IN2)"
+  },
+  {
+   "ref": "JP7",
+   "lib_id": "Jumper:Jumper_2_Open",
+   "value": "Bypass shunt DER",
+   "footprint": "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm",
+   "block": "motores",
+   "dnp": true,
+   "source": "[ENERGIA] §5.1 (R100 satura a 3,2 A)",
+   "status": "provisorio [H] (DNP; montar solo sin A5/A6)"
+  },
+  {
+   "ref": "J22",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Shunt INA219 DER 1=Vin− 2=Vin+",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que J21 (módulo A6)",
+   "status": "provisorio [H] (cable a la bornera del módulo A6; corriente admisible de esa bornera pendiente E-01)"
+  },
+  {
+   "ref": "J10",
+   "lib_id": "Connector_Generic:Conn_01x06",
+   "value": "XH-6 mot+enc DER",
+   "footprint": "Connector_JST:JST_XH_B6B-XH-A_1x06_P2.50mm_Vertical",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[INV] ROB-011; [JST-XH]",
+   "status": "pendiente de medida (DNP; orden 1=M1, 2=M2, 3=V_ENC, 4=GND, 5=A, 6=B es hipótesis [H] sin fuente y no sigue la convención pin 1 = GND; reasignar con el mazo real del GA25-370 en E-01)"
+  },
+  {
+   "ref": "J12",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Motor DER a módulo",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[DS-DRV] p.3 (OUT1/OUT2); [INV] ROB-011 (rojo M+, blanco M−) [V]",
+   "status": "provisorio [H] (DNP; solo con J9/J10, cuyo orden es [H])"
+  },
+  {
+   "ref": "F4",
+   "lib_id": "Device:Fuse",
+   "value": "ATM lento PEND (antec. 10A)",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2, §2.3",
+   "status": "provisorio [H] (valor tras E-06)"
+  },
+  {
+   "ref": "J15",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "UBEC entrada",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[CAP]/ROB-007_YSIDO_UBEC_6A/referencia_compra.png [V]",
+   "status": "provisorio [H] (tipo de enchufe pendiente)"
+  },
+  {
+   "ref": "C22",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §6.7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "J16",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "UBEC salida bornera",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "servos",
+   "dnp": true,
+   "source": "[DS-SERVO] p.3 tabla 3-4 (bloqueo 3,1-3,9 A)",
+   "status": "provisorio [H] (DNP; necesaria para operar con dos servos por [FLUJO] l.72; cortar el enchufe del UBEC lo decide Matías)"
+  },
+  {
+   "ref": "J17",
+   "lib_id": "Connector_Generic:Conn_01x03",
+   "value": "UBEC salida enchufe",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+   "block": "servos",
+   "dnp": false,
+   "source": "[CAP]/ROB-007_YSIDO_UBEC_6A/referencia_compra.png [V]",
+   "status": "provisorio [H] (≈3 A por contacto: válido solo para E-05 con un servo; con dos servos incumple [FLUJO] l.72 ('ningún pin de 2,54 mm lleva la corriente de más de un servo'): usar J16, decisión de Matías)"
+  },
+  {
+   "ref": "J13",
+   "lib_id": "Connector_Generic:Conn_01x03",
+   "value": "Servo IZQ JR",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+   "block": "servos",
+   "dnp": false,
+   "source": "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)",
+   "status": "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06)"
+  },
+  {
+   "ref": "R5",
+   "lib_id": "Device:R",
+   "value": "470 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-ESP32] p.52",
+   "status": "provisorio [H] (valor final tras E-05, 330 Ω-1 kΩ)"
+  },
+  {
+   "ref": "R7",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "servos",
+   "dnp": false,
+   "source": "[DS-ESP32] p.69 (GPIO25 sin pull al reset)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C8",
+   "lib_id": "Device:C_Polarized",
+   "value": "470µ/16V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+   "block": "servos",
+   "dnp": false,
+   "source": "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]",
+   "status": "provisorio [H] (valor tras E-05/E-06)"
+  },
+  {
+   "ref": "J14",
+   "lib_id": "Connector_Generic:Conn_01x03",
+   "value": "Servo DER JR",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+   "block": "servos",
+   "dnp": false,
+   "source": "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)",
+   "status": "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06)"
+  },
+  {
+   "ref": "R6",
+   "lib_id": "Device:R",
+   "value": "470 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-ESP32] p.52",
+   "status": "provisorio [H] (valor final tras E-05, 330 Ω-1 kΩ)"
+  },
+  {
+   "ref": "R8",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "servos",
+   "dnp": false,
+   "source": "[DS-ESP32] p.69 (GPIO26 sin pull al reset)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C9",
+   "lib_id": "Device:C_Polarized",
+   "value": "470µ/16V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+   "block": "servos",
+   "dnp": false,
+   "source": "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]",
+   "status": "provisorio [H] (valor tras E-05/E-06)"
+  },
+  {
+   "ref": "F5",
+   "lib_id": "Device:Fuse",
+   "value": "ATM lento PEND",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "logica",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2 (fila Lógica)",
+   "status": "provisorio [H] (valor tras E-02; decisión 8 de [ENERGIA] §10)"
+  },
+  {
+   "ref": "JP8",
+   "lib_id": "Jumper:SolderJumper_2_Open",
+   "value": "Bypass INA226 (abierto)",
+   "footprint": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
+   "block": "logica",
+   "dnp": false,
+   "source": "Jumper.kicad_sym (A=1, B=2)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C23",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "logica",
+   "dnp": false,
+   "source": "Criterio genérico de entrada de buck [DS-LM2596] p.16-18 (chip distinto; el de A8 no está identificado, MP1584 NO CONFIRMADO); valor 100 nF [H]",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C24",
+   "lib_id": "Device:C_Polarized",
+   "value": "47µ/35V",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "block": "logica",
+   "dnp": false,
+   "source": "Criterio genérico de entrada de buck de baja ESR [DS-LM2596] p.16-18 (chip distinto; MP1584 NO CONFIRMADO); amortigua el filtro de entrada que forma el shunt del INA226; valor 47 µF/35 V [H]",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "J18",
+   "lib_id": "Connector:Screw_Terminal_01x03",
+   "value": "Voltímetro ROB-004",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal",
+   "block": "logica",
+   "dnp": false,
+   "source": "[CAP]/ROB-004_Voltimetro/referencia_compra.png; ficha_comercial_DIYMORE_REFERENCIA.html [V]",
+   "status": "pendiente de medida (colores por convención [H]; ubicación en VM_LOG = propuesta [H] que se desvía de [ENERGIA] §2 y [CONTRATO] §2.10 (bus VM), pendiente de Matías, decisión 12)"
+  },
+  {
+   "ref": "J19",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "LM2596 entrada",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "logica",
+   "dnp": true,
+   "source": "[CAP]/ROB-001_LM2596/referencia_compra.png [V]; [ENERGIA] §4.1(b)",
+   "status": "provisorio [H] (DNP; respaldo de A8)"
+  },
+  {
+   "ref": "J20",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "LM2596 salida 5V",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "logica",
+   "dnp": true,
+   "source": "Igual que J19",
+   "status": "provisorio [H] (DNP; excluyente con A8)"
+  },
+  {
+   "ref": "D2",
+   "lib_id": "Diode:SS34",
+   "value": "SS34 (SMA 3A/40V)",
+   "footprint": "Diode_SMD:D_SMA",
+   "block": "logica",
+   "dnp": false,
+   "source": "[SCH-DevKitC] (D3 BAT760-7 VBUS→EXT_5V); [CONTRATO] §2.11(b); [ENERGIA] §4.3; Diode.kicad_sym SS34 (extends SB120, D_SMA, 1=K 2=A); caída ≈0,30-0,35 V a 0,3 A frente a ≈0,4 V del SS14 [H, curvas típicas]",
+   "status": "provisorio [H] (no reemplazar por 0 Ω salvo verificar que el buck no conduce en inversa; margen medido en TP9 durante ráfagas de Wi-Fi en E-02)"
+  },
+  {
+   "ref": "C25",
+   "lib_id": "Device:C",
+   "value": "10µ/25V X7R",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder",
+   "block": "logica",
+   "dnp": false,
+   "source": "[DS-ESP32] p.19, p.52",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C26",
+   "lib_id": "Device:C",
+   "value": "10µ/10V X7R",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder",
+   "block": "logica",
+   "dnp": true,
+   "source": "LDO AMS1117 de la placa: estabilidad con cerámicos no documentada [H]",
+   "status": "provisorio [H] (DNP)"
+  },
+  {
+   "ref": "R30",
+   "lib_id": "Device:R",
+   "value": "0 (3V3→V_ENC)",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "logica",
+   "dnp": false,
+   "source": "[ENERGIA] §6.5 (primera energización a 3,3 V); [CONTRATO] §2.4; reemplaza al puente de 3 vías JP5",
+   "status": "provisorio [H] (montada; serigrafía 'NO MONTAR CON R31')"
+  },
+  {
+   "ref": "R31",
+   "lib_id": "Device:R",
+   "value": "0 (5V→V_ENC)",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "logica",
+   "dnp": true,
+   "source": "[ENERGIA] §6.5 (5 V solo si el encoder no funciona a 3,3 V)",
+   "status": "provisorio [H] (DNP; huella alejada de R30; nunca montar junto con R30; antes exige 2 kΩ en C10-C13)"
+  },
+  {
+   "ref": "R27",
+   "lib_id": "Device:R",
+   "value": "470",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "controlador",
+   "dnp": false,
+   "source": "[DS-ESP32] p.69 (GPIO13 wpd After Reset); (3,3 − 2,1 V)/470 Ω ≈ 2,6 mA con LED GaP",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "D5",
+   "lib_id": "Device:LED",
+   "value": "LED verde GaP 3mm Vf≈2,1V",
+   "footprint": "LED_THT:LED_D3.0mm",
+   "block": "controlador",
+   "dnp": false,
+   "source": "Device.kicad_sym LED 1=K 2=A; un verde InGaN (Vf ≈ 3 V) daría menos de 1 mA",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "JP2",
+   "lib_id": "Jumper:SolderJumper_3_Bridged12",
+   "value": "AD0 1-2=GND",
+   "footprint": "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[DS-MPU] p.15, p.33; Jumper.kicad_sym (A=1, C=2, B=3)",
+   "status": "provisorio [H] (función AD0 [D]; resistencia de AD0 del GY-521 [H], E-01)"
+  },
+  {
+   "ref": "JP3",
+   "lib_id": "Jumper:SolderJumper_3_Bridged12",
+   "value": "SDA INA 1-2=I2C0",
+   "footprint": "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[CONTRATO] §4.2 (opciones A/B)",
+   "status": "provisorio [H] (decisión tras E-08)"
+  },
+  {
+   "ref": "JP4",
+   "lib_id": "Jumper:SolderJumper_3_Bridged12",
+   "value": "SCL INA 1-2=I2C0",
+   "footprint": "Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[CONTRATO] §4.2",
+   "status": "provisorio [H] (decisión tras E-08)"
+  },
+  {
+   "ref": "R17",
+   "lib_id": "Device:R",
+   "value": "3k3",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "sensores",
+   "dnp": true,
+   "source": "[CONTRATO] §4.4; [DS-219] p.25 §9.2",
+   "status": "provisorio [H] (DNP; paralelo de pull-ups de los módulos supuesto [H], medir sin alimentar en E-01)"
+  },
+  {
+   "ref": "R18",
+   "lib_id": "Device:R",
+   "value": "3k3",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "sensores",
+   "dnp": true,
+   "source": "Igual que R17",
+   "status": "provisorio [H] (DNP; paralelo de pull-ups de los módulos supuesto [H], medir sin alimentar en E-01)"
+  },
+  {
+   "ref": "R19",
+   "lib_id": "Device:R",
+   "value": "3k3",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "sensores",
+   "dnp": true,
+   "source": "Igual que R17 (bus de los INA en opción B)",
+   "status": "provisorio [H] (DNP; paralelo de pull-ups de los módulos supuesto [H], medir sin alimentar en E-01)"
+  },
+  {
+   "ref": "R20",
+   "lib_id": "Device:R",
+   "value": "3k3",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "sensores",
+   "dnp": true,
+   "source": "Igual que R19",
+   "status": "provisorio [H] (DNP; paralelo de pull-ups de los módulos supuesto [H], medir sin alimentar en E-01)"
+  },
+  {
+   "ref": "R21",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[DS-226] p.3, p.12 (ALERT open-drain); [DS-ESP32] p.17 (GPIO39 sin pull)",
+   "status": "provisorio [H] (montada por defecto; con pull-up del módulo quedan ≈5 kΩ, 0,66 mA; retirar solo si E-01 lo justifica)"
+  },
+  {
+   "ref": "C16",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "sensores",
+   "dnp": false,
+   "source": "Desacople local en el zócalo; [ENERGIA] §6.7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C17",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "sensores",
+   "dnp": false,
+   "source": "Desacople local en el zócalo; [ENERGIA] §6.7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C18",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "sensores",
+   "dnp": false,
+   "source": "Desacople local en el zócalo; [ENERGIA] §6.7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C19",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "sensores",
+   "dnp": false,
+   "source": "Desacople local en el zócalo; [ENERGIA] §6.7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "J7",
+   "lib_id": "Connector_Generic:Conn_01x04",
+   "value": "Encoder IZQ XH-4",
+   "footprint": "Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[INV] ROB-011 (negro/amarillo/verde/azul) [V]; [CONTRATO] §2.4",
+   "status": "provisorio [H] (conector de la placa base: el mazo de 6 hilos del GA25-370 tiene terminación desconocida y se reterminaría con carcasa XH-4 [H], decisión de Matías tras E-01; A/B por color [H])"
+  },
+  {
+   "ref": "C20",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[ENERGIA] §6.7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "J8",
+   "lib_id": "Connector_Generic:Conn_01x04",
+   "value": "Encoder DER XH-4",
+   "footprint": "Connector_JST:JST_XH_B4B-XH-A_1x04_P2.50mm_Vertical",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[INV] ROB-011 (negro/amarillo/verde/azul) [V]; [CONTRATO] §2.4",
+   "status": "provisorio [H] (conector de la placa base: el mazo de 6 hilos del GA25-370 tiene terminación desconocida y se reterminaría con carcasa XH-4 [H], decisión de Matías tras E-01; A/B por color [H])"
+  },
+  {
+   "ref": "C21",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[ENERGIA] §6.7",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "R9",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.4; [ENERGIA] §6.5; [DS-ESP32] p.52-53",
+   "status": "provisorio [H] (la primera energización del encoder en E-04 se hace fuera de la placa o sin R9-R12, [CONTRATO] §2.4)"
+  },
+  {
+   "ref": "R10",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.4; [ENERGIA] §6.5; [DS-ESP32] p.52-53",
+   "status": "provisorio [H] (la primera energización del encoder en E-04 se hace fuera de la placa o sin R9-R12, [CONTRATO] §2.4)"
+  },
+  {
+   "ref": "R11",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.4; [ENERGIA] §6.5; [DS-ESP32] p.52-53",
+   "status": "provisorio [H] (la primera energización del encoder en E-04 se hace fuera de la placa o sin R9-R12, [CONTRATO] §2.4)"
+  },
+  {
+   "ref": "R12",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.4; [ENERGIA] §6.5; [DS-ESP32] p.52-53",
+   "status": "provisorio [H] (la primera energización del encoder en E-04 se hace fuera de la placa o sin R9-R12, [CONTRATO] §2.4)"
+  },
+  {
+   "ref": "R13",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[DS-ESP32] p.17 (GPIO34/35 sin pull), p.52; [ENERGIA] §6.5",
+   "status": "provisorio [H] (montada por defecto: evita entradas flotantes con el encoder desconectado; retirar solo si E-04 muestra que el encoder fija el nivel o si V_ENC = 5 V con salida push-pull)"
+  },
+  {
+   "ref": "R14",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[DS-ESP32] p.17 (GPIO34/35 sin pull), p.52; [ENERGIA] §6.5",
+   "status": "provisorio [H] (montada por defecto: evita entradas flotantes con el encoder desconectado; retirar solo si E-04 muestra que el encoder fija el nivel o si V_ENC = 5 V con salida push-pull)"
+  },
+  {
+   "ref": "R15",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[DS-ESP32] p.17 (GPIO34/35 sin pull), p.52; [ENERGIA] §6.5",
+   "status": "provisorio [H] (montada por defecto: evita entradas flotantes con el encoder desconectado; retirar solo si E-04 muestra que el encoder fija el nivel o si V_ENC = 5 V con salida push-pull)"
+  },
+  {
+   "ref": "R16",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[DS-ESP32] p.17 (GPIO34/35 sin pull), p.52; [ENERGIA] §6.5",
+   "status": "provisorio [H] (montada por defecto: evita entradas flotantes con el encoder desconectado; retirar solo si E-04 muestra que el encoder fija el nivel o si V_ENC = 5 V con salida push-pull)"
+  },
+  {
+   "ref": "C10",
+   "lib_id": "Device:C",
+   "value": "1n/50V C0G",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[DS-ESP32] p.38-39 (filtro del PCNT)",
+   "status": "provisorio [H] (DNP; el pad recibe 2 kΩ como resistencia inferior del divisor si V_ENC = 5 V: 5 V · 2k/(1k + 2k) = 3,33 V)"
+  },
+  {
+   "ref": "C11",
+   "lib_id": "Device:C",
+   "value": "1n/50V C0G",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[DS-ESP32] p.38-39 (filtro del PCNT)",
+   "status": "provisorio [H] (DNP; el pad recibe 2 kΩ como resistencia inferior del divisor si V_ENC = 5 V: 5 V · 2k/(1k + 2k) = 3,33 V)"
+  },
+  {
+   "ref": "C12",
+   "lib_id": "Device:C",
+   "value": "1n/50V C0G",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[DS-ESP32] p.38-39 (filtro del PCNT)",
+   "status": "provisorio [H] (DNP; el pad recibe 2 kΩ como resistencia inferior del divisor si V_ENC = 5 V: 5 V · 2k/(1k + 2k) = 3,33 V)"
+  },
+  {
+   "ref": "C13",
+   "lib_id": "Device:C",
+   "value": "1n/50V C0G",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "conectores",
+   "dnp": true,
+   "source": "[DS-ESP32] p.38-39 (filtro del PCNT)",
+   "status": "provisorio [H] (DNP; el pad recibe 2 kΩ como resistencia inferior del divisor si V_ENC = 5 V: 5 V · 2k/(1k + 2k) = 3,33 V)"
+  },
+  {
+   "ref": "J4",
+   "lib_id": "Connector_Generic:Conn_01x03",
+   "value": "Paro XH-3",
+   "footprint": "Connector_JST:JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.12; [JST-XH]",
+   "status": "provisorio [H] (REQ-17; sin contacto remoto hay que puentear 1-2)"
+  },
+  {
+   "ref": "R24",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.12 (nivel definido por pull externo)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "R25",
+   "lib_id": "Device:R",
+   "value": "1k",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[DS-ESP32] p.69 (GPIO14 wpu After Reset)",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "C15",
+   "lib_id": "Device:C",
+   "value": "100n/50V X7R",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder",
+   "block": "conectores",
+   "dnp": false,
+   "source": "Filtro RC [H]: activación (contacto abierto) τ = (R24 + R25)·C15 ≈ 1,1 ms, ≈1,5 ms hasta VIH = 0,75·VDD; liberación τ = R25·C15 = 0,1 ms",
+   "status": "provisorio [H]"
+  },
+  {
+   "ref": "R26",
+   "lib_id": "Device:R",
+   "value": "100",
+   "footprint": "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder",
+   "block": "conectores",
+   "dnp": true,
+   "source": "Limita un cortocircuito en el cable remoto [H]",
+   "status": "provisorio [H] (DNP)"
+  },
+  {
+   "ref": "TP1",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VBAT",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_VBAT = bus protegido, VM_BUS)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP2",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VBAT_SW",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Diagnóstico del lazo J3 (interruptor y paro)",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP3",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VM_IZQ",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (TP_VM_I)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP4",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VM_DER",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (TP_VM_D)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP5",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_UBEC",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_UBEC, salida del UBEC)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP6",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VSERVO_IZQ",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_VSERVO_I, junto al V+ de J13: mide la caída por ubicación)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP7",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VSERVO_DER",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_VSERVO_D, junto al V+ de J14: mide la caída por ubicación)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP8",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_5V",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (TP_5V)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP9",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_5V_ESP",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Margen del AMS1117 tras D2 (E-02)",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP10",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_3V3",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (TP_3V3)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP11",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_GND_PWR",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (TP_GND_PWR)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP12",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_GND_LOG",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (TP_GND_LOG)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP13",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_GND_SERVO",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Masa junto a los headers de servo",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP14",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VM_UBEC",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Entrada del UBEC tras F4",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP15",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SHUNT+_IZQ",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_SHUNT+)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP16",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SHUNT+_DER",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_SHUNT+)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP17",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SHUNT+_LOG",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_SHUNT+)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP18",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SHUNT-_LOG",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_SHUNT−)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP19",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_IN1_IZQ",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP20",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_IN2_IZQ",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP21",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_IN1_DER",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP22",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_IN2_DER",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP23",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_A_IZQ",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP24",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_B_IZQ",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP25",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_A_DER",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP26",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_B_DER",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP27",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_S_IZQ",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP28",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_S_DER",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP29",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SDA0",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (por bus)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP30",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SCL0",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (por bus)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP31",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SDA1",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (por bus)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP32",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_SCL1",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[FLUJO] l.71; [CONTRATO] §2.13 (por bus)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP33",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_INT",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_INT)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP34",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_CICLO",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "[CONTRATO] §2.13 (TP_CICLO)",
+   "status": "provisorio [H] (exigido por la lista citada; ubicación en la PCB pendiente)"
+  },
+  {
+   "ref": "TP35",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_ALERT",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "ALERT del INA226",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP36",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VBAT_ADC",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Divisor de batería hacia GPIO36",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP37",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_PARO",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Paro filtrado hacia GPIO14",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP38",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_V_ENC",
+   "footprint": "TestPoint:TestPoint_THTPad_D2.0mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Alimentación de encoders",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP39",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VBAT_P",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Antes de F1: diagnóstico de F1 abierto con dos puntas sobre la placa (revisión de la v0.1)",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  },
+  {
+   "ref": "TP40",
+   "lib_id": "Connector:TestPoint",
+   "value": "TP_VBAT_F",
+   "footprint": "TestPoint:TestPoint_Loop_D2.50mm_Drill1.0mm",
+   "block": "prueba",
+   "dnp": false,
+   "source": "Entre F1 y J3: diagnóstico de F1 y del lazo de interruptor (revisión de la v0.1)",
+   "status": "provisorio [H] (agregado por diseño; no exigido por [FLUJO] l.71)"
+  }
+ ],
+ "nets": [
+  {
+   "name": "GND",
+   "kind": "power",
+   "pins": [
+    "J1.1",
+    "J2.1",
+    "C1.2",
+    "C2.2",
+    "C3.2",
+    "D1.2",
+    "R29.2",
+    "R23.2",
+    "C14.2",
+    "D4.1",
+    "J5.1",
+    "J6.1",
+    "C4.2",
+    "C5.2",
+    "C6.2",
+    "C7.2",
+    "R1.2",
+    "R2.2",
+    "R3.2",
+    "R4.2",
+    "A3.1",
+    "A4.1",
+    "J15.1",
+    "C22.2",
+    "J16.1",
+    "J17.1",
+    "J13.1",
+    "J14.1",
+    "R7.2",
+    "R8.2",
+    "C8.2",
+    "C9.2",
+    "C23.2",
+    "C24.2",
+    "J18.1",
+    "J19.1",
+    "J20.1",
+    "A8.2",
+    "A8.4",
+    "C25.2",
+    "C26.2",
+    "A1.14",
+    "A1.20",
+    "A1.26",
+    "D5.1",
+    "A2.2",
+    "JP2.1",
+    "A5.2",
+    "A6.2",
+    "A7.7",
+    "C16.2",
+    "C17.2",
+    "C18.2",
+    "C19.2",
+    "J7.1",
+    "J8.1",
+    "J9.4",
+    "J10.4",
+    "C20.2",
+    "C21.2",
+    "C10.2",
+    "C11.2",
+    "C12.2",
+    "C13.2",
+    "J4.1",
+    "C15.2",
+    "TP11.1",
+    "TP12.1",
+    "TP13.1"
+   ],
+   "note": "Masa única = P− del BMS. Plano continuo con nodo de referencia en el negativo de C1 junto a J1; separación de retornos por ubicación y trazado, no galvánica (energía §6)."
+  },
+  {
+   "name": "VBAT_P",
+   "kind": "power",
+   "pins": [
+    "J1.2",
+    "J2.2",
+    "F1.1",
+    "TP39.1"
+   ],
+   "note": "P+ del BMS por J1 (XT60), antes del fusible principal; TP39 para diagnosticar F1."
+  },
+  {
+   "name": "VBAT_F",
+   "kind": "power",
+   "pins": [
+    "F1.2",
+    "J3.1",
+    "TP40.1"
+   ],
+   "note": "Después del fusible principal; sale al interruptor/paro externo por J3.1; TP40."
+  },
+  {
+   "name": "VBAT_SW",
+   "kind": "power",
+   "pins": [
+    "J3.2",
+    "Q1.2",
+    "JP1.1",
+    "TP2.1"
+   ],
+   "note": "Vuelta del interruptor/paro; entra a la protección de polaridad (Q1 DNP o puente JP1); TP2 = TP_VBAT_SW."
+  },
+  {
+   "name": "VM_BUS",
+   "kind": "power",
+   "pins": [
+    "Q1.3",
+    "JP1.2",
+    "D3.1",
+    "C1.1",
+    "C2.1",
+    "C3.1",
+    "D1.1",
+    "R28.1",
+    "R22.1",
+    "F2.1",
+    "F3.1",
+    "F4.1",
+    "F5.1",
+    "TP1.1"
+   ],
+   "note": "Bus VM protegido, 11,1 V nominal (7,5-13,6 V; clamp 24,4 V). Bulk, TVS, divisor ADC, LED y fusibles de rama; TP1 = TP_VBAT del contrato §2.13."
+  },
+  {
+   "name": "Q_POL_G",
+   "kind": "signal",
+   "pins": [
+    "Q1.1",
+    "R29.1",
+    "D3.2"
+   ],
+   "note": "Compuerta de Q1 (DNP): R29 a GND y zener D3 a la fuente."
+  },
+  {
+   "name": "LED_VM_A",
+   "kind": "signal",
+   "pins": [
+    "R28.2",
+    "D4.2"
+   ],
+   "note": "Ánodo del LED de bus energizado."
+  },
+  {
+   "name": "VBAT_ADC",
+   "kind": "signal",
+   "pins": [
+    "R22.2",
+    "R23.1",
+    "C14.1",
+    "A1.3",
+    "TP36.1"
+   ],
+   "note": "Divisor 100k/12k de VM_BUS hacia GPIO36 (ADC1_CH0, atenuación 2)."
+  },
+  {
+   "name": "VM_IZQ_F",
+   "kind": "power",
+   "pins": [
+    "F2.2",
+    "JP6.1",
+    "TP15.1",
+    "J21.2"
+   ],
+   "note": "Rama motor IZQ tras F2; J21.2 → cable a la bornera Vin+ del módulo A5 (la tira de 2,54 mm no lleva esta corriente)."
+  },
+  {
+   "name": "VM_IZQ",
+   "kind": "power",
+   "pins": [
+    "JP6.2",
+    "J5.2",
+    "C4.1",
+    "C6.1",
+    "TP3.1",
+    "J21.1"
+   ],
+   "note": "Tras el shunt de A5: vuelve de la bornera Vin− del módulo a J21.1; sale por J5.2 al POWER+ del DRV IZQ. C4/C6 locales."
+  },
+  {
+   "name": "VM_DER_F",
+   "kind": "power",
+   "pins": [
+    "F3.2",
+    "JP7.1",
+    "TP16.1",
+    "J22.2"
+   ],
+   "note": "Rama motor DER tras F3; J22.2 → cable a la bornera Vin+ del módulo A6."
+  },
+  {
+   "name": "VM_DER",
+   "kind": "power",
+   "pins": [
+    "JP7.2",
+    "J6.2",
+    "C5.1",
+    "C7.1",
+    "TP4.1",
+    "J22.1"
+   ],
+   "note": "Tras el shunt de A6: vuelve de la bornera Vin− del módulo a J22.1; sale por J6.2 al POWER+ del DRV DER. C5/C7 locales."
+  },
+  {
+   "name": "IN1_IZQ",
+   "kind": "signal",
+   "pins": [
+    "A1.28",
+    "A3.3",
+    "R1.1",
+    "TP19.1"
+   ],
+   "note": "GPIO18 → IN1 del DRV IZQ; pull-down 2,2 kΩ."
+  },
+  {
+   "name": "IN2_IZQ",
+   "kind": "signal",
+   "pins": [
+    "A1.27",
+    "A3.4",
+    "R2.1",
+    "TP20.1"
+   ],
+   "note": "GPIO19 → IN2 del DRV IZQ; pull-down 2,2 kΩ."
+  },
+  {
+   "name": "IN1_DER",
+   "kind": "signal",
+   "pins": [
+    "A1.21",
+    "A4.3",
+    "R3.1",
+    "TP21.1"
+   ],
+   "note": "GPIO23 → IN1 del DRV DER; pull-down 2,2 kΩ."
+  },
+  {
+   "name": "IN2_DER",
+   "kind": "signal",
+   "pins": [
+    "A1.32",
+    "A4.4",
+    "R4.1",
+    "TP22.1"
+   ],
+   "note": "GPIO4 → IN2 del DRV DER; pull-down 2,2 kΩ (GPIO4 además tiene wpd)."
+  },
+  {
+   "name": "MOT_IZQ_1",
+   "kind": "signal",
+   "pins": [
+    "J9.1",
+    "J11.1"
+   ],
+   "note": "Solo con J9 (DNP, orden [H]): motor IZQ → J11 → cable a OUT1 del módulo. Lleva corriente de motor."
+  },
+  {
+   "name": "MOT_IZQ_2",
+   "kind": "signal",
+   "pins": [
+    "J9.2",
+    "J11.2"
+   ],
+   "note": "Solo con J9 (DNP, orden [H]): motor IZQ → J11 → OUT2 del módulo."
+  },
+  {
+   "name": "MOT_DER_1",
+   "kind": "signal",
+   "pins": [
+    "J10.1",
+    "J12.1"
+   ],
+   "note": "Solo con J10 (DNP, orden [H]): motor DER → J12 → OUT1 del módulo."
+  },
+  {
+   "name": "MOT_DER_2",
+   "kind": "signal",
+   "pins": [
+    "J10.2",
+    "J12.2"
+   ],
+   "note": "Solo con J10 (DNP, orden [H]): motor DER → J12 → OUT2 del módulo."
+  },
+  {
+   "name": "VM_UBEC",
+   "kind": "power",
+   "pins": [
+    "F4.2",
+    "J15.2",
+    "C22.1",
+    "TP14.1"
+   ],
+   "note": "Entrada del UBEC tras F4."
+  },
+  {
+   "name": "V_SERVO",
+   "kind": "power",
+   "pins": [
+    "J16.2",
+    "J17.2",
+    "J13.2",
+    "J14.2",
+    "C8.1",
+    "C9.1",
+    "TP5.1",
+    "TP6.1",
+    "TP7.1"
+   ],
+   "note": "Salida 6,0 V [P] del UBEC (7,4 V prohibido) hacia los dos headers JR. TP5 en la salida del UBEC, TP6/TP7 junto al V+ de cada header (misma net a propósito: miden la caída por ubicación, [CONTRATO] §2.13)."
+  },
+  {
+   "name": "SERVO_IZQ_MCU",
+   "kind": "signal",
+   "pins": [
+    "A1.9",
+    "R5.1",
+    "R7.1"
+   ],
+   "note": "GPIO25 (LEDC) con pull-down 10 kΩ; lado ESP32 de R5."
+  },
+  {
+   "name": "SERVO_IZQ_SIG",
+   "kind": "signal",
+   "pins": [
+    "R5.2",
+    "J13.3",
+    "TP27.1"
+   ],
+   "note": "Señal al pin SIG de J13 tras R5 de 470 Ω."
+  },
+  {
+   "name": "SERVO_DER_MCU",
+   "kind": "signal",
+   "pins": [
+    "A1.10",
+    "R6.1",
+    "R8.1"
+   ],
+   "note": "GPIO26 (LEDC) con pull-down 10 kΩ; lado ESP32 de R6."
+  },
+  {
+   "name": "SERVO_DER_SIG",
+   "kind": "signal",
+   "pins": [
+    "R6.2",
+    "J14.3",
+    "TP28.1"
+   ],
+   "note": "Señal al pin SIG de J14 tras R6 de 470 Ω."
+  },
+  {
+   "name": "VM_LOG_F",
+   "kind": "power",
+   "pins": [
+    "F5.2",
+    "A7.1",
+    "JP8.1",
+    "TP17.1"
+   ],
+   "note": "Rama lógica tras F5; IN+ del shunt de A7."
+  },
+  {
+   "name": "VM_LOG",
+   "kind": "power",
+   "pins": [
+    "A7.2",
+    "A7.3",
+    "JP8.2",
+    "A8.1",
+    "C23.1",
+    "C24.1",
+    "J18.2",
+    "J18.3",
+    "J19.2",
+    "TP18.1"
+   ],
+   "note": "Tras el shunt de A7 (IN-): entrada del mini buck, voltímetro y VBS del INA226 (tensión de bus)."
+  },
+  {
+   "name": "5V",
+   "kind": "power",
+   "pins": [
+    "A8.3",
+    "J20.2",
+    "D2.2",
+    "TP8.1",
+    "R31.1"
+   ],
+   "note": "Salida de 5 V del mini buck A8 (o del LM2596 por J20, DNP). R31 (DNP) la llevaría a V_ENC."
+  },
+  {
+   "name": "5V_ESP",
+   "kind": "power",
+   "pins": [
+    "D2.1",
+    "A1.19",
+    "C25.1",
+    "TP9.1"
+   ],
+   "note": "Pin 5V (J2-19) de la DevKitC tras el Schottky D2: único nodo de alimentación de la ESP32."
+  },
+  {
+   "name": "3V3",
+   "kind": "power",
+   "pins": [
+    "A1.1",
+    "C26.1",
+    "A2.1",
+    "JP2.3",
+    "A5.1",
+    "A6.1",
+    "A7.8",
+    "C16.1",
+    "C17.1",
+    "C18.1",
+    "C19.1",
+    "R13.1",
+    "R14.1",
+    "R15.1",
+    "R16.1",
+    "R17.1",
+    "R18.1",
+    "R19.1",
+    "R20.1",
+    "R21.1",
+    "R24.1",
+    "R26.1",
+    "TP10.1",
+    "R30.1"
+   ],
+   "note": "Salida 3V3 (J2-1) del AMS1117 de la DevKitC: alimenta IMU, INA, encoders (por R30) y pull-ups. Nunca alimentarla desde afuera."
+  },
+  {
+   "name": "V_ENC",
+   "kind": "power",
+   "pins": [
+    "J7.4",
+    "J8.4",
+    "J9.3",
+    "J10.3",
+    "C20.1",
+    "C21.1",
+    "TP38.1",
+    "R30.2",
+    "R31.2"
+   ],
+   "note": "Alimentación de encoders: 3V3 por R30 (montada) o 5V por R31 (DNP). Nunca ambas: unirían 5V con 3V3."
+  },
+  {
+   "name": "ENC_IZQ_A",
+   "kind": "signal",
+   "pins": [
+    "J7.2",
+    "J9.5",
+    "R9.1",
+    "R13.2",
+    "TP23.1"
+   ],
+   "note": "Canal A del encoder IZQ, lado cable (amarillo [H]); pull-up R13 10 kΩ a 3V3 montada."
+  },
+  {
+   "name": "ENC_IZQ_B",
+   "kind": "signal",
+   "pins": [
+    "J7.3",
+    "J9.6",
+    "R10.1",
+    "R14.2",
+    "TP24.1"
+   ],
+   "note": "Canal B del encoder IZQ, lado cable (verde [H]); pull-up R14 10 kΩ a 3V3 montada."
+  },
+  {
+   "name": "ENC_IZQ_A_MCU",
+   "kind": "signal",
+   "pins": [
+    "R9.2",
+    "C10.1",
+    "A1.5"
+   ],
+   "note": "A IZQ tras R serie de 1 kΩ hacia GPIO34 (PCNT)."
+  },
+  {
+   "name": "ENC_IZQ_B_MCU",
+   "kind": "signal",
+   "pins": [
+    "R10.2",
+    "C11.1",
+    "A1.6"
+   ],
+   "note": "B IZQ tras R serie de 1 kΩ hacia GPIO35 (PCNT)."
+  },
+  {
+   "name": "ENC_DER_A",
+   "kind": "signal",
+   "pins": [
+    "J8.2",
+    "J10.5",
+    "R11.1",
+    "R15.2",
+    "TP25.1"
+   ],
+   "note": "Canal A del encoder DER, lado cable (amarillo [H]); pull-up R15 10 kΩ a 3V3 montada."
+  },
+  {
+   "name": "ENC_DER_B",
+   "kind": "signal",
+   "pins": [
+    "J8.3",
+    "J10.6",
+    "R12.1",
+    "R16.2",
+    "TP26.1"
+   ],
+   "note": "Canal B del encoder DER, lado cable (verde [H]); pull-up R16 10 kΩ a 3V3 montada."
+  },
+  {
+   "name": "ENC_DER_A_MCU",
+   "kind": "signal",
+   "pins": [
+    "R11.2",
+    "C12.1",
+    "A1.7"
+   ],
+   "note": "A DER tras R serie de 1 kΩ hacia GPIO32 (PCNT)."
+  },
+  {
+   "name": "ENC_DER_B_MCU",
+   "kind": "signal",
+   "pins": [
+    "R12.2",
+    "C13.1",
+    "A1.8"
+   ],
+   "note": "B DER tras R serie de 1 kΩ hacia GPIO33 (PCNT)."
+  },
+  {
+   "name": "I2C_SDA",
+   "kind": "signal",
+   "pins": [
+    "A1.25",
+    "A2.4",
+    "JP3.1",
+    "R17.2",
+    "TP29.1"
+   ],
+   "note": "Bus I2C0 (GPIO21): MPU6050 y, con JP3 en 1-2, los tres INA (direcciones propuestas 0x40/0x41/0x44, pendientes del contrato §4.1)."
+  },
+  {
+   "name": "I2C_SCL",
+   "kind": "signal",
+   "pins": [
+    "A1.22",
+    "A2.3",
+    "JP4.1",
+    "R18.2",
+    "TP30.1"
+   ],
+   "note": "Bus I2C0 (GPIO22)."
+  },
+  {
+   "name": "INA_SDA",
+   "kind": "signal",
+   "pins": [
+    "JP3.2",
+    "A5.4",
+    "A6.4",
+    "A7.6",
+    "R19.2",
+    "TP31.1"
+   ],
+   "note": "SDA común de A5, A6 y A7; va a I2C0 (JP3 1-2) o a I2C1 (JP3 2-3)."
+  },
+  {
+   "name": "INA_SCL",
+   "kind": "signal",
+   "pins": [
+    "JP4.2",
+    "A5.3",
+    "A6.3",
+    "A7.5",
+    "R20.2",
+    "TP32.1"
+   ],
+   "note": "SCL común de A5, A6 y A7."
+  },
+  {
+   "name": "RESERVA_SDA1",
+   "kind": "signal",
+   "pins": [
+    "A1.31",
+    "JP3.3"
+   ],
+   "note": "GPIO16: reserva; SDA de I2C1 en la opción B (solo WROOM)."
+  },
+  {
+   "name": "CICLO_SCL1",
+   "kind": "signal",
+   "pins": [
+    "A1.30",
+    "JP4.3",
+    "TP34.1"
+   ],
+   "note": "GPIO17: marcador de ciclo de 5 ms (E-08) en la opción A; SCL de I2C1 en la opción B."
+  },
+  {
+   "name": "IMU_AD0",
+   "kind": "signal",
+   "pins": [
+    "A2.7",
+    "JP2.2"
+   ],
+   "note": "AD0 de la MPU fijado por JP2 (GND por defecto → 0x68)."
+  },
+  {
+   "name": "IMU_INT",
+   "kind": "signal",
+   "pins": [
+    "A2.8",
+    "A1.11",
+    "TP33.1"
+   ],
+   "note": "INT de la MPU → GPIO27 (interrupción por flanco)."
+  },
+  {
+   "name": "INA_ALERT",
+   "kind": "signal",
+   "pins": [
+    "A7.4",
+    "R21.2",
+    "A1.4",
+    "TP35.1"
+   ],
+   "note": "ALE (ALERT open-drain [H]) del INA226 → GPIO39 (solo entrada); pull-up R21 10 kΩ montada."
+  },
+  {
+   "name": "LED_ESTADO",
+   "kind": "signal",
+   "pins": [
+    "A1.15",
+    "R27.1"
+   ],
+   "note": "GPIO13 → R27 470 Ω (LED de estado GaP, activo alto)."
+  },
+  {
+   "name": "LED_ESTADO_A",
+   "kind": "signal",
+   "pins": [
+    "R27.2",
+    "D5.2"
+   ],
+   "note": "Ánodo de D5."
+  },
+  {
+   "name": "PARO_CONT",
+   "kind": "signal",
+   "pins": [
+    "J4.2",
+    "R24.2",
+    "R25.1"
+   ],
+   "note": "Contacto NC externo a GND por J4.2 con pull-up de 10 kΩ a 3V3: contacto abierto o cable cortado = paro."
+  },
+  {
+   "name": "PARO_MCU",
+   "kind": "signal",
+   "pins": [
+    "R25.2",
+    "C15.1",
+    "A1.12",
+    "TP37.1"
+   ],
+   "note": "Señal de paro filtrada (R25 1 kΩ + C15 100 nF) → GPIO14, activa en alto. Activación τ ≈ 1,1 ms; liberación τ = 0,1 ms."
+  },
+  {
+   "name": "PARO_AUX",
+   "kind": "signal",
+   "pins": [
+    "J4.3",
+    "R26.2"
+   ],
+   "note": "3V3 auxiliar por R26 de 100 Ω (DNP) para un receptor remoto."
+  }
+ ],
+ "no_connect": [
+  "A1.2",
+  "A1.13",
+  "A1.16",
+  "A1.17",
+  "A1.18",
+  "A1.23",
+  "A1.24",
+  "A1.29",
+  "A1.33",
+  "A1.34",
+  "A1.35",
+  "A1.36",
+  "A1.37",
+  "A1.38",
+  "A2.5",
+  "A2.6",
+  "A3.2",
+  "A4.2",
+  "J17.3",
+  "A5.5",
+  "A5.6",
+  "A6.5",
+  "A6.6"
+ ],
+ "gpio_table": [
+  {
+   "function": "Alimentación 3,3 V (salida del AMS1117 de la DevKitC)",
+   "gpio": "3V3",
+   "board_pin": "J2-1 (A1.1)",
+   "net": "3V3",
+   "justification": "Único nodo de 3,3 V; alimenta IMU, INA, encoders (por R30) y pull-ups (R13-R16 y R21 montadas, ≈1,6 mA en el peor caso). Nunca entra tensión externa (opciones excluyentes de la guía oficial) [UG-DevKitC]; presupuesto en E-02."
+  },
+  {
+   "function": "Reset (CHIP_PU)",
+   "gpio": "EN",
+   "board_pin": "J2-2 (A1.2)",
+   "net": "NC (sin conexión)",
+   "justification": "La DevKitC ya trae R 10 kΩ, C 0,1 µF, pulsador y auto-reset [SCH-DevKitC]; la placa base no lo carga. El supervisor externo de CHIP_PU (decisión 7 de [ENERGIA] §10) no está incluido en la v0.2."
+  },
+  {
+   "function": "Medición de batería (ADC1_CH0)",
+   "gpio": "GPIO36",
+   "board_pin": "J2-3 (A1.3)",
+   "net": "VBAT_ADC",
+   "justification": "Solo entrada, analógico puro: la errata GPIO-3.11 no afecta lecturas ADC; ADC1 (ADC2 no se usa con Wi-Fi). Divisor 100k/12k, atenuación 2 (150-1750 mV) [DS-ESP32] p.44."
+  },
+  {
+   "function": "ALERT del INA226",
+   "gpio": "GPIO39",
+   "board_pin": "J2-4 (A1.4)",
+   "net": "INA_ALERT",
+   "justification": "Señal lenta open-drain activa en bajo; GPIO39 no tiene pull interno: R21 10 kΩ a 3V3 montada por defecto. Errata GPIO-3.11: leer por nivel y confirmar por I2C [DS-ESP32] p.17. Usar ALERT es la decisión 5 de [ENERGIA] §10, pendiente."
+  },
+  {
+   "function": "Encoder IZQ canal A (PCNT)",
+   "gpio": "GPIO34",
+   "board_pin": "J2-5 (A1.5)",
+   "net": "ENC_IZQ_A_MCU",
+   "justification": "Solo entrada, sin pull; PCNT por matriz [DS-ESP32] p.38-39. Pull-up externo R13 10 kΩ montada por defecto, serie R9 1 kΩ."
+  },
+  {
+   "function": "Encoder IZQ canal B (PCNT)",
+   "gpio": "GPIO35",
+   "board_pin": "J2-6 (A1.6)",
+   "net": "ENC_IZQ_B_MCU",
+   "justification": "Igual que GPIO34 (R14, R10); contiguo en J2."
+  },
+  {
+   "function": "Encoder DER canal A (PCNT)",
+   "gpio": "GPIO32",
+   "board_pin": "J2-7 (A1.7)",
+   "net": "ENC_DER_A_MCU",
+   "justification": "XTAL_32K_P libre: la DevKitC V4 no monta cristal de 32 kHz [SCH-DevKitC]; sin pull al reset [DS-ESP32] p.69. Pull-up R15 montada, serie R11."
+  },
+  {
+   "function": "Encoder DER canal B (PCNT)",
+   "gpio": "GPIO33",
+   "board_pin": "J2-8 (A1.8)",
+   "net": "ENC_DER_B_MCU",
+   "justification": "XTAL_32K_N libre; igual que GPIO32 (R16, R12)."
+  },
+  {
+   "function": "Servo IZQ (LEDC 50 Hz, 500-2500 µs)",
+   "gpio": "GPIO25",
+   "board_pin": "J2-9 (A1.9)",
+   "net": "SERVO_IZQ_MCU",
+   "justification": "Sin pull At/After Reset, no strapping ni JTAG [DS-ESP32] p.69; R7 10 kΩ a GND fija nivel bajo en el arranque; R5 470 Ω serie."
+  },
+  {
+   "function": "Servo DER (LEDC)",
+   "gpio": "GPIO26",
+   "board_pin": "J2-10 (A1.10)",
+   "net": "SERVO_DER_MCU",
+   "justification": "Igual que GPIO25 (R8, R6)."
+  },
+  {
+   "function": "INT de la MPU6050",
+   "gpio": "GPIO27",
+   "board_pin": "J2-11 (A1.11)",
+   "net": "IMU_INT",
+   "justification": "Sin pull de fábrica, no strapping; interrupción por flanco de Data Ready; admite pull-down interno por firmware."
+  },
+  {
+   "function": "Paro / fallo externo (activo alto)",
+   "gpio": "GPIO14",
+   "board_pin": "J2-12 (A1.12)",
+   "net": "PARO_MCU",
+   "justification": "Solo como entrada: su wpu After Reset coincide con el pull-up externo R24; excluido para IN1/IN2 y servos (R-WPU). Filtro R25 1 kΩ + C15 100 nF: activación τ ≈ 1,1 ms (≈1,5 ms hasta VIH), liberación τ = 0,1 ms. Se pierde JTAG (MTMS)."
+  },
+  {
+   "function": "Sin uso (strapping VDD_SDIO)",
+   "gpio": "GPIO12",
+   "board_pin": "J2-13 (A1.13)",
+   "net": "NC (sin conexión)",
+   "justification": "MTDI en alto al reset selecciona flash de 1,8 V y el WROOM-32E no arranca [DS-ESP32] p.22-24; nunca cargarlo."
+  },
+  {
+   "function": "Masa",
+   "gpio": "GND",
+   "board_pin": "J2-14 (A1.14)",
+   "net": "GND",
+   "justification": "Masa única P−."
+  },
+  {
+   "function": "LED de estado (activo alto)",
+   "gpio": "GPIO13",
+   "board_pin": "J2-15 (A1.15)",
+   "net": "LED_ESTADO",
+   "justification": "wpd After Reset: LED apagado durante el arranque [DS-ESP32] p.69; R27 470 Ω con LED GaP (≈2,6 mA). Si se usa la opción B de I2C, el marcador de ciclo pasa aquí."
+  },
+  {
+   "function": "Sin uso (flash SPI)",
+   "gpio": "GPIO9/SD2",
+   "board_pin": "J2-16 (A1.16)",
+   "net": "NC (sin conexión)",
+   "justification": "Flash interna: no usar (nota [2] de la guía)."
+  },
+  {
+   "function": "Sin uso (flash SPI)",
+   "gpio": "GPIO10/SD3",
+   "board_pin": "J2-17 (A1.17)",
+   "net": "NC (sin conexión)",
+   "justification": "Flash interna: no usar."
+  },
+  {
+   "function": "Sin uso (flash SPI)",
+   "gpio": "GPIO11/CMD",
+   "board_pin": "J2-18 (A1.18)",
+   "net": "NC (sin conexión)",
+   "justification": "Flash interna: no usar."
+  },
+  {
+   "function": "Alimentación 5 V de entrada",
+   "gpio": "5V",
+   "board_pin": "J2-19 (A1.19)",
+   "net": "5V_ESP",
+   "justification": "Entrada EXT_5V al AMS1117 de la placa; recibe el mini buck por D2 SS34 (no 0 Ω: el USB alimentaría hacia atrás el buck). El USB entra por el BAT760-7 propio de la placa [SCH-DevKitC]."
+  },
+  {
+   "function": "Masa",
+   "gpio": "GND",
+   "board_pin": "J3-1 (A1.20)",
+   "net": "GND",
+   "justification": "Masa única P−."
+  },
+  {
+   "function": "IN1 del DRV8871 DER",
+   "gpio": "GPIO23",
+   "board_pin": "J3-2 (A1.21)",
+   "net": "IN1_DER",
+   "justification": "Dominio CPU, sin pull At/After Reset [DS-ESP32] p.69; R3 2,2 kΩ a GND (decisión 14, pendiente)."
+  },
+  {
+   "function": "SCL del bus I2C0",
+   "gpio": "GPIO22",
+   "board_pin": "J3-3 (A1.22)",
+   "net": "I2C_SCL",
+   "justification": "Par habitual de I2C en placas de desarrollo; sin pull; pull-ups de los módulos (R18 DNP; paralelo supuesto [H] hasta E-01)."
+  },
+  {
+   "function": "Sin uso (U0TXD)",
+   "gpio": "GPIO1/TX",
+   "board_pin": "J3-4 (A1.23)",
+   "net": "NC (sin conexión)",
+   "justification": "UART0 hacia el CP2102N de la placa (programación y log); reservado."
+  },
+  {
+   "function": "Sin uso (U0RXD)",
+   "gpio": "GPIO3/RX",
+   "board_pin": "J3-5 (A1.24)",
+   "net": "NC (sin conexión)",
+   "justification": "Lo maneja el TXD del CP2102N: cualquier otra salida causaría contención."
+  },
+  {
+   "function": "SDA del bus I2C0",
+   "gpio": "GPIO21",
+   "board_pin": "J3-6 (A1.25)",
+   "net": "I2C_SDA",
+   "justification": "Sin pull, dominio CPU; MPU 0x68 e INA 0x40/0x41/0x44 en opción A (direcciones propuestas, pendientes de aprobar el cambio del contrato §4.1)."
+  },
+  {
+   "function": "Masa",
+   "gpio": "GND",
+   "board_pin": "J3-7 (A1.26)",
+   "net": "GND",
+   "justification": "Masa única P−."
+  },
+  {
+   "function": "IN2 del DRV8871 IZQ",
+   "gpio": "GPIO19",
+   "board_pin": "J3-8 (A1.27)",
+   "net": "IN2_IZQ",
+   "justification": "Dominio CPU, sin pull At/After Reset; R2 2,2 kΩ a GND (decisión 14, pendiente)."
+  },
+  {
+   "function": "IN1 del DRV8871 IZQ",
+   "gpio": "GPIO18",
+   "board_pin": "J3-9 (A1.28)",
+   "net": "IN1_IZQ",
+   "justification": "Dominio CPU, sin pull At/After Reset; R1 2,2 kΩ a GND (decisión 14 de [ENERGIA] §10, pendiente)."
+  },
+  {
+   "function": "Sin uso (strapping con wpu)",
+   "gpio": "GPIO5",
+   "board_pin": "J3-10 (A1.29)",
+   "net": "NC (sin conexión)",
+   "justification": "wpu At/After Reset: llevaría un IN a ≈2,3 V sin pull-down [CONTRATO] §5.3."
+  },
+  {
+   "function": "Marcador de ciclo de 5 ms (opción A) / SCL de I2C1 (opción B)",
+   "gpio": "GPIO17",
+   "board_pin": "J3-11 (A1.30)",
+   "net": "CICLO_SCL1",
+   "justification": "Libre solo con WROOM/SOLO (nota [3] de la guía); por eso lleva funciones no esenciales. JP4 2-3 lo une al SCL de los INA."
+  },
+  {
+   "function": "Reserva (opción A) / SDA de I2C1 (opción B)",
+   "gpio": "GPIO16",
+   "board_pin": "J3-12 (A1.31)",
+   "net": "RESERVA_SDA1",
+   "justification": "Igual que GPIO17; JP3 2-3 lo une al SDA de los INA."
+  },
+  {
+   "function": "IN2 del DRV8871 DER",
+   "gpio": "GPIO4",
+   "board_pin": "J3-13 (A1.32)",
+   "net": "IN2_DER",
+   "justification": "wpd At/After Reset a favor del estado seguro. Dominio RTC: desvío propuesto del contrato §3.1 (dominio CPU preferente) por reservar 21/22 para I2C, pendiente de aprobación de Matías. R4 2,2 kΩ a GND."
+  },
+  {
+   "function": "Sin uso (strapping de arranque)",
+   "gpio": "GPIO0",
+   "board_pin": "J3-14 (A1.33)",
+   "net": "NC (sin conexión)",
+   "justification": "BOOT, auto-programación DTR/RTS y capacitor C15 propio de la DevKitC (no confundir con C15 de la placa base)."
+  },
+  {
+   "function": "Sin uso (strapping de descarga)",
+   "gpio": "GPIO2",
+   "board_pin": "J3-15 (A1.34)",
+   "net": "NC (sin conexión)",
+   "justification": "Debe estar en 0 con GPIO0 para descargar; evitar cargas."
+  },
+  {
+   "function": "Sin uso (strapping con wpu, MTDO)",
+   "gpio": "GPIO15",
+   "board_pin": "J3-16 (A1.35)",
+   "net": "NC (sin conexión)",
+   "justification": "wpu At/After Reset; controla el log de U0TXD."
+  },
+  {
+   "function": "Sin uso (flash SPI)",
+   "gpio": "GPIO8/SD1",
+   "board_pin": "J3-17 (A1.36)",
+   "net": "NC (sin conexión)",
+   "justification": "Flash interna: no usar."
+  },
+  {
+   "function": "Sin uso (flash SPI)",
+   "gpio": "GPIO7/SD0",
+   "board_pin": "J3-18 (A1.37)",
+   "net": "NC (sin conexión)",
+   "justification": "Flash interna: no usar."
+  },
+  {
+   "function": "Sin uso (flash SPI)",
+   "gpio": "GPIO6/CLK",
+   "board_pin": "J3-19 (A1.38)",
+   "net": "NC (sin conexión)",
+   "justification": "Flash interna: no usar."
+  }
+ ],
+ "open_points": [
+  "E-01, ESP32 (ROB-012): identificar la placa comprada. Medir la separación entre hileras (25,40 mm en la DevKitC V4), la cantidad de pines, el rótulo del blindaje (WROOM-32E o WROVER, que tomaría GPIO16/17), el diodo VBUS→5V y el capacitor C15 propio de la placa. Después crear la huella segway_modulos:ROB-012_ESP32-DevKitC-V4_2x19_P2.54mm_Row25.40mm. Archivar en el repositorio la guía, el esquema y el plano DXF de la DevKitC, que hoy solo están en el scratchpad.",
+  "Observación no aplicada, orden del header del DRV8871: un revisor sostuvo que la serigrafía IN2/IN1/GND era contigua y que IN1 quedaba junto a GND. Se verificó contra la fuente: la captura ampliada muestra 4 pads con rótulos alternados IN2 (arriba), IN1 (abajo), VM (arriba, borroso) y GND (abajo). El drv.brd de Adafruit da JP2 pad1 GND, pad2 VMOTOR, pad3 IN1 y pad4 IN2, con la misma serigrafía alternada. Se mantiene 1=GND, 2=VM, 3=IN1, 4=IN2. Quitar el contacto VM del zócalo no protege contra el módulo girado 180° (VM caería en la posición de IN1), así que solo se agregan la marca de pin 1 y el contorno. Queda por evaluar una resistencia serie entre GPIO e IN si se quiere tolerar esa inversión.",
+  "E-01, DRV8871 (ROB-008): confirmar el pad cuadrado del header, R_ILIM (30 kΩ ≈ 2,1 A en Adafruit), el electrolítico y el 100 nF del módulo (definen C4-C7), la unión GND/PGND y si trae resistencias en IN1/IN2 (si las trae, recalcular R1-R4). El segundo módulo (A4) no está comprado.",
+  "E-01, INA219 ×2: confirmar el orden Vcc, Gnd, Scl, Sda, Vin−, Vin+; si la bornera Vin−/Vin+ viene soldada y qué corriente admite (acota F2/F3 junto con J21/J22); las pull-ups; a qué une el puente A0/A1 (para fijar 0x41 y 0x44), y el valor y la potencia del shunt R100.",
+  "E-01, INA226: confirmar la dirección de fábrica 0x40, si VBS está unida a IN−, si ALE es ALERT y si trae pull-up (R21 está montada, así que una pull-up del módulo la deja en ≈5 kΩ), y qué son los 4 agujeros grandes.",
+  "E-01, MPU6050: identificar el regulador del GY-521 y su caída con VCC = 3,3 V. Confirmar las pull-ups de 2,2 kΩ y el pull-down de 4,7 kΩ de AD0, ambos supuestos [H].",
+  "Mini buck ROB-006 (A8): identificar el chip y su tensión máxima de entrada (debe soportar el clamp de 24,4 V del bus) y medir los pads para la huella. En E-02 medir rizado y temperatura; si falla, montar el LM2596 por J19/J20.",
+  "E-02: presupuesto del AMS1117 de la DevKitC para SoC + IMU + 3 INA + 2 encoders + pull-ups. Medir TP9 (J2-19) durante ráfagas de Wi-Fi con D2 SS34. Si el margen no alcanza, considerar un diodo ideal sin camino inverso o un regulador de 3,3 V separado para periféricos en la v0.3, nunca en paralelo con el 3V3 de la placa. No reemplazar D2 por 0 Ω sin verificar que el buck no conduce en inversa.",
+  "Fusibles: valores de F1-F5 pendientes (E-02, E-04, E-06, E-08); F2/F3 deben quedar por debajo de la corriente admisible de la bornera del INA219. Verificar la corriente admisible del portafusible Keystone 3568. F1 en la placa es un desvío del contrato §2.9 (fusible principal cerca del pack): si se mantiene, agregar un fusible en línea junto al pack.",
+  "Polaridad (decisiones 3 y 9 de [ENERGIA] §10): con JP1 la única protección es el XT60, porque D1 (IFSM 40 A, 8,3 ms) falla antes de que abra F1. J2 no se monta sin Q1. Si se puebla Q1, darle disipador (4,5-6,8 W a 15 A) o elegir un P-MOSFET de menor RDS(on) o un N-MOSFET en el retorno. Se descarta el controlador de diodo ideal (LM74700) que sugirió un revisor: bloquea la corriente inversa y [ENERGIA] §2.4 lo excluye por la regeneración. También queda como opción un diodo de potencia en paralelo con la entrada (I_FSM ≥ 150 A) que funda F1 con polaridad invertida. Quedan pendientes la estrategia de regeneración, C2 e inrush/precarga (decisión 13).",
+  "UBEC: identificar el enchufe rojo de entrada y conseguir el adaptador hacia J15. J17 sirve solo para E-05 con un servo: con dos ([FLUJO] l.72; ≈7 A de bloqueo) hay que usar J16 cortando el enchufe, decisión de Matías. Verificar 6,0 V en TP5 antes de conectar servos. La conmutación de la rama de servos por MOSFET (decisión 6) no está incluida.",
+  "Mazo del GA25-370: determinar la terminación (XH-6, PH-2.0 o hilos sueltos) y los colores del motor. J7/J8 (XH-4) suponen reterminar el mazo [H], decisión de Matías. El orden de J9/J10 es [H] y no sigue la convención pin 1 = GND: reasignarlo con el mazo real antes de poblarlos. En E-04 caracterizar el encoder fuera de la placa (sin R9-R16), como pide el contrato §2.4, y decidir si funciona a 3,3 V; si necesita 5 V, retirar R30, montar R31 y 2 kΩ en C10-C13 y revisar R13-R16.",
+  "Servos: variante angular (-FB), compatibilidad con el pulso de 3,3 V y valor de R5/R6 (470 Ω o 1 kΩ) en E-05. Medir la temperatura de los contactos de J13/J14 con el servo bloqueado (3,1-3,9 A frente a ≈3 A [H] del contacto); si no alcanza, llevar la alimentación del servo a una bornera y dejar el header solo para la señal.",
+  "I²C: elegir la opción A o B tras E-08 (JP3/JP4). Montar R17-R20 solo si el paralelo medido de las pull-ups sale de la ventana de 1 a 3,5 kΩ (el ≈1,33 kΩ actual es [H]).",
+  "Ratificación de Matías, decisiones de [ENERGIA] §10 adoptadas en forma provisoria en la v0.2: (1) mini buck 5 V A8 con LM2596 de respaldo; (2) topología de entrada, con F1 en la placa como desvío; (4) INA219 en las entradas de los DRV8871 e INA226 en la rama lógica en vez del bus (desvío de §5.2; REQ-14); (5) ALERT del INA226 hacia GPIO39; (7) umbral de batería baja y supervisor de CHIP_PU, no incluidos (EN sin conexión); (8) fusibles por rama F2-F5; (10) segundo DRV8871 idéntico (A4); (11) IMU sobre la placa base (A2); (12) voltímetro permanente en VM_LOG (desvío de §2 y del contrato §2.10); (14) R1-R4 de 2,2 kΩ, R5/R6 en serie y pads de encoder. Del contrato: el desvío de GPIO4 (dominio RTC) frente a §3.1 y la tabla de direcciones de §4.1.",
+  "Actualizar, con aprobación de Matías, la tabla de direcciones del contrato §4.1 (INA226 0x40, INA219 0x41/0x44) y el borrador de energía §5: el filtro de 10 Ω + 0,1 µF en IN+/IN− no puede ir en la placa base, porque el shunt y el chip están en el mismo módulo.",
+  "Paro (REQ-17): J3 corta toda la potencia; definir si además hace falta cortar solo la VM de los drivers. Sin contacto remoto, J4 necesita un puente entre 1 y 2. Verificar la actividad de GPIO14 en el arranque (E-09). Con el LED en GPIO13 y el paro en GPIO14 se pierde el JTAG. La τ de activación es ≈1,1 ms (≈1,5 ms hasta VIH); el ≈0,8 ms que estimó un revisor no aplica, porque t = 1,1 ms · ln 4.",
+  "Batería: confirmar el conector del cable P+/P− y el género del XT60. El código AMASS XT60PW-M corresponde al macho, pero el descr de la huella de KiCad dice 'PCB Female': revisar el plano de TME y el enchufe del pack antes de comprar. Verificar la polaridad física frente al pad 1 = '−'. J2 es la alternativa no polarizada (solo con Q1). El divisor R22/R23 depende de la química final.",
+  "Voltímetro ROB-004: identificar los colores con multímetro antes de cablear J18 (por convención [H]: rojo = alimentación, negro = GND, amarillo = medida).",
+  "GPIO39 (ALERT): mitigar en firmware la errata GPIO-3.11 (ADC encendido de forma permanente o lectura por nivel con confirmación por I2C).",
+  "Puentes de 3 vías JP2-JP4 (1,3 mm): JP2 tiene GND y 3V3 en sus extremos, así que un exceso de estaño cortocircuita el 3V3 (el AMS1117 limita; no llega 5 V a la lógica). Comprobar continuidad antes de energizar o, en la v0.3, reemplazarlo por dos resistencias de 0 Ω como se hizo con V_ENC.",
+  "Observación no aplicada, huellas de A1 y A8: la regla 6 de la especificación deja vacías las huellas de módulos sin medir. Una huella provisoria de dos PinSocket_1x19 fijaría una separación entre hileras que el ejemplar ROB-012 no confirmó (30 o 38 pines; 22,86 o 25,40 mm). Antes de 'Actualizar PCB desde el esquema' hay que crear las dos huellas con las medidas de E-01; si no, A1 y A8 quedan fuera de la placa.",
+  "Observación aplicada en parte, nombres de TP: TP1 conserva TP_VBAT porque el contrato §2.13 define así el punto del bus protegido (VM_BUS). Se agregaron TP39 (VBAT_P) y TP40 (VBAT_F) y TP2 pasó a llamarse TP_VBAT_SW. TP6 y TP7 siguen en V_SERVO a propósito: el contrato los ubica en el V+ de cada header para medir la caída.",
+  "Generador de esquemas: escribir el atributo nativo DNP en lugar de un campo de usuario y ordenar el esquema por bloques legibles antes de la revisión de Matías. Cuando se autorice escribir en el repositorio, llevar la especificación v0.2 (scratchpad/corrector/final_v0.2.json) a electronica/cad/segway_base/, copiar la evidencia de ERC y netlist y registrar el ítem en BACKLOG.md con esos enlaces."
+ ],
+ "page": "A1"
+}
