@@ -7,7 +7,7 @@ Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Cl
 - Camino elegido: KiCad + IA + MCP (DEC-05). Componentes como módulos completos con conexiones reales (DEC-04, REQ-22). La PCB es una placa base de interconexión.
 - Dos DS3240 MG, dos GA25-370 de 12 V y 300 RPM con encoder, una ESP32 y una MPU6050 cuyas placas exactas faltan identificar. Pack de tres celdas representado como fuente nominal de 11,1 V.
 - [Inventario](../../componentes_comprados/inventario/inventario_robotica.md): 14 entradas y 27 dispositivos o conjuntos. Un solo DRV8871 para dos motores: falta elegir el segundo canal.
-- KiCad 10.0.7 instalado por Matías el 17/10. Konnect 0.13.0 instalado y registrado en `.mcp.json`. La edición del esquemático por MCP y la verificación con `kicad-cli` funcionan; la PCB en vivo falta probar. `firmware/` vacío, sin GPIO asignados.
+- KiCad 10.0.7 instalado por Matías el 17/10. Konnect 0.13.0 instalado y registrado en `.mcp.json`. Funcionan la edición del esquemático por archivo, la PCB en vivo por la API, `kicad-cli` y el comparador de netlist. Para la API, abrir KiCad desde el menú Inicio, nunca con doble clic en el proyecto. `firmware/` vacío, sin GPIO asignados.
 - MPU6050 en formato módulo de 8 pines (DEC-09). Alimentación fija de 11,1 V; la batería se itera después (DEC-10).
 - **Controladora (DEC-11):** placa ESP32 de desarrollo estándar como versión provisoria, sin Blue Pill; puede cambiar, incluso a una Nucleo. Elegir una variante de referencia documentada y aislar su dependencia en un solo símbolo.
 
@@ -26,7 +26,7 @@ Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Cl
 
 ## Próximo paso
 
-1. **Con Matías frente a KiCad:** habilitar la API, abrir el proyecto de prueba, reiniciar Claude Code y aprobar `konnect`. Después, el agente completa la parte en vivo de la prueba (lista en la [prueba de Konnect](../2026-10-17-prueba-mcp-konnect.md)) y cierra ELE-027.
+1. **Cerrar ELE-027:** con KiCad cerrado, ida y vuelta de guardado y recuperación con git en `cad/_prueba_mcp/`.
 2. **Sin esperar a eso:** seguir la biblioteca [`segway_modulos.kicad_sym`](../../cad/bibliotecas/segway_modulos.kicad_sym), que ya tiene el símbolo del MPU6050 de 8 pines [V] ([vista](../../cad/bibliotecas/vistas/ROB-013_MPU6050_modulo_8p.png)). Agregar los módulos con pinout visible en sus capturas, cada uno verificado con `kicad-cli sym export svg`.
 3. **Controladora provisoria (DEC-11):** elegir una variante ESP32 de referencia con pinout documentado por su fabricante o distribuidor, crear su símbolo marcado como provisorio y aplicar las restricciones de pines del contrato de interfaces.
 4. Las huellas esperan las medidas de los ejemplares.

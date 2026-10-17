@@ -26,3 +26,4 @@ _autosave-*
 fp-info-cache
 *.lck
 *.kicad_prl
+.history/

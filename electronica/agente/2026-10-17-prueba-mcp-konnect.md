@@ -1,8 +1,8 @@
-# Prueba de Konnect con KiCad 10.0.7: parte sin interfaz gráfica
+# Prueba de Konnect con KiCad 10.0.7
 
 Fecha: 17/10/2026. Tarea: ELE-027. Ejecutó: agente de electrónica, con KiCad instalado por Matías ese día. Proyecto de prueba: [`cad/_prueba_mcp/`](../cad/_prueba_mcp/). Criterios: [prueba de aceptación](entorno_windows_mcp.md) y [evaluación de MCP](2026-10-17-evaluacion-mcp-kicad.md), sección 7.
 
-**Resultado:** la integración por archivos y `kicad-cli` funciona. Se encontró una falla grave de una herramienta de Konnect que el ERC no detecta, y se fijó el método seguro. La parte en vivo sobre la PCB, por la API de KiCad, queda pendiente porque requiere la interfaz abierta por Matías.
+**Resultado:** la integración funciona por las tres vías: edición de archivos, `kicad-cli` y edición en vivo de la PCB por la API. Se encontraron dos problemas y se fijó cómo evitarlos: `connect_pins` puede cortocircuitar sin que el ERC lo detecte, y la API solo responde si KiCad se abrió de una forma determinada. Faltan dos comprobaciones menores con KiCad cerrado: ida y vuelta de guardado y recuperación con git.
 
 ## Instalación
 
@@ -34,9 +34,32 @@ Otras observaciones:
 - `delete_schematic_net_label` no puede borrar etiquetas duplicadas en la misma posición. Por eso se recreó el proyecto en lugar de limpiarlo.
 - `kicad-cli` crea un `.kicad_prl` al procesar el proyecto; está en `.gitignore`.
 
-## Pendiente, con Matías frente a KiCad
+## Parte en vivo sobre la PCB (17/10/2026, con Matías)
 
-1. Abrir KiCad, activar *Preferences > Plugins > Enable KiCad API*, reiniciar y anotar la línea `Listening on ipc://...` si aparece.
-2. Abrir `electronica/cad/_prueba_mcp/prueba_mcp.kicad_pro` y confirmar que el esquemático abre sin advertencias. Abrir el editor de PCB y dejar una sola instancia de KiCad.
-3. Reiniciar Claude Code desde la raíz y aprobar el servidor `konnect` del proyecto.
-4. El agente ejecuta los pasos en vivo: lectura de la PCB, mover una huella, pista, DRC, Gerbers, ida y vuelta de guardado y recuperación. Si la conexión en vivo falla con 10.0.7 por la API, la evaluación prevé repetir con 10.0.6.
+### Problema de arranque de la API
+
+La primera vez, KiCad mostraba "Escuchando en ipc://…\kicad\api.sock" pero el canal no existía: ni Konnect ni el cliente oficial `kicad-python` 0.8.0 podían conectarse ("connection refused") y el nombre no figuraba entre los *named pipes* del sistema. El proceso de KiCad abierto había sido lanzado por una instancia anterior, ya cerrada. En Windows, KiCad 10 entrega el canal de la API solo a la primera instancia; si esa se cierra, el canal desaparece aunque las preferencias sigan mostrando la dirección ([Konnect #531](https://github.com/mixelpixx/Konnect/issues/531), [Konnect #529](https://github.com/mixelpixx/Konnect/issues/529), [kicad-sharp #113](https://github.com/danielmeza/kicad-sharp/pull/113)).
+
+Solución verificada: cerrar todas las ventanas de KiCad, abrirlo desde el menú Inicio, abrir el proyecto con *Archivo > Abrir proyecto* y después el editor de placas. Con eso el canal apareció y `kicad-python` leyó la versión 10.0.7 y la placa abierta.
+
+### Pasos
+
+| Paso | Herramienta | Resultado |
+|---|---|---|
+| Ver la placa abierta | `open_project` | "The requested board is open in KiCad" |
+| Asignar huellas genéricas a J1, R1 y R2 | `edit_schematic_component` (archivo) | El diff del esquema cambia solo los tres campos de huella |
+| Actualizar la PCB desde el esquema | `update_pcb_from_schematic`, primero simulación y después aplicación con la revisión del plan | Tres huellas agregadas; cada pad en la net esperada |
+| Contorno y ubicación | `add_board_outline`, `move_component` por la API | Contorno de 40 × 30 mm; huellas en las posiciones pedidas |
+| Pista | `route_pad_to_pad` J1.1 → R1.1, net `/NODO_A`, 0,5 mm | Pista en L sin tocar otros pads ([vista](../cad/_prueba_mcp/evidencia/2026-10-17_pcb_C_vivo.png)) |
+| Guardar | `save_project` por la API | "Board saved successfully" |
+| DRC | `run_drc` (usa `kicad-cli`) | 2 errores esperables: nets NODO_B y RETORNO sin rutear a propósito; 0 de separación o cortocircuito; 6 avisos ([JSON](../cad/_prueba_mcp/evidencia/2026-10-17_drc_C_vivo.json)) |
+| Fabricación | `kicad-cli pcb export gerbers` y `drill` | 20 archivos generados sin error, fuera del repositorio |
+
+Avisos del DRC para tener en cuenta: las tres huellas colocadas por `update_pcb_from_schematic` "no coinciden con la copia en la biblioteca" y el campo Descripción quedó vacío en la placa. No afecta la conectividad. En el diseño real conviene correr *Herramientas > Actualizar huellas desde la biblioteca* en la GUI o evaluar `update_footprints_from_library`.
+
+`route_pad_to_pad` traza en L igual que `connect_pins`. En una placa con más pads puede cruzar uno de otra net; el DRC sí detecta eso en la PCB, a diferencia del ERC en el esquema. Correr DRC después de cada pista.
+
+## Pendiente
+
+1. Con KiCad cerrado: abrir y guardar sin cambios en la GUI y revisar el `git diff`; luego `git restore` de una copia y repetir la lectura. Son comprobaciones de procedimiento; no bloquean empezar el diseño.
+2. Matías confirma que el esquema abre sin advertencias en la GUI.

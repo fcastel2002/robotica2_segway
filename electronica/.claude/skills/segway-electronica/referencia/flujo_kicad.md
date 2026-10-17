@@ -14,6 +14,12 @@ Revisado el 17/10/2026 con documentación oficial de KiCad. La comparación de s
 | Los bindings SWIG (`import pcbnew`) están deprecados desde 9.0 y se eliminan en 11. KiCad 11 tampoco trae Python embebido en Windows. | [dev-docs pcbnew](https://dev-docs.kicad.org/en/apis-and-binding/pcbnew/) |
 | Versiones de formato en 10.0.7: esquemático `20260306`, placa `20260206`. Las bibliotecas Python kiutils, kicad-skip y kicad-sch-api escriben formatos de KiCad 6 a 9. | código fuente 10.0.7; pruebas locales del 17/10 |
 
+## Arranque de KiCad para usar la API (verificado el 17/10/2026)
+
+1. Una sola instancia de KiCad. Abrirla desde el menú Inicio, **no** con doble clic en un archivo del proyecto.
+2. *Archivo > Abrir proyecto*, y después el editor de placas desde el administrador de proyectos.
+3. Antes de editar, comprobar el canal: `open_project` de Konnect debe decir que la placa está abierta. Si dice "not configured" o "connection refused", cerrar todo KiCad y repetir desde el paso 1. La leyenda "Escuchando en ipc://…" de las preferencias no prueba que el canal exista.
+
 ## Qué vía usar para cada operación
 
 | Operación | Vía principal | Respaldo | Quién verifica |
