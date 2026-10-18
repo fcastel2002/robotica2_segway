@@ -27,6 +27,8 @@ La fecha indica cuándo se consolidó el registro en este proyecto. Los antecede
 | 21 | 2026-10-17 | Matías aclaró que la controladora es la Blue Pill STM32F103C8T6 (no ESP32) y pidió pines de 2,54 mm para todos los módulos y borneras para los motores | DEC-12 y DEC-13; el esquema v0.2 se rehace como v0.3 |
 | 22 | 2026-10-17 | Rediseño v0.3 con Blue Pill: flujo de 10 agentes (placa, datasheet STM32F103 DS5319 archivado, conectores, alimentación, pines, síntesis, tres revisiones, corrección con generación aislada) | [Especificación v0.3](../../cad/segway_base/especificacion_v0.3.json), [diseño](../../cad/segway_base/diseno_v0.3.md); esquema regenerado: ERC 0/0, netlist coincidente; rail 3V3 de periféricos con mini buck ROB-005; encoders en TIM2/TIM4, motores en TIM3, I2C2; símbolos viejos de ESP32 retirados de la biblioteca |
 | 23 | 2026-10-17 | Matías pidió avanzar con supuestos persistidos y sacar la primera PCB, casera de una capa (DEC-14, DEC-15) | Freerouting CLI 2.5.0 instalado en `D:/Usuario/Matias/Herramientas/freerouting/2.5.0` (SHA-256 verificado); flujo de PCB v0.1 en curso |
+| 24 | 2026-10-17 | Matías objetó los 153 componentes; se simplificó a 60 para placa casera (sin puntos de prueba ni alternativas no montadas) | Especificación y esquema v0.4 verificados (ERC 0, netlist coincide); huellas de 7 módulos; reglas caseras; 71 supuestos |
+| 25 | 2026-10-18 | Pausa pedida por Matías durante el ruteo en una capa | PCB a medio rutear (64 huellas, 61 pistas, ~103 conexiones pendientes); constructor `construir_pcb.py` y flujo guardados; instrucciones de reanudación en estado actual |
 
 ## Formato de las siguientes entradas
 

@@ -1,6 +1,6 @@
 # Estado de electrónica
 
-Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Claude Code desde la raíz del repositorio.
+Fecha de corte: 2026-10-18 (pausa pedida por Matías). Responsable humano: Matías. Entorno: Windows 11, Claude Code desde la raíz del repositorio.
 
 ## Hechos confirmados
 
@@ -23,14 +23,20 @@ Fecha de corte: 2026-10-17. Responsable humano: Matías. Entorno: Windows 11, Cl
 | [Distribución de energía](../../interfaces/2026-10-17-distribucion-energia-borrador.md) | Borrador revisado, valores pendientes de ensayo |
 | [Datos físicos faltantes y preguntas](../../componentes_comprados/2026-10-17-datos-fisicos-faltantes.md) | Lista única de preguntas a Matías |
 | Paquete del agente revisado: skill, CLAUDE.md, INICIAR_AQUI, referencias | Ver cronología, entrada 13 |
-| [Esquema de la placa base v0.3](../../cad/segway_base/segway_base.kicad_sch) | Blue Pill, 153 componentes, ERC 0, netlist verificada; 20 propuestas pendientes de Matías |
+| [Esquema de la placa base v0.4](../../cad/segway_base/segway_base.kicad_sch) | Blue Pill, 60 componentes simplificados para placa casera, ERC 0, netlist verificada |
+| PCB v0.1 | En curso, a medio rutear (ver Próximo paso) |
 
-## Próximo paso
+## Próximo paso: retomar la PCB v0.1 (pausada el 18/10/2026)
 
-1. **Matías revisa el esquema v0.3** ([PDF](../../cad/segway_base/evidencia/segway_base_v0.3.pdf), [diseño](../../cad/segway_base/diseno_v0.3.md)) y ratifica o cambia las 20 propuestas de la §6.
-2. Con las respuestas: corregir la especificación, regenerar con `agente/generar_esquema.py` y repetir ERC y comparación de netlist.
-3. **Para pasar a PCB** faltan las huellas de la ESP32 y del mini buck (medida del ejemplar), el conector del motor (mazo real) y el contorno con fijaciones (mecánica). Mientras tanto se puede preparar la PCB con los módulos de header estándar.
-4. Cerrar ELE-027: ida y vuelta de guardado y recuperación con KiCad cerrado.
+**Estado al pausar.** El esquema v0.4 simplificado está terminado y verificado: 60 componentes, 47 nets, ERC 0 y netlist igual a la [especificación v0.4](../../cad/segway_base/especificacion_v0.4.json). Las huellas de los 7 módulos están en `cad/bibliotecas/segway_modulos.pretty/`. Las reglas caseras y los 71 supuestos están escritos ([reglas](../../cad/segway_base/reglas_fabricacion_casera.md), [supuestos](../../cad/segway_base/supuestos.md)). La PCB quedó **a medio rutear**: 64 huellas ubicadas, 61 pistas y unas 103 conexiones pendientes en la última instantánea. Se detuvo durante la etapa de ubicación y ruteo en una capa.
+
+**Cómo retomar:**
+
+1. `git pull`. Leer `cad/segway_base/diseno_v0.4.md` y `supuestos.md` por si Matías corrigió algún SUP.
+2. El constructor de la placa es `agente/construir_pcb.py`. Se ejecuta con el Python de KiCad: `"C:/Program Files/KiCad/10.0/bin/python.exe" -I electronica/agente/construir_pcb.py`. Rehace la placa desde cero (ubicación por zonas, esqueleto de potencia, Freerouting en B.Cu, plano GND, DRC). Revisar sus constantes `ESQUELETO` y `ZONAS` antes de correrlo.
+3. Si el ruteo automático no converge, plan B: ubicar a mano los módulos alrededor de la Blue Pill, rutear primero la potencia y aceptar puentes de alambre explícitos (componentes JW en la especificación, regenerando el esquema).
+4. El flujo completo que se interrumpió está en `agente/flujos/pcb_v01_casera.workflow.js`. Las etapas de bases y síntesis ya están hechas: relanzar solo las etapas de placa, revisión y corrección.
+5. Salidas pendientes: DRC limpio, PDF 1:1 de transferencia, plano de taladrado e instrucciones de fabricación (`pcb_v0.1.md`).
 
 ## Bloqueos e incógnitas que condicionan el diseño
 

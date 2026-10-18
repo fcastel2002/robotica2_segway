@@ -55,6 +55,48 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   (symbol "ROB-012_BluePill_STM32F103C8_40p"
     (pin_names
       (offset 1.016))
@@ -67,7 +109,7 @@
     (property "Value" "Blue Pill STM32F103C8T6" (at 0 -29.2100 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-012 (DEC-12 [M]). Placa Blue Pill con STM32F103C8T6: 40 posiciones en dos hileras de 20 a 2,54 mm. Numeracion tipo DIP-40 vista desde arriba, antihoraria, pin 1 = PB12 en el extremo del micro-USB. Hilera B12...3.3 = pines 1-20 (PB12, PB13, PB14, PB15, PA8, PA9, PA10, PA11, PA12, PA15, PB3, PB4, PB5, PB6, PB7, PB8, PB9, 5V, GND, 3V3). Hilera VB...G = pines 21-40 desde el extremo SWD (VBAT, PC13, PC14, PC15, PA0-PA7, PB0, PB1, PB10, PB11, NRST, 3V3, GND, GND). Equivalencia con el esquema VCC-GND: A1.n = P4.(21-n) para n = 1..20; A1.(20+k) = P3.k. Fuentes: esquema original VCC-GND 2016 (P2/P3/P4) [D]; stm32-base.org, Header 1/2 [D]; PR KiCad/kicad-symbols 1121 y kicad-footprints 1409, con la misma numeracion y filas a 15,24 mm [V]; captura de Matias del 17/10/2026 [V]. El header SWD de 4 pines (3V3, SWDIO = PA13, SWCLK = PA14, GND) no esta en el simbolo: va en angulo en el extremo opuesto al USB y queda libre para el ST-Link. 5V = VBUS del micro-USB, sin diodo. 3V3 (pines 20 y 38) es la salida del LDO de la placa (RT9193-33 o TX6211B, clase 300 mA); se declara passive para el ERC con PWR_FLAG. Pin 40 passive: GND segun el esquema, pero GND o VBUS segun el modelo (deskthority); queda sin conexion hasta medir y se usa como codificacion: pin macho 40 cortado en la placa y posicion 40 del zocalo tapada (girada 180 grados, el pin n cae en la posicion n+20 y el 5V del zocalo tocaria el 3.3 = VDD del STM32). PC14/PC15 llevan el cristal de 32,768 kHz y PC13 el LED de la placa. Huella a crear tras E-01: segway_modulos:ROB-012_BluePill_Zocalo_2x20_W15.24mm (dos PinSocket_1x20_P2.54mm_Vertical, taladro 1,0 mm, pad n = pin n, posicion 40 tapada)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (property "Description" "ROB-012 (DEC-12 [M]). Placa Blue Pill con STM32F103C8T6: 40 posiciones en dos hileras de 20 a 2,54 mm. Numeracion tipo DIP-40 vista desde arriba, antihoraria, pin 1 = PB12 en el extremo del micro-USB. Hilera B12...3.3 = pines 1-20 (PB12, PB13, PB14, PB15, PA8, PA9, PA10, PA11, PA12, PA15, PB3, PB4, PB5, PB6, PB7, PB8, PB9, 5V, GND, 3V3). Hilera VB...G = pines 21-40 desde el extremo SWD (VBAT, PC13, PC14, PC15, PA0-PA7, PB0, PB1, PB10, PB11, NRST, 3V3, GND, GND). Equivalencia con el esquema VCC-GND: A1.n = P4.(21-n) para n = 1..20; A1.(20+k) = P3.k. Fuentes: esquema original VCC-GND 2016 (P2/P3/P4) [D]; stm32-base.org, Header 1/2 [D]; PR KiCad/kicad-symbols 1121 y kicad-footprints 1409, con la misma numeracion y filas a 15,24 mm [V]; captura de Matias del 17/10/2026 [V]. El header SWD de 4 pines (3V3, SWDIO = PA13, SWCLK = PA14, GND) no esta en el simbolo: va en angulo en el extremo opuesto al USB y queda libre para el ST-Link. 5V = VBUS del micro-USB, sin diodo. 3V3 (pines 20 y 38) es la salida del LDO de la placa (RT9193-33 o TX6211B, clase 300 mA); se declara passive para el ERC con PWR_FLAG. Pin 40 passive: GND segun el esquema, pero GND o VBUS segun el modelo (deskthority); queda sin conexion hasta medir y se usa como codificacion: pin macho 40 cortado en la placa y posicion 40 del zocalo tapada (girada 180 grados, el pin n cae en la posicion n+20 y el 5V del zocalo tocaria el 3.3 = VDD del STM32). PC14/PC15 llevan el cristal de 32,768 kHz y PC13 el LED de la placa. Huella v0.4: segway_modulos:ROB-012_BluePill_STM32F103C8_40p (dos hileras a 15,24 mm, pad n = pin n, posicion 40 tapada; contorno y salientes de USB/SWD supuestos sin medir, SUP-22 a SUP-24)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (symbol "ROB-012_BluePill_STM32F103C8_40p_0_1"
       (rectangle (start -8.8900 -26.6700) (end 8.8900 26.6700)
         (stroke (width 0.254) (type default))
@@ -289,7 +331,7 @@
     (property "Value" "MPU6050 modulo 8p" (at 0 -13.9700 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-013. Modulo MPU6050 de 8 pines, formato GY-521 segun imagen de Matias del 17/10/2026. Orden VCC,GND,SCL,SDA,XDA,XCL,AD0,INT leido de la serigrafia [V]; numeracion 1=VCC provisoria hasta ver el pad cuadrado del ejemplar. Sin huella propia hasta medir (REQ-22); en la placa base se monta en zocalo 1x08 de 2,54 mm. Codificacion propuesta: pin 5 (XDA, sin uso) retirado de la tira macho y posicion 5 del zocalo tapada; invertido (n -> 9-n), el pin 4 (SDA) cae en la 5 y no entra." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (property "Description" "ROB-013. Modulo MPU6050 de 8 pines, formato GY-521 segun imagen de Matias del 17/10/2026. Orden VCC,GND,SCL,SDA,XDA,XCL,AD0,INT leido de la serigrafia [V]; numeracion 1=VCC provisoria hasta ver el pad cuadrado del ejemplar. Huella v0.4: segway_modulos:ROB-013_MPU6050_modulo_8p (zocalo 1x08 de 2,54 mm y dos NPTH de 3,2 mm para separadores; contorno supuesto sin medir, SUP-36). En la v0.4 AD0 queda sin conexion: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66). Codificacion propuesta: pin 5 (XDA, sin uso) retirado de la tira macho y posicion 5 del zocalo tapada; invertido (n -> 9-n), el pin 4 (SDA) cae en la 5 y no entra." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (symbol "ROB-013_MPU6050_modulo_8p_0_1"
       (rectangle (start -10.1600 -11.4300) (end -2.5400 11.4300)
         (stroke (width 0.254) (type default))
@@ -351,7 +393,7 @@
     (property "Value" "DRV8871 modulo enchufable 8p" (at 0 -8.8900 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella compuesta (PinSocket_1x04 + 4 PinSocket_1x01) a crear tras medir en E-01 el paso (~3,5 mm [H]) y la posicion de las borneras del clon. Opcion A de respaldo: el modulo conserva sus borneras, se enchufan solo los pines 1-4 y POWER llega por cable desde J5/J6. Pinout PENDIENTE de E-01." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (property "Description" "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (symbol "ROB-008_DRV8871_modulo_8p_0_1"
       (rectangle (start -10.1600 -6.3500) (end 10.1600 6.3500)
         (stroke (width 0.254) (type default))
@@ -413,7 +455,7 @@
     (property "Value" "INA219 MCU-219 (R100) 8p" (at 0 -11.4300 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella compuesta (PinSocket_1x06 + 2 PinSocket_1x01) a crear tras medir en E-01 la posicion y el paso de la bornera (5,0/5,08 mm [H]). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (property "Description" "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (symbol "ROB-002_INA219_MCU-219_8p_0_1"
       (rectangle (start -7.6200 -8.8900) (end 7.6200 8.8900)
         (stroke (width 0.254) (type default))
@@ -475,7 +517,7 @@
     (property "Value" "INA226 modulo 8p (R100)" (at 0 -10.1600 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (property "Description" "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (symbol "ROB-009_INA226_modulo_8p_0_1"
       (rectangle (start -7.6200 -7.6200) (end 7.6200 7.6200)
         (stroke (width 0.254) (type default))
@@ -537,7 +579,7 @@
     (property "Value" "Mini buck fijo (5 V ROB-006 / 3,3 V ROB-005)" (at 0 -6.3500 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella PENDIENTE de medir (paso entre pads, agujero o almenado, contorno). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Huella con codificacion mecanica obligatoria (propuesta 16)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (property "Description" "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (symbol "ROB-005-006_MiniBuck_modulo_4p_0_1"
       (rectangle (start -7.6200 -3.8100) (end 7.6200 3.8100)
         (stroke (width 0.254) (type default))
@@ -579,7 +621,7 @@
     (property "Value" "LM2596 modulo 4p" (at 0 -6.3500 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-001. Modulo reductor ajustable LM2596 con 4 agujeros de esquina IN+, IN-, OUT+, OUT- (serigrafia de la captura de compra [V]). Respaldo de A8: DNP y excluyente, se inserta uno solo; ajustar 5,0 V antes de enchufarlo. Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella pendiente de medir. OUT+ passive para el ERC. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Huella con codificacion mecanica obligatoria (propuesta 16)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (property "Description" "ROB-001. Modulo reductor ajustable LM2596 con 4 agujeros de esquina IN+, IN-, OUT+, OUT- (serigrafia de la captura de compra [V]). Sin uso en la v0.4 (A10 eliminado, SUP-63): se conserva en la biblioteca para recuperarlo. Huella supuesta segway_modulos:ROB-001_LM2596_modulo_4p. Ajustar 5,0 V antes de enchufarlo. Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella pendiente de medir. OUT+ passive para el ERC. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Huella con codificacion mecanica obligatoria (propuesta 16)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (symbol "ROB-001_LM2596_modulo_4p_0_1"
       (rectangle (start -7.6200 -3.8100) (end 7.6200 3.8100)
         (stroke (width 0.254) (type default))
