@@ -1,0 +1,141 @@
+(version 1)
+# =====================================================================
+# Reglas personalizadas de KiCad 10 para la placa base del Segway,
+# fabricada EN CASA por transferencia de tóner (plancha) y ácido.
+# Una sola capa de cobre (B.Cu), sin vías, componentes de agujero pasante.
+#
+# Uso: KiCad solo lee el archivo <proyecto>.kicad_dru junto al .kicad_pro.
+# Copiar este archivo como segway_base.kicad_dru (o pegar su contenido en
+# Configuración de la placa > Reglas personalizadas) antes del DRC.
+#
+# Resumen y fuentes: reglas_fabricacion_casera.md (misma carpeta).
+# Valores supuestos: cobre 35 µm (SUP-R01), resolución de tóner (SUP-R02),
+# corrientes de fusible F1-F5 provisorias de especificacion_v0.3.json.
+#
+# KiCad evalúa las reglas de la última a la primera: las generales van
+# arriba y las específicas abajo. Sintaxis verificada con el manual de
+# KiCad 10.0 (PCB Editor > Custom design rules) y con kicad-cli 10.0.7.
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# 1. Capa única, sin vías, componentes solo en la cara superior
+# ---------------------------------------------------------------------
+(rule "sin_vias"
+	(constraint disallow via))
+
+# Nota: "via" no se admite junto a una cláusula (layer ...); las vías ya
+# están prohibidas por la regla anterior en toda la placa.
+(rule "sin_cobre_ruteado_en_F.Cu"
+	(layer F.Cu)
+	(constraint disallow track zone))
+
+(rule "componentes_solo_en_cara_superior"
+	(layer B.Cu)
+	(constraint disallow footprint))
+
+# ---------------------------------------------------------------------
+# 2. Pistas: ancho mínimo general (señal, clase Default)
+#    min 0,8 mm (solo cuellos junto a pads), opt 1,0 mm
+# ---------------------------------------------------------------------
+(rule "pista_senal"
+	(constraint track_width (min 0.8mm) (opt 1.0mm)))
+
+# ---------------------------------------------------------------------
+# 3. Separación general (cobre a cobre de distinta net): 0,7 mm
+#    Piso absoluto de la placa en Board Setup: 0,6 mm.
+# ---------------------------------------------------------------------
+(rule "separacion_general"
+	(constraint clearance (min 0.7mm)))
+
+# ---------------------------------------------------------------------
+# 4. Agujeros, anillos y bordes
+# ---------------------------------------------------------------------
+(rule "taladro_minimo"
+	(constraint hole_size (min 0.8mm)))
+
+(rule "anillo_minimo_pads"
+	(condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+	(constraint annular_width (min 0.4mm)))
+
+(rule "agujero_a_agujero"
+	(constraint hole_to_hole (min 1.0mm)))
+
+(rule "cobre_a_borde"
+	(constraint edge_clearance (min 2.0mm)))
+
+(rule "cobre_a_agujero_ajeno"
+	(constraint hole_clearance (min 0.7mm)))
+
+# Agujeros de fijación M3 (NPTH 3,2 mm): arandela de 7 mm sin cobre debajo.
+(rule "fijacion_M3_sin_cobre"
+	(condition "A.Pad_Type == 'NPTH, mechanical'")
+	(constraint hole_clearance (min 2.0mm)))
+
+# ---------------------------------------------------------------------
+# 5. Clases de potencia (anchos por IPC-2221, capa externa, 35 µm)
+#    El "min" solo se admite en el cuello de entrada a un pad de paso
+#    chico (≤ 5 mm de largo); el "opt" es el ancho de diseño.
+# ---------------------------------------------------------------------
+(rule "pista_logica"
+	(condition "A.hasNetclass('LOGICA')")
+	(constraint track_width (min 1.0mm) (opt 1.2mm)))
+
+(rule "pista_GND"
+	(condition "A.hasNetclass('GND')")
+	(constraint track_width (min 1.0mm) (opt 2.0mm)))
+
+(rule "pista_motor"
+	(condition "A.hasNetclass('MOTOR')")
+	(constraint track_width (min 1.5mm) (opt 2.5mm)))
+
+(rule "pista_servo"
+	(condition "A.hasNetclass('SERVO')")
+	(constraint track_width (min 2.0mm) (opt 3.0mm)))
+
+(rule "pista_bateria_bus"
+	(condition "A.hasNetclass('BATERIA_BUS')")
+	(constraint track_width (min 3.0mm) (opt 8.5mm)))
+
+(rule "separacion_potencia"
+	(condition "A.hasNetclass('BATERIA_BUS') || A.hasNetclass('MOTOR') || A.hasNetclass('SERVO')")
+	(constraint clearance (min 1.0mm)))
+
+# ---------------------------------------------------------------------
+# 6. Plano de masa en B.Cu (relleno GND): separación y conexiones térmicas
+# ---------------------------------------------------------------------
+(rule "relleno_separacion"
+	(condition "A.Type == 'Zone' || B.Type == 'Zone'")
+	(constraint clearance (min 1.0mm)))
+
+(rule "termicos_generales"
+	(constraint zone_connection thermal_reliefs)
+	(constraint thermal_relief_gap (min 0.8mm))
+	(constraint thermal_spoke_width (opt 1.0mm))
+	(constraint min_resolved_spokes 2))
+
+# Pads grandes de potencia (borneras, portafusibles, pines de potencia de
+# módulos, cables soldados): rayos de 2 mm para que el plano lleve corriente
+# y siga siendo soldable con un soldador de 40-60 W.
+(rule "termicos_potencia"
+	(condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole' && A.Hole_Size_X >= 1.2mm")
+	(constraint thermal_relief_gap (min 1.0mm))
+	(constraint thermal_spoke_width (opt 2.0mm))
+	(constraint min_resolved_spokes 3))
+
+# ---------------------------------------------------------------------
+# 7. Pads del mismo paso de 2,54 mm (zócalos, TO-220, LED): la geometría
+#    de la huella fija una separación de ~0,74 mm entre pads ovalados de
+#    1,8 mm. Se admite pad a pad >= 0,6 mm; las pistas siguen con 0,7 o 1,0.
+#    No pasar pistas entre pines de 2,54 mm.
+# ---------------------------------------------------------------------
+(rule "pad_a_pad"
+	(condition "A.Type == 'Pad' && B.Type == 'Pad'")
+	(constraint clearance (min 0.6mm)))
+
+# ---------------------------------------------------------------------
+# 8. Texto en cobre (B.Cu, espejado): legible tras la transferencia
+# ---------------------------------------------------------------------
+(rule "texto_en_cobre"
+	(layer B.Cu)
+	(constraint text_height (min 2.0mm))
+	(constraint text_thickness (min 0.4mm)))

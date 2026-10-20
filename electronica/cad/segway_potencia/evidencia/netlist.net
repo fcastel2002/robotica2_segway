@@ -1,0 +1,5087 @@
+(export
+	(version "E")
+	(design
+		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
+		(date "2026-10-20T11:16:21")
+		(tool "Eeschema 10.0.7")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title)
+				(company)
+				(rev)
+				(date)
+				(source "segway_potencia.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "A3")
+			(value "DRV8871 mód. IZQ (enchufable)")
+			(footprint "segway_modulos:ROB-008_DRV8871_modulo_8p")
+			(description "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: opción B fija, con las borneras POWER y MOTOR del módulo reemplazadas por pines macho (SUP-32); huella segway_modulos:ROB-008_DRV8871_modulo_8p con la geometría del drv.brd de Adafruit 3190, sin medir el clon; OUT1/OUT2 con un contacto solo si ITRIP ≤ 2,4 A (RILIM ≥ 28,75 kΩ, leer en E-01); opción A (J5) eliminada (SUP-63)")
+				(field
+					(name "Fuente") "[CAP]/ROB-008_DRV8871/referencia_compra.png [V]; drv.brd de Adafruit, JP2 1=GND 2=VMOTOR 3=IN1 4=IN2 [D-ref]; [ADA-3190] (borneras soldadas de fábrica; VM y GND del header unidos a POWER); [DS-DRV] p.5 (IOCP 3,7-6,4 A), p.9 (ITRIP = VILIM/RILIM); [WURTH-PHD] 3 A por contacto [V]")
+				(field
+					(name "Footprint") "segway_modulos:ROB-008_DRV8871_modulo_8p")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			)
+			(libsource
+				(lib "segway_modulos")
+				(part "ROB-008_DRV8871_modulo_8p")
+				(description "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: opción B fija, con las borneras POWER y MOTOR del módulo reemplazadas por pines macho (SUP-32); huella segway_modulos:ROB-008_DRV8871_modulo_8p con la geometría del drv.brd de Adafruit 3190, sin medir el clon; OUT1/OUT2 con un contacto solo si ITRIP ≤ 2,4 A (RILIM ≥ 28,75 kΩ, leer en E-01); opción A (J5) eliminada (SUP-63)")
+			)
+			(property
+				(name "Fuente")
+				(value "[CAP]/ROB-008_DRV8871/referencia_compra.png [V]; drv.brd de Adafruit, JP2 1=GND 2=VMOTOR 3=IN1 4=IN2 [D-ref]; [ADA-3190] (borneras soldadas de fábrica; VM y GND del header unidos a POWER); [DS-DRV] p.5 (IOCP 3,7-6,4 A), p.9 (ITRIP = VILIM/RILIM); [WURTH-PHD] 3 A por contacto [V]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "4023ed68-0b99-4316-b40b-dd8489e13d30")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "A4")
+			(value "DRV8871 mód. DER (prov., enchufable)")
+			(footprint "segway_modulos:ROB-008_DRV8871_modulo_8p")
+			(description "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (módulo no comprado, REQ-06; decisión 10 de [ENERGIA] §10 pendiente; mismas condiciones de la opción B que A3) | v0.4: huella segway_modulos:ROB-008_DRV8871_modulo_8p; segundo módulo por comprar (SUP-33); J6 eliminada (SUP-63)")
+				(field
+					(name "Fuente") "Igual que A3; [ENERGIA] §10 decisión 10 (segundo DRV8871 idéntico)")
+				(field
+					(name "Footprint") "segway_modulos:ROB-008_DRV8871_modulo_8p")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			)
+			(libsource
+				(lib "segway_modulos")
+				(part "ROB-008_DRV8871_modulo_8p")
+				(description "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (módulo no comprado, REQ-06; decisión 10 de [ENERGIA] §10 pendiente; mismas condiciones de la opción B que A3) | v0.4: huella segway_modulos:ROB-008_DRV8871_modulo_8p; segundo módulo por comprar (SUP-33); J6 eliminada (SUP-63)")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que A3; [ENERGIA] §10 decisión 10 (segundo DRV8871 idéntico)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "a3a3d3bd-6942-4ac0-a978-7dd7be436f22")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "A5")
+			(value "INA219 MCU-219 0x41 IZQ")
+			(footprint "segway_modulos:ROB-002_INA219_MCU-219_8p")
+			(description "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: dirección 0x41 por puente A0 [H], sujeta al cambio del contrato §4.1; pines macho en los agujeros de la bornera, 2 contactos por net de corriente (5+7 y 6+8), ≤ 4,8 A (SUP-34, SUP-41); huella segway_modulos:ROB-002_INA219_MCU-219_8p con bornera de paso 3,5 mm medida en la captura, sin medir el módulo; J21 eliminada (SUP-63); decisión 4 de [ENERGIA] §10 pendiente")
+				(field
+					(name "Fuente") "[CAP]/ROB-002_INA219/referencia_compra.png (tira Vcc-Gnd-Scl-Sda-Vin−-Vin+ y bornera suelta) [V]; [DS-219] p.3, p.4, p.14 Tabla 1; [ENERGIA] §5.1-5.2; [WURTH-PHD] 3 A por contacto [V]; [DS-DRV] p.5 (IOCP mín. 3,7 A)")
+				(field
+					(name "Footprint") "segway_modulos:ROB-002_INA219_MCU-219_8p")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			)
+			(libsource
+				(lib "segway_modulos")
+				(part "ROB-002_INA219_MCU-219_8p")
+				(description "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: dirección 0x41 por puente A0 [H], sujeta al cambio del contrato §4.1; pines macho en los agujeros de la bornera, 2 contactos por net de corriente (5+7 y 6+8), ≤ 4,8 A (SUP-34, SUP-41); huella segway_modulos:ROB-002_INA219_MCU-219_8p con bornera de paso 3,5 mm medida en la captura, sin medir el módulo; J21 eliminada (SUP-63); decisión 4 de [ENERGIA] §10 pendiente")
+			)
+			(property
+				(name "Fuente")
+				(value "[CAP]/ROB-002_INA219/referencia_compra.png (tira Vcc-Gnd-Scl-Sda-Vin−-Vin+ y bornera suelta) [V]; [DS-219] p.3, p.4, p.14 Tabla 1; [ENERGIA] §5.1-5.2; [WURTH-PHD] 3 A por contacto [V]; [DS-DRV] p.5 (IOCP mín. 3,7 A)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "779202d0-8f68-46d3-afa5-821655ad2c5b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "A6")
+			(value "INA219 MCU-219 0x44 DER")
+			(footprint "segway_modulos:ROB-002_INA219_MCU-219_8p")
+			(description "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: dirección 0x44 por puente A1 [H], sujeta al cambio del contrato §4.1; mismas condiciones de zócalo y huella que A5 (SUP-34); J22 eliminada (SUP-63)")
+				(field
+					(name "Fuente") "Igual que A5; dirección 0x44 por puente A1 del módulo ([DS-219] p.14 Tabla 1)")
+				(field
+					(name "Footprint") "segway_modulos:ROB-002_INA219_MCU-219_8p")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			)
+			(libsource
+				(lib "segway_modulos")
+				(part "ROB-002_INA219_MCU-219_8p")
+				(description "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: dirección 0x44 por puente A1 [H], sujeta al cambio del contrato §4.1; mismas condiciones de zócalo y huella que A5 (SUP-34); J22 eliminada (SUP-63)")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que A5; dirección 0x44 por puente A1 del módulo ([DS-219] p.14 Tabla 1)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "d790a997-cfd5-4520-8cdf-8efbdb03c868")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "A7")
+			(value "INA226 0x40 lógica+bus")
+			(footprint "segway_modulos:ROB-009_INA226_modulo_8p")
+			(description "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38).")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_PER y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de PB13 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67)")
+				(field
+					(name "Fuente") "[CAP]/ROB-009_INA226/referencia_compra.png [V]; [DS-226] p.3, p.5, p.15, p.18 Tabla 6-2, p.26-28; [ENERGIA] §5.1 (R100 solo apto para lógica); [DS-226] p.4 §5.1 (VS 6 V abs.)")
+				(field
+					(name "Footprint") "segway_modulos:ROB-009_INA226_modulo_8p")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38).")
+			)
+			(libsource
+				(lib "segway_modulos")
+				(part "ROB-009_INA226_modulo_8p")
+				(description "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38).")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_PER y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de PB13 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67)")
+			)
+			(property
+				(name "Fuente")
+				(value "[CAP]/ROB-009_INA226/referencia_compra.png [V]; [DS-226] p.3, p.5, p.15, p.18 Tabla 6-2, p.26-28; [ENERGIA] §5.1 (R100 solo apto para lógica); [DS-226] p.4 §5.1 (VS 6 V abs.)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "0cf425dd-a566-4ae1-8111-8ebc8d772c94")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "A8")
+			(value "Mini buck 5V ROB-006")
+			(footprint "segway_modulos:ROB-005-006_MiniBuck_modulo_4p")
+			(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			(fields
+				(field
+					(name "Estado") "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69)")
+				(field
+					(name "Fuente") "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)")
+				(field
+					(name "Footprint") "segway_modulos:ROB-005-006_MiniBuck_modulo_4p")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			)
+			(libsource
+				(lib "segway_modulos")
+				(part "ROB-005-006_MiniBuck_modulo_4p")
+				(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			)
+			(property
+				(name "Estado")
+				(value "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69)")
+			)
+			(property
+				(name "Fuente")
+				(value "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "7d1bbb74-7b58-4d04-8463-6736260424d7")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C1")
+			(value "470µ/35V low-ESR")
+			(footprint "Capacitor_THT:CP_Radial_D10.0mm_P5.00mm")
+			(description "Polarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (valor tras E-04/E-08; decisión 9 de [ENERGIA] §10) | v0.4: C2 eliminado (SUP-63)")
+				(field
+					(name "Fuente") "Criterio [DS-DRV] p.14 §9.1 (bulk según VM y corriente); 35 V por el clamp de [DS-SMAJ] p.2 (24,4 V); valor 470 µF [H]")
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Radial_D10.0mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C_Polarized")
+				(description "Polarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (valor tras E-04/E-08; decisión 9 de [ENERGIA] §10) | v0.4: C2 eliminado (SUP-63)")
+			)
+			(property
+				(name "Fuente")
+				(value "Criterio [DS-DRV] p.14 §9.1 (bulk según VM y corriente); 35 V por el clamp de [DS-SMAJ] p.2 (24,4 V); valor 470 µF [H]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "07a63e31-024b-448d-adfc-3dac45a4008e")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C3")
+			(value "10µ/50V X7R multicapa radial")
+			(footprint "Capacitor_THT:C_Disc_D7.5mm_W5.0mm_P5.00mm")
+			(description "Unpolarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] | v0.4: THT: multicapa radial P5,00 en lugar de 1206 (SUP-17); se conserva por la nota 3 del BMS")
+				(field
+					(name "Fuente") "[DS-BMS] p.2 nota 3; [ENERGIA] §7; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D7.5mm_W5.0mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Unpolarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] | v0.4: THT: multicapa radial P5,00 en lugar de 1206 (SUP-17); se conserva por la nota 3 del BMS")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-BMS] p.2 nota 3; [ENERGIA] §7; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "72b694b6-536a-464f-a362-40c803dc57c7")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C4")
+			(value "47µ/35V low-ESR")
+			(footprint "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
+			(description "Polarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C6 eliminado: el módulo trae 0,1 µF + 22 µF (SUP-69)")
+				(field
+					(name "Fuente") "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar")
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C_Polarized")
+				(description "Polarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C6 eliminado: el módulo trae 0,1 µF + 22 µF (SUP-69)")
+			)
+			(property
+				(name "Fuente")
+				(value "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "9b8c36a9-89a7-4210-88f7-264d565ff94c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C5")
+			(value "47µ/35V low-ESR")
+			(footprint "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
+			(description "Polarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C7 eliminado (SUP-69)")
+				(field
+					(name "Fuente") "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar")
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C_Polarized")
+				(description "Polarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C7 eliminado (SUP-69)")
+			)
+			(property
+				(name "Fuente")
+				(value "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "c3d7f2f9-1bf0-47df-8bf0-2cf215353dfd")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C8")
+			(value "470µ/16V low-ESR")
+			(footprint "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm")
+			(description "Polarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C9, uno por header de servo (SUP-50); C22 eliminado (SUP-69)")
+				(field
+					(name "Fuente") "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]")
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C_Polarized")
+				(description "Polarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C9, uno por header de servo (SUP-50); C22 eliminado (SUP-69)")
+			)
+			(property
+				(name "Fuente")
+				(value "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "c9e6382d-0292-412e-b1e6-27b7fa4ac23a")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C9")
+			(value "470µ/16V low-ESR")
+			(footprint "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm")
+			(description "Polarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C8 (SUP-50)")
+				(field
+					(name "Fuente") "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]")
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C_Polarized")
+				(description "Polarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C8 (SUP-50)")
+			)
+			(property
+				(name "Fuente")
+				(value "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "36793c98-b2d6-41af-a19c-726844ee27e2")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C14")
+			(value "100n/50V cerámico de disco (104)")
+			(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+			(description "Unpolarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] | v0.4: THT: disco P5,00 en lugar de 0805")
+				(field
+					(name "Fuente") "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Unpolarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] | v0.4: THT: disco P5,00 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "94533a67-ce1d-46b3-9b74-f6b946283a3a")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D1")
+			(value "SA15A (alt. P6KE18A)")
+			(footprint "Diode_THT:D_DO-15_P10.16mm_Horizontal")
+			(datasheet "https://www.vishay.com/docs/88301/15ke.pdf")
+			(description "1500W unidirectional TVS diode, DO-201AE")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: SA15A en DO-15 (VWM 15 V, VC 24,4 V); alternativa P6KE18A (VWM 15,3 V, VC 25,2 V); nunca P6KE15A (VWM 12,8 V < 13,6 V) (SUP-17); hojas de datos por archivar; símbolo Diode:1.5KExxA con pin 1 = K a VM_BUS; verificar la banda contra el pad 1")
+				(field
+					(name "Fuente") "Requisitos de la §8 de diseno_v0.3.md: VWM > 13,6 V y VC < 26 V del INA219 ([DS-219] p.4); Littelfuse series SA y P6KE (hojas no archivadas, SUP-17); Diode.kicad_sym 1.5KExxA (unidireccional, pin 1 = K); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Diode_THT:D_DO-15_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet") "https://www.vishay.com/docs/88301/15ke.pdf")
+				(field
+					(name "Description") "1500W unidirectional TVS diode, DO-201AE")
+			)
+			(libsource
+				(lib "Diode")
+				(part "1.5KExxA")
+				(description "1500W unidirectional TVS diode, DO-201AE")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: SA15A en DO-15 (VWM 15 V, VC 24,4 V); alternativa P6KE18A (VWM 15,3 V, VC 25,2 V); nunca P6KE15A (VWM 12,8 V < 13,6 V) (SUP-17); hojas de datos por archivar; símbolo Diode:1.5KExxA con pin 1 = K a VM_BUS; verificar la banda contra el pad 1")
+			)
+			(property
+				(name "Fuente")
+				(value "Requisitos de la §8 de diseno_v0.3.md: VWM > 13,6 V y VC < 26 V del INA219 ([DS-219] p.4); Littelfuse series SA y P6KE (hojas no archivadas, SUP-17); Diode.kicad_sym 1.5KExxA (unidireccional, pin 1 = K); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "transient voltage suppressor TRANSZORB®")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "D?DO?201AE*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "1126c498-97c0-4529-a095-3e8ada335859")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D3")
+			(value "BZX79-C12")
+			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+			(description "Zener diode")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (montado con Q1; limita VGS a 12 V)")
+				(field
+					(name "Fuente") "Infineon IRF4905 p.1 (VGS ±20 V); Device.kicad_sym D_Zener 1=K 2=A")
+				(field
+					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Zener diode")
+			)
+			(libsource
+				(lib "Device")
+				(part "D_Zener")
+				(description "Zener diode")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (montado con Q1; limita VGS a 12 V)")
+			)
+			(property
+				(name "Fuente")
+				(value "Infineon IRF4905 p.1 (VGS ±20 V); Device.kicad_sym D_Zener 1=K 2=A")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "diode")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO-???* *_Diode_* *SingleDiode* D_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "d38848b4-8860-42d2-8d43-fb575bbc418b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D4")
+			(value "LED rojo 3mm VM")
+			(footprint "LED_THT:LED_D3.0mm")
+			(description "Light emitting diode")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]")
+				(field
+					(name "Fuente") "Device.kicad_sym LED 1=K 2=A")
+				(field
+					(name "Footprint") "LED_THT:LED_D3.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Light emitting diode")
+			)
+			(libsource
+				(lib "Device")
+				(part "LED")
+				(description "Light emitting diode")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]")
+			)
+			(property
+				(name "Fuente")
+				(value "Device.kicad_sym LED 1=K 2=A")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "LED diode")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "LED* LED_SMD:* LED_THT:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "29410869-58a5-458d-b2de-5a4f28f13b04")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "F1")
+			(value "ATO 15A lento")
+			(footprint "Fuse:Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin")
+			(description "Fuse")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: ATO de 15 A lento (SUP-46), a confirmar tras E-06/E-08; F1 en la placa es un desvío del contrato §2.9: agregar además un fusible en línea junto al pack")
+				(field
+					(name "Fuente") "[ENERGIA] §2, §2.3; [DS-BMS] p.2 (54-90 A)")
+				(field
+					(name "Footprint") "Fuse:Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Fuse")
+			)
+			(libsource
+				(lib "Device")
+				(part "Fuse")
+				(description "Fuse")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: ATO de 15 A lento (SUP-46), a confirmar tras E-06/E-08; F1 en la placa es un desvío del contrato §2.9: agregar además un fusible en línea junto al pack")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2, §2.3; [DS-BMS] p.2 (54-90 A)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "fuse")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*Fuse*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "a740e0ac-b60f-4354-afd4-cd74e3b45bee")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "F2")
+			(value "ATM 4A")
+			(footprint "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+			(description "Fuse")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: ATM de 4 A (SUP-47), ≤ 4,8 A por los zócalos de A3 y A5 (2 contactos × 3 A × 0,8); corriente del portafusible sin verificar (SUP-19); valor tras E-04")
+				(field
+					(name "Fuente") "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)")
+				(field
+					(name "Footprint") "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Fuse")
+			)
+			(libsource
+				(lib "Device")
+				(part "Fuse")
+				(description "Fuse")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: ATM de 4 A (SUP-47), ≤ 4,8 A por los zócalos de A3 y A5 (2 contactos × 3 A × 0,8); corriente del portafusible sin verificar (SUP-19); valor tras E-04")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "fuse")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*Fuse*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "992c6fb2-f855-4ed4-bdd9-4dc45953dbc0")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "F3")
+			(value "ATM 4A")
+			(footprint "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+			(description "Fuse")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: ATM de 4 A (SUP-47) por los zócalos de A4 y A6; corriente del portafusible sin verificar (SUP-19); valor tras E-04")
+				(field
+					(name "Fuente") "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)")
+				(field
+					(name "Footprint") "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Fuse")
+			)
+			(libsource
+				(lib "Device")
+				(part "Fuse")
+				(description "Fuse")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: ATM de 4 A (SUP-47) por los zócalos de A4 y A6; corriente del portafusible sin verificar (SUP-19); valor tras E-04")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "fuse")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*Fuse*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "13c0edf5-23bf-4adc-9f0e-3c742a6871cb")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "F4")
+			(value "ATM 7,5A")
+			(footprint "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+			(description "Fuse")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: ATM de 7,5 A (SUP-48); el UBEC toma ≈3,8 A de entrada; la clase SERVO usa 3,5 mm por este valor; portafusible mini a verificar para 7,5 A (SUP-19); valor tras E-05/E-06")
+				(field
+					(name "Fuente") "[ENERGIA] §2.2, §2.3")
+				(field
+					(name "Footprint") "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Fuse")
+			)
+			(libsource
+				(lib "Device")
+				(part "Fuse")
+				(description "Fuse")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: ATM de 7,5 A (SUP-48); el UBEC toma ≈3,8 A de entrada; la clase SERVO usa 3,5 mm por este valor; portafusible mini a verificar para 7,5 A (SUP-19); valor tras E-05/E-06")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2.2, §2.3")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "fuse")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*Fuse*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "b256a5f1-5b5d-42cc-b689-676f4de4fad0")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "F5")
+			(value "ATM 1A")
+			(footprint "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+			(description "Fuse")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entradas de A8/A9 (C24 eliminado, SUP-69)")
+				(field
+					(name "Fuente") "[ENERGIA] §2.2 (fila Lógica); consumo de la rama ≈0,1 A [H] (§7 del documento: ≈0,55 W de cargas con rendimiento 80 % [H] a 7,5 V); [DS-226] p.5 (81,92 mV / 0,1 Ω = 0,82 A de rango del R100)")
+				(field
+					(name "Footprint") "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Fuse")
+			)
+			(libsource
+				(lib "Device")
+				(part "Fuse")
+				(description "Fuse")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entradas de A8/A9 (C24 eliminado, SUP-69)")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2.2 (fila Lógica); consumo de la rama ≈0,1 A [H] (§7 del documento: ≈0,55 W de cargas con rendimiento 80 % [H] a 7,5 V); [DS-226] p.5 (81,92 mV / 0,1 Ω = 0,82 A de rango del R100)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "fuse")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*Fuse*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "ff9df728-63e9-4928-8381-0157954ae1f6")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J1")
+			(value "Batería MKDS3 1=P− 2=P+")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (reemplaza al XT60PW-M; no polarizada: exige Q1 montado o un XT60 en latiguillo del lado del cable, decisión de Matías; cable AWG 14; serigrafía 'BAT − +' y separación física de J3)")
+				(field
+					(name "Fuente") "DEC-13 [M] (preferir borneras en potencia); [PHX-MKDS3] (24 A IEC con 2,5 mm², UL 10-15 A, AWG 24-12); TerminalBlock_Phoenix_MKDS-3-2-5.08 .kicad_mod (pads 1-2); pico del robot ≈20 A [H]")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x02")
+				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (reemplaza al XT60PW-M; no polarizada: exige Q1 montado o un XT60 en latiguillo del lado del cable, decisión de Matías; cable AWG 14; serigrafía 'BAT − +' y separación física de J3)")
+			)
+			(property
+				(name "Fuente")
+				(value "DEC-13 [M] (preferir borneras en potencia); [PHX-MKDS3] (24 A IEC con 2,5 mm², UL 10-15 A, AWG 24-12); TerminalBlock_Phoenix_MKDS-3-2-5.08 .kicad_mod (pads 1-2); pico del robot ≈20 A [H]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "22875c76-15df-4b0e-aa42-3e6504b0b6e4")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J3")
+			(value "Lazo interruptor+paro")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (REQ-17 abierto; igual tipo que J1: separarlas y rotular 'SW')")
+				(field
+					(name "Fuente") "[CONTRATO] §2.9, §2.12; [ENERGIA] §2, §8")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x02")
+				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (REQ-17 abierto; igual tipo que J1: separarlas y rotular 'SW')")
+			)
+			(property
+				(name "Fuente")
+				(value "[CONTRATO] §2.9, §2.12; [ENERGIA] §2, §8")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "342e7865-554f-468d-b4a4-142b0cf14473")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J11")
+			(value "Motor IZQ 1=M+ 2=M−")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (montada; 1 = M+ rojo = OUT1, 2 = M− blanco = OUT2; la rueda espejada se invierte en firmware). PCB v0.1: numeración de pines invertida respecto de la v0.4 inicial para que las salidas OUT1/OUT2 del DRV8871 lleguen a la bornera sin cruzarse en una sola capa; la polaridad rojo = M+ = OUT1 no cambia")
+				(field
+					(name "Fuente") "DEC-13 [M] (borneras para motores); DEC-01 [M] (rojo M+, blanco M−); [PHX-MKDS15] (17,5 A IEC, 10 A UL, AWG 26-14); [DS-DRV] p.5 (IOCP ≤ 6,4 A)")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x02")
+				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (montada; 1 = M+ rojo = OUT1, 2 = M− blanco = OUT2; la rueda espejada se invierte en firmware). PCB v0.1: numeración de pines invertida respecto de la v0.4 inicial para que las salidas OUT1/OUT2 del DRV8871 lleguen a la bornera sin cruzarse en una sola capa; la polaridad rojo = M+ = OUT1 no cambia")
+			)
+			(property
+				(name "Fuente")
+				(value "DEC-13 [M] (borneras para motores); DEC-01 [M] (rojo M+, blanco M−); [PHX-MKDS15] (17,5 A IEC, 10 A UL, AWG 26-14); [DS-DRV] p.5 (IOCP ≤ 6,4 A)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6a5bec29-51bd-4290-a43d-4b7de9eed4c5")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J12")
+			(value "Motor DER 1=M+ 2=M−")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (montada; 1 = M+ rojo = OUT1, 2 = M− blanco = OUT2; la rueda espejada se invierte en firmware). PCB v0.1: numeración de pines invertida respecto de la v0.4 inicial para que las salidas OUT1/OUT2 del DRV8871 lleguen a la bornera sin cruzarse en una sola capa; la polaridad rojo = M+ = OUT1 no cambia")
+				(field
+					(name "Fuente") "Igual que J11")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x02")
+				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (montada; 1 = M+ rojo = OUT1, 2 = M− blanco = OUT2; la rueda espejada se invierte en firmware). PCB v0.1: numeración de pines invertida respecto de la v0.4 inicial para que las salidas OUT1/OUT2 del DRV8871 lleguen a la bornera sin cruzarse en una sola capa; la polaridad rojo = M+ = OUT1 no cambia")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que J11")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "9994c74e-45b2-4f6d-a03d-9047505ec86c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J13")
+			(value "Servo IZQ JR")
+			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+			(description "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06; serigrafiar 'S + −' y los colores del cable junto al header)")
+				(field
+					(name "Fuente") "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)")
+				(field
+					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector_Generic")
+				(part "Conn_01x03")
+				(description "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06; serigrafiar 'S + −' y los colores del cable junto al header)")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "14e1580e-88f2-4419-99ec-b96a7bae7b95")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J14")
+			(value "Servo DER JR")
+			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+			(description "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06; serigrafiar 'S + −' y los colores del cable junto al header)")
+				(field
+					(name "Fuente") "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)")
+				(field
+					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector_Generic")
+				(part "Conn_01x03")
+				(description "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06; serigrafiar 'S + −' y los colores del cable junto al header)")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "144d4656-d31b-4236-82ee-4d4ae0955908")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J15")
+			(value "UBEC entrada")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (montada; se corta el enchufe rojo de 2 pines del UBEC y los hilos se atornillan; ≈3,9 A [H] de entrada frente a 10 A UL)")
+				(field
+					(name "Fuente") "[CAP]/ROB-007_YSIDO_UBEC_6A/referencia_compra.png [V]; DEC-13 [M]; [PHX-MKDS15] (10 A UL)")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x02")
+				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (montada; se corta el enchufe rojo de 2 pines del UBEC y los hilos se atornillan; ≈3,9 A [H] de entrada frente a 10 A UL)")
+			)
+			(property
+				(name "Fuente")
+				(value "[CAP]/ROB-007_YSIDO_UBEC_6A/referencia_compra.png [V]; DEC-13 [M]; [PHX-MKDS15] (10 A UL)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "ff3206a5-ad5c-46de-883c-3411375cdc3f")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J16")
+			(value "UBEC salida 6V PT1,5 1=GND 2=V+")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: se corta el JR de salida del UBEC (SUP-40); paso 3,5 mm para no confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar servos (7,4 V prohibido)")
+				(field
+					(name "Fuente") "DEC-13 [M]; [DS-SERVO] p.3 tabla 3-4 (bloqueo 3,9 A por servo); [FLUJO] l.72; [PHX-PT15] (10 A UL, AWG 26-16)")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x02")
+				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: se corta el JR de salida del UBEC (SUP-40); paso 3,5 mm para no confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar servos (7,4 V prohibido)")
+			)
+			(property
+				(name "Fuente")
+				(value "DEC-13 [M]; [DS-SERVO] p.3 tabla 3-4 (bloqueo 3,9 A por servo); [FLUJO] l.72; [PHX-PT15] (10 A UL, AWG 26-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "05dcd2ea-05d1-44ca-bfa8-3bef72ae3092")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J18")
+			(value "Voltímetro ROB-004")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "pendiente de medida (colores por convención [H]; ubicación en VM_LOG = propuesta [H] que se desvía de [ENERGIA] §2 y [CONTRATO] §2.10 (bus VM), pendiente de Matías, decisión 12)")
+				(field
+					(name "Fuente") "[CAP]/ROB-004_Voltimetro/referencia_compra.png; ficha_comercial_DIYMORE_REFERENCIA.html [V]")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x03")
+				(description "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "pendiente de medida (colores por convención [H]; ubicación en VM_LOG = propuesta [H] que se desvía de [ENERGIA] §2 y [CONTRATO] §2.10 (bus VM), pendiente de Matías, decisión 12)")
+			)
+			(property
+				(name "Fuente")
+				(value "[CAP]/ROB-004_Voltimetro/referencia_compra.png; ficha_comercial_DIYMORE_REFERENCIA.html [V]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "017b0b3b-3a22-47f7-8dc0-730848213c00")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J20")
+			(value "Cable lógica-potencia 2x8")
+			(footprint "Connector_IDC:IDC-Header_2x08_P2.54mm_Vertical")
+			(description "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: asignación de pines del cable en interconexion_v0.6.json (SUP-72)")
+				(field
+					(name "Fuente") "DEC-17 [M]: dos placas de una cara unidas por cable plano IDC")
+				(field
+					(name "Footprint") "Connector_IDC:IDC-Header_2x08_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector_Generic")
+				(part "Conn_02x08_Odd_Even")
+				(description "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: asignación de pines del cable en interconexion_v0.6.json (SUP-72)")
+			)
+			(property
+				(name "Fuente")
+				(value "DEC-17 [M]: dos placas de una cara unidas por cable plano IDC")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_2x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "4901c9ca-afae-44f9-820d-1725e90ddb23")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "16")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q1")
+			(value "IRF4905")
+			(footprint "Package_TO_SOT_THT:TO-220-3_Vertical")
+			(datasheet "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
+			(description "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (montado por defecto: con J1 en bornera es la única protección de polaridad; disipador obligatorio, 4,5-6,8 W a 15 A y ≈0,5 W a 5 A; decisiones 3 y 9 de [ENERGIA] §10 pendientes de Matías) | v0.4: JP1 eliminado (SUP-63)")
+				(field
+					(name "Fuente") "[DS-IRF4905] p.1-2 (RDS(on) 20 mΩ a VGS −10 V; RθJA 62 °C/W); Transistor_FET.kicad_sym (1=G, 2=D, 3=S); [ENERGIA] §2.4(c)")
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-220-3_Vertical")
+				(field
+					(name "Datasheet") "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
+				(field
+					(name "Description") "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
+			)
+			(libsource
+				(lib "Transistor_FET")
+				(part "IRF4905")
+				(description "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (montado por defecto: con J1 en bornera es la única protección de polaridad; disipador obligatorio, 4,5-6,8 W a 15 A y ≈0,5 W a 5 A; decisiones 3 y 9 de [ENERGIA] §10 pendientes de Matías) | v0.4: JP1 eliminado (SUP-63)")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-IRF4905] p.1-2 (RDS(on) 20 mΩ a VGS −10 V; RθJA 62 °C/W); Transistor_FET.kicad_sym (1=G, 2=D, 3=S); [ENERGIA] §2.4(c)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Single P-Channel HEXFET Power MOSFET")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO?220*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "70bb8760-b8de-40bf-b44e-62d8bf86773a")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R1")
+			(value "2k2 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (lado MCU de R35; 2,2 kΩ cubre un pull-up interno de 30 kΩ: 0,22 V < VIL; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (lado MCU de R35; 2,2 kΩ cubre un pull-up interno de 30 kΩ: 0,22 V < VIL; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "d6f9b37c-dcbe-4055-9877-c3da50079d59")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R2")
+			(value "2k2 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (lado MCU de R36; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (lado MCU de R36; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "5cffdf80-8545-4e51-9a1e-ce0c546e1537")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R3")
+			(value "2k2 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (lado MCU de R37; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (lado MCU de R37; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "bc04e703-a804-4f4a-923b-c6cc5011c1f1")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R4")
+			(value "2k2 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (lado MCU de R38; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (lado MCU de R38; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6c83277a-0784-4cde-820a-052ed31048a6")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R5")
+			(value "1k 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6174e80c-28a7-40cb-9f94-4984bd751714")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R6")
+			(value "1k 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "d1847fe7-15f7-46e2-a161-89c477be14e2")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R7")
+			(value "10k")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "176cef37-eb83-4087-8867-5142bb10c8ad")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R8")
+			(value "10k")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "65735af0-a3d2-4287-b37f-958934042096")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R22")
+			(value "100k 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (química del pack pendiente; muestrear con ≥ 28,5 ciclos) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (química del pack pendiente; muestrear con ≥ 28,5 ciclos) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "7b83135c-0c89-41a5-8fdb-e12f8fcfd2d6")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R23")
+			(value "12k 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "Igual que R22 (k = 0,1071; 13,6 V → 1,46 V; 24,4 V → 2,61 V < VDDA; Rth 10,7 kΩ); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que R22 (k = 0,1071; 13,6 V → 1,46 V; 24,4 V → 2,61 V < VDDA; Rth 10,7 kΩ); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "060f74fa-63fd-404d-abb3-7b34d0ec8bc8")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R28")
+			(value "5k1")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[ENERGIA] §8 (apagado); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §8 (apagado); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "cae3e2b2-0c0a-4ea3-9c81-0e676e9e811d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R29")
+			(value "10k")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (montada con Q1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[ENERGIA] §2.4(c); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (montada con Q1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[ENERGIA] §2.4(c); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "3ca6fb5f-9b52-48fd-981d-4e0f82c3da67")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R35")
+			(value "4k7 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (nueva, a ratificar: protege PA6 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (nueva, a ratificar: protege PA6 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "2af8dcfc-ab8b-4a12-b868-7e1cabaaf32d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R36")
+			(value "4k7 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (nueva; protege PA7) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (nueva; protege PA7) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "38564093-eb15-4cc7-83a2-951c7b928b35")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R37")
+			(value "4k7 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (nueva; protege PB0) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (nueva; protege PB0) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "47365129-6469-4d26-84ff-8ce143e1b8cf")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R38")
+			(value "4k7 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (nueva; protege PB1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(field
+					(name "Fuente") "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (nueva; protege PB1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+			)
+			(property
+				(name "Fuente")
+				(value "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "fa1d4987-86e8-43e4-bb5c-84ec7eeff867")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "Connector")
+			(part "Screw_Terminal_01x02")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "TerminalBlock*:*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Screw_Terminal_01x02")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector")
+			(part "Screw_Terminal_01x03")
+			(description "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "TerminalBlock*:*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Screw_Terminal_01x03")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x03")
+			(description "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x03")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_02x08_Odd_Even")
+			(description "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_2x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_02x08_Odd_Even")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, double row, 02x08, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "Pin_4")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "Pin_5")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "Pin_6")
+					(type "passive")
+				)
+				(pin
+					(num "7")
+					(name "Pin_7")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "Pin_8")
+					(type "passive")
+				)
+				(pin
+					(num "9")
+					(name "Pin_9")
+					(type "passive")
+				)
+				(pin
+					(num "10")
+					(name "Pin_10")
+					(type "passive")
+				)
+				(pin
+					(num "11")
+					(name "Pin_11")
+					(type "passive")
+				)
+				(pin
+					(num "12")
+					(name "Pin_12")
+					(type "passive")
+				)
+				(pin
+					(num "13")
+					(name "Pin_13")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "Pin_14")
+					(type "passive")
+				)
+				(pin
+					(num "15")
+					(name "Pin_15")
+					(type "passive")
+				)
+				(pin
+					(num "16")
+					(name "Pin_16")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "C")
+			(description "Unpolarized capacitor")
+			(footprints
+				(fp "C_*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "C")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Unpolarized capacitor")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "C_Polarized")
+			(description "Polarized capacitor")
+			(footprints
+				(fp "CP_*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "C_Polarized")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "D_Zener")
+			(description "Zener diode")
+			(footprints
+				(fp "TO-???*")
+				(fp "*_Diode_*")
+				(fp "*SingleDiode*")
+				(fp "D_*")
+			)
+			(fields
+				(field
+					(name "Reference") "D")
+				(field
+					(name "Value") "D_Zener")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Zener diode")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "K")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "A")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "Fuse")
+			(description "Fuse")
+			(footprints
+				(fp "*Fuse*")
+			)
+			(fields
+				(field
+					(name "Reference") "F")
+				(field
+					(name "Value") "Fuse")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Fuse")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "LED")
+			(description "Light emitting diode")
+			(footprints
+				(fp "LED*")
+				(fp "LED_SMD:*")
+				(fp "LED_THT:*")
+			)
+			(fields
+				(field
+					(name "Reference") "D")
+				(field
+					(name "Value") "LED")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Light emitting diode")
+				(field
+					(name "Sim.Pins") "1=K 2=A")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "K")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "A")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "R")
+			(description "Resistor")
+			(footprints
+				(fp "R_*")
+			)
+			(fields
+				(field
+					(name "Reference") "R")
+				(field
+					(name "Value") "R")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Diode")
+			(part "1.5KExxA")
+			(description "1500W unidirectional TVS diode, DO-201AE")
+			(docs "https://www.vishay.com/docs/88301/15ke.pdf")
+			(footprints
+				(fp "D?DO?201AE*")
+			)
+			(fields
+				(field
+					(name "Reference") "D")
+				(field
+					(name "Value") "1.5KExxA")
+				(field
+					(name "Footprint") "Diode_THT:D_DO-201AE_P15.24mm_Horizontal")
+				(field
+					(name "Datasheet") "https://www.vishay.com/docs/88301/15ke.pdf")
+				(field
+					(name "Description") "1500W unidirectional TVS diode, DO-201AE")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "A1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "A2")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Transistor_FET")
+			(part "IRF4905")
+			(description "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
+			(docs "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
+			(footprints
+				(fp "TO?220*")
+			)
+			(fields
+				(field
+					(name "Reference") "Q")
+				(field
+					(name "Value") "IRF4905")
+				(field
+					(name "Footprint") "Package_TO_SOT_THT:TO-220-3_Vertical")
+				(field
+					(name "Datasheet") "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
+				(field
+					(name "Description") "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "G")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "D")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "S")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "segway_modulos")
+			(part "ROB-002_INA219_MCU-219_8p")
+			(description "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			(fields
+				(field
+					(name "Reference") "A")
+				(field
+					(name "Value") "INA219 MCU-219 (R100) 8p")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Vcc")
+					(type "power_in")
+				)
+				(pin
+					(num "2")
+					(name "Gnd")
+					(type "power_in")
+				)
+				(pin
+					(num "3")
+					(name "Scl")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "Sda")
+					(type "bidirectional")
+				)
+				(pin
+					(num "5")
+					(name "Vin-")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "Vin+")
+					(type "passive")
+				)
+				(pin
+					(num "7")
+					(name "Vin-_born")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "Vin+_born")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "segway_modulos")
+			(part "ROB-005-006_MiniBuck_modulo_4p")
+			(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			(fields
+				(field
+					(name "Reference") "A")
+				(field
+					(name "Value") "Mini buck fijo (5 V ROB-006 / 3,3 V ROB-005)")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "IN+")
+					(type "power_in")
+				)
+				(pin
+					(num "2")
+					(name "IN-")
+					(type "power_in")
+				)
+				(pin
+					(num "3")
+					(name "OUT+")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "OUT-")
+					(type "power_in")
+				)
+			)
+		)
+		(libpart
+			(lib "segway_modulos")
+			(part "ROB-008_DRV8871_modulo_8p")
+			(description "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			(fields
+				(field
+					(name "Reference") "A")
+				(field
+					(name "Value") "DRV8871 modulo enchufable 8p")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "GND")
+					(type "power_in")
+				)
+				(pin
+					(num "2")
+					(name "VM")
+					(type "power_in")
+				)
+				(pin
+					(num "3")
+					(name "IN1")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "IN2")
+					(type "input")
+				)
+				(pin
+					(num "5")
+					(name "POWER+")
+					(type "power_in")
+				)
+				(pin
+					(num "6")
+					(name "POWER-")
+					(type "power_in")
+				)
+				(pin
+					(num "7")
+					(name "OUT1")
+					(type "output")
+				)
+				(pin
+					(num "8")
+					(name "OUT2")
+					(type "output")
+				)
+			)
+		)
+		(libpart
+			(lib "segway_modulos")
+			(part "ROB-009_INA226_modulo_8p")
+			(description "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38).")
+			(fields
+				(field
+					(name "Reference") "A")
+				(field
+					(name "Value") "INA226 modulo 8p (R100)")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38).")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "IN+")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "IN-")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "VBS")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "ALE")
+					(type "open_collector")
+				)
+				(pin
+					(num "5")
+					(name "SCL")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "SDA")
+					(type "bidirectional")
+				)
+				(pin
+					(num "7")
+					(name "GND")
+					(type "power_in")
+				)
+				(pin
+					(num "8")
+					(name "VCC")
+					(type "power_in")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "Connector")
+			(uri "${KICAD10_SYMBOL_DIR}/Connector.kicad_sym")
+		)
+		(library
+			(logical "Connector_Generic")
+			(uri "${KICAD10_SYMBOL_DIR}/Connector_Generic.kicad_sym")
+		)
+		(library
+			(logical "Device")
+			(uri "${KICAD10_SYMBOL_DIR}/Device.kicad_sym")
+		)
+		(library
+			(logical "Diode")
+			(uri "${KICAD10_SYMBOL_DIR}/Diode.kicad_sym")
+		)
+		(library
+			(logical "Transistor_FET")
+			(uri "${KICAD10_SYMBOL_DIR}/Transistor_FET.kicad_sym")
+		)
+		(library
+			(logical "segway_modulos")
+			(uri "${KIPRJMOD}/../bibliotecas/segway_modulos.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "1")
+			(name "/3V3_MCU")
+			(class "Default")
+			(node
+				(ref "A5")
+				(pin "1")
+				(pinfunction "Vcc_1")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A6")
+				(pin "1")
+				(pinfunction "Vcc_1")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A7")
+				(pin "8")
+				(pinfunction "VCC_8")
+				(pintype "power_in")
+			)
+			(node
+				(ref "J20")
+				(pin "5")
+				(pinfunction "Pin_5_5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "2")
+			(name "/5V")
+			(class "Default")
+			(node
+				(ref "A8")
+				(pin "3")
+				(pinfunction "OUT+_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "J20")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J20")
+				(pin "4")
+				(pinfunction "Pin_4_4")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "3")
+			(name "/GND")
+			(class "Default")
+			(node
+				(ref "A3")
+				(pin "1")
+				(pinfunction "GND_1")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A3")
+				(pin "6")
+				(pinfunction "POWER-_6")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A4")
+				(pin "1")
+				(pinfunction "GND_1")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A4")
+				(pin "6")
+				(pinfunction "POWER-_6")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A5")
+				(pin "2")
+				(pinfunction "Gnd_2")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A6")
+				(pin "2")
+				(pinfunction "Gnd_2")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A7")
+				(pin "7")
+				(pinfunction "GND_7")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A8")
+				(pin "2")
+				(pinfunction "IN-_2")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A8")
+				(pin "4")
+				(pinfunction "OUT-_4")
+				(pintype "power_in")
+			)
+			(node
+				(ref "C1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C14")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C3")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C4")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C5")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C8")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C9")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "D1")
+				(pin "2")
+				(pinfunction "A2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "D4")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J13")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J14")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J15")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J16")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J18")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J20")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J20")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "J20")
+				(pin "7")
+				(pinfunction "Pin_7_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "R1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R2")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R23")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R29")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R3")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R4")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R7")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R8")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
+			(name "/I2C_SCL")
+			(class "Default")
+			(node
+				(ref "A5")
+				(pin "3")
+				(pinfunction "Scl_3")
+				(pintype "input")
+			)
+			(node
+				(ref "A6")
+				(pin "3")
+				(pinfunction "Scl_3")
+				(pintype "input")
+			)
+			(node
+				(ref "A7")
+				(pin "5")
+				(pinfunction "SCL_5")
+				(pintype "input")
+			)
+			(node
+				(ref "J20")
+				(pin "8")
+				(pinfunction "Pin_8_8")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "5")
+			(name "/I2C_SDA")
+			(class "Default")
+			(node
+				(ref "A5")
+				(pin "4")
+				(pinfunction "Sda_4")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "A6")
+				(pin "4")
+				(pinfunction "Sda_4")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "A7")
+				(pin "6")
+				(pinfunction "SDA_6")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "J20")
+				(pin "6")
+				(pinfunction "Pin_6_6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "6")
+			(name "/IN1_DER")
+			(class "Default")
+			(node
+				(ref "A4")
+				(pin "3")
+				(pinfunction "IN1_3")
+				(pintype "input")
+			)
+			(node
+				(ref "R37")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "7")
+			(name "/IN1_DER_MCU")
+			(class "Default")
+			(node
+				(ref "J20")
+				(pin "11")
+				(pinfunction "Pin_11_11")
+				(pintype "passive")
+			)
+			(node
+				(ref "R3")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R37")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "8")
+			(name "/IN1_IZQ")
+			(class "Default")
+			(node
+				(ref "A3")
+				(pin "3")
+				(pinfunction "IN1_3")
+				(pintype "input")
+			)
+			(node
+				(ref "R35")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "9")
+			(name "/IN1_IZQ_MCU")
+			(class "Default")
+			(node
+				(ref "J20")
+				(pin "13")
+				(pinfunction "Pin_13_13")
+				(pintype "passive")
+			)
+			(node
+				(ref "R1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R35")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "10")
+			(name "/IN2_DER")
+			(class "Default")
+			(node
+				(ref "A4")
+				(pin "4")
+				(pinfunction "IN2_4")
+				(pintype "input")
+			)
+			(node
+				(ref "R38")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "11")
+			(name "/IN2_DER_MCU")
+			(class "Default")
+			(node
+				(ref "J20")
+				(pin "12")
+				(pinfunction "Pin_12_12")
+				(pintype "passive")
+			)
+			(node
+				(ref "R38")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R4")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "12")
+			(name "/IN2_IZQ")
+			(class "Default")
+			(node
+				(ref "A3")
+				(pin "4")
+				(pinfunction "IN2_4")
+				(pintype "input")
+			)
+			(node
+				(ref "R36")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "13")
+			(name "/IN2_IZQ_MCU")
+			(class "Default")
+			(node
+				(ref "J20")
+				(pin "14")
+				(pinfunction "Pin_14_14")
+				(pintype "passive")
+			)
+			(node
+				(ref "R2")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R36")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "14")
+			(name "/INA_ALERT")
+			(class "Default")
+			(node
+				(ref "A7")
+				(pin "4")
+				(pinfunction "ALE_4")
+				(pintype "open_collector")
+			)
+			(node
+				(ref "J20")
+				(pin "9")
+				(pinfunction "Pin_9_9")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "15")
+			(name "/LED_VM_A")
+			(class "Default")
+			(node
+				(ref "D4")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R28")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "16")
+			(name "/MOT_DER_1")
+			(class "Default")
+			(node
+				(ref "A4")
+				(pin "7")
+				(pinfunction "OUT1_7")
+				(pintype "output")
+			)
+			(node
+				(ref "J12")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "17")
+			(name "/MOT_DER_2")
+			(class "Default")
+			(node
+				(ref "A4")
+				(pin "8")
+				(pinfunction "OUT2_8")
+				(pintype "output")
+			)
+			(node
+				(ref "J12")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "18")
+			(name "/MOT_IZQ_1")
+			(class "Default")
+			(node
+				(ref "A3")
+				(pin "7")
+				(pinfunction "OUT1_7")
+				(pintype "output")
+			)
+			(node
+				(ref "J11")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "19")
+			(name "/MOT_IZQ_2")
+			(class "Default")
+			(node
+				(ref "A3")
+				(pin "8")
+				(pinfunction "OUT2_8")
+				(pintype "output")
+			)
+			(node
+				(ref "J11")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "20")
+			(name "/Q_POL_G")
+			(class "Default")
+			(node
+				(ref "D3")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q1")
+				(pin "1")
+				(pinfunction "G_1")
+				(pintype "input")
+			)
+			(node
+				(ref "R29")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "21")
+			(name "/SERVO_DER_MCU")
+			(class "Default")
+			(node
+				(ref "J20")
+				(pin "16")
+				(pinfunction "Pin_16_16")
+				(pintype "passive")
+			)
+			(node
+				(ref "R6")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R8")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "22")
+			(name "/SERVO_DER_SIG")
+			(class "Default")
+			(node
+				(ref "J14")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R6")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "23")
+			(name "/SERVO_IZQ_MCU")
+			(class "Default")
+			(node
+				(ref "J20")
+				(pin "15")
+				(pinfunction "Pin_15_15")
+				(pintype "passive")
+			)
+			(node
+				(ref "R5")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R7")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "24")
+			(name "/SERVO_IZQ_SIG")
+			(class "Default")
+			(node
+				(ref "J13")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R5")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "25")
+			(name "/VBAT_ADC")
+			(class "Default")
+			(node
+				(ref "C14")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J20")
+				(pin "10")
+				(pinfunction "Pin_10_10")
+				(pintype "passive")
+			)
+			(node
+				(ref "R22")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R23")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "26")
+			(name "/VBAT_F")
+			(class "Default")
+			(node
+				(ref "F1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J3")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "27")
+			(name "/VBAT_P")
+			(class "Default")
+			(node
+				(ref "F1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "28")
+			(name "/VBAT_SW")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q1")
+				(pin "2")
+				(pinfunction "D_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "29")
+			(name "/VM_BUS")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C3")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D1")
+				(pin "1")
+				(pinfunction "A1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D3")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "F2")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "F3")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "F4")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "F5")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q1")
+				(pin "3")
+				(pinfunction "S_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R22")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R28")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "30")
+			(name "/VM_DER")
+			(class "Default")
+			(node
+				(ref "A4")
+				(pin "2")
+				(pinfunction "VM_2")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A4")
+				(pin "5")
+				(pinfunction "POWER+_5")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A6")
+				(pin "5")
+				(pinfunction "Vin-_5")
+				(pintype "passive")
+			)
+			(node
+				(ref "A6")
+				(pin "7")
+				(pinfunction "Vin-_born_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "C5")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "31")
+			(name "/VM_DER_F")
+			(class "Default")
+			(node
+				(ref "A6")
+				(pin "6")
+				(pinfunction "Vin+_6")
+				(pintype "passive")
+			)
+			(node
+				(ref "A6")
+				(pin "8")
+				(pinfunction "Vin+_born_8")
+				(pintype "passive")
+			)
+			(node
+				(ref "F3")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "32")
+			(name "/VM_IZQ")
+			(class "Default")
+			(node
+				(ref "A3")
+				(pin "2")
+				(pinfunction "VM_2")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A3")
+				(pin "5")
+				(pinfunction "POWER+_5")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A5")
+				(pin "5")
+				(pinfunction "Vin-_5")
+				(pintype "passive")
+			)
+			(node
+				(ref "A5")
+				(pin "7")
+				(pinfunction "Vin-_born_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "C4")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "33")
+			(name "/VM_IZQ_F")
+			(class "Default")
+			(node
+				(ref "A5")
+				(pin "6")
+				(pinfunction "Vin+_6")
+				(pintype "passive")
+			)
+			(node
+				(ref "A5")
+				(pin "8")
+				(pinfunction "Vin+_born_8")
+				(pintype "passive")
+			)
+			(node
+				(ref "F2")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "34")
+			(name "/VM_LOG")
+			(class "Default")
+			(node
+				(ref "A7")
+				(pin "2")
+				(pinfunction "IN-_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "A7")
+				(pin "3")
+				(pinfunction "VBS_3")
+				(pintype "input")
+			)
+			(node
+				(ref "A8")
+				(pin "1")
+				(pinfunction "IN+_1")
+				(pintype "power_in")
+			)
+			(node
+				(ref "J18")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J18")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "35")
+			(name "/VM_LOG_F")
+			(class "Default")
+			(node
+				(ref "A7")
+				(pin "1")
+				(pinfunction "IN+_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "F5")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "36")
+			(name "/VM_UBEC")
+			(class "Default")
+			(node
+				(ref "F4")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J15")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "37")
+			(name "/V_SERVO")
+			(class "Default")
+			(node
+				(ref "C8")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C9")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J13")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J14")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J16")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+		)
+	)
+)

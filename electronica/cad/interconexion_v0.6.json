@@ -1,0 +1,23 @@
+{
+ "cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
+ "conector": "Connector_IDC:IDC-Header_2x08_P2.54mm_Vertical",
+ "pines": {
+  "1": "GND",
+  "2": "5V",
+  "3": "GND",
+  "4": "5V",
+  "5": "3V3_MCU",
+  "6": "I2C_SDA",
+  "7": "GND",
+  "8": "I2C_SCL",
+  "9": "INA_ALERT",
+  "10": "VBAT_ADC",
+  "11": "IN1_DER_MCU",
+  "12": "IN2_DER_MCU",
+  "13": "IN1_IZQ_MCU",
+  "14": "IN2_IZQ_MCU",
+  "15": "SERVO_IZQ_MCU",
+  "16": "SERVO_DER_MCU"
+ },
+ "corriente": "5V en 2 hilos (≤0,5 A total: ESP32-S3 con Wi-Fi); GND en 3 hilos; resto señales"
+}

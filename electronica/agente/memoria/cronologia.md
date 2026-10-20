@@ -29,6 +29,7 @@ La fecha indica cuándo se consolidó el registro en este proyecto. Los antecede
 | 23 | 2026-10-17 | Matías pidió avanzar con supuestos persistidos y sacar la primera PCB, casera de una capa (DEC-14, DEC-15) | Freerouting CLI 2.5.0 instalado en `D:/Usuario/Matias/Herramientas/freerouting/2.5.0` (SHA-256 verificado); flujo de PCB v0.1 en curso |
 | 24 | 2026-10-17 | Matías objetó los 153 componentes; se simplificó a 60 para placa casera (sin puntos de prueba ni alternativas no montadas) | Especificación y esquema v0.4 verificados (ERC 0, netlist coincide); huellas de 7 módulos; reglas caseras; 71 supuestos |
 | 25 | 2026-10-18 | Pausa pedida por Matías durante el ruteo en una capa | PCB a medio rutear (64 huellas, 61 pistas, ~103 conexiones pendientes); constructor `construir_pcb.py` y flujo guardados; instrucciones de reanudación en estado actual |
+| 26 | 2026-10-20 | Controladora definitiva ESP32-S3-DevKitC-1-N16R8 (DEC-16). Esquema v0.5, diagrama de conexionado. Freerouting nativo se colgaba con zonas prohibidas: se pasa al JAR con Java 25. La placa única de una cara daba 27 puentes y 30 conexiones sin rutear; Matías eligió dividirla en dos placas (DEC-17) | Especificaciones v0.6 de potencia (48 componentes) y lógica (12), ambas con ERC 0 y netlist coincidente; cable IDC 2×8 con 13 nets verificadas en las dos placas |
 
 ## Formato de las siguientes entradas
 
