@@ -139,15 +139,3 @@
 	(layer B.Cu)
 	(constraint text_height (min 2.0mm))
 	(constraint text_thickness (min 0.4mm)))
-
-# =====================================================================
-# Enmiendas de la PCB v0.1 (construir_pcb.py, 17/10/2026). Van al final:
-# KiCad aplica primero la última regla que coincide.
-# ---------------------------------------------------------------------
-# Las trabas plásticas sin metalizar de las huellas (portafusible ATO,
-# bornera MPT) no llevan arandela ni tornillo: alcanza la separación
-# general a agujero. La regla de 2,0 mm queda para los M3 y los topes de
-# módulos (agujeros >= 3 mm).
-(rule "traba_npth_chica"
-	(condition "A.Pad_Type == 'NPTH, mechanical' && A.Hole_Size_X < 3mm")
-	(constraint hole_clearance (min 0.7mm)))

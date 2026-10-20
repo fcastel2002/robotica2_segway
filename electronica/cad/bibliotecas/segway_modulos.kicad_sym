@@ -331,7 +331,31 @@
 
 
 
-  (symbol "ROB-013_MPU6050_modulo_8p"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  (symbol "ROB-001_LM2596_modulo_4p"
     (pin_names
       (offset 1.016))
     (exclude_from_sim no)
@@ -339,59 +363,129 @@
     (on_board yes)
     (in_pos_files yes)
     (duplicate_pin_numbers_are_jumpers no)
-    (property "Reference" "A" (at 0 13.9700 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
-    (property "Value" "MPU6050 modulo 8p" (at 0 -13.9700 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
+    (property "Reference" "A" (at 0 6.3500 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
+    (property "Value" "LM2596 modulo 4p" (at 0 -6.3500 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-013. Modulo MPU6050 de 8 pines, formato GY-521 segun imagen de Matias del 17/10/2026. Orden VCC,GND,SCL,SDA,XDA,XCL,AD0,INT leido de la serigrafia [V]; numeracion 1=VCC provisoria hasta ver el pad cuadrado del ejemplar. Huella v0.4: segway_modulos:ROB-013_MPU6050_modulo_8p (zocalo 1x08 de 2,54 mm y dos NPTH de 3,2 mm para separadores; contorno supuesto sin medir, SUP-36). En la v0.4 AD0 queda sin conexion: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66). Codificacion propuesta: pin 5 (XDA, sin uso) retirado de la tira macho y posicion 5 del zocalo tapada; invertido (n -> 9-n), el pin 4 (SDA) cae en la 5 y no entra." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (symbol "ROB-013_MPU6050_modulo_8p_0_1"
-      (rectangle (start -10.1600 -11.4300) (end -2.5400 11.4300)
+    (property "Description" "ROB-001. Modulo reductor ajustable LM2596 con 4 agujeros de esquina IN+, IN-, OUT+, OUT- (serigrafia de la captura de compra [V]). Sin uso en la v0.4 (A10 eliminado, SUP-63): se conserva en la biblioteca para recuperarlo. Huella supuesta segway_modulos:ROB-001_LM2596_modulo_4p. Ajustar 5,0 V antes de enchufarlo. Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella pendiente de medir. OUT+ passive para el ERC. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Huella con codificacion mecanica obligatoria (propuesta 16)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (symbol "ROB-001_LM2596_modulo_4p_0_1"
+      (rectangle (start -7.6200 -3.8100) (end 7.6200 3.8100)
         (stroke (width 0.254) (type default))
         (fill (type background))
       )
-    (pin power_in line (at -12.7 8.89 0)
+    (pin power_in line (at -10.16 1.27 0)
       (length 2.54)
-      (name "VCC" (effects (font (size 1.27 1.27))))
+      (name "IN+" (effects (font (size 1.27 1.27))))
       (number "1" (effects (font (size 1.27 1.27))))
     )
-    (pin power_in line (at -12.7 6.35 0)
+    (pin power_in line (at -10.16 -1.27 0)
       (length 2.54)
-      (name "GND" (effects (font (size 1.27 1.27))))
+      (name "IN-" (effects (font (size 1.27 1.27))))
       (number "2" (effects (font (size 1.27 1.27))))
     )
-    (pin bidirectional line (at -12.7 3.81 0)
+    (pin passive line (at 10.16 1.27 180)
       (length 2.54)
-      (name "SCL" (effects (font (size 1.27 1.27))))
+      (name "OUT+" (effects (font (size 1.27 1.27))))
       (number "3" (effects (font (size 1.27 1.27))))
     )
-    (pin bidirectional line (at -12.7 1.27 0)
+    (pin power_in line (at 10.16 -1.27 180)
       (length 2.54)
-      (name "SDA" (effects (font (size 1.27 1.27))))
+      (name "OUT-" (effects (font (size 1.27 1.27))))
       (number "4" (effects (font (size 1.27 1.27))))
-    )
-    (pin bidirectional line (at -12.7 -1.27 0)
-      (length 2.54)
-      (name "XDA" (effects (font (size 1.27 1.27))))
-      (number "5" (effects (font (size 1.27 1.27))))
-    )
-    (pin bidirectional line (at -12.7 -3.81 0)
-      (length 2.54)
-      (name "XCL" (effects (font (size 1.27 1.27))))
-      (number "6" (effects (font (size 1.27 1.27))))
-    )
-    (pin input line (at -12.7 -6.35 0)
-      (length 2.54)
-      (name "AD0" (effects (font (size 1.27 1.27))))
-      (number "7" (effects (font (size 1.27 1.27))))
-    )
-    (pin output line (at -12.7 -8.89 0)
-      (length 2.54)
-      (name "INT" (effects (font (size 1.27 1.27))))
-      (number "8" (effects (font (size 1.27 1.27))))
     )
     )
     (embedded_fonts no)
   )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   (symbol "ROB-008_DRV8871_modulo_8p"
     (pin_names
@@ -621,7 +715,7 @@
     (embedded_fonts no)
   )
 
-  (symbol "ROB-001_LM2596_modulo_4p"
+  (symbol "ROB-013_MPU6050_modulo_8p"
     (pin_names
       (offset 1.016))
     (exclude_from_sim no)
@@ -629,35 +723,55 @@
     (on_board yes)
     (in_pos_files yes)
     (duplicate_pin_numbers_are_jumpers no)
-    (property "Reference" "A" (at 0 6.3500 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
-    (property "Value" "LM2596 modulo 4p" (at 0 -6.3500 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
+    (property "Reference" "A" (at 0 13.9700 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
+    (property "Value" "MPU6050 modulo 8p" (at 0 -13.9700 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27))))
     (property "Footprint" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
     (property "Datasheet" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (property "Description" "ROB-001. Modulo reductor ajustable LM2596 con 4 agujeros de esquina IN+, IN-, OUT+, OUT- (serigrafia de la captura de compra [V]). Sin uso en la v0.4 (A10 eliminado, SUP-63): se conserva en la biblioteca para recuperarlo. Huella supuesta segway_modulos:ROB-001_LM2596_modulo_4p. Ajustar 5,0 V antes de enchufarlo. Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella pendiente de medir. OUT+ passive para el ERC. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Huella con codificacion mecanica obligatoria (propuesta 16)." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
-    (symbol "ROB-001_LM2596_modulo_4p_0_1"
-      (rectangle (start -7.6200 -3.8100) (end 7.6200 3.8100)
+    (property "Description" "ROB-013. Modulo MPU6050 de 8 pines, formato GY-521 segun imagen de Matias del 17/10/2026. Orden VCC,GND,SCL,SDA,XDA,XCL,AD0,INT leido de la serigrafia [V]; numeracion 1=VCC provisoria hasta ver el pad cuadrado del ejemplar. Huella v0.4: segway_modulos:ROB-013_MPU6050_modulo_8p (zocalo 1x08 de 2,54 mm y dos NPTH de 3,2 mm para separadores; contorno supuesto sin medir, SUP-36). En la v0.4 AD0 queda sin conexion: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66). Codificacion propuesta: pin 5 (XDA, sin uso) retirado de la tira macho y posicion 5 del zocalo tapada; invertido (n -> 9-n), el pin 4 (SDA) cae en la 5 y no entra." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+    (symbol "ROB-013_MPU6050_modulo_8p_0_1"
+      (rectangle (start -10.1600 -11.4300) (end -2.5400 11.4300)
         (stroke (width 0.254) (type default))
         (fill (type background))
       )
-    (pin power_in line (at -10.16 1.27 0)
+    (pin power_in line (at -12.7 8.89 0)
       (length 2.54)
-      (name "IN+" (effects (font (size 1.27 1.27))))
+      (name "VCC" (effects (font (size 1.27 1.27))))
       (number "1" (effects (font (size 1.27 1.27))))
     )
-    (pin power_in line (at -10.16 -1.27 0)
+    (pin power_in line (at -12.7 6.35 0)
       (length 2.54)
-      (name "IN-" (effects (font (size 1.27 1.27))))
+      (name "GND" (effects (font (size 1.27 1.27))))
       (number "2" (effects (font (size 1.27 1.27))))
     )
-    (pin passive line (at 10.16 1.27 180)
+    (pin bidirectional line (at -12.7 3.81 0)
       (length 2.54)
-      (name "OUT+" (effects (font (size 1.27 1.27))))
+      (name "SCL" (effects (font (size 1.27 1.27))))
       (number "3" (effects (font (size 1.27 1.27))))
     )
-    (pin power_in line (at 10.16 -1.27 180)
+    (pin bidirectional line (at -12.7 1.27 0)
       (length 2.54)
-      (name "OUT-" (effects (font (size 1.27 1.27))))
+      (name "SDA" (effects (font (size 1.27 1.27))))
       (number "4" (effects (font (size 1.27 1.27))))
+    )
+    (pin bidirectional line (at -12.7 -1.27 0)
+      (length 2.54)
+      (name "XDA" (effects (font (size 1.27 1.27))))
+      (number "5" (effects (font (size 1.27 1.27))))
+    )
+    (pin bidirectional line (at -12.7 -3.81 0)
+      (length 2.54)
+      (name "XCL" (effects (font (size 1.27 1.27))))
+      (number "6" (effects (font (size 1.27 1.27))))
+    )
+    (pin input line (at -12.7 -6.35 0)
+      (length 2.54)
+      (name "AD0" (effects (font (size 1.27 1.27))))
+      (number "7" (effects (font (size 1.27 1.27))))
+    )
+    (pin output line (at -12.7 -8.89 0)
+      (length 2.54)
+      (name "INT" (effects (font (size 1.27 1.27))))
+      (number "8" (effects (font (size 1.27 1.27))))
     )
     )
     (embedded_fonts no)
