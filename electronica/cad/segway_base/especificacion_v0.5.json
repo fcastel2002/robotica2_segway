@@ -1,0 +1,2606 @@
+{
+ "revision": "v0.5",
+ "fecha": "2026-10-20",
+ "base": "v0.4 con controladora cambiada a Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16)",
+ "resumen": "Placa base de interconexión simplificada para fabricación casera (DEC-14, DEC-15): 60 piezas (9 módulos enchufables + 51 componentes de agujero pasante), una sola capa de cobre B.Cu. Todo valor no medido es un supuesto de supuestos.md (SUP-xx).",
+ "supuestos": "supuestos.md / supuestos.json",
+ "page": "A1",
+ "custom_symbols": [
+  {
+   "name": "ROB-013_MPU6050_modulo_8p",
+   "reference_prefix": "A",
+   "value": "MPU6050 modulo 8p",
+   "description": "ROB-013. Modulo MPU6050 de 8 pines, formato GY-521 segun imagen de Matias del 17/10/2026. Orden VCC,GND,SCL,SDA,XDA,XCL,AD0,INT leido de la serigrafia [V]; numeracion 1=VCC provisoria hasta ver el pad cuadrado del ejemplar. Huella v0.4: segway_modulos:ROB-013_MPU6050_modulo_8p (zocalo 1x08 de 2,54 mm y dos NPTH de 3,2 mm para separadores; contorno supuesto sin medir, SUP-36). En la v0.4 AD0 queda sin conexion: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66). Codificacion propuesta: pin 5 (XDA, sin uso) retirado de la tira macho y posicion 5 del zocalo tapada; invertido (n -> 9-n), el pin 4 (SDA) cae en la 5 y no entra.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "VCC",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "SCL",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "4",
+     "name": "SDA",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "5",
+     "name": "XDA",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "6",
+     "name": "XCL",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "7",
+     "name": "AD0",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "8",
+     "name": "INT",
+     "type": "output",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "name": "ROB-008_DRV8871_modulo_8p",
+   "reference_prefix": "A",
+   "value": "DRV8871 modulo enchufable 8p",
+   "description": "ROB-008. Modulo DRV8871 tipo Adafruit 3190 (equivalencia del clon [H]) enchufado entero en la placa base (DEC-13, opcion B). Pines 1-4 = header logico 1 = GND, 2 = VM, 3 = IN1, 4 = IN2 (drv.brd de Adafruit, JP2 [D-ref]; serigrafia alternada del clon [V]). Pines 5-8 = agujeros de las borneras POWER (5 = POWER+ = VM, 6 = POWER- = GND) y MOTOR (7 = OUT1, 8 = OUT2), con pines macho soldados en lugar de las borneras. VM y GND del header estan unidos a POWER dentro del modulo (Adafruit Learn, Pinouts): 2 contactos en paralelo por net de potencia. Huella v0.4: segway_modulos:ROB-008_DRV8871_modulo_8p, geometria del drv.brd de Adafruit 3190 vista desde arriba y girada 180 grados (borneras de paso 3,5 mm a 17,78 mm del header); supuesta hasta E-01 (SUP-32). La opcion A (J5/J6) se elimino en la v0.4 (SUP-63). Pinout PENDIENTE de E-01.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "VM",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "5",
+     "name": "POWER+",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "6",
+     "name": "POWER-",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "IN1",
+     "type": "input",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "IN2",
+     "type": "input",
+     "side": "right"
+    },
+    {
+     "number": "7",
+     "name": "OUT1",
+     "type": "output",
+     "side": "right"
+    },
+    {
+     "number": "8",
+     "name": "OUT2",
+     "type": "output",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "name": "ROB-002_INA219_MCU-219_8p",
+   "reference_prefix": "A",
+   "value": "INA219 MCU-219 (R100) 8p",
+   "description": "ROB-002. Modulo MCU-219 (INA219, shunt R100 [H por marcado]) enchufado en la placa base (DEC-13). Pines 1-6 = tira Vcc, Gnd, Scl, Sda, Vin-, Vin+ (captura de compra [V]). Pines 7-8 = agujeros de la bornera verde Vin-/Vin+, que viene suelta [V], con pines macho soldados en su lugar. Vin-/Vin+ de la tira y de la bornera estan unidos en el modulo [V]: 2 contactos por net de corriente (hasta 4,8 A con 3 A por contacto y factor 0,8). Huella v0.4: segway_modulos:ROB-002_INA219_MCU-219_8p; bornera de paso 3,5 mm (3,47 mm medidos en la captura de compra) a 15,72 mm de la tira; supuesta hasta E-01 (SUP-34). Direccion por los puentes A0/A1 del modulo. Pinout PENDIENTE de E-01.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "Vcc",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "Gnd",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "5",
+     "name": "Vin-",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "6",
+     "name": "Vin+",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "7",
+     "name": "Vin-_born",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "8",
+     "name": "Vin+_born",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "Scl",
+     "type": "input",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "Sda",
+     "type": "bidirectional",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "name": "ROB-009_INA226_modulo_8p",
+   "reference_prefix": "A",
+   "value": "INA226 modulo 8p (R100)",
+   "description": "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38).",
+   "pins": [
+    {
+     "number": "1",
+     "name": "IN+",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "IN-",
+     "type": "passive",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "VBS",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "4",
+     "name": "ALE",
+     "type": "open_collector",
+     "side": "right"
+    },
+    {
+     "number": "5",
+     "name": "SCL",
+     "type": "input",
+     "side": "right"
+    },
+    {
+     "number": "6",
+     "name": "SDA",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "7",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "8",
+     "name": "VCC",
+     "type": "power_in",
+     "side": "left"
+    }
+   ]
+  },
+  {
+   "name": "ROB-005-006_MiniBuck_modulo_4p",
+   "reference_prefix": "A",
+   "value": "Mini buck fijo (5 V ROB-006 / 3,3 V ROB-005)",
+   "description": "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).",
+   "pins": [
+    {
+     "number": "1",
+     "name": "IN+",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "IN-",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "OUT+",
+     "type": "passive",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "OUT-",
+     "type": "power_in",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "name": "ROB-001_LM2596_modulo_4p",
+   "reference_prefix": "A",
+   "value": "LM2596 modulo 4p",
+   "description": "ROB-001. Modulo reductor ajustable LM2596 con 4 agujeros de esquina IN+, IN-, OUT+, OUT- (serigrafia de la captura de compra [V]). Sin uso en la v0.4 (A10 eliminado, SUP-63): se conserva en la biblioteca para recuperarlo. Huella supuesta segway_modulos:ROB-001_LM2596_modulo_4p. Ajustar 5,0 V antes de enchufarlo. Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella pendiente de medir. OUT+ passive para el ERC. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Huella con codificacion mecanica obligatoria (propuesta 16).",
+   "pins": [
+    {
+     "number": "1",
+     "name": "IN+",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "IN-",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "OUT+",
+     "type": "passive",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "OUT-",
+     "type": "power_in",
+     "side": "right"
+    }
+   ]
+  },
+  {
+   "name": "ROB-012_ESP32-S3-DevKitC-1_N16R8_44p",
+   "reference_prefix": "A",
+   "value": "ESP32-S3-DevKitC-1 N16R8",
+   "description": "ROB-012 Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16), modulo ESP32-S3-WROOM-1 N16R8, CH343P, WS2812 en GPIO48. Pines 1-22 hilera izquierda desde la antena, 23-44 hilera derecha. GPIO35-37 reservados por la PSRAM octal. Pines NO tolerantes a 5 V.",
+   "pins": [
+    {
+     "number": "1",
+     "name": "3V3",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "3V3",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "RST",
+     "type": "input",
+     "side": "left"
+    },
+    {
+     "number": "4",
+     "name": "GPIO4",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "5",
+     "name": "GPIO5",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "6",
+     "name": "GPIO6",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "7",
+     "name": "GPIO7",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "8",
+     "name": "GPIO15",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "9",
+     "name": "GPIO16",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "10",
+     "name": "GPIO17",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "11",
+     "name": "GPIO18",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "12",
+     "name": "GPIO8",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "13",
+     "name": "GPIO3",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "14",
+     "name": "GPIO46",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "15",
+     "name": "GPIO9",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "16",
+     "name": "GPIO10",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "17",
+     "name": "GPIO11",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "18",
+     "name": "GPIO12",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "19",
+     "name": "GPIO13",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "20",
+     "name": "GPIO14",
+     "type": "bidirectional",
+     "side": "left"
+    },
+    {
+     "number": "21",
+     "name": "5V",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "22",
+     "name": "GND",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "23",
+     "name": "GND",
+     "type": "power_in",
+     "side": "right"
+    },
+    {
+     "number": "24",
+     "name": "GPIO43/TX",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "25",
+     "name": "GPIO44/RX",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "26",
+     "name": "GPIO1",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "27",
+     "name": "GPIO2",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "28",
+     "name": "GPIO42",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "29",
+     "name": "GPIO41",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "30",
+     "name": "GPIO40",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "31",
+     "name": "GPIO39",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "32",
+     "name": "GPIO38",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "33",
+     "name": "GPIO37",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "34",
+     "name": "GPIO36",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "35",
+     "name": "GPIO35",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "36",
+     "name": "GPIO0",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "37",
+     "name": "GPIO45",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "38",
+     "name": "GPIO48",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "39",
+     "name": "GPIO47",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "40",
+     "name": "GPIO21",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "41",
+     "name": "GPIO20",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "42",
+     "name": "GPIO19",
+     "type": "bidirectional",
+     "side": "right"
+    },
+    {
+     "number": "43",
+     "name": "GND",
+     "type": "power_in",
+     "side": "right"
+    },
+    {
+     "number": "44",
+     "name": "GND",
+     "type": "power_in",
+     "side": "right"
+    }
+   ]
+  }
+ ],
+ "components": [
+  {
+   "ref": "A1",
+   "lib_id": "segway_modulos:ROB-012_ESP32-S3-DevKitC-1_N16R8_44p",
+   "value": "ESP32-S3-DevKitC-1 N16R8",
+   "footprint": "segway_modulos:ROB-012_ESP32-S3-DevKitC-1_N16R8_44p",
+   "block": "controlador",
+   "dnp": false,
+   "source": "Heemol ESP32-S3-DevKitC-1-N16R8, ASIN B0FKFXC6F8; manual del vendedor (manuals.plus) y pinout del vendedor en ROB-012_ESP32-S3_DevKitC-1_N16R8/; orden igual a Espressif ESP32-S3-DevKitC-1",
+   "status": "confirmado [M] (DEC-16); separación de hileras 25,40 mm supuesta (SUP-E01)",
+   "supuestos": [
+    "SUP-22",
+    "SUP-23",
+    "SUP-24",
+    "SUP-25",
+    "SUP-26",
+    "SUP-27",
+    "SUP-28"
+   ]
+  },
+  {
+   "ref": "A2",
+   "lib_id": "segway_modulos:ROB-013_MPU6050_modulo_8p",
+   "value": "GY-521 MPU6050 0x68",
+   "footprint": "segway_modulos:ROB-013_MPU6050_modulo_8p",
+   "block": "sensores",
+   "dnp": false,
+   "source": "DEC-09 [M]; [CAP]/ROB-013_MPU6050/referencia_modulo_matias_2026-10-17.png [V]; [DS-MPU] p.14, p.15, p.21, p.33",
+   "status": "provisorio [H] (orden de pines [V]/[M]; zócalo estándar 1x08 (DEC-13); alimentado desde 3V3_PER; contorno del módulo pendiente de medida; codificación propuesta: retirar el pin 5 (XDA, sin uso) de la tira macho y tapar la posición 5 del zócalo, porque invertido llevaría 3V3_PER a INT y el VCC del módulo a PB14) | v0.4: huella segway_modulos:ROB-013_MPU6050_modulo_8p (1x08 + 2 NPTH de 3,2 mm, contorno supuesto); AD0 (pin 7) sin conexión: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66); sin pistas debajo",
+   "supuestos": [
+    "SUP-36",
+    "SUP-60",
+    "SUP-30"
+   ]
+  },
+  {
+   "ref": "A3",
+   "lib_id": "segway_modulos:ROB-008_DRV8871_modulo_8p",
+   "value": "DRV8871 mód. IZQ (enchufable)",
+   "footprint": "segway_modulos:ROB-008_DRV8871_modulo_8p",
+   "block": "motores",
+   "dnp": false,
+   "source": "[CAP]/ROB-008_DRV8871/referencia_compra.png [V]; drv.brd de Adafruit, JP2 1=GND 2=VMOTOR 3=IN1 4=IN2 [D-ref]; [ADA-3190] (borneras soldadas de fábrica; VM y GND del header unidos a POWER); [DS-DRV] p.5 (IOCP 3,7-6,4 A), p.9 (ITRIP = VILIM/RILIM); [WURTH-PHD] 3 A por contacto [V]",
+   "status": "provisorio [H]: opción B fija, con las borneras POWER y MOTOR del módulo reemplazadas por pines macho (SUP-32); huella segway_modulos:ROB-008_DRV8871_modulo_8p con la geometría del drv.brd de Adafruit 3190, sin medir el clon; OUT1/OUT2 con un contacto solo si ITRIP ≤ 2,4 A (RILIM ≥ 28,75 kΩ, leer en E-01); opción A (J5) eliminada (SUP-63)",
+   "supuestos": [
+    "SUP-32",
+    "SUP-41"
+   ]
+  },
+  {
+   "ref": "A4",
+   "lib_id": "segway_modulos:ROB-008_DRV8871_modulo_8p",
+   "value": "DRV8871 mód. DER (prov., enchufable)",
+   "footprint": "segway_modulos:ROB-008_DRV8871_modulo_8p",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que A3; [ENERGIA] §10 decisión 10 (segundo DRV8871 idéntico)",
+   "status": "provisorio [H] (módulo no comprado, REQ-06; decisión 10 de [ENERGIA] §10 pendiente; mismas condiciones de la opción B que A3) | v0.4: huella segway_modulos:ROB-008_DRV8871_modulo_8p; segundo módulo por comprar (SUP-33); J6 eliminada (SUP-63)",
+   "supuestos": [
+    "SUP-32",
+    "SUP-33",
+    "SUP-41"
+   ]
+  },
+  {
+   "ref": "A5",
+   "lib_id": "segway_modulos:ROB-002_INA219_MCU-219_8p",
+   "value": "INA219 MCU-219 0x41 IZQ",
+   "footprint": "segway_modulos:ROB-002_INA219_MCU-219_8p",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[CAP]/ROB-002_INA219/referencia_compra.png (tira Vcc-Gnd-Scl-Sda-Vin−-Vin+ y bornera suelta) [V]; [DS-219] p.3, p.4, p.14 Tabla 1; [ENERGIA] §5.1-5.2; [WURTH-PHD] 3 A por contacto [V]; [DS-DRV] p.5 (IOCP mín. 3,7 A)",
+   "status": "provisorio [H]: dirección 0x41 por puente A0 [H], sujeta al cambio del contrato §4.1; pines macho en los agujeros de la bornera, 2 contactos por net de corriente (5+7 y 6+8), ≤ 4,8 A (SUP-34, SUP-41); huella segway_modulos:ROB-002_INA219_MCU-219_8p con bornera de paso 3,5 mm medida en la captura, sin medir el módulo; J21 eliminada (SUP-63); decisión 4 de [ENERGIA] §10 pendiente",
+   "supuestos": [
+    "SUP-34",
+    "SUP-41"
+   ]
+  },
+  {
+   "ref": "A6",
+   "lib_id": "segway_modulos:ROB-002_INA219_MCU-219_8p",
+   "value": "INA219 MCU-219 0x44 DER",
+   "footprint": "segway_modulos:ROB-002_INA219_MCU-219_8p",
+   "block": "sensores",
+   "dnp": false,
+   "source": "Igual que A5; dirección 0x44 por puente A1 del módulo ([DS-219] p.14 Tabla 1)",
+   "status": "provisorio [H]: dirección 0x44 por puente A1 [H], sujeta al cambio del contrato §4.1; mismas condiciones de zócalo y huella que A5 (SUP-34); J22 eliminada (SUP-63)",
+   "supuestos": [
+    "SUP-34",
+    "SUP-41"
+   ]
+  },
+  {
+   "ref": "A7",
+   "lib_id": "segway_modulos:ROB-009_INA226_modulo_8p",
+   "value": "INA226 0x40 lógica+bus",
+   "footprint": "segway_modulos:ROB-009_INA226_modulo_8p",
+   "block": "sensores",
+   "dnp": false,
+   "source": "[CAP]/ROB-009_INA226/referencia_compra.png [V]; [DS-226] p.3, p.5, p.15, p.18 Tabla 6-2, p.26-28; [ENERGIA] §5.1 (R100 solo apto para lógica); [DS-226] p.4 §5.1 (VS 6 V abs.)",
+   "status": "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_PER y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de PB13 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67)",
+   "supuestos": [
+    "SUP-35",
+    "SUP-38"
+   ]
+  },
+  {
+   "ref": "J1",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Batería MKDS3 1=P− 2=P+",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "DEC-13 [M] (preferir borneras en potencia); [PHX-MKDS3] (24 A IEC con 2,5 mm², UL 10-15 A, AWG 24-12); TerminalBlock_Phoenix_MKDS-3-2-5.08 .kicad_mod (pads 1-2); pico del robot ≈20 A [H]",
+   "status": "provisorio [H] (reemplaza al XT60PW-M; no polarizada: exige Q1 montado o un XT60 en latiguillo del lado del cable, decisión de Matías; cable AWG 14; serigrafía 'BAT − +' y separación física de J3)",
+   "supuestos": [
+    "SUP-18",
+    "SUP-44",
+    "SUP-52"
+   ]
+  },
+  {
+   "ref": "F1",
+   "lib_id": "Device:Fuse",
+   "value": "ATO 15A lento",
+   "footprint": "Fuse:Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[ENERGIA] §2, §2.3; [DS-BMS] p.2 (54-90 A)",
+   "status": "provisorio [H]: ATO de 15 A lento (SUP-46), a confirmar tras E-06/E-08; F1 en la placa es un desvío del contrato §2.9: agregar además un fusible en línea junto al pack",
+   "supuestos": [
+    "SUP-46",
+    "SUP-19"
+   ]
+  },
+  {
+   "ref": "J3",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Lazo interruptor+paro",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[CONTRATO] §2.9, §2.12; [ENERGIA] §2, §8",
+   "status": "provisorio [H] (REQ-17 abierto; igual tipo que J1: separarlas y rotular 'SW')",
+   "supuestos": [
+    "SUP-18",
+    "SUP-45",
+    "SUP-52"
+   ]
+  },
+  {
+   "ref": "Q1",
+   "lib_id": "Transistor_FET:IRF4905",
+   "value": "IRF4905",
+   "footprint": "Package_TO_SOT_THT:TO-220-3_Vertical",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-IRF4905] p.1-2 (RDS(on) 20 mΩ a VGS −10 V; RθJA 62 °C/W); Transistor_FET.kicad_sym (1=G, 2=D, 3=S); [ENERGIA] §2.4(c)",
+   "status": "provisorio [H] (montado por defecto: con J1 en bornera es la única protección de polaridad; disipador obligatorio, 4,5-6,8 W a 15 A y ≈0,5 W a 5 A; decisiones 3 y 9 de [ENERGIA] §10 pendientes de Matías) | v0.4: JP1 eliminado (SUP-63)",
+   "supuestos": [
+    "SUP-44",
+    "SUP-20"
+   ]
+  },
+  {
+   "ref": "R29",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[ENERGIA] §2.4(c); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (montada con Q1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-44",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "D3",
+   "lib_id": "Device:D_Zener",
+   "value": "BZX79-C12",
+   "footprint": "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Infineon IRF4905 p.1 (VGS ±20 V); Device.kicad_sym D_Zener 1=K 2=A",
+   "status": "provisorio [H] (montado con Q1; limita VGS a 12 V)",
+   "supuestos": [
+    "SUP-44"
+   ]
+  },
+  {
+   "ref": "C1",
+   "lib_id": "Device:C_Polarized",
+   "value": "470µ/35V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D10.0mm_P5.00mm",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Criterio [DS-DRV] p.14 §9.1 (bulk según VM y corriente); 35 V por el clamp de [DS-SMAJ] p.2 (24,4 V); valor 470 µF [H]",
+   "status": "provisorio [H] (valor tras E-04/E-08; decisión 9 de [ENERGIA] §10) | v0.4: C2 eliminado (SUP-63)",
+   "supuestos": [
+    "SUP-50"
+   ]
+  },
+  {
+   "ref": "C3",
+   "lib_id": "Device:C",
+   "value": "10µ/50V X7R multicapa radial",
+   "footprint": "Capacitor_THT:C_Disc_D7.5mm_W5.0mm_P5.00mm",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-BMS] p.2 nota 3; [ENERGIA] §7; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] | v0.4: THT: multicapa radial P5,00 en lugar de 1206 (SUP-17); se conserva por la nota 3 del BMS",
+   "supuestos": [
+    "SUP-50",
+    "SUP-17"
+   ]
+  },
+  {
+   "ref": "D1",
+   "lib_id": "Diode:1.5KExxA",
+   "value": "SA15A (alt. P6KE18A)",
+   "footprint": "Diode_THT:D_DO-15_P10.16mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Requisitos de la §8 de diseno_v0.3.md: VWM > 13,6 V y VC < 26 V del INA219 ([DS-219] p.4); Littelfuse series SA y P6KE (hojas no archivadas, SUP-17); Diode.kicad_sym 1.5KExxA (unidireccional, pin 1 = K); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H]: SA15A en DO-15 (VWM 15 V, VC 24,4 V); alternativa P6KE18A (VWM 15,3 V, VC 25,2 V); nunca P6KE15A (VWM 12,8 V < 13,6 V) (SUP-17); hojas de datos por archivar; símbolo Diode:1.5KExxA con pin 1 = K a VM_BUS; verificar la banda contra el pad 1",
+   "supuestos": [
+    "SUP-17"
+   ]
+  },
+  {
+   "ref": "R28",
+   "lib_id": "Device:R",
+   "value": "5k1",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[ENERGIA] §8 (apagado); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-51",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "D4",
+   "lib_id": "Device:LED",
+   "value": "LED rojo 3mm VM",
+   "footprint": "LED_THT:LED_D3.0mm",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Device.kicad_sym LED 1=K 2=A",
+   "status": "provisorio [H]",
+   "supuestos": [
+    "SUP-51"
+   ]
+  },
+  {
+   "ref": "R22",
+   "lib_id": "Device:R",
+   "value": "100k 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (química del pack pendiente; muestrear con ≥ 28,5 ciclos) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-51",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R23",
+   "lib_id": "Device:R",
+   "value": "12k 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "Igual que R22 (k = 0,1071; 13,6 V → 1,46 V; 24,4 V → 2,61 V < VDDA; Rth 10,7 kΩ); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-51",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "C14",
+   "lib_id": "Device:C",
+   "value": "100n/50V cerámico de disco (104)",
+   "footprint": "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm",
+   "block": "entrada_potencia",
+   "dnp": false,
+   "source": "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] | v0.4: THT: disco P5,00 en lugar de 0805",
+   "supuestos": [
+    "SUP-51",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "F2",
+   "lib_id": "Device:Fuse",
+   "value": "ATM 4A",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "motores",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)",
+   "status": "provisorio [H]: ATM de 4 A (SUP-47), ≤ 4,8 A por los zócalos de A3 y A5 (2 contactos × 3 A × 0,8); corriente del portafusible sin verificar (SUP-19); valor tras E-04",
+   "supuestos": [
+    "SUP-47",
+    "SUP-19"
+   ]
+  },
+  {
+   "ref": "C4",
+   "lib_id": "Device:C_Polarized",
+   "value": "47µ/35V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "block": "motores",
+   "dnp": false,
+   "source": "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar",
+   "status": "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C6 eliminado: el módulo trae 0,1 µF + 22 µF (SUP-69)",
+   "supuestos": [
+    "SUP-50"
+   ]
+  },
+  {
+   "ref": "R1",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (lado MCU de R35; 2,2 kΩ cubre un pull-up interno de 30 kΩ: 0,22 V < VIL; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R2",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (lado MCU de R36; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R35",
+   "lib_id": "Device:R",
+   "value": "4k7 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (nueva, a ratificar: protege PA6 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R36",
+   "lib_id": "Device:R",
+   "value": "4k7 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (nueva; protege PA7) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "J11",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Motor IZQ 1=M+ 2=M−",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "DEC-13 [M] (borneras para motores); DEC-01 [M] (rojo M+, blanco M−); [PHX-MKDS15] (17,5 A IEC, 10 A UL, AWG 26-14); [DS-DRV] p.5 (IOCP ≤ 6,4 A)",
+   "status": "provisorio [H] (montada; 1 = M+ rojo = OUT1, 2 = M− blanco = OUT2; la rueda espejada se invierte en firmware). PCB v0.1: numeración de pines invertida respecto de la v0.4 inicial para que las salidas OUT1/OUT2 del DRV8871 lleguen a la bornera sin cruzarse en una sola capa; la polaridad rojo = M+ = OUT1 no cambia",
+   "supuestos": [
+    "SUP-18",
+    "SUP-32",
+    "SUP-52"
+   ]
+  },
+  {
+   "ref": "F3",
+   "lib_id": "Device:Fuse",
+   "value": "ATM 4A",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "motores",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2, §2.3; [DS-DRV] p.5 (OCP 3,7-6,4 A)",
+   "status": "provisorio [H]: ATM de 4 A (SUP-47) por los zócalos de A4 y A6; corriente del portafusible sin verificar (SUP-19); valor tras E-04",
+   "supuestos": [
+    "SUP-47",
+    "SUP-19"
+   ]
+  },
+  {
+   "ref": "C5",
+   "lib_id": "Device:C_Polarized",
+   "value": "47µ/35V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "block": "motores",
+   "dnp": false,
+   "source": "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar",
+   "status": "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C7 eliminado (SUP-69)",
+   "supuestos": [
+    "SUP-50"
+   ]
+  },
+  {
+   "ref": "R3",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (lado MCU de R37; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R4",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (lado MCU de R38; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R37",
+   "lib_id": "Device:R",
+   "value": "4k7 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (nueva; protege PB0) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R38",
+   "lib_id": "Device:R",
+   "value": "4k7 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (nueva; protege PB1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-57",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "J12",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Motor DER 1=M+ 2=M−",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "motores",
+   "dnp": false,
+   "source": "Igual que J11",
+   "status": "provisorio [H] (montada; 1 = M+ rojo = OUT1, 2 = M− blanco = OUT2; la rueda espejada se invierte en firmware). PCB v0.1: numeración de pines invertida respecto de la v0.4 inicial para que las salidas OUT1/OUT2 del DRV8871 lleguen a la bornera sin cruzarse en una sola capa; la polaridad rojo = M+ = OUT1 no cambia",
+   "supuestos": [
+    "SUP-18",
+    "SUP-32",
+    "SUP-52"
+   ]
+  },
+  {
+   "ref": "F4",
+   "lib_id": "Device:Fuse",
+   "value": "ATM 7,5A",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2, §2.3",
+   "status": "provisorio [H]: ATM de 7,5 A (SUP-48); el UBEC toma ≈3,8 A de entrada; la clase SERVO usa 3,5 mm por este valor; portafusible mini a verificar para 7,5 A (SUP-19); valor tras E-05/E-06",
+   "supuestos": [
+    "SUP-48",
+    "SUP-19"
+   ]
+  },
+  {
+   "ref": "J15",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "UBEC entrada",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[CAP]/ROB-007_YSIDO_UBEC_6A/referencia_compra.png [V]; DEC-13 [M]; [PHX-MKDS15] (10 A UL)",
+   "status": "provisorio [H] (montada; se corta el enchufe rojo de 2 pines del UBEC y los hilos se atornillan; ≈3,9 A [H] de entrada frente a 10 A UL)",
+   "supuestos": [
+    "SUP-40",
+    "SUP-18",
+    "SUP-52"
+   ]
+  },
+  {
+   "ref": "J16",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "UBEC salida 6V PT1,5 1=GND 2=V+",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "DEC-13 [M]; [DS-SERVO] p.3 tabla 3-4 (bloqueo 3,9 A por servo); [FLUJO] l.72; [PHX-PT15] (10 A UL, AWG 26-16)",
+   "status": "provisorio [H]: se corta el JR de salida del UBEC (SUP-40); paso 3,5 mm para no confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar servos (7,4 V prohibido)",
+   "supuestos": [
+    "SUP-40",
+    "SUP-18"
+   ]
+  },
+  {
+   "ref": "J13",
+   "lib_id": "Connector_Generic:Conn_01x03",
+   "value": "Servo IZQ JR",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+   "block": "servos",
+   "dnp": false,
+   "source": "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)",
+   "status": "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06; serigrafiar 'S + −' y los colores del cable junto al header)",
+   "supuestos": [
+    "SUP-56"
+   ]
+  },
+  {
+   "ref": "R5",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-56",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R7",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-56",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "C8",
+   "lib_id": "Device:C_Polarized",
+   "value": "470µ/16V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+   "block": "servos",
+   "dnp": false,
+   "source": "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]",
+   "status": "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C9, uno por header de servo (SUP-50); C22 eliminado (SUP-69)",
+   "supuestos": [
+    "SUP-50"
+   ]
+  },
+  {
+   "ref": "J14",
+   "lib_id": "Connector_Generic:Conn_01x03",
+   "value": "Servo DER JR",
+   "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical",
+   "block": "servos",
+   "dnp": false,
+   "source": "[DS-SERVO] p.3 §5, p.4 §6 (ficha de distribuidor de la familia)",
+   "status": "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06; serigrafiar 'S + −' y los colores del cable junto al header)",
+   "supuestos": [
+    "SUP-56"
+   ]
+  },
+  {
+   "ref": "R6",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-56",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R8",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-56",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "C9",
+   "lib_id": "Device:C_Polarized",
+   "value": "470µ/16V low-ESR",
+   "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+   "block": "servos",
+   "dnp": false,
+   "source": "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]",
+   "status": "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C8 (SUP-50)",
+   "supuestos": [
+    "SUP-50"
+   ]
+  },
+  {
+   "ref": "F5",
+   "lib_id": "Device:Fuse",
+   "value": "ATM 1A",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "block": "logica",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2 (fila Lógica); consumo de la rama ≈0,1 A [H] (§7 del documento: ≈0,55 W de cargas con rendimiento 80 % [H] a 7,5 V); [DS-226] p.5 (81,92 mV / 0,1 Ω = 0,82 A de rango del R100)",
+   "status": "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entradas de A8/A9 (C24 eliminado, SUP-69)",
+   "supuestos": [
+    "SUP-49",
+    "SUP-19"
+   ]
+  },
+  {
+   "ref": "A8",
+   "lib_id": "segway_modulos:ROB-005-006_MiniBuck_modulo_4p",
+   "value": "Mini buck 5V ROB-006",
+   "footprint": "segway_modulos:ROB-005-006_MiniBuck_modulo_4p",
+   "block": "logica",
+   "dnp": false,
+   "source": "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)",
+   "status": "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69)",
+   "supuestos": [
+    "SUP-37",
+    "SUP-38"
+   ]
+  },
+  {
+   "ref": "J18",
+   "lib_id": "Connector:Screw_Terminal_01x03",
+   "value": "Voltímetro ROB-004",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal",
+   "block": "logica",
+   "dnp": false,
+   "source": "[CAP]/ROB-004_Voltimetro/referencia_compra.png; ficha_comercial_DIYMORE_REFERENCIA.html [V]",
+   "status": "pendiente de medida (colores por convención [H]; ubicación en VM_LOG = propuesta [H] que se desvía de [ENERGIA] §2 y [CONTRATO] §2.10 (bus VM), pendiente de Matías, decisión 12)",
+   "supuestos": [
+    "SUP-39",
+    "SUP-18"
+   ]
+  },
+  {
+   "ref": "D2",
+   "lib_id": "Diode:1N5819",
+   "value": "1N5819",
+   "footprint": "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal",
+   "block": "logica",
+   "dnp": false,
+   "source": "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02",
+   "supuestos": [
+    "SUP-17"
+   ]
+  },
+  {
+   "ref": "J7",
+   "lib_id": "Connector:Screw_Terminal_01x04",
+   "value": "Encoder IZQ PT1,5 1=GND 2=A 3=B 4=V",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-4-3.5-H_1x04_P3.50mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "DEC-13 [M]; DEC-01 [M] (negro GND, amarillo y verde señales, azul V+ del encoder); [PHX-PT15] (17,5 A IEC, 10 A UL, AWG 26-16); [CONTRATO] §2.4",
+   "status": "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69)",
+   "supuestos": [
+    "SUP-53",
+    "SUP-55",
+    "SUP-18"
+   ]
+  },
+  {
+   "ref": "J8",
+   "lib_id": "Connector:Screw_Terminal_01x04",
+   "value": "Encoder DER PT1,5 1=GND 2=A 3=B 4=V",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-4-3.5-H_1x04_P3.50mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "DEC-13 [M]; DEC-01 [M] (negro GND, amarillo y verde señales, azul V+ del encoder); [PHX-PT15] (17,5 A IEC, 10 A UL, AWG 26-16); [CONTRATO] §2.4",
+   "status": "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (SUP-53); C21 eliminado (SUP-69)",
+   "supuestos": [
+    "SUP-53",
+    "SUP-55",
+    "SUP-18"
+   ]
+  },
+  {
+   "ref": "R13",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
+   "supuestos": [
+    "SUP-54",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R14",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
+   "supuestos": [
+    "SUP-54",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R15",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
+   "supuestos": [
+    "SUP-54",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "R16",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
+   "supuestos": [
+    "SUP-54",
+    "SUP-16"
+   ]
+  },
+  {
+   "ref": "J4",
+   "lib_id": "Connector:Screw_Terminal_01x02",
+   "value": "Paro MPT0,5 1=GND 2=PARO (NC)",
+   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.12; DEC-13 [M]; [PHX-MPT05] (6 A [V], AWG 28-20 de la hermana 1725708 [D])",
+   "status": "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a PB12 sin R25 ni C15 (SUP-58)",
+   "supuestos": [
+    "SUP-45",
+    "SUP-58",
+    "SUP-18"
+   ]
+  },
+  {
+   "ref": "R24",
+   "lib_id": "Device:R",
+   "value": "10k",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "[CONTRATO] §2.12 (nivel definido por pull externo); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_PER el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a PB12 (R25 y C15 eliminados, SUP-58, SUP-71)",
+   "supuestos": [
+    "SUP-58",
+    "SUP-16"
+   ]
+  }
+ ],
+ "nets": [
+  {
+   "name": "GND",
+   "kind": "power",
+   "pins": [
+    "J1.1",
+    "C1.2",
+    "C3.2",
+    "D1.2",
+    "R29.2",
+    "R23.2",
+    "C14.2",
+    "D4.1",
+    "C4.2",
+    "C5.2",
+    "R1.2",
+    "R2.2",
+    "R3.2",
+    "R4.2",
+    "A3.1",
+    "A3.6",
+    "A4.1",
+    "A4.6",
+    "J15.1",
+    "J16.1",
+    "J13.1",
+    "J14.1",
+    "R7.2",
+    "R8.2",
+    "C8.2",
+    "C9.2",
+    "J18.1",
+    "A8.2",
+    "A8.4",
+    "A2.2",
+    "A5.2",
+    "A6.2",
+    "A7.7",
+    "J7.1",
+    "J8.1",
+    "J4.1",
+    "A1.22",
+    "A1.23",
+    "A1.43",
+    "A1.44"
+   ]
+  },
+  {
+   "name": "VBAT_P",
+   "kind": "power",
+   "pins": [
+    "J1.2",
+    "F1.1"
+   ]
+  },
+  {
+   "name": "VBAT_F",
+   "kind": "power",
+   "pins": [
+    "F1.2",
+    "J3.1"
+   ]
+  },
+  {
+   "name": "VBAT_SW",
+   "kind": "power",
+   "pins": [
+    "J3.2",
+    "Q1.2"
+   ]
+  },
+  {
+   "name": "VM_BUS",
+   "kind": "power",
+   "pins": [
+    "Q1.3",
+    "D3.1",
+    "C1.1",
+    "C3.1",
+    "D1.1",
+    "R28.1",
+    "R22.1",
+    "F2.1",
+    "F3.1",
+    "F4.1",
+    "F5.1"
+   ]
+  },
+  {
+   "name": "Q_POL_G",
+   "kind": "signal",
+   "pins": [
+    "Q1.1",
+    "R29.1",
+    "D3.2"
+   ]
+  },
+  {
+   "name": "LED_VM_A",
+   "kind": "signal",
+   "pins": [
+    "R28.2",
+    "D4.2"
+   ]
+  },
+  {
+   "name": "VBAT_ADC",
+   "kind": "signal",
+   "pins": [
+    "R22.2",
+    "R23.1",
+    "C14.1",
+    "A1.26"
+   ]
+  },
+  {
+   "name": "VM_IZQ_F",
+   "kind": "power",
+   "pins": [
+    "F2.2",
+    "A5.6",
+    "A5.8"
+   ]
+  },
+  {
+   "name": "VM_IZQ",
+   "kind": "power",
+   "pins": [
+    "C4.1",
+    "A5.5",
+    "A5.7",
+    "A3.2",
+    "A3.5"
+   ]
+  },
+  {
+   "name": "VM_DER_F",
+   "kind": "power",
+   "pins": [
+    "F3.2",
+    "A6.6",
+    "A6.8"
+   ]
+  },
+  {
+   "name": "VM_DER",
+   "kind": "power",
+   "pins": [
+    "C5.1",
+    "A6.5",
+    "A6.7",
+    "A4.2",
+    "A4.5"
+   ]
+  },
+  {
+   "name": "IN1_IZQ_MCU",
+   "kind": "signal",
+   "pins": [
+    "R1.1",
+    "R35.1",
+    "A1.8"
+   ]
+  },
+  {
+   "name": "IN1_IZQ",
+   "kind": "signal",
+   "pins": [
+    "R35.2",
+    "A3.3"
+   ]
+  },
+  {
+   "name": "IN2_IZQ_MCU",
+   "kind": "signal",
+   "pins": [
+    "R2.1",
+    "R36.1",
+    "A1.9"
+   ]
+  },
+  {
+   "name": "IN2_IZQ",
+   "kind": "signal",
+   "pins": [
+    "R36.2",
+    "A3.4"
+   ]
+  },
+  {
+   "name": "IN1_DER_MCU",
+   "kind": "signal",
+   "pins": [
+    "R3.1",
+    "R37.1",
+    "A1.10"
+   ]
+  },
+  {
+   "name": "IN1_DER",
+   "kind": "signal",
+   "pins": [
+    "R37.2",
+    "A4.3"
+   ]
+  },
+  {
+   "name": "IN2_DER_MCU",
+   "kind": "signal",
+   "pins": [
+    "R4.1",
+    "R38.1",
+    "A1.11"
+   ]
+  },
+  {
+   "name": "IN2_DER",
+   "kind": "signal",
+   "pins": [
+    "R38.2",
+    "A4.4"
+   ]
+  },
+  {
+   "name": "MOT_IZQ_1",
+   "kind": "signal",
+   "pins": [
+    "A3.7",
+    "J11.1"
+   ]
+  },
+  {
+   "name": "MOT_IZQ_2",
+   "kind": "signal",
+   "pins": [
+    "A3.8",
+    "J11.2"
+   ]
+  },
+  {
+   "name": "MOT_DER_1",
+   "kind": "signal",
+   "pins": [
+    "A4.7",
+    "J12.1"
+   ]
+  },
+  {
+   "name": "MOT_DER_2",
+   "kind": "signal",
+   "pins": [
+    "A4.8",
+    "J12.2"
+   ]
+  },
+  {
+   "name": "VM_UBEC",
+   "kind": "power",
+   "pins": [
+    "F4.2",
+    "J15.2"
+   ]
+  },
+  {
+   "name": "V_SERVO",
+   "kind": "power",
+   "pins": [
+    "J16.2",
+    "J13.2",
+    "J14.2",
+    "C8.1",
+    "C9.1"
+   ]
+  },
+  {
+   "name": "SERVO_IZQ_MCU",
+   "kind": "signal",
+   "pins": [
+    "R5.1",
+    "R7.1",
+    "A1.16"
+   ]
+  },
+  {
+   "name": "SERVO_IZQ_SIG",
+   "kind": "signal",
+   "pins": [
+    "R5.2",
+    "J13.3"
+   ]
+  },
+  {
+   "name": "SERVO_DER_MCU",
+   "kind": "signal",
+   "pins": [
+    "R6.1",
+    "R8.1",
+    "A1.17"
+   ]
+  },
+  {
+   "name": "SERVO_DER_SIG",
+   "kind": "signal",
+   "pins": [
+    "R6.2",
+    "J14.3"
+   ]
+  },
+  {
+   "name": "VM_LOG_F",
+   "kind": "power",
+   "pins": [
+    "F5.2",
+    "A7.1"
+   ]
+  },
+  {
+   "name": "VM_LOG",
+   "kind": "power",
+   "pins": [
+    "A7.2",
+    "A7.3",
+    "A8.1",
+    "J18.2",
+    "J18.3"
+   ]
+  },
+  {
+   "name": "5V",
+   "kind": "power",
+   "pins": [
+    "A8.3",
+    "D2.2"
+   ]
+  },
+  {
+   "name": "5V_MCU",
+   "kind": "power",
+   "pins": [
+    "D2.1",
+    "A1.21"
+   ]
+  },
+  {
+   "name": "3V3_MCU",
+   "kind": "power",
+   "pins": [
+    "R24.1",
+    "A2.1",
+    "A5.1",
+    "A6.1",
+    "A7.8",
+    "R13.1",
+    "R14.1",
+    "R15.1",
+    "R16.1",
+    "J7.4",
+    "J8.4",
+    "A1.1",
+    "A1.2"
+   ],
+   "note": "3,3 V del regulador de la DevKitC (SUP-E03) para el módulo y los periféricos"
+  },
+  {
+   "name": "ENC_IZQ_A",
+   "kind": "signal",
+   "pins": [
+    "J7.2",
+    "R13.2",
+    "A1.4"
+   ]
+  },
+  {
+   "name": "ENC_IZQ_B",
+   "kind": "signal",
+   "pins": [
+    "J7.3",
+    "R14.2",
+    "A1.5"
+   ]
+  },
+  {
+   "name": "ENC_DER_A",
+   "kind": "signal",
+   "pins": [
+    "J8.2",
+    "R15.2",
+    "A1.6"
+   ]
+  },
+  {
+   "name": "ENC_DER_B",
+   "kind": "signal",
+   "pins": [
+    "J8.3",
+    "R16.2",
+    "A1.7"
+   ]
+  },
+  {
+   "name": "I2C_SDA",
+   "kind": "signal",
+   "pins": [
+    "A2.4",
+    "A5.4",
+    "A6.4",
+    "A7.6",
+    "A1.12"
+   ]
+  },
+  {
+   "name": "I2C_SCL",
+   "kind": "signal",
+   "pins": [
+    "A2.3",
+    "A5.3",
+    "A6.3",
+    "A7.5",
+    "A1.15"
+   ]
+  },
+  {
+   "name": "IMU_INT",
+   "kind": "signal",
+   "pins": [
+    "A2.8",
+    "A1.18"
+   ]
+  },
+  {
+   "name": "INA_ALERT",
+   "kind": "signal",
+   "pins": [
+    "A7.4",
+    "A1.19"
+   ]
+  },
+  {
+   "name": "PARO_CONT",
+   "kind": "signal",
+   "pins": [
+    "J4.2",
+    "R24.2",
+    "A1.20"
+   ]
+  }
+ ],
+ "no_connect": [
+  "A2.5",
+  "A2.6",
+  "A2.7",
+  "A1.3",
+  "A1.13",
+  "A1.14",
+  "A1.24",
+  "A1.25",
+  "A1.27",
+  "A1.28",
+  "A1.29",
+  "A1.30",
+  "A1.31",
+  "A1.32",
+  "A1.33",
+  "A1.34",
+  "A1.35",
+  "A1.36",
+  "A1.37",
+  "A1.38",
+  "A1.39",
+  "A1.40",
+  "A1.41",
+  "A1.42"
+ ],
+ "fuentes_power": {
+  "VBAT_P": "J1.2",
+  "VBAT_F": "F1.2",
+  "VBAT_SW": "J3.2",
+  "VM_BUS": "Q1.3",
+  "VM_IZQ_F": "F2.2",
+  "VM_IZQ": "A5.5",
+  "VM_DER_F": "F3.2",
+  "VM_DER": "A6.5",
+  "VM_UBEC": "F4.2",
+  "V_SERVO": "J16.2",
+  "VM_LOG_F": "F5.2",
+  "VM_LOG": "A7.2",
+  "5V": "A8.3",
+  "5V_MCU": "D2.1",
+  "3V3_MCU": "A1.20",
+  "3V3_PER": "A9.3",
+  "GND": "J1.1"
+ },
+ "cambios_v03_v04": {
+  "fusiones_de_nets": {
+   "INA_SDA": "I2C_SDA",
+   "INA_SCL": "I2C_SCL",
+   "ENC_IZQ_A_MCU": "ENC_IZQ_A",
+   "ENC_IZQ_B_MCU": "ENC_IZQ_B",
+   "ENC_DER_A_MCU": "ENC_DER_A",
+   "ENC_DER_B_MCU": "ENC_DER_B",
+   "UART1_TX_MCU": "UART1_TX",
+   "UART1_RX_MCU": "UART1_RX",
+   "V_ENC": "3V3_PER",
+   "PARO_MCU": "PARO_CONT"
+  },
+  "nets_que_desaparecen": [
+   "RESERVA_SDA1",
+   "CICLO_SCL1",
+   "IMU_AD0",
+   "LED_ESTADO",
+   "LED_ESTADO_A",
+   "PARO_AUX"
+  ],
+  "nuevos_no_connect": [
+   "A1.17",
+   "A1.16",
+   "A2.7",
+   "A1.13"
+  ],
+  "eliminados": "conteo_v04.eliminados_lista de supuestos.json (93 refs, filas SUP-62 a SUP-71)"
+ },
+ "gpio_table": [
+  {
+   "function": "3V3",
+   "gpio": "3V3",
+   "board_pin": "1",
+   "net": "3V3_MCU",
+   "justification": ""
+  },
+  {
+   "function": "3V3",
+   "gpio": "3V3",
+   "board_pin": "2",
+   "net": "3V3_MCU",
+   "justification": ""
+  },
+  {
+   "function": "RST",
+   "gpio": "RST",
+   "board_pin": "3",
+   "net": "sin conexión",
+   "justification": ""
+  },
+  {
+   "function": "ENC_IZQ_A",
+   "gpio": "GPIO4",
+   "board_pin": "4",
+   "net": "ENC_IZQ_A",
+   "justification": "PCNT unidad 0; pin común sin strapping; ADC1 no usado"
+  },
+  {
+   "function": "ENC_IZQ_B",
+   "gpio": "GPIO5",
+   "board_pin": "5",
+   "net": "ENC_IZQ_B",
+   "justification": "PCNT unidad 0"
+  },
+  {
+   "function": "ENC_DER_A",
+   "gpio": "GPIO6",
+   "board_pin": "6",
+   "net": "ENC_DER_A",
+   "justification": "PCNT unidad 1"
+  },
+  {
+   "function": "ENC_DER_B",
+   "gpio": "GPIO7",
+   "board_pin": "7",
+   "net": "ENC_DER_B",
+   "justification": "PCNT unidad 1"
+  },
+  {
+   "function": "IN1_IZQ_MCU",
+   "gpio": "GPIO15",
+   "board_pin": "8",
+   "net": "IN1_IZQ_MCU",
+   "justification": "MCPWM0/LEDC; fuera de strapping; pull-down externo R1 asegura bajo al reset"
+  },
+  {
+   "function": "IN2_IZQ_MCU",
+   "gpio": "GPIO16",
+   "board_pin": "9",
+   "net": "IN2_IZQ_MCU",
+   "justification": "MCPWM0/LEDC; pull-down externo R2"
+  },
+  {
+   "function": "IN1_DER_MCU",
+   "gpio": "GPIO17",
+   "board_pin": "10",
+   "net": "IN1_DER_MCU",
+   "justification": "MCPWM1/LEDC; pull-down externo R3"
+  },
+  {
+   "function": "IN2_DER_MCU",
+   "gpio": "GPIO18",
+   "board_pin": "11",
+   "net": "IN2_DER_MCU",
+   "justification": "MCPWM1/LEDC; pull-down externo R4"
+  },
+  {
+   "function": "I2C_SDA",
+   "gpio": "GPIO8",
+   "board_pin": "12",
+   "net": "I2C_SDA",
+   "justification": "I2C0 (Arduino ESP32-S3 por defecto SDA=8)"
+  },
+  {
+   "function": "GPIO3",
+   "gpio": "GPIO3",
+   "board_pin": "13",
+   "net": "sin conexión",
+   "justification": "strapping: sin conexión"
+  },
+  {
+   "function": "GPIO46",
+   "gpio": "GPIO46",
+   "board_pin": "14",
+   "net": "sin conexión",
+   "justification": "strapping: sin conexión"
+  },
+  {
+   "function": "I2C_SCL",
+   "gpio": "GPIO9",
+   "board_pin": "15",
+   "net": "I2C_SCL",
+   "justification": "I2C0 (Arduino ESP32-S3 por defecto SCL=9)"
+  },
+  {
+   "function": "SERVO_IZQ_MCU",
+   "gpio": "GPIO10",
+   "board_pin": "16",
+   "net": "SERVO_IZQ_MCU",
+   "justification": "LEDC 50 Hz"
+  },
+  {
+   "function": "SERVO_DER_MCU",
+   "gpio": "GPIO11",
+   "board_pin": "17",
+   "net": "SERVO_DER_MCU",
+   "justification": "LEDC 50 Hz"
+  },
+  {
+   "function": "IMU_INT",
+   "gpio": "GPIO12",
+   "board_pin": "18",
+   "net": "IMU_INT",
+   "justification": "entrada con interrupción"
+  },
+  {
+   "function": "INA_ALERT",
+   "gpio": "GPIO13",
+   "board_pin": "19",
+   "net": "INA_ALERT",
+   "justification": "entrada con interrupción; pull-up en el módulo o R21"
+  },
+  {
+   "function": "PARO_CONT",
+   "gpio": "GPIO14",
+   "board_pin": "20",
+   "net": "PARO_CONT",
+   "justification": "entrada con interrupción; pull-up R24 a 3V3"
+  },
+  {
+   "function": "5V",
+   "gpio": "5V",
+   "board_pin": "21",
+   "net": "5V_MCU",
+   "justification": ""
+  },
+  {
+   "function": "GND",
+   "gpio": "GND",
+   "board_pin": "22",
+   "net": "GND",
+   "justification": ""
+  },
+  {
+   "function": "GND",
+   "gpio": "GND",
+   "board_pin": "23",
+   "net": "GND",
+   "justification": ""
+  },
+  {
+   "function": "GPIO43/TX",
+   "gpio": "GPIO43/TX",
+   "board_pin": "24",
+   "net": "sin conexión",
+   "justification": "UART0 del CH343P (programación y depuración)"
+  },
+  {
+   "function": "GPIO44/RX",
+   "gpio": "GPIO44/RX",
+   "board_pin": "25",
+   "net": "sin conexión",
+   "justification": "UART0 del CH343P (programación y depuración)"
+  },
+  {
+   "function": "VBAT_ADC",
+   "gpio": "GPIO1",
+   "board_pin": "26",
+   "net": "VBAT_ADC",
+   "justification": "ADC1_CH0, válido con Wi-Fi activo; divisor R22/R23"
+  },
+  {
+   "function": "GPIO2",
+   "gpio": "GPIO2",
+   "board_pin": "27",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO42",
+   "gpio": "GPIO42",
+   "board_pin": "28",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO41",
+   "gpio": "GPIO41",
+   "board_pin": "29",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO40",
+   "gpio": "GPIO40",
+   "board_pin": "30",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO39",
+   "gpio": "GPIO39",
+   "board_pin": "31",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO38",
+   "gpio": "GPIO38",
+   "board_pin": "32",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO37",
+   "gpio": "GPIO37",
+   "board_pin": "33",
+   "net": "sin conexión",
+   "justification": "reservado por la PSRAM octal del N16R8"
+  },
+  {
+   "function": "GPIO36",
+   "gpio": "GPIO36",
+   "board_pin": "34",
+   "net": "sin conexión",
+   "justification": "reservado por la PSRAM octal del N16R8"
+  },
+  {
+   "function": "GPIO35",
+   "gpio": "GPIO35",
+   "board_pin": "35",
+   "net": "sin conexión",
+   "justification": "reservado por la PSRAM octal del N16R8"
+  },
+  {
+   "function": "GPIO0",
+   "gpio": "GPIO0",
+   "board_pin": "36",
+   "net": "sin conexión",
+   "justification": "strapping: sin conexión"
+  },
+  {
+   "function": "GPIO45",
+   "gpio": "GPIO45",
+   "board_pin": "37",
+   "net": "sin conexión",
+   "justification": "strapping: sin conexión"
+  },
+  {
+   "function": "GPIO48",
+   "gpio": "GPIO48",
+   "board_pin": "38",
+   "net": "sin conexión",
+   "justification": "LED RGB WS2812 de la placa (indicador de estado)"
+  },
+  {
+   "function": "GPIO47",
+   "gpio": "GPIO47",
+   "board_pin": "39",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO21",
+   "gpio": "GPIO21",
+   "board_pin": "40",
+   "net": "sin conexión",
+   "justification": "libre (reserva)"
+  },
+  {
+   "function": "GPIO20",
+   "gpio": "GPIO20",
+   "board_pin": "41",
+   "net": "sin conexión",
+   "justification": "USB nativo D-/D+"
+  },
+  {
+   "function": "GPIO19",
+   "gpio": "GPIO19",
+   "board_pin": "42",
+   "net": "sin conexión",
+   "justification": "USB nativo D-/D+"
+  },
+  {
+   "function": "GND",
+   "gpio": "GND",
+   "board_pin": "43",
+   "net": "GND",
+   "justification": ""
+  },
+  {
+   "function": "GND",
+   "gpio": "GND",
+   "board_pin": "44",
+   "net": "GND",
+   "justification": ""
+  }
+ ],
+ "pcb": {
+  "revision_pcb": "v0.1",
+  "coordenadas": "mm; origen en la esquina superior izquierda del contorno; x hacia la derecha, y hacia abajo; vista desde la cara de componentes (F), como la muestra KiCad",
+  "board": {
+   "width_mm": 160,
+   "height_mm": 100,
+   "corner_radius": 3.0,
+   "mounting_holes": [
+    [
+     4,
+     4
+    ],
+    [
+     156,
+     4
+    ],
+    [
+     4,
+     96
+    ],
+    [
+     156,
+     96
+    ]
+   ],
+   "mounting_hole_drill_mm": 3.2,
+   "mounting_hole_type": "NPTH, MountingHole:MountingHole_3.2mm_M3",
+   "mounting_hole_keepout_diam_mm": 7.0,
+   "thickness_mm": 1.6,
+   "copper_um": 35,
+   "copper_layers": [
+    "B.Cu"
+   ],
+   "component_side": "F (cara superior)",
+   "vias": false,
+   "edge_clearance_mm": 2.0,
+   "supuestos": [
+    "SUP-01",
+    "SUP-03",
+    "SUP-04",
+    "SUP-05",
+    "SUP-12"
+   ],
+   "nota": "160 × 100 mm es el máximo supuesto (SUP-04). La suma de courtyards da ≈58 % del área: no conviene achicar sin pasar cruces a puentes de alambre. Esquinas redondeadas de 3 mm, limadas a mano; si se cortan rectas no cambia nada eléctrico."
+  },
+  "dru": {
+   "source": "reglas_casera.kicad_dru",
+   "copy_as": "segway_base.kicad_dru",
+   "doc": "reglas_fabricacion_casera.md",
+   "nota": "generar_esquema.py copia el archivo junto al .kicad_pro; KiCad solo lee <proyecto>.kicad_dru"
+  },
+  "netclasses": [
+   {
+    "name": "BATERIA_BUS",
+    "nets": [
+     "VBAT_P",
+     "VBAT_F",
+     "VBAT_SW",
+     "VM_BUS"
+    ],
+    "track_mm": 8.5,
+    "track_min_mm": 3.0,
+    "clearance_mm": 1.0,
+    "design_current_A": 15,
+    "nota": "Polígono o zona de ≥8,5 mm en B.Cu (F1 = 15 A, SUP-46), ruteado antes y bloqueado; cuello ≤5 mm en pads. R22.1, R28.1, D3.1, C3.1 y D1.1 van pegados al tronco porque la clase exige ≥3,0 mm hasta sus pads."
+   },
+   {
+    "name": "GND",
+    "nets": [
+     "GND"
+    ],
+    "track_mm": 2.0,
+    "track_min_mm": 1.0,
+    "clearance_mm": 0.7,
+    "design_current_A": 15,
+    "nota": "Relleno GND en B.Cu (SUP-13). Camino de potencia J1.1 → C1 → GND de A3/A4 y retorno de servos de ≥8,5 mm continuo, sin pasar bajo A2 ni A1."
+   },
+   {
+    "name": "MOTOR",
+    "nets": [
+     "VM_IZQ_F",
+     "VM_IZQ",
+     "VM_DER_F",
+     "VM_DER",
+     "MOT_IZQ_1",
+     "MOT_IZQ_2",
+     "MOT_DER_1",
+     "MOT_DER_2"
+    ],
+    "track_mm": 2.5,
+    "track_min_mm": 1.5,
+    "clearance_mm": 1.0,
+    "design_current_A": 4
+   },
+   {
+    "name": "SERVO",
+    "nets": [
+     "VM_UBEC",
+     "V_SERVO"
+    ],
+    "track_mm": 3.5,
+    "track_min_mm": 2.0,
+    "clearance_mm": 1.0,
+    "design_current_A": 7.5,
+    "nota": "3,5 mm en lugar de los 3,0 mm de reglas_fabricacion_casera.md: F4 queda en 7,5 A (SUP-48) y SUP-10 pide 3,5 mm; resuelve SUP-R07 (≈15 °C a 7,5 A con 35 µm)."
+   },
+   {
+    "name": "LOGICA",
+    "nets": [
+     "VM_LOG_F",
+     "VM_LOG",
+     "5V",
+     "5V_MCU",
+     "3V3_MCU",
+     "3V3_PER"
+    ],
+    "track_mm": 1.2,
+    "track_min_mm": 1.0,
+    "clearance_mm": 0.7,
+    "design_current_A": 1
+   },
+   {
+    "name": "Default",
+    "nets": "todas las demás (señales)",
+    "track_mm": 1.0,
+    "track_min_mm": 0.8,
+    "clearance_mm": 0.7,
+    "design_current_A": 0.1
+   }
+  ],
+  "zones": [
+   {
+    "name": "entrada_potencia_y_fusibles",
+    "rect": [
+     0,
+     0,
+     44,
+     100
+    ],
+    "refs": [
+     "J1",
+     "F1",
+     "J3",
+     "Q1",
+     "R29",
+     "D3",
+     "C1",
+     "C3",
+     "D1",
+     "R28",
+     "D4",
+     "R22",
+     "F2",
+     "F3",
+     "F5",
+     "F4",
+     "J4",
+     "J15"
+    ],
+    "bordes": {
+     "J1": "izquierdo, arriba (y≈8-21)",
+     "J3": "izquierdo, debajo de J1 (y≈23-35)",
+     "J4": "izquierdo (y≈58-66)",
+     "J15": "inferior, x≈10-22 (lejos de J1)"
+    },
+    "nota": "Cadena J1 → F1 → J3 → Q1 → tronco VM_BUS. Q1 vertical con reserva de 25 × 20 mm para el disipador (SUP-20). Portafusibles en columna en el orden F2, F3, F5, F4 de arriba hacia abajo, con la entrada del lado del tronco: F2/F3 salen hacia las zonas de motores, F5 hacia la lógica y F4 baja a J15 sin cruzar el tronco. C1 junto a Q1 y J1.1 (nodo de referencia de GND). Divisor: solo R22 aquí; R23 y C14 junto a PA3."
+   },
+   {
+    "name": "motor_izq",
+    "rect": [
+     44,
+     0,
+     102,
+     44
+    ],
+    "refs": [
+     "A5",
+     "A3",
+     "C4",
+     "J11",
+     "R1",
+     "R2",
+     "R35",
+     "R36"
+    ],
+    "bordes": {
+     "J11": "superior"
+    },
+    "nota": "A3 girado 180°: pads POWER/MOTOR hacia el borde superior y J11; header IN1/IN2 hacia abajo. A5 entre la llegada de VM_IZQ_F y A3. R1/R2/R35/R36 abajo, del lado de A1 (hilera derecha, pines 31-32). VM_DER_F cruza esta zona por su borde inferior."
+   },
+   {
+    "name": "motor_der",
+    "rect": [
+     102,
+     0,
+     160,
+     44
+    ],
+    "refs": [
+     "A6",
+     "A4",
+     "C5",
+     "J12",
+     "R3",
+     "R4",
+     "R37",
+     "R38"
+    ],
+    "bordes": {
+     "J12": "superior (fuera del círculo de 7 mm del agujero de (156, 4))"
+    },
+    "nota": "Igual que motor_izq. Retorno de GND de A4 por la franja superior hacia J1, sin pasar por la zona de la IMU."
+   },
+   {
+    "name": "logica",
+    "rect": [
+     44,
+     44,
+     90,
+     100
+    ],
+    "refs": [
+     "A7",
+     "A8",
+     "D2",
+     "J18",
+     "R24"
+    ],
+    "bordes": {
+     "J18": "inferior"
+    },
+    "nota": "F5 → A7 → A8/A9. A8 girado 90° respecto de A9 con rótulos 5V/3V3 en cobre (SUP-38). D2 junto al pin 18 (5V) de A1. R24 junto al pin 1 (PB12) de A1."
+   },
+   {
+    "name": "controlador",
+    "rect": [
+     90,
+     44,
+     116,
+     100
+    ],
+    "refs": [
+     "A1"
+    ],
+    "bordes": {
+     "A1": "extremo SWD al borde inferior"
+    },
+    "nota": "A1 vertical, rotación 0: pad 1 (PB12) arriba, micro-USB hacia el centro de la placa, SWD hacia el borde inferior. Pad 1 en (≈94,3; 48,54): courtyard desde y = 44,0, placa del módulo hasta ≈0,7 mm del borde, pads 20/21 a 2,1 mm del borde y pines SWD acodados en voladizo ≈3,8 mm fuera del contorno, a ≈11 mm de altura; la zona de 15 mm del ST-Link cae fuera de la placa (SUP-23). Pin 40 sin pista. Se puede rutear por debajo del módulo, entre hileras, entrando por el extremo USB."
+   },
+   {
+    "name": "imu_y_adc",
+    "rect": [
+     116,
+     44,
+     140,
+     80
+    ],
+    "refs": [
+     "A2",
+     "R23",
+     "C14"
+    ],
+    "nota": "A2 a ≥6 mm de bordes de zona de potencia, conectores y tornillos, sin pistas debajo (SUP-60). R23/C14 junto a PA3 (A1.28, hilera derecha)."
+   },
+   {
+    "name": "encoders",
+    "rect": [
+     140,
+     44,
+     160,
+     80
+    ],
+    "refs": [
+     "J7",
+     "J8",
+     "R13",
+     "R14",
+     "R15",
+     "R16"
+    ],
+    "bordes": {
+     "J7": "derecho",
+     "J8": "derecho"
+    }
+   },
+   {
+    "name": "servos_y_uart",
+    "rect": [
+     116,
+     80,
+     160,
+     100
+    ],
+    "refs": [
+     "J16",
+     "C8",
+     "C9",
+     "J13",
+     "J14",
+     "R5",
+     "R6",
+     "R7",
+     "R8"
+    ],
+    "bordes": {
+     "J16": "inferior",
+     "J13": "inferior",
+     "J14": "inferior",
+     "J23": "inferior, junto al SWD de A1"
+    },
+    "nota": "C8 junto a J13 y C9 junto a J14. R5-R8 del lado de A1. Fuera del círculo del agujero (156, 96)."
+   }
+  ],
+  "keepouts": [
+   {
+    "name": "acceso_USB_A1",
+    "rect": [
+     92,
+     30,
+     116,
+     44
+    ],
+    "regla": "solo piezas de ≤5 mm de alto (resistencias); deja pasar el cable micro-USB a la altura del módulo (≈11 mm)"
+   },
+   {
+    "name": "debajo_de_A2",
+    "regla": "sin pistas bajo el courtyard de A2 (SUP-60)"
+   },
+   {
+    "name": "disipador_Q1",
+    "regla": "25 × 20 mm libres junto a Q1, a 25 mm de alto, lejos de electrolíticos (SUP-20)"
+   }
+  ],
+  "puentes_alambre": {
+   "prefijo": "W",
+   "max": 8,
+   "alambre": "cobre estañado 0,6 mm",
+   "pad_mm": 2.2,
+   "taladro_mm": 0.9,
+   "paso": "múltiplo de 2,54 mm, 7,62-25,4 mm",
+   "regla": "solo señales o lógica ≤1 A (SUP-15)"
+  },
+  "pads_caseros": "Las huellas estándar de KiCad de resistencias axiales, DO-35, CP_Radial D6.3/D8, disco de 5 mm y headers traen pad de 1,6-1,7 mm. El script de la placa los agranda según la tabla §4 de reglas_fabricacion_casera.md, sin tocar la biblioteca oficial.",
+  "rotulos_cobre": [
+   "SEGWAY BASE v0.1",
+   "LADO COBRE",
+   "BAT + / BAT −",
+   "SW",
+   "M IZQ",
+   "M DER",
+   "UBEC IN",
+   "6V",
+   "5V",
+   "3V3",
+   "USB",
+   "SWD",
+   "pin 1 de cada zócalo",
+   "IN → OUT en A8/A9",
+   "escala de 50,00 mm"
+  ],
+  "ocupacion_courtyards": 0.58
+ },
+ "open_points": [
+  "Supuestos: todo valor físico no medido está en supuestos.md / supuestos.json (SUP-01 a SUP-71). Esta especificación coincide con conteo_v04 (60 piezas). Matías corrige con 'SUP-xx: es X'; el agente regenera esquema y PCB.",
+  "E-01 antes de taladrar: ninguna cota de las 7 huellas de segway_modulos.pretty está medida (fotos escaladas, drv.brd de Adafruit y fichas de terceros: SUP-22 a SUP-38). Imprimir el PDF 1:1 y apoyar cada módulo real sobre el papel antes de transferir.",
+  "Pads de zócalo: las huellas de módulos usan pads redondos de 2,2 mm a paso 2,54 mm (0,34 mm de cobre entre pads). reglas_fabricacion_casera.md §4 pide óvalo de 1,8 × 2,6 mm (0,74 mm) y la regla pad_a_pad exige 0,6 mm: el DRC marcará todos los zócalos de A1-A7 y J4 (MPT de 2,54). Decidir antes de la PCB: ovalar los pads de las huellas (recomendado) o aceptar 0,34 mm con una excepción en el DRU.",
+  "Pads de las huellas estándar de KiCad (resistencias axiales, DO-35, CP_Radial D6.3/D8, disco de 5 mm, headers): 1,6-1,7 mm con anillo de 0,4 mm. El script de la PCB debe agrandarlos a la tabla §4 de las reglas caseras. TO-220 de Q1: anillo de 0,3 mm en el lado corto (SUP-R08 de las reglas, todavía sin fila en supuestos.md).",
+  "Diferencias entre las tareas de base resueltas a favor de supuestos.md: C8 y C9 separados de 470 µF (la conversión THT proponía uno de 1000 µF); D1 = SA15A (proponía P6KE18A como principal); A2.7 (AD0) sin conexión (proponía unirlo a GND); C24 y R25 eliminados (los conservaba). Recomendación del agente para Matías: unir AD0 a GND no suma piezas y fija 0x68 aunque el GY-521 no tenga pull-down (SUP-36, SUP-66).",
+  "Anchos: reglas_fabricacion_casera.md (tronco 8,5 mm, motor 2,5, servo 3,0, lógica 1,2, señal 1,0) difiere de SUP-10 (5,0 / 2,0 / 3,5 / 1,0 / 0,8). Según SUP-09 mandan las reglas; la v0.4 las aplica salvo SERVO, que queda en 3,5 mm por F4 = 7,5 A (SUP-48, SUP-R07). Falta actualizar SUP-09 y SUP-10 y dar número SUP a SUP-R01..R09, SUP-HA-*, SUP-HB-* y SUP-HC-* que no tienen fila propia.",
+  "J15 (entrada del UBEC, MKDS 5,08 de 2 polos) queda en la zona de entrada, como J1 y J3: se ubica en el borde inferior, lejos de J1, con rótulo 'UBEC IN' en cobre. Si se conecta la batería en J15, F1 y Q1 quedan fuera del camino (protegen F4 y D1) (SUP-52).",
+  "Riesgos de la simplificación a vigilar: PA0/PA1 (no FT) sin R serie (SUP-53, SUP-54), PB12 sin R25/C15 (SUP-58), VM_LOG sin C24 (SUP-69), I²C sin pull-ups propias (SUP-30), A7 imprescindible para tener lógica sin JP8 (SUP-67). Ensayos: E-01, E-02, E-04, E-08.",
+  "Firmware: pull-up interna en PB13 (ALERT), antirrebote del paro por software en PB12, LED de estado en PC13, marcador de ciclo en PB8 sin conexión en la base; PB5, PB9, PA2, PA4, PA5, PA15, PB3 y PB4 libres (SUP-28).",
+  "Hojas de datos por archivar antes de comprar: SA15A, P6KE18A, 1N5819 y portafusible Keystone 3568 (¿7,5 A en F4?) (SUP-17, SUP-19). Documentación de la v0.3 aún pendiente: DS5319 Rev 20 y RM0008 Rev 21 (open_point 11 de la v0.3).",
+  "Contrato de interfaces y borrador de energía siguen redactados para ESP32: actualizarlos con aprobación de Matías (open_point 21 de la v0.3).",
+  "PWR_FLAG: generar_esquema.py pone uno en cada net power y el ERC no detecta un riel sin fuente. La v0.4 lo controla con la tabla fuentes_power (cada net de potencia contiene su pin fuente), verificada por el script de construcción.",
+  "Freerouting 2.5.0 aborta si el DSN tiene bloques (outline ...) o (keepout ...): el script de la PCB debe quitarlos (reglas_fabricacion_casera.md §7).",
+  "Los generadores de huellas, de supuestos y de esta especificación están en el scratchpad de la sesión; copiarlos a electronica/agente/ requiere autorización. Registrar ELE-020/PCB v0.1 y esta revisión en BACKLOG.md."
+ ],
+ "cambios_pcb_v01": {
+  "J11_J12_pines": "17/10/2026, PCB v0.1: J11.1/J12.1 = M+ (OUT1) y J11.2/J12.2 = M− (OUT2). Antes era al revés. Con la bornera en el borde superior y el DRV8871 girado 180°, el orden anterior obligaba a cruzar las dos pistas de motor (potencia, sin puentes posibles). Solo cambia el número de pin de la bornera; el cable rojo sigue en OUT1."
+ },
+ "cambios_v04_v05": [
+  "DEC-16: controladora Heemol ESP32-S3-DevKitC-1-N16R8 en lugar de la Blue Pill",
+  "A9 (mini buck 3,3 V) eliminado: 3V3 de la DevKitC alimenta MPU6050, INA y encoders (SUP-E03)",
+  "J23 (UART) eliminado: la depuración usa el USB del CH343P",
+  "Encoders a 3,3 V obligatorio: el ESP32-S3 no tolera 5 V en sus pines"
+ ]
+}

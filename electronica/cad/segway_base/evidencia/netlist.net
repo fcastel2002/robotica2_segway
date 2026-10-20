@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_base\\segway_base.kicad_sch")
-		(date "2026-10-17T22:41:33")
+		(date "2026-10-20T09:24:12")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -56,34 +56,34 @@
 	(components
 		(comp
 			(ref "A1")
-			(value "Blue Pill STM32F103C8T6")
-			(footprint "segway_modulos:ROB-012_BluePill_STM32F103C8_40p")
-			(description "ROB-012 (DEC-12 [M]). Placa Blue Pill con STM32F103C8T6: 40 posiciones en dos hileras de 20 a 2,54 mm. Numeracion tipo DIP-40 vista desde arriba, antihoraria, pin 1 = PB12 en el extremo del micro-USB. Hilera B12...3.3 = pines 1-20 (PB12, PB13, PB14, PB15, PA8, PA9, PA10, PA11, PA12, PA15, PB3, PB4, PB5, PB6, PB7, PB8, PB9, 5V, GND, 3V3). Hilera VB...G = pines 21-40 desde el extremo SWD (VBAT, PC13, PC14, PC15, PA0-PA7, PB0, PB1, PB10, PB11, NRST, 3V3, GND, GND). Equivalencia con el esquema VCC-GND: A1.n = P4.(21-n) para n = 1..20; A1.(20+k) = P3.k. Fuentes: esquema original VCC-GND 2016 (P2/P3/P4) [D]; stm32-base.org, Header 1/2 [D]; PR KiCad/kicad-symbols 1121 y kicad-footprints 1409, con la misma numeracion y filas a 15,24 mm [V]; captura de Matias del 17/10/2026 [V]. El header SWD de 4 pines (3V3, SWDIO = PA13, SWCLK = PA14, GND) no esta en el simbolo: va en angulo en el extremo opuesto al USB y queda libre para el ST-Link. 5V = VBUS del micro-USB, sin diodo. 3V3 (pines 20 y 38) es la salida del LDO de la placa (RT9193-33 o TX6211B, clase 300 mA); se declara passive para el ERC con PWR_FLAG. Pin 40 passive: GND segun el esquema, pero GND o VBUS segun el modelo (deskthority); queda sin conexion hasta medir y se usa como codificacion: pin macho 40 cortado en la placa y posicion 40 del zocalo tapada (girada 180 grados, el pin n cae en la posicion n+20 y el 5V del zocalo tocaria el 3.3 = VDD del STM32). PC14/PC15 llevan el cristal de 32,768 kHz y PC13 el LED de la placa. Huella v0.4: segway_modulos:ROB-012_BluePill_STM32F103C8_40p (dos hileras a 15,24 mm, pad n = pin n, posicion 40 tapada; contorno y salientes de USB/SWD supuestos sin medir, SUP-22 a SUP-24).")
+			(value "ESP32-S3-DevKitC-1 N16R8")
+			(footprint "segway_modulos:ROB-012_ESP32-S3-DevKitC-1_N16R8_44p")
+			(description "ROB-012 Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16), modulo ESP32-S3-WROOM-1 N16R8, CH343P, WS2812 en GPIO48. Pines 1-22 hilera izquierda desde la antena, 23-44 hilera derecha. GPIO35-37 reservados por la PSRAM octal. Pines NO tolerantes a 5 V.")
 			(fields
 				(field
-					(name "Estado") "provisorio [H]: huella segway_modulos:ROB-012_BluePill_STM32F103C8_40p creada el 17/10/2026 desde PR1409 y fotos escaladas, sin medir (SUP-22, SUP-23); pin 40 sin pista y posición 40 del zócalo tapada como codificación (SUP-24); USB nunca enchufado con la base alimentada (SUP-27); extremo SWD al borde inferior (pcb.zones controlador)")
+					(name "Estado") "confirmado [M] (DEC-16); separación de hileras 25,40 mm supuesta (SUP-E01)")
 				(field
-					(name "Fuente") "DEC-12 [M]; [SCH-BP] P2/P3/P4; [STM32-BASE] Header 1/2, SWD, Dimensions, Warnings; [CAP]/ROB-012_STM32_BluePill/referencia_bluepill_matias_2026-10-17.png [V]; [PR1121]/[PR1409] (numeración DIP-40, filas a 15,24 mm) [V]; [DS-STM32] Tabla 5 pp.28-33")
+					(name "Fuente") "Heemol ESP32-S3-DevKitC-1-N16R8, ASIN B0FKFXC6F8; manual del vendedor (manuals.plus) y pinout del vendedor en ROB-012_ESP32-S3_DevKitC-1_N16R8/; orden igual a Espressif ESP32-S3-DevKitC-1")
 				(field
-					(name "Footprint") "segway_modulos:ROB-012_BluePill_STM32F103C8_40p")
+					(name "Footprint") "segway_modulos:ROB-012_ESP32-S3-DevKitC-1_N16R8_44p")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "ROB-012 (DEC-12 [M]). Placa Blue Pill con STM32F103C8T6: 40 posiciones en dos hileras de 20 a 2,54 mm. Numeracion tipo DIP-40 vista desde arriba, antihoraria, pin 1 = PB12 en el extremo del micro-USB. Hilera B12...3.3 = pines 1-20 (PB12, PB13, PB14, PB15, PA8, PA9, PA10, PA11, PA12, PA15, PB3, PB4, PB5, PB6, PB7, PB8, PB9, 5V, GND, 3V3). Hilera VB...G = pines 21-40 desde el extremo SWD (VBAT, PC13, PC14, PC15, PA0-PA7, PB0, PB1, PB10, PB11, NRST, 3V3, GND, GND). Equivalencia con el esquema VCC-GND: A1.n = P4.(21-n) para n = 1..20; A1.(20+k) = P3.k. Fuentes: esquema original VCC-GND 2016 (P2/P3/P4) [D]; stm32-base.org, Header 1/2 [D]; PR KiCad/kicad-symbols 1121 y kicad-footprints 1409, con la misma numeracion y filas a 15,24 mm [V]; captura de Matias del 17/10/2026 [V]. El header SWD de 4 pines (3V3, SWDIO = PA13, SWCLK = PA14, GND) no esta en el simbolo: va en angulo en el extremo opuesto al USB y queda libre para el ST-Link. 5V = VBUS del micro-USB, sin diodo. 3V3 (pines 20 y 38) es la salida del LDO de la placa (RT9193-33 o TX6211B, clase 300 mA); se declara passive para el ERC con PWR_FLAG. Pin 40 passive: GND segun el esquema, pero GND o VBUS segun el modelo (deskthority); queda sin conexion hasta medir y se usa como codificacion: pin macho 40 cortado en la placa y posicion 40 del zocalo tapada (girada 180 grados, el pin n cae en la posicion n+20 y el 5V del zocalo tocaria el 3.3 = VDD del STM32). PC14/PC15 llevan el cristal de 32,768 kHz y PC13 el LED de la placa. Huella v0.4: segway_modulos:ROB-012_BluePill_STM32F103C8_40p (dos hileras a 15,24 mm, pad n = pin n, posicion 40 tapada; contorno y salientes de USB/SWD supuestos sin medir, SUP-22 a SUP-24).")
+					(name "Description") "ROB-012 Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16), modulo ESP32-S3-WROOM-1 N16R8, CH343P, WS2812 en GPIO48. Pines 1-22 hilera izquierda desde la antena, 23-44 hilera derecha. GPIO35-37 reservados por la PSRAM octal. Pines NO tolerantes a 5 V.")
 			)
 			(libsource
 				(lib "segway_modulos")
-				(part "ROB-012_BluePill_STM32F103C8_40p")
-				(description "ROB-012 (DEC-12 [M]). Placa Blue Pill con STM32F103C8T6: 40 posiciones en dos hileras de 20 a 2,54 mm. Numeracion tipo DIP-40 vista desde arriba, antihoraria, pin 1 = PB12 en el extremo del micro-USB. Hilera B12...3.3 = pines 1-20 (PB12, PB13, PB14, PB15, PA8, PA9, PA10, PA11, PA12, PA15, PB3, PB4, PB5, PB6, PB7, PB8, PB9, 5V, GND, 3V3). Hilera VB...G = pines 21-40 desde el extremo SWD (VBAT, PC13, PC14, PC15, PA0-PA7, PB0, PB1, PB10, PB11, NRST, 3V3, GND, GND). Equivalencia con el esquema VCC-GND: A1.n = P4.(21-n) para n = 1..20; A1.(20+k) = P3.k. Fuentes: esquema original VCC-GND 2016 (P2/P3/P4) [D]; stm32-base.org, Header 1/2 [D]; PR KiCad/kicad-symbols 1121 y kicad-footprints 1409, con la misma numeracion y filas a 15,24 mm [V]; captura de Matias del 17/10/2026 [V]. El header SWD de 4 pines (3V3, SWDIO = PA13, SWCLK = PA14, GND) no esta en el simbolo: va en angulo en el extremo opuesto al USB y queda libre para el ST-Link. 5V = VBUS del micro-USB, sin diodo. 3V3 (pines 20 y 38) es la salida del LDO de la placa (RT9193-33 o TX6211B, clase 300 mA); se declara passive para el ERC con PWR_FLAG. Pin 40 passive: GND segun el esquema, pero GND o VBUS segun el modelo (deskthority); queda sin conexion hasta medir y se usa como codificacion: pin macho 40 cortado en la placa y posicion 40 del zocalo tapada (girada 180 grados, el pin n cae en la posicion n+20 y el 5V del zocalo tocaria el 3.3 = VDD del STM32). PC14/PC15 llevan el cristal de 32,768 kHz y PC13 el LED de la placa. Huella v0.4: segway_modulos:ROB-012_BluePill_STM32F103C8_40p (dos hileras a 15,24 mm, pad n = pin n, posicion 40 tapada; contorno y salientes de USB/SWD supuestos sin medir, SUP-22 a SUP-24).")
+				(part "ROB-012_ESP32-S3-DevKitC-1_N16R8_44p")
+				(description "ROB-012 Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16), modulo ESP32-S3-WROOM-1 N16R8, CH343P, WS2812 en GPIO48. Pines 1-22 hilera izquierda desde la antena, 23-44 hilera derecha. GPIO35-37 reservados por la PSRAM octal. Pines NO tolerantes a 5 V.")
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H]: huella segway_modulos:ROB-012_BluePill_STM32F103C8_40p creada el 17/10/2026 desde PR1409 y fotos escaladas, sin medir (SUP-22, SUP-23); pin 40 sin pista y posición 40 del zócalo tapada como codificación (SUP-24); USB nunca enchufado con la base alimentada (SUP-27); extremo SWD al borde inferior (pcb.zones controlador)")
+				(value "confirmado [M] (DEC-16); separación de hileras 25,40 mm supuesta (SUP-E01)")
 			)
 			(property
 				(name "Fuente")
-				(value "DEC-12 [M]; [SCH-BP] P2/P3/P4; [STM32-BASE] Header 1/2, SWD, Dimensions, Warnings; [CAP]/ROB-012_STM32_BluePill/referencia_bluepill_matias_2026-10-17.png [V]; [PR1121]/[PR1409] (numeración DIP-40, filas a 15,24 mm) [V]; [DS-STM32] Tabla 5 pp.28-33")
+				(value "Heemol ESP32-S3-DevKitC-1-N16R8, ASIN B0FKFXC6F8; manual del vendedor (manuals.plus) y pinout del vendedor en ROB-012_ESP32-S3_DevKitC-1_N16R8/; orden igual a Espressif ESP32-S3-DevKitC-1")
 			)
 			(property
 				(name "Sheetname")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b4027b9e-b9ac-4a1c-a3b7-da52773ba265")
+			(tstamps "ee19e0f7-4447-4b91-9065-c2957614f8eb")
 			(units
 				(unit
 					(name "A")
@@ -163,64 +163,76 @@
 							(num "20")
 						)
 						(pin
-							(num "40")
-						)
-						(pin
-							(num "39")
-						)
-						(pin
-							(num "38")
-						)
-						(pin
-							(num "37")
-						)
-						(pin
-							(num "36")
-						)
-						(pin
-							(num "35")
-						)
-						(pin
-							(num "34")
-						)
-						(pin
-							(num "33")
-						)
-						(pin
-							(num "32")
-						)
-						(pin
-							(num "31")
-						)
-						(pin
-							(num "30")
-						)
-						(pin
-							(num "29")
-						)
-						(pin
-							(num "28")
-						)
-						(pin
-							(num "27")
-						)
-						(pin
-							(num "26")
-						)
-						(pin
-							(num "25")
-						)
-						(pin
-							(num "24")
-						)
-						(pin
-							(num "23")
+							(num "21")
 						)
 						(pin
 							(num "22")
 						)
 						(pin
-							(num "21")
+							(num "23")
+						)
+						(pin
+							(num "24")
+						)
+						(pin
+							(num "25")
+						)
+						(pin
+							(num "26")
+						)
+						(pin
+							(num "27")
+						)
+						(pin
+							(num "28")
+						)
+						(pin
+							(num "29")
+						)
+						(pin
+							(num "30")
+						)
+						(pin
+							(num "31")
+						)
+						(pin
+							(num "32")
+						)
+						(pin
+							(num "33")
+						)
+						(pin
+							(num "34")
+						)
+						(pin
+							(num "35")
+						)
+						(pin
+							(num "36")
+						)
+						(pin
+							(num "37")
+						)
+						(pin
+							(num "38")
+						)
+						(pin
+							(num "39")
+						)
+						(pin
+							(num "40")
+						)
+						(pin
+							(num "41")
+						)
+						(pin
+							(num "42")
+						)
+						(pin
+							(num "43")
+						)
+						(pin
+							(num "44")
 						)
 					)
 				)
@@ -269,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0b320804-ce3f-471e-bc18-e2bbcbb180ab")
+			(tstamps "4e7ce84c-f84a-4182-8ee5-4b4e42714677")
 			(units
 				(unit
 					(name "A")
@@ -345,7 +357,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "79f35d43-8b2f-4b7f-8745-f71da68c3ec3")
+			(tstamps "7e314e9d-f62a-470f-a281-ca74d0ab8bec")
 			(units
 				(unit
 					(name "A")
@@ -421,7 +433,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8faf61c7-dcae-4b9b-aae7-e364e5ca3dae")
+			(tstamps "ac8c29ac-032f-48df-9b1b-0b7cfaa5353c")
 			(units
 				(unit
 					(name "A")
@@ -497,7 +509,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0e3927c3-68c5-495b-96f2-9986f525a0e5")
+			(tstamps "8a699963-4642-4eb6-b2c8-9bdff68241ff")
 			(units
 				(unit
 					(name "A")
@@ -573,7 +585,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1ff6ad71-0212-4e51-82c6-1ad3a1ca2656")
+			(tstamps "da14323b-1e4b-4286-a616-b5a9c55eac6b")
 			(units
 				(unit
 					(name "A")
@@ -649,7 +661,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a7b0abb7-154c-4ac8-a08c-373c4cdb248c")
+			(tstamps "959de0f9-e0c0-43b6-9140-083f328d7907")
 			(units
 				(unit
 					(name "A")
@@ -725,71 +737,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "814c33f6-2d45-463c-8577-7807bb9f639e")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-						(pin
-							(num "3")
-						)
-						(pin
-							(num "4")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "A9")
-			(value "Mini buck 3,3V ROB-005 (3V3_PER)")
-			(footprint "segway_modulos:ROB-005-006_MiniBuck_modulo_4p")
-			(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
-			(fields
-				(field
-					(name "Estado") "provisorio [H]: riel 3V3_PER separado del LDO de la Blue Pill (SUP-31); chip y tensión máxima de entrada sin identificar, debe soportar 24,4 V (SUP-37); huella como A8; medir 3,3 V en OUT+ antes de insertar MPU e INA; rótulo 3V3 en cobre (SUP-38); R32, C27 y C28 eliminados (SUP-64, SUP-69)")
-				(field
-					(name "Fuente") "[INV] ROB-005 (5 módulos, salida fija 3,3 V) [V]; [CAP]/ROB-005_Mini_3V3/referencia_compra.png [V]; [SCH-BP] (LDO RT9193-33), [STM32-BASE] (TX6211B, 300 mA), [DESKTH] (≤100 mA para cargas externas)")
-				(field
-					(name "Footprint") "segway_modulos:ROB-005-006_MiniBuck_modulo_4p")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
-			)
-			(libsource
-				(lib "segway_modulos")
-				(part "ROB-005-006_MiniBuck_modulo_4p")
-				(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H]: riel 3V3_PER separado del LDO de la Blue Pill (SUP-31); chip y tensión máxima de entrada sin identificar, debe soportar 24,4 V (SUP-37); huella como A8; medir 3,3 V en OUT+ antes de insertar MPU e INA; rótulo 3V3 en cobre (SUP-38); R32, C27 y C28 eliminados (SUP-64, SUP-69)")
-			)
-			(property
-				(name "Fuente")
-				(value "[INV] ROB-005 (5 módulos, salida fija 3,3 V) [V]; [CAP]/ROB-005_Mini_3V3/referencia_compra.png [V]; [SCH-BP] (LDO RT9193-33), [STM32-BASE] (TX6211B, 300 mA), [DESKTH] (≤100 mA para cargas externas)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_base")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_base.kicad_sch")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "2cd08575-39af-4c6a-acc5-d9a575e2b643")
+			(tstamps "ea7b0cf2-603f-4c12-b8f2-b79b6f270db1")
 			(units
 				(unit
 					(name "A")
@@ -861,7 +809,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "344ae745-d90c-4aa1-8402-92df28dcae16")
+			(tstamps "9ea53fd9-496f-4ce3-9163-392f362d4916")
 			(units
 				(unit
 					(name "A")
@@ -927,7 +875,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c4fcf796-0366-4cd8-97a3-2c9bad427a5f")
+			(tstamps "5a59f5c4-97ac-45fe-982f-43d08292ca63")
 			(units
 				(unit
 					(name "A")
@@ -993,7 +941,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dfd7935e-97c4-4514-8955-777be2a893c2")
+			(tstamps "fcbf1097-b047-4dfb-b177-802902f65004")
 			(units
 				(unit
 					(name "A")
@@ -1059,7 +1007,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "88f6077b-34b7-4f73-9c19-9df135da3ac6")
+			(tstamps "5a994273-c7bb-404d-b630-4af22f2516e4")
 			(units
 				(unit
 					(name "A")
@@ -1125,7 +1073,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fc6962e4-24ec-4043-9787-7861adfcf9c2")
+			(tstamps "28304685-06fe-442e-91b2-88b0590e6fff")
 			(units
 				(unit
 					(name "A")
@@ -1191,7 +1139,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d7333388-7da4-478b-9f04-6c2c54b4469e")
+			(tstamps "a50ca13b-2f85-4a3c-b0d3-d6399e0ede88")
 			(units
 				(unit
 					(name "A")
@@ -1257,7 +1205,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "14315c53-caa6-40b1-9715-e9b5fb80de01")
+			(tstamps "72ba59f7-3164-479f-8840-88f4b70406c9")
 			(units
 				(unit
 					(name "A")
@@ -1323,7 +1271,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4f0052b3-30ba-4ab0-ad5b-d4b67178b34d")
+			(tstamps "ba315eec-d2b1-406c-998e-7a5529e66001")
 			(units
 				(unit
 					(name "A")
@@ -1389,7 +1337,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d4d08f20-80e8-42bf-9de5-ca662d9e897d")
+			(tstamps "1b906507-60a3-4e93-a0e8-09ed0e3a2820")
 			(units
 				(unit
 					(name "A")
@@ -1455,7 +1403,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3e7d0763-8083-4a87-9638-205382db5cef")
+			(tstamps "c56b5114-a486-4da8-b110-8c3343365ebd")
 			(units
 				(unit
 					(name "A")
@@ -1521,7 +1469,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "81d62f6c-b714-4e20-ac24-2927b02c841c")
+			(tstamps "d4355784-5f4b-4eb5-9c25-5fce5ae7a30b")
 			(units
 				(unit
 					(name "A")
@@ -1587,7 +1535,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8ba824fc-4a61-497c-848f-01e5949547b6")
+			(tstamps "ca271abe-a9fc-4030-8a92-7b6c33e66e49")
 			(units
 				(unit
 					(name "A")
@@ -1653,7 +1601,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "eb651a1a-3ae2-4a42-b32e-416bf083952e")
+			(tstamps "82e05611-f153-4a5f-8dd8-7d2d2d139fc2")
 			(units
 				(unit
 					(name "A")
@@ -1719,7 +1667,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2b36288c-ae0d-4add-9d47-6a6e934d020b")
+			(tstamps "a78cb775-b2f1-4ff2-9f5c-a60634a714f7")
 			(units
 				(unit
 					(name "A")
@@ -1785,7 +1733,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "87b6e22e-9d40-45fc-85d7-a2011b7a05ba")
+			(tstamps "e22dbcf6-3a31-4b1d-a83b-3fbc2a6a891a")
 			(units
 				(unit
 					(name "A")
@@ -1851,7 +1799,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "56ea9b2e-8706-489e-8e19-566eab8e2f35")
+			(tstamps "dc7aebb3-ec1d-4010-a64b-aeda64787960")
 			(units
 				(unit
 					(name "A")
@@ -1917,7 +1865,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e79cc1d8-dd7e-4dc0-839e-ea1349e4cb35")
+			(tstamps "9961f3bb-b07a-45f3-a692-aa416d83c0d3")
 			(units
 				(unit
 					(name "A")
@@ -1983,7 +1931,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ac701333-554d-4bbb-a60b-b91b93e3f622")
+			(tstamps "fc8f08fe-34e3-42c1-af2f-26340ca787d6")
 			(units
 				(unit
 					(name "A")
@@ -2049,7 +1997,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f19861fb-f443-453e-856d-0b70d56e6900")
+			(tstamps "92a208ac-94c4-4a41-87dc-b16a8aba6edc")
 			(units
 				(unit
 					(name "A")
@@ -2115,7 +2063,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "bda0e9ff-c033-4417-8e86-50c550ef0a4c")
+			(tstamps "9ee34b47-5be2-4341-9ecc-d8cedbd61b53")
 			(units
 				(unit
 					(name "A")
@@ -2187,7 +2135,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "552fc49e-1e79-49f6-89b4-6b505b760b0e")
+			(tstamps "e7c6c242-00e6-4f58-b382-9fce4e95a6d0")
 			(units
 				(unit
 					(name "A")
@@ -2259,7 +2207,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9ac8961a-18d7-4c82-8dbe-b66ae3d6e331")
+			(tstamps "4c4570db-56b3-43af-b4f4-f44cd56dfe52")
 			(units
 				(unit
 					(name "A")
@@ -2325,7 +2273,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "870da5c5-1a52-4ca6-bc26-d307fca5abce")
+			(tstamps "e80c8798-148f-44ea-b90d-319666fa7201")
 			(units
 				(unit
 					(name "A")
@@ -2391,7 +2339,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9c141b35-4bb9-4772-8b34-4d397f4b5ed7")
+			(tstamps "4f11f6ce-13c9-4f2a-888d-1148ccadea8d")
 			(units
 				(unit
 					(name "A")
@@ -2460,7 +2408,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fc67faa7-d245-467a-b963-5eb2096ab2ce")
+			(tstamps "00c2471c-2c07-41fc-bb37-a5b2cd052216")
 			(units
 				(unit
 					(name "A")
@@ -2529,7 +2477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fbe81d2f-7fe9-4a72-919a-a7e3d638eb45")
+			(tstamps "e65cca4b-d06b-47ad-b9ea-014b51c28530")
 			(units
 				(unit
 					(name "A")
@@ -2595,7 +2543,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "768bf2ae-7e39-4b71-81d8-e53a53d0c537")
+			(tstamps "669fda40-100d-499c-bc68-27b435aa8758")
 			(units
 				(unit
 					(name "A")
@@ -2661,76 +2609,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5e568ded-9312-4ad5-a2e1-5231316f8167")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-						(pin
-							(num "3")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "J23")
-			(value "UART1 1=GND 2=TX 3=RX")
-			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
-			(description "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (nuevo; sin pin de alimentación; adaptador USB-TTL de 3,3 V) | v0.4: directo a PA9/PA10, sin R33/R34 (SUP-59, SUP-70)")
-				(field
-					(name "Fuente") "[DS-STM32] §2.3.8 p.15 (bootloader de sistema por USART1), Tabla 5 p.31 (PA9/PA10 FT); convención pin 1 = GND de la v0.2 (propuesta 18)")
-				(field
-					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			)
-			(libsource
-				(lib "Connector_Generic")
-				(part "Conn_01x03")
-				(description "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (nuevo; sin pin de alimentación; adaptador USB-TTL de 3,3 V) | v0.4: directo a PA9/PA10, sin R33/R34 (SUP-59, SUP-70)")
-			)
-			(property
-				(name "Fuente")
-				(value "[DS-STM32] §2.3.8 p.15 (bootloader de sistema por USART1), Tabla 5 p.31 (PA9/PA10 FT); convención pin 1 = GND de la v0.2 (propuesta 18)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_base")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_base.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "connector")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "Connector*:*_1x??_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "96de9b28-ec99-4de2-957d-2c14144be896")
+			(tstamps "6cac79e4-5374-411c-ab66-f4d11ffc4d45")
 			(units
 				(unit
 					(name "A")
@@ -2799,7 +2678,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7a90a51a-a409-4936-9c08-ccdbc3488242")
+			(tstamps "fecb26c2-bea0-43f5-be42-3386d3fabf1a")
 			(units
 				(unit
 					(name "A")
@@ -2868,7 +2747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0957c0fb-e772-446e-aba6-82ea549b0e3c")
+			(tstamps "2affaa05-9248-4579-aa02-9bfafc471a55")
 			(units
 				(unit
 					(name "A")
@@ -2934,7 +2813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "461d51ff-742a-4fee-a2bd-f2ca9fcf36cd")
+			(tstamps "3de9b127-e749-4bf9-8fd8-86dcb4ebd733")
 			(units
 				(unit
 					(name "A")
@@ -3000,7 +2879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "68acedf6-262a-4adb-8803-4cc89e2d354d")
+			(tstamps "76376b0a-3a5c-4870-9ccc-5ebdd0042988")
 			(units
 				(unit
 					(name "A")
@@ -3066,7 +2945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2e47c842-fb0a-4370-9b8f-26051c1c9552")
+			(tstamps "d59a27a6-0edf-4b36-86ab-c1790fdd1cd3")
 			(units
 				(unit
 					(name "A")
@@ -3132,7 +3011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fe012b0b-caba-4715-8d3a-b6b2f433bd59")
+			(tstamps "a8e68a83-7c70-49d8-917b-e2b9b218f28e")
 			(units
 				(unit
 					(name "A")
@@ -3198,7 +3077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "54c27d8a-d71f-49bc-ae8d-baa7b19aed12")
+			(tstamps "52af5aac-aaeb-4328-b1de-21b24991b51d")
 			(units
 				(unit
 					(name "A")
@@ -3264,7 +3143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "68d67207-e138-4a89-93f3-928d669314a9")
+			(tstamps "f4ef76e9-2675-4a98-86e6-d3e3f88aa788")
 			(units
 				(unit
 					(name "A")
@@ -3330,7 +3209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "755db8e0-10ce-4871-8309-f671d2ed1d51")
+			(tstamps "1b797102-f17e-4e60-8c34-a765f7ee2950")
 			(units
 				(unit
 					(name "A")
@@ -3396,7 +3275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2c6d18e9-807b-41de-9980-86746b1ebecd")
+			(tstamps "bd8fbfab-3bf8-49bb-99c0-2743490cb2e6")
 			(units
 				(unit
 					(name "A")
@@ -3462,7 +3341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "aca4d39e-a7ab-4d88-bb2b-85a9db2e55a6")
+			(tstamps "aba2fb11-4f1f-4e83-bdbb-d912fe75dd8a")
 			(units
 				(unit
 					(name "A")
@@ -3528,7 +3407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6ea6faf3-05d4-4cc2-8b76-55596c638c6e")
+			(tstamps "eb713857-dfc3-4548-9c80-37287122ce8f")
 			(units
 				(unit
 					(name "A")
@@ -3594,7 +3473,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6c7f631b-5f11-483e-bf33-b24090dffc0e")
+			(tstamps "7b07ccb7-8216-4400-b3a0-a76f1755cf8a")
 			(units
 				(unit
 					(name "A")
@@ -3660,7 +3539,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "db90ad94-8995-4d78-840a-779035750716")
+			(tstamps "b69d4fcf-3775-41a2-bd9b-968155142c40")
 			(units
 				(unit
 					(name "A")
@@ -3726,7 +3605,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "db308610-7bc5-40f2-bc5a-952c8790ee67")
+			(tstamps "be063898-349e-485b-a9e0-63fb314ae207")
 			(units
 				(unit
 					(name "A")
@@ -3792,7 +3671,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "604c07e4-116b-4d5b-ae06-ba5912bf635b")
+			(tstamps "29d616b9-b58a-4f3b-bcb0-115ae0a7200e")
 			(units
 				(unit
 					(name "A")
@@ -3858,7 +3737,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "eff4f93b-8f80-4f23-8218-3a0db0e119a5")
+			(tstamps "ea06279e-69b2-4af7-941c-5dbb1d2ba5ff")
 			(units
 				(unit
 					(name "A")
@@ -3924,7 +3803,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0676f299-f984-49fa-af12-df363f0104ad")
+			(tstamps "3271cca8-e7ce-4dd2-a702-03a00ca361c7")
 			(units
 				(unit
 					(name "A")
@@ -3990,7 +3869,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "69759664-2800-45c7-ab5f-168c6ca93be3")
+			(tstamps "69a1d291-a9e7-4012-a541-f55d917517d4")
 			(units
 				(unit
 					(name "A")
@@ -4056,7 +3935,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f12f0770-3b5b-4c8c-aefa-28ee09f327ff")
+			(tstamps "d1bda488-dcc8-45fb-ae10-40d5d66a6af5")
 			(units
 				(unit
 					(name "A")
@@ -4122,7 +4001,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "20ad3115-a66a-477d-b48b-2a481f10ac50")
+			(tstamps "8885d42a-c95b-47d1-9c99-b37c832bb81f")
 			(units
 				(unit
 					(name "A")
@@ -4188,7 +4067,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2df81bc5-374e-4517-9323-5a6452e957bd")
+			(tstamps "503d3a15-251c-43a6-9e7d-39e8de863e76")
 			(units
 				(unit
 					(name "A")
@@ -4904,13 +4783,13 @@
 		)
 		(libpart
 			(lib "segway_modulos")
-			(part "ROB-012_BluePill_STM32F103C8_40p")
-			(description "ROB-012 (DEC-12 [M]). Placa Blue Pill con STM32F103C8T6: 40 posiciones en dos hileras de 20 a 2,54 mm. Numeracion tipo DIP-40 vista desde arriba, antihoraria, pin 1 = PB12 en el extremo del micro-USB. Hilera B12...3.3 = pines 1-20 (PB12, PB13, PB14, PB15, PA8, PA9, PA10, PA11, PA12, PA15, PB3, PB4, PB5, PB6, PB7, PB8, PB9, 5V, GND, 3V3). Hilera VB...G = pines 21-40 desde el extremo SWD (VBAT, PC13, PC14, PC15, PA0-PA7, PB0, PB1, PB10, PB11, NRST, 3V3, GND, GND). Equivalencia con el esquema VCC-GND: A1.n = P4.(21-n) para n = 1..20; A1.(20+k) = P3.k. Fuentes: esquema original VCC-GND 2016 (P2/P3/P4) [D]; stm32-base.org, Header 1/2 [D]; PR KiCad/kicad-symbols 1121 y kicad-footprints 1409, con la misma numeracion y filas a 15,24 mm [V]; captura de Matias del 17/10/2026 [V]. El header SWD de 4 pines (3V3, SWDIO = PA13, SWCLK = PA14, GND) no esta en el simbolo: va en angulo en el extremo opuesto al USB y queda libre para el ST-Link. 5V = VBUS del micro-USB, sin diodo. 3V3 (pines 20 y 38) es la salida del LDO de la placa (RT9193-33 o TX6211B, clase 300 mA); se declara passive para el ERC con PWR_FLAG. Pin 40 passive: GND segun el esquema, pero GND o VBUS segun el modelo (deskthority); queda sin conexion hasta medir y se usa como codificacion: pin macho 40 cortado en la placa y posicion 40 del zocalo tapada (girada 180 grados, el pin n cae en la posicion n+20 y el 5V del zocalo tocaria el 3.3 = VDD del STM32). PC14/PC15 llevan el cristal de 32,768 kHz y PC13 el LED de la placa. Huella v0.4: segway_modulos:ROB-012_BluePill_STM32F103C8_40p (dos hileras a 15,24 mm, pad n = pin n, posicion 40 tapada; contorno y salientes de USB/SWD supuestos sin medir, SUP-22 a SUP-24).")
+			(part "ROB-012_ESP32-S3-DevKitC-1_N16R8_44p")
+			(description "ROB-012 Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16), modulo ESP32-S3-WROOM-1 N16R8, CH343P, WS2812 en GPIO48. Pines 1-22 hilera izquierda desde la antena, 23-44 hilera derecha. GPIO35-37 reservados por la PSRAM octal. Pines NO tolerantes a 5 V.")
 			(fields
 				(field
 					(name "Reference") "A")
 				(field
-					(name "Value") "Blue Pill STM32F103C8T6")
+					(name "Value") "ESP32-S3-DevKitC-1 N16R8")
 				(field
 					(name "Footprint")
 				)
@@ -4918,208 +4797,228 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "ROB-012 (DEC-12 [M]). Placa Blue Pill con STM32F103C8T6: 40 posiciones en dos hileras de 20 a 2,54 mm. Numeracion tipo DIP-40 vista desde arriba, antihoraria, pin 1 = PB12 en el extremo del micro-USB. Hilera B12...3.3 = pines 1-20 (PB12, PB13, PB14, PB15, PA8, PA9, PA10, PA11, PA12, PA15, PB3, PB4, PB5, PB6, PB7, PB8, PB9, 5V, GND, 3V3). Hilera VB...G = pines 21-40 desde el extremo SWD (VBAT, PC13, PC14, PC15, PA0-PA7, PB0, PB1, PB10, PB11, NRST, 3V3, GND, GND). Equivalencia con el esquema VCC-GND: A1.n = P4.(21-n) para n = 1..20; A1.(20+k) = P3.k. Fuentes: esquema original VCC-GND 2016 (P2/P3/P4) [D]; stm32-base.org, Header 1/2 [D]; PR KiCad/kicad-symbols 1121 y kicad-footprints 1409, con la misma numeracion y filas a 15,24 mm [V]; captura de Matias del 17/10/2026 [V]. El header SWD de 4 pines (3V3, SWDIO = PA13, SWCLK = PA14, GND) no esta en el simbolo: va en angulo en el extremo opuesto al USB y queda libre para el ST-Link. 5V = VBUS del micro-USB, sin diodo. 3V3 (pines 20 y 38) es la salida del LDO de la placa (RT9193-33 o TX6211B, clase 300 mA); se declara passive para el ERC con PWR_FLAG. Pin 40 passive: GND segun el esquema, pero GND o VBUS segun el modelo (deskthority); queda sin conexion hasta medir y se usa como codificacion: pin macho 40 cortado en la placa y posicion 40 del zocalo tapada (girada 180 grados, el pin n cae en la posicion n+20 y el 5V del zocalo tocaria el 3.3 = VDD del STM32). PC14/PC15 llevan el cristal de 32,768 kHz y PC13 el LED de la placa. Huella v0.4: segway_modulos:ROB-012_BluePill_STM32F103C8_40p (dos hileras a 15,24 mm, pad n = pin n, posicion 40 tapada; contorno y salientes de USB/SWD supuestos sin medir, SUP-22 a SUP-24).")
+					(name "Description") "ROB-012 Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16), modulo ESP32-S3-WROOM-1 N16R8, CH343P, WS2812 en GPIO48. Pines 1-22 hilera izquierda desde la antena, 23-44 hilera derecha. GPIO35-37 reservados por la PSRAM octal. Pines NO tolerantes a 5 V.")
 			)
 			(pins
 				(pin
 					(num "1")
-					(name "PB12")
-					(type "bidirectional")
+					(name "3V3")
+					(type "power_in")
 				)
 				(pin
 					(num "2")
-					(name "PB13")
-					(type "bidirectional")
+					(name "3V3")
+					(type "power_in")
 				)
 				(pin
 					(num "3")
-					(name "PB14")
-					(type "bidirectional")
+					(name "RST")
+					(type "input")
 				)
 				(pin
 					(num "4")
-					(name "PB15")
+					(name "GPIO4")
 					(type "bidirectional")
 				)
 				(pin
 					(num "5")
-					(name "PA8")
+					(name "GPIO5")
 					(type "bidirectional")
 				)
 				(pin
 					(num "6")
-					(name "PA9")
+					(name "GPIO6")
 					(type "bidirectional")
 				)
 				(pin
 					(num "7")
-					(name "PA10")
+					(name "GPIO7")
 					(type "bidirectional")
 				)
 				(pin
 					(num "8")
-					(name "PA11")
+					(name "GPIO15")
 					(type "bidirectional")
 				)
 				(pin
 					(num "9")
-					(name "PA12")
+					(name "GPIO16")
 					(type "bidirectional")
 				)
 				(pin
 					(num "10")
-					(name "PA15")
+					(name "GPIO17")
 					(type "bidirectional")
 				)
 				(pin
 					(num "11")
-					(name "PB3")
+					(name "GPIO18")
 					(type "bidirectional")
 				)
 				(pin
 					(num "12")
-					(name "PB4")
+					(name "GPIO8")
 					(type "bidirectional")
 				)
 				(pin
 					(num "13")
-					(name "PB5")
+					(name "GPIO3")
 					(type "bidirectional")
 				)
 				(pin
 					(num "14")
-					(name "PB6")
+					(name "GPIO46")
 					(type "bidirectional")
 				)
 				(pin
 					(num "15")
-					(name "PB7")
+					(name "GPIO9")
 					(type "bidirectional")
 				)
 				(pin
 					(num "16")
-					(name "PB8")
+					(name "GPIO10")
 					(type "bidirectional")
 				)
 				(pin
 					(num "17")
-					(name "PB9")
+					(name "GPIO11")
 					(type "bidirectional")
 				)
 				(pin
 					(num "18")
+					(name "GPIO12")
+					(type "bidirectional")
+				)
+				(pin
+					(num "19")
+					(name "GPIO13")
+					(type "bidirectional")
+				)
+				(pin
+					(num "20")
+					(name "GPIO14")
+					(type "bidirectional")
+				)
+				(pin
+					(num "21")
 					(name "5V")
 					(type "power_in")
 				)
 				(pin
-					(num "19")
+					(num "22")
 					(name "GND")
 					(type "power_in")
 				)
 				(pin
-					(num "20")
-					(name "3V3")
-					(type "passive")
-				)
-				(pin
-					(num "21")
-					(name "VBAT")
+					(num "23")
+					(name "GND")
 					(type "power_in")
 				)
 				(pin
-					(num "22")
-					(name "PC13")
+					(num "24")
+					(name "GPIO43/TX")
 					(type "bidirectional")
 				)
 				(pin
-					(num "23")
-					(name "PC14")
-					(type "passive")
-				)
-				(pin
-					(num "24")
-					(name "PC15")
-					(type "passive")
-				)
-				(pin
 					(num "25")
-					(name "PA0")
+					(name "GPIO44/RX")
 					(type "bidirectional")
 				)
 				(pin
 					(num "26")
-					(name "PA1")
+					(name "GPIO1")
 					(type "bidirectional")
 				)
 				(pin
 					(num "27")
-					(name "PA2")
+					(name "GPIO2")
 					(type "bidirectional")
 				)
 				(pin
 					(num "28")
-					(name "PA3")
+					(name "GPIO42")
 					(type "bidirectional")
 				)
 				(pin
 					(num "29")
-					(name "PA4")
+					(name "GPIO41")
 					(type "bidirectional")
 				)
 				(pin
 					(num "30")
-					(name "PA5")
+					(name "GPIO40")
 					(type "bidirectional")
 				)
 				(pin
 					(num "31")
-					(name "PA6")
+					(name "GPIO39")
 					(type "bidirectional")
 				)
 				(pin
 					(num "32")
-					(name "PA7")
+					(name "GPIO38")
 					(type "bidirectional")
 				)
 				(pin
 					(num "33")
-					(name "PB0")
+					(name "GPIO37")
 					(type "bidirectional")
 				)
 				(pin
 					(num "34")
-					(name "PB1")
+					(name "GPIO36")
 					(type "bidirectional")
 				)
 				(pin
 					(num "35")
-					(name "PB10")
+					(name "GPIO35")
 					(type "bidirectional")
 				)
 				(pin
 					(num "36")
-					(name "PB11")
+					(name "GPIO0")
 					(type "bidirectional")
 				)
 				(pin
 					(num "37")
-					(name "NRST")
+					(name "GPIO45")
 					(type "bidirectional")
 				)
 				(pin
 					(num "38")
-					(name "3V3")
-					(type "passive")
+					(name "GPIO48")
+					(type "bidirectional")
 				)
 				(pin
 					(num "39")
+					(name "GPIO47")
+					(type "bidirectional")
+				)
+				(pin
+					(num "40")
+					(name "GPIO21")
+					(type "bidirectional")
+				)
+				(pin
+					(num "41")
+					(name "GPIO20")
+					(type "bidirectional")
+				)
+				(pin
+					(num "42")
+					(name "GPIO19")
+					(type "bidirectional")
+				)
+				(pin
+					(num "43")
 					(name "GND")
 					(type "power_in")
 				)
 				(pin
-					(num "40")
+					(num "44")
 					(name "GND")
-					(type "passive")
+					(type "power_in")
 				)
 			)
 		)
@@ -5218,32 +5117,16 @@
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "20")
-				(pinfunction "3V3_20")
-				(pintype "passive")
-			)
-			(node
-				(ref "A1")
-				(pin "21")
-				(pinfunction "VBAT_21")
+				(pin "1")
+				(pinfunction "3V3_1")
 				(pintype "power_in")
 			)
 			(node
 				(ref "A1")
-				(pin "38")
-				(pinfunction "3V3_38")
-				(pintype "passive")
+				(pin "2")
+				(pinfunction "3V3_2")
+				(pintype "power_in")
 			)
-			(node
-				(ref "R24")
-				(pin "1")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "2")
-			(name "/3V3_PER")
-			(class "Default")
 			(node
 				(ref "A2")
 				(pin "1")
@@ -5269,12 +5152,6 @@
 				(pintype "power_in")
 			)
 			(node
-				(ref "A9")
-				(pin "3")
-				(pinfunction "OUT+_3")
-				(pintype "passive")
-			)
-			(node
 				(ref "J7")
 				(pin "4")
 				(pinfunction "Pin_4_4")
@@ -5306,9 +5183,14 @@
 				(pin "1")
 				(pintype "passive")
 			)
+			(node
+				(ref "R24")
+				(pin "1")
+				(pintype "passive")
+			)
 		)
 		(net
-			(code "3")
+			(code "2")
 			(name "/5V")
 			(class "Default")
 			(node
@@ -5325,13 +5207,13 @@
 			)
 		)
 		(net
-			(code "4")
+			(code "3")
 			(name "/5V_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "18")
-				(pinfunction "5V_18")
+				(pin "21")
+				(pinfunction "5V_21")
 				(pintype "power_in")
 			)
 			(node
@@ -5342,13 +5224,13 @@
 			)
 		)
 		(net
-			(code "5")
+			(code "4")
 			(name "/ENC_DER_A")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "14")
-				(pinfunction "PB6_14")
+				(pin "6")
+				(pinfunction "GPIO6_6")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5364,13 +5246,13 @@
 			)
 		)
 		(net
-			(code "6")
+			(code "5")
 			(name "/ENC_DER_B")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "15")
-				(pinfunction "PB7_15")
+				(pin "7")
+				(pinfunction "GPIO7_7")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5386,13 +5268,13 @@
 			)
 		)
 		(net
-			(code "7")
+			(code "6")
 			(name "/ENC_IZQ_A")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "25")
-				(pinfunction "PA0_25")
+				(pin "4")
+				(pinfunction "GPIO4_4")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5408,13 +5290,13 @@
 			)
 		)
 		(net
-			(code "8")
+			(code "7")
 			(name "/ENC_IZQ_B")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "26")
-				(pinfunction "PA1_26")
+				(pin "5")
+				(pinfunction "GPIO5_5")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5430,19 +5312,31 @@
 			)
 		)
 		(net
-			(code "9")
+			(code "8")
 			(name "/GND")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "19")
-				(pinfunction "GND_19")
+				(pin "22")
+				(pinfunction "GND_22")
 				(pintype "power_in")
 			)
 			(node
 				(ref "A1")
-				(pin "39")
-				(pinfunction "GND_39")
+				(pin "23")
+				(pinfunction "GND_23")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A1")
+				(pin "43")
+				(pinfunction "GND_43")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A1")
+				(pin "44")
+				(pinfunction "GND_44")
 				(pintype "power_in")
 			)
 			(node
@@ -5501,18 +5395,6 @@
 			)
 			(node
 				(ref "A8")
-				(pin "4")
-				(pinfunction "OUT-_4")
-				(pintype "power_in")
-			)
-			(node
-				(ref "A9")
-				(pin "2")
-				(pinfunction "IN-_2")
-				(pintype "power_in")
-			)
-			(node
-				(ref "A9")
 				(pin "4")
 				(pinfunction "OUT-_4")
 				(pintype "power_in")
@@ -5601,12 +5483,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J23")
-				(pin "1")
-				(pinfunction "Pin_1_1")
-				(pintype "passive")
-			)
-			(node
 				(ref "J4")
 				(pin "1")
 				(pinfunction "Pin_1_1")
@@ -5666,13 +5542,13 @@
 			)
 		)
 		(net
-			(code "10")
+			(code "9")
 			(name "/I2C_SCL")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "35")
-				(pinfunction "PB10_35")
+				(pin "15")
+				(pinfunction "GPIO9_15")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5701,13 +5577,13 @@
 			)
 		)
 		(net
-			(code "11")
+			(code "10")
 			(name "/I2C_SDA")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "36")
-				(pinfunction "PB11_36")
+				(pin "12")
+				(pinfunction "GPIO8_12")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5736,13 +5612,13 @@
 			)
 		)
 		(net
-			(code "12")
+			(code "11")
 			(name "/IMU_INT")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "3")
-				(pinfunction "PB14_3")
+				(pin "18")
+				(pinfunction "GPIO12_18")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5753,7 +5629,7 @@
 			)
 		)
 		(net
-			(code "13")
+			(code "12")
 			(name "/IN1_DER")
 			(class "Default")
 			(node
@@ -5769,13 +5645,13 @@
 			)
 		)
 		(net
-			(code "14")
+			(code "13")
 			(name "/IN1_DER_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "33")
-				(pinfunction "PB0_33")
+				(pin "10")
+				(pinfunction "GPIO17_10")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5790,7 +5666,7 @@
 			)
 		)
 		(net
-			(code "15")
+			(code "14")
 			(name "/IN1_IZQ")
 			(class "Default")
 			(node
@@ -5806,13 +5682,13 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "15")
 			(name "/IN1_IZQ_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "31")
-				(pinfunction "PA6_31")
+				(pin "8")
+				(pinfunction "GPIO15_8")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5827,7 +5703,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "16")
 			(name "/IN2_DER")
 			(class "Default")
 			(node
@@ -5843,13 +5719,13 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "17")
 			(name "/IN2_DER_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "34")
-				(pinfunction "PB1_34")
+				(pin "11")
+				(pinfunction "GPIO18_11")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5864,7 +5740,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "18")
 			(name "/IN2_IZQ")
 			(class "Default")
 			(node
@@ -5880,13 +5756,13 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "19")
 			(name "/IN2_IZQ_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "32")
-				(pinfunction "PA7_32")
+				(pin "9")
+				(pinfunction "GPIO16_9")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5901,13 +5777,13 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "20")
 			(name "/INA_ALERT")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "2")
-				(pinfunction "PB13_2")
+				(pin "19")
+				(pinfunction "GPIO13_19")
 				(pintype "bidirectional")
 			)
 			(node
@@ -5918,7 +5794,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "21")
 			(name "/LED_VM_A")
 			(class "Default")
 			(node
@@ -5934,7 +5810,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "22")
 			(name "/MOT_DER_1")
 			(class "Default")
 			(node
@@ -5951,7 +5827,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "23")
 			(name "/MOT_DER_2")
 			(class "Default")
 			(node
@@ -5968,7 +5844,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "24")
 			(name "/MOT_IZQ_1")
 			(class "Default")
 			(node
@@ -5985,7 +5861,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "25")
 			(name "/MOT_IZQ_2")
 			(class "Default")
 			(node
@@ -6002,13 +5878,13 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "26")
 			(name "/PARO_CONT")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "1")
-				(pinfunction "PB12_1")
+				(pin "20")
+				(pinfunction "GPIO14_20")
 				(pintype "bidirectional")
 			)
 			(node
@@ -6024,7 +5900,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "27")
 			(name "/Q_POL_G")
 			(class "Default")
 			(node
@@ -6046,13 +5922,13 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "28")
 			(name "/SERVO_DER_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "4")
-				(pinfunction "PB15_4")
+				(pin "17")
+				(pinfunction "GPIO11_17")
 				(pintype "bidirectional")
 			)
 			(node
@@ -6067,7 +5943,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "29")
 			(name "/SERVO_DER_SIG")
 			(class "Default")
 			(node
@@ -6083,13 +5959,13 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "30")
 			(name "/SERVO_IZQ_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "5")
-				(pinfunction "PA8_5")
+				(pin "16")
+				(pinfunction "GPIO10_16")
 				(pintype "bidirectional")
 			)
 			(node
@@ -6104,7 +5980,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "31")
 			(name "/SERVO_IZQ_SIG")
 			(class "Default")
 			(node
@@ -6120,47 +5996,13 @@
 			)
 		)
 		(net
-			(code "33")
-			(name "/UART1_RX")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "7")
-				(pinfunction "PA10_7")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J23")
-				(pin "3")
-				(pinfunction "Pin_3_3")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "34")
-			(name "/UART1_TX")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "6")
-				(pinfunction "PA9_6")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J23")
-				(pin "2")
-				(pinfunction "Pin_2_2")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "35")
+			(code "32")
 			(name "/VBAT_ADC")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "28")
-				(pinfunction "PA3_28")
+				(pin "26")
+				(pinfunction "GPIO1_26")
 				(pintype "bidirectional")
 			)
 			(node
@@ -6180,7 +6022,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "33")
 			(name "/VBAT_F")
 			(class "Default")
 			(node
@@ -6196,7 +6038,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "34")
 			(name "/VBAT_P")
 			(class "Default")
 			(node
@@ -6212,7 +6054,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "35")
 			(name "/VBAT_SW")
 			(class "Default")
 			(node
@@ -6229,7 +6071,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "36")
 			(name "/VM_BUS")
 			(class "Default")
 			(node
@@ -6292,7 +6134,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "37")
 			(name "/VM_DER")
 			(class "Default")
 			(node
@@ -6326,7 +6168,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "38")
 			(name "/VM_DER_F")
 			(class "Default")
 			(node
@@ -6348,7 +6190,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "39")
 			(name "/VM_IZQ")
 			(class "Default")
 			(node
@@ -6382,7 +6224,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "40")
 			(name "/VM_IZQ_F")
 			(class "Default")
 			(node
@@ -6404,7 +6246,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "41")
 			(name "/VM_LOG")
 			(class "Default")
 			(node
@@ -6426,12 +6268,6 @@
 				(pintype "power_in")
 			)
 			(node
-				(ref "A9")
-				(pin "1")
-				(pinfunction "IN+_1")
-				(pintype "power_in")
-			)
-			(node
 				(ref "J18")
 				(pin "2")
 				(pinfunction "Pin_2_2")
@@ -6445,7 +6281,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "42")
 			(name "/VM_LOG_F")
 			(class "Default")
 			(node
@@ -6461,7 +6297,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "43")
 			(name "/VM_UBEC")
 			(class "Default")
 			(node
@@ -6477,7 +6313,7 @@
 			)
 		)
 		(net
-			(code "47")
+			(code "44")
 			(name "/V_SERVO")
 			(class "Default")
 			(node
@@ -6510,183 +6346,238 @@
 			)
 		)
 		(net
-			(code "48")
-			(name "unconnected-(A1-GND-Pad40)")
+			(code "45")
+			(name "unconnected-(A1-GPIO0-Pad36)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "40")
-				(pinfunction "GND_40")
-				(pintype "passive+no_connect")
+				(pin "36")
+				(pinfunction "GPIO0_36")
+				(pintype "bidirectional+no_connect")
+			)
+		)
+		(net
+			(code "46")
+			(name "unconnected-(A1-GPIO2-Pad27)")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "27")
+				(pinfunction "GPIO2_27")
+				(pintype "bidirectional+no_connect")
+			)
+		)
+		(net
+			(code "47")
+			(name "unconnected-(A1-GPIO3-Pad13)")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "13")
+				(pinfunction "GPIO3_13")
+				(pintype "bidirectional+no_connect")
+			)
+		)
+		(net
+			(code "48")
+			(name "unconnected-(A1-GPIO19-Pad42)")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "42")
+				(pinfunction "GPIO19_42")
+				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "49")
-			(name "unconnected-(A1-NRST-Pad37)")
+			(name "unconnected-(A1-GPIO20-Pad41)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "37")
-				(pinfunction "NRST_37")
+				(pin "41")
+				(pinfunction "GPIO20_41")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "50")
-			(name "unconnected-(A1-PA2-Pad27)")
+			(name "unconnected-(A1-GPIO21-Pad40)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "27")
-				(pinfunction "PA2_27")
+				(pin "40")
+				(pinfunction "GPIO21_40")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "51")
-			(name "unconnected-(A1-PA4-Pad29)")
+			(name "unconnected-(A1-GPIO35-Pad35)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "29")
-				(pinfunction "PA4_29")
+				(pin "35")
+				(pinfunction "GPIO35_35")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "52")
-			(name "unconnected-(A1-PA5-Pad30)")
+			(name "unconnected-(A1-GPIO36-Pad34)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "30")
-				(pinfunction "PA5_30")
+				(pin "34")
+				(pinfunction "GPIO36_34")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "53")
-			(name "unconnected-(A1-PA11-Pad8)")
+			(name "unconnected-(A1-GPIO37-Pad33)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "8")
-				(pinfunction "PA11_8")
+				(pin "33")
+				(pinfunction "GPIO37_33")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "54")
-			(name "unconnected-(A1-PA12-Pad9)")
+			(name "unconnected-(A1-GPIO38-Pad32)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "9")
-				(pinfunction "PA12_9")
+				(pin "32")
+				(pinfunction "GPIO38_32")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "55")
-			(name "unconnected-(A1-PA15-Pad10)")
+			(name "unconnected-(A1-GPIO39-Pad31)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "10")
-				(pinfunction "PA15_10")
+				(pin "31")
+				(pinfunction "GPIO39_31")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "56")
-			(name "unconnected-(A1-PB3-Pad11)")
+			(name "unconnected-(A1-GPIO40-Pad30)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "11")
-				(pinfunction "PB3_11")
+				(pin "30")
+				(pinfunction "GPIO40_30")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "57")
-			(name "unconnected-(A1-PB4-Pad12)")
+			(name "unconnected-(A1-GPIO41-Pad29)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "12")
-				(pinfunction "PB4_12")
+				(pin "29")
+				(pinfunction "GPIO41_29")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "58")
-			(name "unconnected-(A1-PB5-Pad13)")
+			(name "unconnected-(A1-GPIO42-Pad28)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "13")
-				(pinfunction "PB5_13")
+				(pin "28")
+				(pinfunction "GPIO42_28")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "59")
-			(name "unconnected-(A1-PB8-Pad16)")
+			(name "unconnected-(A1-GPIO43{slash}TX-Pad24)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "16")
-				(pinfunction "PB8_16")
+				(pin "24")
+				(pinfunction "GPIO43/TX_24")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "60")
-			(name "unconnected-(A1-PB9-Pad17)")
+			(name "unconnected-(A1-GPIO44{slash}RX-Pad25)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "17")
-				(pinfunction "PB9_17")
+				(pin "25")
+				(pinfunction "GPIO44/RX_25")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "61")
-			(name "unconnected-(A1-PC13-Pad22)")
+			(name "unconnected-(A1-GPIO45-Pad37)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "22")
-				(pinfunction "PC13_22")
+				(pin "37")
+				(pinfunction "GPIO45_37")
 				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "62")
-			(name "unconnected-(A1-PC14-Pad23)")
+			(name "unconnected-(A1-GPIO46-Pad14)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "23")
-				(pinfunction "PC14_23")
-				(pintype "passive+no_connect")
+				(pin "14")
+				(pinfunction "GPIO46_14")
+				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "63")
-			(name "unconnected-(A1-PC15-Pad24)")
+			(name "unconnected-(A1-GPIO47-Pad39)")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "24")
-				(pinfunction "PC15_24")
-				(pintype "passive+no_connect")
+				(pin "39")
+				(pinfunction "GPIO47_39")
+				(pintype "bidirectional+no_connect")
 			)
 		)
 		(net
 			(code "64")
+			(name "unconnected-(A1-GPIO48-Pad38)")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "38")
+				(pinfunction "GPIO48_38")
+				(pintype "bidirectional+no_connect")
+			)
+		)
+		(net
+			(code "65")
+			(name "unconnected-(A1-RST-Pad3)")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "3")
+				(pinfunction "RST_3")
+				(pintype "input+no_connect")
+			)
+		)
+		(net
+			(code "66")
 			(name "unconnected-(A2-AD0-Pad7)")
 			(class "Default")
 			(node
@@ -6697,7 +6588,7 @@
 			)
 		)
 		(net
-			(code "65")
+			(code "67")
 			(name "unconnected-(A2-XCL-Pad6)")
 			(class "Default")
 			(node
@@ -6708,7 +6599,7 @@
 			)
 		)
 		(net
-			(code "66")
+			(code "68")
 			(name "unconnected-(A2-XDA-Pad5)")
 			(class "Default")
 			(node

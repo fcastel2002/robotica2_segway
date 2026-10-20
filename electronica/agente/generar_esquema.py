@@ -204,7 +204,7 @@ TITULOS = {
     "motores": "MOTORES: DRV8871 + INA219",
     "servos": "SERVOS: UBEC Y CONECTORES",
     "logica": "RAMA LOGICA: INA226, BUCK 5 V",
-    "controlador": "BLUE PILL STM32",
+    "controlador": "ESP32-S3 DEVKITC-1",
     "sensores": "SENSORES I2C: MPU6050, INA",
     "conectores": "CONECTORES DE SEÑAL",
     "prueba": "PUNTOS DE PRUEBA",

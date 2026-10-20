@@ -1,2121 +1,2231 @@
 {
-  "archivo": "electronica/cad/segway_base/supuestos.json",
-  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
-  "revision_lista": 1,
-  "fecha": "17/10/2026",
-  "aplica_a": {
-    "especificacion_base": "especificacion_v0.3.json",
-    "especificacion_destino": "especificacion_v0.4.json",
-    "pcb": "v0.1"
+ "archivo": "electronica/cad/segway_base/supuestos.json",
+ "espejo_legible": "electronica/cad/segway_base/supuestos.md",
+ "revision_lista": 2,
+ "fecha": "20/10/2026",
+ "aplica_a": {
+  "especificacion_base": "especificacion_v0.3.json",
+  "especificacion_destino": "especificacion_v0.4.json",
+  "pcb": "v0.1"
+ },
+ "decisiones": [
+  "DEC-12",
+  "DEC-13",
+  "DEC-14",
+  "DEC-15"
+ ],
+ "estados_validos": [
+  "ASUMIDO",
+  "CONFIRMADO",
+  "CAMBIADO"
+ ],
+ "clases_de_dato": {
+  "[M]": "Matías",
+  "[D]": "datasheet o documentación",
+  "[V]": "vendedor, captura o fuente comunitaria",
+  "[H]": "hipótesis"
+ },
+ "afecta_valores": [
+  "especificacion",
+  "huellas",
+  "reglas",
+  "pcb",
+  "fabricacion",
+  "firmware",
+  "ensayos"
+ ],
+ "como_se_aplica": [
+  "Matías informa 'SUP-xx: es X' (o 'SUP-xx: confirmado', o 'SUP-xx: recuperar <ref>' en el grupo H).",
+  "El agente actualiza la fila en supuestos.json y supuestos.md: estado CONFIRMADO si coincide, CAMBIADO si difiere; reescribe 'supuesto' con el valor real; agrega la fuente a 'base', la fecha y una entrada en 'historial'.",
+  "Propaga el cambio según 'afecta': especificación (nueva revisión), huellas, reglas, PCB, fabricación, firmware o ensayos.",
+  "Regenera el esquema con generar_esquema.py y exige ERC 0 y comparar_netlist.py 'Resultado: coincide'.",
+  "Reconstruye la PCB con construir_pcb.py (ubicación, Freerouting, DRC 0 y paridad) y regenera las salidas de fabricación.",
+  "Registra el cambio en BACKLOG.md con la evidencia."
+ ],
+ "conteo_v04": {
+  "total_v03": 153,
+  "conservados": 60,
+  "eliminados": 93,
+  "conservados_por_bloque": {
+   "modulos": [
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7",
+    "A8",
+    "A9"
+   ],
+   "entrada_potencia": [
+    "J1",
+    "F1",
+    "J3",
+    "Q1",
+    "R29",
+    "D3",
+    "C1",
+    "C3",
+    "D1",
+    "R28",
+    "D4",
+    "R22",
+    "R23",
+    "C14"
+   ],
+   "motores": [
+    "F2",
+    "F3",
+    "C4",
+    "C5",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R35",
+    "R36",
+    "R37",
+    "R38",
+    "J11",
+    "J12"
+   ],
+   "servos": [
+    "F4",
+    "J15",
+    "J16",
+    "J13",
+    "J14",
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "C8",
+    "C9"
+   ],
+   "logica": [
+    "F5",
+    "D2",
+    "J18"
+   ],
+   "controlador": [
+    "J23"
+   ],
+   "conectores": [
+    "J7",
+    "J8",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "J4",
+    "R24"
+   ]
   },
-  "decisiones": [
-    "DEC-12",
-    "DEC-13",
-    "DEC-14",
-    "DEC-15"
+  "eliminados_lista": [
+   "TP1",
+   "TP2",
+   "TP3",
+   "TP4",
+   "TP5",
+   "TP6",
+   "TP7",
+   "TP8",
+   "TP9",
+   "TP10",
+   "TP11",
+   "TP12",
+   "TP13",
+   "TP14",
+   "TP15",
+   "TP16",
+   "TP17",
+   "TP18",
+   "TP19",
+   "TP20",
+   "TP21",
+   "TP22",
+   "TP23",
+   "TP24",
+   "TP25",
+   "TP26",
+   "TP27",
+   "TP28",
+   "TP29",
+   "TP30",
+   "TP31",
+   "TP32",
+   "TP33",
+   "TP34",
+   "TP35",
+   "TP36",
+   "TP37",
+   "TP38",
+   "TP39",
+   "TP40",
+   "TP41",
+   "JP1",
+   "C2",
+   "J5",
+   "J6",
+   "J21",
+   "J22",
+   "JP6",
+   "JP7",
+   "A10",
+   "R30",
+   "R31",
+   "R32",
+   "C26",
+   "JP3",
+   "JP4",
+   "R17",
+   "R18",
+   "R19",
+   "R20",
+   "R39",
+   "R40",
+   "JP8",
+   "C10",
+   "C11",
+   "C12",
+   "C13",
+   "R9",
+   "R10",
+   "R11",
+   "R12",
+   "C6",
+   "C7",
+   "C16",
+   "C17",
+   "C18",
+   "C19",
+   "C20",
+   "C21",
+   "C22",
+   "C23",
+   "C24",
+   "C25",
+   "C27",
+   "C28",
+   "R27",
+   "D5",
+   "R33",
+   "R34",
+   "R21",
+   "R25",
+   "C15",
+   "R26"
   ],
-  "estados_validos": [
-    "ASUMIDO",
-    "CONFIRMADO",
-    "CAMBIADO"
-  ],
-  "clases_de_dato": {
-    "[M]": "Matías",
-    "[D]": "datasheet o documentación",
-    "[V]": "vendedor, captura o fuente comunitaria",
-    "[H]": "hipótesis"
+  "nota": "Los puentes de alambre (W1…) se cuentan aparte. La especificación v0.4 manda; si difiere, se corrige este campo."
+ },
+ "donde_medir": [
+  {
+   "net": "VBAT_P y GND",
+   "punto": "J1 pin 2 y J1 pin 1"
   },
-  "afecta_valores": [
+  {
+   "net": "VBAT_F",
+   "punto": "terminal de salida de F1"
+  },
+  {
+   "net": "VBAT_SW",
+   "punto": "J3 pin 2"
+  },
+  {
+   "net": "VM_BUS",
+   "punto": "positivo de C1 o ánodo de D4"
+  },
+  {
+   "net": "VM_IZQ y VM_DER",
+   "punto": "positivo de C4 y de C5 (pin VM del DRV)"
+  },
+  {
+   "net": "VM_UBEC y V_SERVO",
+   "punto": "positivo de J15; positivo de J16 y pin central de J13/J14"
+  },
+  {
+   "net": "VM_LOG",
+   "punto": "pin IN+ de A8 o J18"
+  },
+  {
+   "net": "5V y 5V_MCU",
+   "punto": "pin OUT+ de A8; cátodo de D2 (pin 5V de la Blue Pill)"
+  },
+  {
+   "net": "3V3_PER y 3V3_MCU",
+   "punto": "pin OUT+ de A9; pin 3.3 de la Blue Pill"
+  },
+  {
+   "net": "Señales (IN, encoders, servos, I2C, paro, ALERT, INT, VBAT_ADC)",
+   "punto": "pin correspondiente de la Blue Pill o del módulo, por arriba del zócalo"
+  }
+ ],
+ "items": [
+  {
+   "grupo": "A",
+   "tema": "Método de fabricación",
+   "supuesto": "PCB casera por transferencia de tóner con plancha y ataque con ácido: una sola capa de cobre (B.Cu), sin vías ni agujeros metalizados, todos los componentes de agujero pasante montados en la cara superior y soldados del lado del cobre. Los cruces imposibles en una capa se resuelven con puentes de alambre explícitos en la cara de componentes (SUP-15).",
+   "base": "DEC-14, confirmada por Matías el 17/10/2026 (electronica/agente/memoria/decisiones.md)",
+   "impacto_si_cambia": "Si se pasa a fábrica externa o a doble faz, se rehacen reglas, anchos y ruteo; el esquema no cambia.",
+   "como_se_confirma": "Ya confirmado. Se reabre solo con una decisión nueva de Matías.",
+   "estado": "CONFIRMADO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "reglas",
+    "pcb",
+    "fabricacion"
+   ],
+   "alias": [],
+   "valor": {
+    "capas_cobre": [
+     "B.Cu"
+    ],
+    "vias": false,
+    "tecnologia": "THT"
+   },
+   "id": "SUP-01",
+   "historial": []
+  },
+  {
+   "grupo": "A",
+   "tema": "Cantidad de piezas de la v0.4",
+   "supuesto": "La v0.4 queda en 60 piezas: 9 módulos enchufables (A1-A9) y 51 componentes (borneras, fusibles, pasivos, Q1, diodos, LED y headers). Se eliminan 93 de las 153 de la v0.3: 41 puntos de prueba, 22 DNP y 30 redundantes o de respaldo (grupo H). Los puentes de alambre de SUP-15 se cuentan aparte. La lista definitiva la fija la especificación v0.4 y debe coincidir con el campo conteo_v04 de supuestos.json.",
+   "base": "Objeción de Matías del 17/10/2026 a los 153 componentes de la v0.3 ('cómo que 150 componentes???'). El objetivo de 50-60 piezas con los mismos módulos es la interpretación del agente [H].",
+   "impacto_si_cambia": "Cada elemento que el equipo quiera recuperar se reincorpora desde su fila del grupo H. La especificación v0.3 conserva valores, nets y fuentes de todos.",
+   "como_se_confirma": "Matías confirma que 60 piezas está bien o dice qué más quitar o recuperar.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
     "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "piezas_v04": 60,
+    "modulos": 9,
+    "componentes": 51,
+    "eliminados": 93
+   },
+   "id": "SUP-02",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Placa virgen",
+   "supuesto": "FR-4 simple faz de 1,6 mm con cobre de 35 µm (1 oz). Si solo se consigue pertinax (FR-2), sirve igual, con más cuidado al taladrar.",
+   "base": "Formato más común de placa virgen en el mercado local [H]. Los 35 µm son la base de todos los anchos de SUP-10 (IPC-2221).",
+   "impacto_si_cambia": "Con cobre de 18 µm, los anchos de potencia casi se duplican y el tronco no entra: hay que reforzarlo con cable.",
+   "como_se_confirma": "Leer la etiqueta o la ficha de la placa que se compre y medir el espesor total con calibre.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "reglas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "material": "FR-4",
+    "espesor_mm": 1.6,
+    "cobre_um": 35
+   },
+   "id": "SUP-03",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Tamaño máximo de la placa",
+   "supuesto": "Contorno rectangular de 160 × 100 mm como máximo (formato europeo de placa virgen). La v0.1 puede usar todo el ancho para separar las ramas de potencia; se achica si sobra lugar.",
+   "base": "Medida típica de placa virgen comercial [H]. Falta el dato del chasis (pregunta D.8 de componentes_comprados/2026-10-17-datos-fisicos-faltantes.md, sin respuesta).",
+   "impacto_si_cambia": "Si el chasis o la placa disponible son más chicos (por ejemplo, 100 × 100 mm), hay que reubicar todo y probablemente sumar puentes.",
+   "como_se_confirma": "Mecánica (Francisco): espacio disponible en el chasis (largo, ancho y altura libre). Matías: medida de la placa virgen comprada.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "ancho_max_mm": 160,
+    "alto_max_mm": 100,
+    "radio_esquinas_mm": 0
+   },
+   "id": "SUP-04",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Agujeros de fijación",
+   "supuesto": "Cuatro agujeros M3 (taladro de 3,2 mm) en las esquinas, con el centro a 4 mm de cada borde y un círculo sin cobre de 7 mm de diámetro para la cabeza del tornillo o el separador. La placa va sobre separadores de 10 mm para que las soldaduras del lado del cobre no toquen el chasis.",
+   "base": "Práctica habitual [H]. Open_point 16 de especificacion_v0.3.json: fijación sin definir.",
+   "impacto_si_cambia": "Si el chasis tiene otros puntos de fijación, se mueven los agujeros y se reubican los componentes cercanos.",
+   "como_se_confirma": "Plano o medida del chasis (Francisco) con la posición de los puntos de fijación.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "taladro_mm": 3.2,
+    "distancia_borde_mm": 4.0,
+    "keepout_diametro_mm": 7.0,
+    "separador_mm": 10
+   },
+   "id": "SUP-05",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Impresión para la transferencia",
+   "supuesto": "Impresora láser monocroma a escala 1:1, sin 'ajustar a página', con máxima densidad de tóner, en papel ilustración o couché brillante de 90-150 g o en papel de transferencia. El PDF incluye una regla de control de 100 mm.",
+   "base": "Práctica habitual del método de la plancha [H].",
+   "impacto_si_cambia": "Con una escala distinta de 1:1, los módulos no entran en los zócalos. Con impresora de chorro de tinta, el método no funciona.",
+   "como_se_confirma": "Imprimir una prueba y medir con calibre la regla de 100 mm y la separación de hileras de la Blue Pill (15,24 mm).",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "fabricacion"
+   ],
+   "alias": [],
+   "valor": {
+    "escala": "1:1",
+    "regla_control_mm": 100
+   },
+   "id": "SUP-06",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Espejado del PDF de cobre",
+   "supuesto": "La capa B.Cu se imprime SIN espejar, tal como la dibuja KiCad (vista desde la cara de componentes). Al apoyar el tóner contra el cobre, la transferencia invierte la imagen una vez y queda correcta vista desde abajo. KiCad dibuja espejados los textos de B.Cu: en el papel se leen al revés y en el cobre, derechos.",
+   "base": "Geometría de la transferencia (una sola inversión) y convención de KiCad para las capas inferiores [H, verificar con la prueba].",
+   "impacto_si_cambia": "Si el PDF sale espejado, la Blue Pill y las tiras 1×8 quedan invertidas, y los módulos no encajan o se conectan al revés.",
+   "como_se_confirma": "En la impresión de prueba, el texto de cobre se lee al revés en el papel. Después de transferir, se lee derecho mirando la cara de cobre.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "fabricacion"
+   ],
+   "alias": [],
+   "valor": {
+    "B.Cu_espejado": false
+   },
+   "id": "SUP-07",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Ataque químico",
+   "supuesto": "Percloruro férrico o persulfato de sodio, tibio y con agitación. Se supone un sobreataque lateral de hasta 0,1 mm por borde, ya cubierto por los mínimos de SUP-09.",
+   "base": "Práctica habitual de PCB casera [H].",
+   "impacto_si_cambia": "Con mucho sobreataque, las pistas de 0,8 mm pueden cortarse: se sube el mínimo a 1,0 mm.",
+   "como_se_confirma": "Matías informa qué ácido usa. Revisar la primera placa con lupa y medir algunas pistas.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "reglas",
+    "fabricacion"
+   ],
+   "alias": [],
+   "id": "SUP-08",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Ancho mínimo y separación",
+   "supuesto": "Pista de señal de 0,8 mm, con mínimo absoluto de 0,6 mm solo en tramos cortos de salida de pad. Separación cobre-cobre de 0,6 mm como mínimo y 0,8 mm por defecto. Ninguna pista pasa entre dos pads contiguos de paso 2,54 mm. Ángulos de 45° o redondeados, sin ángulos agudos. Si reglas_fabricacion_casera.md fija otros valores, manda ese archivo y se actualiza esta fila.",
+   "base": "Márgenes holgados para tóner y ácido (DEC-14: 'pistas anchas y seguras') [H]. El detalle lo define la tarea de reglas caseras.",
+   "impacto_si_cambia": "Con reglas más finas aparecen cortes o puentes de tóner. Con reglas más gruesas, hacen falta más puentes de alambre.",
+   "como_se_confirma": "Primera placa: inspección con lupa y continuidad de cada net antes de montar.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "reglas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "pista_senal_mm": 0.8,
+    "pista_min_mm": 0.6,
+    "separacion_min_mm": 0.6,
+    "separacion_defecto_mm": 0.8,
+    "pistas_entre_pads_2p54": false
+   },
+   "id": "SUP-09",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Anchos por corriente (IPC-2221, capa externa, 35 µm)",
+   "supuesto": "Tronco de batería (VBAT_*, VM_BUS y GND de potencia): 5,0 mm o más, para 10 A continuos (4,7 mm con ΔT de 20 °C), estañado o con un alambre de cobre de 1,5 mm² soldado encima. Ramas de motor (VM_IZQ*, VM_DER* y salidas al motor): 2,0 mm (4 A con ΔT de 10 °C). Servos (VM_UBEC, V_SERVO y su GND): 3,5 mm (6 A con ΔT de 10 °C; 7,5 A darían 3,2 mm con ΔT de 20 °C). Lógica (VM_LOG*, 5V, 5V_MCU, 3V3_*): 1,0 mm (≤1 A; el cálculo da 0,3 mm). Señal: 0,8 mm. Junto a los pads de 2,54 mm, la pista puede afinarse al ancho del pad en los últimos 3 mm.",
+   "base": "IPC-2221: I = 0,048·ΔT^0,44·A^0,725, con A en mil² y cobre de 35 µm (SUP-03). Corriente continua del tronco según SUP-43. Resultados del cálculo: 4 A → 2,03 mm (ΔT 10 °C); 6 A → 3,56 mm (ΔT 10 °C); 10 A → 4,72 mm (ΔT 20 °C); 15 A → 8,26 mm (ΔT 20 °C).",
+   "impacto_si_cambia": "Si la corriente continua real supera 10 A o el cobre es de 18 µm, el tronco se cablea por fuera con conductor de 2,5 mm² entre borneras.",
+   "como_se_confirma": "E-04/E-06: medir la corriente con el robot en marcha y la temperatura de las pistas con termómetro IR.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "reglas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "tronco_mm": 5.0,
+    "motores_mm": 2.0,
+    "servos_mm": 3.5,
+    "logica_mm": 1.0,
+    "senal_mm": 0.8,
+    "refuerzo_tronco": "estaño o alambre de 1,5 mm2"
+   },
+   "id": "SUP-10",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Mechas, pads y anillos",
+   "supuesto": "Mechas disponibles: 0,8; 1,0; 1,3 y 3,2 mm (minitaladro). Resistencias, diodos DO-35/DO-41, LED y cerámicos: taladro de 0,8 mm y pad de 2,0 mm. Tiras de 2,54 mm (zócalos y headers) y TO-220: taladro de 1,0 mm y pad de 2,2 mm (oval de 1,8 × 2,6 mm en el TO-220). Borneras de 5,08 y 3,5 mm, portafusibles, electrolíticos grandes y diodos DO-15/DO-201: taladro de 1,3 mm y pad de 2,8-3,0 mm. Anillo mínimo de 0,5 mm (0,6 mm en potencia). Cada pad deja un punto central sin cobre de 0,5 mm como guía para la mecha.",
+   "base": "Huellas ya creadas en segway_modulos.pretty (pad de 2,2 mm con taladro de 1,0 mm en paso 2,54 y de 2,8 mm con 1,3 mm en bornera) y práctica casera [H].",
+   "impacto_si_cambia": "Con otras mechas cambian los diámetros de taladro y de pad de las huellas. Sin la mecha de 1,3 mm, las borneras no entran.",
+   "como_se_confirma": "Matías informa qué mechas tiene. Probar cada mecha con una bornera y con un pin de la tira antes de taladrar la placa.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
     "huellas",
     "reglas",
     "pcb",
-    "fabricacion",
-    "firmware",
-    "ensayos"
-  ],
-  "como_se_aplica": [
-    "Matías informa 'SUP-xx: es X' (o 'SUP-xx: confirmado', o 'SUP-xx: recuperar <ref>' en el grupo H).",
-    "El agente actualiza la fila en supuestos.json y supuestos.md: estado CONFIRMADO si coincide, CAMBIADO si difiere; reescribe 'supuesto' con el valor real; agrega la fuente a 'base', la fecha y una entrada en 'historial'.",
-    "Propaga el cambio según 'afecta': especificación (nueva revisión), huellas, reglas, PCB, fabricación, firmware o ensayos.",
-    "Regenera el esquema con generar_esquema.py y exige ERC 0 y comparar_netlist.py 'Resultado: coincide'.",
-    "Reconstruye la PCB con construir_pcb.py (ubicación, Freerouting, DRC 0 y paridad) y regenera las salidas de fabricación.",
-    "Registra el cambio en BACKLOG.md con la evidencia."
-  ],
-  "conteo_v04": {
-    "total_v03": 153,
-    "conservados": 60,
-    "eliminados": 93,
-    "conservados_por_bloque": {
-      "modulos": [
-        "A1",
-        "A2",
-        "A3",
-        "A4",
-        "A5",
-        "A6",
-        "A7",
-        "A8",
-        "A9"
-      ],
-      "entrada_potencia": [
-        "J1",
-        "F1",
-        "J3",
-        "Q1",
-        "R29",
-        "D3",
-        "C1",
-        "C3",
-        "D1",
-        "R28",
-        "D4",
-        "R22",
-        "R23",
-        "C14"
-      ],
-      "motores": [
-        "F2",
-        "F3",
-        "C4",
-        "C5",
-        "R1",
-        "R2",
-        "R3",
-        "R4",
-        "R35",
-        "R36",
-        "R37",
-        "R38",
-        "J11",
-        "J12"
-      ],
-      "servos": [
-        "F4",
-        "J15",
-        "J16",
-        "J13",
-        "J14",
-        "R5",
-        "R6",
-        "R7",
-        "R8",
-        "C8",
-        "C9"
-      ],
-      "logica": [
-        "F5",
-        "D2",
-        "J18"
-      ],
-      "controlador": [
-        "J23"
-      ],
-      "conectores": [
-        "J7",
-        "J8",
-        "R13",
-        "R14",
-        "R15",
-        "R16",
-        "J4",
-        "R24"
-      ]
-    },
-    "eliminados_lista": [
-      "TP1",
-      "TP2",
-      "TP3",
-      "TP4",
-      "TP5",
-      "TP6",
-      "TP7",
-      "TP8",
-      "TP9",
-      "TP10",
-      "TP11",
-      "TP12",
-      "TP13",
-      "TP14",
-      "TP15",
-      "TP16",
-      "TP17",
-      "TP18",
-      "TP19",
-      "TP20",
-      "TP21",
-      "TP22",
-      "TP23",
-      "TP24",
-      "TP25",
-      "TP26",
-      "TP27",
-      "TP28",
-      "TP29",
-      "TP30",
-      "TP31",
-      "TP32",
-      "TP33",
-      "TP34",
-      "TP35",
-      "TP36",
-      "TP37",
-      "TP38",
-      "TP39",
-      "TP40",
-      "TP41",
-      "JP1",
-      "C2",
-      "J5",
-      "J6",
-      "J21",
-      "J22",
-      "JP6",
-      "JP7",
-      "A10",
-      "R30",
-      "R31",
-      "R32",
-      "C26",
-      "JP3",
-      "JP4",
-      "R17",
-      "R18",
-      "R19",
-      "R20",
-      "R39",
-      "R40",
-      "JP8",
-      "C10",
-      "C11",
-      "C12",
-      "C13",
-      "R9",
-      "R10",
-      "R11",
-      "R12",
-      "C6",
-      "C7",
-      "C16",
-      "C17",
-      "C18",
-      "C19",
-      "C20",
-      "C21",
-      "C22",
-      "C23",
-      "C24",
-      "C25",
-      "C27",
-      "C28",
-      "R27",
-      "D5",
-      "R33",
-      "R34",
-      "R21",
-      "R25",
-      "C15",
-      "R26"
+    "fabricacion"
+   ],
+   "alias": [],
+   "valor": {
+    "mechas_mm": [
+     0.8,
+     1.0,
+     1.3,
+     3.2
     ],
-    "nota": "Los puentes de alambre (W1…) se cuentan aparte. La especificación v0.4 manda; si difiere, se corrige este campo."
+    "pad_pasivo_mm": [
+     2.0,
+     0.8
+    ],
+    "pad_tira_2p54_mm": [
+     2.2,
+     1.0
+    ],
+    "pad_bornera_mm": [
+     2.8,
+     1.3
+    ],
+    "anillo_min_mm": 0.5
+   },
+   "id": "SUP-11",
+   "historial": []
   },
-  "donde_medir": [
+  {
+   "grupo": "B",
+   "tema": "Distancia al borde",
+   "supuesto": "El cobre queda a 1,5 mm o más del contorno. La placa se corta con sierra o amoladora y se lima.",
+   "base": "Práctica casera [H].",
+   "impacto_si_cambia": "Si el corte sale menos prolijo, se sube a 2 mm.",
+   "como_se_confirma": "Primera placa.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "reglas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "borde_mm": 1.5
+   },
+   "id": "SUP-12",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Relleno de masa en B.Cu",
+   "supuesto": "Relleno GND en B.Cu con separación de 0,8 mm y conexión térmica a los pads (rayos de 0,8 mm o más), sin islas. Se gasta menos ácido y los retornos son más cortos. Los retornos de motores y servos van por pistas o sectores propios hasta el nodo de referencia junto a C1/J1, sin pasar bajo A2 ni la Blue Pill. Si el relleno rompe esa separación, se reemplaza por pistas.",
+   "base": "Práctica casera [H]. Guía de la §10 de diseno_v0.3.md (nodo de referencia y retornos).",
+   "impacto_si_cambia": "Sin relleno se gasta más ácido y hay que rutear todas las masas.",
+   "como_se_confirma": "La revisión eléctrica de layout comprueba que los retornos no pasan bajo la IMU ni bajo la Blue Pill.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "relleno": "GND",
+    "separacion_mm": 0.8,
+    "rayo_termico_mm": 0.8
+   },
+   "id": "SUP-13",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Rótulos sin serigrafía",
+   "supuesto": "Sin máscara antisoldante ni serigrafía industrial. Los rótulos críticos van como texto en el cobre de B.Cu, de 2 mm de alto o más y con trazo de 0,4 mm o más: BAT +/−, SW, M IZQ/M DER, UBEC IN/OUT, 6V, 5V, 3V3, la flecha USB, el pin 1 y el IN/OUT de los reguladores. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. Después del ataque se estañan las pistas.",
+   "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H].",
+   "impacto_si_cambia": "Si se hace una segunda transferencia en la cara de componentes, se suma la serigrafía y se achican los textos de cobre.",
+   "como_se_confirma": "Matías decide si hace la serigrafía por transferencia.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb",
+    "fabricacion"
+   ],
+   "alias": [],
+   "id": "SUP-14",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Puentes de alambre",
+   "supuesto": "Si un cruce no se resuelve en una capa, se agrega un puente de alambre en la cara de componentes: alambre de cobre estañado de 0,6 mm (AWG 22) o resistencia de 0 Ω, recto, en grilla de 2,54 mm y de 7,62 a 25,4 mm de largo. Cada puente es un componente explícito (W1…) en la especificación y en el esquema. Objetivo: 8 puentes o menos. Por un puente solo pasan señales o lógica de hasta 1 A. Los cruces de potencia se resuelven con la ubicación o con cable de la sección que corresponda.",
+   "base": "DEC-14 [M]: sin vías y puentes como componentes explícitos. Los números son [H].",
+   "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error. Si hacen falta más de 8, conviene reubicar.",
+   "como_se_confirma": "Resultado del ruteo de la v0.1: cantidad real de puentes en pcb_v0.1.md.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "alambre_mm": 0.6,
+    "largo_mm": [
+     7.62,
+     25.4
+    ],
+    "max_objetivo": 8,
+    "prefijo_ref": "W"
+   },
+   "id": "SUP-15",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Todo de agujero pasante",
+   "supuesto": "Resistencias de película metálica de 1/4 W y 1 %, axiales, con paso de 10,16 mm (7,62 mm si falta lugar). Cerámicos radiales de paso 5,08 mm (o 2,54 mm). Electrolíticos radiales del diámetro que corresponde al valor. LED de 3 mm, Q1 en TO-220 vertical y zener DO-35. Ninguna pieza SMD sobre la placa base; los módulos traen sus propias SMD.",
+   "base": "DEC-14 [M]: componentes THT. Son los formatos más comunes en las casas de electrónica locales [H].",
+   "impacto_si_cambia": "Si falta alguna pieza THT, cambia la huella; la net no cambia.",
+   "como_se_confirma": "Lista de compras validada por Matías en la casa de electrónica.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "especificacion",
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-16",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Equivalentes THT de los semiconductores SMD",
+   "supuesto": "D1 (TVS SMAJ15A, SMA) se reemplaza por SA15A (DO-15, 500 W), que tiene la misma tabla de tensiones: VWM de 15 V y VC de 24,4 V. Alternativa: P6KE18A (VWM de 15,3 V, VC de 25,2 V). NO sirve P6KE15A: su VWM de 12,8 V queda por debajo de los 13,6 V de carga del bus. D2 (SS34) se reemplaza por 1N5819 (DO-41, 1 A, 40 V), porque 5V_MCU consume menos de 0,1 A; alternativa: 1N5822 (DO-201AD, 3 A). C3 (10 µF/50 V X7R en 1206) pasa a multicapa radial de 10 µF/50 V.",
+   "base": "Datos de la §8 de diseno_v0.3.md: VWM mayor de 13,6 V y VC menor de 26 V del INA219 ([DS-219] p.4). Hojas de datos de Littelfuse (series SA y P6KE) y de onsemi/Vishay (1N5819/1N5822), no archivadas: descargarlas y verificar la tabla antes de comprar [D pendiente].",
+   "impacto_si_cambia": "Con un TVS de VWM menor que el bus, D1 conduce con la batería llena y se calienta. Con VC mayor de 26 V, el INA219 queda sin margen.",
+   "como_se_confirma": "Bajar y archivar en componentes_comprados/ las hojas de SA15A, P6KE18A y 1N5819, comprobar VWM, VC y Vf, y comprar el que se consiga.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "D1",
+    "D2",
+    "C3"
+   ],
+   "afecta": [
+    "especificacion",
+    "huellas"
+   ],
+   "alias": [],
+   "valor": {
+    "D1": "SA15A (alt. P6KE18A)",
+    "D2": "1N5819 (alt. 1N5822)",
+    "C3": "MLCC radial 10uF/50V"
+   },
+   "id": "SUP-17",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Borneras",
+   "supuesto": "Borneras genéricas equivalentes a las Phoenix de la v0.3. KF301 de 5,08 mm y 2 polos: J1, J3, J11, J12 y J15. KF350 de 3,5 mm: J16 (2 polos), J18 (3 polos) y J7/J8 (4 polos). KF128 o MPT de 2,54 mm: J4. Se usan las huellas Phoenix de KiCad del mismo paso, con taladro de 1,3 mm. Una bornera vendida como de 5,0 mm también entra en 2 polos.",
+   "base": "§9 de diseno_v0.3.md (equivalentes locales KF301-5.0/5.08, KF350-3.5, KF128-2.54) [V]. Corrientes Phoenix: [PHX-MKDS3], [PHX-MKDS15] y [PHX-PT15].",
+   "impacto_si_cambia": "Con otro paso o con bornera de 3 tornillos cambia la huella. Una bornera genérica sin corriente verificada obliga a medir su temperatura en E-04.",
+   "como_se_confirma": "Foto o medida con calibre de las borneras compradas: paso, diámetro del pin y altura.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J1",
+    "J3",
+    "J11",
+    "J12",
+    "J15",
+    "J16",
+    "J18",
+    "J7",
+    "J8",
+    "J4"
+   ],
+   "afecta": [
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "5.08": [
+     "J1",
+     "J3",
+     "J11",
+     "J12",
+     "J15"
+    ],
+    "3.5": [
+     "J16",
+     "J18",
+     "J7",
+     "J8"
+    ],
+    "2.54": [
+     "J4"
+    ]
+   },
+   "id": "SUP-18",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Portafusibles",
+   "supuesto": "F1: portafusible ATO de PCB de 2 pines (huella Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin). F2-F5: portafusible mini (ATM) de PCB Keystone 3568 o equivalente. Se supone que cada portafusible soporta la corriente de su fusible: 15 A en F1 y 7,5 A en F4.",
+   "base": "Huellas de la v0.3. Open_point 15: verificar la corriente del Keystone 3568 [H].",
+   "impacto_si_cambia": "Si el portafusible mini no soporta 7,5 A, F4 pasa a ATO. Si no se consiguen portafusibles de PCB, se usan fusibles en línea con cable y la placa lleva borneras o pads.",
+   "como_se_confirma": "Hoja de datos del portafusible comprado (corriente nominal) o compra local confirmada por Matías.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5"
+   ],
+   "afecta": [
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-19",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Disipador de Q1",
+   "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W.",
+   "base": "§8 de diseno_v0.3.md: 0,5 W a 5 A y 4,5-6,8 W a 15 A ([DS-IRF4905] p.1-2). Corriente continua según SUP-43.",
+   "impacto_si_cambia": "Si la corriente continua es mayor, hace falta un disipador más grande o un MOSFET de menor RDS(on) (open_point 5).",
+   "como_se_confirma": "E-04/E-06: temperatura de Q1 con termómetro IR en marcha.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "Q1"
+   ],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "espacio_mm": [
+     25,
+     20,
+     25
+    ],
+    "rth_max_C_W": 15
+   },
+   "id": "SUP-20",
+   "historial": []
+  },
+  {
+   "grupo": "B",
+   "tema": "Zócalos y tiras de 2,54 mm",
+   "supuesto": "Tira hembra genérica de 2,54 mm, de unos 8,5 mm de alto, con cola de 0,6 × 0,6 mm (diagonal de 0,85 mm, entra en el taladro de 1,0 mm). Tira macho genérica para los módulos y para J13, J14 y J23. Los tapones de codificación son pines macho cortados al ras y pegados en la posición que se tapa.",
+   "base": "§9 y §10 de diseno_v0.3.md (altura de ≈8,5 mm, compras) [V].",
+   "impacto_si_cambia": "Con colas más gruesas, los zócalos necesitan la mecha de 1,3 mm y el anillo se achica.",
+   "como_se_confirma": "Medir con calibre la tira comprada.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "huellas",
+    "fabricacion"
+   ],
+   "alias": [],
+   "id": "SUP-21",
+   "historial": []
+  },
+  {
+   "grupo": "C",
+   "tema": "Separación de hileras de la ESP32-S3-DevKitC-1",
+   "supuesto": "Dos hileras de 22 pines separadas 25,40 mm, paso 2,54 mm. Pines 1-22 en la hilera izquierda desde la antena (3V3, 3V3, RST, 4, 5, 6, 7, 15, 16, 17, 18, 8, 3, 46, 9, 10, 11, 12, 13, 14, 5V, GND) y 23-44 en la derecha (GND, 43, 44, 1, 2, 42, 41, 40, 39, 38, 37, 36, 35, 0, 45, 48, 47, 21, 20, 19, GND, GND).",
+   "base": "Pinout y manual del vendedor (ROB-012_ESP32-S3_DevKitC-1_N16R8/), orden igual a Espressif ESP32-S3-DevKitC-1 J1/J3 [V]. Ancho de placa 28 mm según el vendedor; la separación de 25,40 mm es [H].",
+   "impacto_si_cambia": "Con otra separación la placa no entra en el zócalo: se rehace la huella con huella_esp32s3.py y se reubica.",
+   "como_se_confirma": "E-01: medir con calibre la distancia entre centros de las dos hileras.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1"
+   ],
+   "afecta": [
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "separacion_hileras_mm": 25.4,
+    "paso_mm": 2.54,
+    "pines_por_hilera": 22
+   },
+   "id": "SUP-22",
+   "historial": [
     {
-      "net": "VBAT_P y GND",
-      "punto": "J1 pin 2 y J1 pin 1"
-    },
-    {
-      "net": "VBAT_F",
-      "punto": "terminal de salida de F1"
-    },
-    {
-      "net": "VBAT_SW",
-      "punto": "J3 pin 2"
-    },
-    {
-      "net": "VM_BUS",
-      "punto": "positivo de C1 o ánodo de D4"
-    },
-    {
-      "net": "VM_IZQ y VM_DER",
-      "punto": "positivo de C4 y de C5 (pin VM del DRV)"
-    },
-    {
-      "net": "VM_UBEC y V_SERVO",
-      "punto": "positivo de J15; positivo de J16 y pin central de J13/J14"
-    },
-    {
-      "net": "VM_LOG",
-      "punto": "pin IN+ de A8 o J18"
-    },
-    {
-      "net": "5V y 5V_MCU",
-      "punto": "pin OUT+ de A8; cátodo de D2 (pin 5V de la Blue Pill)"
-    },
-    {
-      "net": "3V3_PER y 3V3_MCU",
-      "punto": "pin OUT+ de A9; pin 3.3 de la Blue Pill"
-    },
-    {
-      "net": "Señales (IN, encoders, servos, I2C, paro, ALERT, INT, VBAT_ADC)",
-      "punto": "pin correspondiente de la Blue Pill o del módulo, por arriba del zócalo"
-    }
-  ],
-  "items": [
-    {
-      "grupo": "A",
-      "tema": "Método de fabricación",
-      "supuesto": "PCB casera por transferencia de tóner con plancha y ataque con ácido: una sola capa de cobre (B.Cu), sin vías ni agujeros metalizados, todos los componentes de agujero pasante montados en la cara superior y soldados del lado del cobre. Los cruces imposibles en una capa se resuelven con puentes de alambre explícitos en la cara de componentes (SUP-15).",
-      "base": "DEC-14, confirmada por Matías el 17/10/2026 (electronica/agente/memoria/decisiones.md)",
-      "impacto_si_cambia": "Si se pasa a fábrica externa o a doble faz, se rehacen reglas, anchos y ruteo; el esquema no cambia.",
-      "como_se_confirma": "Ya confirmado. Se reabre solo con una decisión nueva de Matías.",
-      "estado": "CONFIRMADO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "reglas",
-        "pcb",
-        "fabricacion"
-      ],
-      "alias": [],
-      "valor": {
-        "capas_cobre": [
-          "B.Cu"
-        ],
-        "vias": false,
-        "tecnologia": "THT"
-      },
-      "id": "SUP-01",
-      "historial": []
-    },
-    {
-      "grupo": "A",
-      "tema": "Cantidad de piezas de la v0.4",
-      "supuesto": "La v0.4 queda en 60 piezas: 9 módulos enchufables (A1-A9) y 51 componentes (borneras, fusibles, pasivos, Q1, diodos, LED y headers). Se eliminan 93 de las 153 de la v0.3: 41 puntos de prueba, 22 DNP y 30 redundantes o de respaldo (grupo H). Los puentes de alambre de SUP-15 se cuentan aparte. La lista definitiva la fija la especificación v0.4 y debe coincidir con el campo conteo_v04 de supuestos.json.",
-      "base": "Objeción de Matías del 17/10/2026 a los 153 componentes de la v0.3 ('cómo que 150 componentes???'). El objetivo de 50-60 piezas con los mismos módulos es la interpretación del agente [H].",
-      "impacto_si_cambia": "Cada elemento que el equipo quiera recuperar se reincorpora desde su fila del grupo H. La especificación v0.3 conserva valores, nets y fuentes de todos.",
-      "como_se_confirma": "Matías confirma que 60 piezas está bien o dice qué más quitar o recuperar.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "piezas_v04": 60,
-        "modulos": 9,
-        "componentes": 51,
-        "eliminados": 93
-      },
-      "id": "SUP-02",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Placa virgen",
-      "supuesto": "FR-4 simple faz de 1,6 mm con cobre de 35 µm (1 oz). Si solo se consigue pertinax (FR-2), sirve igual, con más cuidado al taladrar.",
-      "base": "Formato más común de placa virgen en el mercado local [H]. Los 35 µm son la base de todos los anchos de SUP-10 (IPC-2221).",
-      "impacto_si_cambia": "Con cobre de 18 µm, los anchos de potencia casi se duplican y el tronco no entra: hay que reforzarlo con cable.",
-      "como_se_confirma": "Leer la etiqueta o la ficha de la placa que se compre y medir el espesor total con calibre.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "reglas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "material": "FR-4",
-        "espesor_mm": 1.6,
-        "cobre_um": 35
-      },
-      "id": "SUP-03",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Tamaño máximo de la placa",
-      "supuesto": "Contorno rectangular de 160 × 100 mm como máximo (formato europeo de placa virgen). La v0.1 puede usar todo el ancho para separar las ramas de potencia; se achica si sobra lugar.",
-      "base": "Medida típica de placa virgen comercial [H]. Falta el dato del chasis (pregunta D.8 de componentes_comprados/2026-10-17-datos-fisicos-faltantes.md, sin respuesta).",
-      "impacto_si_cambia": "Si el chasis o la placa disponible son más chicos (por ejemplo, 100 × 100 mm), hay que reubicar todo y probablemente sumar puentes.",
-      "como_se_confirma": "Mecánica (Francisco): espacio disponible en el chasis (largo, ancho y altura libre). Matías: medida de la placa virgen comprada.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "ancho_max_mm": 160,
-        "alto_max_mm": 100,
-        "radio_esquinas_mm": 0
-      },
-      "id": "SUP-04",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Agujeros de fijación",
-      "supuesto": "Cuatro agujeros M3 (taladro de 3,2 mm) en las esquinas, con el centro a 4 mm de cada borde y un círculo sin cobre de 7 mm de diámetro para la cabeza del tornillo o el separador. La placa va sobre separadores de 10 mm para que las soldaduras del lado del cobre no toquen el chasis.",
-      "base": "Práctica habitual [H]. Open_point 16 de especificacion_v0.3.json: fijación sin definir.",
-      "impacto_si_cambia": "Si el chasis tiene otros puntos de fijación, se mueven los agujeros y se reubican los componentes cercanos.",
-      "como_se_confirma": "Plano o medida del chasis (Francisco) con la posición de los puntos de fijación.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "taladro_mm": 3.2,
-        "distancia_borde_mm": 4.0,
-        "keepout_diametro_mm": 7.0,
-        "separador_mm": 10
-      },
-      "id": "SUP-05",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Impresión para la transferencia",
-      "supuesto": "Impresora láser monocroma a escala 1:1, sin 'ajustar a página', con máxima densidad de tóner, en papel ilustración o couché brillante de 90-150 g o en papel de transferencia. El PDF incluye una regla de control de 100 mm.",
-      "base": "Práctica habitual del método de la plancha [H].",
-      "impacto_si_cambia": "Con una escala distinta de 1:1, los módulos no entran en los zócalos. Con impresora de chorro de tinta, el método no funciona.",
-      "como_se_confirma": "Imprimir una prueba y medir con calibre la regla de 100 mm y la separación de hileras de la Blue Pill (15,24 mm).",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "fabricacion"
-      ],
-      "alias": [],
-      "valor": {
-        "escala": "1:1",
-        "regla_control_mm": 100
-      },
-      "id": "SUP-06",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Espejado del PDF de cobre",
-      "supuesto": "La capa B.Cu se imprime SIN espejar, tal como la dibuja KiCad (vista desde la cara de componentes). Al apoyar el tóner contra el cobre, la transferencia invierte la imagen una vez y queda correcta vista desde abajo. KiCad dibuja espejados los textos de B.Cu: en el papel se leen al revés y en el cobre, derechos.",
-      "base": "Geometría de la transferencia (una sola inversión) y convención de KiCad para las capas inferiores [H, verificar con la prueba].",
-      "impacto_si_cambia": "Si el PDF sale espejado, la Blue Pill y las tiras 1×8 quedan invertidas, y los módulos no encajan o se conectan al revés.",
-      "como_se_confirma": "En la impresión de prueba, el texto de cobre se lee al revés en el papel. Después de transferir, se lee derecho mirando la cara de cobre.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "fabricacion"
-      ],
-      "alias": [],
-      "valor": {
-        "B.Cu_espejado": false
-      },
-      "id": "SUP-07",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Ataque químico",
-      "supuesto": "Percloruro férrico o persulfato de sodio, tibio y con agitación. Se supone un sobreataque lateral de hasta 0,1 mm por borde, ya cubierto por los mínimos de SUP-09.",
-      "base": "Práctica habitual de PCB casera [H].",
-      "impacto_si_cambia": "Con mucho sobreataque, las pistas de 0,8 mm pueden cortarse: se sube el mínimo a 1,0 mm.",
-      "como_se_confirma": "Matías informa qué ácido usa. Revisar la primera placa con lupa y medir algunas pistas.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "reglas",
-        "fabricacion"
-      ],
-      "alias": [],
-      "id": "SUP-08",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Ancho mínimo y separación",
-      "supuesto": "Pista de señal de 0,8 mm, con mínimo absoluto de 0,6 mm solo en tramos cortos de salida de pad. Separación cobre-cobre de 0,6 mm como mínimo y 0,8 mm por defecto. Ninguna pista pasa entre dos pads contiguos de paso 2,54 mm. Ángulos de 45° o redondeados, sin ángulos agudos. Si reglas_fabricacion_casera.md fija otros valores, manda ese archivo y se actualiza esta fila.",
-      "base": "Márgenes holgados para tóner y ácido (DEC-14: 'pistas anchas y seguras') [H]. El detalle lo define la tarea de reglas caseras.",
-      "impacto_si_cambia": "Con reglas más finas aparecen cortes o puentes de tóner. Con reglas más gruesas, hacen falta más puentes de alambre.",
-      "como_se_confirma": "Primera placa: inspección con lupa y continuidad de cada net antes de montar.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "reglas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "pista_senal_mm": 0.8,
-        "pista_min_mm": 0.6,
-        "separacion_min_mm": 0.6,
-        "separacion_defecto_mm": 0.8,
-        "pistas_entre_pads_2p54": false
-      },
-      "id": "SUP-09",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Anchos por corriente (IPC-2221, capa externa, 35 µm)",
-      "supuesto": "Tronco de batería (VBAT_*, VM_BUS y GND de potencia): 5,0 mm o más, para 10 A continuos (4,7 mm con ΔT de 20 °C), estañado o con un alambre de cobre de 1,5 mm² soldado encima. Ramas de motor (VM_IZQ*, VM_DER* y salidas al motor): 2,0 mm (4 A con ΔT de 10 °C). Servos (VM_UBEC, V_SERVO y su GND): 3,5 mm (6 A con ΔT de 10 °C; 7,5 A darían 3,2 mm con ΔT de 20 °C). Lógica (VM_LOG*, 5V, 5V_MCU, 3V3_*): 1,0 mm (≤1 A; el cálculo da 0,3 mm). Señal: 0,8 mm. Junto a los pads de 2,54 mm, la pista puede afinarse al ancho del pad en los últimos 3 mm.",
-      "base": "IPC-2221: I = 0,048·ΔT^0,44·A^0,725, con A en mil² y cobre de 35 µm (SUP-03). Corriente continua del tronco según SUP-43. Resultados del cálculo: 4 A → 2,03 mm (ΔT 10 °C); 6 A → 3,56 mm (ΔT 10 °C); 10 A → 4,72 mm (ΔT 20 °C); 15 A → 8,26 mm (ΔT 20 °C).",
-      "impacto_si_cambia": "Si la corriente continua real supera 10 A o el cobre es de 18 µm, el tronco se cablea por fuera con conductor de 2,5 mm² entre borneras.",
-      "como_se_confirma": "E-04/E-06: medir la corriente con el robot en marcha y la temperatura de las pistas con termómetro IR.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "reglas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "tronco_mm": 5.0,
-        "motores_mm": 2.0,
-        "servos_mm": 3.5,
-        "logica_mm": 1.0,
-        "senal_mm": 0.8,
-        "refuerzo_tronco": "estaño o alambre de 1,5 mm2"
-      },
-      "id": "SUP-10",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Mechas, pads y anillos",
-      "supuesto": "Mechas disponibles: 0,8; 1,0; 1,3 y 3,2 mm (minitaladro). Resistencias, diodos DO-35/DO-41, LED y cerámicos: taladro de 0,8 mm y pad de 2,0 mm. Tiras de 2,54 mm (zócalos y headers) y TO-220: taladro de 1,0 mm y pad de 2,2 mm (oval de 1,8 × 2,6 mm en el TO-220). Borneras de 5,08 y 3,5 mm, portafusibles, electrolíticos grandes y diodos DO-15/DO-201: taladro de 1,3 mm y pad de 2,8-3,0 mm. Anillo mínimo de 0,5 mm (0,6 mm en potencia). Cada pad deja un punto central sin cobre de 0,5 mm como guía para la mecha.",
-      "base": "Huellas ya creadas en segway_modulos.pretty (pad de 2,2 mm con taladro de 1,0 mm en paso 2,54 y de 2,8 mm con 1,3 mm en bornera) y práctica casera [H].",
-      "impacto_si_cambia": "Con otras mechas cambian los diámetros de taladro y de pad de las huellas. Sin la mecha de 1,3 mm, las borneras no entran.",
-      "como_se_confirma": "Matías informa qué mechas tiene. Probar cada mecha con una bornera y con un pin de la tira antes de taladrar la placa.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "huellas",
-        "reglas",
-        "pcb",
-        "fabricacion"
-      ],
-      "alias": [],
-      "valor": {
-        "mechas_mm": [
-          0.8,
-          1.0,
-          1.3,
-          3.2
-        ],
-        "pad_pasivo_mm": [
-          2.0,
-          0.8
-        ],
-        "pad_tira_2p54_mm": [
-          2.2,
-          1.0
-        ],
-        "pad_bornera_mm": [
-          2.8,
-          1.3
-        ],
-        "anillo_min_mm": 0.5
-      },
-      "id": "SUP-11",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Distancia al borde",
-      "supuesto": "El cobre queda a 1,5 mm o más del contorno. La placa se corta con sierra o amoladora y se lima.",
-      "base": "Práctica casera [H].",
-      "impacto_si_cambia": "Si el corte sale menos prolijo, se sube a 2 mm.",
-      "como_se_confirma": "Primera placa.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "reglas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "borde_mm": 1.5
-      },
-      "id": "SUP-12",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Relleno de masa en B.Cu",
-      "supuesto": "Relleno GND en B.Cu con separación de 0,8 mm y conexión térmica a los pads (rayos de 0,8 mm o más), sin islas. Se gasta menos ácido y los retornos son más cortos. Los retornos de motores y servos van por pistas o sectores propios hasta el nodo de referencia junto a C1/J1, sin pasar bajo A2 ni la Blue Pill. Si el relleno rompe esa separación, se reemplaza por pistas.",
-      "base": "Práctica casera [H]. Guía de la §10 de diseno_v0.3.md (nodo de referencia y retornos).",
-      "impacto_si_cambia": "Sin relleno se gasta más ácido y hay que rutear todas las masas.",
-      "como_se_confirma": "La revisión eléctrica de layout comprueba que los retornos no pasan bajo la IMU ni bajo la Blue Pill.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "relleno": "GND",
-        "separacion_mm": 0.8,
-        "rayo_termico_mm": 0.8
-      },
-      "id": "SUP-13",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Rótulos sin serigrafía",
-      "supuesto": "Sin máscara antisoldante ni serigrafía industrial. Los rótulos críticos van como texto en el cobre de B.Cu, de 2 mm de alto o más y con trazo de 0,4 mm o más: BAT +/−, SW, M IZQ/M DER, UBEC IN/OUT, 6V, 5V, 3V3, la flecha USB, el pin 1 y el IN/OUT de los reguladores. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. Después del ataque se estañan las pistas.",
-      "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H].",
-      "impacto_si_cambia": "Si se hace una segunda transferencia en la cara de componentes, se suma la serigrafía y se achican los textos de cobre.",
-      "como_se_confirma": "Matías decide si hace la serigrafía por transferencia.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "pcb",
-        "fabricacion"
-      ],
-      "alias": [],
-      "id": "SUP-14",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Puentes de alambre",
-      "supuesto": "Si un cruce no se resuelve en una capa, se agrega un puente de alambre en la cara de componentes: alambre de cobre estañado de 0,6 mm (AWG 22) o resistencia de 0 Ω, recto, en grilla de 2,54 mm y de 7,62 a 25,4 mm de largo. Cada puente es un componente explícito (W1…) en la especificación y en el esquema. Objetivo: 8 puentes o menos. Por un puente solo pasan señales o lógica de hasta 1 A. Los cruces de potencia se resuelven con la ubicación o con cable de la sección que corresponda.",
-      "base": "DEC-14 [M]: sin vías y puentes como componentes explícitos. Los números son [H].",
-      "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error. Si hacen falta más de 8, conviene reubicar.",
-      "como_se_confirma": "Resultado del ruteo de la v0.1: cantidad real de puentes en pcb_v0.1.md.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "alambre_mm": 0.6,
-        "largo_mm": [
-          7.62,
-          25.4
-        ],
-        "max_objetivo": 8,
-        "prefijo_ref": "W"
-      },
-      "id": "SUP-15",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Todo de agujero pasante",
-      "supuesto": "Resistencias de película metálica de 1/4 W y 1 %, axiales, con paso de 10,16 mm (7,62 mm si falta lugar). Cerámicos radiales de paso 5,08 mm (o 2,54 mm). Electrolíticos radiales del diámetro que corresponde al valor. LED de 3 mm, Q1 en TO-220 vertical y zener DO-35. Ninguna pieza SMD sobre la placa base; los módulos traen sus propias SMD.",
-      "base": "DEC-14 [M]: componentes THT. Son los formatos más comunes en las casas de electrónica locales [H].",
-      "impacto_si_cambia": "Si falta alguna pieza THT, cambia la huella; la net no cambia.",
-      "como_se_confirma": "Lista de compras validada por Matías en la casa de electrónica.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "especificacion",
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-16",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Equivalentes THT de los semiconductores SMD",
-      "supuesto": "D1 (TVS SMAJ15A, SMA) se reemplaza por SA15A (DO-15, 500 W), que tiene la misma tabla de tensiones: VWM de 15 V y VC de 24,4 V. Alternativa: P6KE18A (VWM de 15,3 V, VC de 25,2 V). NO sirve P6KE15A: su VWM de 12,8 V queda por debajo de los 13,6 V de carga del bus. D2 (SS34) se reemplaza por 1N5819 (DO-41, 1 A, 40 V), porque 5V_MCU consume menos de 0,1 A; alternativa: 1N5822 (DO-201AD, 3 A). C3 (10 µF/50 V X7R en 1206) pasa a multicapa radial de 10 µF/50 V.",
-      "base": "Datos de la §8 de diseno_v0.3.md: VWM mayor de 13,6 V y VC menor de 26 V del INA219 ([DS-219] p.4). Hojas de datos de Littelfuse (series SA y P6KE) y de onsemi/Vishay (1N5819/1N5822), no archivadas: descargarlas y verificar la tabla antes de comprar [D pendiente].",
-      "impacto_si_cambia": "Con un TVS de VWM menor que el bus, D1 conduce con la batería llena y se calienta. Con VC mayor de 26 V, el INA219 queda sin margen.",
-      "como_se_confirma": "Bajar y archivar en componentes_comprados/ las hojas de SA15A, P6KE18A y 1N5819, comprobar VWM, VC y Vf, y comprar el que se consiga.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "D1",
-        "D2",
-        "C3"
-      ],
-      "afecta": [
-        "especificacion",
-        "huellas"
-      ],
-      "alias": [],
-      "valor": {
-        "D1": "SA15A (alt. P6KE18A)",
-        "D2": "1N5819 (alt. 1N5822)",
-        "C3": "MLCC radial 10uF/50V"
-      },
-      "id": "SUP-17",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Borneras",
-      "supuesto": "Borneras genéricas equivalentes a las Phoenix de la v0.3. KF301 de 5,08 mm y 2 polos: J1, J3, J11, J12 y J15. KF350 de 3,5 mm: J16 (2 polos), J18 (3 polos) y J7/J8 (4 polos). KF128 o MPT de 2,54 mm: J4. Se usan las huellas Phoenix de KiCad del mismo paso, con taladro de 1,3 mm. Una bornera vendida como de 5,0 mm también entra en 2 polos.",
-      "base": "§9 de diseno_v0.3.md (equivalentes locales KF301-5.0/5.08, KF350-3.5, KF128-2.54) [V]. Corrientes Phoenix: [PHX-MKDS3], [PHX-MKDS15] y [PHX-PT15].",
-      "impacto_si_cambia": "Con otro paso o con bornera de 3 tornillos cambia la huella. Una bornera genérica sin corriente verificada obliga a medir su temperatura en E-04.",
-      "como_se_confirma": "Foto o medida con calibre de las borneras compradas: paso, diámetro del pin y altura.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J1",
-        "J3",
-        "J11",
-        "J12",
-        "J15",
-        "J16",
-        "J18",
-        "J7",
-        "J8",
-        "J4"
-      ],
-      "afecta": [
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "5.08": [
-          "J1",
-          "J3",
-          "J11",
-          "J12",
-          "J15"
-        ],
-        "3.5": [
-          "J16",
-          "J18",
-          "J7",
-          "J8"
-        ],
-        "2.54": [
-          "J4"
-        ]
-      },
-      "id": "SUP-18",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Portafusibles",
-      "supuesto": "F1: portafusible ATO de PCB de 2 pines (huella Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin). F2-F5: portafusible mini (ATM) de PCB Keystone 3568 o equivalente. Se supone que cada portafusible soporta la corriente de su fusible: 15 A en F1 y 7,5 A en F4.",
-      "base": "Huellas de la v0.3. Open_point 15: verificar la corriente del Keystone 3568 [H].",
-      "impacto_si_cambia": "Si el portafusible mini no soporta 7,5 A, F4 pasa a ATO. Si no se consiguen portafusibles de PCB, se usan fusibles en línea con cable y la placa lleva borneras o pads.",
-      "como_se_confirma": "Hoja de datos del portafusible comprado (corriente nominal) o compra local confirmada por Matías.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "F1",
-        "F2",
-        "F3",
-        "F4",
-        "F5"
-      ],
-      "afecta": [
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-19",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Disipador de Q1",
-      "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W.",
-      "base": "§8 de diseno_v0.3.md: 0,5 W a 5 A y 4,5-6,8 W a 15 A ([DS-IRF4905] p.1-2). Corriente continua según SUP-43.",
-      "impacto_si_cambia": "Si la corriente continua es mayor, hace falta un disipador más grande o un MOSFET de menor RDS(on) (open_point 5).",
-      "como_se_confirma": "E-04/E-06: temperatura de Q1 con termómetro IR en marcha.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "Q1"
-      ],
-      "afecta": [
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "espacio_mm": [
-          25,
-          20,
-          25
-        ],
-        "rth_max_C_W": 15
-      },
-      "id": "SUP-20",
-      "historial": []
-    },
-    {
-      "grupo": "B",
-      "tema": "Zócalos y tiras de 2,54 mm",
-      "supuesto": "Tira hembra genérica de 2,54 mm, de unos 8,5 mm de alto, con cola de 0,6 × 0,6 mm (diagonal de 0,85 mm, entra en el taladro de 1,0 mm). Tira macho genérica para los módulos y para J13, J14 y J23. Los tapones de codificación son pines macho cortados al ras y pegados en la posición que se tapa.",
-      "base": "§9 y §10 de diseno_v0.3.md (altura de ≈8,5 mm, compras) [V].",
-      "impacto_si_cambia": "Con colas más gruesas, los zócalos necesitan la mecha de 1,3 mm y el anillo se achica.",
-      "como_se_confirma": "Medir con calibre la tira comprada.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "huellas",
-        "fabricacion"
-      ],
-      "alias": [],
-      "id": "SUP-21",
-      "historial": []
-    },
-    {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Separación de hileras de la Blue Pill",
       "supuesto": "Dos hileras de 20 pines separadas 15,24 mm, con paso de 2,54 mm y numeración DIP-40 del símbolo: pin 1 = PB12 en el extremo del USB, en sentido antihorario visto desde arriba.",
-      "base": "[PR1409] y [PR1121], dos huellas comunitarias independientes [V]; §4 de diseno_v0.3.md. No hay plano del fabricante.",
-      "impacto_si_cambia": "Con otra separación, la placa no entra en el zócalo: se rehace la huella y se reubica.",
-      "como_se_confirma": "E-01: medir con calibre la distancia entre los centros de las dos hileras de la Blue Pill.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1"
-      ],
-      "afecta": [
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "separacion_hileras_mm": 15.24,
-        "paso_mm": 2.54
-      },
-      "id": "SUP-22",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ]
+  },
+  {
+   "grupo": "C",
+   "tema": "Contorno y accesos de la ESP32-S3",
+   "supuesto": "Placa de 28 × 57 mm más la antena que llega a 63,3 mm. Va vertical en el centro, con la antena hacia arriba sobre una zona sin cobre y los dos USB-C hacia el borde inferior de la placa base. Sin cobre bajo la antena.",
+   "base": "Medidas del vendedor (dimensiones_vendedor.jpg) [V]; guía de diseño del ESP32-S3-WROOM-1 (zona libre de antena) [D].",
+   "impacto_si_cambia": "Si el USB no queda accesible o la antena choca, se reubica A1.",
+   "como_se_confirma": "E-01: medir largo, ancho y voladizo de la antena; enchufar un cable USB-C con la placa montada.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1"
+   ],
+   "afecta": [
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "ancho_mm": 28.0,
+    "largo_mm": 57.0,
+    "largo_con_antena_mm": 63.3
+   },
+   "id": "SUP-23",
+   "historial": [
     {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Contorno y accesos de la Blue Pill",
       "supuesto": "Placa de 22,86 × 53,34 mm. El micro-USB sobresale 1-2 mm por un extremo y el header SWD de 4 pines, en ángulo, por el otro. El extremo USB va hacia un borde de la placa base. El extremo SWD tiene al menos 15 mm libres para el cable del ST-Link. Debajo del módulo no va nada alto.",
-      "base": "Contorno del PR 1409 [V]; §10 de diseno_v0.3.md.",
-      "impacto_si_cambia": "Si el SWD es recto o el contorno es otro, cambian el courtyard y la zona libre.",
-      "como_se_confirma": "E-01: medir largo, ancho, saliente del USB y forma del header SWD, con fotos de las dos caras.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1"
-      ],
-      "afecta": [
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "contorno_mm": [
-          22.86,
-          53.34
-        ],
-        "libre_swd_mm": 15
-      },
-      "id": "SUP-23",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ]
+  },
+  {
+   "grupo": "C",
+   "tema": "Pines reservados de la ESP32-S3",
+   "supuesto": "Sin conexión: GPIO35, 36 y 37 (PSRAM octal del N16R8), GPIO0, 3, 45 y 46 (strapping), GPIO19 y 20 (USB nativo), GPIO43 y 44 (UART0 del CH343P), GPIO48 (LED RGB WS2812) y RST.",
+   "base": "ESP32-S3 datasheet y guía de la DevKitC-1 de Espressif [D]; pinout del vendedor [V].",
+   "impacto_si_cambia": "Usar un pin reservado puede impedir el arranque o romper la PSRAM.",
+   "como_se_confirma": "Revisión de la tabla de GPIO de la especificación v0.5.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1"
+   ],
+   "afecta": [
+    "huellas",
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-24",
+   "historial": [
     {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Pin 40 y codificación de la Blue Pill",
       "supuesto": "El pin 40 (G o VBUS según el modelo) queda sin conexión y sin pista. Codificación: se corta el pin macho 40 de la Blue Pill y se tapa la posición 40 del zócalo; girada 180°, su pin 20 choca con el tapón.",
-      "base": "Propuesta 11 de diseno_v0.3.md y open_point 24 de especificacion_v0.3.json; [DESKTH].",
-      "impacto_si_cambia": "Si el pin 40 es GND puro se podría conectar, pero no hace falta: alcanzan los pines 19 y 39. La codificación no cambia.",
-      "como_se_confirma": "E-01: sin alimentar, continuidad del pin 40 con GND y con VBUS.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1"
-      ],
-      "afecta": [
-        "huellas",
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-24",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ],
+   "valor": {}
+  },
+  {
+   "grupo": "C",
+   "tema": "Chip y regulador de la ESP32-S3",
+   "supuesto": "Módulo ESP32-S3-WROOM-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal) y regulador SOT-223 de clase 1 A (tipo AMS1117-3.3) que alimenta el módulo y los periféricos de 3,3 V. Pines NO tolerantes a 5 V.",
+   "base": "Manual del vendedor (módulo, CH343P) [V]; encapsulado SOT-223 visible en las fotos; el marcado del regulador no se leyó [H].",
+   "impacto_si_cambia": "Si el regulador es de 500 mA o menos, vuelve el mini buck de 3,3 V para los periféricos.",
+   "como_se_confirma": "E-01: leer el marcado del regulador; E-02: medir 3V3 con Wi-Fi activo y todos los periféricos.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1"
+   ],
+   "afecta": [
+    "firmware"
+   ],
+   "alias": [],
+   "id": "SUP-25",
+   "historial": [
     {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Chip y regulador de la Blue Pill",
       "supuesto": "STM32F103C8T6 original o clon compatible pin a pin (CKS32/CS32); el clon solo afecta al firmware. Regulador de clase 300 mA (RT9193-33 o TX6211B), que alimenta solo al MCU (3V3_MCU, unos 65 mA).",
-      "base": "§4 y §7 de diseno_v0.3.md; [SCH-BP], [STM32-BASE], [TX6211B] p.2.",
-      "impacto_si_cambia": "Un regulador más chico (100 mA) sigue alcanzando para 3V3_MCU. Un clon distinto cambia el firmware y el programador.",
-      "como_se_confirma": "E-01: leer los marcados del chip y del regulador U1.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1"
-      ],
-      "afecta": [
-        "firmware"
-      ],
-      "alias": [],
-      "id": "SUP-25",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ],
+   "valor": {
+    "regulador": "AMS1117-3.3 (supuesto)",
+    "corriente_A": 1.0
+   }
+  },
+  {
+   "grupo": "C",
+   "tema": "Pines de alimentación de la ESP32-S3",
+   "supuesto": "Se alimenta por el pin 5V (21) desde el buck de 5 V A8 a través de D2. Los dos pines 3V3 (1 y 2) entregan 3,3 V a la placa base. GND en los pines 22, 23, 43 y 44.",
+   "base": "Pinout del vendedor [V]; guía de la DevKitC-1 (entradas de alimentación excluyentes) [D].",
+   "impacto_si_cambia": "Si el 5V del USB queda unido al pin 5V sin diodo, conectar el USB con la batería encendida realimenta el buck: lo evita D2.",
+   "como_se_confirma": "E-02: medir 5V y 3V3 con y sin USB conectado.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-26",
+   "historial": [
     {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "VBAT de la Blue Pill",
       "supuesto": "El pin VB (21) se une a 3V3_MCU (propuesta 9). No se usa RTC con batería.",
-      "base": "[DS-STM32] p.15; práctica de ST [H, AN2586 no descargada].",
-      "impacto_si_cambia": "Si se quiere un RTC con pila, VB queda libre para la pila.",
-      "como_se_confirma": "E-01: comprobar con continuidad si VB ya está unido a 3.3 en la placa.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-26",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ],
+   "valor": {}
+  },
+  {
+   "grupo": "C",
+   "tema": "Programación y depuración",
+   "supuesto": "Se programa y depura por el USB-C del CH343P (UART0). No hace falta ST-Link ni adaptador USB-TTL. El header UART J23 se elimina.",
+   "base": "Manual del vendedor, §5 y §6 [V].",
+   "impacto_si_cambia": "Si se quiere una UART externa, se agrega un header en pines libres (GPIO38-42).",
+   "como_se_confirma": "Primera carga de firmware con la placa montada.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1",
+    "J23"
+   ],
+   "afecta": [
+    "firmware",
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-27",
+   "historial": [
     {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Programación y USB",
       "supuesto": "Hay un ST-Link V2 (clon) disponible y se programa por SWD, conectando solo GND, SWDIO y SWCLK. Hay un adaptador USB-TTL de 3,3 V para el bootloader y la depuración por J23. El USB de la Blue Pill nunca se enchufa con la placa base alimentada, y R10 de la Blue Pill no se modifica (propuesta 7).",
-      "base": "Propuestas 7 y 10 de diseno_v0.3.md; open_point 8.",
-      "impacto_si_cambia": "Sin ST-Link se programa por J23 con BOOT0 = 1: es más lento, pero la placa no cambia. Para usar el USB nativo hace falta una política de alimentación nueva.",
-      "como_se_confirma": "El equipo confirma que tiene el ST-Link y el adaptador USB-TTL de 3,3 V.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1",
-        "J23"
-      ],
-      "afecta": [
-        "firmware",
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-27",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ],
+   "valor": {}
+  },
+  {
+   "grupo": "C",
+   "tema": "Asignación de pines (ESP32-S3)",
+   "supuesto": "Encoders IZQ A/B en GPIO4/5 y DER A/B en GPIO6/7 (PCNT). IN1/IN2 IZQ en GPIO15/16 y DER en GPIO17/18 (MCPWM o LEDC). I2C SDA/SCL en GPIO8/9. Servos en GPIO10/11 (LEDC 50 Hz). INT de la IMU en GPIO12, ALERT del INA226 en GPIO13, paro en GPIO14. Batería en GPIO1 (ADC1_CH0).",
+   "base": "Especificación v0.5 (tabla de GPIO); matriz GPIO del ESP32-S3: cualquier periférico en cualquier pin [D].",
+   "impacto_si_cambia": "Cambiar pines solo modifica etiquetas del esquema y pistas cortas; el firmware usa la misma tabla.",
+   "como_se_confirma": "Revisión con el equipo de firmware.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1"
+   ],
+   "afecta": [
+    "especificacion",
+    "firmware"
+   ],
+   "alias": [],
+   "valor": {},
+   "id": "SUP-28",
+   "historial": [
     {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Asignación de pines",
       "supuesto": "Se mantiene la §5 de la v0.3: TIM3 en PA6/PA7/PB0/PB1 para los motores; TIM2 en PA0/PA1 y TIM4 en PB6/PB7 para los encoders; TIM1 en PA8/PB15 para los servos; I2C2 en PB10/PB11; USART1 en PA9/PA10; ADC en PA3; paro en PB12; ALERT en PB13; IMU_INT en PB14. No hay LED de estado propio: se usa el LED de PC13 de la Blue Pill y PB5 queda libre. PA2, PA4, PA5, PA15, PB3, PB4, PB5, PB8 y PB9 quedan sin conexión y sin header de expansión. El tiempo de ciclo se mide en el pin de la Blue Pill.",
-      "base": "§5 de diseno_v0.3.md; open_point 17; simplificación del 17/10/2026.",
-      "impacto_si_cambia": "Para telemetría inalámbrica o más E/S habría que sumar un header de expansión (open_point 17).",
-      "como_se_confirma": "Firmware confirma que no necesita otros pines en la v0.1.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1"
-      ],
-      "afecta": [
-        "especificacion",
-        "firmware"
-      ],
-      "alias": [],
-      "valor": {
-        "libres": [
-          "PA2",
-          "PA4",
-          "PA5",
-          "PA15",
-          "PB3",
-          "PB4",
-          "PB5",
-          "PB8",
-          "PB9"
-        ]
-      },
-      "id": "SUP-28",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ]
+  },
+  {
+   "grupo": "C",
+   "tema": "Periféricos del ESP32-S3",
+   "supuesto": "Los cuatro canales de encoder usan dos unidades PCNT; los PWM de motor, MCPWM; los servos, LEDC. No hay conflictos de remapeo: la matriz GPIO los rutea a cualquier pin.",
+   "base": "ESP32-S3 Technical Reference Manual (PCNT, MCPWM, LEDC, GPIO matrix) [D].",
+   "impacto_si_cambia": "Ninguno en la placa.",
+   "como_se_confirma": "Firmware de prueba en el banco.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A1"
+   ],
+   "afecta": [
+    "firmware",
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-29",
+   "historial": [
     {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "TIM1 y USART1 juntos",
       "supuesto": "TIM1 (CH1 en PA8 y CH3N en PB15) convive con USART1 (PA9/PA10). El plan B (servos en CH1N/CH3N y ALERT movido a PA2) no se cablea.",
-      "base": "Open_point 9 de especificacion_v0.3.json; nota 4 de la Tabla 5 de [DS-STM32] [H].",
-      "impacto_si_cambia": "Si no conviven, hay que mover las pistas de servos o de ALERT, y cambian el ruteo y el firmware.",
-      "como_se_confirma": "E-05: PWM de servos y UART al mismo tiempo.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1"
-      ],
-      "afecta": [
-        "firmware",
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-29",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ],
+   "valor": {}
+  },
+  {
+   "grupo": "C",
+   "tema": "Bus I2C",
+   "supuesto": "Se usa solo la opción A: MPU6050 e INA en I2C2 (PB10/PB11), a 100 kHz al principio y a 400 kHz después de E-08. La placa base no lleva pull-ups: alcanzan las de los módulos. Con 10 kΩ en cada INA y 4,7 kΩ en el GY-521, el paralelo da 1,95 kΩ; con 2,2 kΩ en el GY-521, 1,33 kΩ. Las dos quedan dentro de la ventana de 1 a 3,5 kΩ.",
+   "base": "[CONTRATO] §4.4; §8 de diseno_v0.3.md (R17-R20 DNP, paralelo de los módulos de ≈1,33 kΩ [H]). Las pull-ups de los módulos no se midieron.",
+   "impacto_si_cambia": "Si los módulos no traen pull-ups, el I2C no funciona: se recuperan dos resistencias de 3,3 kΩ a 3V3_PER (SUP-65).",
+   "como_se_confirma": "E-01: sin alimentar, medir la resistencia entre SDA/SCL y VCC de cada módulo.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A2",
+    "A5",
+    "A6",
+    "A7"
+   ],
+   "afecta": [
+    "especificacion",
+    "firmware"
+   ],
+   "alias": [],
+   "valor": {
+    "bus": "I2C2",
+    "f_inicial_kHz": 100
+   },
+   "id": "SUP-30",
+   "historial": []
+  },
+  {
+   "grupo": "C",
+   "tema": "Rieles de 3,3 V",
+   "supuesto": "Un solo riel 3V3_MCU desde el regulador de la DevKitC (SUP-25) para el módulo, la MPU, los INA y los encoders. Se elimina el mini buck de 3,3 V A9. Presupuesto: unos 350 mA de pico del ESP32-S3 con Wi-Fi más unos 65 mA de periféricos.",
+   "base": "Simplificación por la placa ESP32-S3 (DEC-16); consumo del ESP32-S3 según su datasheet [D]; periféricos según §7 de diseno_v0.3.md [H].",
+   "impacto_si_cambia": "Si el regulador no alcanza, vuelve A9 (mini buck ROB-005) solo para periféricos.",
+   "como_se_confirma": "E-02: medir 3V3 y la temperatura del regulador con Wi-Fi activo.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "A9",
+    "A1"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-31",
+   "historial": [
     {
-      "grupo": "C",
-      "tema": "Bus I2C",
-      "supuesto": "Se usa solo la opción A: MPU6050 e INA en I2C2 (PB10/PB11), a 100 kHz al principio y a 400 kHz después de E-08. La placa base no lleva pull-ups: alcanzan las de los módulos. Con 10 kΩ en cada INA y 4,7 kΩ en el GY-521, el paralelo da 1,95 kΩ; con 2,2 kΩ en el GY-521, 1,33 kΩ. Las dos quedan dentro de la ventana de 1 a 3,5 kΩ.",
-      "base": "[CONTRATO] §4.4; §8 de diseno_v0.3.md (R17-R20 DNP, paralelo de los módulos de ≈1,33 kΩ [H]). Las pull-ups de los módulos no se midieron.",
-      "impacto_si_cambia": "Si los módulos no traen pull-ups, el I2C no funciona: se recuperan dos resistencias de 3,3 kΩ a 3V3_PER (SUP-65).",
-      "como_se_confirma": "E-01: sin alimentar, medir la resistencia entre SDA/SCL y VCC de cada módulo.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A2",
-        "A5",
-        "A6",
-        "A7"
-      ],
-      "afecta": [
-        "especificacion",
-        "firmware"
-      ],
-      "alias": [],
-      "valor": {
-        "bus": "I2C2",
-        "f_inicial_kHz": 100
-      },
-      "id": "SUP-30",
-      "historial": []
-    },
-    {
-      "grupo": "C",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Rieles de 3,3 V",
       "supuesto": "3V3_PER sale del mini buck A9 (ROB-005) y alimenta la MPU, los INA y los encoders. El LDO de la Blue Pill alimenta solo al MCU (propuesta 1). Presupuesto: unos 65 mA en 3V3_MCU y 62-67 mA en 3V3_PER.",
-      "base": "Propuesta 1 y §7 de diseno_v0.3.md; [DESKTH]; [DS-STM32] p.39.",
-      "impacto_si_cambia": "Con un solo riel desde el LDO (≈130 mA) habría que reincorporar R32 (SUP-64). No se recomienda.",
-      "como_se_confirma": "E-02: corriente real de cada riel.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A9",
-        "A1"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-31",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ],
+   "valor": {
+    "corriente_pico_mA": 415
+   }
+  },
+  {
+   "grupo": "D",
+   "tema": "DRV8871 enchufado entero (A3/A4)",
+   "supuesto": "Opción B: se desoldan las borneras POWER y MOTOR del módulo y se sueldan pines macho en esos agujeros. VM y GND llegan por 2 contactos y OUT1/OUT2 por uno. Los motores se atornillan en J11/J12 de la placa base. Geometría del Adafruit 3190 (drv.brd): placa de 20,32 × 24,13 mm, header 1×04 y borneras de paso 3,5 mm. Con RILIM de 30 kΩ, ITRIP = 1,97-2,30 A.",
+   "base": "Propuesta 2 de diseno_v0.3.md; [ADA-3190]; github.com/adafruit/Adafruit-DRV8871-Breakout-PCB (drv.brd y drv.sch); [DS-DRV] p.9. Alias en la huella: SUP-HB-DRV-1 (el clon copia la geometría) y SUP-HB-DRV-2 (paso de bornera de 3,5 mm).",
+   "impacto_si_cambia": "Con la opción A (módulo con sus borneras y cable), vuelven J5/J6 y J11/J12 quedan sin uso. Si el clon tiene otra geometría, se rehace la huella.",
+   "como_se_confirma": "E-01: fotos y calibre del módulo comprado (paso de bornera, posición de los agujeros y valor de RILIM).",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A3",
+    "A4"
+   ],
+   "afecta": [
+    "huellas",
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [
+    "SUP-HB-DRV-1",
+    "SUP-HB-DRV-2"
+   ],
+   "valor": {
+    "opcion": "B",
+    "RILIM_kohm": 30,
+    "ITRIP_A": [
+     1.97,
+     2.3
+    ]
+   },
+   "id": "SUP-32",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "Segundo DRV8871",
+   "supuesto": "A4 es un DRV8871 idéntico a A3, con la misma placa y el mismo RILIM. Hoy hay una sola unidad comprada (ROB-008).",
+   "base": "Open_point 3; inventario de ROB-008 (1 unidad); ratificación heredada (10) del open_point 20.",
+   "impacto_si_cambia": "Con otro driver para el segundo motor cambian la huella y, quizás, la asignación de pines.",
+   "como_se_confirma": "Matías o el equipo confirman la compra del segundo módulo.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A4"
+   ],
+   "afecta": [
+    "huellas",
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-33",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "INA219 MCU-219 (A5/A6)",
+   "supuesto": "Pines macho en los agujeros de la bornera suelta, con 2 contactos por net (propuesta 3). Tira 1×06 en el orden Vcc, Gnd, Scl, Sda, Vin−, Vin+. Bornera de paso 3,5 mm en la posición medida sobre la captura y contorno de 25 × 22 mm. Shunt R100 = 0,1 Ω. Direcciones 0x41 en IZQ (puente A0) y 0x44 en DER (puente A1).",
+   "base": "Propuesta 3; huella ROB-002_INA219_MCU-219_8p (alias SUP-HB-INA-1, paso de bornera; SUP-HB-INA-2, posición; SUP-HB-INA-3, contorno); [DS-219] p.14; protosupplies.com/product/ina219-dc-current-measurement-module/ [V].",
+   "impacto_si_cambia": "Si la bornera queda soldada y va cable a la placa, se recuperan J21/J22. Con otro paso o posición, se rehace la huella.",
+   "como_se_confirma": "E-01: medir el módulo con calibre, leer el shunt y soldar los puentes A0/A1.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A5",
+    "A6"
+   ],
+   "afecta": [
+    "huellas",
+    "firmware"
+   ],
+   "alias": [
+    "SUP-HB-INA-1",
+    "SUP-HB-INA-2",
+    "SUP-HB-INA-3"
+   ],
+   "valor": {
+    "dir_IZQ": "0x41",
+    "dir_DER": "0x44",
+    "shunt_ohm": 0.1
+   },
+   "id": "SUP-34",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "INA226 (A7)",
+   "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SCL, SDA, GND, VCC, con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT usa la pull-up interna de PB13 (30-50 kΩ) en lugar de R21. Un tope mecánico de la huella impide enchufarlo invertido.",
+   "base": "Captura de ROB-009 (componentes_comprados/datasheets/ROB-009_INA226/referencia_compra.png) [V]; [DS-226] p.5, p.18 y p.30; propuesta 16.",
+   "impacto_si_cambia": "Si el orden de pines es otro, se rehace la huella. Si ALERT necesita un flanco rápido, se recupera R21.",
+   "como_se_confirma": "E-01: foto del módulo con la serigrafía legible y medida del contorno.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A7"
+   ],
+   "afecta": [
+    "huellas",
+    "especificacion",
+    "firmware"
+   ],
+   "alias": [],
+   "valor": {
+    "orden": [
+     "IN+",
+     "IN-",
+     "VBS",
+     "ALE",
+     "SCL",
+     "SDA",
+     "GND",
+     "VCC"
+    ],
+    "dir": "0x40"
+   },
+   "id": "SUP-35",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "MPU6050 GY-521 (A2)",
+   "supuesto": "Formato GY-521 (DEC-09) con tira 1×08 en el orden VCC, GND, SCL, SDA, XDA, XCL, AD0, INT, alimentado desde 3V3_PER. El regulador propio del GY-521 funciona con 3,3 V de entrada. AD0 queda sin conexión en la placa base: la pull-down del módulo fija la dirección 0x68. Codificación: se retira el pin 5 (XDA) y se tapa esa posición.",
+   "base": "DEC-09; open_point 25; [DS-MPU] p.15; pull-down de AD0 de unos 4,7 kΩ en el GY-521 [H].",
+   "impacto_si_cambia": "Si el módulo no tiene pull-down en AD0, la dirección queda indefinida y se recupera R39. Si su regulador no funciona con 3,3 V, la MPU pasa a 5V y cambia la net de VCC.",
+   "como_se_confirma": "E-01: sin alimentar, resistencia entre AD0 y GND. E-02: tensión en el VDD del chip con VCC = 3,3 V.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A2"
+   ],
+   "afecta": [
+    "huellas",
+    "especificacion"
+   ],
+   "alias": [],
+   "valor": {
+    "dir": "0x68",
+    "AD0": "sin conexion"
+   },
+   "id": "SUP-36",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "Mini bucks de 5 V y 3,3 V (A8/A9)",
+   "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, cada uno sobre un zócalo 1×01. Contorno de unos 22 × 17 mm, el que adoptó la tarea de huellas (tipo MP1584). IN− y OUT− son la misma masa. Admiten 24,4 V o más de entrada (MP1584: 28 V). La captura muestra una placa negra con inductor 4R7 y cuatro agujeros en las esquinas, sin medidas.",
+   "base": "Captura de componentes_comprados/datasheets/ROB-005_Mini_3V3/referencia_compra.png [V]; inventario: chip no identificado y MP1584 solo como candidato [H].",
+   "impacto_si_cambia": "Si el chip admite menos de 24,4 V (por ejemplo, 20 V), un transitorio en el clamp del TVS puede dañarlo: hace falta otro módulo o un limitador. Con otro contorno o posición de pads, se rehace la huella.",
+   "como_se_confirma": "E-01: calibre, fotos y marcado del chip. E-02: rizado y temperatura.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A8",
+    "A9"
+   ],
+   "afecta": [
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "contorno_mm": [
+     22,
+     17
+    ],
+    "vin_max_V": 28
+   },
+   "id": "SUP-37",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "Codificación de A7, A8 y A9",
+   "supuesto": "En la v0.1, la huella de A8 va rotada 90° respecto de la de A9, con rótulos grandes de cobre (5V y 3V3) y la flecha IN→OUT. El pin ciego o tope definitivo se agrega cuando E-01 muestre una asimetría usable. La huella de A7 lleva dibujado un tope contra el cuerpo invertido.",
+   "base": "Propuesta 16 de diseno_v0.3.md y open_point 23 de especificacion_v0.3.json.",
+   "impacto_si_cambia": "Si no hay una asimetría usable, se decide con Matías soldar el módulo directo, lo que se desvía de DEC-13.",
+   "como_se_confirma": "E-01: fotos de los módulos y medición de los componentes altos y de los agujeros libres.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A7",
+    "A8",
+    "A9"
+   ],
+   "afecta": [
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-38",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "Voltímetro (ROB-004)",
+   "supuesto": "No se monta sobre la placa. Se conecta en J18, bornera de 3,5 mm y 3 polos (GND, medida y alimentación), y mide VM_LOG. Admite 4,5-30 V de alimentación.",
+   "base": "Ficha comercial DIYMORE de referencia [V]; §3 de diseno_v0.3.md.",
+   "impacto_si_cambia": "Si consume más de 20 mA o no admite 13,6 V, cambia F5 o pasa a otra rama.",
+   "como_se_confirma": "E-01: colores y función de los 3 cables del voltímetro comprado.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J18"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-39",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "UBEC YSIDO 6 A",
+   "supuesto": "Configurado en 6,0 V. Se cortan sus enchufes: la entrada (conector rojo) va a J15 y la salida (JR) a J16 (propuesta 12). Entrega 6 A como máximo. Antes de conectar los servos se miden 6,0 V en J16; 7,4 V está prohibido.",
+   "base": "Propuesta 12; open_point 19; ficha comercial de Banggood [V]; regla de servos de electronica/CLAUDE.md.",
+   "impacto_si_cambia": "Con 5 V los servos dan menos par. 7,4 V no está autorizado.",
+   "como_se_confirma": "Medir la salida del UBEC sin carga antes de montar y anotar cómo se elige la tensión.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J15",
+    "J16"
+   ],
+   "afecta": [
+    "ensayos"
+   ],
+   "alias": [],
+   "valor": {
+    "V_salida": 6.0
+   },
+   "id": "SUP-40",
+   "historial": []
+  },
+  {
+   "grupo": "D",
+   "tema": "Corriente por contacto de los zócalos",
+   "supuesto": "3 A por contacto de 2,54 mm, con un factor de 0,8 entre contactos en paralelo: N = techo(I / 2,4 A).",
+   "base": "Würth WR-PHD [V] (el valor más bajo); Samtec SSW, 4,7 A [D]; §9 de diseno_v0.3.md.",
+   "impacto_si_cambia": "Si las tiras genéricas calientan, se bajan F2/F3 o se suelda el módulo.",
+   "como_se_confirma": "E-04/E-05: temperatura de los contactos de A3-A6 con el motor bloqueado.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A3",
+    "A4",
+    "A5",
+    "A6"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-41",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Batería",
+   "supuesto": "Pack de 3 celdas (ROB-014): 11,1 V nominales y 12,6 V con carga completa (hipótesis de litio). El bus puede llegar a 13,6 V si se carga con el robot conectado. El BMS (ROB-003) va en el pack. La salida del pack llega a J1 en cables sueltos de AWG 14.",
+   "base": "DEC-03 y DEC-10; ficha del BMS, p.1 (carga de 12,6-13,6 V) [V]; open_point 20.",
+   "impacto_si_cambia": "Con otra química u otra cantidad de celdas cambian D1, el divisor y la tensión de entrada de todos los módulos.",
+   "como_se_confirma": "Etiquetas de las celdas y del BMS (preguntas B.4-B.6 de datos-fisicos-faltantes).",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J1",
+    "D1",
+    "R22",
+    "R23"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "valor": {
+    "V_nom": 11.1,
+    "V_max": 12.6,
+    "V_carga_max": 13.6
+   },
+   "id": "SUP-42",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Corriente continua del tronco",
+   "supuesto": "La corriente continua de diseño del tronco es de 10 A como máximo, con picos breves de unos 20 A. Suma: 2 motores con ITRIP ≤ 2,3 A, servos con hasta 6 A a la salida del UBEC (unos 3,8 A a la entrada) y la lógica, con unos 0,1 A. F1 (15 A) es la protección, no la corriente de trabajo.",
+   "base": "§9 de diseno_v0.3.md (pico de ≈20 A [H]); [DS-DRV] p.9; [DS-SERVO] p.3 [H].",
+   "impacto_si_cambia": "Si la corriente continua supera 10 A, se ensancha o se cablea el tronco (SUP-10) y crece el disipador de Q1 (SUP-20).",
+   "como_se_confirma": "E-04/E-06: corriente del bus en marcha, con pinza o shunt.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [],
+   "afecta": [
+    "reglas",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "I_continua_A": 10,
+    "I_pico_A": 20
+   },
+   "id": "SUP-43",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Protección de polaridad",
+   "supuesto": "J1 es una bornera de 5,08 mm (1 = P−, 2 = P+). Q1 IRF4905 va montado con R29 de 10 kΩ y D3 BZX79-C12, sin diodo en serie y sin el puente JP1 (propuesta 4).",
+   "base": "Propuesta 4 de diseno_v0.3.md; [DS-IRF4905] p.1-2; [PHX-MKDS3].",
+   "impacto_si_cambia": "Si se elige XT60 en latiguillo, Q1 sale y vuelve el puente JP1 (SUP-63).",
+   "como_se_confirma": "Matías confirma la bornera y Q1.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J1",
+    "Q1",
+    "R29",
+    "D3"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-44",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Interruptor y paro en la potencia",
+   "supuesto": "J3 recibe el lazo en serie del interruptor general y del paro NC externo, que cortan toda la potencia. J4 recibe el contacto NC del paro hacia PB12 y pasa a 2 polos (1 GND, 2 PARO): el polo AUX desaparece junto con R26.",
+   "base": "§3 de diseno_v0.3.md; open_point 18; REQ-17.",
+   "impacto_si_cambia": "Si se quiere alimentar un paro remoto desde la placa, J4 vuelve a 3 polos con R26.",
+   "como_se_confirma": "El equipo confirma qué paro se usa y cómo se cablea.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J3",
+    "J4"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-45",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Fusible principal F1",
+   "supuesto": "F1 es un fusible ATO lento de 15 A, en la placa. Los fusibles no se agrupan: F2/F3 no pueden superar 4 A por los zócalos, y F4 y F5 tienen valores distintos. Se recomienda, además, un fusible en línea junto al pack (desvío del contrato §2.9).",
+   "base": "Antecedente de 15 A de la v0.3 [H]; open_point 15; [ENERGIA] §2.3.",
+   "impacto_si_cambia": "Si el pico real es mayor (arranque de los dos motores con los servos), F1 sube a 20 A y se ensancha el tronco.",
+   "como_se_confirma": "E-06/E-08: corriente pico real. Matías confirma el fusible en línea del pack.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "F1"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "valor": {
+    "A": 15,
+    "tipo": "ATO lento"
+   },
+   "id": "SUP-46",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Fusibles de motor F2/F3",
+   "supuesto": "Un mini ATM de 4 A por driver.",
+   "base": "Propuesta 3: 2 contactos × 3 A × 0,8 = 4,8 A, que cubre el IOCP mínimo de 3,7 A ([DS-DRV] p.5).",
+   "impacto_si_cambia": "Si abren en los arranques, se revisa con la temperatura medida en los zócalos (SUP-41), sin pasar nunca de 4,8 A.",
+   "como_se_confirma": "E-04: corriente de arranque y de bloqueo.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "F2",
+    "F3"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "valor": {
+    "A": 4
+   },
+   "id": "SUP-47",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Fusible del UBEC F4",
+   "supuesto": "Mini ATM de 7,5 A. El UBEC toma unos 3,8 A de entrada (6 A × 6 V / 0,85 / 11,1 V); el resto es margen para la carga inicial y los picos.",
+   "base": "Cálculo con eficiencia del 85 % [H]; antecedente de 10 A en la v0.3.",
+   "impacto_si_cambia": "Si abre al encender o con los dos servos bloqueados, sube a 10 A y pasa a portafusible ATO (SUP-19).",
+   "como_se_confirma": "E-05/E-06: corriente de entrada del UBEC con los servos bloqueados.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "F4"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "valor": {
+    "A": 7.5
+   },
+   "id": "SUP-48",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Fusible de la rama lógica F5",
+   "supuesto": "Mini ATM de 1 A (propuesta 17). La serie mini no tiene una curva 'rápida' propiamente dicha; si hiciera falta, se usa un fusible de vidrio 5×20 F1A con otro portafusible.",
+   "base": "Propuesta 17: consumo de ≈0,1 A [H] y rango de hasta 0,82 A del R100 de A7; [DS-226] p.5.",
+   "impacto_si_cambia": "Si abre con la carga inicial de los condensadores de entrada de A8/A9, sube a 2 A y se pierde parte de la protección de A7.",
+   "como_se_confirma": "E-02: encender con fuente limitada y comprobar que F5 no abre.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "F5"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "valor": {
+    "A": 1
+   },
+   "id": "SUP-49",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Electrolíticos y condensador del BMS",
+   "supuesto": "C1: 470 µF/35 V low-ESR (D10, P5), junto a J1/Q1. C4/C5: 47 µF/35 V (D6.3, P2.5), junto a cada DRV, porque el módulo solo trae 22 µF/63 V. C8/C9: 470 µF/16 V (D8, P3.5), junto a cada header de servo. C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Son valores [H] hasta E-04/E-08.",
+   "base": "§8 de diseno_v0.3.md; drv.sch de Adafruit (el módulo trae C1 de 0,1 µF/50 V y C2 de 22 µF/63 V) [D]; nota 3 de la ficha del BMS, p.2 [V].",
+   "impacto_si_cambia": "Si E-04 muestra sobretensión al frenar, se suma C2 (SUP-63) o más bulk.",
+   "como_se_confirma": "E-04/E-08: osciloscopio sobre VM_BUS durante el frenado.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "C1",
+    "C3",
+    "C4",
+    "C5",
+    "C8",
+    "C9"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-50",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Divisor de batería y LED de alimentación",
+   "supuesto": "R22 de 100 kΩ, R23 de 12 kΩ y C14 de 100 nF hacia PA3 (13,6 V → 1,46 V; 24,4 V → 2,61 V). LED rojo D4 de 3 mm con R28 de 5,1 kΩ en VM_BUS (2,1 mA).",
+   "base": "§8 de diseno_v0.3.md; [DS-STM32] pp.74-75; [ENERGIA] §8.",
+   "impacto_si_cambia": "Con otra batería se recalcula el divisor.",
+   "como_se_confirma": "E-02: comparar la lectura del ADC con el multímetro.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R22",
+    "R23",
+    "C14",
+    "D4",
+    "R28"
+   ],
+   "afecta": [
+    "especificacion",
+    "firmware"
+   ],
+   "alias": [],
+   "id": "SUP-51",
+   "historial": []
+  },
+  {
+   "grupo": "E",
+   "tema": "Borneras sin polarizar",
+   "supuesto": "Se acepta el desvío de [FLUJO] l.72: el paso y la cantidad de polos no se repiten entre ramas de distinta tensión. Quedan pares iguales con la misma tensión (J1/J3 y J11/J12/J15), que se distinguen por distancia y por los rótulos de cobre (propuesta 5).",
+   "base": "Propuesta 5; open_point 7.",
+   "impacto_si_cambia": "Si el equipo exige conectores polarizados, J1, J3, J11, J12 y J15 cambian de huella.",
+   "como_se_confirma": "Matías y el equipo aceptan el riesgo.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J1",
+    "J3",
+    "J11",
+    "J12",
+    "J15"
+   ],
+   "afecta": [
+    "huellas",
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-52",
+   "historial": []
+  },
+  {
+   "grupo": "F",
+   "tema": "Alimentación de los encoders",
+   "supuesto": "Los encoders del GA25-370 funcionan con 3,3 V. V_ENC es la misma net que 3V3_PER, sin R30, y cada encoder consume 20 mA o menos.",
+   "base": "El vendedor dice '3,3-5 V' en una línea y '3,5-5 V' en otra, una contradicción [V]; open_point 12; §7 de diseno_v0.3.md.",
+   "impacto_si_cambia": "Si necesitan 5 V, V_ENC pasa a la net 5V. Con salida push-pull de 5 V hace falta un divisor en PA0/PA1, que no son FT: vuelven R9/R10 y se suman 2 kΩ a GND.",
+   "como_se_confirma": "E-04: alimentar el encoder con 3,3 V y ver los pulsos con osciloscopio o analizador lógico.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J7",
+    "J8",
+    "A9"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "valor": {
+    "V_ENC": "3V3_PER"
+   },
+   "id": "SUP-53",
+   "historial": []
+  },
+  {
+   "grupo": "F",
+   "tema": "Salida y pull-ups de los encoders",
+   "supuesto": "Salida de colector abierto o push-pull de 3,3 V. Pull-ups R13-R16 de 10 kΩ a 3V3_PER, sin resistencia en serie ni filtro RC: los glitches los filtra el filtro digital ICxF del timer.",
+   "base": "§8 de diseno_v0.3.md; [RM0008] §13.3; criterio de simplificación (se conservan las pull-ups) [H].",
+   "impacto_si_cambia": "Con ruido en el cable, o con 3V3_PER encendido y el MCU apagado, PA0/PA1 (no FT) quedan menos protegidos: se recuperan R9-R12.",
+   "como_se_confirma": "E-04: pulsos limpios a la máxima velocidad del motor.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R13",
+    "R14",
+    "R15",
+    "R16"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-54",
+   "historial": []
+  },
+  {
+   "grupo": "F",
+   "tema": "Cable de los encoders",
+   "supuesto": "Hilos de AWG 26 en la bornera de 3,5 mm y 4 polos (1 GND, 2 A, 3 B, 4 V). Con AWG 28 se usa puntera de 0,25 mm².",
+   "base": "Propuesta 14; [PHX-PT15] (AWG 26-16).",
+   "impacto_si_cambia": "Si los hilos son más finos y no ajustan, J7/J8 pasan a bornera de 2,54 mm (MPT 0,5).",
+   "como_se_confirma": "Medir el calibre del mazo del motor.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "J7",
+    "J8"
+   ],
+   "afecta": [
+    "huellas"
+   ],
+   "alias": [],
+   "valor": {
+    "AWG": 26
+   },
+   "id": "SUP-55",
+   "historial": []
+  },
+  {
+   "grupo": "F",
+   "tema": "Servos",
+   "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie, R7/R8 de 10 kΩ a GND del lado del MCU (evitan pulsos espurios en el reset) y un header macho 1×03 de 2,54 mm para su JR. El tiempo de bloqueo se limita por firmware.",
+   "base": "Propuesta 19; open_point 13; [DS-SERVO] p.3; [DS-STM32] Tabla 37 p.64.",
+   "impacto_si_cambia": "Si no responden a 3,3 V, hace falta salida open-drain con pull-up a 5 V, lo que es otra decisión. Si el contacto JR calienta, se cambia el conector.",
+   "como_se_confirma": "E-05: probar el pulso y medir la temperatura de J13/J14 con el servo bloqueado.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R5",
+    "R6",
+    "R7",
+    "R8",
+    "J13",
+    "J14"
+   ],
+   "afecta": [
+    "especificacion",
+    "firmware"
+   ],
+   "alias": [],
+   "id": "SUP-56",
+   "historial": []
+  },
+  {
+   "grupo": "F",
+   "tema": "Entradas de los drivers",
+   "supuesto": "R1-R4 de 2,2 kΩ a GND del lado del MCU y R35-R38 de 4,7 kΩ en serie hacia IN1/IN2 (propuesta 6). Protegen al MCU si un DRV se enchufa girado.",
+   "base": "Propuesta 6 de diseno_v0.3.md; [DS-STM32] p.37; [DS-DRV] p.4-5.",
+   "impacto_si_cambia": "Sin ellas, un DRV girado lleva VM a PA6/PB0.",
+   "como_se_confirma": "No hace falta confirmarlo, salvo que el equipo quiera quitarlas.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R35",
+    "R36",
+    "R37",
+    "R38"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-57",
+   "historial": []
+  },
+  {
+   "grupo": "F",
+   "tema": "Entrada de paro",
+   "supuesto": "R24 de 10 kΩ a 3V3_MCU y entrada directa a PB12 (FT), sin R25 ni C15: el antirrebote se hace por firmware. Con el contacto abierto (paro), PB12 sube y el firmware corta los motores. J3 corta la potencia de todos modos.",
+   "base": "§8 de diseno_v0.3.md; [CONTRATO] §2.12; simplificación del 17/10/2026 [H].",
+   "impacto_si_cambia": "Si hay disparos falsos por ruido en el cable, se recuperan R25 y C15.",
+   "como_se_confirma": "E-08: ensayo de paro con los motores en marcha.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R24",
+    "J4"
+   ],
+   "afecta": [
+    "especificacion",
+    "firmware"
+   ],
+   "alias": [],
+   "id": "SUP-58",
+   "historial": []
+  },
+  {
+   "grupo": "F",
+   "tema": "Header UART",
+   "supuesto": "Se elimina J23: la depuración usa el USB del CH343P de la DevKitC.",
+   "base": "SUP-27.",
+   "impacto_si_cambia": "Se recupera con un header en GPIO38-42 si se pide.",
+   "como_se_confirma": "—",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "J23"
+   ],
+   "afecta": [
+    "especificacion"
+   ],
+   "alias": [],
+   "id": "SUP-59",
+   "historial": [
     {
-      "grupo": "D",
-      "tema": "DRV8871 enchufado entero (A3/A4)",
-      "supuesto": "Opción B: se desoldan las borneras POWER y MOTOR del módulo y se sueldan pines macho en esos agujeros. VM y GND llegan por 2 contactos y OUT1/OUT2 por uno. Los motores se atornillan en J11/J12 de la placa base. Geometría del Adafruit 3190 (drv.brd): placa de 20,32 × 24,13 mm, header 1×04 y borneras de paso 3,5 mm. Con RILIM de 30 kΩ, ITRIP = 1,97-2,30 A.",
-      "base": "Propuesta 2 de diseno_v0.3.md; [ADA-3190]; github.com/adafruit/Adafruit-DRV8871-Breakout-PCB (drv.brd y drv.sch); [DS-DRV] p.9. Alias en la huella: SUP-HB-DRV-1 (el clon copia la geometría) y SUP-HB-DRV-2 (paso de bornera de 3,5 mm).",
-      "impacto_si_cambia": "Con la opción A (módulo con sus borneras y cable), vuelven J5/J6 y J11/J12 quedan sin uso. Si el clon tiene otra geometría, se rehace la huella.",
-      "como_se_confirma": "E-01: fotos y calibre del módulo comprado (paso de bornera, posición de los agujeros y valor de RILIM).",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A3",
-        "A4"
-      ],
-      "afecta": [
-        "huellas",
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [
-        "SUP-HB-DRV-1",
-        "SUP-HB-DRV-2"
-      ],
-      "valor": {
-        "opcion": "B",
-        "RILIM_kohm": 30,
-        "ITRIP_A": [
-          1.97,
-          2.3
-        ]
-      },
-      "id": "SUP-32",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "Segundo DRV8871",
-      "supuesto": "A4 es un DRV8871 idéntico a A3, con la misma placa y el mismo RILIM. Hoy hay una sola unidad comprada (ROB-008).",
-      "base": "Open_point 3; inventario de ROB-008 (1 unidad); ratificación heredada (10) del open_point 20.",
-      "impacto_si_cambia": "Con otro driver para el segundo motor cambian la huella y, quizás, la asignación de pines.",
-      "como_se_confirma": "Matías o el equipo confirman la compra del segundo módulo.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A4"
-      ],
-      "afecta": [
-        "huellas",
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-33",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "INA219 MCU-219 (A5/A6)",
-      "supuesto": "Pines macho en los agujeros de la bornera suelta, con 2 contactos por net (propuesta 3). Tira 1×06 en el orden Vcc, Gnd, Scl, Sda, Vin−, Vin+. Bornera de paso 3,5 mm en la posición medida sobre la captura y contorno de 25 × 22 mm. Shunt R100 = 0,1 Ω. Direcciones 0x41 en IZQ (puente A0) y 0x44 en DER (puente A1).",
-      "base": "Propuesta 3; huella ROB-002_INA219_MCU-219_8p (alias SUP-HB-INA-1, paso de bornera; SUP-HB-INA-2, posición; SUP-HB-INA-3, contorno); [DS-219] p.14; protosupplies.com/product/ina219-dc-current-measurement-module/ [V].",
-      "impacto_si_cambia": "Si la bornera queda soldada y va cable a la placa, se recuperan J21/J22. Con otro paso o posición, se rehace la huella.",
-      "como_se_confirma": "E-01: medir el módulo con calibre, leer el shunt y soldar los puentes A0/A1.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A5",
-        "A6"
-      ],
-      "afecta": [
-        "huellas",
-        "firmware"
-      ],
-      "alias": [
-        "SUP-HB-INA-1",
-        "SUP-HB-INA-2",
-        "SUP-HB-INA-3"
-      ],
-      "valor": {
-        "dir_IZQ": "0x41",
-        "dir_DER": "0x44",
-        "shunt_ohm": 0.1
-      },
-      "id": "SUP-34",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "INA226 (A7)",
-      "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SCL, SDA, GND, VCC, con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT usa la pull-up interna de PB13 (30-50 kΩ) en lugar de R21. Un tope mecánico de la huella impide enchufarlo invertido.",
-      "base": "Captura de ROB-009 (componentes_comprados/datasheets/ROB-009_INA226/referencia_compra.png) [V]; [DS-226] p.5, p.18 y p.30; propuesta 16.",
-      "impacto_si_cambia": "Si el orden de pines es otro, se rehace la huella. Si ALERT necesita un flanco rápido, se recupera R21.",
-      "como_se_confirma": "E-01: foto del módulo con la serigrafía legible y medida del contorno.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A7"
-      ],
-      "afecta": [
-        "huellas",
-        "especificacion",
-        "firmware"
-      ],
-      "alias": [],
-      "valor": {
-        "orden": [
-          "IN+",
-          "IN-",
-          "VBS",
-          "ALE",
-          "SCL",
-          "SDA",
-          "GND",
-          "VCC"
-        ],
-        "dir": "0x40"
-      },
-      "id": "SUP-35",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "MPU6050 GY-521 (A2)",
-      "supuesto": "Formato GY-521 (DEC-09) con tira 1×08 en el orden VCC, GND, SCL, SDA, XDA, XCL, AD0, INT, alimentado desde 3V3_PER. El regulador propio del GY-521 funciona con 3,3 V de entrada. AD0 queda sin conexión en la placa base: la pull-down del módulo fija la dirección 0x68. Codificación: se retira el pin 5 (XDA) y se tapa esa posición.",
-      "base": "DEC-09; open_point 25; [DS-MPU] p.15; pull-down de AD0 de unos 4,7 kΩ en el GY-521 [H].",
-      "impacto_si_cambia": "Si el módulo no tiene pull-down en AD0, la dirección queda indefinida y se recupera R39. Si su regulador no funciona con 3,3 V, la MPU pasa a 5V y cambia la net de VCC.",
-      "como_se_confirma": "E-01: sin alimentar, resistencia entre AD0 y GND. E-02: tensión en el VDD del chip con VCC = 3,3 V.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A2"
-      ],
-      "afecta": [
-        "huellas",
-        "especificacion"
-      ],
-      "alias": [],
-      "valor": {
-        "dir": "0x68",
-        "AD0": "sin conexion"
-      },
-      "id": "SUP-36",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "Mini bucks de 5 V y 3,3 V (A8/A9)",
-      "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, cada uno sobre un zócalo 1×01. Contorno de unos 22 × 17 mm, el que adoptó la tarea de huellas (tipo MP1584). IN− y OUT− son la misma masa. Admiten 24,4 V o más de entrada (MP1584: 28 V). La captura muestra una placa negra con inductor 4R7 y cuatro agujeros en las esquinas, sin medidas.",
-      "base": "Captura de componentes_comprados/datasheets/ROB-005_Mini_3V3/referencia_compra.png [V]; inventario: chip no identificado y MP1584 solo como candidato [H].",
-      "impacto_si_cambia": "Si el chip admite menos de 24,4 V (por ejemplo, 20 V), un transitorio en el clamp del TVS puede dañarlo: hace falta otro módulo o un limitador. Con otro contorno o posición de pads, se rehace la huella.",
-      "como_se_confirma": "E-01: calibre, fotos y marcado del chip. E-02: rizado y temperatura.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A8",
-        "A9"
-      ],
-      "afecta": [
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "contorno_mm": [
-          22,
-          17
-        ],
-        "vin_max_V": 28
-      },
-      "id": "SUP-37",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "Codificación de A7, A8 y A9",
-      "supuesto": "En la v0.1, la huella de A8 va rotada 90° respecto de la de A9, con rótulos grandes de cobre (5V y 3V3) y la flecha IN→OUT. El pin ciego o tope definitivo se agrega cuando E-01 muestre una asimetría usable. La huella de A7 lleva dibujado un tope contra el cuerpo invertido.",
-      "base": "Propuesta 16 de diseno_v0.3.md y open_point 23 de especificacion_v0.3.json.",
-      "impacto_si_cambia": "Si no hay una asimetría usable, se decide con Matías soldar el módulo directo, lo que se desvía de DEC-13.",
-      "como_se_confirma": "E-01: fotos de los módulos y medición de los componentes altos y de los agujeros libres.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A7",
-        "A8",
-        "A9"
-      ],
-      "afecta": [
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-38",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "Voltímetro (ROB-004)",
-      "supuesto": "No se monta sobre la placa. Se conecta en J18, bornera de 3,5 mm y 3 polos (GND, medida y alimentación), y mide VM_LOG. Admite 4,5-30 V de alimentación.",
-      "base": "Ficha comercial DIYMORE de referencia [V]; §3 de diseno_v0.3.md.",
-      "impacto_si_cambia": "Si consume más de 20 mA o no admite 13,6 V, cambia F5 o pasa a otra rama.",
-      "como_se_confirma": "E-01: colores y función de los 3 cables del voltímetro comprado.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J18"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-39",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "UBEC YSIDO 6 A",
-      "supuesto": "Configurado en 6,0 V. Se cortan sus enchufes: la entrada (conector rojo) va a J15 y la salida (JR) a J16 (propuesta 12). Entrega 6 A como máximo. Antes de conectar los servos se miden 6,0 V en J16; 7,4 V está prohibido.",
-      "base": "Propuesta 12; open_point 19; ficha comercial de Banggood [V]; regla de servos de electronica/CLAUDE.md.",
-      "impacto_si_cambia": "Con 5 V los servos dan menos par. 7,4 V no está autorizado.",
-      "como_se_confirma": "Medir la salida del UBEC sin carga antes de montar y anotar cómo se elige la tensión.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J15",
-        "J16"
-      ],
-      "afecta": [
-        "ensayos"
-      ],
-      "alias": [],
-      "valor": {
-        "V_salida": 6.0
-      },
-      "id": "SUP-40",
-      "historial": []
-    },
-    {
-      "grupo": "D",
-      "tema": "Corriente por contacto de los zócalos",
-      "supuesto": "3 A por contacto de 2,54 mm, con un factor de 0,8 entre contactos en paralelo: N = techo(I / 2,4 A).",
-      "base": "Würth WR-PHD [V] (el valor más bajo); Samtec SSW, 4,7 A [D]; §9 de diseno_v0.3.md.",
-      "impacto_si_cambia": "Si las tiras genéricas calientan, se bajan F2/F3 o se suelda el módulo.",
-      "como_se_confirma": "E-04/E-05: temperatura de los contactos de A3-A6 con el motor bloqueado.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A3",
-        "A4",
-        "A5",
-        "A6"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-41",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Batería",
-      "supuesto": "Pack de 3 celdas (ROB-014): 11,1 V nominales y 12,6 V con carga completa (hipótesis de litio). El bus puede llegar a 13,6 V si se carga con el robot conectado. El BMS (ROB-003) va en el pack. La salida del pack llega a J1 en cables sueltos de AWG 14.",
-      "base": "DEC-03 y DEC-10; ficha del BMS, p.1 (carga de 12,6-13,6 V) [V]; open_point 20.",
-      "impacto_si_cambia": "Con otra química u otra cantidad de celdas cambian D1, el divisor y la tensión de entrada de todos los módulos.",
-      "como_se_confirma": "Etiquetas de las celdas y del BMS (preguntas B.4-B.6 de datos-fisicos-faltantes).",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J1",
-        "D1",
-        "R22",
-        "R23"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "valor": {
-        "V_nom": 11.1,
-        "V_max": 12.6,
-        "V_carga_max": 13.6
-      },
-      "id": "SUP-42",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Corriente continua del tronco",
-      "supuesto": "La corriente continua de diseño del tronco es de 10 A como máximo, con picos breves de unos 20 A. Suma: 2 motores con ITRIP ≤ 2,3 A, servos con hasta 6 A a la salida del UBEC (unos 3,8 A a la entrada) y la lógica, con unos 0,1 A. F1 (15 A) es la protección, no la corriente de trabajo.",
-      "base": "§9 de diseno_v0.3.md (pico de ≈20 A [H]); [DS-DRV] p.9; [DS-SERVO] p.3 [H].",
-      "impacto_si_cambia": "Si la corriente continua supera 10 A, se ensancha o se cablea el tronco (SUP-10) y crece el disipador de Q1 (SUP-20).",
-      "como_se_confirma": "E-04/E-06: corriente del bus en marcha, con pinza o shunt.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [],
-      "afecta": [
-        "reglas",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "I_continua_A": 10,
-        "I_pico_A": 20
-      },
-      "id": "SUP-43",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Protección de polaridad",
-      "supuesto": "J1 es una bornera de 5,08 mm (1 = P−, 2 = P+). Q1 IRF4905 va montado con R29 de 10 kΩ y D3 BZX79-C12, sin diodo en serie y sin el puente JP1 (propuesta 4).",
-      "base": "Propuesta 4 de diseno_v0.3.md; [DS-IRF4905] p.1-2; [PHX-MKDS3].",
-      "impacto_si_cambia": "Si se elige XT60 en latiguillo, Q1 sale y vuelve el puente JP1 (SUP-63).",
-      "como_se_confirma": "Matías confirma la bornera y Q1.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J1",
-        "Q1",
-        "R29",
-        "D3"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-44",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Interruptor y paro en la potencia",
-      "supuesto": "J3 recibe el lazo en serie del interruptor general y del paro NC externo, que cortan toda la potencia. J4 recibe el contacto NC del paro hacia PB12 y pasa a 2 polos (1 GND, 2 PARO): el polo AUX desaparece junto con R26.",
-      "base": "§3 de diseno_v0.3.md; open_point 18; REQ-17.",
-      "impacto_si_cambia": "Si se quiere alimentar un paro remoto desde la placa, J4 vuelve a 3 polos con R26.",
-      "como_se_confirma": "El equipo confirma qué paro se usa y cómo se cablea.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J3",
-        "J4"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-45",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Fusible principal F1",
-      "supuesto": "F1 es un fusible ATO lento de 15 A, en la placa. Los fusibles no se agrupan: F2/F3 no pueden superar 4 A por los zócalos, y F4 y F5 tienen valores distintos. Se recomienda, además, un fusible en línea junto al pack (desvío del contrato §2.9).",
-      "base": "Antecedente de 15 A de la v0.3 [H]; open_point 15; [ENERGIA] §2.3.",
-      "impacto_si_cambia": "Si el pico real es mayor (arranque de los dos motores con los servos), F1 sube a 20 A y se ensancha el tronco.",
-      "como_se_confirma": "E-06/E-08: corriente pico real. Matías confirma el fusible en línea del pack.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "F1"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "valor": {
-        "A": 15,
-        "tipo": "ATO lento"
-      },
-      "id": "SUP-46",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Fusibles de motor F2/F3",
-      "supuesto": "Un mini ATM de 4 A por driver.",
-      "base": "Propuesta 3: 2 contactos × 3 A × 0,8 = 4,8 A, que cubre el IOCP mínimo de 3,7 A ([DS-DRV] p.5).",
-      "impacto_si_cambia": "Si abren en los arranques, se revisa con la temperatura medida en los zócalos (SUP-41), sin pasar nunca de 4,8 A.",
-      "como_se_confirma": "E-04: corriente de arranque y de bloqueo.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "F2",
-        "F3"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "valor": {
-        "A": 4
-      },
-      "id": "SUP-47",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Fusible del UBEC F4",
-      "supuesto": "Mini ATM de 7,5 A. El UBEC toma unos 3,8 A de entrada (6 A × 6 V / 0,85 / 11,1 V); el resto es margen para la carga inicial y los picos.",
-      "base": "Cálculo con eficiencia del 85 % [H]; antecedente de 10 A en la v0.3.",
-      "impacto_si_cambia": "Si abre al encender o con los dos servos bloqueados, sube a 10 A y pasa a portafusible ATO (SUP-19).",
-      "como_se_confirma": "E-05/E-06: corriente de entrada del UBEC con los servos bloqueados.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "F4"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "valor": {
-        "A": 7.5
-      },
-      "id": "SUP-48",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Fusible de la rama lógica F5",
-      "supuesto": "Mini ATM de 1 A (propuesta 17). La serie mini no tiene una curva 'rápida' propiamente dicha; si hiciera falta, se usa un fusible de vidrio 5×20 F1A con otro portafusible.",
-      "base": "Propuesta 17: consumo de ≈0,1 A [H] y rango de hasta 0,82 A del R100 de A7; [DS-226] p.5.",
-      "impacto_si_cambia": "Si abre con la carga inicial de los condensadores de entrada de A8/A9, sube a 2 A y se pierde parte de la protección de A7.",
-      "como_se_confirma": "E-02: encender con fuente limitada y comprobar que F5 no abre.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "F5"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "valor": {
-        "A": 1
-      },
-      "id": "SUP-49",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Electrolíticos y condensador del BMS",
-      "supuesto": "C1: 470 µF/35 V low-ESR (D10, P5), junto a J1/Q1. C4/C5: 47 µF/35 V (D6.3, P2.5), junto a cada DRV, porque el módulo solo trae 22 µF/63 V. C8/C9: 470 µF/16 V (D8, P3.5), junto a cada header de servo. C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Son valores [H] hasta E-04/E-08.",
-      "base": "§8 de diseno_v0.3.md; drv.sch de Adafruit (el módulo trae C1 de 0,1 µF/50 V y C2 de 22 µF/63 V) [D]; nota 3 de la ficha del BMS, p.2 [V].",
-      "impacto_si_cambia": "Si E-04 muestra sobretensión al frenar, se suma C2 (SUP-63) o más bulk.",
-      "como_se_confirma": "E-04/E-08: osciloscopio sobre VM_BUS durante el frenado.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "C1",
-        "C3",
-        "C4",
-        "C5",
-        "C8",
-        "C9"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-50",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Divisor de batería y LED de alimentación",
-      "supuesto": "R22 de 100 kΩ, R23 de 12 kΩ y C14 de 100 nF hacia PA3 (13,6 V → 1,46 V; 24,4 V → 2,61 V). LED rojo D4 de 3 mm con R28 de 5,1 kΩ en VM_BUS (2,1 mA).",
-      "base": "§8 de diseno_v0.3.md; [DS-STM32] pp.74-75; [ENERGIA] §8.",
-      "impacto_si_cambia": "Con otra batería se recalcula el divisor.",
-      "como_se_confirma": "E-02: comparar la lectura del ADC con el multímetro.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R22",
-        "R23",
-        "C14",
-        "D4",
-        "R28"
-      ],
-      "afecta": [
-        "especificacion",
-        "firmware"
-      ],
-      "alias": [],
-      "id": "SUP-51",
-      "historial": []
-    },
-    {
-      "grupo": "E",
-      "tema": "Borneras sin polarizar",
-      "supuesto": "Se acepta el desvío de [FLUJO] l.72: el paso y la cantidad de polos no se repiten entre ramas de distinta tensión. Quedan pares iguales con la misma tensión (J1/J3 y J11/J12/J15), que se distinguen por distancia y por los rótulos de cobre (propuesta 5).",
-      "base": "Propuesta 5; open_point 7.",
-      "impacto_si_cambia": "Si el equipo exige conectores polarizados, J1, J3, J11, J12 y J15 cambian de huella.",
-      "como_se_confirma": "Matías y el equipo aceptan el riesgo.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J1",
-        "J3",
-        "J11",
-        "J12",
-        "J15"
-      ],
-      "afecta": [
-        "huellas",
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-52",
-      "historial": []
-    },
-    {
-      "grupo": "F",
-      "tema": "Alimentación de los encoders",
-      "supuesto": "Los encoders del GA25-370 funcionan con 3,3 V. V_ENC es la misma net que 3V3_PER, sin R30, y cada encoder consume 20 mA o menos.",
-      "base": "El vendedor dice '3,3-5 V' en una línea y '3,5-5 V' en otra, una contradicción [V]; open_point 12; §7 de diseno_v0.3.md.",
-      "impacto_si_cambia": "Si necesitan 5 V, V_ENC pasa a la net 5V. Con salida push-pull de 5 V hace falta un divisor en PA0/PA1, que no son FT: vuelven R9/R10 y se suman 2 kΩ a GND.",
-      "como_se_confirma": "E-04: alimentar el encoder con 3,3 V y ver los pulsos con osciloscopio o analizador lógico.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J7",
-        "J8",
-        "A9"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "valor": {
-        "V_ENC": "3V3_PER"
-      },
-      "id": "SUP-53",
-      "historial": []
-    },
-    {
-      "grupo": "F",
-      "tema": "Salida y pull-ups de los encoders",
-      "supuesto": "Salida de colector abierto o push-pull de 3,3 V. Pull-ups R13-R16 de 10 kΩ a 3V3_PER, sin resistencia en serie ni filtro RC: los glitches los filtra el filtro digital ICxF del timer.",
-      "base": "§8 de diseno_v0.3.md; [RM0008] §13.3; criterio de simplificación (se conservan las pull-ups) [H].",
-      "impacto_si_cambia": "Con ruido en el cable, o con 3V3_PER encendido y el MCU apagado, PA0/PA1 (no FT) quedan menos protegidos: se recuperan R9-R12.",
-      "como_se_confirma": "E-04: pulsos limpios a la máxima velocidad del motor.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R13",
-        "R14",
-        "R15",
-        "R16"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-54",
-      "historial": []
-    },
-    {
-      "grupo": "F",
-      "tema": "Cable de los encoders",
-      "supuesto": "Hilos de AWG 26 en la bornera de 3,5 mm y 4 polos (1 GND, 2 A, 3 B, 4 V). Con AWG 28 se usa puntera de 0,25 mm².",
-      "base": "Propuesta 14; [PHX-PT15] (AWG 26-16).",
-      "impacto_si_cambia": "Si los hilos son más finos y no ajustan, J7/J8 pasan a bornera de 2,54 mm (MPT 0,5).",
-      "como_se_confirma": "Medir el calibre del mazo del motor.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J7",
-        "J8"
-      ],
-      "afecta": [
-        "huellas"
-      ],
-      "alias": [],
-      "valor": {
-        "AWG": 26
-      },
-      "id": "SUP-55",
-      "historial": []
-    },
-    {
-      "grupo": "F",
-      "tema": "Servos",
-      "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie, R7/R8 de 10 kΩ a GND del lado del MCU (evitan pulsos espurios en el reset) y un header macho 1×03 de 2,54 mm para su JR. El tiempo de bloqueo se limita por firmware.",
-      "base": "Propuesta 19; open_point 13; [DS-SERVO] p.3; [DS-STM32] Tabla 37 p.64.",
-      "impacto_si_cambia": "Si no responden a 3,3 V, hace falta salida open-drain con pull-up a 5 V, lo que es otra decisión. Si el contacto JR calienta, se cambia el conector.",
-      "como_se_confirma": "E-05: probar el pulso y medir la temperatura de J13/J14 con el servo bloqueado.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R5",
-        "R6",
-        "R7",
-        "R8",
-        "J13",
-        "J14"
-      ],
-      "afecta": [
-        "especificacion",
-        "firmware"
-      ],
-      "alias": [],
-      "id": "SUP-56",
-      "historial": []
-    },
-    {
-      "grupo": "F",
-      "tema": "Entradas de los drivers",
-      "supuesto": "R1-R4 de 2,2 kΩ a GND del lado del MCU y R35-R38 de 4,7 kΩ en serie hacia IN1/IN2 (propuesta 6). Protegen al MCU si un DRV se enchufa girado.",
-      "base": "Propuesta 6 de diseno_v0.3.md; [DS-STM32] p.37; [DS-DRV] p.4-5.",
-      "impacto_si_cambia": "Sin ellas, un DRV girado lleva VM a PA6/PB0.",
-      "como_se_confirma": "No hace falta confirmarlo, salvo que el equipo quiera quitarlas.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R1",
-        "R2",
-        "R3",
-        "R4",
-        "R35",
-        "R36",
-        "R37",
-        "R38"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-57",
-      "historial": []
-    },
-    {
-      "grupo": "F",
-      "tema": "Entrada de paro",
-      "supuesto": "R24 de 10 kΩ a 3V3_MCU y entrada directa a PB12 (FT), sin R25 ni C15: el antirrebote se hace por firmware. Con el contacto abierto (paro), PB12 sube y el firmware corta los motores. J3 corta la potencia de todos modos.",
-      "base": "§8 de diseno_v0.3.md; [CONTRATO] §2.12; simplificación del 17/10/2026 [H].",
-      "impacto_si_cambia": "Si hay disparos falsos por ruido en el cable, se recuperan R25 y C15.",
-      "como_se_confirma": "E-08: ensayo de paro con los motores en marcha.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R24",
-        "J4"
-      ],
-      "afecta": [
-        "especificacion",
-        "firmware"
-      ],
-      "alias": [],
-      "id": "SUP-58",
-      "historial": []
-    },
-    {
-      "grupo": "F",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "Header UART",
       "supuesto": "J23 es un header macho 1×03 (1 GND, 2 TX, 3 RX), sin resistencias en serie y sin pin de alimentación. El adaptador es de 3,3 V.",
-      "base": "Propuesta 10 (R33/R34 eliminadas en la v0.4); PA9/PA10 son FT ([DS-STM32] Tabla 5).",
-      "impacto_si_cambia": "Un cable cruzado (TX con TX) se tolera un rato. Con un adaptador de 5 V hacen falta R33/R34.",
-      "como_se_confirma": "Confirmar la tensión del adaptador USB-TTL.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "J23"
-      ],
-      "afecta": [
-        "especificacion"
-      ],
-      "alias": [],
-      "id": "SUP-59",
-      "historial": []
-    },
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    }
+   ],
+   "valor": {}
+  },
+  {
+   "grupo": "G",
+   "tema": "Posición de la IMU",
+   "supuesto": "La MPU6050 (A2) va sobre la placa base, a más de 6 mm de conectores y tornillos, lejos de los DRV, los bucks, el UBEC y las pistas de potencia, y sin pistas debajo.",
+   "base": "§10 de diseno_v0.3.md; [DS-MPU] p.43; ratificación heredada (11) del open_point 20.",
+   "impacto_si_cambia": "Si mecánica pide la IMU en otro lugar (por ejemplo, sobre el eje), A2 pasa a un conector con cable.",
+   "como_se_confirma": "Francisco y modelado confirman dónde va la IMU y cómo se orienta respecto de los ejes del robot.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A2"
+   ],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-60",
+   "historial": []
+  },
+  {
+   "grupo": "G",
+   "tema": "Fijación de los módulos",
+   "supuesto": "Sin definir. La v0.1 no prevé agujeros para precintos ni travesaños: la Blue Pill y los DRV quedan sujetos solo por los zócalos. El LM2596 ya no está.",
+   "base": "Open_point 16 de especificacion_v0.3.json.",
+   "impacto_si_cambia": "Si hay vibraciones, se agregan agujeros de 3 mm para precintos junto a A1, A3 y A4.",
+   "como_se_confirma": "Prueba del robot en marcha y decisión del equipo.",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "A1",
+    "A3",
+    "A4"
+   ],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-61",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Puntos de prueba TP1-TP41",
+   "supuesto": "Se eliminan los 41 puntos de prueba. Se mide sobre los pines de los módulos, las borneras y los terminales de los componentes (ver la tabla 'Dónde medir sin puntos de prueba'). Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "Simplificación del 17/10/2026 tras la objeción de Matías a los 153 componentes: en una placa de una capa, cada punto es un pad y una pista más.",
+   "impacto_si_cambia": "Si el equipo pide un punto concreto (por ejemplo, el ciclo en PB8), se agrega como pad THT de 2 mm.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-62: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "TP1",
+    "TP2",
+    "TP3",
+    "TP4",
+    "TP5",
+    "TP6",
+    "TP7",
+    "TP8",
+    "TP9",
+    "TP10",
+    "TP11",
+    "TP12",
+    "TP13",
+    "TP14",
+    "TP15",
+    "TP16",
+    "TP17",
+    "TP18",
+    "TP19",
+    "TP20",
+    "TP21",
+    "TP22",
+    "TP23",
+    "TP24",
+    "TP25",
+    "TP26",
+    "TP27",
+    "TP28",
+    "TP29",
+    "TP30",
+    "TP31",
+    "TP32",
+    "TP33",
+    "TP34",
+    "TP35",
+    "TP36",
+    "TP37",
+    "TP38",
+    "TP39",
+    "TP40",
+    "TP41"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "TP1",
+    "TP2",
+    "TP3",
+    "TP4",
+    "TP5",
+    "TP6",
+    "TP7",
+    "TP8",
+    "TP9",
+    "TP10",
+    "TP11",
+    "TP12",
+    "TP13",
+    "TP14",
+    "TP15",
+    "TP16",
+    "TP17",
+    "TP18",
+    "TP19",
+    "TP20",
+    "TP21",
+    "TP22",
+    "TP23",
+    "TP24",
+    "TP25",
+    "TP26",
+    "TP27",
+    "TP28",
+    "TP29",
+    "TP30",
+    "TP31",
+    "TP32",
+    "TP33",
+    "TP34",
+    "TP35",
+    "TP36",
+    "TP37",
+    "TP38",
+    "TP39",
+    "TP40",
+    "TP41"
+   ],
+   "id": "SUP-62",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Alternativas de potencia DNP",
+   "supuesto": "Se eliminan JP1 (puente alternativo a Q1), C2 (segundo bulk), J5/J6 (POWER del DRV, opción A), J21/J22 (bornera del INA219 por cable), JP6/JP7 (bypass de los shunts del INA219) y A10 (LM2596 de respaldo de A8). Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "Eran DNP o alternativas excluyentes (propuestas 2, 3, 4 y 15).",
+   "impacto_si_cambia": "Se recuperan con su net de la v0.3 si se elige la opción A del DRV, la bornera del INA219, XT60 sin Q1 o el LM2596.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-63: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "JP1",
+    "C2",
+    "J5",
+    "J6",
+    "J21",
+    "J22",
+    "JP6",
+    "JP7",
+    "A10"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "JP1",
+    "C2",
+    "J5",
+    "J6",
+    "J21",
+    "J22",
+    "JP6",
+    "JP7",
+    "A10"
+   ],
+   "id": "SUP-63",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Alternativas de rieles",
+   "supuesto": "Se eliminan R30 (V_ENC desde 3V3_PER; ahora V_ENC se une directo, SUP-53), R31 (V_ENC desde 5V), R32 (puente entre 3V3_MCU y 3V3_PER) y C26 (10 µF en 3V3_MCU, DNP). Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "Eran puentes de 0 Ω o DNP de alternativas (propuestas 1 y 18).",
+   "impacto_si_cambia": "Se recuperan si los encoders necesitan 5 V o si falta A9.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-64: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R30",
+    "R31",
+    "R32",
+    "C26"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "R30",
+    "R31",
+    "R32",
+    "C26"
+   ],
+   "id": "SUP-64",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Opción B de I2C y pull-ups de I2C",
+   "supuesto": "Se eliminan JP3/JP4 (puentes de 3 vías entre I2C2 e I2C1 remapeado) y R17-R20 (pull-ups de 3,3 kΩ, DNP). Los INA quedan unidos directamente a I2C2. Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "Se elige la opción A (SUP-30) y se usan las pull-ups de los módulos [H].",
+   "impacto_si_cambia": "Si E-01 muestra que los módulos no traen pull-ups, se recuperan R17/R18 a 3V3_PER.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-65: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "JP3",
+    "JP4",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "JP3",
+    "JP4",
+    "R17",
+    "R18",
+    "R19",
+    "R20"
+   ],
+   "id": "SUP-65",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Selección de dirección AD0 de la MPU",
+   "supuesto": "Se eliminan R39 (0 Ω a GND) y R40 (1 kΩ a 3V3_PER, DNP). AD0 queda sin conexión (SUP-36). Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "La pull-down del GY-521 fija la dirección 0x68 [H].",
+   "impacto_si_cambia": "Si E-01 muestra AD0 flotante, se recupera R39.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-66: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R39",
+    "R40"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "R39",
+    "R40"
+   ],
+   "id": "SUP-66",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Bypass del INA226",
+   "supuesto": "Se elimina JP8, el puente de soldadura abierto en paralelo con el shunt de A7. Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "Estaba abierto en la v0.3 y era solo para depuración.",
+   "impacto_si_cambia": "Se recupera si hay que alimentar la lógica sin A7 enchufado.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-67: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "JP8"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "JP8"
+   ],
+   "id": "SUP-67",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Filtros y resistencias serie de los encoders",
+   "supuesto": "Se eliminan C10-C13 (1 nF o divisor, DNP) y R9-R12 (1 kΩ en serie). Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "Filtra el filtro digital del timer y PB6/PB7 son FT. Las pull-ups se conservan (SUP-54).",
+   "impacto_si_cambia": "Se recuperan si hay ruido o si los encoders son push-pull de 5 V (divisor).",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-68: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "R9",
+    "R10",
+    "R11",
+    "R12"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "R9",
+    "R10",
+    "R11",
+    "R12"
+   ],
+   "id": "SUP-68",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "Desacoples que los módulos ya traen",
+   "supuesto": "Se eliminan C6/C7 (100 nF en el VM de cada DRV, que ya trae 0,1 µF + 22 µF), C16-C19 (100 nF de la MPU y los tres INA, que traen el suyo [H]), C20/C21 (100 nF de V_ENC en la bornera), C22 (entrada del UBEC), C23/C24 (100 nF y 47 µF de entrada de A8), C28/C27 (entrada y salida de A9) y C25 (10 µF en 5V_MCU). Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "drv.sch de Adafruit [D]; módulos con desacople propio [H]; criterio de simplificación: un desacople por módulo solo si el módulo no lo trae [H].",
+   "impacto_si_cambia": "Se recuperan de a uno si E-01 muestra que un módulo no trae desacople o si E-02 muestra rizado o reinicios.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-69: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "C6",
+    "C7",
+    "C16",
+    "C17",
+    "C18",
+    "C19",
+    "C20",
+    "C21",
+    "C22",
+    "C23",
+    "C24",
+    "C25",
+    "C27",
+    "C28"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "C6",
+    "C7",
+    "C16",
+    "C17",
+    "C18",
+    "C19",
+    "C20",
+    "C21",
+    "C22",
+    "C23",
+    "C24",
+    "C25",
+    "C27",
+    "C28"
+   ],
+   "id": "SUP-69",
+   "historial": []
+  },
+  {
+   "grupo": "H",
+   "tema": "LED de estado",
+   "supuesto": "Se usa el LED RGB WS2812 de la DevKitC en GPIO48 como indicador de estado. Siguen eliminados R27/D5 y R33/R34.",
+   "base": "Manual del vendedor [V].",
+   "impacto_si_cambia": "Ninguno en la placa.",
+   "como_se_confirma": "Firmware de prueba.",
+   "estado": "CAMBIADO",
+   "fecha": "20/10/2026",
+   "refs": [
+    "R27",
+    "D5",
+    "R33",
+    "R34"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "R27",
+    "D5",
+    "R33",
+    "R34"
+   ],
+   "id": "SUP-70",
+   "historial": [
     {
-      "grupo": "G",
-      "tema": "Posición de la IMU",
-      "supuesto": "La MPU6050 (A2) va sobre la placa base, a más de 6 mm de conectores y tornillos, lejos de los DRV, los bucks, el UBEC y las pistas de potencia, y sin pistas debajo.",
-      "base": "§10 de diseno_v0.3.md; [DS-MPU] p.43; ratificación heredada (11) del open_point 20.",
-      "impacto_si_cambia": "Si mecánica pide la IMU en otro lugar (por ejemplo, sobre el eje), A2 pasa a un conector con cable.",
-      "como_se_confirma": "Francisco y modelado confirman dónde va la IMU y cómo se orienta respecto de los ejes del robot.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A2"
-      ],
-      "afecta": [
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-60",
-      "historial": []
-    },
-    {
-      "grupo": "G",
-      "tema": "Fijación de los módulos",
-      "supuesto": "Sin definir. La v0.1 no prevé agujeros para precintos ni travesaños: la Blue Pill y los DRV quedan sujetos solo por los zócalos. El LM2596 ya no está.",
-      "base": "Open_point 16 de especificacion_v0.3.json.",
-      "impacto_si_cambia": "Si hay vibraciones, se agregan agujeros de 3 mm para precintos junto a A1, A3 y A4.",
-      "como_se_confirma": "Prueba del robot en marcha y decisión del equipo.",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "A1",
-        "A3",
-        "A4"
-      ],
-      "afecta": [
-        "pcb"
-      ],
-      "alias": [],
-      "id": "SUP-61",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Puntos de prueba TP1-TP41",
-      "supuesto": "Se eliminan los 41 puntos de prueba. Se mide sobre los pines de los módulos, las borneras y los terminales de los componentes (ver la tabla 'Dónde medir sin puntos de prueba'). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "Simplificación del 17/10/2026 tras la objeción de Matías a los 153 componentes: en una placa de una capa, cada punto es un pad y una pista más.",
-      "impacto_si_cambia": "Si el equipo pide un punto concreto (por ejemplo, el ciclo en PB8), se agrega como pad THT de 2 mm.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-62: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "TP1",
-        "TP2",
-        "TP3",
-        "TP4",
-        "TP5",
-        "TP6",
-        "TP7",
-        "TP8",
-        "TP9",
-        "TP10",
-        "TP11",
-        "TP12",
-        "TP13",
-        "TP14",
-        "TP15",
-        "TP16",
-        "TP17",
-        "TP18",
-        "TP19",
-        "TP20",
-        "TP21",
-        "TP22",
-        "TP23",
-        "TP24",
-        "TP25",
-        "TP26",
-        "TP27",
-        "TP28",
-        "TP29",
-        "TP30",
-        "TP31",
-        "TP32",
-        "TP33",
-        "TP34",
-        "TP35",
-        "TP36",
-        "TP37",
-        "TP38",
-        "TP39",
-        "TP40",
-        "TP41"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "TP1",
-        "TP2",
-        "TP3",
-        "TP4",
-        "TP5",
-        "TP6",
-        "TP7",
-        "TP8",
-        "TP9",
-        "TP10",
-        "TP11",
-        "TP12",
-        "TP13",
-        "TP14",
-        "TP15",
-        "TP16",
-        "TP17",
-        "TP18",
-        "TP19",
-        "TP20",
-        "TP21",
-        "TP22",
-        "TP23",
-        "TP24",
-        "TP25",
-        "TP26",
-        "TP27",
-        "TP28",
-        "TP29",
-        "TP30",
-        "TP31",
-        "TP32",
-        "TP33",
-        "TP34",
-        "TP35",
-        "TP36",
-        "TP37",
-        "TP38",
-        "TP39",
-        "TP40",
-        "TP41"
-      ],
-      "id": "SUP-62",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Alternativas de potencia DNP",
-      "supuesto": "Se eliminan JP1 (puente alternativo a Q1), C2 (segundo bulk), J5/J6 (POWER del DRV, opción A), J21/J22 (bornera del INA219 por cable), JP6/JP7 (bypass de los shunts del INA219) y A10 (LM2596 de respaldo de A8). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "Eran DNP o alternativas excluyentes (propuestas 2, 3, 4 y 15).",
-      "impacto_si_cambia": "Se recuperan con su net de la v0.3 si se elige la opción A del DRV, la bornera del INA219, XT60 sin Q1 o el LM2596.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-63: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "JP1",
-        "C2",
-        "J5",
-        "J6",
-        "J21",
-        "J22",
-        "JP6",
-        "JP7",
-        "A10"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "JP1",
-        "C2",
-        "J5",
-        "J6",
-        "J21",
-        "J22",
-        "JP6",
-        "JP7",
-        "A10"
-      ],
-      "id": "SUP-63",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Alternativas de rieles",
-      "supuesto": "Se eliminan R30 (V_ENC desde 3V3_PER; ahora V_ENC se une directo, SUP-53), R31 (V_ENC desde 5V), R32 (puente entre 3V3_MCU y 3V3_PER) y C26 (10 µF en 3V3_MCU, DNP). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "Eran puentes de 0 Ω o DNP de alternativas (propuestas 1 y 18).",
-      "impacto_si_cambia": "Se recuperan si los encoders necesitan 5 V o si falta A9.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-64: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R30",
-        "R31",
-        "R32",
-        "C26"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "R30",
-        "R31",
-        "R32",
-        "C26"
-      ],
-      "id": "SUP-64",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Opción B de I2C y pull-ups de I2C",
-      "supuesto": "Se eliminan JP3/JP4 (puentes de 3 vías entre I2C2 e I2C1 remapeado) y R17-R20 (pull-ups de 3,3 kΩ, DNP). Los INA quedan unidos directamente a I2C2. Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "Se elige la opción A (SUP-30) y se usan las pull-ups de los módulos [H].",
-      "impacto_si_cambia": "Si E-01 muestra que los módulos no traen pull-ups, se recuperan R17/R18 a 3V3_PER.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-65: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "JP3",
-        "JP4",
-        "R17",
-        "R18",
-        "R19",
-        "R20"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "JP3",
-        "JP4",
-        "R17",
-        "R18",
-        "R19",
-        "R20"
-      ],
-      "id": "SUP-65",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Selección de dirección AD0 de la MPU",
-      "supuesto": "Se eliminan R39 (0 Ω a GND) y R40 (1 kΩ a 3V3_PER, DNP). AD0 queda sin conexión (SUP-36). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "La pull-down del GY-521 fija la dirección 0x68 [H].",
-      "impacto_si_cambia": "Si E-01 muestra AD0 flotante, se recupera R39.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-66: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R39",
-        "R40"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "R39",
-        "R40"
-      ],
-      "id": "SUP-66",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Bypass del INA226",
-      "supuesto": "Se elimina JP8, el puente de soldadura abierto en paralelo con el shunt de A7. Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "Estaba abierto en la v0.3 y era solo para depuración.",
-      "impacto_si_cambia": "Se recupera si hay que alimentar la lógica sin A7 enchufado.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-67: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "JP8"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "JP8"
-      ],
-      "id": "SUP-67",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Filtros y resistencias serie de los encoders",
-      "supuesto": "Se eliminan C10-C13 (1 nF o divisor, DNP) y R9-R12 (1 kΩ en serie). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "Filtra el filtro digital del timer y PB6/PB7 son FT. Las pull-ups se conservan (SUP-54).",
-      "impacto_si_cambia": "Se recuperan si hay ruido o si los encoders son push-pull de 5 V (divisor).",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-68: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "C10",
-        "C11",
-        "C12",
-        "C13",
-        "R9",
-        "R10",
-        "R11",
-        "R12"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "C10",
-        "C11",
-        "C12",
-        "C13",
-        "R9",
-        "R10",
-        "R11",
-        "R12"
-      ],
-      "id": "SUP-68",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Desacoples que los módulos ya traen",
-      "supuesto": "Se eliminan C6/C7 (100 nF en el VM de cada DRV, que ya trae 0,1 µF + 22 µF), C16-C19 (100 nF de la MPU y los tres INA, que traen el suyo [H]), C20/C21 (100 nF de V_ENC en la bornera), C22 (entrada del UBEC), C23/C24 (100 nF y 47 µF de entrada de A8), C28/C27 (entrada y salida de A9) y C25 (10 µF en 5V_MCU). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "drv.sch de Adafruit [D]; módulos con desacople propio [H]; criterio de simplificación: un desacople por módulo solo si el módulo no lo trae [H].",
-      "impacto_si_cambia": "Se recuperan de a uno si E-01 muestra que un módulo no trae desacople o si E-02 muestra rizado o reinicios.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-69: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "C6",
-        "C7",
-        "C16",
-        "C17",
-        "C18",
-        "C19",
-        "C20",
-        "C21",
-        "C22",
-        "C23",
-        "C24",
-        "C25",
-        "C27",
-        "C28"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "C6",
-        "C7",
-        "C16",
-        "C17",
-        "C18",
-        "C19",
-        "C20",
-        "C21",
-        "C22",
-        "C23",
-        "C24",
-        "C25",
-        "C27",
-        "C28"
-      ],
-      "id": "SUP-69",
-      "historial": []
-    },
-    {
-      "grupo": "H",
+     "fecha": "20/10/2026",
+     "antes": {
       "tema": "LED de estado y resistencias de UART",
       "supuesto": "Se eliminan R27/D5 (LED de estado en PB5; se usa el LED de PC13 de la Blue Pill) y R33/R34 (1 kΩ en serie en la UART). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "Simplificación; PA9/PA10 son FT (SUP-59).",
-      "impacto_si_cambia": "Se recuperan si el LED de PC13 no se ve con la placa montada o si se usa un adaptador de 5 V.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-70: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R27",
-        "D5",
-        "R33",
-        "R34"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "R27",
-        "D5",
-        "R33",
-        "R34"
-      ],
-      "id": "SUP-70",
-      "historial": []
-    },
-    {
-      "grupo": "H",
-      "tema": "Extras de ALERT y del paro",
-      "supuesto": "Se eliminan R21 (pull-up de ALERT; se usa la interna de PB13), R25/C15 (filtro del paro; antirrebote por firmware) y R26 (3,3 V auxiliar del paro, DNP). Eliminado en la v0.4; se recupera si el equipo lo pide.",
-      "base": "SUP-35 y SUP-58.",
-      "impacto_si_cambia": "Se recuperan si hay disparos falsos o si ALERT necesita flancos rápidos.",
-      "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-71: recuperar <ref>\".",
-      "estado": "ASUMIDO",
-      "fecha": "17/10/2026",
-      "refs": [
-        "R21",
-        "R25",
-        "C15",
-        "R26"
-      ],
-      "afecta": [
-        "especificacion",
-        "pcb"
-      ],
-      "alias": [],
-      "eliminados": [
-        "R21",
-        "R25",
-        "C15",
-        "R26"
-      ],
-      "id": "SUP-71",
-      "historial": []
+      "estado": "ASUMIDO"
+     },
+     "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
     }
-  ]
+   ],
+   "valor": {}
+  },
+  {
+   "grupo": "H",
+   "tema": "Extras de ALERT y del paro",
+   "supuesto": "Se eliminan R21 (pull-up de ALERT; se usa la interna de PB13), R25/C15 (filtro del paro; antirrebote por firmware) y R26 (3,3 V auxiliar del paro, DNP). Eliminado en la v0.4; se recupera si el equipo lo pide.",
+   "base": "SUP-35 y SUP-58.",
+   "impacto_si_cambia": "Se recuperan si hay disparos falsos o si ALERT necesita flancos rápidos.",
+   "como_se_confirma": "El equipo pide recuperarlo diciendo \"SUP-71: recuperar <ref>\".",
+   "estado": "ASUMIDO",
+   "fecha": "17/10/2026",
+   "refs": [
+    "R21",
+    "R25",
+    "C15",
+    "R26"
+   ],
+   "afecta": [
+    "especificacion",
+    "pcb"
+   ],
+   "alias": [],
+   "eliminados": [
+    "R21",
+    "R25",
+    "C15",
+    "R26"
+   ],
+   "id": "SUP-71",
+   "historial": []
+  }
+ ]
 }
