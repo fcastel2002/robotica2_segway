@@ -371,27 +371,14 @@
    ]
   },
   {
-   "ref": "D2",
-   "lib_id": "Diode:1N5819",
-   "value": "1N5819",
-   "footprint": "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal",
-   "block": "logica",
-   "dnp": false,
-   "source": "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02",
-   "supuestos": [
-    "SUP-17"
-   ]
-  },
-  {
    "ref": "J7",
    "lib_id": "Connector:Screw_Terminal_01x04",
-   "value": "Encoder IZQ PT1,5 1=GND 2=A 3=B 4=V",
+   "value": "Encoder IZQ PT1,5 1=V 2=A 3=B 4=GND",
    "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-4-3.5-H_1x04_P3.50mm_Horizontal",
    "block": "conectores",
    "dnp": false,
    "source": "DEC-13 [M]; DEC-01 [M] (negro GND, amarillo y verde señales, azul V+ del encoder); [PHX-PT15] (17,5 A IEC, 10 A UL, AWG 26-16); [CONTRATO] §2.4",
-   "status": "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69)",
+   "status": "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69); pines 1 y 4 invertidos por ruteo (DEC-17)",
    "supuestos": [
     "SUP-53",
     "SUP-55",
@@ -515,89 +502,81 @@
    "kind": "power",
    "pins": [
     "A2.2",
-    "J7.1",
+    "J7.4",
     "J8.1",
     "J4.1",
     "A1.22",
     "A1.23",
     "A1.43",
     "A1.44",
-    "J20.1",
-    "J20.3",
-    "J20.7"
+    "J20.11",
+    "J20.15",
+    "J20.16"
    ]
   },
   {
    "name": "VBAT_ADC",
    "kind": "signal",
    "pins": [
-    "A1.26",
-    "J20.10"
+    "A1.12",
+    "J20.3"
    ]
   },
   {
    "name": "IN1_IZQ_MCU",
    "kind": "signal",
    "pins": [
-    "A1.6",
-    "J20.13"
+    "A1.17",
+    "J20.6"
    ]
   },
   {
    "name": "IN2_IZQ_MCU",
    "kind": "signal",
    "pins": [
-    "A1.7",
-    "J20.14"
+    "A1.18",
+    "J20.8"
    ]
   },
   {
    "name": "IN1_DER_MCU",
    "kind": "signal",
    "pins": [
-    "A1.4",
-    "J20.11"
+    "A1.15",
+    "J20.2"
    ]
   },
   {
    "name": "IN2_DER_MCU",
    "kind": "signal",
    "pins": [
-    "A1.5",
-    "J20.12"
+    "A1.16",
+    "J20.4"
    ]
   },
   {
    "name": "SERVO_IZQ_MCU",
    "kind": "signal",
    "pins": [
-    "A1.16",
-    "J20.15"
+    "A1.19",
+    "J20.10"
    ]
   },
   {
    "name": "SERVO_DER_MCU",
    "kind": "signal",
    "pins": [
-    "A1.17",
-    "J20.16"
-   ]
-  },
-  {
-   "name": "5V",
-   "kind": "power",
-   "pins": [
-    "D2.2",
-    "J20.2",
-    "J20.4"
+    "A1.20",
+    "J20.12"
    ]
   },
   {
    "name": "5V_MCU",
    "kind": "power",
    "pins": [
-    "D2.1",
-    "A1.21"
+    "A1.21",
+    "J20.13",
+    "J20.14"
    ]
   },
   {
@@ -610,11 +589,11 @@
     "R14.1",
     "R15.1",
     "R16.1",
-    "J7.4",
+    "J7.1",
     "J8.4",
     "A1.1",
     "A1.2",
-    "J20.5"
+    "J20.9"
    ],
    "note": "3,3 V del regulador de la DevKitC (SUP-E03) para el módulo y los periféricos"
   },
@@ -624,7 +603,7 @@
    "pins": [
     "J7.2",
     "R13.2",
-    "A1.10"
+    "A1.4"
    ]
   },
   {
@@ -633,7 +612,7 @@
    "pins": [
     "J7.3",
     "R14.2",
-    "A1.11"
+    "A1.5"
    ]
   },
   {
@@ -642,7 +621,7 @@
    "pins": [
     "J8.2",
     "R15.2",
-    "A1.8"
+    "A1.7"
    ]
   },
   {
@@ -651,7 +630,7 @@
    "pins": [
     "J8.3",
     "R16.2",
-    "A1.9"
+    "A1.8"
    ]
   },
   {
@@ -659,8 +638,8 @@
    "kind": "signal",
    "pins": [
     "A2.4",
-    "A1.12",
-    "J20.6"
+    "A1.10",
+    "J20.5"
    ]
   },
   {
@@ -668,8 +647,8 @@
    "kind": "signal",
    "pins": [
     "A2.3",
-    "A1.15",
-    "J20.8"
+    "A1.9",
+    "J20.7"
    ]
   },
   {
@@ -677,15 +656,15 @@
    "kind": "signal",
    "pins": [
     "A2.8",
-    "A1.18"
+    "A1.11"
    ]
   },
   {
    "name": "INA_ALERT",
    "kind": "signal",
    "pins": [
-    "A1.19",
-    "J20.9"
+    "A1.13",
+    "J20.1"
    ]
   },
   {
@@ -694,7 +673,7 @@
    "pins": [
     "J4.2",
     "R24.2",
-    "A1.20"
+    "A1.6"
    ]
   }
  ],
@@ -703,10 +682,10 @@
   "A2.6",
   "A2.7",
   "A1.3",
-  "A1.13",
   "A1.14",
   "A1.24",
   "A1.25",
+  "A1.26",
   "A1.27",
   "A1.28",
   "A1.29",
@@ -774,147 +753,147 @@
  },
  "gpio_table": [
   {
-   "function": "3V3",
+   "function": "3V3_MCU",
    "gpio": "3V3",
    "board_pin": "1",
    "net": "3V3_MCU",
    "justification": ""
   },
   {
-   "function": "3V3",
+   "function": "3V3_MCU",
    "gpio": "3V3",
    "board_pin": "2",
    "net": "3V3_MCU",
    "justification": ""
   },
   {
-   "function": "RST",
+   "function": "sin conexión",
    "gpio": "RST",
    "board_pin": "3",
    "net": "sin conexión",
    "justification": ""
   },
   {
-   "function": "IN1_DER_MCU",
+   "function": "ENC_IZQ_A",
    "gpio": "GPIO4",
    "board_pin": "4",
-   "net": "IN1_DER_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
-  },
-  {
-   "function": "IN2_DER_MCU",
-   "gpio": "GPIO5",
-   "board_pin": "5",
-   "net": "IN2_DER_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
-  },
-  {
-   "function": "IN1_IZQ_MCU",
-   "gpio": "GPIO6",
-   "board_pin": "6",
-   "net": "IN1_IZQ_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
-  },
-  {
-   "function": "IN2_IZQ_MCU",
-   "gpio": "GPIO7",
-   "board_pin": "7",
-   "net": "IN2_IZQ_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
-  },
-  {
-   "function": "ENC_DER_A",
-   "gpio": "GPIO15",
-   "board_pin": "8",
-   "net": "ENC_DER_A",
-   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
-  },
-  {
-   "function": "ENC_DER_B",
-   "gpio": "GPIO16",
-   "board_pin": "9",
-   "net": "ENC_DER_B",
-   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
-  },
-  {
-   "function": "ENC_IZQ_A",
-   "gpio": "GPIO17",
-   "board_pin": "10",
    "net": "ENC_IZQ_A",
-   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
+   "justification": "PCNT; pin asignado por geometría (DEC-17)"
   },
   {
    "function": "ENC_IZQ_B",
-   "gpio": "GPIO18",
-   "board_pin": "11",
+   "gpio": "GPIO5",
+   "board_pin": "5",
    "net": "ENC_IZQ_B",
-   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
-  },
-  {
-   "function": "I2C_SDA",
-   "gpio": "GPIO8",
-   "board_pin": "12",
-   "net": "I2C_SDA",
-   "justification": "I2C0 (Arduino ESP32-S3 por defecto SDA=8)"
-  },
-  {
-   "function": "GPIO3",
-   "gpio": "GPIO3",
-   "board_pin": "13",
-   "net": "sin conexión",
-   "justification": "strapping: sin conexión"
-  },
-  {
-   "function": "GPIO46",
-   "gpio": "GPIO46",
-   "board_pin": "14",
-   "net": "sin conexión",
-   "justification": "strapping: sin conexión"
-  },
-  {
-   "function": "I2C_SCL",
-   "gpio": "GPIO9",
-   "board_pin": "15",
-   "net": "I2C_SCL",
-   "justification": "I2C0 (Arduino ESP32-S3 por defecto SCL=9)"
-  },
-  {
-   "function": "SERVO_IZQ_MCU",
-   "gpio": "GPIO10",
-   "board_pin": "16",
-   "net": "SERVO_IZQ_MCU",
-   "justification": "LEDC 50 Hz"
-  },
-  {
-   "function": "SERVO_DER_MCU",
-   "gpio": "GPIO11",
-   "board_pin": "17",
-   "net": "SERVO_DER_MCU",
-   "justification": "LEDC 50 Hz"
-  },
-  {
-   "function": "IMU_INT",
-   "gpio": "GPIO12",
-   "board_pin": "18",
-   "net": "IMU_INT",
-   "justification": "entrada con interrupción"
-  },
-  {
-   "function": "INA_ALERT",
-   "gpio": "GPIO13",
-   "board_pin": "19",
-   "net": "INA_ALERT",
-   "justification": "entrada con interrupción; pull-up en el módulo o R21"
+   "justification": "PCNT; pin asignado por geometría (DEC-17)"
   },
   {
    "function": "PARO_CONT",
-   "gpio": "GPIO14",
-   "board_pin": "20",
+   "gpio": "GPIO6",
+   "board_pin": "6",
    "net": "PARO_CONT",
-   "justification": "entrada con interrupción; pull-up R24 a 3V3"
+   "justification": "entrada con interrupción; pull-up R24; pin asignado por geometría (DEC-17)"
   },
   {
-   "function": "5V",
+   "function": "ENC_DER_A",
+   "gpio": "GPIO7",
+   "board_pin": "7",
+   "net": "ENC_DER_A",
+   "justification": "PCNT; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "ENC_DER_B",
+   "gpio": "GPIO15",
+   "board_pin": "8",
+   "net": "ENC_DER_B",
+   "justification": "PCNT; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "I2C_SCL",
+   "gpio": "GPIO16",
+   "board_pin": "9",
+   "net": "I2C_SCL",
+   "justification": "I2C0 por la matriz GPIO; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "I2C_SDA",
+   "gpio": "GPIO17",
+   "board_pin": "10",
+   "net": "I2C_SDA",
+   "justification": "I2C0 por la matriz GPIO; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IMU_INT",
+   "gpio": "GPIO18",
+   "board_pin": "11",
+   "net": "IMU_INT",
+   "justification": "entrada con interrupción; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "VBAT_ADC",
+   "gpio": "GPIO8",
+   "board_pin": "12",
+   "net": "VBAT_ADC",
+   "justification": "ADC1_CH7; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "INA_ALERT",
+   "gpio": "GPIO3",
+   "board_pin": "13",
+   "net": "INA_ALERT",
+   "justification": "entrada; pull-up del INA226; GPIO3 sin efecto de strapping con eFuses de fábrica; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "sin conexión",
+   "gpio": "GPIO46",
+   "board_pin": "14",
+   "net": "sin conexión",
+   "justification": ""
+  },
+  {
+   "function": "IN1_DER_MCU",
+   "gpio": "GPIO9",
+   "board_pin": "15",
+   "net": "IN1_DER_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IN2_DER_MCU",
+   "gpio": "GPIO10",
+   "board_pin": "16",
+   "net": "IN2_DER_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IN1_IZQ_MCU",
+   "gpio": "GPIO11",
+   "board_pin": "17",
+   "net": "IN1_IZQ_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IN2_IZQ_MCU",
+   "gpio": "GPIO12",
+   "board_pin": "18",
+   "net": "IN2_IZQ_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "SERVO_IZQ_MCU",
+   "gpio": "GPIO13",
+   "board_pin": "19",
+   "net": "SERVO_IZQ_MCU",
+   "justification": "LEDC 50 Hz; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "SERVO_DER_MCU",
+   "gpio": "GPIO14",
+   "board_pin": "20",
+   "net": "SERVO_DER_MCU",
+   "justification": "LEDC 50 Hz; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "5V_MCU",
    "gpio": "5V",
    "board_pin": "21",
    "net": "5V_MCU",
@@ -935,137 +914,137 @@
    "justification": ""
   },
   {
-   "function": "GPIO43/TX",
-   "gpio": "GPIO43/TX",
+   "function": "sin conexión",
+   "gpio": "GPIO43",
    "board_pin": "24",
    "net": "sin conexión",
-   "justification": "UART0 del CH343P (programación y depuración)"
+   "justification": ""
   },
   {
-   "function": "GPIO44/RX",
-   "gpio": "GPIO44/RX",
+   "function": "sin conexión",
+   "gpio": "GPIO44",
    "board_pin": "25",
    "net": "sin conexión",
-   "justification": "UART0 del CH343P (programación y depuración)"
+   "justification": ""
   },
   {
-   "function": "VBAT_ADC",
+   "function": "sin conexión",
    "gpio": "GPIO1",
    "board_pin": "26",
-   "net": "VBAT_ADC",
-   "justification": "ADC1_CH0, válido con Wi-Fi activo; divisor R22/R23"
+   "net": "sin conexión",
+   "justification": ""
   },
   {
-   "function": "GPIO2",
+   "function": "sin conexión",
    "gpio": "GPIO2",
    "board_pin": "27",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO42",
+   "function": "sin conexión",
    "gpio": "GPIO42",
    "board_pin": "28",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO41",
+   "function": "sin conexión",
    "gpio": "GPIO41",
    "board_pin": "29",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO40",
+   "function": "sin conexión",
    "gpio": "GPIO40",
    "board_pin": "30",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO39",
+   "function": "sin conexión",
    "gpio": "GPIO39",
    "board_pin": "31",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO38",
+   "function": "sin conexión",
    "gpio": "GPIO38",
    "board_pin": "32",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO37",
+   "function": "sin conexión",
    "gpio": "GPIO37",
    "board_pin": "33",
    "net": "sin conexión",
-   "justification": "reservado por la PSRAM octal del N16R8"
+   "justification": ""
   },
   {
-   "function": "GPIO36",
+   "function": "sin conexión",
    "gpio": "GPIO36",
    "board_pin": "34",
    "net": "sin conexión",
-   "justification": "reservado por la PSRAM octal del N16R8"
+   "justification": ""
   },
   {
-   "function": "GPIO35",
+   "function": "sin conexión",
    "gpio": "GPIO35",
    "board_pin": "35",
    "net": "sin conexión",
-   "justification": "reservado por la PSRAM octal del N16R8"
+   "justification": ""
   },
   {
-   "function": "GPIO0",
+   "function": "sin conexión",
    "gpio": "GPIO0",
    "board_pin": "36",
    "net": "sin conexión",
-   "justification": "strapping: sin conexión"
+   "justification": ""
   },
   {
-   "function": "GPIO45",
+   "function": "sin conexión",
    "gpio": "GPIO45",
    "board_pin": "37",
    "net": "sin conexión",
-   "justification": "strapping: sin conexión"
+   "justification": ""
   },
   {
-   "function": "GPIO48",
+   "function": "sin conexión",
    "gpio": "GPIO48",
    "board_pin": "38",
    "net": "sin conexión",
-   "justification": "LED RGB WS2812 de la placa (indicador de estado)"
+   "justification": ""
   },
   {
-   "function": "GPIO47",
+   "function": "sin conexión",
    "gpio": "GPIO47",
    "board_pin": "39",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO21",
+   "function": "sin conexión",
    "gpio": "GPIO21",
    "board_pin": "40",
    "net": "sin conexión",
-   "justification": "libre (reserva)"
+   "justification": ""
   },
   {
-   "function": "GPIO20",
+   "function": "sin conexión",
    "gpio": "GPIO20",
    "board_pin": "41",
    "net": "sin conexión",
-   "justification": "USB nativo D-/D+"
+   "justification": ""
   },
   {
-   "function": "GPIO19",
+   "function": "sin conexión",
    "gpio": "GPIO19",
    "board_pin": "42",
    "net": "sin conexión",
-   "justification": "USB nativo D-/D+"
+   "justification": ""
   },
   {
    "function": "GND",
@@ -1087,7 +1066,7 @@
   "coordenadas": "mm; origen en la esquina superior izquierda del contorno; x hacia la derecha, y hacia abajo; vista desde la cara de componentes (F), como la muestra KiCad",
   "board": {
    "width_mm": 100,
-   "height_mm": 75,
+   "height_mm": 82,
    "corner_radius": 3.0,
    "mounting_holes": [
     [
@@ -1100,11 +1079,11 @@
     ],
     [
      4,
-     71
+     78
     ],
     [
      96,
-     71
+     78
     ]
    ],
    "copper_layers": [
@@ -1128,7 +1107,6 @@
    {
     "name": "LOGICA",
     "nets": [
-     "5V",
      "5V_MCU",
      "3V3_MCU"
     ],
@@ -1178,21 +1156,21 @@
   "Pines reasignados por geometría para la placa de una cara: IN de los drivers en GPIO4-7, encoders en GPIO15-18"
  ],
  "cable_J20": {
-  "1": "GND",
-  "2": "5V",
-  "3": "GND",
-  "4": "5V",
-  "5": "3V3_MCU",
-  "6": "I2C_SDA",
-  "7": "GND",
-  "8": "I2C_SCL",
-  "9": "INA_ALERT",
-  "10": "VBAT_ADC",
-  "11": "IN1_DER_MCU",
-  "12": "IN2_DER_MCU",
-  "13": "IN1_IZQ_MCU",
-  "14": "IN2_IZQ_MCU",
-  "15": "SERVO_IZQ_MCU",
-  "16": "SERVO_DER_MCU"
+  "1": "INA_ALERT",
+  "2": "IN1_DER_MCU",
+  "3": "VBAT_ADC",
+  "4": "IN2_DER_MCU",
+  "5": "I2C_SDA",
+  "6": "IN1_IZQ_MCU",
+  "7": "I2C_SCL",
+  "8": "IN2_IZQ_MCU",
+  "9": "3V3_MCU",
+  "10": "SERVO_IZQ_MCU",
+  "11": "GND",
+  "12": "SERVO_DER_MCU",
+  "13": "5V_MCU",
+  "14": "5V_MCU",
+  "15": "GND",
+  "16": "GND"
  }
 }

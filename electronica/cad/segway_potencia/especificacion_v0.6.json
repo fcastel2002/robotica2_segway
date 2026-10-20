@@ -863,6 +863,19 @@
    ]
   },
   {
+   "ref": "D2",
+   "lib_id": "Diode:1N5819",
+   "value": "1N5819",
+   "footprint": "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal",
+   "block": "logica",
+   "dnp": false,
+   "source": "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "status": "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02",
+   "supuestos": [
+    "SUP-17"
+   ]
+  },
+  {
    "ref": "J20",
    "lib_id": "Connector_Generic:Conn_02x08_Odd_Even",
    "value": "Cable lógica-potencia 2x8",
@@ -910,9 +923,9 @@
     "A5.2",
     "A6.2",
     "A7.7",
-    "J20.1",
-    "J20.3",
-    "J20.7"
+    "J20.11",
+    "J20.15",
+    "J20.16"
    ]
   },
   {
@@ -980,7 +993,7 @@
     "R22.2",
     "R23.1",
     "C14.1",
-    "J20.10"
+    "J20.3"
    ]
   },
   {
@@ -1029,7 +1042,7 @@
    "pins": [
     "R1.1",
     "R35.1",
-    "J20.13"
+    "J20.6"
    ]
   },
   {
@@ -1046,7 +1059,7 @@
    "pins": [
     "R2.1",
     "R36.1",
-    "J20.14"
+    "J20.8"
    ]
   },
   {
@@ -1063,7 +1076,7 @@
    "pins": [
     "R3.1",
     "R37.1",
-    "J20.11"
+    "J20.2"
    ]
   },
   {
@@ -1080,7 +1093,7 @@
    "pins": [
     "R4.1",
     "R38.1",
-    "J20.12"
+    "J20.4"
    ]
   },
   {
@@ -1148,7 +1161,7 @@
    "pins": [
     "R5.1",
     "R7.1",
-    "J20.15"
+    "J20.10"
    ]
   },
   {
@@ -1165,7 +1178,7 @@
    "pins": [
     "R6.1",
     "R8.1",
-    "J20.16"
+    "J20.12"
    ]
   },
   {
@@ -1200,8 +1213,16 @@
    "kind": "power",
    "pins": [
     "A8.3",
-    "J20.2",
-    "J20.4"
+    "D2.2"
+   ]
+  },
+  {
+   "name": "5V_MCU",
+   "kind": "power",
+   "pins": [
+    "D2.1",
+    "J20.13",
+    "J20.14"
    ]
   },
   {
@@ -1211,7 +1232,7 @@
     "A5.1",
     "A6.1",
     "A7.8",
-    "J20.5"
+    "J20.9"
    ],
    "note": "3,3 V del regulador de la DevKitC (SUP-E03) para el módulo y los periféricos"
   },
@@ -1222,7 +1243,7 @@
     "A5.4",
     "A6.4",
     "A7.6",
-    "J20.6"
+    "J20.5"
    ]
   },
   {
@@ -1232,7 +1253,7 @@
     "A5.3",
     "A6.3",
     "A7.5",
-    "J20.8"
+    "J20.7"
    ]
   },
   {
@@ -1240,7 +1261,7 @@
    "kind": "signal",
    "pins": [
     "A7.4",
-    "J20.9"
+    "J20.1"
    ]
   }
  ],
@@ -1385,6 +1406,7 @@
      "VM_LOG_F",
      "VM_LOG",
      "5V",
+     "5V_MCU",
      "3V3_MCU"
     ],
     "track_mm": 1.2,
@@ -1433,21 +1455,21 @@
   "Pines reasignados por geometría para la placa de una cara: IN de los drivers en GPIO4-7, encoders en GPIO15-18"
  ],
  "cable_J20": {
-  "1": "GND",
-  "2": "5V",
-  "3": "GND",
-  "4": "5V",
-  "5": "3V3_MCU",
-  "6": "I2C_SDA",
-  "7": "GND",
-  "8": "I2C_SCL",
-  "9": "INA_ALERT",
-  "10": "VBAT_ADC",
-  "11": "IN1_DER_MCU",
-  "12": "IN2_DER_MCU",
-  "13": "IN1_IZQ_MCU",
-  "14": "IN2_IZQ_MCU",
-  "15": "SERVO_IZQ_MCU",
-  "16": "SERVO_DER_MCU"
+  "1": "INA_ALERT",
+  "2": "IN1_DER_MCU",
+  "3": "VBAT_ADC",
+  "4": "IN2_DER_MCU",
+  "5": "I2C_SDA",
+  "6": "IN1_IZQ_MCU",
+  "7": "I2C_SCL",
+  "8": "IN2_IZQ_MCU",
+  "9": "3V3_MCU",
+  "10": "SERVO_IZQ_MCU",
+  "11": "GND",
+  "12": "SERVO_DER_MCU",
+  "13": "5V_MCU",
+  "14": "5V_MCU",
+  "15": "GND",
+  "16": "GND"
  }
 }

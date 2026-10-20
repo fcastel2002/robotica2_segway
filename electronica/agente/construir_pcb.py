@@ -101,7 +101,9 @@ def leer_netlist(ruta):
     for c in hijos(hijos(raiz, "components")[0], "comp"):
         ref = valor(c, "ref")
         comps[ref] = {"ref": ref, "value": valor(c, "value"), "footprint": valor(c, "footprint"),
-                      "tstamp": valor(c, "tstamps"), "sheet": valor(hijos(c, "sheetpath")[0], "names")}
+                      "tstamp": valor(c, "tstamps"), "sheet": valor(hijos(c, "sheetpath")[0], "names"),
+                      "fields": {valor(f, "name"): (f[2] if len(f) > 2 and isinstance(f[2], str) else "")
+                                 for g in hijos(c, "fields") for f in hijos(g, "field")}}
     nets = {}
     for n in hijos(hijos(raiz, "nets")[0], "net"):
         nets[valor(n, "name")] = [(valor(x, "ref"), valor(x, "pin")) for x in hijos(n, "node")]
@@ -149,6 +151,8 @@ PADS_CASEROS = {
     "TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal": (1.2, 2.6, 2.6),
     "TerminalBlock_Phoenix_PT-1,5-4-3.5-H_1x04_P3.50mm_Horizontal": (1.2, 2.6, 2.6),
     "TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal": (1.1, 1.9, 2.4),   # anillo 0,4; 0,8 a sus trabas
+    # IDC 2x8: grilla de 2,54 en x e y, sin lugar para óvalos: pad redondo 1,9 (anillo 0,45; 0,64 entre pads)
+    "IDC-Header_2x08_P2.54mm_Vertical": (1.0, 1.9, 1.9),
     "Fuseholder_Blade_Mini_Keystone_3568": (1.8, 3.2, 3.2),
     "Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin": (2.0, 3.8, 3.8),
     # Puentes de alambre W (resistencia axial como huella): pad 2,2 / taladro 0,9 (SUP-15)
@@ -293,6 +297,10 @@ def ubicar(board, comps, nets, origen, libtmp):
         fp.SetSheetname("/")
         fp.SetSheetfile(f"{NOMBRE}.kicad_sch")
         pads_caseros(fp, nombre)
+        for campo in ("Estado", "Fuente", "Description"):
+            if c["fields"].get(campo):
+                fp.SetField(campo, c["fields"][campo])
+                fp.GetField(campo).SetVisible(False)
         board.Add(fp)
         x, y, rot = UBICACION.get(ref, (0.0, 0.0, 0))
         fp.SetPosition(V(x, y))
@@ -389,6 +397,7 @@ def agujeros(board, spec, libtmp):
         fp.SetReference(f"H{i}")
         fp.SetValue("M3")
         fp.SetBoardOnly(True)
+        fp.Reference().SetVisible(False)
         board.Add(fp)
         fp.SetPosition(V(x, y))
 
@@ -442,9 +451,11 @@ ENMIENDAS_DRU = """
 """
 
 
-def reglas_dru():
-    """segway_base.kicad_dru = reglas_casera.kicad_dru + ENMIENDAS_DRU (KiCad solo lee <proyecto>.kicad_dru)."""
-    base = (PROY / "reglas_casera.kicad_dru").read_text(encoding="utf-8")
+def reglas_dru(spec):
+    """<proyecto>.kicad_dru = reglas_casera.kicad_dru (pcb.dru.source) + ENMIENDAS_DRU (KiCad solo lee
+    <proyecto>.kicad_dru)."""
+    fuente = spec.get("pcb", {}).get("dru", {}).get("source", "reglas_casera.kicad_dru")
+    base = (PROY / fuente).resolve().read_text(encoding="utf-8")
     (PROY / f"{NOMBRE}.kicad_dru").write_text(base.rstrip() + chr(10) + ENMIENDAS_DRU, encoding="utf-8")
 
 
@@ -539,6 +550,13 @@ def adaptar_dsn(entrada, salida, anchos):
     for clave in ("outline", "plane"):
         for a, b in reversed(_bloques(t, clave)):
             t = t[:a] + t[b:]
+    # Contorno rectangular retraído: Freerouting deja la separación de clase (0,7) al borde, más este
+    # margen llega a los 2,0 mm de cobre_a_borde.
+    a, b = _bloques(t, "boundary")[0]
+    m = MARGEN_BORDE_RUTEO
+    x0, x1 = round((OX + m) * 1000), round((OX + ANCHO - m) * 1000)
+    y0, y1 = -round((OY + m) * 1000), -round((OY + ALTO - m) * 1000)
+    t = t[:a] + f"(boundary (path pcb 0  {x0} {y0}  {x1} {y0}  {x1} {y1}  {x0} {y1}  {x0} {y0}))" + t[b:]
     usados = set()
     contador = [0]
 
@@ -563,9 +581,10 @@ def adaptar_dsn(entrada, salida, anchos):
     # Pads vecinos de paso 2,54 mm (0,74 mm entre óvalos) con nets de potencia (1,0 mm): sin esta regla
     # tipada Freerouting los toma como violaciones previas. KiCad aplica la regla pad_a_pad (0,6 mm).
     t = re.sub(r"\(clearance (\d+)\)", lambda m: f"(clearance {m.group(1)}) (clearance 300 (type pin_pin))", t)
-    for clase, ancho in anchos.items():
-        t = re.sub(r'(\(class ' + re.escape(clase) + r' [^()]*?(?:\([^()]*\)[^()]*?)*?\(rule\s*\(width )(\d+)',
-                   lambda m: m.group(1) + str(ancho), t, flags=re.S)
+    for a, b in reversed(_bloques(t, "class ")):
+        clase = t[a:b].split()[1]
+        if clase in anchos:
+            t = t[:a] + re.sub(r"\(width \d+\)", f"(width {anchos[clase]})", t[a:b], count=1) + t[b:]
     # Placa de una cara: los pads de componentes existen solo en B.Cu. La capa F.Cu queda para puentes de
     # alambre, a la que Freerouting solo puede llegar por vías (que después se convierten en pads de puente).
     def solo_bcu(m):
@@ -588,6 +607,8 @@ def adaptar_dsn(entrada, salida, anchos):
     salida.write_text(t, encoding="utf-8")
     return contador[0]
 
+
+MARGEN_BORDE_RUTEO = 1.3
 
 # Costos de Freerouting para que la capa de puentes se use lo menos posible
 COSTO_VIA = 150
@@ -622,52 +643,53 @@ def convertir_puentes(board, netinfo):
         if k in padre:
             grupos.setdefault(raiz(k), []).append(v)
     puentes = []
-    n = 0
-    for vs in grupos.values():
+    for n, vs in enumerate(grupos.values(), start=1):
         net = vs[0].GetNetname()
-        # árbol de expansión mínima entre las vías del grupo (cada arista = un alambre recto)
-        dentro, resto = [vs[0]], vs[1:]
+        # árbol de expansión mínima entre las vías del grupo: cada arista es un tramo de alambre recto; las
+        # vías compartidas son un solo agujero (la huella W<n> tiene un pad por vía).
+        dentro, resto, aristas = [vs[0]], vs[1:], []
         while resto:
             a, b = min(((a, b) for a in dentro for b in resto),
                        key=lambda ab: (ab[0].GetPosition() - ab[1].GetPosition()).EuclideanNorm())
             dentro.append(b)
             resto.remove(b)
-            n += 1
-            ref = f"W{n}"
-            fp = pcbnew.FOOTPRINT(board)
-            fp.SetFPID(pcbnew.LIB_ID("segway_puentes", "Puente_alambre"))
-            fp.SetReference(ref)
-            pa, pb = a.GetPosition(), b.GetPosition()
-            largo = pcbnew.ToMM((pa - pb).EuclideanNorm())
-            fp.SetValue(f"puente {largo:.1f} mm")
-            fp.SetBoardOnly(True)
-            fp.SetDuplicatePadNumbersAreJumpers(True)
-            fp.SetPosition(pa)
-            for pos in (pa, pb):
-                pad = pcbnew.PAD(fp)
-                pad.SetNumber("1")
-                pad.SetAttribute(pcbnew.PAD_ATTRIB_PTH)
-                pad.SetShape(pcbnew.PAD_SHAPE_CIRCLE)
-                pad.SetSize(pcbnew.VECTOR2I(mm(2.2), mm(2.2)))
-                pad.SetDrillSize(pcbnew.VECTOR2I(mm(0.9), mm(0.9)))
-                ls = pcbnew.LSET()
-                ls.AddLayer(pcbnew.B_Cu)
-                ls.AddLayer(pcbnew.B_Mask)
-                pad.SetLayerSet(ls)
-                pad.SetPosition(pos)
-                pad.SetNet(netinfo[net.lstrip("/")] if net.lstrip("/") in netinfo else a.GetNet())
-                fp.Add(pad)
+            aristas.append((a.GetPosition(), b.GetPosition()))
+        ref = f"W{n}"
+        fp = pcbnew.FOOTPRINT(board)
+        fp.SetFPID(pcbnew.LIB_ID("segway_puentes", "Puente_alambre"))
+        fp.SetReference(ref)
+        largo = sum(pcbnew.ToMM((pa - pb).EuclideanNorm()) for pa, pb in aristas)
+        fp.SetValue(f"puente {largo:.1f} mm")
+        fp.SetBoardOnly(True)
+        fp.SetDuplicatePadNumbersAreJumpers(True)
+        fp.SetPosition(vs[0].GetPosition())
+        for v in vs:
+            pad = pcbnew.PAD(fp)
+            pad.SetNumber("1")
+            pad.SetAttribute(pcbnew.PAD_ATTRIB_PTH)
+            pad.SetShape(pcbnew.PAD_SHAPE_CIRCLE)
+            pad.SetSize(pcbnew.VECTOR2I(mm(2.2), mm(2.2)))
+            pad.SetDrillSize(pcbnew.VECTOR2I(mm(0.9), mm(0.9)))
+            ls = pcbnew.LSET()
+            ls.AddLayer(pcbnew.B_Cu)
+            ls.AddLayer(pcbnew.B_Mask)
+            pad.SetLayerSet(ls)
+            pad.SetPosition(v.GetPosition())
+            pad.SetNet(v.GetNet())
+            fp.Add(pad)
+        for pa, pb in aristas:
             s = pcbnew.PCB_SHAPE(fp, pcbnew.SHAPE_T_SEGMENT)
             s.SetStart(pa)
             s.SetEnd(pb)
             s.SetLayer(pcbnew.F_SilkS)
             s.SetWidth(mm(0.3))
             fp.Add(s)
-            fp.Reference().SetPosition(pcbnew.VECTOR2I((pa.x + pb.x) // 2, (pa.y + pb.y) // 2 - mm(1.2)))
-            fp.Reference().SetLayer(pcbnew.F_SilkS)
-            fp.Value().SetVisible(False)
-            board.Add(fp)
-            puentes.append((ref, net, round(largo, 1), a_placa(pa), a_placa(pb)))
+        pa, pb = aristas[0]
+        fp.Reference().SetPosition(pcbnew.VECTOR2I((pa.x + pb.x) // 2, (pa.y + pb.y) // 2 - mm(1.2)))
+        fp.Reference().SetLayer(pcbnew.F_SilkS)
+        fp.Value().SetVisible(False)
+        board.Add(fp)
+        puentes.append((ref, net, round(largo, 1), [a_placa(v.GetPosition()) for v in vs]))
     for t in pistas + [v for vs in grupos.values() for v in vs]:
         board.Remove(t)
     return puentes
@@ -686,7 +708,7 @@ def freerouting(dsn, ses, pasadas, ignorar):
     return r.returncode, log
 
 
-def rutear(board, tmp, pasadas, ignorar=("BATERIA_BUS", "GND")):
+def rutear(board, tmp, pasadas, ignorar):
     dsn0, dsn, ses = tmp / "placa_kicad.dsn", tmp / "placa.dsn", tmp / "placa.ses"
     if not pcbnew.ExportSpecctraDSN(board, str(dsn0)):
         raise SystemExit("ExportSpecctraDSN falló")
@@ -703,12 +725,25 @@ def rutear(board, tmp, pasadas, ignorar=("BATERIA_BUS", "GND")):
     if not pcbnew.ImportSpecctraSES(board, str(ses)):
         raise SystemExit("ImportSpecctraSES falló")
     p(f"   SES importado: {antes} -> {len(board.GetTracks())} pistas")
+    # Freerouting angosta las pistas al entrar a algunos pads (0,75 mm) aunque se le pida que no: se
+    # llevan al mínimo de la regla pista_senal (0,8 mm) y el DRC confirma la separación.
+    angostas = [t for t in board.GetTracks() if t.Type() == pcbnew.PCB_TRACE_T and t.GetWidth() < mm(0.8)]
+    for t in angostas:
+        t.SetWidth(mm(0.8))
+    p(f"   pistas angostadas por Freerouting llevadas a 0,8 mm: {len(angostas)}")
     return log
 
 
 # Anchos de ruteo para Freerouting (µm). MOTOR a 2,0 mm: entra con 1,0 mm de separación en los pads de
 # bornera de paso 3,5 mm de los módulos (la regla pide 1,5 mm mínimo y 2,5 mm de diseño).
 ANCHOS_RUTEO = {"GND": 1500, "MOTOR": 2000, "LOGICA": 1200, "kicad_default": 1000}
+IGNORAR = ("BATERIA_BUS", "GND")   # nets que Freerouting no rutea (van por esqueleto y zonas)
+ZONAS = []
+ROTULOS = []
+ESCALA = None
+PUENTES = []
+SIN_RELLENO = []
+RUTEAR = True
 
 # Esqueleto de potencia: (net, ancho mm, [puntos]); se traza fijo antes de Freerouting.
 ESQUELETO = [
@@ -746,6 +781,7 @@ ESQUELETO = [
 
 def drc(salida):
     cmd = [str(CLI), "pcb", "drc", "--format", "json", "--severity-all", "--schematic-parity",
+           "--refill-zones", "--save-board",
            "--exit-code-violations", "--output", str(salida), str(PCB)]
     subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     d = json.loads(salida.read_text(encoding="utf-8"))
@@ -782,8 +818,175 @@ def superposiciones(board):
     return out
 
 
+def cargar_placa(nombre):
+    """Reemplaza las constantes de la placa por las de electronica/agente/placas/<nombre>.py y la especificación."""
+    import importlib.util
+    global PROY, SPEC, NOMBRE, PCB, PRO, SCH, EVID, FAB, ANCHO, ALTO, RADIO, UBICACION, FIJAS, SOBRESALEN, ESQUELETO
+    global ANCHOS_RUTEO, IGNORAR, ZONAS, PUENTES, SIN_RELLENO, RUTEAR, ROTULOS, ESCALA
+    ruta = Path(__file__).resolve().parent / "placas" / f"{nombre}.py"
+    spec_mod = importlib.util.spec_from_file_location(f"placa_{nombre}", ruta)
+    cfg = importlib.util.module_from_spec(spec_mod)
+    spec_mod.loader.exec_module(cfg)
+    NOMBRE = cfg.PROYECTO
+    PROY = RAIZ / "electronica" / "cad" / NOMBRE
+    SPEC = PROY / cfg.SPEC
+    PCB, PRO, SCH = (PROY / f"{NOMBRE}.{e}" for e in ("kicad_pcb", "kicad_pro", "kicad_sch"))
+    EVID = PROY / "evidencia"
+    FAB = PROY / "fabricacion" / "rev-0.1"
+    tablero = json.loads(SPEC.read_text(encoding="utf-8"))["pcb"]["board"]
+    ANCHO, ALTO, RADIO = float(tablero["width_mm"]), float(tablero["height_mm"]), float(tablero["corner_radius"])
+    UBICACION, FIJAS, SOBRESALEN, ESQUELETO = cfg.UBICACION, set(cfg.FIJAS), set(cfg.SOBRESALEN), list(cfg.ESQUELETO)
+    ANCHOS_RUTEO = getattr(cfg, "ANCHOS_RUTEO", ANCHOS_RUTEO)
+    IGNORAR = tuple(getattr(cfg, "IGNORAR", IGNORAR))
+    ZONAS = list(getattr(cfg, "ZONAS", []))
+    PUENTES = list(getattr(cfg, "PUENTES", []))
+    SIN_RELLENO = list(getattr(cfg, "SIN_RELLENO", []))
+    RUTEAR = bool(getattr(cfg, "RUTEAR", True))
+    ROTULOS = list(getattr(cfg, "ROTULOS", []))
+    ESCALA = getattr(cfg, "ESCALA", None)
+
+
+def rotulos_cobre(board):
+    """ROTULOS: [(texto, (x, y), alto_mm)] en B.Cu, espejados (se leen derechos del lado cobre), y ESCALA:
+    (x, y) del extremo izquierdo de una barra de control de 50,00 mm con marcas cada 10 mm
+    (reglas_fabricacion_casera.md §6)."""
+    for texto, (x, y), alto in ROTULOS:
+        tx = pcbnew.PCB_TEXT(board)
+        tx.SetText(texto)
+        tx.SetLayer(pcbnew.B_Cu)
+        tx.SetPosition(V(x, y))
+        tx.SetTextSize(pcbnew.VECTOR2I(mm(alto), mm(alto)))
+        tx.SetTextThickness(mm(max(0.4, alto * 0.18)))
+        tx.SetMirrored(True)
+        tx.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_CENTER)
+        board.Add(tx)
+    if ESCALA:
+        x, y = ESCALA
+        trazos = [((x, y), (x + 50.0, y))] + [((x + k, y - 1.5), (x + k, y)) for k in range(0, 51, 10)]
+        for a, b in trazos:
+            s = pcbnew.PCB_SHAPE(board, pcbnew.SHAPE_T_SEGMENT)
+            s.SetStart(V(*a))
+            s.SetEnd(V(*b))
+            s.SetLayer(pcbnew.B_Cu)
+            s.SetWidth(mm(0.5))
+            board.Add(s)
+    return len(ROTULOS) + (1 if ESCALA else 0)
+
+
+def fabricar():
+    """Salidas de fabricación casera en FAB (reglas_fabricacion_casera.md §6): cobre 1:1 sin espejar
+    (SUP-07), guía de montaje, taladros Excellon con mapa y vista PNG."""
+    FAB.mkdir(parents=True, exist_ok=True)
+    base = NOMBRE
+    corridas = [
+        [str(CLI), "pcb", "export", "pdf", "--layers", "B.Cu,Edge.Cuts", "--mode-single", "--black-and-white",
+         "--scale", "1", "--drill-shape-opt", "1", "--output", str(FAB / f"{base}_cobre_BCu_1a1.pdf"), str(PCB)],
+        [str(CLI), "pcb", "export", "pdf", "--layers", "F.Silkscreen,F.Fab,Edge.Cuts", "--mode-single",
+         "--black-and-white", "--scale", "1", "--drill-shape-opt", "2", "--output",
+         str(FAB / f"{base}_montaje_cara_superior.pdf"), str(PCB)],
+        [str(CLI), "pcb", "export", "drill", "--format", "excellon", "--excellon-units", "mm", "--generate-map",
+         "--map-format", "pdf", "--generate-report", "--report-path", str(FAB / f"{base}_taladros.rpt"),
+         "--output", str(FAB) + "\\", str(PCB)],
+    ]
+    for cmd in corridas:
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if r.returncode:
+            raise SystemExit(f"Falló {' '.join(cmd[:4])}: {r.stdout}{r.stderr}")
+    return sorted(f.name for f in FAB.iterdir())
+
+
+def huella_puente(board, ref, net, posiciones, aristas):
+    """Puente de alambre W<n>: un pad THT (2,2 / 0,9) por posición, todos con número 1
+    (duplicate_pad_numbers_are_jumpers) y una línea de serigrafía por tramo de alambre."""
+    fp = pcbnew.FOOTPRINT(board)
+    fp.SetFPID(pcbnew.LIB_ID("segway_puentes", "Puente_alambre"))
+    fp.SetReference(ref)
+    largo = sum(pcbnew.ToMM((pa - pb).EuclideanNorm()) for pa, pb in aristas)
+    fp.SetValue(f"puente {largo:.1f} mm")
+    fp.SetBoardOnly(True)
+    fp.SetDuplicatePadNumbersAreJumpers(True)
+    fp.SetPosition(posiciones[0])
+    for pos in posiciones:
+        pad = pcbnew.PAD(fp)
+        pad.SetNumber("1")
+        pad.SetAttribute(pcbnew.PAD_ATTRIB_PTH)
+        pad.SetShape(pcbnew.PAD_SHAPE_CIRCLE)
+        pad.SetSize(pcbnew.VECTOR2I(mm(2.2), mm(2.2)))
+        pad.SetDrillSize(pcbnew.VECTOR2I(mm(0.9), mm(0.9)))
+        ls = pcbnew.LSET()
+        ls.AddLayer(pcbnew.B_Cu)
+        ls.AddLayer(pcbnew.B_Mask)
+        pad.SetLayerSet(ls)
+        pad.SetPosition(pos)
+        pad.SetNet(net)
+        fp.Add(pad)
+    for pa, pb in aristas:
+        s = pcbnew.PCB_SHAPE(fp, pcbnew.SHAPE_T_SEGMENT)
+        s.SetStart(pa)
+        s.SetEnd(pb)
+        s.SetLayer(pcbnew.F_SilkS)
+        s.SetWidth(mm(0.3))
+        fp.Add(s)
+    pa, pb = aristas[0]
+    fp.Reference().SetPosition(pcbnew.VECTOR2I((pa.x + pb.x) // 2 + mm(1.6), (pa.y + pb.y) // 2))
+    fp.Reference().SetLayer(pcbnew.F_SilkS)
+    fp.Value().SetVisible(False)
+    board.Add(fp)
+    return round(largo, 1)
+
+
+def puentes_fijos(board, netinfo):
+    """PUENTES: [(net, [(x, y), ...])] -> puentes W1.. en línea recta entre puntos consecutivos."""
+    out = []
+    for i, (net, puntos) in enumerate(PUENTES, start=1):
+        pos = [V(*q) for q in puntos]
+        largo = huella_puente(board, f"W{i}", netinfo[f"/{net}"], pos, list(zip(pos, pos[1:])))
+        out.append((f"W{i}", net, largo, puntos))
+    return out
+
+
+def areas_sin_relleno(board):
+    """SIN_RELLENO: polígonos (coordenadas de placa) donde no entra el relleno de cobre en B.Cu."""
+    for puntos in SIN_RELLENO:
+        z = pcbnew.ZONE(board)
+        z.SetIsRuleArea(True)
+        z.SetDoNotAllowZoneFills(True)
+        z.SetDoNotAllowTracks(False)
+        z.SetDoNotAllowVias(False)
+        z.SetDoNotAllowPads(False)
+        z.SetDoNotAllowFootprints(False)
+        z.SetLayer(pcbnew.B_Cu)
+        ol = z.Outline()
+        ol.NewOutline()
+        for (x, y) in puntos:
+            ol.Append(mm(OX + x), mm(OY + y))
+        z.SetZoneName("sin_relleno")
+        board.Add(z)
+    return len(SIN_RELLENO)
+
+
+def rellenar_zonas(board, netinfo):
+    """ZONAS: [(net, [(x, y), ...] | "placa", prioridad)]. "placa" = contorno menos el margen a borde."""
+    zs = []
+    for net, puntos, prioridad in ZONAS:
+        if puntos == "placa":
+            m = 0.5
+            puntos = [(m, m), (ANCHO - m, m), (ANCHO - m, ALTO - m), (m, ALTO - m)]
+        zs.append(zona(board, netinfo, net, puntos, prioridad, termica=True, nombre=f"relleno_{net}"))
+    if zs:
+        pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+    return len(zs)
+
+
 def main():
+    if "--placa" in sys.argv:
+        cargar_placa(sys.argv[sys.argv.index("--placa") + 1])
     solo_ubicar = "--solo-ubicar" in sys.argv
+    global COSTO_VIA, COSTO_FCU
+    if "--costo-via" in sys.argv:
+        COSTO_VIA = int(sys.argv[sys.argv.index("--costo-via") + 1])
+    if "--costo-fcu" in sys.argv:
+        COSTO_FCU = float(sys.argv[sys.argv.index("--costo-fcu") + 1])
     pasadas = int(sys.argv[sys.argv.index("--pasadas") + 1]) if "--pasadas" in sys.argv else 50
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     tmp = Path(tempfile.mkdtemp(prefix="pcb_segway_"))
@@ -793,7 +996,7 @@ def main():
     origen = preparar_biblioteca(comps, libtmp)
     p(f"2. Huellas de trabajo: {len(origen)} en {libtmp}")
     p(f"   netclasses: {fijar_netclasses(spec)} patrones con '/' en {PRO.name}")
-    reglas_dru()
+    reglas_dru(spec)
     if PCB.exists():
         PCB.unlink()
     board = pcbnew.NewBoard(str(PCB))
@@ -817,16 +1020,23 @@ def main():
     for a, b, area in sup:
         p(f"     {a} x {b}: {area} mm2")
     p(f"   esqueleto: {trazar_esqueleto(board, netinfo, huellas)} tramos fijos")
+    puentes = puentes_fijos(board, netinfo)
+    p(f"   áreas sin relleno: {areas_sin_relleno(board)}")
+    p(f"   rótulos en cobre: {rotulos_cobre(board)}")
     pcbnew.SaveBoard(str(PCB), board)
     if solo_ubicar:
         return 0
     p("4. Ruteo")
-    rutear(board, tmp, pasadas)
-    puentes = convertir_puentes(board, netinfo)
+    if RUTEAR:
+        rutear(board, tmp, pasadas, IGNORAR)
+        puentes += convertir_puentes(board, netinfo)
+    else:
+        p("   sin Freerouting: ruteo completo en ESQUELETO")
     p(f"   puentes de alambre: {len(puentes)}")
-    for ref, net, largo, a, b in puentes:
-        p(f"     {ref}: {net} {largo} mm {a} -> {b}")
+    for ref, net, largo, pts in puentes:
+        p(f"     {ref}: {net} {largo} mm {pts}")
     (tmp / "puentes.json").write_text(json.dumps(puentes, ensure_ascii=False, indent=1), encoding="utf-8")
+    p(f"   zonas rellenas: {rellenar_zonas(board, netinfo)}")
     pcbnew.SaveBoard(str(PCB), board)
     p("5. DRC")
     EVID.mkdir(exist_ok=True)
@@ -834,7 +1044,12 @@ def main():
     p(f"   {len(viol)} violaciones, {len(sin)} sin conectar, {len(par)} de paridad")
     for (sev, tipo), c in sorted(cuenta.items()):
         p(f"     {sev:8s} {tipo:35s} {c}")
-    shutil.copyfile(tmp / "drc.json", tmp / "drc_ultimo.json")
+    shutil.copyfile(tmp / "drc.json", EVID / "drc_pcb_v0.1.json")
+    (EVID / "puentes_pcb_v0.1.json").write_text(json.dumps(puentes, ensure_ascii=False, indent=1), encoding="utf-8")
+    if not [v for v in viol if v["severity"] == "error"] and not sin and "--fabricar" in sys.argv:
+        p("6. Fabricación")
+        for f in fabricar():
+            p(f"   {FAB.name}/{f}")
     p(f"   carpeta de trabajo: {tmp}")
     return 0
 

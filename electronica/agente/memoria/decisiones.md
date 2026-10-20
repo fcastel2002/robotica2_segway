@@ -28,6 +28,7 @@ Registrados el 15/10/2026 y actualizados el 17/10/2026. Las decisiones del usuar
 | TEC-01 | Decisión técnica del agente, 17/10/2026; Matías puede revertirla | Abrir Claude Code desde la raíz del repositorio y no desde `electronica/` | Reemplaza la indicación del 15/10 en INICIAR_AQUI. Motivo verificado en la documentación de Claude Code: desde `electronica/` deja de cargarse `AGENTS.md` raíz |
 | TEC-02 | Decisión técnica del agente, 17/10/2026 | Configuración MCP en `.mcp.json` de la raíz y skill `svgbob-diagrams` en `.claude/skills/` de la raíz | Excepción acotada a DEC-06: Claude Code solo lee esas ubicaciones. Todo lo demás sigue dentro de `electronica/` |
 | TEC-03 | Decisión técnica del agente, 17/10/2026 | En KiCad 10 el esquemático se edita por archivo y se verifica con kicad-cli; el MCP se usa sobre todo para PCB | Consecuencia de que la API IPC de KiCad 10 no edita esquemáticos. No reabre REQ-23: el MCP sigue siendo parte del camino |
+| TEC-04 | Decisión técnica del agente, 20/10/2026 | Las placas de una cara se rutean a mano por topología (ESQUELETO en `agente/placas/<placa>.py`); Freerouting queda como ayuda para tramos sueltos | En la lógica, Freerouting daba de 3 a 7 puentes según los costos (hasta 68 mm); a mano quedan 2 cortos. El mapa de GPIO y el cable se eligen por geometría y se regeneran especificación y esquema |
 
 ## Interpretaciones que se deben evitar
 

@@ -207,6 +207,10 @@
       },
       {
         "netclass": "LOGICA",
+        "pattern": "5V_MCU"
+      },
+      {
+        "netclass": "LOGICA",
         "pattern": "3V3_MCU"
       }
     ]

@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-20T11:16:02")
+		(date "2026-10-20T11:53:34")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b25a3d77-fd00-4f75-b2c6-1790163a5815")
+			(tstamps "fa2acd68-2c60-4045-b9a5-075f6acc5a0e")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5697e600-4bd2-47ba-a13e-f76afdc72ca4")
+			(tstamps "345d0386-4300-46e2-8089-fecb533d54e2")
 			(units
 				(unit
 					(name "A")
@@ -309,72 +309,6 @@
 						)
 						(pin
 							(num "8")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "D2")
-			(value "1N5819")
-			(footprint "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal")
-			(datasheet "http://www.vishay.com/docs/88525/1n5817.pdf")
-			(description "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			(fields
-				(field
-					(name "Estado") "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02")
-				(field
-					(name "Fuente") "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-				(field
-					(name "Footprint") "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet") "http://www.vishay.com/docs/88525/1n5817.pdf")
-				(field
-					(name "Description") "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			)
-			(libsource
-				(lib "Diode")
-				(part "1N5819")
-				(description "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02")
-			)
-			(property
-				(name "Fuente")
-				(value "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "diode Schottky")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "D*DO?41*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "732be8ea-8b07-4a2a-b723-e4621e51aa0c")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
 						)
 					)
 				)
@@ -431,7 +365,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3a7ee435-abfb-45db-a82c-ae6d140c10b2")
+			(tstamps "5de51855-f8e9-4114-858c-5cfd43f63e55")
 			(units
 				(unit
 					(name "A")
@@ -448,12 +382,12 @@
 		)
 		(comp
 			(ref "J7")
-			(value "Encoder IZQ PT1,5 1=GND 2=A 3=B 4=V")
+			(value "Encoder IZQ PT1,5 1=V 2=A 3=B 4=GND")
 			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-4-3.5-H_1x04_P3.50mm_Horizontal")
 			(description "Generic screw terminal, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69)")
+					(name "Estado") "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69); pines 1 y 4 invertidos por ruteo (DEC-17)")
 				(field
 					(name "Fuente") "DEC-13 [M]; DEC-01 [M] (negro GND, amarillo y verde señales, azul V+ del encoder); [PHX-PT15] (17,5 A IEC, 10 A UL, AWG 26-16); [CONTRATO] §2.4")
 				(field
@@ -471,7 +405,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69)")
+				(value "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69); pines 1 y 4 invertidos por ruteo (DEC-17)")
 			)
 			(property
 				(name "Fuente")
@@ -497,7 +431,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "807cf926-26d3-43a1-8d1e-d0879775dc44")
+			(tstamps "677e2932-040f-440f-b3a0-c87d364daae3")
 			(units
 				(unit
 					(name "A")
@@ -569,7 +503,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7a8a42af-876d-495c-b966-23b89a27fbf2")
+			(tstamps "2ce13c87-2740-4b6d-89fe-5b4fb71107fa")
 			(units
 				(unit
 					(name "A")
@@ -641,7 +575,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b5c44e55-7852-465e-a34e-8e9cd59bce68")
+			(tstamps "b4a90911-9c6a-4a9b-8749-3c1fcce01909")
 			(units
 				(unit
 					(name "A")
@@ -749,7 +683,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c6ff04d6-7322-44f1-ac4e-42d7781e6bdf")
+			(tstamps "827a5707-a444-4b5f-b7d1-a1b1bf33aec2")
 			(units
 				(unit
 					(name "A")
@@ -815,7 +749,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "df3a1e58-8470-401e-9312-c0beb9e1808e")
+			(tstamps "b100dcef-1d10-4b15-aa82-4a2c4e38f7a7")
 			(units
 				(unit
 					(name "A")
@@ -881,7 +815,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b0ab659c-4e3b-4988-bd2c-8fd1d2b7f21d")
+			(tstamps "864b24e7-7ff7-4ed1-ba9b-368a7c089c49")
 			(units
 				(unit
 					(name "A")
@@ -947,7 +881,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "77e9dfb2-1fca-420e-9298-968bf8e3694d")
+			(tstamps "fe25d72e-89cd-4c77-87c8-8c5f4e2abf71")
 			(units
 				(unit
 					(name "A")
@@ -1013,7 +947,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "eb9fe3c0-e47c-4d39-bf22-d10768c789ce")
+			(tstamps "b616eeda-ab16-4cf1-bc21-7e36bc4bc94d")
 			(units
 				(unit
 					(name "A")
@@ -1244,39 +1178,6 @@
 				(pin
 					(num "2")
 					(name "")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Diode")
-			(part "1N5819")
-			(description "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			(docs "http://www.vishay.com/docs/88525/1n5817.pdf")
-			(footprints
-				(fp "D*DO?41*")
-			)
-			(fields
-				(field
-					(name "Reference") "D")
-				(field
-					(name "Value") "1N5819")
-				(field
-					(name "Footprint") "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet") "http://www.vishay.com/docs/88525/1n5817.pdf")
-				(field
-					(name "Description") "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "K")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "A")
 					(type "passive")
 				)
 			)
@@ -1598,10 +1499,6 @@
 			(uri "${KICAD10_SYMBOL_DIR}/Device.kicad_sym")
 		)
 		(library
-			(logical "Diode")
-			(uri "${KICAD10_SYMBOL_DIR}/Diode.kicad_sym")
-		)
-		(library
 			(logical "segway_modulos")
 			(uri "${KIPRJMOD}/../bibliotecas/segway_modulos.kicad_sym")
 		)
@@ -1631,14 +1528,14 @@
 			)
 			(node
 				(ref "J20")
-				(pin "5")
-				(pinfunction "Pin_5_5")
+				(pin "9")
+				(pinfunction "Pin_9_9")
 				(pintype "passive")
 			)
 			(node
 				(ref "J7")
-				(pin "4")
-				(pinfunction "Pin_4_4")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
@@ -1675,29 +1572,6 @@
 		)
 		(net
 			(code "2")
-			(name "/5V")
-			(class "Default")
-			(node
-				(ref "D2")
-				(pin "2")
-				(pinfunction "A_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "J20")
-				(pin "2")
-				(pinfunction "Pin_2_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "J20")
-				(pin "4")
-				(pinfunction "Pin_4_4")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "3")
 			(name "/5V_MCU")
 			(class "Default")
 			(node
@@ -1707,20 +1581,26 @@
 				(pintype "power_in")
 			)
 			(node
-				(ref "D2")
-				(pin "1")
-				(pinfunction "K_1")
+				(ref "J20")
+				(pin "13")
+				(pinfunction "Pin_13_13")
+				(pintype "passive")
+			)
+			(node
+				(ref "J20")
+				(pin "14")
+				(pinfunction "Pin_14_14")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "4")
+			(code "3")
 			(name "/ENC_DER_A")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "8")
-				(pinfunction "GPIO15_8")
+				(pin "7")
+				(pinfunction "GPIO7_7")
 				(pintype "bidirectional")
 			)
 			(node
@@ -1736,13 +1616,13 @@
 			)
 		)
 		(net
-			(code "5")
+			(code "4")
 			(name "/ENC_DER_B")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "9")
-				(pinfunction "GPIO16_9")
+				(pin "8")
+				(pinfunction "GPIO15_8")
 				(pintype "bidirectional")
 			)
 			(node
@@ -1758,13 +1638,13 @@
 			)
 		)
 		(net
-			(code "6")
+			(code "5")
 			(name "/ENC_IZQ_A")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "10")
-				(pinfunction "GPIO17_10")
+				(pin "4")
+				(pinfunction "GPIO4_4")
 				(pintype "bidirectional")
 			)
 			(node
@@ -1780,13 +1660,13 @@
 			)
 		)
 		(net
-			(code "7")
+			(code "6")
 			(name "/ENC_IZQ_B")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "11")
-				(pinfunction "GPIO18_11")
+				(pin "5")
+				(pinfunction "GPIO5_5")
 				(pintype "bidirectional")
 			)
 			(node
@@ -1802,7 +1682,7 @@
 			)
 		)
 		(net
-			(code "8")
+			(code "7")
 			(name "/GND")
 			(class "Default")
 			(node
@@ -1837,20 +1717,20 @@
 			)
 			(node
 				(ref "J20")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "11")
+				(pinfunction "Pin_11_11")
 				(pintype "passive")
 			)
 			(node
 				(ref "J20")
-				(pin "3")
-				(pinfunction "Pin_3_3")
+				(pin "15")
+				(pinfunction "Pin_15_15")
 				(pintype "passive")
 			)
 			(node
 				(ref "J20")
-				(pin "7")
-				(pinfunction "Pin_7_7")
+				(pin "16")
+				(pinfunction "Pin_16_16")
 				(pintype "passive")
 			)
 			(node
@@ -1861,8 +1741,8 @@
 			)
 			(node
 				(ref "J7")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "4")
+				(pinfunction "Pin_4_4")
 				(pintype "passive")
 			)
 			(node
@@ -1873,13 +1753,13 @@
 			)
 		)
 		(net
-			(code "9")
+			(code "8")
 			(name "/I2C_SCL")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "15")
-				(pinfunction "GPIO9_15")
+				(pin "9")
+				(pinfunction "GPIO16_9")
 				(pintype "bidirectional")
 			)
 			(node
@@ -1890,19 +1770,19 @@
 			)
 			(node
 				(ref "J20")
-				(pin "8")
-				(pinfunction "Pin_8_8")
+				(pin "7")
+				(pinfunction "Pin_7_7")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "10")
+			(code "9")
 			(name "/I2C_SDA")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "12")
-				(pinfunction "GPIO8_12")
+				(pin "10")
+				(pinfunction "GPIO17_10")
 				(pintype "bidirectional")
 			)
 			(node
@@ -1913,19 +1793,19 @@
 			)
 			(node
 				(ref "J20")
-				(pin "6")
-				(pinfunction "Pin_6_6")
+				(pin "5")
+				(pinfunction "Pin_5_5")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "11")
+			(code "10")
 			(name "/IMU_INT")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "18")
-				(pinfunction "GPIO12_18")
+				(pin "11")
+				(pinfunction "GPIO18_11")
 				(pintype "bidirectional")
 			)
 			(node
@@ -1936,98 +1816,98 @@
 			)
 		)
 		(net
-			(code "12")
+			(code "11")
 			(name "/IN1_DER_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "4")
-				(pinfunction "GPIO4_4")
+				(pin "15")
+				(pinfunction "GPIO9_15")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "11")
-				(pinfunction "Pin_11_11")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "12")
+			(name "/IN1_IZQ_MCU")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "17")
+				(pinfunction "GPIO11_17")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "J20")
+				(pin "6")
+				(pinfunction "Pin_6_6")
 				(pintype "passive")
 			)
 		)
 		(net
 			(code "13")
-			(name "/IN1_IZQ_MCU")
+			(name "/IN2_DER_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "6")
-				(pinfunction "GPIO6_6")
+				(pin "16")
+				(pinfunction "GPIO10_16")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "13")
-				(pinfunction "Pin_13_13")
+				(pin "4")
+				(pinfunction "Pin_4_4")
 				(pintype "passive")
 			)
 		)
 		(net
 			(code "14")
-			(name "/IN2_DER_MCU")
+			(name "/IN2_IZQ_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "5")
-				(pinfunction "GPIO5_5")
+				(pin "18")
+				(pinfunction "GPIO12_18")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "12")
-				(pinfunction "Pin_12_12")
+				(pin "8")
+				(pinfunction "Pin_8_8")
 				(pintype "passive")
 			)
 		)
 		(net
 			(code "15")
-			(name "/IN2_IZQ_MCU")
+			(name "/INA_ALERT")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "7")
-				(pinfunction "GPIO7_7")
+				(pin "13")
+				(pinfunction "GPIO3_13")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "14")
-				(pinfunction "Pin_14_14")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 		)
 		(net
 			(code "16")
-			(name "/INA_ALERT")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "19")
-				(pinfunction "GPIO13_19")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J20")
-				(pin "9")
-				(pinfunction "Pin_9_9")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "17")
 			(name "/PARO_CONT")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "20")
-				(pinfunction "GPIO14_20")
+				(pin "6")
+				(pinfunction "GPIO6_6")
 				(pintype "bidirectional")
 			)
 			(node
@@ -2043,47 +1923,30 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "17")
 			(name "/SERVO_DER_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "17")
-				(pinfunction "GPIO11_17")
+				(pin "20")
+				(pinfunction "GPIO14_20")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "16")
-				(pinfunction "Pin_16_16")
+				(pin "12")
+				(pinfunction "Pin_12_12")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "19")
+			(code "18")
 			(name "/SERVO_IZQ_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "16")
-				(pinfunction "GPIO10_16")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J20")
-				(pin "15")
-				(pinfunction "Pin_15_15")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "20")
-			(name "/VBAT_ADC")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "26")
-				(pinfunction "GPIO1_26")
+				(pin "19")
+				(pinfunction "GPIO13_19")
 				(pintype "bidirectional")
 			)
 			(node
@@ -2094,13 +1957,41 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "19")
+			(name "/VBAT_ADC")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "12")
+				(pinfunction "GPIO8_12")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "J20")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "20")
 			(name "unconnected-(A1-GPIO0-Pad36)")
 			(class "Default")
 			(node
 				(ref "A1")
 				(pin "36")
 				(pinfunction "GPIO0_36")
+				(pintype "bidirectional+no_connect")
+			)
+		)
+		(net
+			(code "21")
+			(name "unconnected-(A1-GPIO1-Pad26)")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "26")
+				(pinfunction "GPIO1_26")
 				(pintype "bidirectional+no_connect")
 			)
 		)
@@ -2117,17 +2008,6 @@
 		)
 		(net
 			(code "23")
-			(name "unconnected-(A1-GPIO3-Pad13)")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "13")
-				(pinfunction "GPIO3_13")
-				(pintype "bidirectional+no_connect")
-			)
-		)
-		(net
-			(code "24")
 			(name "unconnected-(A1-GPIO19-Pad42)")
 			(class "Default")
 			(node
@@ -2138,7 +2018,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "24")
 			(name "unconnected-(A1-GPIO20-Pad41)")
 			(class "Default")
 			(node
@@ -2149,7 +2029,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "25")
 			(name "unconnected-(A1-GPIO21-Pad40)")
 			(class "Default")
 			(node
@@ -2160,7 +2040,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "26")
 			(name "unconnected-(A1-GPIO35-Pad35)")
 			(class "Default")
 			(node
@@ -2171,7 +2051,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "27")
 			(name "unconnected-(A1-GPIO36-Pad34)")
 			(class "Default")
 			(node
@@ -2182,7 +2062,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "28")
 			(name "unconnected-(A1-GPIO37-Pad33)")
 			(class "Default")
 			(node
@@ -2193,7 +2073,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "29")
 			(name "unconnected-(A1-GPIO38-Pad32)")
 			(class "Default")
 			(node
@@ -2204,7 +2084,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "30")
 			(name "unconnected-(A1-GPIO39-Pad31)")
 			(class "Default")
 			(node
@@ -2215,7 +2095,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "31")
 			(name "unconnected-(A1-GPIO40-Pad30)")
 			(class "Default")
 			(node
@@ -2226,7 +2106,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "32")
 			(name "unconnected-(A1-GPIO41-Pad29)")
 			(class "Default")
 			(node
@@ -2237,7 +2117,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "33")
 			(name "unconnected-(A1-GPIO42-Pad28)")
 			(class "Default")
 			(node
@@ -2248,7 +2128,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "34")
 			(name "unconnected-(A1-GPIO43{slash}TX-Pad24)")
 			(class "Default")
 			(node
@@ -2259,7 +2139,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "35")
 			(name "unconnected-(A1-GPIO44{slash}RX-Pad25)")
 			(class "Default")
 			(node
@@ -2270,7 +2150,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "36")
 			(name "unconnected-(A1-GPIO45-Pad37)")
 			(class "Default")
 			(node
@@ -2281,7 +2161,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "37")
 			(name "unconnected-(A1-GPIO46-Pad14)")
 			(class "Default")
 			(node
@@ -2292,7 +2172,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "38")
 			(name "unconnected-(A1-GPIO47-Pad39)")
 			(class "Default")
 			(node
@@ -2303,7 +2183,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "39")
 			(name "unconnected-(A1-GPIO48-Pad38)")
 			(class "Default")
 			(node
@@ -2314,7 +2194,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "40")
 			(name "unconnected-(A1-RST-Pad3)")
 			(class "Default")
 			(node
@@ -2325,7 +2205,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "41")
 			(name "unconnected-(A2-AD0-Pad7)")
 			(class "Default")
 			(node
@@ -2336,7 +2216,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "42")
 			(name "unconnected-(A2-XCL-Pad6)")
 			(class "Default")
 			(node
@@ -2347,7 +2227,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "43")
 			(name "unconnected-(A2-XDA-Pad5)")
 			(class "Default")
 			(node
