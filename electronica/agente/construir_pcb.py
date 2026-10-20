@@ -297,7 +297,10 @@ def ubicar(board, comps, nets, origen, libtmp):
         fp.SetSheetname("/")
         fp.SetSheetfile(f"{NOMBRE}.kicad_sch")
         pads_caseros(fp, nombre)
-        for campo in ("Estado", "Fuente", "Description"):
+        if nombre in QUITAR_NPTH:
+            for pad in [x for x in fp.Pads() if x.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH]:
+                fp.Remove(pad)
+        for campo in ("Estado", "Fuente", "Description", "Datasheet"):
             if c["fields"].get(campo):
                 fp.SetField(campo, c["fields"][campo])
                 fp.GetField(campo).SetVisible(False)
@@ -418,6 +421,7 @@ def fijar_netclasses(spec):
                 patrones.append({"netclass": nc["name"], "pattern": f"/{n}"})
                 patrones.append({"netclass": nc["name"], "pattern": n})
     ns["netclass_patterns"] = patrones
+    datos.setdefault("board", {}).setdefault("design_settings", {}).setdefault("rule_severities", {}).update(SEVERIDADES)
     PRO.write_text(json.dumps(datos, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return len(patrones) // 2
 
@@ -456,7 +460,7 @@ def reglas_dru(spec):
     <proyecto>.kicad_dru)."""
     fuente = spec.get("pcb", {}).get("dru", {}).get("source", "reglas_casera.kicad_dru")
     base = (PROY / fuente).resolve().read_text(encoding="utf-8")
-    (PROY / f"{NOMBRE}.kicad_dru").write_text(base.rstrip() + chr(10) + ENMIENDAS_DRU, encoding="utf-8")
+    (PROY / f"{NOMBRE}.kicad_dru").write_text(base.rstrip() + chr(10) + ENMIENDAS_DRU + ENMIENDAS_PLACA, encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------
@@ -542,13 +546,17 @@ def _bloques(texto, clave):
         i = k + 1
 
 
-def adaptar_dsn(entrada, salida, anchos):
+def adaptar_dsn(entrada, salida, anchos, ignorar=()):
     """Freerouting 2.5.0 aborta con (outline), (keepout) y (plane): se quitan. Los NPTH (keepout de las
     imágenes) pasan a pines sin net con un padstack que deja 2,0 mm de cobre libre (regla
     fijacion_M3_sin_cobre). anchos: {clase: ancho_um} para el ruteo."""
     t = entrada.read_text(encoding="utf-8")
     for clave in ("outline", "plane"):
         for a, b in reversed(_bloques(t, clave)):
+            t = t[:a] + t[b:]
+    # Áreas de reglas poligonales (sin relleno): Freerouting las toma como zonas prohibidas y deja de rutear
+    for a, b in reversed(_bloques(t, "keepout")):
+        if "(polygon" in t[a:b]:
             t = t[:a] + t[b:]
     # Contorno rectangular retraído: Freerouting deja la separación de clase (0,7) al borde, más este
     # margen llega a los 2,0 mm de cobre_a_borde.
@@ -581,6 +589,29 @@ def adaptar_dsn(entrada, salida, anchos):
     # Pads vecinos de paso 2,54 mm (0,74 mm entre óvalos) con nets de potencia (1,0 mm): sin esta regla
     # tipada Freerouting los toma como violaciones previas. KiCad aplica la regla pad_a_pad (0,6 mm).
     t = re.sub(r"\(clearance (\d+)\)", lambda m: f"(clearance {m.group(1)}) (clearance 300 (type pin_pin))", t)
+    # Pines que un módulo une por dentro con otro ya conectado (SIN_RUTEO): fuera de la red para Freerouting.
+    for pin in SIN_RUTEO:
+        t = re.sub(r"(\(pins [^()]*?)\s" + re.escape(pin) + r"(?=[\s)])", r"\1", t)
+    # Freerouting solo respeta la primera clase de --router.autorouter.ignore_net_classes: las nets de las
+    # demás clases ignoradas pasan a la primera.
+    if len(ignorar) > 1 or NETS_FIJAS:
+        juntar = [f"/{n}" for n in NETS_FIJAS]
+        for a, b in reversed(_bloques(t, "class ")):
+            if t[a:b].split()[1] not in ignorar:
+                bloque = t[a:b]
+                for n in NETS_FIJAS:
+                    bloque = re.sub(r"\s/" + re.escape(n) + r"(?=[\s)])", "", bloque)
+                t = t[:a] + bloque + t[b:]
+        for a, b in reversed(_bloques(t, "class ")):
+            partes = t[a:b].split()
+            if partes[1] in ignorar[1:]:
+                juntar += [x for x in t[a:b].split("(circuit")[0].split()[2:] if x]
+                t = t[:a] + t[b:]
+        for a, b in _bloques(t, "class "):
+            if t[a:b].split()[1] == ignorar[0]:
+                k = a + len(f"(class {ignorar[0]}")
+                t = t[:k] + " " + " ".join(juntar) + t[k:]
+                break
     for a, b in reversed(_bloques(t, "class ")):
         clase = t[a:b].split()[1]
         if clase in anchos:
@@ -604,6 +635,10 @@ def adaptar_dsn(entrada, salida, anchos):
     i = t.index("(structure")
     k = t.index("\n    (via ", i)
     t = t[:k + 1] + ajustes + t[k + 1:]
+    if VIAS_FUERA_DE:
+        k = t.index("\n    (via ", t.index("(structure"))
+        t = t[:k + 1] + "".join(f"    (via_keepout \"\" (rect signal {x0} {y0} {x1} {y1}))\n"
+                                for (x0, y0, x1, y1) in VIAS_FUERA_DE) + t[k + 1:]
     salida.write_text(t, encoding="utf-8")
     return contador[0]
 
@@ -643,7 +678,8 @@ def convertir_puentes(board, netinfo):
         if k in padre:
             grupos.setdefault(raiz(k), []).append(v)
     puentes = []
-    for n, vs in enumerate(grupos.values(), start=1):
+    previos = sum(1 for f in board.GetFootprints() if re.fullmatch(r"W\d+", f.GetReference()))
+    for n, vs in enumerate(grupos.values(), start=previos + 1):
         net = vs[0].GetNetname()
         # árbol de expansión mínima entre las vías del grupo: cada arista es un tramo de alambre recto; las
         # vías compartidas son un solo agujero (la huella W<n> tiene un pad por vía).
@@ -692,6 +728,8 @@ def convertir_puentes(board, netinfo):
         puentes.append((ref, net, round(largo, 1), [a_placa(v.GetPosition()) for v in vs]))
     for t in pistas + [v for vs in grupos.values() for v in vs]:
         board.Remove(t)
+    for v in [t for t in board.GetTracks() if t.Type() == pcbnew.PCB_VIA_T]:
+        board.Remove(v)
     return puentes
 
 
@@ -699,8 +737,8 @@ def freerouting(dsn, ses, pasadas, ignorar):
     cmd = [str(JAVA), "-jar", str(FREEROUTING), "-de", str(dsn), "-do", str(ses),
            f"--router.autorouter.max_passes={pasadas}",
            "--gui.enabled=false",
-           "--router.layers.routable=true,true",
-           "--router.vias_allowed=true",
+           "--router.layers.routable=true,true" if PUENTES_FR else "--router.layers.routable=false,true",
+           f"--router.vias_allowed={'true' if PUENTES_FR else 'false'}",
            "--router.automatic_neckdown=false",
            f"--router.autorouter.ignore_net_classes={','.join(ignorar)}"]
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
@@ -712,9 +750,18 @@ def rutear(board, tmp, pasadas, ignorar):
     dsn0, dsn, ses = tmp / "placa_kicad.dsn", tmp / "placa.dsn", tmp / "placa.ses"
     if not pcbnew.ExportSpecctraDSN(board, str(dsn0)):
         raise SystemExit("ExportSpecctraDSN falló")
-    n = adaptar_dsn(dsn0, dsn, ANCHOS_RUTEO)
+    global VIAS_FUERA_DE
+    VIAS_FUERA_DE = []
+    for f in board.GetFootprints():
+        if f.GetReference()[:1] in ("A", "H", "W"):
+            continue                # bajo los módulos en zócalo y en los agujeros M3 no se mira
+        f.BuildCourtyardCaches()
+        bb = f.GetCourtyard(pcbnew.F_CrtYd).BBox()
+        if bb.GetWidth() > 0:
+            VIAS_FUERA_DE.append((bb.GetLeft() // 1000, -bb.GetBottom() // 1000, bb.GetRight() // 1000, -bb.GetTop() // 1000))
+    n = adaptar_dsn(dsn0, dsn, ANCHOS_RUTEO, tuple(ignorar))
     p(f"   DSN adaptado: {n} agujeros sin metalizar convertidos en obstáculos")
-    rc, log = freerouting(dsn, ses, pasadas, ignorar)
+    rc, log = freerouting(dsn, ses, pasadas, ignorar[:1])
     (tmp / "freerouting.log").write_text(log, encoding="utf-8")
     resumen = [l for l in log.splitlines() if "Auto-routing stage completed" in l or "pass #" in l]
     for l in resumen[-3:]:
@@ -725,11 +772,17 @@ def rutear(board, tmp, pasadas, ignorar):
     if not pcbnew.ImportSpecctraSES(board, str(ses)):
         raise SystemExit("ImportSpecctraSES falló")
     p(f"   SES importado: {antes} -> {len(board.GetTracks())} pistas")
-    # Freerouting angosta las pistas al entrar a algunos pads (0,75 mm) aunque se le pida que no: se
-    # llevan al mínimo de la regla pista_senal (0,8 mm) y el DRC confirma la separación.
-    angostas = [t for t in board.GetTracks() if t.Type() == pcbnew.PCB_TRACE_T and t.GetWidth() < mm(0.8)]
-    for t in angostas:
-        t.SetWidth(mm(0.8))
+    # Freerouting angosta las pistas al entrar a algunos pads aunque se le pida que no: se llevan al
+    # mínimo de su clase (pista_senal 0,8; GND y LOGICA 1,0) y el DRC confirma la separación.
+    minimo = {"GND": 1.0, "LOGICA": 1.0, "MOTOR": 1.5, "SERVO": 2.0, "BATERIA_BUS": 3.0}
+    angostas = []
+    for t in board.GetTracks():
+        if t.Type() != pcbnew.PCB_TRACE_T or t.IsLocked():
+            continue
+        m = minimo.get(t.GetNetClassName(), 0.8)
+        if t.GetWidth() < mm(m):
+            t.SetWidth(mm(m))
+            angostas.append(t)
     p(f"   pistas angostadas por Freerouting llevadas a 0,8 mm: {len(angostas)}")
     return log
 
@@ -741,6 +794,13 @@ IGNORAR = ("BATERIA_BUS", "GND")   # nets que Freerouting no rutea (van por esqu
 ZONAS = []
 ROTULOS = []
 ESCALA = None
+ENMIENDAS_PLACA = ""
+SIN_RUTEO = []
+VIAS_FUERA_DE = []
+QUITAR_NPTH = []
+SEVERIDADES = {}
+NETS_FIJAS = []       # nets completas en ESQUELETO/PUENTES: Freerouting no las toca
+PUENTES_FR = True      # False: Freerouting solo en B.Cu, sin vías (los cruces se resuelven a mano)
 PUENTES = []
 SIN_RELLENO = []
 RUTEAR = True
@@ -822,7 +882,7 @@ def cargar_placa(nombre):
     """Reemplaza las constantes de la placa por las de electronica/agente/placas/<nombre>.py y la especificación."""
     import importlib.util
     global PROY, SPEC, NOMBRE, PCB, PRO, SCH, EVID, FAB, ANCHO, ALTO, RADIO, UBICACION, FIJAS, SOBRESALEN, ESQUELETO
-    global ANCHOS_RUTEO, IGNORAR, ZONAS, PUENTES, SIN_RELLENO, RUTEAR, ROTULOS, ESCALA
+    global ANCHOS_RUTEO, IGNORAR, ZONAS, PUENTES, SIN_RELLENO, RUTEAR, ROTULOS, ESCALA, ENMIENDAS_PLACA, SIN_RUTEO, PUENTES_FR, QUITAR_NPTH, SEVERIDADES, NETS_FIJAS
     ruta = Path(__file__).resolve().parent / "placas" / f"{nombre}.py"
     spec_mod = importlib.util.spec_from_file_location(f"placa_{nombre}", ruta)
     cfg = importlib.util.module_from_spec(spec_mod)
@@ -844,6 +904,12 @@ def cargar_placa(nombre):
     RUTEAR = bool(getattr(cfg, "RUTEAR", True))
     ROTULOS = list(getattr(cfg, "ROTULOS", []))
     ESCALA = getattr(cfg, "ESCALA", None)
+    ENMIENDAS_PLACA = getattr(cfg, "ENMIENDAS", "")
+    SIN_RUTEO = list(getattr(cfg, "SIN_RUTEO", []))
+    PUENTES_FR = bool(getattr(cfg, "PUENTES_FR", True))
+    QUITAR_NPTH = list(getattr(cfg, "QUITAR_NPTH", []))
+    SEVERIDADES = dict(getattr(cfg, "SEVERIDADES", {}))
+    NETS_FIJAS = list(getattr(cfg, "NETS_FIJAS", []))
 
 
 def rotulos_cobre(board):
@@ -965,14 +1031,40 @@ def areas_sin_relleno(board):
     return len(SIN_RELLENO)
 
 
+def sin_conectar(board):
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
+    board.BuildConnectivity()
+    c = board.GetConnectivity()
+    c.RecalculateRatsnest()
+    return c.GetUnconnectedCount(False)
+
+
+def podar_puentes(board, fijos):
+    """Quita los puentes de Freerouting que no hacen falta (Freerouting no sabe que los dos pads de un
+    puente fijo son la misma conexión y a veces los duplica). Devuelve las referencias quitadas."""
+    base = sin_conectar(board)
+    quitados = []
+    for fp in sorted([f for f in board.GetFootprints() if re.fullmatch(r"W\d+", f.GetReference())
+                      and f.GetReference() not in fijos], key=lambda f: -int(f.GetReference()[1:])):
+        board.Remove(fp)
+        if sin_conectar(board) <= base:
+            quitados.append(fp.GetReference())
+        else:
+            board.Add(fp)
+    sin_conectar(board)
+    return quitados
+
+
 def rellenar_zonas(board, netinfo):
     """ZONAS: [(net, [(x, y), ...] | "placa", prioridad)]. "placa" = contorno menos el margen a borde."""
     zs = []
-    for net, puntos, prioridad in ZONAS:
+    for z in ZONAS:
+        net, puntos, prioridad = z[:3]
+        termica = z[3] if len(z) > 3 else True
         if puntos == "placa":
             m = 0.5
             puntos = [(m, m), (ANCHO - m, m), (ANCHO - m, ALTO - m), (m, ALTO - m)]
-        zs.append(zona(board, netinfo, net, puntos, prioridad, termica=True, nombre=f"relleno_{net}"))
+        zs.append(zona(board, netinfo, net, puntos, prioridad, termica=termica, nombre=f"relleno_{net}_{len(zs) + 1}"))
     if zs:
         pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     return len(zs)
@@ -1037,6 +1129,13 @@ def main():
         p(f"     {ref}: {net} {largo} mm {pts}")
     (tmp / "puentes.json").write_text(json.dumps(puentes, ensure_ascii=False, indent=1), encoding="utf-8")
     p(f"   zonas rellenas: {rellenar_zonas(board, netinfo)}")
+    if RUTEAR:
+        fijos = {f"W{i}" for i in range(1, len(PUENTES) + 1)}
+        quitados = podar_puentes(board, fijos)
+        if quitados:
+            p(f"   puentes redundantes quitados: {', '.join(quitados)}")
+            puentes = [x for x in puentes if x[0] not in quitados]
+            (tmp / "puentes.json").write_text(json.dumps(puentes, ensure_ascii=False, indent=1), encoding="utf-8")
     pcbnew.SaveBoard(str(PCB), board)
     p("5. DRC")
     EVID.mkdir(exist_ok=True)

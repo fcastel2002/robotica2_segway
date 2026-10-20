@@ -30,17 +30,17 @@ Mapa de pines de A1 (SUP-28):
 
 | Pin físico | GPIO | Net | Pin físico | GPIO | Net |
 |---|---|---|---|---|---|
-| 4 | GPIO4 | ENC_IZQ_A | 13 | GPIO3 | INA_ALERT |
-| 5 | GPIO5 | ENC_IZQ_B | 15 | GPIO9 | IN1_DER_MCU |
-| 6 | GPIO6 | PARO_CONT | 16 | GPIO10 | IN2_DER_MCU |
-| 7 | GPIO7 | ENC_DER_A | 17 | GPIO11 | IN1_IZQ_MCU |
-| 8 | GPIO15 | ENC_DER_B | 18 | GPIO12 | IN2_IZQ_MCU |
-| 9 | GPIO16 | I2C_SCL | 19 | GPIO13 | SERVO_IZQ_MCU |
-| 10 | GPIO17 | I2C_SDA | 20 | GPIO14 | SERVO_DER_MCU |
+| 4 | GPIO4 | ENC_IZQ_A | 13 | GPIO3 | VBAT_ADC (ADC1_CH2) |
+| 5 | GPIO5 | ENC_IZQ_B | 15 | GPIO9 | SERVO_IZQ_MCU |
+| 6 | GPIO6 | PARO_CONT | 16 | GPIO10 | SERVO_DER_MCU |
+| 7 | GPIO7 | ENC_DER_A | 17 | GPIO11 | IN2_DER_MCU |
+| 8 | GPIO15 | ENC_DER_B | 18 | GPIO12 | IN1_DER_MCU |
+| 9 | GPIO16 | I2C_SCL | 19 | GPIO13 | IN2_IZQ_MCU |
+| 10 | GPIO17 | I2C_SDA | 20 | GPIO14 | IN1_IZQ_MCU |
 | 11 | GPIO18 | IMU_INT | 21 | 5V | 5V_MCU (por J20.13/14) |
-| 12 | GPIO8 | VBAT_ADC (ADC1_CH7) | 1, 2 / 22 | 3V3 / GND | 3V3_MCU / GND |
+| 12 | GPIO8 | INA_ALERT | 1, 2 / 22 | 3V3 / GND | 3V3_MCU / GND |
 
-Cable J20 (SUP-72): el pin n de una placa va al pin n de la otra. La tabla completa está en [`interconexion_v0.6.json`](../interconexion_v0.6.json).
+Cable J20 (SUP-72): el pin n de una placa va al pin n de la otra. La tabla completa está en [`interconexion_v0.6.json`](../interconexion_v0.6.json) y en la [placa de potencia](../segway_potencia/pcb_v0.1.md). El orden de los pines 1/3 y de la columna par se ajustó al rutear la placa de potencia; en esta placa solo cambió qué GPIO lleva cada señal.
 
 ## Archivos de fabricación (`fabricacion/rev-0.1/`)
 

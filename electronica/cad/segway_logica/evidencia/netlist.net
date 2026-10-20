@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-20T11:53:34")
+		(date "2026-10-20T14:01:00")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fa2acd68-2c60-4045-b9a5-075f6acc5a0e")
+			(tstamps "9776c09e-8921-4b92-b719-ce53690c29d8")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "345d0386-4300-46e2-8089-fecb533d54e2")
+			(tstamps "13c70c04-bf3e-4379-a997-8f277f48ce21")
 			(units
 				(unit
 					(name "A")
@@ -365,7 +365,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5de51855-f8e9-4114-858c-5cfd43f63e55")
+			(tstamps "83e1e206-decd-49ef-bed0-b63d43e81bb9")
 			(units
 				(unit
 					(name "A")
@@ -431,7 +431,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "677e2932-040f-440f-b3a0-c87d364daae3")
+			(tstamps "dba9c126-7e37-49c8-baef-4e0d87c40560")
 			(units
 				(unit
 					(name "A")
@@ -503,7 +503,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2ce13c87-2740-4b6d-89fe-5b4fb71107fa")
+			(tstamps "94fb6556-bb6a-4393-8721-4dc09893e257")
 			(units
 				(unit
 					(name "A")
@@ -575,7 +575,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b4a90911-9c6a-4a9b-8749-3c1fcce01909")
+			(tstamps "c64c741f-705b-4628-9967-666fab1a9bcc")
 			(units
 				(unit
 					(name "A")
@@ -683,7 +683,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "827a5707-a444-4b5f-b7d1-a1b1bf33aec2")
+			(tstamps "fcf816f2-012f-4246-bd0d-1919fc533836")
 			(units
 				(unit
 					(name "A")
@@ -749,7 +749,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b100dcef-1d10-4b15-aa82-4a2c4e38f7a7")
+			(tstamps "5528a703-3fae-41b6-9a27-d402082d2f6f")
 			(units
 				(unit
 					(name "A")
@@ -815,7 +815,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "864b24e7-7ff7-4ed1-ba9b-368a7c089c49")
+			(tstamps "235c898e-6850-458f-bce0-ec309ff8d7ee")
 			(units
 				(unit
 					(name "A")
@@ -881,7 +881,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fe25d72e-89cd-4c77-87c8-8c5f4e2abf71")
+			(tstamps "a650cf37-e097-4c5c-8a6a-46ef3d03a9e9")
 			(units
 				(unit
 					(name "A")
@@ -947,7 +947,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b616eeda-ab16-4cf1-bc21-7e36bc4bc94d")
+			(tstamps "70ac2bd3-921b-46fc-bd62-c151f03e251a")
 			(units
 				(unit
 					(name "A")
@@ -1821,20 +1821,37 @@
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "15")
-				(pinfunction "GPIO9_15")
+				(pin "18")
+				(pinfunction "GPIO12_18")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "8")
+				(pinfunction "Pin_8_8")
 				(pintype "passive")
 			)
 		)
 		(net
 			(code "12")
 			(name "/IN1_IZQ_MCU")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "20")
+				(pinfunction "GPIO14_20")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "J20")
+				(pin "12")
+				(pinfunction "Pin_12_12")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "13")
+			(name "/IN2_DER_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
@@ -1850,36 +1867,19 @@
 			)
 		)
 		(net
-			(code "13")
-			(name "/IN2_DER_MCU")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "16")
-				(pinfunction "GPIO10_16")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J20")
-				(pin "4")
-				(pinfunction "Pin_4_4")
-				(pintype "passive")
-			)
-		)
-		(net
 			(code "14")
 			(name "/IN2_IZQ_MCU")
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "18")
-				(pinfunction "GPIO12_18")
+				(pin "19")
+				(pinfunction "GPIO13_19")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "8")
-				(pinfunction "Pin_8_8")
+				(pin "10")
+				(pinfunction "Pin_10_10")
 				(pintype "passive")
 			)
 		)
@@ -1889,14 +1889,14 @@
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "13")
-				(pinfunction "GPIO3_13")
+				(pin "12")
+				(pinfunction "GPIO8_12")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "3")
+				(pinfunction "Pin_3_3")
 				(pintype "passive")
 			)
 		)
@@ -1928,14 +1928,14 @@
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "20")
-				(pinfunction "GPIO14_20")
+				(pin "16")
+				(pinfunction "GPIO10_16")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "12")
-				(pinfunction "Pin_12_12")
+				(pin "4")
+				(pinfunction "Pin_4_4")
 				(pintype "passive")
 			)
 		)
@@ -1945,14 +1945,14 @@
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "19")
-				(pinfunction "GPIO13_19")
+				(pin "15")
+				(pinfunction "GPIO9_15")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "10")
-				(pinfunction "Pin_10_10")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 		)
@@ -1962,14 +1962,14 @@
 			(class "Default")
 			(node
 				(ref "A1")
-				(pin "12")
-				(pinfunction "GPIO8_12")
+				(pin "13")
+				(pinfunction "GPIO3_13")
 				(pintype "bidirectional")
 			)
 			(node
 				(ref "J20")
-				(pin "3")
-				(pinfunction "Pin_3_3")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 		)

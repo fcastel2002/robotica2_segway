@@ -6,7 +6,7 @@ Coordenadas en mm desde la esquina superior izquierda del contorno, vista desde 
 Topología (el mapa de pines de dividir_v06_dos_placas.py está elegido para esto):
 - A1 vertical a la derecha, antena arriba (sin cobre alrededor), USB-C hacia el borde inferior.
 - J20: la columna par queda a la altura de A1.15-22 (ocho pistas rectas). La impar rodea el conector:
-  J20.1 -> A1.13 (ALERT), J20.3 -> A1.12 (VBAT), J20.5 -> SDA y J20.7 -> SCL pasan por los pines 4 y 3
+  J20.1 -> A1.13 (VBAT), J20.3 -> A1.12 (ALERT), J20.5 -> SDA y J20.7 -> SCL pasan por los pines 4 y 3
   del MPU y siguen a A1.10 y A1.9. INT (A2.8) sale del lado de adentro hacia A1.11.
 - Banda superior: A1.4-8 suben 6,35 mm (para pasar sobre los agujeros del MPU) y van al oeste: J7 A/B,
   paro, J8 A/B. El riel de 3V3 de A1.1 corre por arriba de la banda y alimenta J7.1, R13, R14 y R24.
@@ -60,15 +60,15 @@ ESQUELETO = [
     ("I2C_SDA", W, ["J20.5", (40.64, 57.15), "A2.4", (40.64, 39.37), "A1.10"]),
     ("IMU_INT", W, ["A2.8", (50.80, 41.91), "A1.11"]),
     # --- Rodeo superior de la columna impar de J20
-    ("INA_ALERT", W, ["J20.1", (58.42, 46.99), "A1.13"]),
-    ("VBAT_ADC", W, ["J20.3", (55.88, 54.61), (55.88, 44.45), "A1.12"]),
+    ("VBAT_ADC", W, ["J20.1", (58.42, 46.99), "A1.13"]),
+    ("INA_ALERT", W, ["J20.3", (55.88, 54.61), (55.88, 44.45), "A1.12"]),
     # --- Columna par de J20 en línea con A1.15-22
-    ("IN1_DER_MCU", W, ["J20.2", "A1.15"]),
-    ("IN2_DER_MCU", W, ["J20.4", "A1.16"]),
-    ("IN1_IZQ_MCU", W, ["J20.6", "A1.17"]),
-    ("IN2_IZQ_MCU", W, ["J20.8", "A1.18"]),
-    ("SERVO_IZQ_MCU", W, ["J20.10", "A1.19"]),
-    ("SERVO_DER_MCU", W, ["J20.12", "A1.20"]),
+    ("SERVO_IZQ_MCU", W, ["J20.2", "A1.15"]),
+    ("SERVO_DER_MCU", W, ["J20.4", "A1.16"]),
+    ("IN2_DER_MCU", W, ["J20.6", "A1.17"]),
+    ("IN1_DER_MCU", W, ["J20.8", "A1.18"]),
+    ("IN2_IZQ_MCU", W, ["J20.10", "A1.19"]),
+    ("IN1_IZQ_MCU", W, ["J20.12", "A1.20"]),
     ("5V_MCU", 1.2, ["J20.13", "J20.14", "A1.21"]),
     ("GND", 1.2, ["J20.15", "J20.16", "A1.22"]),
 ]

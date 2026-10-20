@@ -923,7 +923,6 @@
     "A5.2",
     "A6.2",
     "A7.7",
-    "J20.11",
     "J20.15",
     "J20.16"
    ]
@@ -993,7 +992,7 @@
     "R22.2",
     "R23.1",
     "C14.1",
-    "J20.3"
+    "J20.1"
    ]
   },
   {
@@ -1042,7 +1041,7 @@
    "pins": [
     "R1.1",
     "R35.1",
-    "J20.6"
+    "J20.12"
    ]
   },
   {
@@ -1059,7 +1058,7 @@
    "pins": [
     "R2.1",
     "R36.1",
-    "J20.8"
+    "J20.10"
    ]
   },
   {
@@ -1076,7 +1075,7 @@
    "pins": [
     "R3.1",
     "R37.1",
-    "J20.2"
+    "J20.8"
    ]
   },
   {
@@ -1093,7 +1092,7 @@
    "pins": [
     "R4.1",
     "R38.1",
-    "J20.4"
+    "J20.6"
    ]
   },
   {
@@ -1161,7 +1160,7 @@
    "pins": [
     "R5.1",
     "R7.1",
-    "J20.10"
+    "J20.2"
    ]
   },
   {
@@ -1178,7 +1177,7 @@
    "pins": [
     "R6.1",
     "R8.1",
-    "J20.12"
+    "J20.4"
    ]
   },
   {
@@ -1261,11 +1260,13 @@
    "kind": "signal",
    "pins": [
     "A7.4",
-    "J20.1"
+    "J20.3"
    ]
   }
  ],
- "no_connect": [],
+ "no_connect": [
+  "J20.11"
+ ],
  "fuentes_power": {
   "VBAT_P": "J1.2",
   "VBAT_F": "F1.2",
@@ -1319,7 +1320,7 @@
   "coordenadas": "mm; origen en la esquina superior izquierda del contorno; x hacia la derecha, y hacia abajo; vista desde la cara de componentes (F), como la muestra KiCad",
   "board": {
    "width_mm": 150,
-   "height_mm": 95,
+   "height_mm": 110,
    "corner_radius": 3.0,
    "mounting_holes": [
     [
@@ -1332,11 +1333,11 @@
     ],
     [
      4,
-     91
+     106
     ],
     [
      146,
-     91
+     106
     ]
    ],
    "copper_layers": [
@@ -1455,18 +1456,18 @@
   "Pines reasignados por geometría para la placa de una cara: IN de los drivers en GPIO4-7, encoders en GPIO15-18"
  ],
  "cable_J20": {
-  "1": "INA_ALERT",
-  "2": "IN1_DER_MCU",
-  "3": "VBAT_ADC",
-  "4": "IN2_DER_MCU",
+  "1": "VBAT_ADC",
+  "2": "SERVO_IZQ_MCU",
+  "3": "INA_ALERT",
+  "4": "SERVO_DER_MCU",
   "5": "I2C_SDA",
-  "6": "IN1_IZQ_MCU",
+  "6": "IN2_DER_MCU",
   "7": "I2C_SCL",
-  "8": "IN2_IZQ_MCU",
+  "8": "IN1_DER_MCU",
   "9": "3V3_MCU",
-  "10": "SERVO_IZQ_MCU",
+  "10": "IN2_IZQ_MCU",
   "11": "GND",
-  "12": "SERVO_DER_MCU",
+  "12": "IN1_IZQ_MCU",
   "13": "5V_MCU",
   "14": "5V_MCU",
   "15": "GND",

@@ -25,18 +25,19 @@ v5 = json.loads((CAD / "segway_base" / "especificacion_v0.5.json").read_text(enc
 LOGICA = {"A1", "A2", "J7", "J8", "R13", "R14", "R15", "R16", "J4", "R24"}
 
 # Net -> (pin físico de A1, GPIO). VBAT_ADC en ADC1 (GPIO8 = ADC1_CH7). GPIO3 solo es strapping de JTAG
-# con el eFuse STRAP_JTAG_SEL grabado (no viene así): sirve como entrada de INA_ALERT (SUP-24).
+# con el eFuse STRAP_JTAG_SEL grabado (no viene así): sirve como entrada analógica de VBAT_ADC (SUP-24).
 PINES_A1 = {
     "ENC_IZQ_A": ("4", "GPIO4"), "ENC_IZQ_B": ("5", "GPIO5"), "PARO_CONT": ("6", "GPIO6"), "ENC_DER_A": ("7", "GPIO7"),
     "ENC_DER_B": ("8", "GPIO15"), "I2C_SCL": ("9", "GPIO16"), "I2C_SDA": ("10", "GPIO17"), "IMU_INT": ("11", "GPIO18"),
-    "VBAT_ADC": ("12", "GPIO8"), "INA_ALERT": ("13", "GPIO3"),
-    "IN1_DER_MCU": ("15", "GPIO9"), "IN2_DER_MCU": ("16", "GPIO10"), "IN1_IZQ_MCU": ("17", "GPIO11"),
-    "IN2_IZQ_MCU": ("18", "GPIO12"), "SERVO_IZQ_MCU": ("19", "GPIO13"), "SERVO_DER_MCU": ("20", "GPIO14"),
+    "INA_ALERT": ("12", "GPIO8"), "VBAT_ADC": ("13", "GPIO3"),
+    "SERVO_IZQ_MCU": ("15", "GPIO9"), "SERVO_DER_MCU": ("16", "GPIO10"), "IN2_DER_MCU": ("17", "GPIO11"),
+    "IN1_DER_MCU": ("18", "GPIO12"), "IN2_IZQ_MCU": ("19", "GPIO13"), "IN1_IZQ_MCU": ("20", "GPIO14"),
 }
 FUNCION = {"ENC_IZQ_A": "PCNT", "ENC_IZQ_B": "PCNT", "ENC_DER_A": "PCNT", "ENC_DER_B": "PCNT",
            "PARO_CONT": "entrada con interrupción; pull-up R24", "IMU_INT": "entrada con interrupción",
-           "I2C_SDA": "I2C0 por la matriz GPIO", "I2C_SCL": "I2C0 por la matriz GPIO", "VBAT_ADC": "ADC1_CH7",
-           "INA_ALERT": "entrada; pull-up del INA226; GPIO3 sin efecto de strapping con eFuses de fábrica",
+           "I2C_SDA": "I2C0 por la matriz GPIO", "I2C_SCL": "I2C0 por la matriz GPIO",
+           "VBAT_ADC": "ADC1_CH2; GPIO3 sin efecto de strapping con eFuses de fábrica",
+           "INA_ALERT": "entrada; pull-up del INA226",
            "IN1_DER_MCU": "MCPWM/LEDC", "IN2_DER_MCU": "MCPWM/LEDC", "IN1_IZQ_MCU": "MCPWM/LEDC",
            "IN2_IZQ_MCU": "MCPWM/LEDC", "SERVO_IZQ_MCU": "LEDC 50 Hz", "SERVO_DER_MCU": "LEDC 50 Hz"}
 GPIO_PIN = ["3V3", "3V3", "RST", "GPIO4", "GPIO5", "GPIO6", "GPIO7", "GPIO15", "GPIO16", "GPIO17", "GPIO18", "GPIO8",
@@ -45,12 +46,12 @@ GPIO_PIN = ["3V3", "3V3", "RST", "GPIO4", "GPIO5", "GPIO6", "GPIO7", "GPIO15", "
             "GPIO36", "GPIO35", "GPIO0", "GPIO45", "GPIO48", "GPIO47", "GPIO21", "GPIO20", "GPIO19", "GND", "GND"]
 
 # Cable J20 (IDC 2x8). Columna par (2..16) alineada con los pines 15..22 de A1; impar: 1, 3, 5, 7 hacia
-# A1.13, 12, 10, 9; 9 = 3V3; 11, 15 = GND; 13 = 5V_MCU (13-14 y 15-16 unidos en la placa). SCL y SDA
+# A1.13 (VBAT), 12 (ALERT), 10, 9; 9 = 3V3; 11, 15 = GND; 13 = 5V_MCU (13-14 y 15-16 unidos en la placa). SCL y SDA
 # pasan por los pines 3 y 4 del MPU (VCC/GND quedan del lado de afuera, INT del lado de adentro hacia A1.11).
 CABLE = {
-    "1": "INA_ALERT", "2": "IN1_DER_MCU", "3": "VBAT_ADC", "4": "IN2_DER_MCU",
-    "5": "I2C_SDA", "6": "IN1_IZQ_MCU", "7": "I2C_SCL", "8": "IN2_IZQ_MCU",
-    "9": "3V3_MCU", "10": "SERVO_IZQ_MCU", "11": "GND", "12": "SERVO_DER_MCU",
+    "1": "VBAT_ADC", "2": "SERVO_IZQ_MCU", "3": "INA_ALERT", "4": "SERVO_DER_MCU",
+    "5": "I2C_SDA", "6": "IN2_DER_MCU", "7": "I2C_SCL", "8": "IN1_DER_MCU",
+    "9": "3V3_MCU", "10": "IN2_IZQ_MCU", "11": "GND", "12": "IN1_IZQ_MCU",
     "13": "5V_MCU", "14": "5V_MCU", "15": "GND", "16": "GND",
 }
 J20 = {"ref": "J20", "lib_id": "Connector_Generic:Conn_02x08_Odd_Even", "value": "Cable lógica-potencia 2x8",
@@ -61,7 +62,7 @@ J20 = {"ref": "J20", "lib_id": "Connector_Generic:Conn_02x08_Odd_Even", "value":
 
 # Tamaño de cada placa (SUP-04 revisado por DEC-17): una cara, cobre 35 µm, agujeros M3 en las esquinas
 TABLERO = {
-    "potencia": {"width_mm": 150, "height_mm": 95, "corner_radius": 3.0, "mounting_holes": [[4, 4], [146, 4], [4, 91], [146, 91]],
+    "potencia": {"width_mm": 150, "height_mm": 110, "corner_radius": 3.0, "mounting_holes": [[4, 4], [146, 4], [4, 106], [146, 106]],
                  "copper_layers": ["B.Cu"], "vias": False, "edge_clearance_mm": 2.0},
     "logica": {"width_mm": 100, "height_mm": 82, "corner_radius": 3.0, "mounting_holes": [[4, 4], [96, 4], [4, 78], [96, 78]],
                "copper_layers": ["B.Cu"], "vias": False, "edge_clearance_mm": 2.0},
@@ -126,6 +127,11 @@ def placa(nombre, refs):
                             "justification": FUNCION.get(red.get(str(i)), "") + ("; pin asignado por geometría (DEC-17)" if red.get(str(i)) in PINES_A1 else "")}
                            for i, g in enumerate(GPIO_PIN, start=1)]
     s["cable_J20"] = CABLE
+    if nombre == "potencia":
+        for n in s["nets"]:
+            if n["name"] == "GND":
+                n["pins"] = [p for p in n["pins"] if p != "J20.11"]
+        s["no_connect"].append("J20.11")
     return s
 
 
@@ -135,7 +141,7 @@ def main():
     log = placa("logica", LOGICA)
     for s in (pot, log):
         conectados = {p for n in s["nets"] for p in n["pins"]}
-        faltan = [f"J20.{k}" for k in CABLE if f"J20.{k}" not in conectados]
+        faltan = [f"J20.{k}" for k in CABLE if f"J20.{k}" not in conectados and f"J20.{k}" not in s["no_connect"]]
         assert not faltan, faltan
         from collections import Counter
         c = Counter(p for n in s["nets"] for p in n["pins"]) + Counter(s["no_connect"])

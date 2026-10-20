@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 3,
+ "revision_lista": 4,
  "fecha": "20/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -338,8 +338,8 @@
   {
    "grupo": "B",
    "tema": "Tamaño de las placas",
-   "supuesto": "Dos placas: potencia de 150 × 95 mm y lógica de 100 × 82 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. La lógica tiene 82 mm de alto para rodear el conector IDC por abajo y dejar el USB-C de la DevKitC hacia el borde.",
-   "base": "DEC-17; ruteo de la lógica v0.1 (electronica/agente/placas/logica.py) [H].",
+   "supuesto": "Dos placas: potencia de 150 × 110 mm y lógica de 100 × 82 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. La potencia creció de 95 a 110 mm de alto para que la banda lógica (J20, INA226, buck, voltímetro) entre en una cara.",
+   "base": "DEC-17; ruteo v0.1 de ambas placas [H].",
    "impacto_si_cambia": "Otro tamaño obliga a reubicar y rehacer el ruteo de esa placa; el esquema no cambia.",
    "como_se_confirma": "Mecánica confirma dónde van las dos placas y el largo del cable.",
    "estado": "CAMBIADO",
@@ -352,7 +352,7 @@
    "valor": {
     "potencia_mm": [
      150,
-     95
+     110
     ],
     "logica_mm": [
      100,
@@ -369,6 +369,15 @@
       "estado": "ASUMIDO"
      },
      "fuente": "DEC-17 [M]: Matías eligió dos placas de una cara (potencia y lógica) unidas por cable plano ('vamos con la opción 1')"
+    },
+    {
+     "fecha": "20/10/2026",
+     "antes": {
+      "tema": "Tamaño de las placas",
+      "supuesto": "Dos placas: potencia de 150 × 95 mm y lógica de 100 × 82 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. La lógica tiene 82 mm de alto para rodear el conector IDC por abajo y dejar el USB-C de la DevKitC hacia el borde.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
     }
    ]
   },
@@ -610,10 +619,10 @@
   {
    "grupo": "B",
    "tema": "Puentes de alambre",
-   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre en la cara de componentes: alambre de cobre estañado de 0,6 mm (AWG 22), recto, pads de 2,2 mm con taladro de 0,9 mm. Son huellas de placa W1… (sin símbolo), listadas en evidencia/puentes_pcb_v0.1.json de cada placa. La lógica v0.1 lleva 2: W1 (3V3, 17,8 mm) y W2 (GND, 7,6 mm). Objetivo: 8 o menos por placa; por un puente solo pasan señales o lógica de hasta 1 A.",
-   "base": "DEC-14 [M]; resultado del ruteo de la lógica v0.1 [H].",
+   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm (AWG 22) en la cara de componentes, rectos, con pads de 2,2 mm y taladro de 0,9 mm. Son huellas de placa W1… (sin símbolo), listadas en evidencia/puentes_pcb_v0.1.json de cada placa. Lógica: 2 (17,8 y 7,6 mm). Potencia: 7, de 5,1 a 15,5 mm (SDA ×2, 5V ×2, VM_LOG, GND ×2). Por un puente solo pasan señales o lógica de hasta 1 A.",
+   "base": "DEC-14 [M]; resultado del ruteo v0.1 [H].",
    "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error.",
-   "como_se_confirma": "Montaje de la placa de lógica.",
+   "como_se_confirma": "Montaje de las placas.",
    "estado": "CAMBIADO",
    "fecha": "20/10/2026",
    "refs": [],
@@ -623,7 +632,8 @@
    ],
    "alias": [],
    "valor": {
-    "logica_v0.1": 2
+    "logica_v0.1": 2,
+    "potencia_v0.1": 7
    },
    "id": "SUP-15",
    "historial": [
@@ -635,6 +645,15 @@
       "estado": "ASUMIDO"
      },
      "fuente": "DEC-17 [M]: Matías eligió dos placas de una cara (potencia y lógica) unidas por cable plano ('vamos con la opción 1')"
+    },
+    {
+     "fecha": "20/10/2026",
+     "antes": {
+      "tema": "Puentes de alambre",
+      "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre en la cara de componentes: alambre de cobre estañado de 0,6 mm (AWG 22), recto, pads de 2,2 mm con taladro de 0,9 mm. Son huellas de placa W1… (sin símbolo), listadas en evidencia/puentes_pcb_v0.1.json de cada placa. La lógica v0.1 lleva 2: W1 (3V3, 17,8 mm) y W2 (GND, 7,6 mm). Objetivo: 8 o menos por placa; por un puente solo pasan señales o lógica de hasta 1 A.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
     }
    ]
   },
@@ -873,10 +892,10 @@
   {
    "grupo": "C",
    "tema": "Pines reservados de la ESP32-S3",
-   "supuesto": "Sin conexión: GPIO35, 36 y 37 (PSRAM octal del N16R8), GPIO0, 45 y 46 (strapping), GPIO19 y 20 (USB nativo), GPIO43 y 44 (UART0 del CH343P), GPIO48 (LED RGB WS2812) y RST. GPIO3 se usa como entrada de INA_ALERT: su función de strapping (fuente de JTAG) solo actúa con el eFuse STRAP_JTAG_SEL grabado, que de fábrica no lo está.",
+   "supuesto": "Sin conexión: GPIO35, 36 y 37 (PSRAM octal del N16R8), GPIO0, 45 y 46 (strapping), GPIO19 y 20 (USB nativo), GPIO43 y 44 (UART0 del CH343P), GPIO48 (LED RGB WS2812) y RST. GPIO3 se usa como entrada analógica de VBAT_ADC (ADC1_CH2): su función de strapping (fuente de JTAG) solo actúa con el eFuse STRAP_JTAG_SEL grabado, que de fábrica no lo está.",
    "base": "ESP32-S3 datasheet, tabla de strapping pins [D]; pinout del vendedor [V].",
-   "impacto_si_cambia": "Si alguien graba STRAP_JTAG_SEL, ALERT en alto al arrancar elegiría JTAG por pines: no grabar ese eFuse.",
-   "como_se_confirma": "Primer arranque con el INA226 conectado (ALERT en alto).",
+   "impacto_si_cambia": "No grabar el eFuse STRAP_JTAG_SEL.",
+   "como_se_confirma": "Primer arranque con la batería conectada.",
    "estado": "CAMBIADO",
    "fecha": "20/10/2026",
    "refs": [
@@ -906,6 +925,15 @@
       "estado": "CAMBIADO"
      },
      "fuente": "DEC-17 [M]: Matías eligió dos placas de una cara (potencia y lógica) unidas por cable plano ('vamos con la opción 1')"
+    },
+    {
+     "fecha": "20/10/2026",
+     "antes": {
+      "tema": "Pines reservados de la ESP32-S3",
+      "supuesto": "Sin conexión: GPIO35, 36 y 37 (PSRAM octal del N16R8), GPIO0, 45 y 46 (strapping), GPIO19 y 20 (USB nativo), GPIO43 y 44 (UART0 del CH343P), GPIO48 (LED RGB WS2812) y RST. GPIO3 se usa como entrada de INA_ALERT: su función de strapping (fuente de JTAG) solo actúa con el eFuse STRAP_JTAG_SEL grabado, que de fábrica no lo está.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
     }
    ],
    "valor": {}
@@ -1017,9 +1045,9 @@
   {
    "grupo": "C",
    "tema": "Asignación de pines (ESP32-S3)",
-   "supuesto": "Por geometría de la placa de lógica de una cara: encoder IZQ A/B en GPIO4/5, paro en GPIO6, encoder DER A/B en GPIO7/15, I2C SCL en GPIO16 y SDA en GPIO17, INT de la IMU en GPIO18, batería en GPIO8 (ADC1_CH7), ALERT en GPIO3, IN1/IN2 del DRV DER en GPIO9/10 y del DRV IZQ en GPIO11/12, servos IZQ/DER en GPIO13/14. Tabla completa en gpio_table de segway_logica/especificacion_v0.6.json.",
+   "supuesto": "Por geometría de las dos placas de una cara: encoder IZQ A/B en GPIO4/5, paro en GPIO6, encoder DER A/B en GPIO7/15, I2C SCL en GPIO16 y SDA en GPIO17, INT de la IMU en GPIO18, ALERT en GPIO8, batería en GPIO3 (ADC1_CH2), servos IZQ/DER en GPIO9/10, IN2/IN1 del DRV DER en GPIO11/12 y del DRV IZQ en GPIO13/14. Tabla completa en gpio_table de segway_logica/especificacion_v0.6.json.",
    "base": "dividir_v06_dos_placas.py (PINES_A1); matriz GPIO del ESP32-S3 [D].",
-   "impacto_si_cambia": "Cambiar un pin obliga a rehacer el ruteo de la lógica; el firmware lee la misma tabla.",
+   "impacto_si_cambia": "Cambiar un pin obliga a rehacer el ruteo; el firmware lee la misma tabla.",
    "como_se_confirma": "Revisión con el equipo de firmware.",
    "estado": "CAMBIADO",
    "fecha": "20/10/2026",
@@ -1051,6 +1079,15 @@
       "estado": "CAMBIADO"
      },
      "fuente": "DEC-17 [M]: Matías eligió dos placas de una cara (potencia y lógica) unidas por cable plano ('vamos con la opción 1')"
+    },
+    {
+     "fecha": "20/10/2026",
+     "antes": {
+      "tema": "Asignación de pines (ESP32-S3)",
+      "supuesto": "Por geometría de la placa de lógica de una cara: encoder IZQ A/B en GPIO4/5, paro en GPIO6, encoder DER A/B en GPIO7/15, I2C SCL en GPIO16 y SDA en GPIO17, INT de la IMU en GPIO18, batería en GPIO8 (ADC1_CH7), ALERT en GPIO3, IN1/IN2 del DRV DER en GPIO9/10 y del DRV IZQ en GPIO11/12, servos IZQ/DER en GPIO13/14. Tabla completa en gpio_table de segway_logica/especificacion_v0.6.json.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
     }
    ]
   },
@@ -2276,11 +2313,11 @@
   {
    "grupo": "I",
    "tema": "Cable entre placas (J20)",
-   "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 INA_ALERT, 2 IN1_DER, 3 VBAT_ADC, 4 IN2_DER, 5 SDA, 6 IN1_IZQ, 7 SCL, 8 IN2_IZQ, 9 3V3, 10 SERVO_IZQ, 11 GND, 12 SERVO_DER, 13 y 14 5V_MCU, 15 y 16 GND. La columna par queda alineada con los pines 15-22 de la ESP32-S3.",
-   "base": "cad/interconexion_v0.6.json; ruteo de la lógica v0.1 [H].",
+   "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 VBAT_ADC, 2 SERVO_IZQ, 3 INA_ALERT, 4 SERVO_DER, 5 SDA, 6 IN2_DER, 7 SCL, 8 IN1_DER, 9 3V3, 10 IN2_IZQ, 11 GND (solo en la lógica), 12 IN1_IZQ, 13 y 14 5V_MCU, 15 y 16 GND.",
+   "base": "cad/interconexion_v0.6.json; ruteo v0.1 de las dos placas [H].",
    "impacto_si_cambia": "Otro orden obliga a rehacer el ruteo de las dos placas.",
    "como_se_confirma": "Mecánica fija el largo; continuidad pin a pin del cable armado.",
-   "estado": "ASUMIDO",
+   "estado": "CAMBIADO",
    "fecha": "20/10/2026",
    "refs": [],
    "afecta": [
@@ -2293,7 +2330,17 @@
     "pines": 16,
     "paso_mm": 2.54
    },
-   "historial": []
+   "historial": [
+    {
+     "fecha": "20/10/2026",
+     "antes": {
+      "tema": "Cable entre placas (J20)",
+      "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 INA_ALERT, 2 IN1_DER, 3 VBAT_ADC, 4 IN2_DER, 5 SDA, 6 IN1_IZQ, 7 SCL, 8 IN2_IZQ, 9 3V3, 10 SERVO_IZQ, 11 GND, 12 SERVO_DER, 13 y 14 5V_MCU, 15 y 16 GND. La columna par queda alineada con los pines 15-22 de la ESP32-S3.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
+    }
+   ]
   },
   {
    "grupo": "I",
@@ -2330,6 +2377,60 @@
    ],
    "alias": [],
    "id": "SUP-74",
+   "valor": {},
+   "historial": []
+  },
+  {
+   "grupo": "I",
+   "tema": "INA226 sin separador",
+   "supuesto": "La huella del INA226 (A7) se usa sin el agujero de tope para el separador M3 opcional: cae sobre el bus I2C. El módulo queda sostenido por su zócalo; si vibra, se fija con una gota de adhesivo.",
+   "base": "Ruteo de la potencia v0.1 (QUITAR_NPTH) [H].",
+   "impacto_si_cambia": "Sin separador, el módulo puede moverse con la vibración del robot.",
+   "como_se_confirma": "Prueba de vibración con el robot andando.",
+   "estado": "ASUMIDO",
+   "fecha": "20/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-75",
+   "valor": {},
+   "historial": []
+  },
+  {
+   "grupo": "I",
+   "tema": "Puentes bajo módulos en zócalo",
+   "supuesto": "Los puentes W1, W2, W4 y W7 de la potencia pasan bajo el INA226 (A7) y el buck (A8), que van en zócalos hembra de 8,5 mm. El alambre va pegado a la placa y el módulo queda por encima. El DRC lo marca como aviso (pth_inside_courtyard); sobre los demás componentes las vías están prohibidas.",
+   "base": "Altura del zócalo hembra estándar (8,5 mm) [H].",
+   "impacto_si_cambia": "Si A8 se suelda sin zócalo, W4 y W7 chocan con el módulo.",
+   "como_se_confirma": "Montaje en seco de A7 y A8 sobre los puentes.",
+   "estado": "ASUMIDO",
+   "fecha": "20/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-76",
+   "valor": {},
+   "historial": []
+  },
+  {
+   "grupo": "I",
+   "tema": "Masa de la lógica en la placa de potencia",
+   "supuesto": "El relleno GND de la banda lógica se une al bus de retorno de los servos (que va al lomo por J15) y al lomo por D4. Los retornos de los motores tienen ramas propias por el borde superior. J20.11 queda sin conexión en la potencia: el retorno de la lógica usa J20.15 y J20.16.",
+   "base": "Criterio de masa en estrella (§10 de diseno_v0.3.md) adaptado al ruteo de una cara [H].",
+   "impacto_si_cambia": "La corriente de los servos comparte unos 20 mm de cobre con la masa de la lógica.",
+   "como_se_confirma": "E-03: medir la diferencia de GND entre J20.15 y C1− con los servos en carga.",
+   "estado": "ASUMIDO",
+   "fecha": "20/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb"
+   ],
+   "alias": [],
+   "id": "SUP-77",
    "valor": {},
    "historial": []
   }

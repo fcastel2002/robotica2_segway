@@ -2,18 +2,18 @@
  "cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
  "conector": "Connector_IDC:IDC-Header_2x08_P2.54mm_Vertical",
  "pines": {
-  "1": "INA_ALERT",
-  "2": "IN1_DER_MCU",
-  "3": "VBAT_ADC",
-  "4": "IN2_DER_MCU",
+  "1": "VBAT_ADC",
+  "2": "SERVO_IZQ_MCU",
+  "3": "INA_ALERT",
+  "4": "SERVO_DER_MCU",
   "5": "I2C_SDA",
-  "6": "IN1_IZQ_MCU",
+  "6": "IN2_DER_MCU",
   "7": "I2C_SCL",
-  "8": "IN2_IZQ_MCU",
+  "8": "IN1_DER_MCU",
   "9": "3V3_MCU",
-  "10": "SERVO_IZQ_MCU",
+  "10": "IN2_IZQ_MCU",
   "11": "GND",
-  "12": "SERVO_DER_MCU",
+  "12": "IN1_IZQ_MCU",
   "13": "5V_MCU",
   "14": "5V_MCU",
   "15": "GND",
@@ -53,35 +53,35 @@
    "pin": "11",
    "gpio": "GPIO18"
   },
-  "VBAT_ADC": {
+  "INA_ALERT": {
    "pin": "12",
    "gpio": "GPIO8"
   },
-  "INA_ALERT": {
+  "VBAT_ADC": {
    "pin": "13",
    "gpio": "GPIO3"
   },
-  "IN1_DER_MCU": {
+  "SERVO_IZQ_MCU": {
    "pin": "15",
    "gpio": "GPIO9"
   },
-  "IN2_DER_MCU": {
+  "SERVO_DER_MCU": {
    "pin": "16",
    "gpio": "GPIO10"
   },
-  "IN1_IZQ_MCU": {
+  "IN2_DER_MCU": {
    "pin": "17",
    "gpio": "GPIO11"
   },
-  "IN2_IZQ_MCU": {
+  "IN1_DER_MCU": {
    "pin": "18",
    "gpio": "GPIO12"
   },
-  "SERVO_IZQ_MCU": {
+  "IN2_IZQ_MCU": {
    "pin": "19",
    "gpio": "GPIO13"
   },
-  "SERVO_DER_MCU": {
+  "IN1_IZQ_MCU": {
    "pin": "20",
    "gpio": "GPIO14"
   }

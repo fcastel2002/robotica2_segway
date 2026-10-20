@@ -518,44 +518,20 @@
    "name": "VBAT_ADC",
    "kind": "signal",
    "pins": [
-    "A1.12",
-    "J20.3"
+    "A1.13",
+    "J20.1"
    ]
   },
   {
    "name": "IN1_IZQ_MCU",
    "kind": "signal",
    "pins": [
-    "A1.17",
-    "J20.6"
+    "A1.20",
+    "J20.12"
    ]
   },
   {
    "name": "IN2_IZQ_MCU",
-   "kind": "signal",
-   "pins": [
-    "A1.18",
-    "J20.8"
-   ]
-  },
-  {
-   "name": "IN1_DER_MCU",
-   "kind": "signal",
-   "pins": [
-    "A1.15",
-    "J20.2"
-   ]
-  },
-  {
-   "name": "IN2_DER_MCU",
-   "kind": "signal",
-   "pins": [
-    "A1.16",
-    "J20.4"
-   ]
-  },
-  {
-   "name": "SERVO_IZQ_MCU",
    "kind": "signal",
    "pins": [
     "A1.19",
@@ -563,11 +539,35 @@
    ]
   },
   {
+   "name": "IN1_DER_MCU",
+   "kind": "signal",
+   "pins": [
+    "A1.18",
+    "J20.8"
+   ]
+  },
+  {
+   "name": "IN2_DER_MCU",
+   "kind": "signal",
+   "pins": [
+    "A1.17",
+    "J20.6"
+   ]
+  },
+  {
+   "name": "SERVO_IZQ_MCU",
+   "kind": "signal",
+   "pins": [
+    "A1.15",
+    "J20.2"
+   ]
+  },
+  {
    "name": "SERVO_DER_MCU",
    "kind": "signal",
    "pins": [
-    "A1.20",
-    "J20.12"
+    "A1.16",
+    "J20.4"
    ]
   },
   {
@@ -663,8 +663,8 @@
    "name": "INA_ALERT",
    "kind": "signal",
    "pins": [
-    "A1.13",
-    "J20.1"
+    "A1.12",
+    "J20.3"
    ]
   },
   {
@@ -830,18 +830,18 @@
    "justification": "entrada con interrupción; pin asignado por geometría (DEC-17)"
   },
   {
-   "function": "VBAT_ADC",
+   "function": "INA_ALERT",
    "gpio": "GPIO8",
    "board_pin": "12",
-   "net": "VBAT_ADC",
-   "justification": "ADC1_CH7; pin asignado por geometría (DEC-17)"
+   "net": "INA_ALERT",
+   "justification": "entrada; pull-up del INA226; pin asignado por geometría (DEC-17)"
   },
   {
-   "function": "INA_ALERT",
+   "function": "VBAT_ADC",
    "gpio": "GPIO3",
    "board_pin": "13",
-   "net": "INA_ALERT",
-   "justification": "entrada; pull-up del INA226; GPIO3 sin efecto de strapping con eFuses de fábrica; pin asignado por geometría (DEC-17)"
+   "net": "VBAT_ADC",
+   "justification": "ADC1_CH2; GPIO3 sin efecto de strapping con eFuses de fábrica; pin asignado por geometría (DEC-17)"
   },
   {
    "function": "sin conexión",
@@ -851,46 +851,46 @@
    "justification": ""
   },
   {
-   "function": "IN1_DER_MCU",
+   "function": "SERVO_IZQ_MCU",
    "gpio": "GPIO9",
    "board_pin": "15",
-   "net": "IN1_DER_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
-  },
-  {
-   "function": "IN2_DER_MCU",
-   "gpio": "GPIO10",
-   "board_pin": "16",
-   "net": "IN2_DER_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
-  },
-  {
-   "function": "IN1_IZQ_MCU",
-   "gpio": "GPIO11",
-   "board_pin": "17",
-   "net": "IN1_IZQ_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
-  },
-  {
-   "function": "IN2_IZQ_MCU",
-   "gpio": "GPIO12",
-   "board_pin": "18",
-   "net": "IN2_IZQ_MCU",
-   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
-  },
-  {
-   "function": "SERVO_IZQ_MCU",
-   "gpio": "GPIO13",
-   "board_pin": "19",
    "net": "SERVO_IZQ_MCU",
    "justification": "LEDC 50 Hz; pin asignado por geometría (DEC-17)"
   },
   {
    "function": "SERVO_DER_MCU",
-   "gpio": "GPIO14",
-   "board_pin": "20",
+   "gpio": "GPIO10",
+   "board_pin": "16",
    "net": "SERVO_DER_MCU",
    "justification": "LEDC 50 Hz; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IN2_DER_MCU",
+   "gpio": "GPIO11",
+   "board_pin": "17",
+   "net": "IN2_DER_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IN1_DER_MCU",
+   "gpio": "GPIO12",
+   "board_pin": "18",
+   "net": "IN1_DER_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IN2_IZQ_MCU",
+   "gpio": "GPIO13",
+   "board_pin": "19",
+   "net": "IN2_IZQ_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
+  },
+  {
+   "function": "IN1_IZQ_MCU",
+   "gpio": "GPIO14",
+   "board_pin": "20",
+   "net": "IN1_IZQ_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
   },
   {
    "function": "5V_MCU",
@@ -1156,18 +1156,18 @@
   "Pines reasignados por geometría para la placa de una cara: IN de los drivers en GPIO4-7, encoders en GPIO15-18"
  ],
  "cable_J20": {
-  "1": "INA_ALERT",
-  "2": "IN1_DER_MCU",
-  "3": "VBAT_ADC",
-  "4": "IN2_DER_MCU",
+  "1": "VBAT_ADC",
+  "2": "SERVO_IZQ_MCU",
+  "3": "INA_ALERT",
+  "4": "SERVO_DER_MCU",
   "5": "I2C_SDA",
-  "6": "IN1_IZQ_MCU",
+  "6": "IN2_DER_MCU",
   "7": "I2C_SCL",
-  "8": "IN2_IZQ_MCU",
+  "8": "IN1_DER_MCU",
   "9": "3V3_MCU",
-  "10": "SERVO_IZQ_MCU",
+  "10": "IN2_IZQ_MCU",
   "11": "GND",
-  "12": "SERVO_DER_MCU",
+  "12": "IN1_IZQ_MCU",
   "13": "5V_MCU",
   "14": "5V_MCU",
   "15": "GND",
