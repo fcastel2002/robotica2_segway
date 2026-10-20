@@ -4,7 +4,7 @@ Uso (desde cualquier carpeta):
     "C:/Program Files/KiCad/10.0/bin/python.exe" -I electronica/agente/construir_pcb.py [--solo-ubicar] [--pasadas N]
 
 Etapas:
- 1. Exporta la netlist del esquema con kicad-cli (kicadsexpr) y lee la especificación v0.4.
+ 1. Exporta la netlist del esquema con kicad-cli (kicadsexpr) y lee la especificación v0.5.
  2. Prepara copias de trabajo de las huellas (carpeta temporal): agranda pads y taladros según
     reglas_fabricacion_casera.md §4 y declara los pines que el módulo une por dentro
     (jumper_pad_groups). La biblioteca oficial y segway_modulos.pretty no se modifican.
@@ -16,7 +16,7 @@ Etapas:
  6. Guarda, corre el DRC (kicad-cli) y exporta las salidas de fabricación.
 
 Coordenadas de este archivo: mm, origen en la esquina superior izquierda del contorno, x a la derecha,
-y hacia abajo, vista desde la cara de componentes (como en especificacion_v0.4.json, campo pcb).
+y hacia abajo, vista desde la cara de componentes (como en especificacion_v0.5.json, campo pcb).
 """
 import json
 import math
@@ -31,7 +31,7 @@ import pcbnew
 
 RAIZ = Path(__file__).resolve().parents[2]
 PROY = RAIZ / "electronica" / "cad" / "segway_base"
-SPEC = PROY / "especificacion_v0.4.json"
+SPEC = PROY / "especificacion_v0.5.json"
 NOMBRE = "segway_base"
 PCB = PROY / f"{NOMBRE}.kicad_pcb"
 PRO = PROY / f"{NOMBRE}.kicad_pro"
@@ -41,7 +41,10 @@ FAB = PROY / "fabricacion" / "rev-0.1"
 CLI = Path(r"C:\Program Files\KiCad\10.0\bin\kicad-cli.exe")
 KFP = Path(r"C:\Program Files\KiCad\10.0\share\kicad\footprints")
 LIBMOD = RAIZ / "electronica" / "cad" / "bibliotecas" / "segway_modulos.pretty"
-FREEROUTING = Path(r"D:\Usuario\Matias\Herramientas\freerouting\2.5.0\freerouting-cli.exe")
+# La versión nativa (freerouting-cli.exe) se cae con zonas prohibidas (ObstacleArea, error de GraalVM):
+# se usa el JAR oficial con Java 25 portátil.
+FREEROUTING = Path(r"D:\Usuario\Matias\Herramientas\freerouting\2.5.0\freerouting-2.5.0.jar")
+JAVA = Path(r"D:\Usuario\Matias\Herramientas\java\jdk-25.0.4.1+1-jre\bin\java.exe")
 
 OX, OY = 25.4, 25.4          # desplazamiento de la placa en la hoja (múltiplo de 2,54)
 ANCHO, ALTO, RADIO = 160.0, 100.0, 3.0
@@ -119,7 +122,7 @@ def exportar_netlist(destino):
 GRUPOS_INTERNOS = {
     "ROB-008_DRV8871_modulo_8p": [("1", "6"), ("2", "5")],           # GND y VM del DRV8871
     "ROB-002_INA219_MCU-219_8p": [("5", "7"), ("6", "8")],           # Vin- y Vin+ (tira y bornera)
-    "ROB-012_BluePill_STM32F103C8_40p": [("19", "39"), ("20", "38")],  # GND y 3V3 de la Blue Pill
+    "ROB-012_ESP32-S3-DevKitC-1_N16R8_44p": [("22", "23", "43", "44"), ("1", "2")],  # GND y 3V3 de la DevKitC
     "ROB-005-006_MiniBuck_modulo_4p": [("2", "4")],                  # IN- y OUT- (masa común)
 }
 # El portafusible mini es una sola pieza de metal por lado: sus dos pads de igual número están unidos.
@@ -154,7 +157,7 @@ PADS_CASEROS = {
     "R_Axial_DIN0309_L9.0mm_D3.2mm_P20.32mm_Horizontal": (0.9, 2.2, 2.2),
     "R_Axial_DIN0309_L9.0mm_D3.2mm_P25.40mm_Horizontal": (0.9, 2.2, 2.2),
     # Módulos: solo los pads de paso 2,54 mm pasan a óvalo 1,8 x 2,6 (bornera y buck se conservan)
-    "ROB-012_BluePill_STM32F103C8_40p": (1.0, 1.8, 2.6),
+    "ROB-012_ESP32-S3-DevKitC-1_N16R8_44p": (1.0, 1.8, 2.6),
     "ROB-013_MPU6050_modulo_8p": (1.0, 1.8, 2.6),
     "ROB-008_DRV8871_modulo_8p": (1.0, 1.8, 2.6),
     "ROB-002_INA219_MCU-219_8p": (1.0, 1.8, 2.6),
@@ -233,36 +236,37 @@ UBICACION = {
     #     debajo de los módulos (entre bornera y tira); borneras de motor y electrolíticos en el borde superior.
     "A3": (20.32, 33.02, 180), "A5": (35.56, 30.48, 0), "J11": (17.78, 5.08, 180), "C4": (25.40, 5.08, 270),
     "A4": (71.12, 33.02, 180), "A6": (86.36, 30.48, 0), "J12": (68.58, 5.08, 180), "C5": (76.20, 5.08, 270),
-    # Resistencias de entrada de los DRV (serie y a GND), bajo los zócalos
-    "R35": (45.72, 40.64, 180), "R36": (45.72, 45.72, 180), "R1": (58.42, 38.10, 180), "R2": (58.42, 43.18, 180),
-    "R37": (76.20, 38.10, 180), "R38": (73.66, 43.18, 180),
+    # Resistencias de entrada de los DRV: serie (MCU -> IN) y pull-down, bajo cada zócalo (v0.5)
+    "R37": (66.04, 48.26, 90), "R3": (71.12, 48.26, 90), "R38": (60.96, 48.26, 90), "R4": (55.88, 48.26, 90),
+    "R35": (27.94, 40.64, 180), "R36": (27.94, 44.45, 180), "R1": (40.64, 40.64, 180), "R2": (40.64, 44.45, 180),
     # --- Entrada de potencia (arriba a la derecha)
     "F3": (119.38, 10.16, 180), "F2": (119.38, 17.78, 180), "F5": (119.38, 25.40, 180),
     "Q1": (132.08, 40.64, 180), "D3": (127.00, 35.56, 0), "R29": (137.16, 40.64, 0),
     "J3": (129.54, 22.86, 270), "F1": (142.24, 22.86, 90), "J1": (154.94, 27.94, 90),
-    "C1": (119.38, 33.02, 180), "C3": (121.92, 43.18, 180), "D1": (121.92, 48.26, 180),
-    "R28": (121.92, 53.34, 180), "D4": (111.76, 58.42, 90), "R22": (121.92, 63.50, 180),
-    "F4": (127.00, 68.58, 0), "J15": (147.32, 76.20, 90),
-    # --- Controlador y paro
-    "A1": (88.90, 48.26, 0), "R24": (88.90, 40.64, 180), "J4": (78.74, 50.80, 90),
-    # --- Derecha de A1: resistencias a GND del DRV DER, ADC, encoder IZQ
-    "R4": (111.76, 71.12, 90), "R3": (116.84, 73.66, 90),
-    "R23": (111.76, 81.28, 0), "C14": (111.76, 86.36, 0),
-    "J7": (111.76, 96.52, 0), "R13": (132.08, 86.36, 270), "R14": (137.16, 86.36, 270),
-    # --- Izquierda de A1: lógica (abajo a la izquierda), IMU, servos, UART, encoder DER
-    "A7": (15.24, 48.26, 0), "A2": (48.26, 68.58, 90),
-    "A9": (22.86, 71.12, 270), "J18": (10.16, 96.52, 0), "A8": (33.02, 81.28, 0),
-    "R8": (76.20, 55.88, 270), "R6": (71.12, 55.88, 270), "R7": (66.04, 58.42, 270), "R5": (60.96, 58.42, 270),
-    "J14": (76.20, 71.12, 0), "J13": (55.88, 76.20, 0), "C8": (63.50, 86.36, 0), "C9": (78.74, 81.28, 270),
-    "J16": (60.96, 96.52, 0), "J23": (81.28, 63.50, 0),
-    "J8": (71.12, 96.52, 0), "R15": (63.50, 76.20, 270), "R16": (68.58, 76.20, 270),
-    "D2": (81.28, 88.90, 180),
+    "C1": (122.68, 50.80, 0), "C3": (122.68, 58.93, 0), "D1": (122.68, 64.77, 0),
+    "R28": (137.16, 63.50, 90), "D4": (137.16, 50.80, 0), "R22": (119.38, 76.20, 90),
+    "F4": (127.00, 70.12, 0), "J15": (147.32, 76.20, 90),
+    # --- Controlador (ESP32-S3, USB hacia el borde inferior) y paro junto a los pines 20-21
+    "A1": (88.90, 44.45, 0), "J4": (78.74, 96.52, 0), "R24": (73.66, 88.90, 180),
+    # --- Divisor de batería, a la derecha de A1 bajo el tronco
+    "R23": (116.84, 86.36, 90), "C14": (124.46, 88.90, 90),
+    # --- Borde oeste: borneras de encoder (cable hacia afuera) y del voltímetro, con sus pull-ups
+    "J8": (6.35, 52.07, 270), "J7": (6.35, 67.31, 270), "J18": (6.35, 82.55, 270),
+    "R15": (12.70, 52.07, 0), "R16": (12.70, 55.88, 0), "R13": (12.70, 67.31, 0), "R14": (12.70, 71.12, 0),
+    # --- IMU en el centro, lejos de drivers; INA226 y buck abajo a la izquierda
+    "A2": (33.02, 68.58, 0), "A7": (27.94, 79.50, 0), "A8": (50.80, 81.28, 0),
+    # 5 V: diodo vertical con el cátodo junto al pin 5V (21) de A1; paro en el borde inferior
+    "D2": (83.82, 95.25, 90), "J4": (73.66, 96.52, 0), "R24": (76.20, 86.36, 90),
+    # --- Servos entre la IMU y A1: headers (1 GND, 2 V+, 3 SIG) en fila, electrolíticos y resistencias
+    "J13": (58.42, 72.39, 90), "J14": (66.04, 72.39, 90), "C8": (58.42, 64.77, 0), "C9": (68.58, 64.77, 0),
+    "R5": (78.74, 60.96, 90), "R7": (78.74, 73.66, 90), "R6": (83.82, 60.96, 90), "R8": (73.66, 73.66, 90),
+    "J16": (60.96, 53.34, 0),
 }
 
 
 # Legalización: las huellas que no están en FIJAS y cuyo courtyard toca a otra (o se sale del área útil)
 # se corren al punto libre más cercano de la grilla de 2,54 mm (búsqueda en espiral, radio <= 10,16 mm).
-FIJAS = {"A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "J1", "J3", "J11", "J12", "J15", "J16", "J7", "J8",
+FIJAS = {"C1", "C3", "D1", "R28", "R22", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "J1", "J3", "J11", "J12", "J15", "J16", "J7", "J8",
          "J18", "F1", "F2", "F3", "F4", "F5", "Q1", "C4", "C5", "H1", "H2", "H3", "H4"}
 # Huellas que pueden salir del contorno (borneras con la entrada del cable hacia afuera, extremo SWD de A1)
 SOBRESALEN = {"A1", "J1", "J7", "J8", "J11", "J12", "J15", "J16", "J18"}
@@ -329,7 +333,7 @@ def legalizar(huellas):
     Devuelve [(ref, (x0, y0), (x1, y1))]."""
     movidas = []
     colocadas = [huellas[r] for r in sorted(huellas) if r in FIJAS]
-    pasos = sorted({(i, j) for i in range(-4, 5) for j in range(-4, 5)}, key=lambda t: (t[0] ** 2 + t[1] ** 2, abs(t[1]), t))
+    pasos = sorted({(i, j) for i in range(-8, 9) for j in range(-8, 9)}, key=lambda t: (t[0] ** 2 + t[1] ** 2, abs(t[1]), t))
     for ref in sorted(r for r in huellas if r not in FIJAS):
         fp = huellas[ref]
         base = fp.GetPosition()
@@ -562,15 +566,119 @@ def adaptar_dsn(entrada, salida, anchos):
     for clase, ancho in anchos.items():
         t = re.sub(r'(\(class ' + re.escape(clase) + r' [^()]*?(?:\([^()]*\)[^()]*?)*?\(rule\s*\(width )(\d+)',
                    lambda m: m.group(1) + str(ancho), t, flags=re.S)
+    # Placa de una cara: los pads de componentes existen solo en B.Cu. La capa F.Cu queda para puentes de
+    # alambre, a la que Freerouting solo puede llegar por vías (que después se convierten en pads de puente).
+    def solo_bcu(m):
+        bloque = m.group(0)
+        primera = bloque.splitlines()[0]
+        if "Via" in primera or "NPTH_obst" in primera:
+            return bloque
+        return "\n".join(l for l in bloque.split("\n") if "F.Cu" not in l)
+    for a, b in reversed(_bloques(t, "padstack")):
+        t = t[:a] + solo_bcu(re.match(r"[\s\S]*", t[a:b])) + t[b:]
+    ajustes = ("    (autoroute_settings\n"
+               "      (fanout off) (autoroute on) (postroute on) (vias on)\n"
+               f"      (via_costs {COSTO_VIA}) (plane_via_costs 5) (start_ripup_costs 100) (start_pass_no 1)\n"
+               f"      (layer_rule F.Cu (active on) (preferred_direction horizontal) (preferred_direction_trace_costs {COSTO_FCU}) (against_preferred_direction_trace_costs {COSTO_FCU}))\n"
+               "      (layer_rule B.Cu (active on) (preferred_direction vertical) (preferred_direction_trace_costs 1.0) (against_preferred_direction_trace_costs 1.0))\n"
+               "    )\n")
+    i = t.index("(structure")
+    k = t.index("\n    (via ", i)
+    t = t[:k + 1] + ajustes + t[k + 1:]
     salida.write_text(t, encoding="utf-8")
     return contador[0]
 
 
+# Costos de Freerouting para que la capa de puentes se use lo menos posible
+COSTO_VIA = 150
+COSTO_FCU = 6.0
+
+
+def convertir_puentes(board, netinfo):
+    """Cada camino en F.Cu (entre vías) pasa a ser un puente de alambre recto: una huella W<n> con dos pads
+    THT de igual número (duplicate_pad_numbers_are_jumpers) en B.Cu, en la posición de las vías. Las pistas
+    F.Cu y las vías se eliminan. Devuelve [(ref, net, largo_mm, (x1, y1), (x2, y2))]."""
+    pistas = [t for t in board.GetTracks() if t.GetLayer() == pcbnew.F_Cu and t.Type() == pcbnew.PCB_TRACE_T]
+    vias = [t for t in board.GetTracks() if t.Type() == pcbnew.PCB_VIA_T]
+    padre = {}
+
+    def raiz(k):
+        while padre.setdefault(k, k) != k:
+            padre[k] = padre[padre[k]]
+            k = padre[k]
+        return k
+
+    def une(a, b):
+        padre[raiz(a)] = raiz(b)
+
+    def clave(net, p):
+        return (net, round(p.x / 1000), round(p.y / 1000))
+
+    for t in pistas:
+        une(clave(t.GetNetname(), t.GetStart()), clave(t.GetNetname(), t.GetEnd()))
+    grupos = {}
+    for v in vias:
+        k = clave(v.GetNetname(), v.GetPosition())
+        if k in padre:
+            grupos.setdefault(raiz(k), []).append(v)
+    puentes = []
+    n = 0
+    for vs in grupos.values():
+        net = vs[0].GetNetname()
+        # árbol de expansión mínima entre las vías del grupo (cada arista = un alambre recto)
+        dentro, resto = [vs[0]], vs[1:]
+        while resto:
+            a, b = min(((a, b) for a in dentro for b in resto),
+                       key=lambda ab: (ab[0].GetPosition() - ab[1].GetPosition()).EuclideanNorm())
+            dentro.append(b)
+            resto.remove(b)
+            n += 1
+            ref = f"W{n}"
+            fp = pcbnew.FOOTPRINT(board)
+            fp.SetFPID(pcbnew.LIB_ID("segway_puentes", "Puente_alambre"))
+            fp.SetReference(ref)
+            pa, pb = a.GetPosition(), b.GetPosition()
+            largo = pcbnew.ToMM((pa - pb).EuclideanNorm())
+            fp.SetValue(f"puente {largo:.1f} mm")
+            fp.SetBoardOnly(True)
+            fp.SetDuplicatePadNumbersAreJumpers(True)
+            fp.SetPosition(pa)
+            for pos in (pa, pb):
+                pad = pcbnew.PAD(fp)
+                pad.SetNumber("1")
+                pad.SetAttribute(pcbnew.PAD_ATTRIB_PTH)
+                pad.SetShape(pcbnew.PAD_SHAPE_CIRCLE)
+                pad.SetSize(pcbnew.VECTOR2I(mm(2.2), mm(2.2)))
+                pad.SetDrillSize(pcbnew.VECTOR2I(mm(0.9), mm(0.9)))
+                ls = pcbnew.LSET()
+                ls.AddLayer(pcbnew.B_Cu)
+                ls.AddLayer(pcbnew.B_Mask)
+                pad.SetLayerSet(ls)
+                pad.SetPosition(pos)
+                pad.SetNet(netinfo[net.lstrip("/")] if net.lstrip("/") in netinfo else a.GetNet())
+                fp.Add(pad)
+            s = pcbnew.PCB_SHAPE(fp, pcbnew.SHAPE_T_SEGMENT)
+            s.SetStart(pa)
+            s.SetEnd(pb)
+            s.SetLayer(pcbnew.F_SilkS)
+            s.SetWidth(mm(0.3))
+            fp.Add(s)
+            fp.Reference().SetPosition(pcbnew.VECTOR2I((pa.x + pb.x) // 2, (pa.y + pb.y) // 2 - mm(1.2)))
+            fp.Reference().SetLayer(pcbnew.F_SilkS)
+            fp.Value().SetVisible(False)
+            board.Add(fp)
+            puentes.append((ref, net, round(largo, 1), a_placa(pa), a_placa(pb)))
+    for t in pistas + [v for vs in grupos.values() for v in vs]:
+        board.Remove(t)
+    return puentes
+
+
 def freerouting(dsn, ses, pasadas, ignorar):
-    cmd = [str(FREEROUTING), "-de", str(dsn), "-do", str(ses), "-mp", str(pasadas), "-da",
+    cmd = [str(JAVA), "-jar", str(FREEROUTING), "-de", str(dsn), "-do", str(ses),
+           f"--router.autorouter.max_passes={pasadas}",
            "--gui.enabled=false",
-           "--router.layers.routable=false,true",
-           "--router.vias_allowed=false",
+           "--router.layers.routable=true,true",
+           "--router.vias_allowed=true",
            "--router.automatic_neckdown=false",
            f"--router.autorouter.ignore_net_classes={','.join(ignorar)}"]
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
@@ -578,7 +686,7 @@ def freerouting(dsn, ses, pasadas, ignorar):
     return r.returncode, log
 
 
-def rutear(board, tmp, pasadas, ignorar=("BATERIA_BUS", "SERVO")):
+def rutear(board, tmp, pasadas, ignorar=("BATERIA_BUS", "GND")):
     dsn0, dsn, ses = tmp / "placa_kicad.dsn", tmp / "placa.dsn", tmp / "placa.ses"
     if not pcbnew.ExportSpecctraDSN(board, str(dsn0)):
         raise SystemExit("ExportSpecctraDSN falló")
@@ -620,8 +728,7 @@ ESQUELETO = [
     ("VM_DER", 2.0, ["A6.7", (90.66, 18.7), (69.828, 18.7), "A4.5"]),
     ("VM_IZQ_F", 2.0, ["F2.2", (105.8, 17.78), (105.8, 21.7), (43.36, 21.7), "A5.8"]),
     ("VM_DER_F", 2.0, ["F3.2", (102.5, 10.16), (102.5, 14.76), "A6.8"]),
-    ("VM_LOG_F", 1.2, ["F5.2", (108.0, 24.3), (4.0, 24.3), (4.0, 46.0), (15.24, 46.0), "A7.1"]),
-    ("GND", 2.5, [(21.0, 33.02), (21.0, 26.85), (105.0, 26.85), (105.0, 36.0)]),
+    ("GND", 2.5, [(21.0, 33.02), (21.0, 26.85), (105.0, 26.85), (114.3, 26.85)]),
     ("GND", 1.2, [(38.10, 26.85), "A5.2"]),
     ("GND", 2.0, [(71.80, 26.85), (71.80, 33.02)]),
     ("GND", 1.2, [(88.90, 26.85), "A6.2"]),
@@ -715,6 +822,11 @@ def main():
         return 0
     p("4. Ruteo")
     rutear(board, tmp, pasadas)
+    puentes = convertir_puentes(board, netinfo)
+    p(f"   puentes de alambre: {len(puentes)}")
+    for ref, net, largo, a, b in puentes:
+        p(f"     {ref}: {net} {largo} mm {a} -> {b}")
+    (tmp / "puentes.json").write_text(json.dumps(puentes, ensure_ascii=False, indent=1), encoding="utf-8")
     pcbnew.SaveBoard(str(PCB), board)
     p("5. DRC")
     EVID.mkdir(exist_ok=True)

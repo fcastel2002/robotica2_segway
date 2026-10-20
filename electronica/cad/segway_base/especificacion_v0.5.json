@@ -1546,7 +1546,7 @@
    "pins": [
     "R1.1",
     "R35.1",
-    "A1.8"
+    "A1.6"
    ]
   },
   {
@@ -1563,7 +1563,7 @@
    "pins": [
     "R2.1",
     "R36.1",
-    "A1.9"
+    "A1.7"
    ]
   },
   {
@@ -1580,7 +1580,7 @@
    "pins": [
     "R3.1",
     "R37.1",
-    "A1.10"
+    "A1.4"
    ]
   },
   {
@@ -1597,7 +1597,7 @@
    "pins": [
     "R4.1",
     "R38.1",
-    "A1.11"
+    "A1.5"
    ]
   },
   {
@@ -1754,7 +1754,7 @@
    "pins": [
     "J7.2",
     "R13.2",
-    "A1.4"
+    "A1.10"
    ]
   },
   {
@@ -1763,7 +1763,7 @@
    "pins": [
     "J7.3",
     "R14.2",
-    "A1.5"
+    "A1.11"
    ]
   },
   {
@@ -1772,7 +1772,7 @@
    "pins": [
     "J8.2",
     "R15.2",
-    "A1.6"
+    "A1.8"
    ]
   },
   {
@@ -1781,7 +1781,7 @@
    "pins": [
     "J8.3",
     "R16.2",
-    "A1.7"
+    "A1.9"
    ]
   },
   {
@@ -1929,60 +1929,60 @@
    "justification": ""
   },
   {
-   "function": "ENC_IZQ_A",
+   "function": "IN1_DER_MCU",
    "gpio": "GPIO4",
    "board_pin": "4",
-   "net": "ENC_IZQ_A",
-   "justification": "PCNT unidad 0; pin común sin strapping; ADC1 no usado"
-  },
-  {
-   "function": "ENC_IZQ_B",
-   "gpio": "GPIO5",
-   "board_pin": "5",
-   "net": "ENC_IZQ_B",
-   "justification": "PCNT unidad 0"
-  },
-  {
-   "function": "ENC_DER_A",
-   "gpio": "GPIO6",
-   "board_pin": "6",
-   "net": "ENC_DER_A",
-   "justification": "PCNT unidad 1"
-  },
-  {
-   "function": "ENC_DER_B",
-   "gpio": "GPIO7",
-   "board_pin": "7",
-   "net": "ENC_DER_B",
-   "justification": "PCNT unidad 1"
-  },
-  {
-   "function": "IN1_IZQ_MCU",
-   "gpio": "GPIO15",
-   "board_pin": "8",
-   "net": "IN1_IZQ_MCU",
-   "justification": "MCPWM0/LEDC; fuera de strapping; pull-down externo R1 asegura bajo al reset"
-  },
-  {
-   "function": "IN2_IZQ_MCU",
-   "gpio": "GPIO16",
-   "board_pin": "9",
-   "net": "IN2_IZQ_MCU",
-   "justification": "MCPWM0/LEDC; pull-down externo R2"
-  },
-  {
-   "function": "IN1_DER_MCU",
-   "gpio": "GPIO17",
-   "board_pin": "10",
    "net": "IN1_DER_MCU",
-   "justification": "MCPWM1/LEDC; pull-down externo R3"
+   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
   },
   {
    "function": "IN2_DER_MCU",
+   "gpio": "GPIO5",
+   "board_pin": "5",
+   "net": "IN2_DER_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
+  },
+  {
+   "function": "IN1_IZQ_MCU",
+   "gpio": "GPIO6",
+   "board_pin": "6",
+   "net": "IN1_IZQ_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
+  },
+  {
+   "function": "IN2_IZQ_MCU",
+   "gpio": "GPIO7",
+   "board_pin": "7",
+   "net": "IN2_IZQ_MCU",
+   "justification": "MCPWM/LEDC; pin asignado por geometría: el módulo DRV está arriba de la placa"
+  },
+  {
+   "function": "ENC_DER_A",
+   "gpio": "GPIO15",
+   "board_pin": "8",
+   "net": "ENC_DER_A",
+   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
+  },
+  {
+   "function": "ENC_DER_B",
+   "gpio": "GPIO16",
+   "board_pin": "9",
+   "net": "ENC_DER_B",
+   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
+  },
+  {
+   "function": "ENC_IZQ_A",
+   "gpio": "GPIO17",
+   "board_pin": "10",
+   "net": "ENC_IZQ_A",
+   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
+  },
+  {
+   "function": "ENC_IZQ_B",
    "gpio": "GPIO18",
    "board_pin": "11",
-   "net": "IN2_DER_MCU",
-   "justification": "MCPWM1/LEDC; pull-down externo R4"
+   "net": "ENC_IZQ_B",
+   "justification": "PCNT; pin asignado por geometría hacia la bornera del encoder"
   },
   {
    "function": "I2C_SDA",
@@ -2601,6 +2601,7 @@
   "DEC-16: controladora Heemol ESP32-S3-DevKitC-1-N16R8 en lugar de la Blue Pill",
   "A9 (mini buck 3,3 V) eliminado: 3V3 de la DevKitC alimenta MPU6050, INA y encoders (SUP-E03)",
   "J23 (UART) eliminado: la depuración usa el USB del CH343P",
-  "Encoders a 3,3 V obligatorio: el ESP32-S3 no tolera 5 V en sus pines"
+  "Encoders a 3,3 V obligatorio: el ESP32-S3 no tolera 5 V en sus pines",
+  "Pines reasignados por geometría para la placa de una cara: IN de los drivers en GPIO4-7, encoders en GPIO15-18"
  ]
 }

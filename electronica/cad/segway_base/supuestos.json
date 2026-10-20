@@ -980,7 +980,7 @@
   {
    "grupo": "C",
    "tema": "Asignación de pines (ESP32-S3)",
-   "supuesto": "Encoders IZQ A/B en GPIO4/5 y DER A/B en GPIO6/7 (PCNT). IN1/IN2 IZQ en GPIO15/16 y DER en GPIO17/18 (MCPWM o LEDC). I2C SDA/SCL en GPIO8/9. Servos en GPIO10/11 (LEDC 50 Hz). INT de la IMU en GPIO12, ALERT del INA226 en GPIO13, paro en GPIO14. Batería en GPIO1 (ADC1_CH0).",
+   "supuesto": "Pines asignados por geometría para la placa de una cara: IN1/IN2 del DRV DER en GPIO4/5 y del DRV IZQ en GPIO6/7; encoders DER A/B en GPIO15/16 e IZQ A/B en GPIO17/18 (PCNT); I2C SDA/SCL en GPIO8/9; servos en GPIO10/11 (LEDC 50 Hz); INT de la IMU en GPIO12, ALERT del INA226 en GPIO13, paro en GPIO14; batería en GPIO1 (ADC1_CH0).",
    "base": "Especificación v0.5 (tabla de GPIO); matriz GPIO del ESP32-S3: cualquier periférico en cualquier pin [D].",
    "impacto_si_cambia": "Cambiar pines solo modifica etiquetas del esquema y pistas cortas; el firmware usa la misma tabla.",
    "como_se_confirma": "Revisión con el equipo de firmware.",
