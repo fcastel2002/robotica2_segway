@@ -155,6 +155,8 @@ así que los 850 g son optimistas: el rango realista está entre **850 y 950 g**
 Es el parámetro que decide **cuánta fuerza recibe el robot al aterrizar**, y hoy vale 30 kN/m
 puesto a dedo. Al caer de un escalón hay dos golpes muy distintos y conviene no confundirlos:
 
+![Qué absorbe el golpe al aterrizar](../../modelado/dinamica/fig_aterrizaje.png)
+
 | | Fase A: el toque | Fase B: el frenado |
 |---|---|---|
 | **Dura** | ~3 ms | 11 a 33 ms |
