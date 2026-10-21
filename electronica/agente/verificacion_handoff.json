@@ -1,0 +1,110 @@
+{
+  "superseded": {
+    "date": "2026-10-17",
+    "note": "Registro histórico del traspaso del 15/10. Su alcance no incluyó BACKLOG.md ni AGENTS.md raíz, donde había 13 enlaces rotos. Los SHA-256 corresponden a los blobs con fin de línea LF en git; el checkout de Windows usa CRLF (core.autocrlf), por lo que Get-FileHash no coincide. 'bundled_quick_validate' es una herramienta de Codex. Para verificar enlaces usar electronica/agente/verificar_enlaces.py."
+  },
+  "date": "2026-10-15",
+  "scope": "Paquete documental de continuidad de electrónica",
+  "target_platform": "Windows",
+  "kicad_installation_owner": "Matías; instalación pendiente en destino",
+  "documents_checked": 18,
+  "local_links_checked": 100,
+  "broken_links": [],
+  "skill_validation": {
+    "yaml_parser": "Ruby standard library YAML.safe_load",
+    "format": "passed",
+    "name_and_description": "passed",
+    "bundled_quick_validate": "Intentado; no ejecutable por falta de PyYAML. Validación alternativa de YAML y campos realizada sin instalar dependencias."
+  },
+  "reviewed_invariants": [
+    "REQ-22: módulos físicos",
+    "REQ-23: KiCad + IA + MCP elegido",
+    "Windows como destino; KiCad a cargo de Matías",
+    "Servidor MCP y prueba pendientes, sin configuración ficticia",
+    "Estado físico no ensayado y placas exactas pendientes",
+    "Skill ubicada bajo electronica/.claude/skills; copiar carpetas ocultas",
+    "Planes consolidados; enlaces anteriores conservados",
+    "Memoria documental explícita, sin dependencia de memoria privada"
+  ],
+  "runtime_not_tested": [
+    "Carga de skill en Claude Code de Windows",
+    "Disponibilidad/identificador de Opus 5.5 en cuenta de destino",
+    "KiCad de Windows",
+    "Servidor MCP",
+    "CAD final y ensayos físicos"
+  ],
+  "files": [
+    {
+      "path": "docs/gestion/2026-10-15-documentacion-componentes.md",
+      "sha256": "b99e1784d501f61fc5243f1d56cc2e24f288f58202368855eb915d664b742b63"
+    },
+    {
+      "path": "docs/gestion/2026-10-15-plan-electronica-pcb.md",
+      "sha256": "41c4e414584f84a8aea8c7a4783151f93fc01f24c77312e401f933b60212e97d"
+    },
+    {
+      "path": "docs/gestion/2026-10-15-research-reddit-eda-ia.md",
+      "sha256": "d5958bcd72912be12b78d050bb99416be0c5baa26f01402770719c98cce03a31"
+    },
+    {
+      "path": "electronica/.claude/skills/segway-electronica/SKILL.md",
+      "sha256": "d2bc3bede10a72ac0238000508114176e4c5ff338095ed405666101c488332c9"
+    },
+    {
+      "path": "electronica/AGENTS.md",
+      "sha256": "bb8270381005d690c575ba3c3fb97282c084397e775d2622b487ab19110e2ff3"
+    },
+    {
+      "path": "electronica/CLAUDE.md",
+      "sha256": "ba0f5227dea169a394d2c0049b419b6546e5efb41860b345196a3ea462419073"
+    },
+    {
+      "path": "electronica/INICIAR_AQUI.md",
+      "sha256": "9cdcb068d749d87058d51cad50aa93255741aefe74a714b3b89637a1e0c8bd3f"
+    },
+    {
+      "path": "electronica/README.md",
+      "sha256": "58b5fd9c72170fcec8dad44e2ed0a662568da9029b36bfce0a0b6e0148073099"
+    },
+    {
+      "path": "electronica/agente/entorno_windows_mcp.md",
+      "sha256": "cca3f233f238ff276b9cc4d3a2863eecdd10008bd57ebfc6d910055e5a84c09d"
+    },
+    {
+      "path": "electronica/agente/memoria/MEMORY.md",
+      "sha256": "cb9ffbb8ddd178e0bfc3580bf046f28331672ca50001e50eea58831085d4d229"
+    },
+    {
+      "path": "electronica/agente/memoria/cronologia.md",
+      "sha256": "3b02f06337f9625c78bc907c3b10231d4e1eb8a4f02aa6f8923a1f8d5260af7d"
+    },
+    {
+      "path": "electronica/agente/memoria/decisiones.md",
+      "sha256": "11e6ff9bd489b970c81bbc33e6801c4340a1c3eaece73c41888440a73d125c3b"
+    },
+    {
+      "path": "electronica/agente/memoria/estado_actual.md",
+      "sha256": "38a38fbec5714f0e9a484259ea72464f4aed809804a1d9ba6bc7da96e84ce625"
+    },
+    {
+      "path": "electronica/agente/proxima_sesion.md",
+      "sha256": "82392146db00daf7ea9bd58cbc15a469778be0a0acdcabb83e920bf66acd6e9d"
+    },
+    {
+      "path": "electronica/planificacion/2026-10-15-documentacion-componentes.md",
+      "sha256": "5a6009539488c9244fa1f083f15403417865fa4460541cb904d64d2e8e3148cc"
+    },
+    {
+      "path": "electronica/planificacion/2026-10-15-plan-electronica-pcb.md",
+      "sha256": "ef662e2ca4db6bfe8930b828ba045166f29d73b3a06fb3e1671d325ca70eb87a"
+    },
+    {
+      "path": "electronica/planificacion/2026-10-15-research-reddit-eda-ia.md",
+      "sha256": "c256e9b4c79ab2a8707196cbaa7678de0a7d4af46dd021a85541734574aca042"
+    },
+    {
+      "path": "electronica/requisitos_y_decisiones.md",
+      "sha256": "142e1c535293c912a2c5f88df6fdd6084660b9a08742d76e2c3e7e8bb27ccb6c"
+    }
+  ]
+}

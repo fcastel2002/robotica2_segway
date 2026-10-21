@@ -1,0 +1,240 @@
+{
+  "violations": [
+    {
+      "severity": "warning",
+      "description": "La huella 'R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal' no coincide con la copia en la biblioteca 'Resistor_THT'",
+      "rule": "lib_footprint_mismatch",
+      "pos": {
+        "x": 115.0,
+        "y": 100.0
+      },
+      "items": [
+        {
+          "description": "Huella R2",
+          "pos": {
+            "x": 115.0,
+            "y": 100.0
+          },
+          "uuid": "0527dd5f-4912-4d56-8f5b-f33bdc17b5d3",
+          "ownership_status": "resolved",
+          "item_kind": "footprint",
+          "layer": "F.Cu",
+          "owner": {
+            "kind": "board"
+          }
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "description": "La huella 'PinHeader_1x02_P2.54mm_Vertical' no coincide con la copia en la biblioteca 'Connector_PinHeader_2.54mm'",
+      "rule": "lib_footprint_mismatch",
+      "pos": {
+        "x": 106.0,
+        "y": 92.0
+      },
+      "items": [
+        {
+          "description": "Huella J1",
+          "pos": {
+            "x": 106.0,
+            "y": 92.0
+          },
+          "uuid": "9efbcd8c-65ef-45b4-a165-1f7208c42819",
+          "ownership_status": "resolved",
+          "item_kind": "footprint",
+          "layer": "F.Cu",
+          "owner": {
+            "kind": "board"
+          }
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "description": "La huella 'R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal' no coincide con la copia en la biblioteca 'Resistor_THT'",
+      "rule": "lib_footprint_mismatch",
+      "pos": {
+        "x": 115.0,
+        "y": 88.0
+      },
+      "items": [
+        {
+          "description": "Huella R1",
+          "pos": {
+            "x": 115.0,
+            "y": 88.0
+          },
+          "uuid": "a9f14ad9-9d81-4088-bf75-5d9c81d77eb0",
+          "ownership_status": "resolved",
+          "item_kind": "footprint",
+          "layer": "F.Cu",
+          "owner": {
+            "kind": "board"
+          }
+        }
+      ]
+    }
+  ],
+  "unconnected_items": [
+    {
+      "severity": "error",
+      "description": "Missing connection between items",
+      "rule": "unconnected_items",
+      "pos": {
+        "x": 115.0,
+        "y": 100.0
+      },
+      "items": [
+        {
+          "description": "Pad PTH 1 [/NODO_B] de R2",
+          "pos": {
+            "x": 115.0,
+            "y": 100.0
+          },
+          "uuid": "2538c2d6-87f9-4578-a448-550e15f229ec",
+          "ownership_status": "resolved",
+          "item_kind": "pad",
+          "owner": {
+            "kind": "footprint",
+            "reference": "R2",
+            "uuid": "0527dd5f-4912-4d56-8f5b-f33bdc17b5d3"
+          }
+        },
+        {
+          "description": "Pad PTH 2 [/NODO_B] de R1",
+          "pos": {
+            "x": 122.62,
+            "y": 88.0
+          },
+          "uuid": "22dbfc90-c7a5-4707-b89e-ea4f8f218362",
+          "ownership_status": "resolved",
+          "item_kind": "pad",
+          "owner": {
+            "kind": "footprint",
+            "reference": "R1",
+            "uuid": "a9f14ad9-9d81-4088-bf75-5d9c81d77eb0"
+          }
+        }
+      ]
+    },
+    {
+      "severity": "error",
+      "description": "Missing connection between items",
+      "rule": "unconnected_items",
+      "pos": {
+        "x": 106.0,
+        "y": 94.54
+      },
+      "items": [
+        {
+          "description": "Pad PTH 2 [/RETORNO] de J1",
+          "pos": {
+            "x": 106.0,
+            "y": 94.54
+          },
+          "uuid": "faff475b-6cde-4060-8abb-a807983e7f94",
+          "ownership_status": "resolved",
+          "item_kind": "pad",
+          "owner": {
+            "kind": "footprint",
+            "reference": "J1",
+            "uuid": "9efbcd8c-65ef-45b4-a165-1f7208c42819"
+          }
+        },
+        {
+          "description": "Pad PTH 2 [/RETORNO] de R2",
+          "pos": {
+            "x": 122.62,
+            "y": 100.0
+          },
+          "uuid": "bc5f527f-336f-4749-8fe8-4968b1177f1e",
+          "ownership_status": "resolved",
+          "item_kind": "pad",
+          "owner": {
+            "kind": "footprint",
+            "reference": "R2",
+            "uuid": "0527dd5f-4912-4d56-8f5b-f33bdc17b5d3"
+          }
+        }
+      ]
+    }
+  ],
+  "schematic_parity": [
+    {
+      "severity": "warning",
+      "description": "El campo 'Description' difiere (PCB: '', Esquema: 'Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)')",
+      "rule": "footprint_symbol_field_mismatch",
+      "pos": {
+        "x": 106.0,
+        "y": 92.0
+      },
+      "items": [
+        {
+          "description": "Huella J1",
+          "pos": {
+            "x": 106.0,
+            "y": 92.0
+          },
+          "uuid": "9efbcd8c-65ef-45b4-a165-1f7208c42819",
+          "ownership_status": "resolved",
+          "item_kind": "footprint",
+          "layer": "F.Cu",
+          "owner": {
+            "kind": "board"
+          }
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "description": "El campo 'Description' difiere (PCB: '', Esquema: 'Resistor')",
+      "rule": "footprint_symbol_field_mismatch",
+      "pos": {
+        "x": 115.0,
+        "y": 88.0
+      },
+      "items": [
+        {
+          "description": "Huella R1",
+          "pos": {
+            "x": 115.0,
+            "y": 88.0
+          },
+          "uuid": "a9f14ad9-9d81-4088-bf75-5d9c81d77eb0",
+          "ownership_status": "resolved",
+          "item_kind": "footprint",
+          "layer": "F.Cu",
+          "owner": {
+            "kind": "board"
+          }
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "description": "El campo 'Description' difiere (PCB: '', Esquema: 'Resistor')",
+      "rule": "footprint_symbol_field_mismatch",
+      "pos": {
+        "x": 115.0,
+        "y": 100.0
+      },
+      "items": [
+        {
+          "description": "Huella R2",
+          "pos": {
+            "x": 115.0,
+            "y": 100.0
+          },
+          "uuid": "0527dd5f-4912-4d56-8f5b-f33bdc17b5d3",
+          "ownership_status": "resolved",
+          "item_kind": "footprint",
+          "layer": "F.Cu",
+          "owner": {
+            "kind": "board"
+          }
+        }
+      ]
+    }
+  ]
+}

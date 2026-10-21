@@ -129,5 +129,27 @@
     "sha256": "bfe5d2e6a936b3e2ae2a48a665ae2755571332db07fc04dc5b4a1fe5713bc9ce",
     "paginas": null,
     "alcance": "Módulos similares; no identifica el integrado de ROB-005/006."
+  },
+  {
+    "archivo": "ROB-012_ESP32/ESP32_Series_Espressif_datasheet.pdf",
+    "fuente": "https://documentation.espressif.com/esp32_datasheet_en.pdf",
+    "publicador": "Espressif Systems",
+    "revision": "v5.3",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 989523,
+    "sha256": "a7917e6b47528c9dcab06837a49d452e582751335797db879f1cf2d17cd29adf",
+    "paginas": 78,
+    "alcance": "Datasheet oficial del SoC de la serie ESP32 clásica. Variante de placa pendiente; no aplicarlo automáticamente a S3/C3 u otra familia."
+  },
+  {
+    "archivo": "ROB-013_MPU6050/MPU6000_MPU6050_InvenSense_datasheet.pdf",
+    "fuente": "https://cdn.sparkfun.com/assets/a/4/6/8/e/MPU_6050.pdf",
+    "publicador": "InvenSense; copia original alojada por SparkFun",
+    "revision": "PS-MPU-6000A-00, Rev. 3.4, 19/08/2013",
+    "fecha_descarga": "2026-10-15",
+    "bytes": 1637351,
+    "sha256": "a4fdf69590b8cbab1cf0a5bcd359327b0ac022061fb233855aff2e191e7e3584",
+    "paginas": 52,
+    "alcance": "Datasheet original del integrado. La alimentación, regulación y pinout del módulo comprado requieren identificación."
   }
 ]

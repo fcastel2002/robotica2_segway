@@ -4,6 +4,12 @@ Actualizado: 15 de octubre de 2026.
 
 Inventario basado en las nueve capturas iniciales, dos fotografías del servo y la publicación de los motores aportadas por Matías, quien indicó que corresponden a productos comprados. Las cantidades de ROB-001 a ROB-009 se transcriben de las variantes y selectores visibles; las capturas de las fichas comerciales no son comprobantes del pedido. Matías confirmó expresamente 2 servos y 2 motores. Las especificaciones son las anunciadas o visibles en las imágenes y aún no se verificaron con documentación técnica.
 
+## Formato de uso confirmado para las placas
+
+**Decisión de Matías, 15/10/2026:** todos los componentes mencionados se utilizarán como módulos/conjuntos completos, con sus pines o conexiones físicas. Las referencias LM2596, INA219, DRV8871, INA226, ESP32 y MPU6050 identifican la función o familia del módulo; no indican compra o montaje del integrado suelto en la PCB. Los elementos con cables, terminales o pads conservan esa interfaz real. El diseño representará los módulos comprados mediante sus símbolos, huellas y conectores, verificando dimensiones y pinout físicos. Detalle en [REQ-22](../../requisitos_y_decisiones.md).
+
+La imagen de búsqueda de MPU6050 aportada como aclaración es ilustrativa del formato; la variante exacta de ROB-013 sigue pendiente de identificar.
+
 ## Listado
 
 | ID | Componente / variante seleccionada | Presentación visible | Unidades registradas | Precio mostrado por presentación (ARS) | Captura |
@@ -19,8 +25,11 @@ Inventario basado en las nueve capturas iniciales, dos fotografías del servo y 
 | ROB-009 | Sensor de corriente y potencia INA226, interfaz I²C | Variante INA226 / 1pc | 1 | No visible | 09 |
 | ROB-010 | Servo digital DSSERVO DS3240 MG, etiqueta 40 kg | 2 servos confirmados por Matías | 2 | No informado | 10a, 10b |
 | ROB-011 | Motorreductor DC con escobillas GA25-370, 12 V, 300 RPM, con encoder | 2 motores confirmados por Matías | 2 | No informado | Publicación Mercado Libre y confirmación de Matías |
+| ROB-012 | Controladora Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16, 20/10/2026) | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
+| ROB-013 | IMU MPU6050, módulo de 8 pines formato GY-521 según imagen de Matías; ejemplar sin medir | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
+| ROB-014 | Conjunto de tres celdas conectado al controlador de batería | 1 conjunto de 3 celdas; modelo nominal 11,1 V | 1 conjunto | No informado | Confirmación de Matías, 15/10/2026 |
 
-Total actualizado: **11 entradas de inventario y 24 módulos/dispositivos**, según las cantidades visibles iniciales y las cantidades de servos y motores confirmadas por Matías. Los accesorios de los módulos no se cuentan como unidades adicionales.
+Total actualizado: **14 entradas y 27 dispositivos/conjuntos para el robot**: 24 unidades registradas inicialmente, una controladora ESP32, una IMU MPU6050 y un conjunto de batería que contiene 3 celdas. Se registra una controladora y una IMU para el diseño; repuestos adicionales no informados. El pack cuenta como un conjunto, no como una sola celda. Los accesorios no se cuentan por separado.
 
 Suma de los siete precios de las capturas iniciales: **ARS 59.254**. Es una referencia de las fichas mostradas, no el importe pagado; faltan los precios de compra de ROB-008 a ROB-011 y no se incluyen cargos de importación u otros cargos.
 
@@ -144,12 +153,42 @@ Suma de los siete precios de las capturas iniciales: **ARS 59.254**. Es una refe
 - Precio observado en la publicación: **ARS 27.752,93** por unidad, sin impuestos según la página, al momento de consulta. Es referencia comercial actual, no precio de compra confirmado, y no se suma a los precios de las capturas iniciales.
 - Pendiente: relación de reducción, corriente nominal y de bloqueo, par, medidas del eje y especificaciones del encoder; una foto de la etiqueta puede ayudar a completar estos datos.
 
+### ROB-012 — Controladora ESP32-S3-DevKitC-1-N16R8
+
+- 20/10/2026 (DEC-16): Matías definió con el equipo la **Heemol ESP32-S3-DevKitC-1-N16R8**, ASIN B0FKFXC6F8. Módulo ESP32-S3-WROOM-1-N16R8, puente USB-serie CH343P, dos USB-C (UART y USB nativo), LED RGB WS2812 en GPIO48, 44 pines en dos hileras de 22, placa de 57 × 28 mm (63,3 mm con antena). Documentación en [ROB-012_ESP32-S3_DevKitC-1_N16R8](../datasheets/ROB-012_ESP32-S3_DevKitC-1_N16R8/FICHA_Y_FUENTES.md). Lo que sigue es el registro anterior.
+
+
+- Confirmada por Matías el 15/10/2026 para el robot; se registra una unidad de diseño.
+- Variante de SoC, módulo y placa de desarrollo todavía no identificadas físicamente. No se asume WROOM, DevKit, S3 o C3 ni un pinout concreto.
+- Archivado el datasheet oficial **ESP32 Series v5.3** de Espressif; corresponde a la serie ESP32 clásica y no a todas las familias que incluyen ESP32 en el nombre.
+- Pendiente: foto/código de la placa, dimensiones, pines, regulación incorporada, entrada 5 V/3,3 V y comportamiento al conectar USB.
+- [Ficha y fuentes](../datasheets/ROB-012_ESP32/FICHA_Y_FUENTES.md).
+
+### ROB-013 — IMU MPU6050
+
+- Confirmada por Matías el 15/10/2026 para el robot; se registra una unidad de diseño.
+- Sensor inercial MPU6050; modelo de módulo/PCB todavía pendiente. No se asume GY-521.
+- Archivado el datasheet original de InvenSense, **PS-MPU-6000A-00 Rev. 3.4**, copia alojada por SparkFun. La descarga directa de TDK redirige o devuelve acceso denegado; se conserva el enlace oficial y la procedencia de la copia.
+- Pendiente: pinout del módulo, alimentación, regulación/pull-ups, orientación, calibración y fijación en la cabina.
+- 17/10/2026: Matías confirmó el formato módulo y aportó una imagen de referencia de 8 pines (INT, AD0, XCL, XDA, SDA, SCL, GND, VCC), serigrafía "ITG/MPU". Detalle y pendientes en la ficha.
+- [Ficha y fuentes](../datasheets/ROB-013_MPU6050/FICHA_Y_FUENTES.md).
+
+### ROB-014 — Conjunto de batería de tres celdas
+
+- Matías confirmó **3 celdas conectadas al controlador** el 15/10/2026.
+- Representación solicitada para el trabajo eléctrico: **fuente ideal nominal de 11,1 V**.
+- Un conjunto registrado; las celdas son tres. Química, modelo, conexión real, capacidad y corriente admisible no informados.
+- El controlador referido se debe identificar; no se asume automáticamente cuál de las dos placas BMS compradas se utiliza.
+- Sin datasheet específico: falta marca/modelo de celdas y controlador. No se inventa una ficha de batería genérica.
+- Los extremos de tensión de diseño físico, la protección y el cargador se verificarán por separado de la representación nominal de 11,1 V.
+- [Ficha y pendientes](../datasheets/ROB-014_Bateria_11V1/FICHA_Y_FUENTES.md).
+
 ## Pendientes
 
 - Confirmar relación de reducción y especificaciones restantes de los motores ROB-011; variante de 300 RPM ya confirmada.
 - Confirmar variante angular y especificaciones restantes de los servos ROB-010.
-- Documentación recopilada el 15/10/2026 en [datasheets/README.md](../datasheets/README.md): 9 PDF descargados, 3 fichas comerciales HTML y una ficha local por cada ID. Los datasheets oficiales de LM2596, INA219, DRV8871 e INA226 describen los integrados; la documentación de módulos, servo y motor tiene su alcance detallado en el índice. MP1584 es solo candidato para ROB-005/006. Siguen pendientes los datasheets exactos o la confirmación de revisión de los componentes genéricos señalados allí.
-- Continuar numeración desde ROB-012 si se incorporan otros componentes.
+- Documentación recopilada el 15/10/2026 en [datasheets/README.md](../datasheets/README.md): 11 PDF descargados, 3 fichas comerciales HTML y una ficha local por cada ID. Los datasheets oficiales de LM2596, INA219, DRV8871, INA226, ESP32 y MPU6050 describen los integrados; la documentación de módulos, servo y motor tiene su alcance detallado en el índice. MP1584 es solo candidato para ROB-005/006. Siguen pendientes los datasheets exactos o la confirmación de revisión de los componentes genéricos señalados allí.
+- Continuar numeración desde ROB-015 si se incorporan otros componentes.
 
 ## Evidencia
 

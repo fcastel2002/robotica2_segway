@@ -14,8 +14,10 @@ borró del árbol el 19/9/2026 y quedó solo en la historia de git; ver la secci
 El [inventario confirmado](electronica/componentes_comprados/inventario/inventario_robotica.md)
 y los [datasheets y fichas recopilados](electronica/componentes_comprados/datasheets/README.md)
 están organizados en [electrónica](electronica/componentes_comprados/README.md).
-Se registran **11 entradas y 24 unidades**, incluidos **2 servos DSSERVO DS3240 MG** y
-**2 motores GA25-370 de 12 V y 300 RPM con encoder**.
+Se registran **14 entradas y 27 dispositivos/conjuntos** (un pack contiene tres celdas), incluidos **2 servos DSSERVO DS3240 MG** y
+**2 motores GA25-370 de 12 V y 300 RPM con encoder**. ESP32 y MPU6050 confirmadas;
+alimentación representada por una fuente nominal de 11,1 V. Matías es responsable de electrónica y PCB.
+[Plan de trabajo](electronica/planificacion/2026-10-15-plan-electronica-pcb.md).
 
 El modelo y la simulación **ya usan el motor comprado** desde el 15/10 (PAR-004 y ELE-014 en el
 [backlog](BACKLOG.md)). Lo que sigue pendiente es el CAD, que todavía tiene el motor anterior de 37 mm
@@ -102,7 +104,7 @@ Detalle y estado en [`BACKLOG.md`](BACKLOG.md).
 5. **Planta completa** en `modelado/planta/`: péndulo invertido sobre ruedas con la altura del centro de
    masa en función de θ, LQR, motores, contacto. Es el modelo del equilibrio; el banco de Matías es el
    de la pata.
-6. Electrónica y firmware: nada empezado.
+6. Electrónica: [plan, requisitos y ensayos definidos](electronica/README.md); validar el prototipo y después diseñar la PCB. Firmware de prueba e integración pendientes.
 
 ## 6. Cómo correr las cosas
 
