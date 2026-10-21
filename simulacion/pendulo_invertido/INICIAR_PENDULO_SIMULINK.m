@@ -84,10 +84,21 @@ fprintf('LIMITES del actuador\n');
 fprintf('        par de bloqueo del motor       %.3f N m\n', motor.tau_bloqueo);
 fprintf('        fuerza que pone en el piso     %.2f N   (NO es tau/r = %.1f N)\n', F_motor, motor.tau_bloqueo/r);
 fprintf('        friccion disponible            %.2f N   (mu = %.1f)\n', F_piso, p.mu);
-if F_motor < F_piso
-    fprintf('        -> usa el %.0f %% del agarre: el motor NO puede hacer patinar la rueda\n\n', 100*F_motor/F_piso);
+% El veredicto depende de mu, que es el unico parametro SIN MEDIR (ensayo M-1 del plan
+% de ensayos). Con mu = 0.7 el motor queda justo por debajo del agarre, pero el margen es
+% de un 2 %: si el piso resulta peor, patina en las maniobras bruscas. Lo tranquilizador es
+% que el equilibrio normal (+-2 grados) pide apenas mu = 0.20.
+uso = 100*F_motor/F_piso;
+if uso < 80
+    fprintf('        -> a fondo usa el %.0f %% del agarre: el motor NO puede hacer patinar la rueda\n\n', uso);
+elseif uso <= 100
+    fprintf('        -> a fondo usa el %.0f %% del agarre: entra, pero por poco.\n', uso);
+    fprintf('           OJO: mu = %.1f esta SUPUESTO, no medido. Si el piso da mu < %.2f, patina\n', ...
+            p.mu, p.mu*F_motor/F_piso);
+    fprintf('           a fondo. Pararse quieto pide solo mu = 0.20, asi que no se cae por esto\n\n');
 else
-    fprintf('        -> supera el agarre %.1f veces: manda el neumatico\n\n', F_motor/F_piso);
+    fprintf('        -> supera el agarre %.1f veces: manda el neumatico.\n', F_motor/F_piso);
+    fprintf('           Limitar el par a %.3f N m por software (ensayo M-1)\n\n', F_piso/abs(c1));
 end
 
 %% 5. Construir y simular ==================================================

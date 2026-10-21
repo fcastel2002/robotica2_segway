@@ -123,7 +123,7 @@ barra_BC(ax); punto(ax, B, "B", (-14, 10)); punto(ax, C, "C", (14, 6)); cm(ax, G
 fuerza(ax, B, (1, 0), r"$B_x$", AZUL); fuerza(ax, B, (0, 1), r"$B_y$", AZUL)
 fuerza(ax, GBC, (0, -1), r"$m_{BC}\,g$", ROJO, L=26, dtxt=(16, 0))
 fuerza(ax, C, (1, 0), r"$C_x$", AZUL); fuerza(ax, C, (0, 1), r"$C_y$", AZUL)
-ax.text(130, -55, "con m_BC = 5.6 g despreciable, BC es una barra biarticulada:\nsu fuerza va a lo largo de BC", fontsize=14, color=GRIS, ha="center", va="top")
+ax.text(130, -55, "con m_BC = 23 g (medido) casi despreciable, BC es una barra biarticulada:\nsu fuerza va a lo largo de BC, con 0.9 % de error", fontsize=14, color=GRIS, ha="center", va="top")
 ax.set_xlim(20, 260); ax.set_ylim(-90, 115)
 
 # ---------- (d) acoplador CDP + rueda ----------

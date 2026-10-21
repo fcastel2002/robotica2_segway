@@ -1,0 +1,61 @@
+   ENSAYO M-1: medir el coeficiente de rozamiento mu del neumatico
+
+
+   METODO A  (recomendado)  tiro con balanza, carga real
+   .--------------------------------------------------------------------.
+   |                                                                     |
+   |        peso conocido W                                              |
+   |        (lastre: 460 g = lo que carga                                |
+   |         una rueda del robot)                                        |
+   |              |                                                      |
+   |              v                                                      |
+   |          +-------+                                                  |
+   |          | ##### |                                                  |
+   |          +-------+          ,--------.                              |
+   |             ,-.             | balanza|                              |
+   |            / O \ <----------| de mano|<---- tirar despacio,          |
+   |           '-----'    F      '--------'      cada vez mas fuerte     |
+   |          rueda con                                                  |
+   |          el eje trabado                                             |
+   |   =================================================                 |
+   |      piso REAL del lugar donde se va a demostrar                    |
+   |                                                                     |
+   |   Se anota F justo cuando la rueda ARRANCA a resbalar.              |
+   |                                                                     |
+   |              mu = F / W                                             |
+   |                                                                     |
+   '--------------------------------------------------------------------'
+
+
+   METODO B  (de apuro)  plano inclinado
+   .--------------------------------------------------------------------.
+   |                                                                     |
+   |                             ,-.                                     |
+   |                            / O \  rueda con el eje trabado          |
+   |                        .  '-----'                                   |
+   |                      .  /                                           |
+   |                    .   /                                            |
+   |                  .    /  tabla forrada con el piso real             |
+   |                .     /   (o el piso mismo, levantando un extremo)   |
+   |              .      /                                               |
+   |            .       /                                                |
+   |          . alfa   /                                                 |
+   |   ==============================                                    |
+   |                                                                     |
+   |   Se levanta de a poco hasta que la rueda arranca a resbalar.       |
+   |                                                                     |
+   |              mu = tan(alfa)                                         |
+   |                                                                     |
+   |   Mas rapido, pero mide con MUY poca carga: la goma da mu mas       |
+   |   alto a baja presion, asi que este metodo sale OPTIMISTA.          |
+   |                                                                     |
+   '--------------------------------------------------------------------'
+
+
+   LO QUE NO HAY QUE HACER
+
+      ,-.                      ,-.
+     / O \  --> rueda          / O \  --> si el eje gira libre,
+    '-----'     suelta        '-----'     la rueda RUEDA y nunca
+   ==========                ==========   resbala: se mide rodadura,
+                                          no rozamiento. TRABAR EL EJE.

@@ -34,16 +34,20 @@ p.Rw    = 33e-3;           % radio de la rueda
 p.theta_min = deg2rad(10); % carrera del servo: plegada
 p.theta_max = deg2rad(40); %                    estirada
 % --- piezas de la pata: masa [kg], centro de masa [m], inercia respecto de SU centro de masa [kg m^2]
-%     (las de la primera iteración escaladas a 80: la masa baja con el largo, x0.8, y la inercia x0.8^3;
-%      PESAR las piezas cuando estén impresas)
-p.m_AD  = 0.0232;  p.AG = 0.428*p.AD;   p.IG_AD  = 3.63e-5;   % manivela:  masa, distancia A->G_AD, inercia
-p.m_BC  = 0.0056;  p.BG = 0.5*p.BC;     p.IG_BC  = 0.88e-5;   % balancín:  masa, distancia B->G_BC, inercia
-p.m_CDP = 0.0156;  p.dG = 0.3145*p.DP;  p.IG_CDP = 3.27e-5;   % acoplador: masa, distancia D->G_CDP, inercia
+%     MASAS MEDIDAS el 21/10/2026, una barra por vez. Las inercias son las del mallado del STEP
+%     escaladas por masa_medida/masa_estimada, porque la geometría no cambió, sólo la densidad real.
+%     El BC resultó pesar CUATRO VECES lo estimado, así que conviene no confiar en el resto
+%     de las masas que siguen sin medir (la rueda y el motor de rueda, que no están todavía).
+p.m_AD  = 0.0300;  p.AG = 0.428*p.AD;   p.IG_AD  = 4.695e-5;  % MEDIDO (se estimaba 23.2 g)   % manivela:  masa, distancia A->G_AD, inercia
+p.m_BC  = 0.0230;  p.BG = 0.5*p.BC;     p.IG_BC  = 3.616e-5;  % MEDIDO (se estimaba 5.6 g: x4)   % balancín:  masa, distancia B->G_BC, inercia
+p.m_CDP = 0.0110;  p.dG = 0.3145*p.DP;  p.IG_CDP = 2.308e-5;  % MEDIDO (se estimaba 15.6 g)   % acoplador: masa, distancia D->G_CDP, inercia
 p.epsG  = p.delta;                                            % ángulo de D->G_CDP desde D->C (G sobre la recta D->P)
 p.m_P   = 0.030 + 0.095;   % rueda (30 g) + motorreductor GA25-370 1:20 con encoder (95 g estimado; PESAR) colgados de P
 % --- cabina: todo lo que NO es pata. Solo hace falta su masa, no dónde está su centro de masa,
 %     porque no gira (el control de equilibrio mantiene la inclinación) y solo se traslada.
-p.m_cabina = 0.207 + 0.114 + 2*0.058 + 0.120 + 0.060 + 0.050;  % cabeza + tapa + 2 servos de 40 kg cm (58 g) + batería + electrónica + tornillería
+% Caja = 542 g MEDIDOS: se peso el robot entero sin ruedas ni motores de rueda (670 g) y se
+% restaron las seis barras. El reparto interno sigue siendo el estimado, escalado 542/667.
+p.m_cabina = 0.1682 + 0.0926 + 2*0.0471 + 0.0975 + 0.0488 + 0.0406;  % cabeza + tapa + 2 servos + batería + electrónica + tornillería
 p.n_patas  = 2;            % patas iguales, movidas a la vez por sus dos servos
 % --- fricción viscosa en cada articulación [N m s/rad]: par de roce = -b_eq(theta)*theta'
 %     NINGUNA está medida todavía, por eso valen cero y el modelo no tiene pérdidas. Para medirlas,

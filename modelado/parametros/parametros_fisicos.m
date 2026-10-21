@@ -38,7 +38,8 @@ function o = parametros_fisicos(variante)
       o.N = 20;    o.encoder = true;    % GA25-370 COMPRADO: reductor 1:20, 300 rpm en vacio a 12 V
       o.nombre_motor = 'GA25-370 12V 1:20 (300 rpm en vacio) con encoder de cuadratura, 11 PPR en el rotor';
       o.m_motor = 95;                   % cada motorreductor GA25-370 [g] (cuerpo 25 mm, caja 21 mm; estimado). PESAR.
-      o.m_servo = 58;                   % cada servo de 40 kg cm [g] (ficha tipo DS3240). PESAR.
+      o.m_servo = 47.1;                   % parte de los 542 g medidos. OJO: la ficha del DS3240 da ~60 g y un servo
+                                        % pesa lo que pesa, no se escala. Es un relleno hasta tener el desglose: PESARLO SUELTO.
       o.tau_s_max = 40*0.0981;          % par maximo del servo [N m] = 40 kg cm. Verificar a que tension lo da la publicacion
       o.w_nl_servo = 7.0;               % velocidad en vacio [rad/s] (0.15 s por 60 grados, tipico de esta clase; verificar)
       o.nombre_servo = 'servo digital 40 kg cm (tipo DS3240)';
@@ -64,24 +65,34 @@ function o = parametros_fisicos(variante)
   o.b_w = 1e-4;          % friccion viscosa en el eje de rueda [N m s/rad] (rodamientos; supuesto)
 
   % ============================ 3. MASAS DE LAS PIEZAS (g) y su posicion ============================
-  % Cabina y tapa: volumen del STEP de la primera iteracion por una densidad efectiva (PLA con relleno); no cambian
-  % con la escala de las barras. Barras: la primera iteracion escalada, el largo baja con e y el ancho y el espesor no,
-  % asi que la masa va con e y la inercia propia con e^3. Cuando se impriman: PESAR y reemplazar.
+  % --- 21/10/2026: PRIMERA TANDA DE MEDICIONES ---
+  % Las tres barras se pesaron una por una. El resto de la caja se obtuvo pesando el robot entero
+  % SIN ruedas ni motores de rueda (670 g) y restando las seis barras: quedan 542 g de caja.
+  % Como no hay desglose de esos 542 g, los seis items de la caja se escalan parejo por 542/667.
+  % Se comprobo que el reparto no importa: repartiendo parejo o sacandole todo a las piezas
+  % impresas, el brazo l cambia de 8.17 a 8.10 cm y el polo inestable de 7.44 a 7.52 1/s.
+  % SIGUEN SIN PESAR: la rueda y el motor de rueda, que no estan todavia.
   % Posiciones del CoM respecto de A [mm] (x hacia atras, y arriba).
-  o.m_cabina = 207;      o.r_cabina = [13.1 5.0];       % cabeza_v31, pared 3 mm, 172.9 cm3 x 1.2 g/cm3
-  o.m_tapa = 114;        o.r_tapa = [-28.1 47.2];       % tapa_cabeza, 94.9 cm3 x 1.2 (no esta en el ensamble de la 2a iteracion)
+  % Los seis items de abajo suman 542 g, que es lo medido. El reparto entre ellos sigue siendo
+  % el estimado, escalado por 542/667; sus posiciones de CoM no cambiaron.
+  o.m_cabina = 168.2;     o.r_cabina = [13.1 5.0];       % parte de los 542 g medidos (se estimaba 207)
+  o.m_tapa = 92.6;       o.r_tapa = [-28.1 47.2];       % parte de los 542 g medidos (se estimaba 114)
   o.r_servo = [-9.7 0];                                 % cada servo, en A (la masa esta en la seccion 1)
-  o.m_bateria = 120;     o.r_bateria = [-18.5 21.0];    % LiPo 3S ~1000 mAh (estimada), centro de la cabina
-  o.m_electronica = 60;  o.r_electronica = [-18.5 21.0];% ESP32 + driver + IMU + BEC + cables (estimada)
-  o.m_tornilleria = 50;  o.r_tornilleria = [0 0];       % pernos, ejes, rodamientos (estimada)
+  o.m_bateria = 97.5;     o.r_bateria = [-18.5 21.0];    % LiPo 3S ~1000 mAh (estimada), centro de la cabina
+  o.m_electronica = 48.8;  o.r_electronica = [-18.5 21.0];% ESP32 + driver + IMU + BEC + cables (estimada)
+  o.m_tornilleria = 40.6;  o.r_tornilleria = [0 0];       % pernos, ejes, rodamientos (estimada)
   o.m_carga = 0;         o.r_carga = [-18.5 21.0];      % carga extra en la cabina (por defecto nada)
-  o.m_AD = 29*e;         o.f_AD = 0.428;                % cada manivela: 26.3 cm3 x 1.1 a escala 100; f = donde esta su CoM (fraccion de A hacia D)
-  o.m_BC = 7*e;          o.f_BC = 0.5;                  % cada balancin: 6.3 cm3 x 1.1 a escala 100
-  o.m_CDP = 19.5*e;      o.f_CDP = 0.3145;              % cada acoplador: 17.7 cm3 x 1.1 a escala 100; f desde D hacia P
+  o.m_AD = 30;           o.f_AD = 0.428;                % MEDIDO 21/10 (se estimaba 23.2: -23 %). f = CoM, fraccion de A hacia D
+  o.m_BC = 23;           o.f_BC = 0.5;                  % MEDIDO 21/10. Se estimaba 5.6 g: el modelo lo tenia CUATRO veces mas liviano
+  o.m_CDP = 11;          o.f_CDP = 0.3145;              % MEDIDO 21/10 (se estimaba 15.6: +42 %). f desde D hacia P
   o.m_mecanismo = 110*e; % masa que mueve el servo cuando hay flexor (las barras) [g]
   % Inercias propias de cada pieza respecto de su CoM, eje de cabeceo [kg m2]. Del mallado del STEP de la primera iteracion.
   o.J_cabina = 4.8477e8*1.2e-12;  o.J_tapa = 2.7331e8*1.2e-12;
-  o.J_AD = 6.4467e7*1.1e-12*e^3;  o.J_BC = 1.5631e7*1.1e-12*e^3;  o.J_CDP = 5.8125e7*1.1e-12*e^3;
+  % Inercias de las barras: la forma sale del mallado del STEP, pero la masa es la medida, asi
+  % que se escalan por masa_medida/masa_estimada. La geometria no cambio, solo la densidad real.
+  o.J_AD  = 6.4467e7*1.1e-12*e^3 * (30/(29*e));
+  o.J_BC  = 1.5631e7*1.1e-12*e^3 * (23/(7*e));
+  o.J_CDP = 5.8125e7*1.1e-12*e^3 * (11/(19.5*e));
   o.J_cuerpo = [];       % inercia total del cuerpo suspendido respecto de su CoM [kg m2]; [] = calcularla de las piezas
 
   % ================================ 4. CONTACTO RUEDA-PISO ================================

@@ -25,10 +25,22 @@ function [tau_max, F_max, c1] = limite_de_traccion(p)
 %   estatica y un factor de seguridad p.factor_traccion (0.9 por defecto).
 %
 %   --- Lectura del resultado ---
-%   Con los parametros vigentes tau_max sale mayor que el par de bloqueo del motor,
-%   asi que el motor NO puede hacer patinar la rueda: a tension plena desde el
-%   reposo usa alrededor del 87 % del agarre. La saturacion queda igual como red de
-%   seguridad por si cambian la rueda, el piso o el motor.
+%   Con los parametros vigentes tau_max sale apenas por encima del par de bloqueo del
+%   motor: a tension plena desde el reposo usa el 98 % del agarre. O sea que el motor
+%   NO llega a hacer patinar la rueda, pero por muy poco, y el veredicto cuelga de mu,
+%   que es el unico parametro del modelo SIN MEDIR (0.7 supuesto). Si el piso diera
+%   mu < 0.69, a fondo patina. Lo que hay que mirar para decidir si importa: el
+%   equilibrio normal, de mas menos 2 grados, pide apenas mu = 0.20; recuperarse de
+%   10 grados pide 0.69. Ver el ensayo M-1 en docs/gestion/2026-10-21-plan-de-ensayos.md
+%   y la figura fig_traccion.png de esta carpeta.
+%
+%   Hasta el 21/10/2026, con las masas estimadas, el robot pesaba 1006 g y este numero
+%   daba 87 %. Al pesarlo resulto de 920 g y, contra la intuicion, el uso del agarre
+%   SUBIO: mas liviano significa menos peso sobre la rueda, o sea menos friccion
+%   disponible, y el par del motor no cambio.
+%
+%   La saturacion queda igual como red de seguridad por si cambian la rueda, el piso
+%   o el motor.
 
     if isfield(p, 'factor_traccion'), f = p.factor_traccion; else, f = 0.9; end
     if isfield(p, 'e_acople'), e = p.e_acople; else, e = 0; end

@@ -23,9 +23,12 @@ function test_fuente_comun_de_parametros(tc)
     [G.AB G.AD G.BC G.CD G.DP], 'AbsTol', 1e-12);
   tc.verifyEqual(rad2deg(p.a45), G.beta, 'AbsTol', 1e-12);
   % Valor fijado a proposito: si cambia una masa, este test tiene que fallar para que
-  % alguien lo mire. Ultima actualizacion 15/10/2026, al cargar el motor GA25-370 1:20
-  % comprado (95 g) en lugar del JGB37-520 (152 g) que se habia supuesto.
-  tc.verifyEqual(p.m_total, 1.0058, 'AbsTol', 1e-9);  % cabina 667 g + 2 patas de 169.4 g
+  % alguien lo mire. Ultima actualizacion 21/10/2026, al cargar la PRIMERA TANDA DE
+  % PESOS MEDIDOS: barras AD 30 g, BC 23 g y CDP 11 g una por una, y caja de 542 g
+  % obtenida pesando el robot sin ruedas ni motores de rueda (670 g) y restando barras.
+  % La rueda y el motor de rueda siguen estimados, asi que este numero va a volver a
+  % cambiar cuando se pesen.
+  tc.verifyEqual(p.m_total, 0.9199, 'AbsTol', 1e-9);  % caja 542 g + 2 patas de 189 g
 end
 
 function test_cierre_y_cinematica_independiente(tc)

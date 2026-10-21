@@ -51,7 +51,7 @@ variante `segunda_iteracion`. Si un número de este README no coincide con ese a
 | Rueda | Ø66 mm (Rw = 33), 30 g estimados | CAD |
 | Servo de pata | **40 kg·cm**, ~58 g, uno por pata. Elegido el 19/9; verificar a qué tensión da los 40 kg·cm | decisión, ver sección 3 |
 | Motor de rueda | **GA25-370 12 V, reductor 1:20, 300 rpm en vacío**, con encoder de cuadratura (11 PPR en el rotor). ~95 g estimados. **Comprado** | decisión, ver sección 3 |
-| Masas estimadas | cabina 667 g (cabeza 207, tapa 114, servos 116, batería 120, electrónica 60, tornillería 50); pata 169 g (barras 44, rueda 30, motor 95); **robot ≈ 1,01 kg** | primera iteración escalada; **pesar todo** |
+| Masas **medidas** (21/10/2026) | barras por pata: AD 30 g, BC 23 g, CDP 11 g (pesadas una por una); caja 542 g (se pesó el robot sin ruedas ni motores de rueda: 670 g, y se restaron las seis barras); **robot ≈ 0,92 kg** con la rueda y el motor todavía estimados (30 + 95 g) | el BC resultó **4 veces** más pesado que el estimado y la caja 19 % más liviana; falta pesar rueda y motor de rueda |
 | Batería | LiPo 3S 11,1 V (propuesta) | |
 | Control | 200 Hz (propuesta); electrónica por definir | |
 

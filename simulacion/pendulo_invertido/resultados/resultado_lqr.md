@@ -6,18 +6,18 @@
 
 | Magnitud | Valor |
 |---|---:|
-| Polo inestable a lazo abierto | 7.62 1/s (duplica cada 91 ms) |
-| K (V por m, m/s, rad, rad/s) | [55.5, 54.6, -93.6, -11.5] |
-| Polos a lazo cerrado | [-97.7 -7.17 -2.69-1.13i -2.69+1.13i] |
+| Polo inestable a lazo abierto | 7.38 1/s (duplica cada 94 ms) |
+| K (V por m, m/s, rad, rad/s) | [55.5, 54.8, -93.5, -11.7] |
+| Polos a lazo cerrado | [-94.83 -7.16 -2.67-1.13i -2.67+1.13i] |
 | Par de bloqueo del motor | 0.587 N m (17.8 N en el piso) |
-| Par que el piso transmite | 0.604 N m (18.3 N) |
+| Par que el piso transmite | 0.539 N m (16.3 N) |
 | Velocidad maxima | 1.01 m/s |
-| Se corre del lugar estando quieto | 21.1 mm |
+| Se corre del lugar estando quieto | 21.4 mm |
 | Consigna de posicion | 0.30 m |
-| Retroceso antes de avanzar | 13.5 mm |
-| Tiempo en llegar al 98 % | 1.83 s |
+| Retroceso antes de avanzar | 13.9 mm |
+| Tiempo en llegar al 98 % | 1.84 s |
 | Tension pico | 11.10 V de 11.1 |
-| Error Simulink vs MATLAB (phi) | 1.92e-11 rad |
+| Error Simulink vs MATLAB (phi) | 1.96e-11 rad |
 | Rodadura valida | true |
 
 ![Respuesta](respuesta_lqr.png)
