@@ -1,6 +1,6 @@
 # Backlog persistente — Segway con piernas extensibles
 
-Última actualización: 2026-10-15. Este archivo es la fuente de verdad del trabajo realizado,
+Última actualización: 2026-10-17. Este archivo es la fuente de verdad del trabajo realizado,
 en curso y pendiente. Todo cambio futuro debe actualizar aquí su estado y adjuntar evidencia.
 
 Estados: `HECHO`, `EN CURSO`, `PENDIENTE`, `BLOQUEADO`. Prioridades: `P0` crítica, `P1` alta,
@@ -43,6 +43,7 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 
 | ID | Pri. | Estado | Fecha | Tarea | Evidencia / resultado |
 |---|---:|---|---|---|---|
+| ELE-028 | P1 | EN CURSO | 2026-10-17 | Conexionado del prototipo de banco 2S (potencia) + 1S (lógica) con L298N, N20, DS3240 y MPU-6050 en dos perfboards | [Diagrama y tablas](electronica/interfaces/prototipo_2s/README.md) con [fuente editable](electronica/interfaces/prototipo_2s/generar_conexionado.py); pinout J1/J3 de la guía oficial de la DevKitC-1 v1.1, umbrales del datasheet ST L298 y cables del datasheet DS3240; protecciones propuestas (fusible + crowbar en 2S, Schottky en 1S, PTC + zener en 5 V, 470 Ω en señales). Falta: serigrafía del clon ESP32, del módulo L298N, de la IMU y de los step-up/down; tensión de los N20; corriente del step-down de 6 V; armado y medidas |
 | ELE-027 | P1 | PENDIENTE | 2026-10-15 | Verificar KiCad instalado por Matías en Windows, elegir/preparar MCP y validar un bloque piloto (Matías + agente) | [Entorno de destino y prueba](electronica/agente/entorno_windows_mcp.md); no instalar KiCad en macOS; versiones, servidor y configuración aún pendientes |
 | ELE-026 | P1 | HECHO | 2026-10-15 | Consolidar electrónica y preparar instrucciones, skill y memoria para nueva sesión de Claude Code (Codex) | [Entrada de continuidad](electronica/INICIAR_AQUI.md), [CLAUDE.md](electronica/CLAUDE.md), [skill](electronica/.claude/skills/segway-electronica/SKILL.md), [memoria](electronica/agente/memoria/MEMORY.md) y [verificación documental](electronica/agente/verificacion_handoff.json); planes consolidados en electrónica con accesos históricos; Windows e instalación de KiCad a cargo de Matías; MCP pendiente en ELE-027 |
 | ELE-025 | P1 | HECHO | 2026-10-15 | Persistir el uso de componentes en versión módulo con conexiones físicas para las PCB (Codex) | [REQ-22 y criterios de montaje](electronica/requisitos_y_decisiones.md), [inventario](electronica/componentes_comprados/inventario/inventario_robotica.md), [plan actualizado](electronica/planificacion/2026-10-15-plan-electronica-pcb.md), [índice](electronica/README.md) e [instrucciones futuras](AGENTS.md); consistencia y enlaces verificados; captura MPU6050 ilustrativa, variante exacta aún pendiente |
@@ -143,6 +144,23 @@ Traspaso vigente: [dinámica de pata en Simulink](docs/gestion/2026-09-15-handof
 | RUN-302 | P1 | PENDIENTE | RUN-301 | Simular escalón y escalera con/sin flexor | Solo después de validar contacto y piso plano; impacto y sensibilidad al paso documentados |
 | VAL-301 | P1 | PENDIENTE | Prototipo físico | Identificar parámetros reales de servo, rueda, contacto y masas | Ensayos y datos crudos versionados; parámetros actualizados con incertidumbre |
 | DOC-301 | P1 | PENDIENTE | RUN-302 | Actualizar informe y manual del modelo | Ecuaciones, supuestos, trazabilidad y resultados concordantes con `planta_v3` |
+
+## Firmware prototipo v0.1
+
+Arquitectura vigente: [firmware/docs/arquitectura_v0_1.md](firmware/docs/arquitectura_v0_1.md). Alcance: equilibrio solo con
+IMU (MPU-6050) y L298N (DRV8871 en la versión final) sobre ESP32-S3 N16R8 con ESP-IDF; servos solo
+posicionados a mano; sin encoders ni INA226, deriva aceptada.
+
+| ID | Pri. | Estado | Fecha / dependencias | Tarea | Criterio de aceptación |
+|---|---:|---|---|---|---|
+| FW-001 | P0 | HECHO | 2026-10-16 | Definir la arquitectura del firmware v0.1 | [Documento de arquitectura](firmware/docs/arquitectura_v0_1.md): capas, 2 tareas FreeRTOS, colas, máquina de estados, pines preliminares y orden de puesta en marcha |
+| FW-002 | P0 | EN CURSO | 2026-10-16 | Esqueleto `firmware/segway_v01/` con tick 1 kHz y medición del ciclo | [Proyecto](firmware/segway_v01/README.md) compila con ESP-IDF v6.1 sin avisos; [7 pruebas en PC](firmware/segway_v01/test_host/test_control.c) aprobadas. Falta en placa: 200 Hz estables, 0 ciclos excedidos en 10 min |
+| FW-003 | P0 | EN CURSO | 2026-10-16 | Driver MPU-6050 y filtro complementario (código escrito, sin probar en placa) | Ángulo sigue la inclinación a mano; sin deriva visible en 60 s quieto |
+| FW-004 | P0 | EN CURSO | 2026-10-17 | Driver de motores para L298N (con EN) y DRV8871, y prueba manual (código escrito, sin probar en placa) | 17/10: PWM pasado de LEDC a MCPWM ([`motor.c`](firmware/segway_v01/components/motor/motor.c): un timer común, IN1/IN2 actualizados juntos en el inicio del período); GPIO21 reservado para la entrada de falla del MCPWM ([`board_pins.h`](firmware/segway_v01/main/board_pins.h)), sin configurar; compila con ESP-IDF v6.1. Falta: sentido correcto en ambos, zona muerta del PWM registrada y forma de onda de IN1/IN2 al 0 % y al 100 % vista en osciloscopio |
+| FW-005 | P0 | EN CURSO | 2026-10-16 | Supervisor, seguridad, telemetría y comandos (código escrito; supervisor probado en PC) | Arranque desarmado; corte a 30° verificado; ajuste de ganancias en vivo |
+| FW-006 | P0 | PENDIENTE | FW-005 | Lazo cerrado en el aire y luego equilibrio en el piso | Equilibrio ≥ 10 s; ganancias finales en `board_config.h` |
+| FW-008 | P1 | EN CURSO | 2026-10-16 | Posicionar los servos de las patas por comando, sin función en el control | Comando `servo` con límites 45–135° y 90°/s en [`segway_v01`](firmware/segway_v01/README.md), compila; falta probar en placa y medir el rango útil de cada pata |
+| FW-007 | P2 | PENDIENTE | Motores recibidos | Verificar si los JGB37-520 recibidos traen encoder Hall | Cantidad de cables y pulsos por vuelta registrados |
 
 ## Reglas de mantenimiento
 

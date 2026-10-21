@@ -15,6 +15,7 @@ La fecha indica cuándo se consolidó el registro en este proyecto. Los antecede
 | 09 | 2026-10-15 | Durante preparación se detectó Claude Code 2.1.287 en el equipo macOS; no KiCad en PATH ni ubicaciones revisadas | Observación del equipo de preparación, no diagnóstico de Windows ni prueba MCP |
 | 10 | 2026-10-15 | Matías aclaró que trabajará en Windows y él instalará KiCad | DEC-07; se descarta continuar instalación/diagnóstico de KiCad en macOS |
 | 11 | 2026-10-15 | Se consolidan instrucciones, skill, memoria y planes dentro de electrónica | ELE-026; ver registro de verificación del paquete. No se instaló MCP ni se abrió Claude para ejecutar la skill |
+| 12 | 2026-10-17 | Francisco define un prototipo de banco: 2S para potencia (L298N, N20 500 rpm, servos con step-down de 6 V) y 1S + step-up para la lógica, en dos perfboards | ELE-028; [conexionado](../../interfaces/prototipo_2s/README.md). Pinouts tomados de fuentes oficiales; módulos genéricos sin verificar; nada armado ni medido |
 
 ## Formato de las siguientes entradas
 

@@ -1,0 +1,6 @@
+CompileFlags:
+    Remove: [-f*, -m*]
+Diagnostics:
+    # Al abrir un .h solo, clangd lo analiza como si fuera un .c y marca su #pragma once.
+    # Es un aviso del editor: el compilador de ESP-IDF no lo da.
+    Suppress: [pp_pragma_once_in_main_file]
