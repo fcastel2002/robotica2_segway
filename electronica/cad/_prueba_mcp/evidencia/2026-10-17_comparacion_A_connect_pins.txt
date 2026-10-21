@@ -1,0 +1,6 @@
+FALLA  NODO_A: esperado ['J1.1', 'R1.1']
+         net real 'Net-(J1-Pin_1)': ['J1.1', 'R1.1', 'R1.2', 'R2.1']
+FALLA  NODO_B: esperado ['R1.2', 'R2.1']
+         net real 'Net-(J1-Pin_1)': ['J1.1', 'R1.1', 'R1.2', 'R2.1']
+OK     RETORNO: ['J1.2', 'R2.2']
+Resultado: 2 diferencias

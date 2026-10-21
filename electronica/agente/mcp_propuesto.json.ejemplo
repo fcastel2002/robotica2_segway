@@ -1,0 +1,36 @@
+{
+  "_nota": "PROPUESTA NO PROBADA (17/10/2026). No está activa: Claude Code solo lee .mcp.json en la raíz del repo. Ver electronica/agente/2026-10-17-evaluacion-mcp-kicad.md, secciones 6 y 7. Antes de usarla: (1) instalar KiCad 10.0.7 y habilitar Preferences > Plugins > Enable KiCad API; (2) descargar konnect-v0.13.0-x86_64-pc-windows-msvc.zip, verificar su sha256 contra GitHub y extraerlo; (3) reemplazar la ruta de 'command' por la ruta REAL de konnect.exe (la estructura interna del zip no está verificada); (4) copiar SOLO el bloque mcpServers a D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\.mcp.json, sin las claves que empiezan con '_' (no se verificó si Claude Code tolera claves desconocidas); (5) no ejecutar 'konnect init'.",
+  "mcpServers": {
+    "konnect": {
+      "type": "stdio",
+      "command": "D:\\Usuario\\Matias\\Herramientas\\konnect\\v0.13.0\\konnect.exe",
+      "args": [],
+      "env": {}
+    }
+  },
+  "_variantes_no_activas": {
+    "_nota": "Fragmentos alternativos, también NO PROBADOS. Ninguno se activa desde este archivo.",
+    "konnect_instalado_por_PCM": {
+      "type": "stdio",
+      "command": "C:\\Users\\matia\\Documents\\KiCad\\10.0\\3rdparty\\plugins\\com_github_mixelpixx_konnect\\bin\\konnect.exe",
+      "args": [],
+      "env": {}
+    },
+    "konnect_env_si_falla_autodeteccion_IPC": {
+      "KICAD_API_SOCKET": "ipc://C:\\Users\\matia\\AppData\\Local\\Temp\\kicad\\api.sock",
+      "_nota": "Reemplazar por la dirección exacta 'Listening on ipc://...' que muestra KiCad en Preferences > Plugins. Va dentro de 'env' de la entrada konnect."
+    },
+    "respaldo_kicad_mcp_pro": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--python", "3.13", "kicad-mcp-pro@4.3.0", "--transport", "stdio"],
+      "env": {
+        "KICAD_MCP_PROJECT_DIR": "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\_prueba_mcp",
+        "KICAD_MCP_WORKSPACE_ROOT": "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica",
+        "KICAD_MCP_KICAD_CLI": "C:\\Program Files\\KiCad\\10.0\\bin\\kicad-cli.exe",
+        "KICAD_MCP_PROFILE": "default",
+        "KICAD_MCP_OPERATING_MODE": "readonly"
+      }
+    }
+  }
+}

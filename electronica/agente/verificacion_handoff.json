@@ -1,4 +1,8 @@
 {
+  "superseded": {
+    "date": "2026-10-17",
+    "note": "Registro histórico del traspaso del 15/10. Su alcance no incluyó BACKLOG.md ni AGENTS.md raíz, donde había 13 enlaces rotos. Los SHA-256 corresponden a los blobs con fin de línea LF en git; el checkout de Windows usa CRLF (core.autocrlf), por lo que Get-FileHash no coincide. 'bundled_quick_validate' es una herramienta de Codex. Para verificar enlaces usar electronica/agente/verificar_enlaces.py."
+  },
   "date": "2026-10-15",
   "scope": "Paquete documental de continuidad de electrónica",
   "target_platform": "Windows",

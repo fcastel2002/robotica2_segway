@@ -40,7 +40,7 @@ p.m_AD  = 0.0232;  p.AG = 0.428*p.AD;   p.IG_AD  = 3.63e-5;   % manivela:  masa,
 p.m_BC  = 0.0056;  p.BG = 0.5*p.BC;     p.IG_BC  = 0.88e-5;   % balancín:  masa, distancia B->G_BC, inercia
 p.m_CDP = 0.0156;  p.dG = 0.3145*p.DP;  p.IG_CDP = 3.27e-5;   % acoplador: masa, distancia D->G_CDP, inercia
 p.epsG  = p.delta;                                            % ángulo de D->G_CDP desde D->C (G sobre la recta D->P)
-p.m_P   = 0.030 + 0.152;   % rueda (30 g) + motorreductor JGB37-520 con encoder (152 g, ficha; PESAR) colgados de P
+p.m_P   = 0.030 + 0.095;   % rueda (30 g) + motorreductor GA25-370 1:20 con encoder (95 g estimado; PESAR) colgados de P
 % --- cabina: todo lo que NO es pata. Solo hace falta su masa, no dónde está su centro de masa,
 %     porque no gira (el control de equilibrio mantiene la inclinación) y solo se traslada.
 p.m_cabina = 0.207 + 0.114 + 2*0.058 + 0.120 + 0.060 + 0.050;  % cabeza + tapa + 2 servos de 40 kg cm (58 g) + batería + electrónica + tornillería

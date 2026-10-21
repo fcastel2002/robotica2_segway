@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+
+  (lib (name "segway_modulos") (type "KiCad") (uri "${KIPRJMOD}/../bibliotecas/segway_modulos.kicad_sym") (options "") (descr "")))

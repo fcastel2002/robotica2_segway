@@ -19,9 +19,10 @@ Se registran **14 entradas y 27 dispositivos/conjuntos** (un pack contiene tres 
 alimentación representada por una fuente nominal de 11,1 V. Matías es responsable de electrónica y PCB.
 [Plan de trabajo](electronica/planificacion/2026-10-15-plan-electronica-pcb.md).
 
-Las referencias al **JGB37-520** en las tablas históricas siguientes corresponden a la selección
-anterior y al modelado/CAD existente. La conciliación con los motores comprados queda pendiente
-(PAR-003 en el [backlog](BACKLOG.md)); esta organización documental no cambia los parámetros de simulación.
+El modelo y la simulación **ya usan el motor comprado** desde el 15/10 (PAR-004 y ELE-014 en el
+[backlog](BACKLOG.md)). Lo que sigue pendiente es el CAD, que todavía tiene el motor anterior de 37 mm
+y al que le falta la rueda (CAD-202 y PAR-003). Cuidado con la ficha del vendedor: su columna de
+torsión se contradice con la eléctrica, así que el par del modelo está **calculado**, no leído.
 
 ## 1. Qué es el robot
 
@@ -49,8 +50,8 @@ variante `segunda_iteracion`. Si un número de este README no coincide con ese a
 | Recorrido del servo | 320° (pata estirada, de pie) a 350° (plegada). En la dinámica se usa θ = 360° − servo: 10° plegada, 40° estirada | `parametros_geometria.m` |
 | Rueda | Ø66 mm (Rw = 33), 30 g estimados | CAD |
 | Servo de pata | **40 kg·cm**, ~58 g, uno por pata. Elegido el 19/9; verificar a qué tensión da los 40 kg·cm | decisión, ver sección 3 |
-| Motor de rueda | **JGB37-520 12 V con encoder Hall**, ~152 g. Relación de reducción **sin definir** (la pieza del CAD es la de 319 rpm) | decisión, ver sección 3 |
-| Masas estimadas | cabina 667 g (cabeza 207, tapa 114, servos 116, batería 120, electrónica 60, tornillería 50); pata 226 g (barras 44, rueda 30, motor 152); **robot ≈ 1,12 kg** | primera iteración escalada; **pesar todo** |
+| Motor de rueda | **GA25-370 12 V, reductor 1:20, 300 rpm en vacío**, con encoder de cuadratura (11 PPR en el rotor). ~95 g estimados. **Comprado** | decisión, ver sección 3 |
+| Masas estimadas | cabina 667 g (cabeza 207, tapa 114, servos 116, batería 120, electrónica 60, tornillería 50); pata 169 g (barras 44, rueda 30, motor 95); **robot ≈ 1,01 kg** | primera iteración escalada; **pesar todo** |
 | Batería | LiPo 3S 11,1 V (propuesta) | |
 | Control | 200 Hz (propuesta); electrónica por definir | |
 
@@ -67,7 +68,7 @@ qué escalón se puede bajar, fuerzas en los pasadores) está en los PDF de `mod
 | 14/9 | CAD segunda iteración: barras a **escala 80** | la primera iteración tenía la bancada de 80 mm con barras de escala 100 y perdía la línea recta; Francisco llevó las barras a 80 | `diseño_mecanico/segunda_iteracion/` |
 | 19/9 | El modelado pasa a escala 80 para seguir al CAD | eran dos ramas de la misma bifurcación; imprimir es lo caro, así que manda el CAD | `docs/gestion/2026-09-19-auditoria-limpieza.md`, sección 1.2 |
 | 19/9 | Servo de **40 kg·cm** | con la geometría de escala 100 la caída de un escalón de 18 cm pedía 22,4 kg·cm de par medio; uno de 25 quedaba justo y uno de 35 no se consigue | `modelado/dinamica/dinamica_resumen.pdf`, sección 10 |
-| 19/9 | Motor de rueda **JGB37-520 con encoder** | motorreductor con encoder integrado, 12 V, par de sobra para la rueda de 66 mm. Relación de reducción pendiente | sección 5 |
+| 15/10 | Motor de rueda **GA25-370 1:20** (comprado) | 300 rpm en vacío dan 1,01 m/s con la rueda de 66 mm. El par y el agarre quedan casi empatados: el motor pone 6,0 N en el piso contra 6,9 N de fricción disponible. La columna de torsión de su ficha es inconsistente y no se usa | `modelado/parametros/parametros_fisicos.m` §7 |
 | 19/9 | `simulacion/planta_v2` (planta completa hecha con Claude) se descarta | el equipo va a rehacer la planta a mano en `modelado/planta/`; queda el banco Simulink de Matías | sección 7 |
 
 ## 4. Mapa del repositorio
@@ -95,7 +96,7 @@ en MATLAB está en [`simulacion/pendulo_invertido/`](simulacion/pendulo_invertid
 Detalle y estado en [`BACKLOG.md`](BACKLOG.md).
 
 1. **Pesar** las piezas impresas, el servo y el motor, y reemplazar las masas estimadas.
-2. **Definir la relación de reducción** del JGB37-520 y cargar su hoja de datos en `parametros_fisicos.m`.
+2. **Medir el motor**: par de bloqueo real con un brazo y una balanza, y rendimiento del reductor. La ficha del GA25-370 se contradice a sí misma (su columna de torsión exigiría 146 % de rendimiento), así que el par del modelo está calculado, no leído.
 3. **Medir el servo** en el banco: rigidez del lazo interno (grados de desvío por peso colgado) y par de
    calado real a la tensión que se use. De eso dependen todos los números de la caída de escalón.
 4. Corregir en el CAD los 3 mm de la bancada (`cabeza_v31`) y agregar rueda, motor y tapa al ensamble

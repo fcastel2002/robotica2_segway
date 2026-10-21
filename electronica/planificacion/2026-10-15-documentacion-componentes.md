@@ -4,6 +4,8 @@ Responsable: Codex, por pedido de Matías.
 
 ## Resultado
 
+Las cifras de esta sección son las del 15/10/2026 antes de ELE-023. Las vigentes son 14 entradas, 27 dispositivos o conjuntos y 11 PDF, según el [inventario](../componentes_comprados/inventario/inventario_robotica.md) y el [índice de datasheets](../componentes_comprados/datasheets/README.md).
+
 - [Acceso principal](../componentes_comprados/README.md).
 - [Inventario](../componentes_comprados/inventario/inventario_robotica.md): 11 entradas, 24 unidades.
 - [Documentación](../componentes_comprados/datasheets/README.md): 9 PDF originales, 3 páginas comerciales y 11 fichas locales.

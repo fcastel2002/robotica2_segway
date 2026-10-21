@@ -1,8 +1,10 @@
 # Electrónica
 
-**Para continuar en una sesión nueva de Claude Code: [INICIAR_AQUI.md](INICIAR_AQUI.md).** Incluye instrucciones, skill y memoria portable. Camino confirmado: **KiCad + IA + MCP**, en **Windows**; Matías instalará KiCad.
+**Para continuar en una sesión nueva de Claude Code: [INICIAR_AQUI.md](INICIAR_AQUI.md).** Abrir Claude Code desde la raíz del repositorio. Camino confirmado: **KiCad + IA + MCP**, en **Windows**; Matías instalará KiCad. Estado al día en [estado actual](agente/memoria/estado_actual.md).
 
 - [Plan de electrónica y PCB](planificacion/2026-10-15-plan-electronica-pcb.md).
+- Borradores del 17/10: [contrato de interfaces](interfaces/2026-10-17-contrato-interfaces-borrador.md), [distribución de energía](interfaces/2026-10-17-distribucion-energia-borrador.md), [datos físicos faltantes](componentes_comprados/2026-10-17-datos-fisicos-faltantes.md).
+- Entorno: [informe Windows](agente/2026-10-17-informe-entorno-windows.md) y [evaluación de MCP para KiCad](agente/2026-10-17-evaluacion-mcp-kicad.md).
 - [Research de Reddit sobre EDA con IA y MCP](planificacion/2026-10-15-research-reddit-eda-ia.md).
 - [Requisitos y decisiones](requisitos_y_decisiones.md).
 - [Ensayos de banco](ensayos/plan_de_ensayos.md).

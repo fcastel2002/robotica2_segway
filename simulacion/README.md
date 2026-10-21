@@ -14,7 +14,7 @@ Dos bancos de simulación separados por tema:
   traspaso en `docs/gestion/2026-09-15-handoff-dinamica-simulink.md`. 12 tests en `tests/`.
 
 Desde el 19/9 sus scripts usan la variante `segunda_iteracion` de `modelado/parametros/parametros_fisicos.m`
-(barras a escala 80, servo de 40 kg·cm, motor JGB37-520). Los resultados guardados en `resultados/` del
+(barras a escala 80, servo de 40 kg·cm, motor GA25-370 1:20). Los resultados guardados en `resultados/` del
 14/9 se hicieron con la variante `corregido` (escala 100) y quedan como registro de esa corrida; para
 regenerarlos con la geometría actual hay que volver a correr el banco.
 

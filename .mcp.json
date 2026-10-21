@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "konnect": {
+      "type": "stdio",
+      "command": "D:\\Usuario\\Matias\\Herramientas\\konnect\\v0.13.0\\konnect.exe",
+      "args": [],
+      "env": {}
+    }
+  }
+}

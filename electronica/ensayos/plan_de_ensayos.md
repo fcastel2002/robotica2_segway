@@ -2,9 +2,12 @@
 
 Fecha: 15/10/2026. Responsable: Matías. **Procedimiento propuesto; ensayos todavía no ejecutados.**
 
-Plan general: [electrónica y PCB](../../docs/gestion/2026-10-15-plan-electronica-pcb.md). Los límites de alimentación y corriente deben fijarse con la [matriz de requisitos](../requisitos_y_decisiones.md) y la placa concreta antes de energizar.
+Plan general: [electrónica y PCB](../planificacion/2026-10-15-plan-electronica-pcb.md). Reglas eléctricas de detalle para preparar cada ensayo: [distribución de energía](../interfaces/2026-10-17-distribucion-energia-borrador.md) y [contrato de interfaces](../interfaces/2026-10-17-contrato-interfaces-borrador.md). Los límites de alimentación y corriente deben fijarse con la [matriz de requisitos](../requisitos_y_decisiones.md) y la placa concreta antes de energizar.
 
 ## Preparación
+
+Reglas de seguridad agregadas el 17/10/2026, del [borrador de energía](../interfaces/2026-10-17-distribucion-energia-borrador.md): referenciar todos los instrumentos y el USB de la PC únicamente a P− del BMS; medir tensiones de celda solo con multímetro flotante o con el robot sin cargas; energizar los encoders por primera vez a 3,3 V y observar A y B con osciloscopio antes de conectarlos a la ESP32; medir la corriente de conexión al cerrar el interruptor con todo el bulk instalado; medir VM durante el frenado con el elemento de polaridad definitivo ya instalado.
+
 
 Usar multímetro y fuente regulable con limitación de corriente. Para picos, caídas rápidas, ruido y PWM se necesita osciloscopio; un analizador lógico es útil para I²C y encoder. Verificar que la instrumentación y las masas de las sondas no creen cortocircuitos. Documentar si la fuente puede absorber energía de frenado; si no, definir el montaje adecuado antes de ensayar frenadas.
 
@@ -29,7 +32,7 @@ Los umbrales de error, temperatura y tensión se completan a partir de las placa
 
 ## Registro por ensayo
 
-Copiar esta ficha en un archivo de resultados nuevo:
+Copiar esta ficha en `ensayos/registros/AAAA-MM-DD_E-xx_<tema>.md`; los datos crudos y capturas van en una carpeta con el mismo nombre. Enlazar el registro desde la fila ELE del backlog:
 
 - ID, fecha, responsable y objetivo:
 - Modelo y unidad física del componente:

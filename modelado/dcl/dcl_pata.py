@@ -141,7 +141,7 @@ ax.set_xlim(-75, 245); ax.set_ylim(-135, 60)
 
 fig.text(0.5, 0.015,
          r"$(A_x, A_y)$, $(B_x, B_y)$: reacciones de la cabina (fija).   $(D_x, D_y)$: fuerza del acoplador sobre AD en D.   "
-         r"$(C_x, C_y)$: fuerza del acoplador sobre BC en C.   $N = m_{robot}\,g/2 = 5.49$ N.   $\tau$: par del servo.",
+         r"$(C_x, C_y)$: fuerza del acoplador sobre BC en C.   $N = m_{robot}\,g/2 = 4.93$ N.   $\tau$: par del servo.",
          fontsize=15, ha="center", va="bottom", bbox=dict(boxstyle="round,pad=0.5", facecolor="#fafafa", edgecolor="#999999"))
 fig.tight_layout(rect=(0, 0.04, 1, 1))
 salida = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dcl_pata.png")

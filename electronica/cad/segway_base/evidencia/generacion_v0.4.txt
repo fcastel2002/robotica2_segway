@@ -1,0 +1,25 @@
+0. Huellas contra símbolos
+   60 huellas verificadas contra su símbolo, 0 fallas
+1. Símbolos propios
+  símbolo ROB-012_BluePill_STM32F103C8_40p: 40 pines
+  símbolo ROB-013_MPU6050_modulo_8p: 8 pines
+  símbolo ROB-008_DRV8871_modulo_8p: 8 pines
+  símbolo ROB-002_INA219_MCU-219_8p: 8 pines
+  símbolo ROB-009_INA226_modulo_8p: 8 pines
+  símbolo ROB-005-006_MiniBuck_modulo_4p: 4 pines
+  símbolo ROB-001_LM2596_modulo_4p: 4 pines
+2. Proyecto y bibliotecas
+   fp-lib-table: registrada por Konnect (${KIPRJMOD}/../bibliotecas/segway_modulos.pretty)
+3. Componentes
+   60 componentes
+4. Conexiones por etiqueta
+   188 pines conectados, 17 PWR_FLAG, 19 sin conexión
+5. Posprocesado: DNP nativo, títulos de bloque y datos de PCB
+   0 DNP nativos, 7 títulos
+   6 netclasses y 21 asignaciones en segway_base.kicad_pro
+   reglas reglas_casera.kicad_dru copiadas como segway_base.kicad_dru
+6. Verificación
+Encontradas 0 infracciones
+Informe de ERC guardado a D:/Usuario/Matias/Proyectos/robotica2_segway/electronica/cad/segway_base/evidencia/erc.json
+   ERC: 0 errores, 0 avisos
+Resultado: coincide

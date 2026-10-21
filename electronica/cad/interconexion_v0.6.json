@@ -1,0 +1,89 @@
+{
+ "cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
+ "conector": "Connector_IDC:IDC-Header_2x08_P2.54mm_Vertical",
+ "pines": {
+  "1": "VBAT_ADC",
+  "2": "SERVO_IZQ_MCU",
+  "3": "INA_ALERT",
+  "4": "SERVO_DER_MCU",
+  "5": "I2C_SDA",
+  "6": "IN2_DER_MCU",
+  "7": "I2C_SCL",
+  "8": "IN1_DER_MCU",
+  "9": "3V3_MCU",
+  "10": "IN2_IZQ_MCU",
+  "11": "GND",
+  "12": "IN1_IZQ_MCU",
+  "13": "5V_MCU",
+  "14": "5V_MCU",
+  "15": "GND",
+  "16": "GND"
+ },
+ "corriente": "5V_MCU en 2 hilos (≤0,5 A total: ESP32-S3 con Wi-Fi); GND en 3 hilos; resto señales",
+ "pines_A1": {
+  "ENC_IZQ_A": {
+   "pin": "4",
+   "gpio": "GPIO4"
+  },
+  "ENC_IZQ_B": {
+   "pin": "5",
+   "gpio": "GPIO5"
+  },
+  "PARO_CONT": {
+   "pin": "6",
+   "gpio": "GPIO6"
+  },
+  "ENC_DER_A": {
+   "pin": "7",
+   "gpio": "GPIO7"
+  },
+  "ENC_DER_B": {
+   "pin": "8",
+   "gpio": "GPIO15"
+  },
+  "I2C_SCL": {
+   "pin": "9",
+   "gpio": "GPIO16"
+  },
+  "I2C_SDA": {
+   "pin": "10",
+   "gpio": "GPIO17"
+  },
+  "IMU_INT": {
+   "pin": "11",
+   "gpio": "GPIO18"
+  },
+  "INA_ALERT": {
+   "pin": "12",
+   "gpio": "GPIO8"
+  },
+  "VBAT_ADC": {
+   "pin": "13",
+   "gpio": "GPIO3"
+  },
+  "SERVO_IZQ_MCU": {
+   "pin": "15",
+   "gpio": "GPIO9"
+  },
+  "SERVO_DER_MCU": {
+   "pin": "16",
+   "gpio": "GPIO10"
+  },
+  "IN2_DER_MCU": {
+   "pin": "17",
+   "gpio": "GPIO11"
+  },
+  "IN1_DER_MCU": {
+   "pin": "18",
+   "gpio": "GPIO12"
+  },
+  "IN2_IZQ_MCU": {
+   "pin": "19",
+   "gpio": "GPIO13"
+  },
+  "IN1_IZQ_MCU": {
+   "pin": "20",
+   "gpio": "GPIO14"
+  }
+ }
+}

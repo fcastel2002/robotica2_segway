@@ -1,0 +1,76 @@
+                        +-----------------------------+
+                        | Pack 3 celdas  ROB-014      |
+                        | quimica PENDIENTE (E-01)    |
+                        +--------------+--------------+
+                                       | B+  B1  B2  B-
+                                       v
+                        +-----------------------------+
+                        | BMS 3S 40 A  ROB-003        |
+                        | variante PENDIENTE (E-01)   |
+                        | salida P+ / P-  (comun)     |
+                        +--------------+--------------+
+                                       | P+ / P-  (cargador solo con robot apagado)
+                                       v
+                        +-----------------------------+
+                        | Fusible principal           |
+                        | cerca del pack; PENDIENTE   |
+                        +--------------+--------------+
+                                       |
+                                       v
+                        +-----------------------------+
+                        | Conector polarizado         |
+                        | de entrada (obligatorio)    |
+                        +--------------+--------------+
+                                       |
+                                       v
+                        +-----------------------------+
+                        | Interruptor / paro          |
+                        | accesible                   |
+                        +--------------+--------------+
+                                       |
+                                       v
+                        +-----------------------------+
+                        | Polaridad (opcional):       |
+                        | MOSFET P que conduce en     |
+                        | ambos sentidos; NO diodo    |
+                        +--------------+--------------+
+                                       |
+                                       v
+                        +-----------------------------+
+                        | Precarga (opcional)         |
+                        | NTC o R puenteada; E-08     |
+                        +--------------+--------------+
+                                       |
+                                       v
+  +----------------+    +-----------------------------+    +-------------------+
+  | Voltimetro     |    | BUS VM  11,1 V nominal      |    | Bulk + TVS o      |
+  | ROB-004        |<---+ referencia: negativo del    +--->| freno disipativo  |
+  |                |    | bulk junto a la entrada     |    | (PENDIENTE E-04)  |
+  +----------------+    +----+---------+---------+----+    +-------------------+
+                             |         |         |
+           +-----------------+         |         +-----------------+
+           |                           |                           |
+           v                           v                           v
+  +-----------------+         +-----------------+         +-----------------+
+  | Fusible rama    |         | Fusible rama    |         | Fusible rama    |
+  | motores         |         | servos          |         | logica          |
+  +--------+--------+         +--------+--------+         +--------+--------+
+           |                           |                           |
+      +----+----+                      v                           v
+      |         |             +-----------------+         +-----------------+
+      v         v             | UBEC ROB-007    |         | Regulador de    |
+  +--------+--------+         | 6 V propuesta   |         | logica (E-02)   |
+  | DRV    | DRV    |         | del plan REQ-08 |         | 3,3 V / 5 V     |
+  | A      | B      |         +--------+--------+         +--------+--------+
+  +---+----+----+---+                  |                           |
+      |         |                 +----+----+                 +----+----+
+      v         v                 |         |                 |         |
+  +--------+--------+             v         v                 v         v
+  | GA25   | GA25   |         +--------+--------+         +--------+--------+
+  | izq    | der    |         | DS3240 | DS3240 |         | ESP32  | IMU,   |
+  +--------+--------+         | izq    | der    |         |        | INA,   |
+                              +--------+--------+         |        | enc.   |
+                                                          +--------+--------+
+
+  IN1/IN2: pull-down               SIG: nivel 3,3 V,           encoders: primera
+  externo en placa base            R serie en placa base       energizacion a 3,3 V

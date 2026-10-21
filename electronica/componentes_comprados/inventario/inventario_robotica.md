@@ -25,8 +25,8 @@ La imagen de búsqueda de MPU6050 aportada como aclaración es ilustrativa del f
 | ROB-009 | Sensor de corriente y potencia INA226, interfaz I²C | Variante INA226 / 1pc | 1 | No visible | 09 |
 | ROB-010 | Servo digital DSSERVO DS3240 MG, etiqueta 40 kg | 2 servos confirmados por Matías | 2 | No informado | 10a, 10b |
 | ROB-011 | Motorreductor DC con escobillas GA25-370, 12 V, 300 RPM, con encoder | 2 motores confirmados por Matías | 2 | No informado | Publicación Mercado Libre y confirmación de Matías |
-| ROB-012 | Controladora ESP32, placa/variante exacta pendiente | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
-| ROB-013 | IMU MPU6050, módulo exacto pendiente | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
+| ROB-012 | Controladora Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16, 20/10/2026) | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
+| ROB-013 | IMU MPU6050, módulo de 8 pines formato GY-521 según imagen de Matías; ejemplar sin medir | 1 para el robot; repuestos no informados | 1 | No informado | Confirmación de Matías, 15/10/2026 |
 | ROB-014 | Conjunto de tres celdas conectado al controlador de batería | 1 conjunto de 3 celdas; modelo nominal 11,1 V | 1 conjunto | No informado | Confirmación de Matías, 15/10/2026 |
 
 Total actualizado: **14 entradas y 27 dispositivos/conjuntos para el robot**: 24 unidades registradas inicialmente, una controladora ESP32, una IMU MPU6050 y un conjunto de batería que contiene 3 celdas. Se registra una controladora y una IMU para el diseño; repuestos adicionales no informados. El pack cuenta como un conjunto, no como una sola celda. Los accesorios no se cuentan por separado.
@@ -153,7 +153,10 @@ Suma de los siete precios de las capturas iniciales: **ARS 59.254**. Es una refe
 - Precio observado en la publicación: **ARS 27.752,93** por unidad, sin impuestos según la página, al momento de consulta. Es referencia comercial actual, no precio de compra confirmado, y no se suma a los precios de las capturas iniciales.
 - Pendiente: relación de reducción, corriente nominal y de bloqueo, par, medidas del eje y especificaciones del encoder; una foto de la etiqueta puede ayudar a completar estos datos.
 
-### ROB-012 — Controladora ESP32
+### ROB-012 — Controladora ESP32-S3-DevKitC-1-N16R8
+
+- 20/10/2026 (DEC-16): Matías definió con el equipo la **Heemol ESP32-S3-DevKitC-1-N16R8**, ASIN B0FKFXC6F8. Módulo ESP32-S3-WROOM-1-N16R8, puente USB-serie CH343P, dos USB-C (UART y USB nativo), LED RGB WS2812 en GPIO48, 44 pines en dos hileras de 22, placa de 57 × 28 mm (63,3 mm con antena). Documentación en [ROB-012_ESP32-S3_DevKitC-1_N16R8](../datasheets/ROB-012_ESP32-S3_DevKitC-1_N16R8/FICHA_Y_FUENTES.md). Lo que sigue es el registro anterior.
+
 
 - Confirmada por Matías el 15/10/2026 para el robot; se registra una unidad de diseño.
 - Variante de SoC, módulo y placa de desarrollo todavía no identificadas físicamente. No se asume WROOM, DevKit, S3 o C3 ni un pinout concreto.
@@ -167,6 +170,7 @@ Suma de los siete precios de las capturas iniciales: **ARS 59.254**. Es una refe
 - Sensor inercial MPU6050; modelo de módulo/PCB todavía pendiente. No se asume GY-521.
 - Archivado el datasheet original de InvenSense, **PS-MPU-6000A-00 Rev. 3.4**, copia alojada por SparkFun. La descarga directa de TDK redirige o devuelve acceso denegado; se conserva el enlace oficial y la procedencia de la copia.
 - Pendiente: pinout del módulo, alimentación, regulación/pull-ups, orientación, calibración y fijación en la cabina.
+- 17/10/2026: Matías confirmó el formato módulo y aportó una imagen de referencia de 8 pines (INT, AD0, XCL, XDA, SDA, SCL, GND, VCC), serigrafía "ITG/MPU". Detalle y pendientes en la ficha.
 - [Ficha y fuentes](../datasheets/ROB-013_MPU6050/FICHA_Y_FUENTES.md).
 
 ### ROB-014 — Conjunto de batería de tres celdas

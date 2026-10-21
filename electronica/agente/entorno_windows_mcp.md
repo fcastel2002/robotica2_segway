@@ -1,44 +1,51 @@
-# Entorno de destino: Windows, KiCad y MCP
+# Entorno Windows, KiCad y MCP: preparación y prueba de aceptación
 
-Decisión vigente de Matías: él instalará KiCad en la computadora Windows donde se continuará el trabajo. No preparar una instalación de KiCad para macOS. Este documento organiza la próxima evaluación; no describe una integración ya operativa.
+Actualizado el 17/10/2026. Tarea: ELE-027. Matías instala KiCad (DEC-07). Este documento fija qué se registra, dónde se configura el MCP y cómo se acepta. La comparación de servidores está en la [evaluación de MCP](2026-10-17-evaluacion-mcp-kicad.md) y los hechos de KiCad 10 en el [flujo KiCad de la skill](../.claude/skills/segway-electronica/referencia/flujo_kicad.md).
 
-## Estado al traspaso
+## Estado al 17/10/2026
 
-| Elemento | Estado |
-|---|---|
-| Windows de destino y ruta del repositorio | Se identificarán al iniciar allí |
-| KiCad | Instalación a cargo de Matías; versión por registrar |
-| Claude Code / modelo | Sesión de destino pendiente; Opus 5.5 solicitado por Matías |
-| MCP | Sin servidor elegido/configurado/probado en este paquete |
-| Archivos CAD electrónicos | Pendientes; prueba inicial en carpeta aislada |
+| Elemento | Estado | Evidencia |
+|---|---|---|
+| Windows y repositorio | Windows 11 Home 10.0.26200; repo en `D:\Usuario\Matias\Proyectos\robotica2_segway` | [Informe de entorno](2026-10-17-informe-entorno-windows.md) |
+| Claude Code | 2.1.291, sesión abierta desde la raíz | Informe de entorno |
+| KiCad | 10.0.7 instalado por Matías; `kicad-cli` en `C:\Program Files\KiCad\10.0\bin`; API todavía sin habilitar | [Prueba de Konnect](2026-10-17-prueba-mcp-konnect.md) |
+| Servidor MCP | Konnect 0.13.0 instalado y en `.mcp.json`; edición de esquemático probada; PCB en vivo pendiente | [Prueba de Konnect](2026-10-17-prueba-mcp-konnect.md) |
+| Archivos de KiCad | Proyecto de prueba en `cad/_prueba_mcp/` | Prueba de Konnect |
 
-La observación Claude Code 2.1.287 corresponde únicamente al Mac que preparó la documentación. No indica la versión de Windows ni disponibilidad de un modelo. La ausencia de KiCad en las ubicaciones revisadas del Mac no condiciona el trabajo futuro.
+Los datos del equipo macOS que preparó el paquete el 15/10 quedaron solo en la cronología como antecedente.
 
-## Comprobar la instalación real
+## Después de instalar KiCad: qué registrar
 
-Partir del directorio real del repositorio y usar rutas relativas para sus archivos. Obtener versión de KiCad desde la aplicación o `kicad-cli --version` si está accesible. En Windows la aplicación puede funcionar aunque el ejecutable no esté en PATH: localizarlo en la instalación real antes de diagnosticar ausencia. No codificar una ruta supuesta de Program Files, un número de versión, un intérprete Python o un puerto IPC.
+Agregar al informe de entorno, con el comando usado:
 
-Registrar versión de Windows, KiCad, Claude Code, dependencias y herramientas disponibles en un nuevo informe de entorno dentro de esta carpeta. Consultar la documentación correspondiente a las versiones instaladas antes de fijar el método de integración.
+1. Versión exacta: Ayuda > Acerca de, o `kicad-cli version`.
+2. Ruta de `kicad-cli.exe` y si está en el PATH. Si no está, invocarla con la ruta completa; no suponer `C:\Program Files\KiCad\10.0\bin` sin comprobarlo.
+3. Ruta del Python que trae KiCad y su versión (la documentación de la rama 10.0 indica 3.11, a confirmar).
+4. Estado de *Preferences > Plugins > Enable KiCad API* y del intérprete configurado para plugins.
+5. Carpeta de configuración de usuario (`%APPDATA%\kicad\10.0`) y de terceros (`Documents\KiCad\10.0\3rdparty`), si existen.
 
-## Elegir el MCP
+## Dónde se configura el MCP
 
-Evaluar unos pocos candidatos mantenidos y compatibles con Windows/KiCad instalado. Konnect aparece en relatos de uso de Reddit; KiPilot fue un candidato de la comparación inicial. Ninguno quedó elegido ni se dispone de un benchmark propio. Confirmar repositorio y revisión, dependencias, transporte, capacidades reales y método de recuperación. Revisar si el esquema/PCB se modifica por API, CLI o edición de archivos; no asumir que todas las operaciones tienen soporte nativo de la API instalada.
+En `.mcp.json` en la **raíz** del repositorio, porque la sesión se abre desde la raíz y Claude Code no lee archivos `.mcp.json` de subcarpetas. Es una excepción técnica a la regla de mantener la electrónica dentro de `electronica/`. Hasta pasar la prueba de aceptación, la entrada propuesta vive como [ejemplo no activo](mcp_propuesto.json.ejemplo). Instalar dependencias Python en un entorno aislado con `uv`, nunca en el Python global ni en el de KiCad salvo que el servidor lo exija y quede registrado. No guardar secretos en archivos versionados. El archivo `.omp/mcp.json` de la raíz configura SolidWorks para otra computadora y no tiene relación con esto.
 
-Aplicar cambios de entorno/configuración dentro del alcance autorizado de la sesión. Preferir dependencias aisladas y configuración de proyecto; conservar configuraciones existentes. Evitar configuraciones ficticias `.mcp.json`, comandos copiados sin verificar, secretos en archivos versionados y permisos amplios innecesarios.
+## Prueba de aceptación
 
-## Prueba de aceptación inicial
+La tabla siguiente fija los criterios generales. La versión operativa para el servidor recomendado, Konnect v0.13.0, con nombres de herramientas y pasos P1 a P8, está en la [evaluación de MCP](2026-10-17-evaluacion-mcp-kicad.md), sección 7. Si la conexión en vivo falla con KiCad 10.0.7 y no es un problema de configuración, la evaluación prevé repetirla con 10.0.6.
 
-Usar una copia o proyecto de prueba aislado dentro de electrónica. Validar que se puede:
+Usar `electronica/cad/_prueba_mcp/`, un proyecto mínimo creado para la prueba: una hoja con dos símbolos genéricos y un conector, y una placa con contorno y esas huellas. Es un archivo real de prueba, no una huella de módulo del robot. Hacer commit antes de empezar.
 
-1. Conectar e inspeccionar el proyecto sin modificarlo inesperadamente.
-2. Hacer una edición pequeña controlada y conservar archivos editables que KiCad abra.
-3. Inspeccionar conexiones, referencias y geometría; ejecutar ERC/DRC donde aplique y guardar su resultado.
-4. Recuperar el estado previo o repetir la operación sin pérdida de archivos.
+Precondiciones: KiCad abierto con el proyecto cargado, API habilitada, y ningún otro cliente de la API conectado.
 
-Después, probar un bloque de ESP32, MPU6050 y conectores con módulos exactos identificados. Si faltan medidas, usar interfaces provisionales explícitas o limitar la prueba a operaciones CAD que no dependan de esas dimensiones; no declarar lista una huella ilustrativa.
+| Paso | Qué se hace | Criterio de aprobación | Evidencia |
+|---|---|---|---|
+| 1. Lectura | Conectar el MCP y listar referencias, nets y huellas | Coinciden con el archivo; `git status` sin cambios | Salida guardada en `evidencia/` |
+| 2. Edición de PCB | Mover una huella y agregar una pista por la API | La GUI muestra el cambio; al guardar, `git diff` muestra solo ese cambio | Diff guardado |
+| 3. Edición de esquemático | Agregar un símbolo y una conexión editando el archivo, con KiCad sin cambios pendientes, y reabrir | `kicad-cli sch erc` procesa el archivo; Matías confirma en la GUI que abre sin advertencias | JSON de ERC y confirmación de Matías |
+| 4. Verificación | `kicad-cli sch erc` y `kicad-cli pcb drc` con `--format json` | Reportes generados; las violaciones son las esperables del proyecto mínimo | JSON guardados |
+| 5. Exportación | Netlist y BOM antes y después de la edición; Gerbers de la placa | La netlist cambia solo en lo editado; los Gerbers se generan | Archivos en `evidencia/` |
+| 6. Ida y vuelta | Abrir y guardar en la GUI sin tocar nada | `git diff` vacío o limitado a metadatos | Diff |
+| 7. Recuperación | `git restore` al estado inicial y repetir el paso 1 | Mismo resultado que el paso 1 | Salida |
 
-Registrar tareas probadas, fallos, correcciones, tiempo y costo observable. Distinguir validación de la integración, validación del diseño y ensayo físico. Una lectura del README de un servidor no es una prueba de funcionamiento.
+Registrar en el informe: tiempo por paso, fallos, correcciones manuales y consumo observable. La aceptación valida la integración, no el diseño ni el hardware.
 
-Si el MCP falla, registrar el problema y avanzar en requisitos, símbolos, documentación o una operación explícita por CLI/API. Ese recurso no elimina la elección de integrar MCP ni se debe presentar como MCP funcionando.
-
-Fuentes de contexto: [research](../planificacion/2026-10-15-research-reddit-eda-ia.md), [skills de Claude Code](https://code.claude.com/docs/en/skills), [memoria/instrucciones de Claude Code](https://code.claude.com/docs/en/memory). Las capacidades del candidato elegido deben verificarse nuevamente al preparar el entorno.
+Si el MCP falla, registrar el fallo y seguir con el flujo de respaldo: edición de archivos más `kicad-cli`. Ese flujo es además la vía principal para el esquemático en KiCad 10, porque la API IPC no edita esquemáticos en esa versión. Después de aprobar la prueba, el bloque piloto ESP32 + MPU6050 + conectores (PROP-03) espera a que las placas estén identificadas y medidas.

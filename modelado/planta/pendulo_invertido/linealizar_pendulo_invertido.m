@@ -2,9 +2,11 @@ function L = linealizar_pendulo_invertido(p)
 %LINEALIZAR_PENDULO_INVERTIDO Taylor alrededor de phi=0, velocidades=0, tau=0.
 %   Orden de estado: [x; velocidad_x; phi; velocidad_phi].
 %   Entrada: par TOTAL en las dos ruedas. No requiere Control System Toolbox.
+%   Con el campo e_acople (inercia del rotor) el acople es -h+e_acople en phi=0.
 
     %% Modelo de segundo orden M0*q_ddot + D*q_dot = gravedad + H*tau.
-    M0 = [p.a, -p.h; -p.h, p.j];
+    if isfield(p, 'e_acople'), e_acople = p.e_acople; else, e_acople = 0; end
+    M0 = [p.a, -p.h + e_acople; -p.h + e_acople, p.j];
     D = [p.b_x + p.b_eje / p.r^2, p.b_eje / p.r; ...
          p.b_eje / p.r, p.b_eje + p.b_phi];
     H = [-1 / p.r; -1];
