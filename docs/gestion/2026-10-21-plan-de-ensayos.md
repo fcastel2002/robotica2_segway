@@ -29,9 +29,10 @@ pide el servo bajó de 9,06 a 7,98 kg·cm, así que el servo de 40 kg·cm pasó 
 | # | Parámetro | Valor hoy | De dónde sale | Si está mal, cambia… |
 |---|---|---|---|---|
 | **M-1** | **μ del neumático** | 0,70 **supuesto** | nada: elegido | **Todo el margen de tracción.** Es el único parámetro sin ninguna cota |
+| **M-6** | **rigidez del neumático** | 30 kN/m **supuesto** | nada: elegido | **Todo el pico del golpe al aterrizar.** La fuerza va con √k: un neumático tres veces más blando baja el pico un 43 % |
 | M-2 | par real y rendimiento del reductor | η = 0,75 supuesto | la ficha se contradice | el par disponible ±25 %, y con él el ángulo máximo de recuperación |
 | M-3 | resolución del encoder | 11 PPR **supuesto** | la ficha no la dice | el filtro de velocidad y el ruido que entra al control |
-| M-4 | masa de rueda y motor de rueda | 30 + 95 g estimados | catálogo | el brazo `l` y con él el polo inestable (±5 %) |
+| M-4 | masa de rueda y motor de rueda | 30 + 95 g estimados | catálogo | el brazo `l`, el polo inestable (±5 %) y la masa no suspendida del golpe |
 | M-5 | inercia del rotor | 6e-7 kg·m² típica | valor de libro | el coeficiente de avance hasta 43 % |
 
 Los demás parámetros ya se movieron uno por uno en un barrido de sensibilidad: el polo inestable se
@@ -149,6 +150,42 @@ esperado y volver a correr la suite.
 las dos ruedas con sus motores, o sea 90 g cada conjunto. Un GA25-370 solo ya pesa cerca de 95 g,
 así que los 850 g son optimistas: el rango realista está entre **850 y 950 g**.
 
+## 6 bis. M-6 — Rigidez del neumático, y por qué importa tanto
+
+Es el parámetro que decide **cuánta fuerza recibe el robot al aterrizar**, y hoy vale 30 kN/m
+puesto a dedo. Al caer de un escalón hay dos golpes muy distintos y conviene no confundirlos:
+
+| | Fase A: el toque | Fase B: el frenado |
+|---|---|---|
+| **Dura** | ~3 ms | 11 a 33 ms |
+| **Qué se frena** | la rueda y el motor, 125 g, **en seco** | el resto del robot, 795 g |
+| **Quién lo absorbe** | **sólo el neumático** | el servo plegando la pata |
+| **El servo** | no llega a reaccionar: actúa como barra rígida | trabaja, 8 a 18 kg·cm |
+| **Fuerza en el eje del servo** | 128 N (escalón de 2 cm) a 393 N (18 cm) | 71 N |
+
+La fase A es la que preocupa, y el control no puede hacer nada: en 3 ms el servo ni se entera.
+El pico sale de `F = √(2·E·k)`, con `E` la energía de la masa **no suspendida** (rueda + motor).
+O sea que baja con la raíz de las dos cosas, y los dos se pueden tocar:
+
+| Cambio (escalón de 10 cm) | Hundimiento | N en el neumático | Eje del servo |
+|---|---|---|---|
+| como está hoy (k = 30 kN/m) | 3,0 mm | 90 N | **292 N** |
+| neumático 3× más blando | 5,2 mm | 52 N | **167 N** (−43 %) |
+| neumático 10× más blando (gomaespuma) | 9,5 mm | 29 N | **89 N** (−70 %) |
+| neumático 3× más duro | 1,7 mm | 157 N | **509 N** (+74 %) |
+| rueda + motor de 125 a 80 g | 2,5 mm | 74 N | 241 N (−17 %) |
+| rueda + motor de 125 a 180 g | 3,6 mm | 107 N | 344 N (+18 %) |
+
+**Ensayo:** apoyar la rueda sobre una balanza de cocina, apretar hasta 4,5 N (la carga estática)
+y hasta 45 N, y medir con un calibre cuánto se hunde en cada caso. `k = ΔF/Δd`. Dos minutos.
+Hacerlo **antes de comprar la segunda rueda**, porque de acá sale si conviene goma blanda o dura.
+
+**Lo que conviene hacer en el CAD, independientemente de lo que dé:** que el pasador `A` tenga su
+**propio rodamiento** tomando la carga radial, y que el servo entregue sólo par. 393 N sobre el
+estriado de un servo le arranca los dientes; 393 N sobre un rodamiento de 6 mm no es nada.
+Si eso no se puede, la alternativa es un **acople elástico** entre el brazo del servo y la manivela
+(un resorte de torsión con topes), que es lo que en robótica se llama actuación elástica en serie.
+
 ## 7. M-5 — Inercia del rotor
 
 El valor usado (6e-7 kg·m²) es típico de un motor de este tamaño, no medido. Multiplicado por 20²
@@ -164,8 +201,8 @@ constante de tiempo mecánica. El mismo registro da el rozamiento del eje.
 
 | Cuándo | Qué | Depende de |
 |---|---|---|
-| **Ya, sin esperar nada** | programar el tope de par como constante configurable y la detección de patinaje | nada |
-| Al llegar las ruedas | **M-1** (μ) y **M-4** (pesar) | tener una rueda |
+| **Ya, sin esperar nada** | programar el tope de par como constante configurable y la detección de patinaje; revisar en el CAD si `A` tiene rodamiento propio | nada |
+| Al llegar las ruedas | **M-1** (μ), **M-6** (rigidez) y **M-4** (pesar) | tener una rueda |
 | Con un motor en la mesa | **M-2** (par) y **M-5** (inercia), junto con E-04 de Matías | motor + driver + fuente |
 | Con el encoder leyendo | **M-3** (resolución) | ESP32 andando |
 | Después de M-1 a M-5 | recargar `parametros_fisicos.m`, correr la suite, regenerar PDFs y rediseñar el LQR | todo lo anterior |
