@@ -30,7 +30,7 @@ p.CD    = 40.8e-3;         % acoplador, lado D->C
 p.DP    = 112e-3;          % acoplador, de D al eje de la rueda P
 p.a45   = deg2rad(45);     % inclinación de AB respecto de la horizontal
 p.delta = deg2rad(164);    % ángulo del acoplador en D, de D->C a D->P
-p.Rw    = 33e-3;           % radio de la rueda
+p.Rw    = 40e-3;           % radio de la rueda (CORREGIDO 21/10: rueda de 80 mm, no la de 65 del CAD viejo)
 p.theta_min = deg2rad(10); % carrera del servo: plegada
 p.theta_max = deg2rad(40); %                    estirada
 % --- piezas de la pata: masa [kg], centro de masa [m], inercia respecto de SU centro de masa [kg m^2]
@@ -302,6 +302,24 @@ fprintf('\n  el otro pico, en el instante del toque (estimación cuasi-estática
 fprintf('    los %.3f J que se lleva el golpe los absorbe el neumático: se hunde %.1f mm y recibe %.0f N (%.0f veces la estática)\n', ...
         E_golpe, d_toque*1e3, N_toque, N_toque/N_est);
 fprintf('    con esa normal el eje del servo vería %.0f N\n', hypot(z_toque(1), z_toque(2)));
+
+% --- OJO: ese número es una COTA SUPERIOR, no una predicción.
+%     Supone que lo único elástico en todo el camino es el neumático, y que las barras,
+%     los pasadores y la reductora del servo son rígidos. En un robot de PLA impreso eso
+%     es falso: la manivela AD, con la sección que sale de su masa medida, tiene una
+%     rigidez a flexión de entre 4 y 15 kN/m, o sea del mismo orden que el neumático
+%     supuesto, o más blanda. Y los resortes en serie los manda el MÁS BLANDO.
+rel_eje = hypot(z_toque(1), z_toque(2))/N_toque;   % cuánto amplifica el mecanismo
+fprintf('\n    pero eso supone la estructura RIGIDA. Contándola como un resorte en serie:\n');
+fprintf('      %14s %12s %12s\n', 'k estructura', 'N neumático', 'eje del servo');
+for k_est = [inf 20e3 10e3 8e3 5e3]
+    k_eq = 1/(1/p.k_rueda + 1/k_est);
+    F = sqrt(2*E_golpe*k_eq);
+    if isinf(k_est), et = 'rígida'; else, et = sprintf('%.0f kN/m', k_est/1e3); end
+    fprintf('      %14s %10.0f N %10.0f N\n', et, F, F*rel_eje);
+end
+fprintf('    La rigidez real de la pata NO está medida: es el ensayo M-7 del plan de ensayos.\n');
+fprintf('    Hasta medirla, tomar el número de arriba como el PEOR caso, no como el esperado.\n');
 
 figure('Name', 'Fuerza en los pasadores durante la caída')
 subplot(2,1,1); plot(t3*1e3, [radial_A radial_B radial_C radial_D], 'LineWidth', 1.5); grid on

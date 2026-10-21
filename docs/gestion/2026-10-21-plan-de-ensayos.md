@@ -33,6 +33,7 @@ pide el servo bajó de 9,06 a 7,98 kg·cm, así que el servo de 40 kg·cm pasó 
 | M-2 | par real y rendimiento del reductor | η = 0,75 supuesto | la ficha se contradice | el par disponible ±25 %, y con él el ángulo máximo de recuperación |
 | M-3 | resolución del encoder | 11 PPR **supuesto** | la ficha no la dice | el filtro de velocidad y el ruido que entra al control |
 | M-4 | masa de rueda y motor de rueda | 30 + 95 g estimados | catálogo | el brazo `l`, el polo inestable (±5 %) y la masa no suspendida del golpe |
+| **M-7** | **rigidez de la pata armada** | **no está, se la supone rígida** | nada | **el pico del golpe, otra vez.** La manivela de PLA es tan blanda como el neumático, y en serie manda la más blanda: el pico cae a menos de la mitad |
 | M-5 | inercia del rotor | 6e-7 kg·m² típica | valor de libro | el coeficiente de avance hasta 43 % |
 
 Los demás parámetros ya se movieron uno por uno en un barrido de sensibilidad: el polo inestable se
@@ -188,6 +189,48 @@ estriado de un servo le arranca los dientes; 393 N sobre un rodamiento de 6 mm n
 Si eso no se puede, la alternativa es un **acople elástico** entre el brazo del servo y la manivela
 (un resorte de torsión con topes), que es lo que en robótica se llama actuación elástica en serie.
 
+## 6 ter. M-7 — Rigidez de la pata armada, y por qué los 393 N estaban de más
+
+Joaquín preguntó si los 393 N sobre el eje del servo al caer de 18 cm no eran demasiado para
+un robot de menos de un kilo. **Tenía razón: ese número es una cota superior, no una predicción.**
+
+El modelo supone que lo **único** elástico en todo el camino es el neumático, y que las barras,
+los pasadores y la reductora del servo son rígidos. En un robot de PLA impreso eso es falso.
+
+De la masa medida de la manivela (30 g en 112 mm) sale una sección media de 233 mm². Repartida
+de distintas maneras, su rigidez a flexión queda así, con E = 2,5 GPa:
+
+| Espesor × ancho | I | k |
+|---|---|---|
+| 6 × 39 mm | 699 mm⁴ | 3,7 kN/m |
+| 8 × 29 mm | 1242 mm⁴ | 6,6 kN/m |
+| 10 × 23 mm | 1941 mm⁴ | 10,4 kN/m |
+| 12 × 19 mm | 2795 mm⁴ | 14,9 kN/m |
+
+O sea entre **4 y 15 kN/m**: del mismo orden que el neumático supuesto (30 kN/m) o **más blanda**.
+Y eso es sólo la manivela; faltan el acoplador, los pasadores y la reductora del servo.
+
+**Los resortes en serie los manda el más blando**, y el pico va con la raíz de la rigidez:
+
+| Rigidez de la estructura | N en el neumático | **Eje del servo** |
+|---|---|---|
+| rígida (lo que supone el modelo) | 121 N | **393 N** |
+| 20 kN/m | 77 N | 248 N |
+| 10 kN/m | 61 N | 196 N |
+| 8 kN/m | 56 N | **180 N** |
+| 5 kN/m | 46 N | 148 N |
+
+Y con un escalón realista en vez de 18 cm, contando la estructura a 8 kN/m: **60 N con 2 cm**,
+95 N con 5 cm, 135 N con 10 cm. De referencia, parado y quieto el eje ve 12,2 N.
+
+**Ensayo:** con la pata armada y la cabina sujeta, apoyar la rueda sobre una balanza de cocina,
+empujar hacia abajo hasta 20 y 50 N, y medir con un calibre cuánto baja el eje del servo respecto
+de la rueda. `k = ΔF/Δd`. Hacerlo en las dos posturas extremas, porque la rigidez del cuatro barras
+cambia con el ángulo.
+
+**Lo que NO cambia con esto:** aun con 180 N, el eje del servo ve quince veces la carga estática.
+La recomendación de ponerle un rodamiento propio al pasador `A` sigue en pie.
+
 ## 7. M-5 — Inercia del rotor
 
 El valor usado (6e-7 kg·m²) es típico de un motor de este tamaño, no medido. Multiplicado por 20²
@@ -204,7 +247,8 @@ constante de tiempo mecánica. El mismo registro da el rozamiento del eje.
 | Cuándo | Qué | Depende de |
 |---|---|---|
 | **Ya, sin esperar nada** | programar el tope de par como constante configurable y la detección de patinaje; revisar en el CAD si `A` tiene rodamiento propio | nada |
-| Al llegar las ruedas | **M-1** (μ), **M-6** (rigidez) y **M-4** (pesar) | tener una rueda |
+| Al llegar las ruedas | **M-1** (μ), **M-6** (rigidez del neumático) y **M-4** (pesar) | tener una rueda |
+| Con la pata impresa y armada | **M-7** (rigidez de la pata) | las barras impresas |
 | Con un motor en la mesa | **M-2** (par) y **M-5** (inercia), junto con E-04 de Matías | motor + driver + fuente |
 | Con el encoder leyendo | **M-3** (resolución) | ESP32 andando |
 | Después de M-1 a M-5 | recargar `parametros_fisicos.m`, correr la suite, regenerar PDFs y rediseñar el LQR | todo lo anterior |

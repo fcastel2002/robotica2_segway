@@ -21,7 +21,7 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 
 # --- geometria de la pata, igual que fig_casos.py (escala 80, segunda iteracion)
 AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0
-A45, DELTA, Rw = math.radians(45), math.radians(164), 33.0
+A45, DELTA, Rw = math.radians(45), math.radians(164), 40.0
 CAB = dict(cx=-18.5, fondo=142.0, bajo_A=29.0, alto=104.5)
 TH_LAND, TH_FIN = 40.0, 30.2          # aterriza estirada, frena usando 9.8 grados
 H_CAIDA = 85.0                         # altura dibujada en la etapa 1 (no a escala)
@@ -121,8 +121,8 @@ ax.text(44, 34, "cae a 1,9 m/s", fontsize=15, color=AZULC,
 
 ax, A, P = ejes[1]                                   # el toque
 flecha(ax, (P[0], -32), (P[0], 6), ROJO, lw=4.4)
-ax.text(P[0] + 16, -22, "121 N", fontsize=17, color=ROJO, fontweight="bold", ha="left", va="center")
-ax.text(P[0] + 46, 30, "el neumático\nse hunde 4 mm", fontsize=14, color=ROJO,
+ax.text(P[0] + 16, -22, "56 a 121 N", fontsize=16, color=ROJO, fontweight="bold", ha="left", va="center")
+ax.text(P[0] + 46, 30, "el neumático y la pata\nceden entre 4 y 9 mm", fontsize=13.5, color=ROJO,
         fontweight="bold", ha="left", va="center", linespacing=1.4)
 for x in (-95, -10):
     flecha(ax, (x, 212), (x, 170), AZULC, lw=3.0)
@@ -154,8 +154,10 @@ textos = [
     "goma del neumático: se aplasta y devuelve\n"
     "121 N.\n\n"
     "El servo NO llega a reaccionar: en 3 ms es\n"
-    "una barra rígida. Por eso su eje ve 393 N,\n"
-    "contra 12 N parado y quieto.",
+    "una barra rígida, y su eje ve entre 180 y\n"
+    "393 N: el valor alto supone que la pata no\n"
+    "se dobla nada, cosa que en PLA es falsa.\n"
+    "Contra 12 N parado y quieto.",
 
     "Como la pata PUEDE plegarse, el cuerpo\n"
     "(795 g) no tiene que parar de golpe: sigue\n"

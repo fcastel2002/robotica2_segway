@@ -59,7 +59,8 @@ function o = parametros_fisicos(variante)
   e = o.s_barras/100;    % escala de las barras respecto de la primera iteracion, de donde salieron masas e inercias
 
   % ======================================== 2. RUEDA ========================================
-  o.Rw = 33;             % radio de rueda [mm] (rueda comercial de 65 mm del CAD). Afecta velocidad, par y altura.
+  o.Rw = 40;             % radio de rueda [mm]. CORREGIDO el 21/10/2026 por Matias: la rueda es de
+                         % 80 mm de diametro, no la de 65 del CAD viejo. Afecta velocidad, par y altura.
   o.m_rueda = 30;        % masa de cada rueda [g] (estimada: goma + nucleo). PESAR.
   o.J_rueda = [];        % inercia de cada rueda [kg m2]; [] = disco macizo 0.5*m*R^2. Poner un numero si se mide.
   o.b_w = 1e-4;          % friccion viscosa en el eje de rueda [N m s/rad] (rodamientos; supuesto)

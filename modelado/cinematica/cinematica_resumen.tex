@@ -45,7 +45,7 @@ Símbolo & Qué es & Valor CAD & Pieza \\
 \(DP\) & acoplador, tramo \(D\)--\(P\) (hasta el eje de rueda) & 112 mm & \texttt{eslabon\_CDP\_v2} \\
 \(\delta\) & ángulo del acoplador en \(D\), de \(D\!\to\!C\) a \(D\!\to\!P\) & \(164^\circ\) (plano: \(16^\circ\)) & \texttt{eslabon\_CDP} \\
 \(\theta\) & ángulo del servo: dirección de \(A\!\to\!D\) desde \(+x\) & \(320^\circ\) a \(350^\circ\) & servo en \(A\) \\
-\(R_w\) & radio de rueda & 33 mm & \texttt{wheel} \\
+\(R_w\) & radio de rueda & 40 mm & \texttt{wheel} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -187,7 +187,7 @@ Conviene usar una sola forma: \(\delta=164^\circ\) antihorario desde \(D\!\to\!C
 \item \textbf{Nombres.} En las hojas aparecen \(L_{CP}=1{,}4L\) y \(L_{DP}\) para el mismo tramo, y
 \(L_{DC}\)/\(L_{CD}\); quedó \(DP\) y \(CD\).
 \item \textbf{Unidades.} El script trabajaba en cm con \(L=10\); ahora todo está en mm con las cotas
-reales del CAD y el radio de rueda de 33 mm (antes 37,5 mm).
+reales del CAD y el radio de rueda de \textbf{40 mm}, corregido el 21/10/2026 (la rueda es de 80 mm de diámetro; antes se usaban 33 mm, de una de 65).
 \end{enumerate}
 
 \subsection*{Archivos}

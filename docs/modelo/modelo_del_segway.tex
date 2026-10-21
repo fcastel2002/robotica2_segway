@@ -162,7 +162,7 @@ $BC$ & balancín & 108{,}0 mm \\
 $CD$ & lado corto del acoplador & 40{,}8 mm \\
 $DP$ & del acoplador al eje de la rueda & 112{,}0 mm \\
 $\delta$ & ángulo del acoplador en $D$, de $D\!\to\!C$ a $D\!\to\!P$ & $164^\circ$ \\
-$R_w$ & radio de la rueda & 33 mm \\
+$R_w$ & radio de la rueda & 40 mm \\
 $\theta$ & ángulo de $AD$ bajo la horizontal & $10^\circ$ a $40^\circ$ \\
 \bottomrule
 \end{tabular}
@@ -475,11 +475,11 @@ Cada coeficiente tiene un significado físico directo:
 \toprule
 \textbf{Coef.} & \textbf{Qué es} & \textbf{Valor a $25^\circ$} \\
 \midrule
-$a$ & masa que hay que acelerar para avanzar, incluida la inercia de ruedas y rotores & 1{,}3907 kg \\
+$a$ & masa que hay que acelerar para avanzar, incluida la inercia de ruedas y rotores & 1{,}2499 kg \\
 $h$ & acoplamiento entre avance e inclinación: $m_b\,\ell$ & 0{,}0702 kg$\cdot$m \\
 $j$ & inercia del cuerpo alrededor del eje de la rueda & 0{,}010018 kg$\cdot$m$^2$ \\
 $k$ & par que hace la gravedad por radián: $m_b\,g\,\ell$ & 0{,}6891 N$\cdot$m \\
-$e$ & acoplamiento del rotor, constante (ver abajo) & 0{,}013818 \\
+$e$ & acoplamiento del rotor, constante (ver abajo) & 0{,}011400 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -501,12 +501,12 @@ $\dot z = A z + B\,U$ con $z = [x;\ v;\ \varphi;\ \omega]$:
 \begin{equation}
 A = \begin{bmatrix}
 0 & 1 & 0 & 0\\
-0 & -19{,}647 & 3{,}618 & -0{,}654\\
+0 & -16{,}522 & 4{,}476 & -0{,}667\\
 0 & 0 & 0 & 1\\
-0 & -169{,}211 & 89{,}159 & -5{,}713
+0 & -145{,}352 & 95{,}074 & -5{,}952
 \end{bmatrix},
 \qquad
-B = \begin{bmatrix} 0 \\ -1{,}771 \\ 0 \\ -15{,}252 \end{bmatrix}.
+B = \begin{bmatrix} 0 \\ -1{,}805 \\ 0 \\ -15{,}880 \end{bmatrix}.
 \end{equation}
 
 \section{Qué dicen los polos y los ceros}
@@ -516,12 +516,12 @@ B = \begin{bmatrix} 0 \\ -1{,}771 \\ 0 \\ -15{,}252 \end{bmatrix}.
 \toprule
 \textbf{Qué} & \textbf{Valor} & \textbf{Qué significa} \\
 \midrule
-Polo inestable & $+7{,}385$ s$^{-1}$ & la inclinación se duplica cada \textbf{94 ms}: ése
+Polo inestable & $+7{,}345$ s$^{-1}$ & la inclinación se duplica cada \textbf{94 ms}: ése
 es el tiempo que tiene el control para reaccionar \\
-Polo rápido & $-27{,}04$ s$^{-1}$ & la fricción eléctrica del motor \\
-Polo & $-5{,}71$ s$^{-1}$ & \\
+Polo rápido & $-24{,}76$ s$^{-1}$ & la fricción eléctrica del motor \\
+Polo & $-5{,}06$ s$^{-1}$ & \\
 Polo en el origen & $0$ & la posición: nada se opone a que el robot se vaya caminando \\
-Cero de $U \to x$ & $+7{,}574$ s$^{-1}$ & \textbf{fase no mínima} \\
+Cero de $U \to x$ & $+7{,}423$ s$^{-1}$ & \textbf{fase no mínima} \\
 Rango de controlabilidad & 4 de 4 & el sistema es controlable: un solo motor alcanza \\
 \bottomrule
 \end{tabular}
@@ -573,7 +573,7 @@ $b_m$ & calculado & 0{,}019157 N$\cdot$m$\cdot$s/rad \\
 $V_{bat}$ & tres celdas & 11{,}1 V \\
 \midrule
 Par de bloqueo (los dos motores) & calculado & \textbf{0{,}587 N$\cdot$m} \\
-Velocidad máxima & calculada & 1{,}01 m/s \\
+Velocidad máxima & calculada & \textbf{1{,}23 m/s} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -593,12 +593,12 @@ declarados). Hay que medirlo: ensayo M-2.
 cambió una conclusión publicada.
 
 Parte del par del motor no va al piso: va a acelerar la inercia reflejada del rotor, que con
-una reducción de 1:20 equivale a casi medio kilo sobre un robot de un kilo. La fuerza real es
+una reducción de 1:20 equivale a un tercio de kilo sobre un robot de un kilo. La fuerza real es
 \[
 F = c_1\,\tau, \qquad c_1 = \begin{bmatrix} m_{tot} & -h\end{bmatrix} M_0^{-1} H
-= -10{,}55 \ \mathrm{N/(N\cdot m)},
+= -10{,}31 \ \mathrm{N/(N\cdot m)},
 \]
-contra los $1/R_w = 30{,}3$ que daría la cuenta ingenua. O sea casi \textbf{tres veces menos}.
+contra los $1/R_w = 25{,}0$ que daría la cuenta ingenua. O sea casi \textbf{dos veces y media menos}.
 \end{ojo}
 
 Con los números de hoy:
@@ -606,15 +606,15 @@ Con los números de hoy:
 \begin{center}
 \begin{tabular}{@{}lr@{}}
 \toprule
-Fuerza que el motor pone en el piso, a fondo & 6{,}19 N \\
+Fuerza que el motor pone en el piso, a fondo & 6{,}05 N \\
 Fricción disponible ($\mu = 0{,}7$ supuesto) & 6{,}32 N \\
 \midrule
-\textbf{Uso del agarre} & \textbf{98\%} \\
+\textbf{Uso del agarre} & \textbf{96\%} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-O sea: el motor queda justo por debajo del agarre, pero con un margen de apenas 2\%, y ese
+O sea: el motor queda justo por debajo del agarre, pero con un margen de apenas 4\%, y ese
 veredicto descansa en $\mu = 0{,}7$, que está supuesto. El capítulo \ref{cap:falta} explica
 cómo medirlo y por qué, a pesar de todo, no es grave.
 
@@ -650,7 +650,7 @@ adivinar nada.
       30 cm/s, $8^\circ$ de inclinación, 1 rad/s.
 \item \textbf{El LQR regala márgenes.} La desigualdad de Kalman garantiza margen de fase
       $\geq 60^\circ$ y margen de ganancia infinito hacia arriba, \emph{por construcción}.
-      Acá el margen de fase medido es $96^\circ$.
+      Acá el margen de fase medido es $94^\circ$.
 \end{enumerate}
 
 \begin{ojo}
@@ -687,7 +687,7 @@ ningún libro: aparece al simular la implementación real.
 
 \begin{equation}
 U = -K\,(z - z_{ref}), \qquad
-K = \begin{bmatrix} 55{,}50 & 54{,}80 & -93{,}49 & -11{,}74 \end{bmatrix}
+K = \begin{bmatrix} 55{,}50 & 52{,}87 & -90{,}72 & -11{,}51 \end{bmatrix}
 \end{equation}
 
 en voltios por (m, m/s, rad, rad/s).
@@ -695,9 +695,9 @@ en voltios por (m, m/s, rad, rad/s).
 \begin{center}
 \begin{tabular}{@{}lr@{}}
 \toprule
-Polos a lazo cerrado & $-94{,}83$;\ $-7{,}16$;\ $-2{,}67 \pm 1{,}13i$ \\
-Tiempo de asentamiento & 1{,}50 s \\
-Margen de fase & $96{,}1^\circ$ a 77{,}6 rad/s \\
+Polos a lazo cerrado & $-97{,}54$;\ $-7{,}17$;\ $-2{,}54 \pm 1{,}24i$ \\
+Tiempo de asentamiento & 1{,}57 s \\
+Margen de fase & $94{,}5^\circ$ a 83{,}9 rad/s \\
 Pico de sensibilidad $\|S\|_\infty$ & 1{,}00 \\
 \bottomrule
 \end{tabular}

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Arc, FancyArrowPatch, Polygon, Circle
 
 AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0     # mm (escala 80, STEP del 14/9)
-ANG_AB, DELTA, THETA, Rw = 45.0, 164.0, 10.0, 33.0        # grados, mm
+ANG_AB, DELTA, THETA, Rw = 45.0, 164.0, 10.0, 40.0        # grados, mm
 fAD, fBC, fCDP = 0.428, 0.5, 0.3145
 r = math.radians
 
