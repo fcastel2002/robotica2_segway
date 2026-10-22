@@ -46,8 +46,8 @@ function [tau_max, F_max, c1] = limite_de_traccion(p)
     if isfield(p, 'e_acople'), e = p.e_acople; else, e = 0; end
     validateattributes(p.mu, {'numeric'}, {'scalar', 'real', 'finite', 'nonnegative'});
 
-    M0 = [p.a, -p.h + e; -p.h + e, p.j];
-    c1 = [p.m_total, -p.h] * (M0 \ [-1/p.r; -1]);
+    M0 = [p.a, p.h + e; p.h + e, p.j];
+    c1 = [p.m_total, p.h] * (M0 \ [1/p.r; -1]);
     assert(abs(c1) > eps, 'La fuerza en el piso no depende del par: revisar la planta.');
 
     F_max = f*p.mu*p.m_total*p.g;

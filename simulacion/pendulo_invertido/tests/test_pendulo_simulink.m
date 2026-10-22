@@ -100,9 +100,13 @@ function test_lqr_estabiliza_y_los_signos_son_los_previstos(tc)
     tc.verifyTrue(all(real(C.polos) < 0), 'El lazo cerrado no es estable.');
     tc.verifyGreaterThan(max(real(C.autovalores_lazo_abierto)), 0, ...
         'Sin control el equilibrio superior deberia ser inestable.');
-    % Signos previstos en el capitulo de espacio de estados, seccion 12.2.
-    tc.verifyGreaterThan(C.K(1), 0, 'K_x deberia ser positiva.');
-    tc.verifyGreaterThan(C.K(2), 0, 'K_v deberia ser positiva.');
+    % Con el convenio intuitivo (phi y tau positivos hacia adelante) las CUATRO
+    % ganancias salen negativas, y no es un error: U = -K z, asi que una inclinacion
+    % hacia adelante pide tension positiva, o sea empujar hacia adelante para ponerse
+    % debajo del cuerpo. Y la de posicion es negativa por el cero de fase no minima:
+    % para ir hacia adelante primero hay que empujar hacia atras.
+    tc.verifyLessThan(C.K(1), 0, 'K_x deberia ser negativa (fase no minima).');
+    tc.verifyLessThan(C.K(2), 0, 'K_v deberia ser negativa.');
     tc.verifyLessThan(C.K(3), 0, 'K_phi deberia ser negativa.');
     tc.verifyLessThan(C.K(4), 0, 'K_omega deberia ser negativa.');
 end
@@ -167,7 +171,7 @@ end
 
 function test_fuerza_tangencial_igual_a_newton(tc)
 % La fuerza en el contacto tiene que ser la de Newton sobre TODO el robot,
-% m_total*x'' - h cos(phi) phi'' + h sin(phi) phi'^2, tambien con rotor.
+% m_total*x'' + h cos(phi) phi'' - h sin(phi) phi'^2, tambien con rotor.
 % Antes se calculaba como -tau_ef/r - J_ruedas*x''/r^2, que omite la inercia
 % del rotor y daba errores de hasta 200 %.
     p = tc.TestData.p;
@@ -175,7 +179,7 @@ function test_fuerza_tangencial_igual_a_newton(tc)
     for ensayo = 1:200
         z = [0; 0.3*randn; 0.3*randn; 2*randn];
         [dz, R] = planta_con_motor(z, 3*randn, p);
-        F_newton = p.m_total*dz(2) - p.h*cos(z(3))*dz(4) + p.h*sin(z(3))*z(4)^2;
+        F_newton = p.m_total*dz(2) + p.h*cos(z(3))*dz(4) - p.h*sin(z(3))*z(4)^2;
         peor = max(peor, abs(R.fuerza_tangencial - F_newton));
     end
     tc.verifyLessThan(peor, 1e-12, ...

@@ -8,9 +8,9 @@
   "error_A": 2.1316837184315318E-12,
   "error_B": 1.1368683772161603E-13,
   "error_potencia": 0,
-  "error_balance_horizontal": 0,
+  "error_balance_horizontal": 5.5511151231257827E-17,
   "deriva_energia_J": 1.1102230246251565E-16,
   "grupos_aprobados": 6,
-  "fecha": "2026-10-21 20:27:07 -0300",
+  "fecha": "2026-10-22 11:55:45 -0300",
   "matlab": "23.2.0.2485118 (R2023b) Update 6"
 }

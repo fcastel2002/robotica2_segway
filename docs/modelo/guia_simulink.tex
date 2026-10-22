@@ -86,16 +86,18 @@ Esto es lo primero que conviene tener claro, porque el diagrama usa estos nombre
 \toprule
 \textbf{Símbolo} & \textbf{Unidad} & \textbf{Qué es} \\
 \midrule
-$\tau$ (tau) & N$\cdot$m & \textbf{El par}: lo que el motor le tuerce a la rueda. Por reacción, la
-rueda le devuelve $-\tau$ al cuerpo, y ésa es la \emph{única} forma que tiene el robot de
-inclinarse a propósito \\
+$\tau$ (tau) & N$\cdot$m & \textbf{El par}: lo que el motor le tuerce a la rueda. Positivo
+\textbf{empuja hacia adelante}. Por reacción, la rueda le devuelve $-\tau$ al cuerpo, y ésa es
+la \emph{única} forma que tiene el robot de inclinarse a propósito \\
 $U$ & V & la tensión que el control le manda a cada motor \\
 $x$ & m & cuánto avanzó el eje de las ruedas \\
 $v$ & m/s & velocidad de avance \\
-$\varphi$ (phi) & rad & \textbf{la inclinación}, medida desde la dirección del centro de masa \\
+$\varphi$ (phi) & rad & \textbf{la inclinación}, medida desde la dirección del centro de masa.
+Positiva \textbf{hacia adelante}: el robot se inclina adelante para ir adelante \\
 $\omega$ (omega) & rad/s & qué tan rápido se está inclinando \\
 $\theta$ (theta) & rad & la postura de las patas: $10^\circ$ plegada, $40^\circ$ estirada \\
-$\delta_G$ & rad & lo que hay \emph{entre} el ángulo del chasis y $\varphi$. Cambia con la postura \\
+$\delta_G$ & rad & lo que hay \emph{entre} el ángulo del chasis y $\varphi$. Cambia con la
+postura: va de $-9{,}09^\circ$ plegada a $-1{,}78^\circ$ estirada \\
 \midrule
 $a$ & kg & \textbf{masa efectiva de avance}. Vale 1,25 kg aunque el robot pese 0,92: la diferencia
 es la inercia del rotor vista a través de la reductora 1:20 \\
@@ -166,9 +168,11 @@ $U = -K\,(z_{medido} - z_{ref})$. Una sola multiplicación de un vector de cuatr
 error de los cuatro estados.
 \end{idea}
 
-$K = [\,55{,}5\ \ 52{,}9\ \ -90{,}7\ \ -11{,}5\,]$, en voltios por (m, m/s, rad, rad/s). O sea:
-por cada metro de error de posición pide 55,5 V, por cada radián de inclinación pide 90,7 V (con
-signo opuesto), y así.
+$K = [\,-55{,}5\ \ -52{,}9\ \ -90{,}7\ \ -11{,}5\,]$, en voltios por (m, m/s, rad, rad/s).
+Como $U = -K\,(z - z_{ref})$, los cuatro signos negativos quieren decir que una inclinación
+hacia adelante pide tensión positiva, o sea empujar hacia adelante para meterse debajo del
+cuerpo. Y la ganancia de posición es negativa por el cero de fase no mínima: para ir hacia
+adelante, primero hay que empujar hacia atrás.
 
 \textbf{Por qué una sola ganancia y no cuatro PID:} el robot tiene \emph{dos} coordenadas que
 importan ($x$ y $\varphi$) y \emph{un} solo actuador. Realimentando sólo el ángulo se equilibra
@@ -266,9 +270,9 @@ cambian su brazo y su inercia. Con la postura constante devuelven siempre el mis
 \small
 \begin{tabular}{@{}lp{10.8cm}@{}}
 \toprule
-$-\tau/r$ & el par del motor, visto como fuerza en el contacto con el piso \\
+$+\tau/r$ & el par del motor, visto como fuerza en el contacto con el piso \\
 $-b_x\,v$ & rozamiento de rodadura (hoy vale cero: no está medido) \\
-$-h\sin\varphi\,\omega^2$ & la fuerza centrífuga del cuerpo girando inclinado. Es el \textbf{único
+$+h\sin\varphi\,\omega^2$ & la fuerza centrífuga del cuerpo girando inclinado. Es el \textbf{único
 término no lineal} de todo el modelo, y sólo importa cuando el robot se inclina mucho y rápido \\
 \bottomrule
 \end{tabular}
@@ -317,8 +321,8 @@ determinante dividido por el determinante común.
 \ddot\varphi &= \frac{a\cdot\text{momentos} - \text{acople}\cdot\text{fuerzas}}{a\,j - \text{acople}^2}
 \end{align*}
 
-\textbf{El acople} vale $-h\cos\varphi + \text{(una constante del rotor)}$, y es el número que dice
-cuánto se afectan entre sí avanzar e inclinarse. Si fuera cero, las dos ecuaciones se separarían y
+\textbf{El acople} vale $h\cos\varphi + \text{(una constante del rotor, que es negativa)}$, y es
+el número que dice cuánto se afectan entre sí avanzar e inclinarse. Si fuera cero, las dos ecuaciones se separarían y
 el robot no se podría equilibrar moviendo las ruedas, porque empujar la rueda no inclinaría el
 cuerpo.
 

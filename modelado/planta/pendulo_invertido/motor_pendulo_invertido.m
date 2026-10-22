@@ -35,8 +35,8 @@ function [p, motor] = motor_pendulo_invertido(p, fisicos, varargin)
 %      porque nace de la velocidad del centro de masa; el del rotor es
 %      CONSTANTE, porque alpha_m' es lineal en x' y phi' con coeficientes fijos.
 %      Por eso el modelo ampliado usa
-%        M(1,2) = M(2,1) = -h*cos(phi) + e_acople,
-%      con e_acople = delta_M(1,2) >= 0, que es un campo nuevo de p. Con
+%        M(1,2) = M(2,1) = +h*cos(phi) + e_acople,
+%      con e_acople = delta_M(1,2) <= 0, que es un campo nuevo de p. Con
 %      e_acople = 0 se recupera exactamente el modelo de patas fijas sin motor.
 %      Al no depender de phi, este termino no agrega fuerza centrifuga.
 %
@@ -106,7 +106,7 @@ function [p, motor] = motor_pendulo_invertido(p, fisicos, varargin)
     % Correccion de rango uno y CONSTANTE sobre la matriz de masa.
     motor.incluir_rotor = incluir_rotor;
     motor.J_r = fisicos.J_r;
-    vector_rotor = [-motor.n_g/p.r; 1 - motor.n_g];
+    vector_rotor = [motor.n_g/p.r; 1 - motor.n_g];
     motor.delta_M = motor.n_motores*motor.J_r*(vector_rotor*vector_rotor.');
     motor.a_sin_rotor = p.a;
     motor.h_sin_rotor = p.h;
@@ -118,7 +118,7 @@ function [p, motor] = motor_pendulo_invertido(p, fisicos, varargin)
         p.a = p.a + motor.delta_M(1, 1);
         p.j = p.j + motor.delta_M(2, 2);
         p.e_acople = p.e_acople + motor.delta_M(1, 2);
-        % h NO cambia: el acople del rotor no tiene la forma -h*cos(phi).
+        % h NO cambia: el acople del rotor no tiene la forma h*cos(phi).
     end
     p.b_eje_mecanico = p.b_eje;
     p.b_eje = p.b_eje + motor.b_m;     % la contraelectromotriz amortigua el eje relativo
@@ -128,7 +128,7 @@ function [p, motor] = motor_pendulo_invertido(p, fisicos, varargin)
     %% 6. La matriz de masa debe seguir siendo definida positiva en toda la carrera.
     % El peor caso del acople es cos(phi) = 1 (su magnitud maxima si e_acople < h).
     for cphi = [-1, 0, 1]
-        M12 = -p.h*cphi + p.e_acople;
+        M12 = p.h*cphi + p.e_acople;
         determinante = p.a*p.j - M12^2;
         assert(p.a > 0 && p.j > 0 && determinante > 0, ...
             'La correccion del rotor rompio la matriz de masa (cos phi = %g, det = %.3e).', ...

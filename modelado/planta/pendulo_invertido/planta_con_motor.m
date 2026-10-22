@@ -39,7 +39,7 @@ function [derivada, R] = planta_con_motor(estado, tension, p)
     V_bat = p.motor.V_bat;
     tension_aplicada = max(min(tension, V_bat), -V_bat);
 
-    velocidad_relativa = -estado(2)/p.r - estado(4);
+    velocidad_relativa = estado(2)/p.r - estado(4);
     par_motor = p.motor.beta_V*tension_aplicada - p.motor.b_m*velocidad_relativa;
 
     tau_traccion = limite_de_traccion(p);

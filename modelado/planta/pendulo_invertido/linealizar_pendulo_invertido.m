@@ -2,14 +2,17 @@ function L = linealizar_pendulo_invertido(p)
 %LINEALIZAR_PENDULO_INVERTIDO Taylor alrededor de phi=0, velocidades=0, tau=0.
 %   Orden de estado: [x; velocidad_x; phi; velocidad_phi].
 %   Entrada: par TOTAL en las dos ruedas. No requiere Control System Toolbox.
-%   Con el campo e_acople (inercia del rotor) el acople es -h+e_acople en phi=0.
+%   Con el campo e_acople (inercia del rotor) el acople es +h+e_acople en phi=0.
+%   Convenio: phi positivo es inclinado HACIA ADELANTE y tau positivo EMPUJA
+%   hacia adelante, por eso H = [+1/r; -1]: la rueda va para adelante y el cuerpo
+%   recibe la reaccion para atras.
 
     %% Modelo de segundo orden M0*q_ddot + D*q_dot = gravedad + H*tau.
     if isfield(p, 'e_acople'), e_acople = p.e_acople; else, e_acople = 0; end
-    M0 = [p.a, -p.h + e_acople; -p.h + e_acople, p.j];
-    D = [p.b_x + p.b_eje / p.r^2, p.b_eje / p.r; ...
-         p.b_eje / p.r, p.b_eje + p.b_phi];
-    H = [-1 / p.r; -1];
+    M0 = [p.a, p.h + e_acople; p.h + e_acople, p.j];
+    D = [p.b_x + p.b_eje / p.r^2, -p.b_eje / p.r; ...
+         -p.b_eje / p.r, p.b_eje + p.b_phi];
+    H = [1 / p.r; -1];
     respuesta_gravedad = M0 \ [0; p.k];
     respuesta_velocidad = -(M0 \ D);
     respuesta_par = M0 \ H;
