@@ -113,7 +113,7 @@ ax.fill_between(mus, 0, a_real, color="#eaf1f9", zorder=0)
 ax.axvline(MU_TOPE, color=GRIS, lw=1.4, ls=":")
 ax.plot(MU_TOPE, A_MOTOR, "o", ms=11, color=NARANJA, mec="white", mew=2, zorder=8)
 ax.annotate("μ = %.2f: de acá en adelante sobra\npiso y el que limita es el motor" % MU_TOPE,
-            (MU_TOPE, A_MOTOR), (0.44, 8.9), fontsize=12.5, color=NARANJA, fontweight="bold",
+            (MU_TOPE, A_MOTOR), (0.475, 8.9), fontsize=12.5, color=NARANJA, fontweight="bold",
             ha="center", arrowprops=dict(arrowstyle="->", color=NARANJA, lw=2))
 
 for mu_, txt, ali, dx in [(0.40, "piso malo", "right", -0.02),
@@ -139,7 +139,7 @@ ax.grid(alpha=0.25)
 ax.tick_params(labelsize=13)
 ax.legend(fontsize=12.5, loc="lower right", framealpha=0.95)
 
-fig.suptitle("Robot medido el 21/10/2026: %.0f g, centro de masa a %.1f cm del eje, ruedas de %.0f mm, "
+fig.suptitle("Robot medido el 21 y el 22/10/2026: %.0f g, centro de masa a %.1f cm del eje, ruedas de %.0f mm, "
              "dos GA25-370 1:20 a 11,1 V" % (MASA_G, BRAZO_CM, RUEDA_MM),
              fontsize=14, color=GRIS, y=0.025)
 fig.tight_layout(rect=[0, 0.045, 1, 1])

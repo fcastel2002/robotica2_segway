@@ -30,20 +30,23 @@ function C = disenar_lqr_pendulo_invertido(p, varargin)
 %
 %   --- Por que R se multiplica por 4 ---
 %   La regla de Bryson fija R = 1/V_bat^2, que es coherente con Q pero mira solo el
-%   problema continuo e ideal. Con ese R el LQR pone un polo en -189 1/s que no tiene
-%   nada que ver con la fisica del robot (el mas rapido de la planta es -7,6) y es puro
+%   problema continuo e ideal. Con ese R el LQR pone un polo en -182 1/s que no tiene
+%   nada que ver con la fisica del robot (el mas rapido de la planta es -23,5) y es puro
 %   costo de implementacion. Medido sobre el lazo realista (muestreo de 5 ms, un paso de
 %   retardo y el filtro de 20 Hz que la cuantizacion del encoder obliga a poner):
 %
 %     factor_R   polo caro   Ts que aguanta   ruido del encoder   con filtro de 20 Hz
-%        1        -189 1/s       5,9 ms            4,4 V            INESTABLE (1,178)
-%        2        -135           8,7 ms            3,3 V            al limite  (0,993)
-%        4         -98          13,0 ms            2,6 V            estable    (0,985)
-%        8         -72          19,5 ms            2,0 V            estable    (0,988)
+%        1        -182 1/s       6,0 ms            5,4 V            INESTABLE (1,163)
+%        2        -129           8,7 ms            4,0 V            estable    (0,986)
+%        4         -93          12,7 ms            3,0 V            estable    (0,986)
+%        8         -68          18,6 ms            2,4 V            estable    (0,986)
+%
+%   (Recalculada el 22/10/2026 con el robot completamente pesado, 962 g, y la rueda de
+%   40 mm. El ruido es Kv por el salto de velocidad de una cuenta de encoder en 5 ms.)
 %
 %   O sea que el diseno de libro no anda en el robot. El costo de repesar es chico: el
-%   escalon de 30 cm pasa de 1,69 s a 1,83 s, un 8 %%. Se elige 4 porque deja el margen
-%   de muestreo en 2,6 veces el periodo en vez de 1,2, que es el riesgo real.
+%   escalon de 30 cm pasa de 1,70 s a 1,80 s, un 6 %%. Se elige 4 porque deja el margen
+%   de muestreo en 2,5 veces el periodo en vez de 1,2, que es el riesgo real.
 %   En LQR solo importa el cociente Q/R, asi que multiplicar R por 4 equivale a declarar
 %   tolerancias 2 veces mas grandes; se deja explicito en vez de disimularlo en Q.
 %

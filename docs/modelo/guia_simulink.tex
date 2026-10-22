@@ -99,8 +99,9 @@ $\theta$ (theta) & rad & la postura de las patas: $10^\circ$ plegada, $40^\circ$
 $\delta_G$ & rad & lo que hay \emph{entre} el ángulo del chasis y $\varphi$. Cambia con la
 postura: va de $-9{,}09^\circ$ plegada a $-1{,}78^\circ$ estirada \\
 \midrule
-$a$ & kg & \textbf{masa efectiva de avance}. Vale 1,25 kg aunque el robot pese 0,92: la diferencia
-es la inercia del rotor vista a través de la reductora 1:20 \\
+$a$ & kg & \textbf{masa efectiva de avance}. Vale 1,31 kg aunque el robot pese 0,96: la diferencia
+es sobre todo la inercia del rotor vista a través de la reductora 1:20 (0,30 kg) y un poco el
+giro de las ruedas (0,05) \\
 $h$ & kg$\cdot$m & \textbf{masa por brazo}, $m_{cuerpo}\cdot\ell$. Es el \emph{acople}: si valiera
 cero, avanzar e inclinarse serían independientes y el robot no se podría equilibrar con las ruedas \\
 $j$ & kg$\cdot$m$^2$ & \textbf{inercia del cuerpo} alrededor del eje de la rueda \\
@@ -168,7 +169,7 @@ $U = -K\,(z_{medido} - z_{ref})$. Una sola multiplicación de un vector de cuatr
 error de los cuatro estados.
 \end{idea}
 
-$K = [\,-55{,}5\ \ -52{,}9\ \ -90{,}7\ \ -11{,}5\,]$, en voltios por (m, m/s, rad, rad/s).
+$K = [\,-55{,}5\ \ -53{,}1\ \ -90{,}2\ \ -11{,}4\,]$, en voltios por (m, m/s, rad, rad/s).
 Como $U = -K\,(z - z_{ref})$, los cuatro signos negativos quieren decir que una inclinación
 hacia adelante pide tensión positiva, o sea empujar hacia adelante para meterse debajo del
 cuerpo. Y la ganancia de posición es negativa por el cero de fase no mínima: para ir hacia
@@ -356,7 +357,7 @@ miden perfecto y el ruido está en cero, pero los lugares donde meter la realida
 
 $\varphi$ se mide desde la dirección del centro de masa, y entre el chasis y esa dirección hay un
 ángulo $\delta_G$. El problema es que $\delta_G$ \textbf{cambia con la postura de las patas}: vale
-$9{,}09^\circ$ con la pata plegada y $1{,}78^\circ$ con la pata estirada.
+$-9{,}09^\circ$ con la pata plegada y $-1{,}78^\circ$ con la pata estirada.
 
 O sea que al mover las patas, \textbf{el cero del ángulo se corre más de 7 grados}.
 \end{ojo}
@@ -400,7 +401,7 @@ Al terminar, todo queda en el workspace base: \texttt{p} (la planta), \texttt{mo
 
 Simulink no se valida solo. El mismo problema se integra en paralelo con \texttt{ode45} sobre una
 implementación \emph{independiente} de la planta, escrita a mano. Las dos coinciden en
-$1{,}3\times10^{-12}$ m de posición y $8{,}3\times10^{-12}$ rad de ángulo. Además hay
+$1{,}4\times10^{-12}$ m de posición y $1{,}0\times10^{-11}$ rad de ángulo. Además hay
 \textbf{11 tests} propios, y la suite del proyecto está en \textbf{35 de 35}.
 
 \begin{probar}
@@ -429,7 +430,7 @@ Para que quede claro hasta dónde llega:
 \toprule
 período de muestreo & el modelo es continuo. El control real va a correr cada 5 ms \\
 retardo de cálculo & un paso entre medir y actuar \\
-cuantización del encoder & 0,24 mm por cuenta \\
+cuantización del encoder & 0,29 mm por cuenta \\
 giro & las dos ruedas pueden recibir distinto, pero la planta es plana sagital \\
 patas con inercia & las tablas congelan la planta en cada postura e interpolan \\
 \bottomrule

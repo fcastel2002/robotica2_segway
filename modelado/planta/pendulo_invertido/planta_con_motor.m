@@ -20,8 +20,8 @@ function [derivada, R] = planta_con_motor(estado, tension, p)
 %
 %   --- Sobre el limite de agarre: el motor NO llega a romperlo, pero por poco ---
 %   Con los parametros vigentes el motor a tension plena pone 6.19 N en el piso
-%   contra 6.32 N de friccion disponible: usa el 98 % del agarre y no lo supera.
-%   El margen es de un 2 % y descansa en mu = 0.7, que esta SUPUESTO y no medido
+%   contra 6.61 N de friccion disponible: usa el 94 % del agarre y no lo supera.
+%   El margen es de un 6 % y descansa en mu = 0.7, que esta SUPUESTO y no medido
 %   (ensayo M-1). La saturacion queda igual como red de seguridad, por si cambian
 %   la rueda, el piso o el motor; mientras no se active, no altera nada.
 %

@@ -48,10 +48,10 @@ variante `segunda_iteracion`. Si un número de este README no coincide con ese a
 | Barras | AD = 112, BC = 108, CD = 40,8, DP = 112 mm (familia 1,40 / 1,35 / 0,51 / 1,40 a escala 80); δ = 164° | medido en los STEP de `diseño_mecanico/segunda_iteracion/completo/step/` |
 | Bancada AB | 80 mm a 45° (intención). En el STEP está en 77,9 mm a 46,6°: B quedó 3 mm corto en horizontal, a corregir en `cabeza_v31` | idem |
 | Recorrido del servo | 320° (pata estirada, de pie) a 350° (plegada). En la dinámica se usa θ = 360° − servo: 10° plegada, 40° estirada | `parametros_geometria.m` |
-| Rueda | Ø66 mm (Rw = 33), 30 g estimados | CAD |
+| Rueda | Ø80 mm (Rw = 40), **50 g medidos** (22/10/2026) | Matías (radio), pesada |
 | Servo de pata | **40 kg·cm**, ~58 g, uno por pata. Elegido el 19/9; verificar a qué tensión da los 40 kg·cm | decisión, ver sección 3 |
-| Motor de rueda | **GA25-370 12 V, reductor 1:20, 300 rpm en vacío**, con encoder de cuadratura (11 PPR en el rotor). ~95 g estimados. **Comprado** | decisión, ver sección 3 |
-| Masas **medidas** (21/10/2026) | barras por pata: AD 30 g, BC 23 g, CDP 11 g (pesadas una por una); caja 542 g (se pesó el robot sin ruedas ni motores de rueda: 670 g, y se restaron las seis barras); **robot ≈ 0,92 kg** con la rueda y el motor todavía estimados (30 + 95 g) | el BC resultó **4 veces** más pesado que el estimado y la caja 19 % más liviana; falta pesar rueda y motor de rueda |
+| Motor de rueda | **GA25-370 12 V, reductor 1:20, 300 rpm en vacío**, con encoder de cuadratura (11 PPR en el rotor). **96 g medidos** (22/10/2026). **Comprado** | decisión, ver sección 3 |
+| Masas **medidas** (21 y 22/10/2026) | barras por pata: AD 30 g, BC 23 g, CDP 11 g (pesadas una por una); caja 542 g (se pesó el robot sin ruedas ni motores de rueda: 670 g, y se restaron las seis barras); rueda 50 g y motor de rueda 96 g; **robot 962 g** | el BC resultó **4 veces** más pesado que el estimado, la caja 19 % más liviana y la rueda 67 % más pesada. **Ya no queda ninguna masa estimada** |
 | Batería | LiPo 3S 11,1 V (propuesta) | |
 | Control | 200 Hz (propuesta); electrónica por definir | |
 
@@ -95,7 +95,7 @@ en MATLAB está en [`simulacion/pendulo_invertido/`](simulacion/pendulo_invertid
 
 Detalle y estado en [`BACKLOG.md`](BACKLOG.md).
 
-1. **Pesar** las piezas impresas, el servo y el motor, y reemplazar las masas estimadas.
+1. ~~**Pesar** las piezas impresas, el servo y el motor~~: hecho el 21 y el 22/10/2026 (robot de 962 g). Falta la inercia de la rueda (disco o aro), ver M-4 del [plan de ensayos](docs/gestion/2026-10-21-plan-de-ensayos.md).
 2. **Medir el motor**: par de bloqueo real con un brazo y una balanza, y rendimiento del reductor. La ficha del GA25-370 se contradice a sí misma (su columna de torsión exigiría 146 % de rendimiento), así que el par del modelo está calculado, no leído.
 3. **Medir el servo** en el banco: rigidez del lazo interno (grados de desvío por peso colgado) y par de
    calado real a la tensión que se use. De eso dependen todos los números de la caída de escalón.

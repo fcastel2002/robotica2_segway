@@ -1,6 +1,6 @@
 # Plan de ensayos del modelo — qué falta medir y cómo
 
-**21/10/2026.** Complementa el [plan de ensayos de electrónica de Matías](../../electronica/ensayos/plan_de_ensayos.md)
+**21/10/2026, actualizado el 22/10/2026** (llegaron las ruedas y los motores: M-4 hecho). Complementa el [plan de ensayos de electrónica de Matías](../../electronica/ensayos/plan_de_ensayos.md)
 (E-01 a E-10, que cubre alimentación, drivers, IMU, encoders y servos). Acá van los ensayos
 **mecánicos y de modelo**, numerados M-… para que no choquen con los E-…
 
@@ -14,11 +14,14 @@ cambia la conclusión si están mal, y cómo medir cada uno.
 
 Pesos **medidos el 21/10/2026**: las tres barras una por una (AD 30 g, BC 23 g, CDP 11 g) y el robot
 entero sin ruedas ni motores de rueda (670 g), de donde la caja sale por diferencia en 542 g.
-Con eso el robot queda en **920 g** (contra los 1006 g estimados) y el brazo del centro de masa en
-**8,2 cm**. Dos sorpresas:
+El 22/10 llegaron las ruedas y se pesaron la **rueda (50 g)** y el **motor de rueda (96 g)**.
+Con eso el robot queda en **962 g** (contra los 1006 g estimados), **sin ninguna masa estimada**, y
+el brazo del centro de masa en **8,2 cm**. Tres sorpresas:
 
 - el **BC pesa cuatro veces** lo que decía el modelo (23 g contra 5,6 g estimados);
-- la **caja pesa 19 % menos** (542 g contra 667 g).
+- la **caja pesa 19 % menos** (542 g contra 667 g);
+- la **rueda pesa 67 % más** (50 g contra 30). Como está en el eje, no cambia el péndulo: sólo la
+  masa que hay que acelerar para avanzar y el peso sobre el piso, que **mejora** el agarre.
 
 Que el modelo errara por cuatro en una pieza es la razón por la que conviene medir el resto en lugar
 de confiar en las estimaciones. Lo bueno: el robot más liviano **mejora** los márgenes. El par que
@@ -29,16 +32,16 @@ pide el servo bajó de 9,06 a 7,98 kg·cm, así que el servo de 40 kg·cm pasó 
 | # | Parámetro | Valor hoy | De dónde sale | Si está mal, cambia… |
 |---|---|---|---|---|
 | **M-1** | **μ del neumático** | 0,70 **supuesto** | nada: elegido | **Todo el margen de tracción.** Es el único parámetro sin ninguna cota |
-| **M-6** | **rigidez del neumático** | 30 kN/m **supuesto** | nada: elegido | **Todo el pico del golpe al aterrizar.** La fuerza va con √k: un neumático tres veces más blando baja el pico un 43 % |
+| **M-6** | **rigidez del neumático** | 30 kN/m **supuesto** | nada: elegido | **Todo el pico del golpe al aterrizar.** La fuerza va con √k: un neumático tres veces más blando baja el pico un 42 % |
 | M-2 | par real y rendimiento del reductor | η = 0,75 supuesto | la ficha se contradice | el par disponible ±25 %, y con él el ángulo máximo de recuperación |
 | M-3 | resolución del encoder | 11 PPR **supuesto** | la ficha no la dice | el filtro de velocidad y el ruido que entra al control |
-| M-4 | masa de rueda y motor de rueda | 30 + 95 g estimados | catálogo | el brazo `l`, el polo inestable (±5 %) y la masa no suspendida del golpe |
+| ~~M-4~~ | masa de rueda y motor de rueda | **50 + 96 g medidos** (22/10) | balanza | **hecho.** Queda la **inercia** de la rueda (disco o aro): mueve el uso del agarre entre 94 y 86 % |
 | **M-7** | **rigidez de la pata armada** | **no está, se la supone rígida** | nada | **el pico del golpe, otra vez.** La manivela de PLA es tan blanda como el neumático, y en serie manda la más blanda: el pico cae a menos de la mitad |
 | M-5 | inercia del rotor | 6e-7 kg·m² típica | valor de libro | el coeficiente de avance hasta 43 % |
 
 Los demás parámetros ya se movieron uno por uno en un barrido de sensibilidad: el polo inestable se
-queda entre 7,38 y 7,83 1/s y la ganancia K_φ varía menos de ±5 % frente a **todas** las demás
-suposiciones juntas. El diseño del control es robusto; **lo único que está realmente indeterminado
+queda entre 7,07 y 7,59 1/s y la ganancia K_φ varía menos de ±6 % frente a **todas** las demás
+suposiciones. El diseño del control es robusto; **lo único que está realmente indeterminado
 es si patina o no.**
 
 ---
@@ -61,15 +64,15 @@ Esta es la parte que vale la pena entender antes de salir a medir:
 
 | Maniobra | μ que necesita | ¿anda con un piso malo (μ = 0,4)? |
 |---|---|---|
-| **Mantenerse parado** (±2°, que es lo normal) | **0,20** | sí, con sobra de 2× |
-| Recuperarse de un empujón mediano (5°) | 0,50 | no, patina un poco |
-| Recuperarse de 10° (caso límite) | 0,69 | no |
+| **Mantenerse parado** (±2°, que es lo normal) | **0,19** | sí, con sobra de 2× |
+| Recuperarse de un empujón mediano (5°) | 0,46 | no, patina un poco |
+| Recuperarse de 10° (caso límite) | 0,66 | no |
 
-El equilibrio normal pide **μ = 0,20**, que lo da hasta un piso encerado. Dicho de otra manera:
+El equilibrio normal pide **μ = 0,19**, que lo da hasta un piso encerado. Dicho de otra manera:
 **el robot no se va a caer por falta de agarre; lo que pierde es aceleración máxima y tolerancia a
 empujones.** Por eso se puede empezar a andar sin saber μ y medirlo después.
 
-Arriba de μ = 0,69 el piso deja de ser el límite: ahí manda la batería, porque los motores ya no
+Arriba de μ = 0,66 el piso deja de ser el límite: ahí manda la batería, porque los motores ya no
 dan más par aunque sobre agarre.
 
 ### Cómo se mide
@@ -81,10 +84,10 @@ Fuente editable del mismo diagrama en ASCII: [`docs/diagramas/ensayo_mu_neumatic
 `cargo install svgbob_cli --locked` y `cargo install resvg --version 0.45.1 --locked`.)*
 
 **Método A, tiro con balanza (el bueno).** Trabar el eje de la rueda para que no pueda girar, cargarla
-con ≈ 460 g (lo que carga una rueda del robot: 920 g repartidos en dos), apoyarla sobre el piso real y
+con ≈ 480 g (lo que carga una rueda del robot: 962 g repartidos en dos), apoyarla sobre el piso real y
 tirar en horizontal con una balanza de mano hasta que arranque a resbalar. **μ = F / W**. Cinco
 repeticiones y promedio. No hace falta el robot, ni los motores, ni la electrónica: alcanza con **una
-rueda sola**, así que se puede hacer el día que lleguen.
+rueda sola**, así que **ya se puede hacer**: las ruedas llegaron el 22/10.
 
 **Método B, plano inclinado (de apuro).** La misma rueda trabada sobre una tabla, levantando un
 extremo hasta que resbala. **μ = tan α**. Más rápido, pero apoya con muy poca carga y la goma agarra
@@ -103,7 +106,7 @@ presentar el proyecto**, que es el que decide.
 Dos cosas que se programan ahora y hacen que el número deje de ser crítico:
 
 1. **Tope de par por software.** Limitar el PWM al valor que el piso aguanta. Con μ = 0,5 el tope
-   queda en 73 % del PWM; con μ = 0,4, en 58 %. Como el equilibrio normal usa menos del 30 %, el tope
+   queda en 76 % del PWM; con μ = 0,4, en 61 %. Como el equilibrio normal usa menos del 30 %, el tope
    **no se nota** salvo en maniobras bruscas. Es una constante en el firmware: cuando se mida μ, se
    cambia un número.
 2. **Detección de patinaje, gratis.** El encoder dice cuánto giró la rueda y la IMU dice cómo
@@ -129,7 +132,7 @@ el tema. Si se acerca a 5,6, sobra par y hay que revisar el límite de tracción
 ## 5. M-3 — Resolución del encoder
 
 El modelo supone 11 PPR en el rotor, que con la reducción 1:20 y el canal en cuadratura da 880 cuentas
-por vuelta de rueda = 0,24 mm de resolución. La ficha de Matías
+por vuelta de rueda = 0,29 mm de resolución. La ficha de Matías
 ([ROB-011](../../electronica/componentes_comprados/datasheets/ROB-011_GA25-370_300RPM/)) dice que
 **falta la etiqueta del fabricante y la resolución real no está confirmada**.
 
@@ -138,18 +141,40 @@ Dividir por 10. Es el ensayo E-04 de Matías; acá importa porque de ese número
 velocidad: a 0,1 m/s con 880 cuentas/vuelta entran sólo **2 cuentas por muestra de 5 ms**, y por eso
 el control necesita el filtro de 20 Hz que ya está en el diseño del LQR.
 
-## 6. M-4 — Pesar la rueda y el motor de rueda
+## 6. M-4 — Pesar la rueda y el motor de rueda: HECHO el 22/10/2026
 
-Es lo único que falta para cerrar la masa del robot. Se pesa cada conjunto rueda+motor por separado
-cuando lleguen y se carga en `modelado/parametros/parametros_fisicos.m`
-(`o.m_rueda` y `o.m_motor`, en gramos). El test
+Rueda **50 g** y motor de rueda **96 g**, cargados en `modelado/parametros/parametros_fisicos.m`
+(`o.m_rueda` y `o.m_motor`). La guarda del test
 [`test_dinamica_pata/test_fuente_comun_de_parametros`](../../modelado/dinamica/tests/test_dinamica_pata.m)
-va a fallar a propósito: es la guarda que avisa que cambió una masa. Hay que actualizar el valor
-esperado y volver a correr la suite.
+pasó a 0,9619 kg. El robot completo pesa **962 g**. Qué cambió y qué no:
 
-**Referencia:** si el robot completo pesara los 850 g que se estimaron a ojo, quedarían 180 g para
-las dos ruedas con sus motores, o sea 90 g cada conjunto. Un GA25-370 solo ya pesa cerca de 95 g,
-así que los 850 g son optimistas: el rango realista está entre **850 y 950 g**.
+- **No cambian** el brazo del péndulo (`h`), su inercia (`j`) ni el par de la gravedad (`k`): la
+  rueda y el motor están en el eje, que es justo el punto desde donde se miden. El polo inestable
+  quedó en 7,345 1/s.
+- **Sube** la masa que hay que acelerar para avanzar: `a` pasa de 1,250 a 1,312 kg.
+- **Mejora** el agarre: hay más peso sobre el piso y el motor empuja lo mismo. Uso del agarre a
+  fondo: de 96 a **94 %**.
+- **Sube** la masa no suspendida del aterrizaje, de 125 a 146 g, y con ella el pico del toque:
+  421 N en el eje del servo en el peor caso (pata rígida), 193 N contando la pata a 8 kN/m.
+- El par estático del servo **no cambia** (7,98 kg·cm): lo que la rueda suma de peso lo descuenta
+  la normal en el mismo punto.
+
+### Lo que queda: la inercia de la rueda
+
+El modelo trata la rueda como un disco macizo, `J = ½·m·R²`. Una rueda con neumático de goma tiene
+más masa cerca del borde, así que está entre el disco y el aro (`J = m·R²`). Con aro, el uso del
+agarre bajaría de 94 a 86 %: **el disco es el supuesto conservador**, así que no es urgente. Pero
+ahora que la rueda está en la mano se mide en cinco minutos.
+
+**Ensayo (suspensión bifilar):** colgar la rueda sola, acostada, de dos hilos verticales iguales de
+largo `L` ≈ 50 cm, pegados con cinta en dos puntos opuestos de la llanta a una distancia `d` del
+centro (por ejemplo `d` = 3 cm, o sea 6 cm entre hilos). Girarla un poco alrededor del eje vertical
+y soltarla: oscila. Cronometrar 20 oscilaciones y dividir por 20 para tener el período `T`. Entonces
+
+`J = m·g·d²·T² / (4·π²·L)`
+
+Con esas medidas, un disco daría `T` ≈ 1,3 s y un aro `T` ≈ 1,9 s: la diferencia se ve con el
+cronómetro del celular. El resultado, en kg·m², va en `o.J_rueda`.
 
 ## 6 bis. M-6 — Rigidez del neumático, y por qué importa tanto
 
@@ -161,38 +186,38 @@ puesto a dedo. Al caer de un escalón hay dos golpes muy distintos y conviene no
 | | Fase A: el toque | Fase B: el frenado |
 |---|---|---|
 | **Dura** | ~3 ms | 11 a 33 ms |
-| **Qué se frena** | la rueda y el motor, 125 g, **en seco** | el resto del robot, 795 g |
+| **Qué se frena** | la rueda y el motor, 146 g, **en seco** | el resto del robot, 816 g |
 | **Quién lo absorbe** | **sólo el neumático** | el servo plegando la pata |
 | **El servo** | no llega a reaccionar: actúa como barra rígida | trabaja, 8 a 18 kg·cm |
-| **Fuerza en el eje del servo** | 128 N (escalón de 2 cm) a 393 N (18 cm) | 71 N |
+| **Fuerza en el eje del servo** | 140 N (escalón de 2 cm) a 421 N (18 cm), con la pata rígida | 94 N |
 
 La fase A es la que preocupa, y el control no puede hacer nada: en 3 ms el servo ni se entera.
 El pico sale de `F = √(2·E·k)`, con `E` la energía de la masa **no suspendida** (rueda + motor).
-O sea que baja con la raíz de las dos cosas, y los dos se pueden tocar:
+O sea que baja con la raíz de las dos cosas. La masa ya está medida (146 g); lo que queda por
+medir, y lo que se puede cambiar, es el neumático:
 
 | Cambio (escalón de 10 cm) | Hundimiento | N en el neumático | Eje del servo |
 |---|---|---|---|
-| como está hoy (k = 30 kN/m) | 3,0 mm | 90 N | **292 N** |
-| neumático 3× más blando | 5,2 mm | 52 N | **167 N** (−43 %) |
-| neumático 10× más blando (gomaespuma) | 9,5 mm | 29 N | **89 N** (−70 %) |
-| neumático 3× más duro | 1,7 mm | 157 N | **509 N** (+74 %) |
-| rueda + motor de 125 a 80 g | 2,5 mm | 74 N | 241 N (−17 %) |
-| rueda + motor de 125 a 180 g | 3,6 mm | 107 N | 344 N (+18 %) |
+| como está hoy (k = 30 kN/m) | 3,2 mm | 97 N | **314 N** |
+| neumático 3× más blando | 5,6 mm | 56 N | **181 N** (−42 %) |
+| neumático 10× más blando (gomaespuma) | 10,2 mm | 31 N | **99 N** (−68 %) |
+| neumático 3× más duro | 1,9 mm | 168 N | **544 N** (+73 %) |
 
-**Ensayo:** apoyar la rueda sobre una balanza de cocina, apretar hasta 4,5 N (la carga estática)
+**Ensayo:** apoyar la rueda sobre una balanza de cocina, apretar hasta 4,7 N (la carga estática)
 y hasta 45 N, y medir con un calibre cuánto se hunde en cada caso. `k = ΔF/Δd`. Dos minutos.
-Hacerlo **antes de comprar la segunda rueda**, porque de acá sale si conviene goma blanda o dura.
+Hacerlo **ya, con las ruedas que llegaron**: de acá sale si conviene cambiar a una goma más blanda.
 
 **Lo que conviene hacer en el CAD, independientemente de lo que dé:** que el pasador `A` tenga su
-**propio rodamiento** tomando la carga radial, y que el servo entregue sólo par. 393 N sobre el
-estriado de un servo le arranca los dientes; 393 N sobre un rodamiento de 6 mm no es nada.
+**propio rodamiento** tomando la carga radial, y que el servo entregue sólo par. Unos 200 N (el
+caso realista) o 421 N (el peor) sobre el estriado de un servo le pueden arrancar los dientes;
+sobre un rodamiento de 6 mm no son nada.
 Si eso no se puede, la alternativa es un **acople elástico** entre el brazo del servo y la manivela
 (un resorte de torsión con topes), que es lo que en robótica se llama actuación elástica en serie.
 
-## 6 ter. M-7 — Rigidez de la pata armada, y por qué los 393 N estaban de más
+## 6 ter. M-7 — Rigidez de la pata armada, y por qué los 400 N estaban de más
 
-Joaquín preguntó si los 393 N sobre el eje del servo al caer de 18 cm no eran demasiado para
-un robot de menos de un kilo. **Tenía razón: ese número es una cota superior, no una predicción.**
+Joaquín preguntó si los 393 N sobre el eje del servo al caer de 18 cm (421 N desde que se pesaron
+la rueda y el motor) no eran demasiado para un robot de menos de un kilo. **Tenía razón: ese número es una cota superior, no una predicción.**
 
 El modelo supone que lo **único** elástico en todo el camino es el neumático, y que las barras,
 los pasadores y la reductora del servo son rígidos. En un robot de PLA impreso eso es falso.
@@ -214,21 +239,21 @@ Y eso es sólo la manivela; faltan el acoplador, los pasadores y la reductora de
 
 | Rigidez de la estructura | N en el neumático | **Eje del servo** |
 |---|---|---|
-| rígida (lo que supone el modelo) | 121 N | **393 N** |
-| 20 kN/m | 77 N | 248 N |
-| 10 kN/m | 61 N | 196 N |
-| 8 kN/m | 56 N | **180 N** |
-| 5 kN/m | 46 N | 148 N |
+| rígida (lo que supone el modelo) | 130 N | **421 N** |
+| 20 kN/m | 82 N | 266 N |
+| 10 kN/m | 65 N | 211 N |
+| 8 kN/m | 60 N | **193 N** |
+| 5 kN/m | 49 N | 159 N |
 
-Y con un escalón realista en vez de 18 cm, contando la estructura a 8 kN/m: **60 N con 2 cm**,
-95 N con 5 cm, 135 N con 10 cm. De referencia, parado y quieto el eje ve 12,2 N.
+Y con un escalón realista en vez de 18 cm, contando la estructura a 8 kN/m: **64 N con 2 cm**,
+102 N con 5 cm, 144 N con 10 cm. De referencia, parado y quieto el eje ve 12,2 N.
 
 **Ensayo:** con la pata armada y la cabina sujeta, apoyar la rueda sobre una balanza de cocina,
 empujar hacia abajo hasta 20 y 50 N, y medir con un calibre cuánto baja el eje del servo respecto
 de la rueda. `k = ΔF/Δd`. Hacerlo en las dos posturas extremas, porque la rigidez del cuatro barras
 cambia con el ángulo.
 
-**Lo que NO cambia con esto:** aun con 180 N, el eje del servo ve quince veces la carga estática.
+**Lo que NO cambia con esto:** aun con 193 N, el eje del servo ve dieciséis veces la carga estática.
 La recomendación de ponerle un rodamiento propio al pasador `A` sigue en pie.
 
 ## 7. M-5 — Inercia del rotor
@@ -247,7 +272,7 @@ constante de tiempo mecánica. El mismo registro da el rozamiento del eje.
 | Cuándo | Qué | Depende de |
 |---|---|---|
 | **Ya, sin esperar nada** | programar el tope de par como constante configurable y la detección de patinaje; revisar en el CAD si `A` tiene rodamiento propio | nada |
-| Al llegar las ruedas | **M-1** (μ), **M-6** (rigidez del neumático) y **M-4** (pesar) | tener una rueda |
+| **Ya: las ruedas llegaron el 22/10** | **M-1** (μ), **M-6** (rigidez del neumático) y la inercia de la rueda (M-4, el peso ya está) | una rueda |
 | Con la pata impresa y armada | **M-7** (rigidez de la pata) | las barras impresas |
 | Con un motor en la mesa | **M-2** (par) y **M-5** (inercia), junto con E-04 de Matías | motor + driver + fuente |
 | Con el encoder leyendo | **M-3** (resolución) | ESP32 andando |

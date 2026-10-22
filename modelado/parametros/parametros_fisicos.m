@@ -37,7 +37,7 @@ function o = parametros_fisicos(variante)
                                         % y 46.6 grados de A (altura justa, 3 mm corto en horizontal). Corregir en cabeza_v31.
       o.N = 20;    o.encoder = true;    % GA25-370 COMPRADO: reductor 1:20, 300 rpm en vacio a 12 V
       o.nombre_motor = 'GA25-370 12V 1:20 (300 rpm en vacio) con encoder de cuadratura, 11 PPR en el rotor';
-      o.m_motor = 95;                   % cada motorreductor GA25-370 [g] (cuerpo 25 mm, caja 21 mm; estimado). PESAR.
+      o.m_motor = 96;                   % cada motorreductor GA25-370 [g]. MEDIDO 22/10/2026 (se estimaba 95)
       o.m_servo = 47.1;                   % parte de los 542 g medidos. OJO: la ficha del DS3240 da ~60 g y un servo
                                         % pesa lo que pesa, no se escala. Es un relleno hasta tener el desglose: PESARLO SUELTO.
       o.tau_s_max = 40*0.0981;          % par maximo del servo [N m] = 40 kg cm. Verificar a que tension lo da la publicacion
@@ -61,8 +61,11 @@ function o = parametros_fisicos(variante)
   % ======================================== 2. RUEDA ========================================
   o.Rw = 40;             % radio de rueda [mm]. CORREGIDO el 21/10/2026 por Matias: la rueda es de
                          % 80 mm de diametro, no la de 65 del CAD viejo. Afecta velocidad, par y altura.
-  o.m_rueda = 30;        % masa de cada rueda [g] (estimada: goma + nucleo). PESAR.
+  o.m_rueda = 50;        % masa de cada rueda [g]. MEDIDO 22/10/2026 (se estimaba 30: +67 %)
   o.J_rueda = [];        % inercia de cada rueda [kg m2]; [] = disco macizo 0.5*m*R^2. Poner un numero si se mide.
+                         % OJO: una rueda con neumatico de goma concentra la masa en el borde, asi que su
+                         % inercia real esta entre el disco (0.5 m R^2) y el aro (m R^2). Con aro el uso del
+                         % agarre baja de 94 a 86 %; el polo y K casi no cambian. Se mide en M-4.
   o.b_w = 1e-4;          % friccion viscosa en el eje de rueda [N m s/rad] (rodamientos; supuesto)
 
   % ============================ 3. MASAS DE LAS PIEZAS (g) y su posicion ============================
@@ -72,7 +75,7 @@ function o = parametros_fisicos(variante)
   % Como no hay desglose de esos 542 g, los seis items de la caja se escalan parejo por 542/667.
   % Se comprobo que el reparto no importa: repartiendo parejo o sacandole todo a las piezas
   % impresas, el brazo l cambia de 8.17 a 8.10 cm y el polo inestable de 7.44 a 7.52 1/s.
-  % SIGUEN SIN PESAR: la rueda y el motor de rueda, que no estan todavia.
+  % --- 22/10/2026: rueda (50 g) y motor de rueda (96 g) medidos. Con eso estan TODAS las masas.
   % Posiciones del CoM respecto de A [mm] (x hacia atras, y arriba).
   % Los seis items de abajo suman 542 g, que es lo medido. El reparto entre ellos sigue siendo
   % el estimado, escalado por 542/667; sus posiciones de CoM no cambiaron.

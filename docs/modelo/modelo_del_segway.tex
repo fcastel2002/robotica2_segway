@@ -27,7 +27,8 @@
               {../../modelado/dinamica/}{../../modelado/geometria/}%
               {../../modelado/planta/pendulo_invertido/}%
               {../../modelado/planta/pendulo_invertido/diagramas/}%
-              {../../simulacion/pendulo_invertido/resultados/}}
+              {../../simulacion/pendulo_invertido/resultados/}%
+              {../../simulacion/segway_completo/resultados/}}
 
 \setlength{\parskip}{5pt}
 \setlength{\parindent}{0pt}
@@ -183,7 +184,8 @@ y $P$ se usan en todo el documento.}
 \begin{medido}
 El 21/10/2026 se pesaron por primera vez las piezas. Las tres barras, una por una, y el robot
 entero \emph{sin ruedas ni motores de rueda}: 670 g. Restando las seis barras, la caja queda
-en 542 g. Siguen \textbf{sin pesar} la rueda y el motor de rueda, porque todavía no están.
+en 542 g. El 22/10 llegaron las ruedas y los motores de rueda y también se pesaron: con eso
+están \textbf{todas} las masas del robot medidas.
 \end{medido}
 
 \begin{center}
@@ -195,15 +197,15 @@ Manivela $AD$ (cada una) & \textcolor{verdep}{medida} & 23{,}2 g & \textbf{30 g}
 Balancín $BC$ (cada uno) & \textcolor{verdep}{medida} & 5{,}6 g & \textbf{23 g} \\
 Acoplador $CDP$ (cada uno) & \textcolor{verdep}{medida} & 15{,}6 g & \textbf{11 g} \\
 Caja (todo lo que no es pata) & \textcolor{verdep}{medida por diferencia} & 667 g & \textbf{542 g} \\
-Rueda (cada una) & \textcolor{rojop}{estimada} & 30 g & 30 g \\
-Motor de rueda (cada uno) & \textcolor{rojop}{estimada} & 95 g & 95 g \\
+Rueda (cada una) & \textcolor{verdep}{medida} & 30 g & \textbf{50 g} \\
+Motor de rueda (cada uno) & \textcolor{verdep}{medida} & 95 g & \textbf{96 g} \\
 \midrule
-\textbf{Robot completo} & & 1006 g & \textbf{920 g} \\
+\textbf{Robot completo} & & 1006 g & \textbf{962 g} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Dos sorpresas, y las dos enseñan algo:
+Tres sorpresas, y las tres enseñan algo:
 
 \begin{itemize}[leftmargin=1.5em]
 \item El \textbf{balancín pesa cuatro veces} lo que decía el modelo. Era la pieza más chica y
@@ -212,6 +214,11 @@ Dos sorpresas, y las dos enseñan algo:
 \item La \textbf{caja pesa un 19\% menos}. Acá la moraleja es al revés: el modelo era pesimista,
       y al corregirlo \emph{mejoraron} los márgenes. El par que pide el servo bajó de 9{,}06 a
       \textbf{7{,}98 kg$\cdot$cm}, y su margen subió de 4{,}4 a \textbf{5{,}0}.
+\item La \textbf{rueda pesa un 67\% más} (50 g contra 30). Pero acá hay una buena noticia
+      escondida: la rueda y el motor están \emph{en el eje}, así que no cambian nada del péndulo
+      ---ni el brazo, ni la inercia del cuerpo, ni el par de la gravedad---. Lo único que
+      mueven es la masa que hay que acelerar para avanzar, y el peso sobre el piso, que
+      \emph{mejora} el agarre.
 \end{itemize}
 
 \section{Los componentes}
@@ -344,7 +351,7 @@ unidad de $\dot\theta$:
 \toprule
 & $\theta = 10^\circ$ & $\theta = 25^\circ$ & $\theta = 40^\circ$ \\
 \midrule
-$I_{eq}$ caso \texttt{banco} [g$\cdot$m$^2$] & 8{,}25 & 5{,}40 & 4{,}59 \\
+$I_{eq}$ caso \texttt{banco} [g$\cdot$m$^2$] & 9{,}56 & 6{,}23 & 5{,}29 \\
 $I_{eq}$ caso \texttt{parado} [g$\cdot$m$^2$] & 19{,}42 & 12{,}30 & 10{,}47 \\
 Par estático del servo [kg$\cdot$cm] & \textbf{7{,}98} & 6{,}33 & 5{,}78 \\
 \bottomrule
@@ -354,7 +361,7 @@ Par estático del servo [kg$\cdot$cm] & \textbf{7{,}98} & 6{,}33 & 5{,}78 \\
 Dos lecturas:
 
 \begin{itemize}[leftmargin=1.5em]
-\item Parado, el servo ve una inercia \textbf{2{,}3 veces} mayor que en el banco. Tiene
+\item Parado, el servo ve una inercia \textbf{2{,}0 veces} mayor que en el banco. Tiene
       sentido: en el banco mueve la rueda, parado mueve el robot entero.
 \item El peor caso es la pata \textbf{plegada}, con 7{,}98 kg$\cdot$cm por servo. Con el
       DS3240 de 40 kg$\cdot$cm el margen es \textbf{5{,}0}. El servo está holgado.
@@ -365,7 +372,7 @@ Dos lecturas:
 La ecuación \eqref{eq:pata} se obtuvo por Lagrange, que es un método de energías y no muestra
 las fuerzas internas. Para comprobarla se resolvió el mismo problema por el camino opuesto:
 diagramas de cuerpo libre de las tres barras, nueve ecuaciones de equilibrio con nueve
-incógnitas $(A_x, A_y, \tau, B_x, B_y, C_x, C_y, D_x, D_y)$.
+incógnitas: $A_x$, $A_y$, $\tau$, $B_x$, $B_y$, $C_x$, $C_y$, $D_x$ y $D_y$.
 
 \begin{center}
 \includegraphics[width=0.95\textwidth]{dcl_pata.png}
@@ -395,13 +402,18 @@ confundirlos, porque los absorben cosas distintas.
 & \textbf{Fase A: el toque} & \textbf{Fase B: el frenado} \\
 \midrule
 Dura & $\sim$3 ms & 11 a 33 ms \\
-Qué se frena & la rueda y el motor, 125 g, en seco & el resto del robot, 795 g \\
+Qué se frena & la rueda y el motor, 146 g, en seco & el resto del robot, 816 g \\
 Quién lo absorbe & \textbf{sólo el neumático} & el servo plegando la pata \\
 El servo & no reacciona: es una barra rígida & trabaja, 8 a 18 kg$\cdot$cm \\
-Fuerza en el eje del servo & 128 N (2 cm) a 393 N (18 cm) & 71 N \\
+Fuerza en el eje del servo & 64 N (2 cm) a 193 N (18 cm)$^*$ & 94 N \\
 \bottomrule
 \end{tabular}
 \end{center}
+{\small $^*$ Contando la pata de PLA como un resorte de 8 kN/m en serie con el neumático. Si se la
+supone rígida ---que es lo que hacía el primer cálculo--- dan 140 y 421 N, pero eso es una cota
+superior: la manivela impresa es tan blanda como el neumático, y en serie manda la más blanda.
+Se mide con el ensayo M-7.}
+
 
 La fase B está cubierta: el servo absorbe 0{,}9 J usando 10 de los 30 grados de carrera.
 La que preocupa es la fase A.
@@ -409,11 +421,11 @@ La que preocupa es la fase A.
 \begin{ojo}
 En 3 ms el servo no llega a reaccionar: mantiene posición y transmite todo. El pico sale de
 $F = \sqrt{2Ek}$, con $E$ la energía de la masa \emph{no suspendida} (rueda más motor) y $k$
-la rigidez del neumático. Un neumático tres veces más blando baja el pico un 43\%; uno tres
-veces más duro lo sube un 74\%.
+la rigidez del neumático. Un neumático tres veces más blando baja el pico un 42\%; uno tres
+veces más duro lo sube un 73\%.
 
 La recomendación de diseño que sale de acá: que el pasador $A$ tenga \textbf{rodamiento
-propio} tomando la carga radial, y que el servo entregue sólo par. 393 N sobre el estriado de
+propio} tomando la carga radial, y que el servo entregue sólo par. Casi 200 N sobre el estriado de
 un servo le arranca los dientes.
 \end{ojo}
 
@@ -613,17 +625,17 @@ de la ecuación \eqref{eq:planta}. Y ahora se ve de dónde sale cada coeficiente
 \toprule
 \textbf{Coef.} & \textbf{Fórmula} & \textbf{Valor} \\
 \midrule
-$a$ & $\underbrace{m_b + m_w}_{0{,}920} + \underbrace{J_w/R_w^2}_{0{,}030} + \underbrace{n_{mot}J_r n^2/R_w^2}_{0{,}300}$ & 1{,}2499 kg \\[10pt]
-$h$ & $m_b\,\ell = 0{,}8599 \times 0{,}0817$ & 0{,}07024 kg$\cdot$m \\[4pt]
-$j$ & $\underbrace{J_b}_{0{,}003847} + \underbrace{m_b\ell^2}_{0{,}005738} + \underbrace{n_{mot}J_r(1-n)^2}_{0{,}000433}$ & 0{,}010018 kg$\cdot$m$^2$ \\[10pt]
+$a$ & $\underbrace{m_b + m_w}_{0{,}962} + \underbrace{J_w/R_w^2}_{0{,}050} + \underbrace{n_{mot}J_r n^2/R_w^2}_{0{,}300}$ & 1{,}3119 kg \\[10pt]
+$h$ & $m_b\,\ell = 0{,}8619 \times 0{,}0815$ & 0{,}07024 kg$\cdot$m \\[4pt]
+$j$ & $\underbrace{J_b}_{0{,}003860} + \underbrace{m_b\ell^2}_{0{,}005725} + \underbrace{n_{mot}J_r(1-n)^2}_{0{,}000433}$ & 0{,}010018 kg$\cdot$m$^2$ \\[10pt]
 $e$ & $n_{mot}J_r\,n(1-n)/R_w$ & $-0{,}011400$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \begin{idea}
-Fijate en $a$: de los 1,25 kg que hay que acelerar para avanzar, sólo 0,92 son el robot.
-Los otros 0,33 son inercia que no existe como masa: 0,03 de las ruedas girando y
+Fijate en $a$: de los 1,31 kg que hay que acelerar para avanzar, sólo 0,96 son el robot.
+Los otros 0,35 son inercia que no existe como masa: 0,05 de las ruedas girando y
 \textbf{0,30 del rotor}, que gira veinte veces más rápido que la rueda y por eso se siente
 cuatrocientas veces más ($n^2 = 400$). La reductora es una lupa de inercia.
 \end{idea}
@@ -800,7 +812,7 @@ M_0^{-1} = \frac{1}{\Delta}\begin{bmatrix} j & -(h+e) \\ -(h+e) & a \end{bmatrix
 \end{equation}
 
 Con los números: $h + e = 0{,}07024 - 0{,}01140 = 0{,}058842$, y
-$\Delta = 1{,}2499 \times 0{,}010018 - 0{,}058842^2 = 0{,}0090590$. Que $\Delta > 0$ no es un
+$\Delta = 1{,}3119 \times 0{,}010018 - 0{,}058842^2 = 0{,}0096801$. Que $\Delta > 0$ no es un
 detalle: significa que $M_0$ es definida positiva, o sea que cualquier movimiento tiene energía
 cinética positiva. Si diera cero o negativo, el modelo estaría mal.
 
@@ -841,12 +853,12 @@ Reemplazando los números:
 \begin{equation}
 A = \begin{bmatrix}
 0 & 1 & 0 & 0\\
-0 & -16{,}522 & -4{,}476 & 0{,}667\\
+0 & -15{,}462 & -4{,}189 & 0{,}625\\
 0 & 0 & 0 & 1\\
-0 & 145{,}352 & 95{,}074 & -5{,}952
+0 & 139{,}125 & 93{,}388 & -5{,}701
 \end{bmatrix},
 \qquad
-B = \begin{bmatrix} 0 \\ 1{,}805 \\ 0 \\ -15{,}880 \end{bmatrix}.
+B = \begin{bmatrix} 0 \\ 1{,}689 \\ 0 \\ -15{,}200 \end{bmatrix}.
 \end{equation}
 
 Armadas a mano con las fórmulas de arriba, coinciden con las del código en
@@ -866,7 +878,7 @@ Si por un momento se tiran todos los rozamientos, la cuarta fila queda sola:
 \begin{equation}
 \ddot\varphi = \frac{a\,k}{\Delta}\,\varphi
 \quad\Longrightarrow\quad
-\text{polos en } \pm\sqrt{\frac{a\,k}{\Delta}} = \pm\sqrt{95{,}07} = \pm 9{,}75\ \text{s}^{-1}.
+\text{polos en } \pm\sqrt{\frac{a\,k}{\Delta}} = \pm\sqrt{93{,}39} = \pm 9{,}66\ \text{s}^{-1}.
 \end{equation}
 
 Es la misma ecuación que un péndulo invertido de libro, $\ddot\varphi = (g/\ell_{eq})\varphi$:
@@ -890,15 +902,15 @@ $\varphi$ & \multicolumn{3}{c}{$\ddot x$ [m/s$^2$]} & \multicolumn{3}{c}{$\ddot\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 $[^\circ]$ & no lineal & lineal & error & no lineal & lineal & error \\
 \midrule
-1  & $-0{,}078$ & $-0{,}078$ & 0{,}0\% & 1{,}66  & 1{,}66  & 0{,}0\% \\
-2  & $-0{,}156$ & $-0{,}156$ & 0{,}1\% & 3{,}32  & 3{,}32  & 0{,}1\% \\
-5  & $-0{,}387$ & $-0{,}391$ & 0{,}9\% & 8{,}26  & 8{,}30  & 0{,}5\% \\
-\textbf{8}  & $\mathbf{-0{,}610}$ & $\mathbf{-0{,}625}$ & \textbf{2{,}4\%} & \textbf{13{,}12} & \textbf{13{,}28} & \textbf{1{,}2\%} \\
-10 & $-0{,}753$ & $-0{,}781$ & 3{,}8\% & 16{,}29 & 16{,}59 & 1{,}9\% \\
-15 & $-1{,}079$ & $-1{,}172$ & 8{,}7\% & 23{,}88 & 24{,}89 & 4{,}2\% \\
-20 & $-1{,}349$ & $-1{,}562$ & 15{,}8\% & 30{,}88 & 33{,}19 & 7{,}5\% \\
-30 & $-1{,}690$ & $-2{,}344$ & 38{,}7\% & 42{,}73 & 49{,}78 & 16{,}5\% \\
-45 & $-1{,}686$ & $-3{,}515$ & 108{,}5\% & 55{,}08 & 74{,}67 & 35{,}6\% \\
+1  & $-0{,}073$ & $-0{,}073$ & 0{,}0\% & 1{,}63  & 1{,}63  & 0{,}0\% \\
+2  & $-0{,}146$ & $-0{,}146$ & 0{,}1\% & 3{,}26  & 3{,}26  & 0{,}1\% \\
+5  & $-0{,}362$ & $-0{,}366$ & 0{,}9\% & 8{,}11  & 8{,}15  & 0{,}5\% \\
+\textbf{8}  & $\mathbf{-0{,}571}$ & $\mathbf{-0{,}585}$ & \textbf{2{,}3\%} & \textbf{12{,}89} & \textbf{13{,}04} & \textbf{1{,}2\%} \\
+10 & $-0{,}705$ & $-0{,}731$ & 3{,}7\% & 16{,}01 & 16{,}30 & 1{,}8\% \\
+15 & $-1{,}011$ & $-1{,}097$ & 8{,}4\% & 23{,}50 & 24{,}45 & 4{,}0\% \\
+20 & $-1{,}267$ & $-1{,}462$ & 15{,}4\% & 30{,}43 & 32{,}60 & 7{,}1\% \\
+30 & $-1{,}592$ & $-2{,}193$ & 37{,}8\% & 42{,}25 & 48{,}90 & 15{,}7\% \\
+45 & $-1{,}597$ & $-3{,}290$ & 106{,}0\% & 54{,}74 & 73{,}35 & 34{,}0\% \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -943,9 +955,9 @@ el LQR levanta el robot desde:
 Inclinación inicial & ¿Se levanta? & Cuánto se corre \\
 \midrule
 $10^\circ$ & sí & 42 mm \\
-$20^\circ$ & sí & 96 mm \\
-$30^\circ$ & sí & 181 mm \\
-$35^\circ$ & sí & 261 mm \\
+$20^\circ$ & sí & 94 mm \\
+$30^\circ$ & sí & 178 mm \\
+$35^\circ$ & sí & 256 mm \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -964,8 +976,8 @@ garantizados como el LQR: el margen cubre, entre otras cosas, el error de haber 
 \midrule
 Polo inestable & $+7{,}345$ s$^{-1}$ & la inclinación se duplica cada \textbf{94 ms}: ése
 es el tiempo que tiene el control para reaccionar \\
-Polo rápido & $-24{,}76$ s$^{-1}$ & la fricción eléctrica del motor \\
-Polo & $-5{,}06$ s$^{-1}$ & \\
+Polo rápido & $-23{,}52$ s$^{-1}$ & la fricción eléctrica del motor \\
+Polo & $-4{,}98$ s$^{-1}$ & \\
 Polo en el origen & $0$ & la posición: nada se opone a que el robot se vaya caminando \\
 Cero de $U \to x$ & $+7{,}423$ s$^{-1}$ & \textbf{fase no mínima} \\
 Rango de controlabilidad & 4 de 4 & el sistema es controlable: un solo motor alcanza \\
@@ -980,7 +992,7 @@ unos milímetros para inclinarse, y recién entonces avanza. No es un defecto de
 es una propiedad de la planta, y \emph{ningún} control la puede eliminar.
 \end{idea}
 
-En la simulación, ese retroceso es de \textbf{13{,}9 mm} antes de avanzar 30 cm.
+En la simulación, ese retroceso es de \textbf{14{,}2 mm} antes de avanzar 30 cm.
 
 % ===========================================================================
 \chapter{El motor y el límite de tracción}\label{cap:motor}
@@ -1011,7 +1023,7 @@ b_m = \frac{n_{mot}\,\eta\,n_g^2\,K_t K_e}{R_m}.
 \textbf{Parámetro} & \textbf{De dónde sale} & \textbf{Valor} \\
 \midrule
 $n_g$, reducción & publicación & 20 \\
-$K_t = K_e$ & de la velocidad en vacío, corregida por $R_m i_0$ & 0{,}01812 \\
+$K_t = K_e$ & velocidad en vacío, corregida por $R_m i_0$ & 0{,}01812 \\
 $R_m$ & \textcolor{naranjap}{deducida} de la corriente de vacío & 10{,}28 $\Omega$ \\
 $\eta$, rendimiento del reductor & \textcolor{rojop}{supuesto} & 0{,}75 \\
 $\beta_V$ & calculado & 0{,}05287 N$\cdot$m/V \\
@@ -1042,7 +1054,7 @@ Parte del par del motor no va al piso: va a acelerar la inercia reflejada del ro
 una reducción de 1:20 equivale a un tercio de kilo sobre un robot de un kilo. La fuerza real es
 \[
 F = c_1\,\tau, \qquad c_1 = \begin{bmatrix} m_{tot} & -h\end{bmatrix} M_0^{-1} H
-= +10{,}31 \ \mathrm{N/(N\cdot m)},
+= +10{,}54 \ \mathrm{N/(N\cdot m)},
 \]
 contra los $1/R_w = 25{,}0$ que daría la cuenta ingenua. O sea casi \textbf{dos veces y media menos}.
 \end{ojo}
@@ -1052,15 +1064,15 @@ Con los números de hoy:
 \begin{center}
 \begin{tabular}{@{}lr@{}}
 \toprule
-Fuerza que el motor pone en el piso, a fondo & 6{,}05 N \\
-Fricción disponible ($\mu = 0{,}7$ supuesto) & 6{,}32 N \\
+Fuerza que el motor pone en el piso, a fondo & 6{,}19 N \\
+Fricción disponible ($\mu = 0{,}7$ supuesto) & 6{,}61 N \\
 \midrule
-\textbf{Uso del agarre} & \textbf{96\%} \\
+\textbf{Uso del agarre} & \textbf{94\%} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-O sea: el motor queda justo por debajo del agarre, pero con un margen de apenas 4\%, y ese
+O sea: el motor queda justo por debajo del agarre, pero con un margen de apenas 6\%, y ese
 veredicto descansa en $\mu = 0{,}7$, que está supuesto. El capítulo \ref{cap:falta} explica
 cómo medirlo y por qué, a pesar de todo, no es grave.
 
@@ -1118,14 +1130,14 @@ R = \frac{f_R}{V_{bat}^2}.
 
 \begin{ojo}
 Con la regla de Bryson pura ($f_R = 1$) el diseño es impecable en el papel y
-\textbf{no sobrevive a la implementación}. Pone un polo en $-189$ s$^{-1}$ que no tiene nada
-que ver con la física del robot (el más rápido de la planta es $-27$): es puro costo de
+\textbf{no sobrevive a la implementación}. Pone un polo en $-182$ s$^{-1}$ que no tiene nada
+que ver con la física del robot (el más rápido de la planta es $-23{,}5$): es puro costo de
 muestreo. Con un período de 5 ms, un paso de retardo y el filtro de 20 Hz que la cuantización
-del encoder obliga, el lazo queda \textbf{inestable}, con radio espectral 1{,}178.
+del encoder obliga, el lazo queda \textbf{inestable}, con radio espectral 1{,}163.
 
-Con $f_R = 4$: radio espectral 0{,}985, el margen de muestreo pasa de 1{,}2$\times$ a
-2{,}6$\times$ y el ruido del encoder cae de 4{,}4 a 2{,}6 V. Cuesta un 8\% de tiempo de
-respuesta. \textbf{Es una de las decisiones más importantes del proyecto}, y no aparece en
+Con $f_R = 4$: radio espectral 0{,}986, el polo caro baja a $-93$ y el margen de muestreo pasa
+de 1{,}2$\times$ a 2{,}5$\times$ y el ruido del encoder cae de 5{,}4 a 3{,}0 V. Cuesta un 6\%
+de tiempo de respuesta: el escalón de 30 cm pasa de 1{,}70 a 1{,}80 s. \textbf{Es una de las decisiones más importantes del proyecto}, y no aparece en
 ningún libro: aparece al simular la implementación real.
 \end{ojo}
 
@@ -1133,7 +1145,7 @@ ningún libro: aparece al simular la implementación real.
 
 \begin{equation}
 U = -K\,(z - z_{ref}), \qquad
-K = \begin{bmatrix} -55{,}50 & -52{,}87 & -90{,}72 & -11{,}51 \end{bmatrix}
+K = \begin{bmatrix} -55{,}50 & -53{,}12 & -90{,}17 & -11{,}44 \end{bmatrix}
 \end{equation}
 
 en voltios por (m, m/s, rad, rad/s).
@@ -1141,9 +1153,9 @@ en voltios por (m, m/s, rad, rad/s).
 \begin{center}
 \begin{tabular}{@{}lr@{}}
 \toprule
-Polos a lazo cerrado & $-97{,}54$;\ $-7{,}17$;\ $-2{,}54 \pm 1{,}24i$ \\
-Tiempo de asentamiento & 1{,}57 s \\
-Margen de fase & $94{,}5^\circ$ a 83{,}9 rad/s \\
+Polos a lazo cerrado & $-93{,}08$;\ $-7{,}17$;\ $-2{,}51 \pm 1{,}24i$ \\
+Tiempo de asentamiento & 1{,}60 s \\
+Margen de fase & $93{,}9^\circ$ a 80{,}9 rad/s \\
 Pico de sensibilidad $\|S\|_\infty$ & 1{,}00 \\
 \bottomrule
 \end{tabular}
@@ -1158,105 +1170,107 @@ amplifica ninguna perturbación en ninguna frecuencia.
 
 \begin{idea}
 Hay un solo archivo que abrir. Construye el modelo si falta, lo simula, lo compara contra una
-integración independiente en MATLAB, y deja figura y resumen en \texttt{resultados/}.
+integración independiente en MATLAB, y deja figura en \texttt{resultados/}. El recorrido
+bloque por bloque del diagrama está en una guía aparte, \texttt{guia\_simulink.pdf}, que es la
+versión corta de este documento enfocada sólo en Simulink.
 \end{idea}
 
 \section{El archivo que se abre}
 
 \begin{center}
-\texttt{simulacion/pendulo\_invertido/INICIAR\_PENDULO\_SIMULINK.m}
+\texttt{simulacion/segway\_completo/INICIAR\_SEGWAY.m}
 \end{center}
 
 Se abre y se pulsa \textbf{Run}. No hace falta nada más: el script agrega las rutas, lee los
-parámetros, diseña el LQR, construye el \texttt{.slx} si no existe, simula y verifica.
-
-\section{Las variables en el workspace}
-
-El archivo es un \emph{script}, no una función. Eso es a propósito: todo lo que calcula queda
-en el \textbf{workspace base}, que es justamente de donde Simulink lee sus parámetros. Al
-terminar quedan disponibles:
-
-\begin{center}
-\small
-\begin{tabular}{@{}llp{6.4cm}@{}}
-\toprule
-\textbf{Grupo} & \textbf{Variables} & \textbf{Qué son} \\
-\midrule
-Parámetros físicos & \texttt{fisicos} & la estructura cruda, en unidades de ingeniería \\
-Planta & \texttt{p} & todo el péndulo en SI \\
-& \texttt{a h j k e\_acople r} & los coeficientes de la ecuación \eqref{eq:planta} \\
-& \texttt{b\_eje b\_x b\_phi} & fricciones \\
-Motor & \texttt{motor} & la estructura completa \\
-& \texttt{beta\_V b\_m V\_bat} & lo que lee el bloque del motor \\
-Control & \texttt{C} & el diseño completo, con $A$, $B$, $Q$, $R$, polos y márgenes \\
-& \texttt{K} & la ganancia, que es lo que lee el bloque \\
-& \texttt{tau\_traccion} & el tope de par que impone el piso \\
-Condiciones & \texttt{q0 q\_punto0} & estado inicial \\
-Resultados & \texttt{t z\_sl U\_sl tau\_sl} & lo que devolvió Simulink \\
-& \texttt{z\_ml error\_estado} & la referencia de MATLAB y la diferencia \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\begin{idea}
-Si querés experimentar sin tocar nada más, la \textbf{sección 2} del script tiene todo lo que
-conviene cambiar: la postura de las patas, la inclinación inicial, adónde se le pide ir y
-cuándo. El resto se recalcula solo.
-\end{idea}
+parámetros, diseña el LQR, arma las tablas de cada postura de las patas, construye el
+\texttt{.slx} si no existe, simula y verifica.
 
 \section{Cómo está armado el diagrama}
 
-Cinco áreas, que son las cinco etapas físicas:
+Seis etapas de izquierda a derecha, cada una en su área:
 
 \begin{center}
-\begin{tabular}{@{}lp{10.2cm}@{}}
+\small
+\begin{tabular}{@{}lp{11.2cm}@{}}
 \toprule
-\textbf{Área} & \textbf{Qué hace} \\
+\textbf{Etapa} & \textbf{Qué hace} \\
 \midrule
-Consigna & arma $z_{ref} = [x_{destino};\,0;\,0;\,0]$ \\
-Control & $U = -K\,(z - z_{ref})$ \\
-Actuador & saturación de batería $\to$ motor $\to$ saturación de agarre \\
-Planta & resuelve $M(\varphi)\,\ddot q = \ldots$ \\
+Consignas & adónde se le pide ir y en qué postura poner las patas \\
+Control & $U = -K\,(z_{medido} - z_{ref})$, y el reparto a las dos ruedas (con la entrada de giro
+en cero) \\
+Actuadores & los \textbf{cuatro motores}, cada uno en su bloque: dos GA25-370 de rueda (batería,
+constante de par y contraelectromotriz) y dos DS3240 de pata (lazo de posición con tope de
+velocidad y topes mecánicos) \\
+Planta & la física, en cuatro etapas numeradas: el par que llega a la rueda, los coeficientes
+según la postura, las dos ecuaciones de Newton--Euler por separado, y el despeje de las dos
+aceleraciones por Cramer \\
+Sensores & encoders e IMU, cada uno con su fuente de ruido (hoy en cero). La IMU mide el ángulo
+del \emph{chasis} y el firmware le suma $\delta_G$ para recuperar $\varphi$ \\
 Registro & saca las señales al workspace \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-La planta está armada en \textbf{forma matricial}: un bloque \texttt{Matrix Concatenate} arma
-$M(\varphi)$ por filas, y un solo bloque \texttt{Divide} configurado en modo matricial resuelve
-$M \backslash \mathrm{rhs}$. Eso evita escribir las ecuaciones despejadas a mano, que es donde
-se cometen los errores de signo.
+La planta \textbf{no} está armada con matrices anónimas: cada señal lleva el nombre de lo que es
+---\emph{suma de fuerzas}, \emph{suma de momentos}, \emph{masa efectiva}, \emph{inercia del
+cuerpo}, \emph{acople}--- y es exactamente la ecuación \eqref{eq:planta} escrita en bloques.
 
-\begin{ojo}
-La tensión se llama \texttt{U} y la velocidad de avance \texttt{v}. Antes las dos se llamaban
-\texttt{V} y era imposible leer el diagrama.
-\end{ojo}
+\section{Las variables en el workspace}
+
+El archivo es un \emph{script}, no una función. Eso es a propósito: todo lo que calcula queda
+en el \textbf{workspace base}, que es justamente de donde Simulink lee sus parámetros. La
+\textbf{sección 2} del script junta todo lo que conviene tocar:
+
+\begin{center}
+\small
+\begin{tabular}{@{}llp{7.4cm}@{}}
+\toprule
+\textbf{Variable} & \textbf{Por defecto} & \textbf{Qué cambia} \\
+\midrule
+\texttt{postura\_deg} & 25 & en qué postura se diseña el control \\
+\texttt{phi0} & $5^\circ$ & de qué inclinación arranca \\
+\texttt{x\_destino} & 0,30 m & adónde se le pide ir (0 = quedarse quieto) \\
+\texttt{theta\_pata\_fin} & igual a la inicial & si las patas se mueven o no \\
+\texttt{giro\_ref} & 0 & diferencia de tensión entre las dos ruedas \\
+\texttt{ruido\_imu\_angulo}, \ldots & 0 & ruido de cada sensor \\
+\texttt{sesgo\_imu} & 0 & error constante de la IMU \\
+\texttt{compensar\_delta\_G} & 1 & si el firmware corrige el ángulo según la postura \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Al terminar quedan además \texttt{p} (la planta en SI), \texttt{motor}, \texttt{C} (el diseño
+del control, con $A$, $B$, $Q$, $R$, polos y márgenes), \texttt{K}, y los resultados
+\texttt{z\_sl}, \texttt{z\_med}, \texttt{U\_sl}, \texttt{tau\_sl} y \texttt{th\_sl}.
 
 \section{Lo que da}
 
 \begin{center}
-\includegraphics[width=\textwidth]{respuesta_lqr.png}
-\captionof{figure}{Las dos cosas que se le piden al robot: quedarse parado y moverse a otra
-posición.}
+\includegraphics[width=\textwidth]{respuesta_segway.png}
+\captionof{figure}{Las dos cosas que se le piden al robot: quedarse parado (arranca inclinado
+$5^\circ$) y moverse 30 cm hacia adelante a partir de $t = 2$ s. Fijate en la inclinación: al
+arrancar se va a $+9^\circ$, o sea \textbf{hacia adelante}, que es hacia donde avanza. Y justo
+antes la tensión pega un pico \emph{negativo}: es el empujón hacia atrás que hace falta para
+tirar el cuerpo hacia adelante.}
 \end{center}
 
 \begin{center}
 \begin{tabular}{@{}lr@{}}
 \toprule
 \multicolumn{2}{@{}l}{\textbf{a) Quedarse parado, arrancando inclinado $5^\circ$}}\\
-Inclinación a los 2 s & $0{,}056^\circ$ \\
-Cuánto se corrió del lugar & 21{,}4 mm \\
+Inclinación a los 2 s & $0{,}064^\circ$ \\
+Cuánto se corrió del lugar & 20{,}6 mm \\
 \midrule
-\multicolumn{2}{@{}l}{\textbf{b) Ir a 30 cm}}\\
+\multicolumn{2}{@{}l}{\textbf{b) Ir a 30 cm hacia adelante}}\\
 Error final & 0{,}0 mm \\
-Retroceso antes de avanzar & 13{,}9 mm \\
-Inclinación máxima & $8{,}59^\circ$ \\
-Tiempo al 98\% & 1{,}84 s \\
+Retroceso antes de avanzar & 14{,}2 mm \\
+Inclinación máxima & $+9{,}05^\circ$ (hacia adelante) \\
+Tiempo al 98\% & 1{,}80 s \\
 \midrule
 \multicolumn{2}{@{}l}{\textbf{Común}}\\
-Tensión pico & 11{,}10 V de 11{,}1 \\
+Tensión que pide el control & 16{,}7 V (la batería da 11{,}1: el resto se satura) \\
 Tiempo saturando el agarre & 0\% \\
-Normal mínima & 8{,}7 N (la rueda nunca despega) \\
+Normal mínima & 9{,}1 N (la rueda nunca despega) \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1269,10 +1283,10 @@ una implementación \emph{independiente} de la planta, escrita a mano. Las dos c
 \begin{center}
 \begin{tabular}{@{}lr@{}}
 \toprule
-$x$ & $2{,}3\times10^{-12}$ m \\
-$v$ & $1{,}7\times10^{-10}$ m/s \\
-$\varphi$ & $2{,}0\times10^{-11}$ rad \\
-$\omega$ & $1{,}5\times10^{-9}$ rad/s \\
+$x$ & $1{,}4\times10^{-12}$ m \\
+$v$ & $9{,}7\times10^{-11}$ m/s \\
+$\varphi$ & $1{,}0\times10^{-11}$ rad \\
+$\omega$ & $8{,}8\times10^{-10}$ rad/s \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1280,7 +1294,7 @@ $\omega$ & $1{,}5\times10^{-9}$ rad/s \\
 Además hay una verificación de seis grupos que corre en los tests: simetría y definición
 positiva de $M$, las matrices $A$ y $B$ contra diferencias finitas, el balance de potencia,
 el balance horizontal de Newton y la deriva de energía sin fricción. Los seis pasan, y la
-suite completa del proyecto está en \textbf{24 de 24}.
+suite completa del proyecto está en \textbf{35 de 35}.
 
 % ===========================================================================
 \chapter{Qué pasa si las patas se mueven}\label{cap:patasmov}
@@ -1301,19 +1315,19 @@ La respuesta corta: \textbf{no}, pero hay que corregir una cosa en el firmware.
 \textbf{$\delta_G$} & \textbf{$K_\varphi$} \\
 $[^\circ]$ & [cm] & [cm] & [s$^{-1}$] & $[^\circ]$ & \\
 \midrule
-10 (plegada) & 7{,}2 & 3{,}94 & 7{,}33 & 9{,}09 & $-80{,}0$ \\
-15 & 8{,}8 & 5{,}46 & 7{,}54 & 6{,}10 & $-85{,}2$ \\
-20 & 10{,}2 & 6{,}86 & 7{,}51 & 4{,}52 & $-89{,}6$ \\
-25 & 11{,}5 & 8{,}17 & 7{,}38 & 3{,}58 & $-93{,}5$ \\
-30 & 12{,}7 & 9{,}42 & 7{,}23 & 2{,}94 & $-97{,}1$ \\
-35 & 13{,}9 & 10{,}62 & 7{,}06 & 2{,}41 & $-100{,}4$ \\
-40 (estirada) & 15{,}1 & 11{,}79 & 6{,}89 & 1{,}78 & $-103{,}7$ \\
+10 (plegada) & 7{,}9 & 3{,}93 & 7{,}14 & $-9{,}09$ & $-76{,}4$ \\
+15 & 9{,}4 & 5{,}44 & 7{,}42 & $-6{,}10$ & $-81{,}8$ \\
+20 & 10{,}8 & 6{,}84 & 7{,}43 & $-4{,}52$ & $-86{,}2$ \\
+25 & 12{,}1 & 8{,}15 & 7{,}35 & $-3{,}58$ & $-90{,}2$ \\
+30 & 13{,}4 & 9{,}40 & 7{,}21 & $-2{,}94$ & $-93{,}8$ \\
+35 & 14{,}6 & 10{,}60 & 7{,}06 & $-2{,}41$ & $-97{,}2$ \\
+40 (estirada) & 15{,}8 & 11{,}77 & 6{,}91 & $-1{,}78$ & $-100{,}4$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-El centro de masa \textbf{se duplica} en altura, de 7{,}2 a 15{,}1 cm. Y sin embargo el polo
-inestable se mueve apenas un 5\%, de 7{,}33 a 6{,}89 s$^{-1}$, con un máximo en el medio.
+El centro de masa \textbf{se duplica} en altura, de 7{,}9 a 15{,}8 cm. Y sin embargo el polo
+inestable se mueve apenas un 7\%, entre 6{,}91 y 7{,}43 s$^{-1}$, con el máximo en el medio.
 
 \begin{idea}
 La intuición de la escoba --- cuanto más larga, más fácil de equilibrar --- \textbf{no se
@@ -1334,44 +1348,45 @@ No. Aplicando el $K$ diseñado a $25^\circ$ sobre la planta de cada postura:
 \toprule
 \textbf{Postura} & \textbf{Polo lento} & \textbf{¿Estable?} & \textbf{Asentamiento} \\
 \midrule
-$10^\circ$ & $-1{,}55$ s$^{-1}$ & sí & 2{,}59 s \\
-$25^\circ$ & $-2{,}67$ s$^{-1}$ & sí & 1{,}50 s \\
-$40^\circ$ & $-2{,}86$ s$^{-1}$ & sí & 1{,}40 s \\
+$10^\circ$ & $-1{,}37$ s$^{-1}$ & sí & 2{,}93 s \\
+$25^\circ$ & $-2{,}51$ s$^{-1}$ & sí & 1{,}60 s \\
+$40^\circ$ & $-2{,}83$ s$^{-1}$ & sí & 1{,}41 s \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Es estable en todo el rango, con margen de fase entre $85^\circ$ y $96^\circ$. El precio de
-usar un solo $K$ es que, con la pata totalmente plegada, el robot tarda un 46\% más en
+Es estable en todo el rango, con margen de fase entre $84^\circ$ y $94^\circ$. El precio de
+usar un solo $K$ es que, con la pata totalmente plegada, el robot tarda un 51\% más en
 asentarse. Es un precio barato comparado con la complejidad de programar \emph{gain
 scheduling}.
 
 \begin{idea}
 \textbf{Recomendación: un solo $K$, el de la postura media.} Si más adelante se quiere afinar,
 lo que más se gana es subir $|K_\varphi|$ y $|K_\omega|$ a medida que la pata se estira: de
-punta a punta cambian un 30\% y un 47\% respectivamente. Las ganancias de posición y velocidad
+punta a punta cambian un 31\% y un 48\% respectivamente. Las ganancias de posición y velocidad
 no cambian nada.
 \end{idea}
 
 \section{Lo que sí hay que corregir}
 
 \begin{ojo}
-Mirá la columna $\delta_G$ de la tabla: va de $9{,}09^\circ$ con la pata plegada a
-$1{,}78^\circ$ con la pata estirada. $\delta_G$ es lo que hay entre el ángulo del chasis ---
+Mirá la columna $\delta_G$ de la tabla: va de $-9{,}09^\circ$ con la pata plegada a
+$-1{,}78^\circ$ con la pata estirada. $\delta_G$ es lo que hay entre el ángulo del chasis ---
 que es lo que mide la IMU --- y $\varphi$, que es lo que necesita el control.
 
 O sea: \textbf{al mover la pata, el cero del ángulo se corre $7{,}31^\circ$}. Si el firmware
 no lo corrige, el control va a creer que el robot está inclinado cuando no lo está.
 \end{ojo}
 
-Simulado con la planta no lineal, estirando la pata de $10^\circ$ a $40^\circ$:
+Simulado con el modelo de Simulink completo, con los servos reales estirando la pata de
+$10^\circ$ a $40^\circ$:
 
 \begin{center}
 \begin{tabular}{@{}lrr@{}}
 \toprule
 & \textbf{Se corre} & \textbf{Inclinación máxima} \\
 \midrule
-Sin compensar & 215 mm & $1{,}0^\circ$ \\
+Sin compensar & 207 mm & $7{,}5^\circ$ \\
 \textbf{Compensando} & \textbf{0 mm} & \textbf{$0{,}0^\circ$} \\
 \bottomrule
 \end{tabular}
@@ -1413,9 +1428,10 @@ Este capítulo dice cuáles son y cuánto cambiaría la conclusión si estuviera
 M-1 & $\mu$ del neumático & \textbf{todo el margen de tracción}. Es el único parámetro
 sin ninguna cota \\
 M-6 & rigidez del neumático & \textbf{todo el pico del golpe al aterrizar} \\
+M-7 & rigidez de la pata armada & el pico del golpe, otra vez: en serie manda la más blanda \\
 M-2 & par real y rendimiento del reductor & el par disponible $\pm25\%$ \\
 M-3 & resolución del encoder & el filtro de velocidad y el ruido que entra al control \\
-M-4 & masa de rueda y motor & el brazo $\ell$ y el polo inestable ($\pm5\%$) \\
+M-4 & masa de rueda y motor & \textcolor{verdep}{\textbf{medida el 22/10}}: rueda 50 g, motor 96 g \\
 M-5 & inercia del rotor & el coeficiente de avance, hasta un 43\% \\
 \bottomrule
 \end{tabular}
@@ -1423,13 +1439,14 @@ M-5 & inercia del rotor & el coeficiente de avance, hasta un 43\% \\
 
 \section{Por qué el diseño igual es robusto}
 
-Se movió cada suposición una por una. El polo inestable se queda entre 7{,}38 y 7{,}83
-s$^{-1}$ y la ganancia $K_\varphi$ varía menos de $\pm5\%$ frente a \textbf{todas} las demás
-suposiciones juntas.
+Ya están medidas todas las masas. Se movió cada una de las suposiciones que quedan ---el
+rendimiento del reductor, la inercia del rotor, la resistencia del motor--- de a una. El polo
+inestable se queda entre 7{,}07 y 7{,}59 s$^{-1}$ y la ganancia $K_\varphi$ varía menos de
+$\pm6\%$. El diseño del control no depende de ninguna de ellas.
 
 \textbf{Lo único realmente indeterminado es si patina o no.} Y ahí la buena noticia es que el
-equilibrio normal --- inclinarse dos o tres grados --- pide apenas $\mu = 0{,}20$, que lo da
-hasta un piso encerado. Recuperarse de $5^\circ$ pide 0{,}50 y de $10^\circ$, 0{,}69.
+equilibrio normal --- inclinarse dos o tres grados --- pide apenas $\mu = 0{,}19$, que lo da
+hasta un piso encerado. Recuperarse de $5^\circ$ pide 0{,}46 y de $10^\circ$, 0{,}66.
 
 \begin{idea}
 Perder agarre \textbf{no voltea al robot}: le baja la aceleración máxima y la tolerancia a
@@ -1444,8 +1461,10 @@ empujones. Por eso se puede armar y probar el equilibrio sin saber $\mu$, y medi
 armado.}
 \end{center}
 
-El plan completo de ensayos, con los seis y en qué orden hacerlos, está en
-\texttt{docs/gestion/2026-10-21-plan-de-ensayos.md}.
+El plan completo de ensayos, con los siete y en qué orden hacerlos, está en
+\begin{center}
+\texttt{docs/gestion/2026-10-21-plan-de-ensayos.md}
+\end{center}
 
 % ===========================================================================
 \appendix

@@ -121,12 +121,12 @@ ax.text(44, 34, "cae a 1,9 m/s", fontsize=15, color=AZULC,
 
 ax, A, P = ejes[1]                                   # el toque
 flecha(ax, (P[0], -32), (P[0], 6), ROJO, lw=4.4)
-ax.text(P[0] + 16, -22, "56 a 121 N", fontsize=16, color=ROJO, fontweight="bold", ha="left", va="center")
-ax.text(P[0] + 46, 30, "el neumático y la pata\nceden entre 4 y 9 mm", fontsize=13.5, color=ROJO,
+ax.text(P[0] + 16, -22, "60 a 130 N", fontsize=16, color=ROJO, fontweight="bold", ha="left", va="center")
+ax.text(P[0] + 46, 30, "el neumático y la pata\nceden entre 4 y 10 mm", fontsize=13.5, color=ROJO,
         fontweight="bold", ha="left", va="center", linespacing=1.4)
 for x in (-95, -10):
     flecha(ax, (x, 212), (x, 170), AZULC, lw=3.0)
-ax.text(-120, 240, "el cuerpo SIGUE bajando a 1,9 m/s", fontsize=15, color=AZULC,
+ax.text(-120, 292, "el cuerpo SIGUE bajando a 1,9 m/s", fontsize=15, color=AZULC,
         fontweight="bold", ha="left", va="center")
 
 ax, A, P = ejes[2]                                   # la pata cede
@@ -149,18 +149,18 @@ textos = [
     "Durante 190 ms no pasa nada: cae el robot\n"
     "entero, rígido, sin tocar nada.",
 
-    "La rueda y el motor (125 g) se frenan EN\n"
+    "La rueda y el motor (146 g) se frenan EN\n"
     "SECO. Lo único elástico en el camino es la\n"
     "goma del neumático: se aplasta y devuelve\n"
-    "121 N.\n\n"
+    "130 N.\n\n"
     "El servo NO llega a reaccionar: en 3 ms es\n"
-    "una barra rígida, y su eje ve entre 180 y\n"
-    "393 N: el valor alto supone que la pata no\n"
+    "una barra rígida, y su eje ve entre 193 y\n"
+    "421 N: el valor alto supone que la pata no\n"
     "se dobla nada, cosa que en PLA es falsa.\n"
     "Contra 12 N parado y quieto.",
 
     "Como la pata PUEDE plegarse, el cuerpo\n"
-    "(795 g) no tiene que parar de golpe: sigue\n"
+    "(816 g) no tiene que parar de golpe: sigue\n"
     "bajando mientras la rueda ya está quieta, y\n"
     "el cuatro barras se cierra 10°.\n\n"
     "Acá sí trabaja el servo. Al ser empujado\n"

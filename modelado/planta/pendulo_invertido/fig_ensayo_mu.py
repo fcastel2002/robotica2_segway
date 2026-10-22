@@ -67,7 +67,7 @@ ax.plot([2.6, 2.6], [R + 0.02, 0.82], color=NEGRO, lw=2.4, zorder=5)
 ax.text(2.6, 1.03, "lastre", fontsize=12.5, ha="center", va="center", zorder=7)
 flecha(ax, (2.6, 1.70), (2.6, 1.32), VERDE, lw=3.2)
 ax.text(2.80, 1.50, "W", fontsize=18, color=VERDE, va="center", ha="left", fontweight="bold")
-ax.text(0.1, 0.88, "W = peso total\napoyado. Poner\n≈ 460 g: es lo que\ncarga una rueda.",
+ax.text(0.1, 0.88, "W = peso total\napoyado. Poner\n≈ 480 g: es lo que\ncarga una rueda.",
         fontsize=12.5, color=VERDE, va="center", ha="left", fontweight="bold", linespacing=1.4)
 
 ax.add_patch(Rectangle((4.55, 0.14), 1.05, 0.42, fc="#fff3cd", ec=NEGRO, lw=1.8, zorder=6))

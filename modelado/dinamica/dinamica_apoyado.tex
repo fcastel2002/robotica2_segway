@@ -25,7 +25,7 @@
 
 El robot está de pie sobre sus dos ruedas. El servo gira la manivela y, como la rueda apoya en el piso y no
 se puede mover, lo que sube y baja es la cabina. Este es el caso que hay que resolver para saber qué par
-necesita el servo: es el que tiene la masa de verdad, porque la cabina pesa casi cuatro veces más que la rueda.
+necesita el servo: es el que tiene la masa de verdad, porque la cabina pesa casi cuatro veces más que la rueda con su motor.
 
 Hay un solo grado de libertad, \(\theta\) (el ángulo del servo), y el camino es el de siempre: ángulos,
 posiciones, velocidades, \(K\), \(U\), Lagrange. Lo que hay que mirar con cuidado es el paso de las
@@ -54,7 +54,7 @@ entre los dos.
 \(CD\) & lado del acoplador que va a \(C\). 40.8 mm \\
 \(DP\) & lado del acoplador que va al eje de la rueda \(P\). 112 mm \\
 \(\delta\) & ángulo del acoplador en \(D\), entre \(DC\) y \(DP\). \(164^\circ\) \\
-\(R_w\) & radio de la rueda. 33 mm \\
+\(R_w\) & radio de la rueda. 40 mm \\
 \midrule
 \multicolumn{2}{l}{\textbf{Los ángulos que salen de \(\theta\)} (sección 3)}\\
 \midrule
@@ -82,7 +82,7 @@ entre los dos.
 \multicolumn{2}{l}{\textbf{Las masas y las inercias}}\\
 \midrule
 \(m_{AD},\,m_{BC},\,m_{CDP}\) & masa de la manivela, del balancín y del acoplador. 30, 23 y 11 g, \textbf{medidas} el 21/10/2026 \\
-\(m_P\) & rueda más motor, que cuelgan de \(P\). 125 g \\
+\(m_P\) & rueda más motor, que cuelgan de \(P\). 50 + 96 = 146 g, \textbf{medidas} el 22/10/2026 \\
 \(m_c\) & masa de la cabina, o sea todo lo que no es pata. 542 g, \textbf{medida} por diferencia el 21/10/2026 \\
 \(n\) & cantidad de patas. 2 \\
 \(I_{AD},\,I_{BC},\,I_{CDP}\) & inercia de cada pieza respecto de \emph{su propio} centro de masa \\
@@ -249,7 +249,7 @@ I_{eq}(\theta)={}&I_{AD}+I_{BC}\,\beta'^2+I_{CDP}\,\psi'^2\\
 \end{equation}
 \(I_{eq}\) (la inercia equivalente) es lo que el servo siente en su eje. Depende de \(\theta\) porque las
 relaciones de transmisión \(\beta'\) y \(\psi'\) y el vector \(c_P\) cambian con la posición. El último
-término, el de la cabina, es el 93 por ciento del total.
+término, el de la cabina, es el 87 por ciento del total.
 
 \section{Paso 5: la energía potencial \(U\)}
 
@@ -363,7 +363,7 @@ Y para simular, despejando la aceleración, con el estado \(x=(\theta,\dot\theta
 \toprule
 \textbf{En \(K\)} & \\
 \midrule
-Entró la cabina & \(\tfrac12(m_c/n)|c_P|^2\dot\theta^2\). Es el término más grande, el 93 por ciento de
+Entró la cabina & \(\tfrac12(m_c/n)|c_P|^2\dot\theta^2\). Es el término más grande, el 87 por ciento de
   \(I_{eq}\). No estás subiendo la rueda, estás subiendo la cabina \\
 Salió la rueda & el término de \(m_P\) desaparece: con la rueda apoyada, \(P\) no se traslada \\
 Cambió la referencia & las velocidades pasan de \(c_Q\) a \(c_Q-c_P\): todo se mide respecto de \(P\) \\
@@ -398,11 +398,11 @@ Con los valores de la tabla de la sección 2, y \(n=2\):
 \toprule
  & \(\theta=10^\circ\) (plegada) & \(\theta=25^\circ\) & \(\theta=40^\circ\) (estirada) \\
 \midrule
-Altura de la cabina \(h\) [mm] & 70.2 & 127.9 & 177.2 \\
+Altura de la cabina \(h\) [mm] & 77.2 & 134.9 & 184.2 \\
 \(\beta'\), \(\psi'\) [rad/rad] & \(-0.703\), \(1.260\) & \(-0.950\), \(0.964\) & \(-1.161\), \(1.120\) \\
 \(|c_P|=|y_P'|\) [mm/rad] & 250 & 199 & 182 \\
-\(I_{eq}\) [g\,m\(^2\)] & 22.24 & 14.13 & 11.92 \\
-\(\tau_{est}=U'\) [kg\,cm] & 9.06 & 7.20 & 6.58 \\
+\(I_{eq}\) [g\,m\(^2\)] & 19.42 & 12.30 & 10.47 \\
+\(\tau_{est}=U'\) [kg\,cm] & 7.98 & 6.32 & 5.78 \\
 \midrule
 Factor de \(b_C\) en \(b_{eq}\) & 3.85 & 3.66 & 5.20 \\
 Factor de \(b_D\) en \(b_{eq}\) & 5.11 & 3.86 & 4.49 \\
@@ -410,7 +410,7 @@ Factor de \(b_D\) en \(b_{eq}\) & 5.11 & 3.86 & 4.49 \\
 \end{tabular}
 \end{center}
 
-La postura más exigente es la plegada: ahí el brazo \(|c_P|\) es máximo y el servo tiene que dar 9.1 kg\,cm
+La postura más exigente es la plegada: ahí el brazo \(|c_P|\) es máximo y el servo tiene que dar 8.0 kg\,cm
 solo para sostener el robot quieto, contra los 40 kg\,cm del servo elegido. La inercia también es máxima ahí, casi
 el doble que estirada.
 

@@ -116,17 +116,17 @@ resintonizar cinco o seis ganancias a mano para cada altura.
 Nuestro robot va a muestrear a 200 Hz, va a tener retardo de cómputo y va a necesitar filtrar la
 velocidad del encoder. Nada de eso está cubierto por el teorema.
 
-Y eso **no es teoría**: nos mordió. El diseño con la regla de Bryson pura ponía un polo en −189 1/s
-que no tiene nada que ver con la física del robot (el más rápido de la planta es −7,6) y era puro
-costo de implementación. Medido:
+Y eso **no es teoría**: nos mordió. El diseño con la regla de Bryson pura ponía un polo en −182 1/s
+que no tiene nada que ver con la física del robot (el más rápido de la planta es −23,5) y era puro
+costo de implementación. Medido (recalculado el 22/10/2026 con el robot ya pesado entero, 962 g):
 
 | R | Polo caro | Ts que aguanta | Ruido del encoder | Con filtro de 20 Hz |
 |---|---|---|---|---|
-| Bryson puro | −189 | 5,9 ms | 4,4 V | **INESTABLE** (radio 1,178) |
-| **Bryson × 4** | **−98** | **13,0 ms** | **2,6 V** | **estable** (0,985) |
+| Bryson puro | −182 | 6,0 ms | 5,4 V | **INESTABLE** (radio 1,163) |
+| **Bryson × 4** | **−93** | **12,7 ms** | **3,0 V** | **estable** (0,986) |
 
 O sea que el diseño de libro **no andaba en el robot**. Lo corregimos multiplicando R por 4, que
-cuesta un 8 % de tiempo de respuesta (1,69 s → 1,83 s para 30 cm). Hay un test que lo verifica para
+cuesta un 6 % de tiempo de respuesta (1,70 s → 1,80 s para 30 cm). Hay un test que lo verifica para
 que no vuelva a pasar.
 
 **Esto es un argumento a favor, no en contra**: la perilla que arregla el problema es R, que es

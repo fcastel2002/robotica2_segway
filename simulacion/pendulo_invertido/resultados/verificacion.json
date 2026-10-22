@@ -4,13 +4,13 @@
     25,
     40
   ],
-  "determinante_minimo": 0.0025685743720015573,
-  "error_A": 2.1316837184315318E-12,
-  "error_B": 1.1368683772161603E-13,
-  "error_potencia": 0,
-  "error_balance_horizontal": 5.5511151231257827E-17,
+  "determinante_minimo": 0.002811047324920996,
+  "error_A": 1.7625900738948985E-12,
+  "error_B": 0,
+  "error_potencia": 6.9388939039072284E-18,
+  "error_balance_horizontal": 0,
   "deriva_energia_J": 1.1102230246251565E-16,
   "grupos_aprobados": 6,
-  "fecha": "2026-10-22 11:55:45 -0300",
+  "fecha": "2026-10-22 16:33:57 -0300",
   "matlab": "23.2.0.2485118 (R2023b) Update 6"
 }

@@ -13,7 +13,7 @@ from matplotlib.patches import Arc, FancyArrowPatch, Polygon, Circle
 AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0     # mm (escala 80, STEP del 14/9)
 ANG_AB, DELTA = 45.0, 164.0                                # grados
 THETA = 25.0                                               # angulo para el dibujo (40 = estirada, 10 = plegada)
-Rw = 33.0
+Rw = 40.0
 fAD, fBC, fCDP = 0.428, 0.5, 0.3145                        # centros de masa (fraccion del largo)
 r, dg = math.radians, math.degrees
 

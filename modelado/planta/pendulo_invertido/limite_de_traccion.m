@@ -26,18 +26,20 @@ function [tau_max, F_max, c1] = limite_de_traccion(p)
 %
 %   --- Lectura del resultado ---
 %   Con los parametros vigentes tau_max sale apenas por encima del par de bloqueo del
-%   motor: a tension plena desde el reposo usa el 98 % del agarre. O sea que el motor
+%   motor: a tension plena desde el reposo usa el 94 % del agarre. O sea que el motor
 %   NO llega a hacer patinar la rueda, pero por muy poco, y el veredicto cuelga de mu,
 %   que es el unico parametro del modelo SIN MEDIR (0.7 supuesto). Si el piso diera
-%   mu < 0.69, a fondo patina. Lo que hay que mirar para decidir si importa: el
-%   equilibrio normal, de mas menos 2 grados, pide apenas mu = 0.20; recuperarse de
-%   10 grados pide 0.69. Ver el ensayo M-1 en docs/gestion/2026-10-21-plan-de-ensayos.md
+%   mu < 0.66, a fondo patina. Lo que hay que mirar para decidir si importa: el
+%   equilibrio normal, de mas menos 2 grados, pide apenas mu = 0.19; recuperarse de
+%   10 grados pide 0.66. Ver el ensayo M-1 en docs/gestion/2026-10-21-plan-de-ensayos.md
 %   y la figura fig_traccion.png de esta carpeta.
 %
 %   Hasta el 21/10/2026, con las masas estimadas, el robot pesaba 1006 g y este numero
-%   daba 87 %. Al pesarlo resulto de 920 g y, contra la intuicion, el uso del agarre
-%   SUBIO: mas liviano significa menos peso sobre la rueda, o sea menos friccion
-%   disponible, y el par del motor no cambio.
+%   daba 87 %. Al pesar las barras y la caja resulto de 920 g y, contra la intuicion, el
+%   uso del agarre SUBIO a 98 %: mas liviano significa menos peso sobre la rueda, o sea
+%   menos friccion disponible, y el par del motor no cambio. El 22/10 se pesaron la rueda
+%   (50 g) y el motor (96 g): 962 g, y el uso bajo a 94 %. Con la rueda modelada como aro
+%   en vez de disco bajaria a 86 %: el disco es el supuesto conservador.
 %
 %   La saturacion queda igual como red de seguridad por si cambian la rueda, el piso
 %   o el motor.

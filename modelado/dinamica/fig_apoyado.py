@@ -12,7 +12,7 @@ import numpy as np
 from matplotlib.patches import Polygon, Circle, FancyArrowPatch
 
 AB, AD, BC, CD, DP = 80.0, 112.0, 108.0, 40.8, 112.0
-A45, DELTA, THETA, Rw = math.radians(45), math.radians(164), math.radians(25), 33.0
+A45, DELTA, THETA, Rw = math.radians(45), math.radians(164), math.radians(25), 40.0
 fAD, fBC, fCDP = 0.428, 0.5, 0.3145
 CAB = dict(cx=-18.5, fondo=142.0, bajo_A=29.0, alto=104.5)
 NEGRO, GRIS, AZULC, NARANJA, VIOLETA, VERDE, ROJO = "#1a1a1a", "#8a8a8a", "#1f5fa8", "#d9531e", "#7b2d8e", "#2e8b3a", "#c62828"
