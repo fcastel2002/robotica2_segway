@@ -447,16 +447,275 @@ $3{,}58^\circ$ en la postura media. La IMU mide el chasis, así que el firmware 
 sumarle $\delta_G$. El capítulo \ref{cap:patasmov} muestra qué pasa si no lo hace.
 \end{ojo}
 
-\section{Las ecuaciones}
+\section{Las ecuaciones: de dónde salen}
 
-Con $q = [x;\ \varphi]$, las ecuaciones de Lagrange quedan en forma matricial:
+\begin{idea}
+Se escribe la energía del robot en función de dos coordenadas, se le aplica Lagrange y sale
+todo. Lo único que hay que tener cuidado es con los signos y con el rotor del motor, que
+aporta una inercia que no se ve.
+\end{idea}
+
+\subsection{Qué se modela y qué se deja afuera}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{7.2cm}p{7.2cm}@{}}
+\toprule
+\textbf{Está en el modelo} & \textbf{No está} \\
+\midrule
+las dos ruedas, con su masa y su inercia & el giro: las dos ruedas van juntas \\
+el cuerpo entero (cabina, patas y motores) como \emph{un solo} sólido rígido & el movimiento de las patas: están congeladas \\
+el rotor de los motores, con su inercia reflejada & la elasticidad de las barras \\
+la reacción del par sobre el cuerpo & el deslizamiento: la rueda no patina \\
+rozamiento viscoso en el eje y en el pivote & el rozamiento seco \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Que el cuerpo sea \emph{un} sólido rígido es la hipótesis más fuerte, y es legítima
+precisamente porque las patas están quietas: con las patas bloqueadas, cabina, barras y
+motores se mueven todos juntos, así que se los puede reemplazar por un único cuerpo con la
+masa total, su centro de masa y su inercia. El capítulo \ref{cap:patasmov} revisa qué pasa
+cuando se las suelta.
+
+\subsection{Las coordenadas, y el convenio de signos}
+
+Dos grados de libertad:
+
+\begin{center}
+\begin{tabular}{@{}llp{9.0cm}@{}}
+\toprule
+$x$ & [m] & cuánto avanzó el \textbf{eje de las ruedas}, positivo hacia adelante \\
+$\varphi$ & [rad] & inclinación del cuerpo, medida desde la dirección en que el centro de masa
+queda justo arriba del eje \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{ojo}
+\textbf{El signo de $\varphi$ no es el que uno adivinaría, y conviene fijarlo de entrada.}
+
+En este modelo $\varphi$ es positivo cuando el centro de masa se corre hacia \textbf{atrás}
+respecto del eje. Es decir: para que el robot \emph{avance}, $\varphi$ tiene que hacerse
+\emph{negativo}. Se comprueba simulando: pidiéndole ir a $+30$ cm, la inclinación llega a
+$-8{,}9^\circ$.
+
+Lo mismo con el par: un $\tau$ \emph{positivo} hace que el robot vaya hacia \emph{atrás}.
+Por eso, cuando lleguemos a la ecuación matricial al final de esta sección, el vector $H$ va a
+tener los dos signos negativos.
+
+El apéndice \ref{ap:dcl}, que es el informe de diagramas de cuerpo libre, usa el convenio
+\textbf{opuesto} para $\varphi$ y para $\tau$. Los dos modelos son el mismo: uno se obtiene
+del otro cambiando $(\varphi, \tau) \to (-\varphi, -\tau)$, y se comprobó numéricamente que
+dan exactamente lo mismo. Pero si se mezclan los dos documentos sin darse cuenta, los signos
+no cierran.
+\end{ojo}
+
+La rodadura sin deslizar ata el giro de la rueda al avance. Llamando $\theta_w$ al ángulo
+absoluto de la rueda, medido en el mismo sentido que $\varphi$:
+
+\begin{equation}\label{eq:rodadura}
+\theta_w = -\,\frac{x}{R_w}
+\qquad\Longrightarrow\qquad
+\dot\theta_w = -\,\frac{\dot x}{R_w}.
+\end{equation}
+
+El signo menos es el mismo convenio de antes: avanzar hacia $+x$ hace girar la rueda en el
+sentido \emph{negativo} de $\varphi$.
+
+\subsection{Dónde está cada cosa}
+
+Poniendo el origen en el punto donde el eje arranca, y con el piso en $y = 0$:
+
+\begin{align}
+\text{eje de las ruedas:}&\qquad (x,\ R_w) \\
+\text{centro de masa del cuerpo:}&\qquad
+\begin{cases}
+x_G = x - \ell\,\sin\varphi \\
+y_G = R_w + \ell\,\cos\varphi
+\end{cases}
+\end{align}
+
+con $\ell$ la distancia del eje al centro de masa. El signo menos en $x_G$ es,
+otra vez, el convenio: al crecer $\varphi$ el centro de masa se va hacia atrás. Derivando:
+
+\begin{equation}
+\dot x_G = \dot x - \ell\cos\varphi\,\dot\varphi,
+\qquad
+\dot y_G = -\ell\sin\varphi\,\dot\varphi .
+\end{equation}
+
+\subsection{La energía cinética, término por término}
+
+\textbf{Las ruedas} (las dos juntas: masa $m_w$, inercia $J_w$) se trasladan con el eje y giran
+según \eqref{eq:rodadura}:
+
+\begin{equation}
+T_w = \tfrac12\,m_w\,\dot x^{\,2} \;+\; \tfrac12\,J_w\left(\frac{\dot x}{R_w}\right)^{\!2}
+    = \tfrac12\left(m_w + \frac{J_w}{R_w^2}\right)\dot x^{\,2}.
+\end{equation}
+
+Acá ya aparece algo que vale la pena notar: la inercia de la rueda se \emph{suma a la masa},
+dividida por el radio al cuadrado. Una rueda pesada cuesta más de acelerar dos veces: una por
+su masa y otra por su inercia.
+
+\textbf{El cuerpo} (masa $m_b$, inercia $J_b$ respecto de \emph{su propio} centro de masa):
+
+\begin{align}
+T_b &= \tfrac12\,m_b\left(\dot x_G^{\,2} + \dot y_G^{\,2}\right) + \tfrac12\,J_b\,\dot\varphi^{\,2}\\
+    &= \tfrac12\,m_b\Bigl[\bigl(\dot x - \ell\cos\varphi\,\dot\varphi\bigr)^2
+       + \ell^2\sin^2\!\varphi\,\dot\varphi^{\,2}\Bigr] + \tfrac12\,J_b\,\dot\varphi^{\,2}\\
+    &= \tfrac12\,m_b\,\dot x^{\,2}
+       \;-\; m_b\,\ell\cos\varphi\;\dot x\,\dot\varphi
+       \;+\; \tfrac12\bigl(J_b + m_b\ell^2\bigr)\dot\varphi^{\,2}.
+\end{align}
+
+En el último paso se usó $\cos^2 + \sin^2 = 1$, que es lo que hace desaparecer la dependencia
+con $\varphi$ del último término. Notar que $J_b + m_b\ell^2$ es, por Steiner, la inercia del
+cuerpo respecto del \textbf{eje de la rueda}, no respecto de su centro de masa.
+
+\textbf{Los rotores} son el término que casi siempre se olvida, y acá pesa mucho. El rotor de
+cada motor gira respecto del \emph{cuerpo}, que a su vez gira. Con reducción $n$:
+
+\begin{equation}\label{eq:rotor}
+\dot\alpha_m = -\,n\,\frac{\dot x}{R_w} \;+\; (1-n)\,\dot\varphi .
+\end{equation}
+
+El primer término es el giro de la rueda multiplicado por la reducción; el segundo es que, si
+el cuerpo gira, el estator gira con él. Con $n_{mot}$ motores de inercia de rotor $J_r$:
+
+\begin{equation}
+T_r = \tfrac12\,n_{mot}J_r\,\dot\alpha_m^{\,2}
+= \tfrac12\,\frac{n_{mot}J_r n^2}{R_w^2}\,\dot x^{\,2}
+\;+\; \frac{n_{mot}J_r\,n(n-1)}{R_w}\,\dot x\,\dot\varphi
+\;+\; \tfrac12\,n_{mot}J_r(1-n)^2\,\dot\varphi^{\,2}.
+\end{equation}
+
+\begin{ojo}
+Mirá el término del medio: es un acoplamiento entre $\dot x$ y $\dot\varphi$, igual que el del
+cuerpo, \textbf{pero no lleva $\cos\varphi$}. La ecuación \eqref{eq:rotor} es lineal con
+coeficientes fijos: no depende de la postura. Por eso el acoplamiento total queda
+$-h\cos\varphi + e$, con dos partes de naturaleza distinta, y el $e$ \emph{no} se puede
+meter adentro de $h$.
+
+Esto costó entenderlo y es fácil equivocarse. Con $e = 0$ se recupera el modelo clásico de
+péndulo invertido sobre ruedas que está en los libros, que no tiene rotor.
+\end{ojo}
+
+\textbf{Sumando todo}, la energía cinética queda, ordenada:
+
+\begin{equation}\label{eq:T}
+T = \tfrac12\,a\,\dot x^{\,2}
+\;+\; \bigl(-h\cos\varphi + e\bigr)\,\dot x\,\dot\varphi
+\;+\; \tfrac12\,j\,\dot\varphi^{\,2}
+\;=\; \tfrac12\,\dot q^{\,\mathsf{T}} M(\varphi)\,\dot q,
+\end{equation}
+
+que es \emph{exactamente} la forma $\tfrac12 \dot q^{\mathsf T} M \dot q$ con la matriz de masa
+de la ecuación \eqref{eq:planta}. Y ahora se ve de dónde sale cada coeficiente:
+
+\begin{center}
+\small
+\begin{tabular}{@{}llr@{}}
+\toprule
+\textbf{Coef.} & \textbf{Fórmula} & \textbf{Valor} \\
+\midrule
+$a$ & $\underbrace{m_b + m_w}_{0{,}920} + \underbrace{J_w/R_w^2}_{0{,}030} + \underbrace{n_{mot}J_r n^2/R_w^2}_{0{,}300}$ & 1{,}2499 kg \\[10pt]
+$h$ & $m_b\,\ell = 0{,}8599 \times 0{,}0817$ & 0{,}07024 kg$\cdot$m \\[4pt]
+$j$ & $\underbrace{J_b}_{0{,}003847} + \underbrace{m_b\ell^2}_{0{,}005738} + \underbrace{n_{mot}J_r(1-n)^2}_{0{,}000433}$ & 0{,}010018 kg$\cdot$m$^2$ \\[10pt]
+$e$ & $n_{mot}J_r\,n(n-1)/R_w$ & 0{,}011400 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{idea}
+Fijate en $a$: de los 1,25 kg que hay que acelerar para avanzar, sólo 0,92 son el robot.
+Los otros 0,33 son inercia que no existe como masa: 0,03 de las ruedas girando y
+\textbf{0,30 del rotor}, que gira veinte veces más rápido que la rueda y por eso se siente
+cuatrocientas veces más ($n^2 = 400$). La reductora es una lupa de inercia.
+\end{idea}
+
+\subsection{La energía potencial}
+
+Sólo el cuerpo sube y baja:
+
+\begin{equation}
+V = m_b\,g\,y_G = m_b\,g\,(R_w + \ell\cos\varphi)
+\quad\Longrightarrow\quad
+\frac{\partial V}{\partial \varphi} = -\,\underbrace{m_b\,g\,\ell}_{k}\,\sin\varphi .
+\end{equation}
+
+La constante $m_b g R_w$ no aporta nada y se descarta. Lo importante es el signo: $V$ es
+\textbf{máxima} en $\varphi = 0$, que es justamente la posición que se quiere mantener. Estar
+parado es estar en la cima de una loma: cualquier desviación la gravedad la agranda. Ése es,
+en una línea, por qué el robot es inestable y hay que controlarlo.
+
+\subsection{Lagrange, paso por paso}
+
+Con $L = T - V$, las dos ecuaciones son
+$\frac{\dd}{\dd t}\bigl(\partial L/\partial \dot q_i\bigr) - \partial L/\partial q_i = Q_i$.
+
+\textbf{Primera ecuación} ($q_1 = x$). De \eqref{eq:T}:
+
+\begin{align}
+\frac{\partial L}{\partial \dot x} &= a\,\dot x + (-h\cos\varphi + e)\,\dot\varphi \\
+\frac{\dd}{\dd t}\frac{\partial L}{\partial \dot x}
+  &= a\,\ddot x + (-h\cos\varphi + e)\,\ddot\varphi + h\sin\varphi\,\dot\varphi^{\,2} \\
+\frac{\partial L}{\partial x} &= 0 \qquad\text{($x$ no aparece: por eso hay un polo en el origen)}
+\end{align}
+
+y queda
+\begin{equation}\label{eq:fila1}
+a\,\ddot x + (-h\cos\varphi + e)\,\ddot\varphi \;+\; h\sin\varphi\,\dot\varphi^{\,2} \;=\; Q_x .
+\end{equation}
+
+\textbf{Segunda ecuación} ($q_2 = \varphi$):
+
+\begin{align}
+\frac{\partial L}{\partial \dot\varphi} &= (-h\cos\varphi + e)\,\dot x + j\,\dot\varphi \\
+\frac{\dd}{\dd t}\frac{\partial L}{\partial \dot\varphi}
+  &= (-h\cos\varphi + e)\,\ddot x + h\sin\varphi\,\dot\varphi\,\dot x + j\,\ddot\varphi \\
+\frac{\partial L}{\partial \varphi}
+  &= \underbrace{h\sin\varphi\,\dot x\,\dot\varphi}_{\text{de }T}
+   \;+\; \underbrace{k\sin\varphi}_{-\partial V/\partial\varphi}
+\end{align}
+
+y al restar, los dos términos $h\sin\varphi\,\dot x\,\dot\varphi$ \textbf{se cancelan}:
+
+\begin{equation}\label{eq:fila2}
+(-h\cos\varphi + e)\,\ddot x + j\,\ddot\varphi \;-\; k\sin\varphi \;=\; Q_\varphi .
+\end{equation}
+
+\begin{idea}
+Vale la pena mirar esa cancelación. En la primera ecuación quedó un término centrífugo
+$h\sin\varphi\,\dot\varphi^{\,2}$, y en la segunda \textbf{no quedó ninguno}. No es casualidad
+ni un error: pasa siempre que la matriz de masa depende de una sola coordenada, acá $\varphi$.
+Es una buena comprobación de que la derivación está bien hecha.
+\end{idea}
+
+\subsection{Las fuerzas generalizadas}
+
+Los motores hacen un par $\tau$ sobre la rueda. Por reacción, hacen $-\tau$ sobre el cuerpo.
+El trabajo virtual es $\delta W = \tau\,\delta\theta_w - \tau\,\delta\varphi$, y usando
+$\theta_w = -x/R_w$:
+
+\begin{equation}
+\delta W = -\frac{\tau}{R_w}\,\delta x - \tau\,\delta\varphi
+\qquad\Longrightarrow\qquad
+Q_x = -\frac{\tau}{R_w}, \qquad Q_\varphi = -\tau .
+\end{equation}
+
+Sumándoles los rozamientos viscosos, $-b_x\dot x$ y $-b_\varphi\dot\varphi$, y pasando los
+términos no lineales al otro lado, las ecuaciones \eqref{eq:fila1} y \eqref{eq:fila2} se juntan
+en una sola línea. \textbf{Ésta es toda la dinámica del robot:}
 
 \begin{equation}\label{eq:planta}
 \boxed{\;M(\varphi)\,\ddot q \;=\; H\,\tau \;-\; D\,\dot q \;+\; \sin\varphi
 \begin{bmatrix} -h\,\dot\varphi^{\,2} \\ k \end{bmatrix}\;}
 \end{equation}
 
-con
+con $q = [x;\ \varphi]$ y
+
 \begin{equation}
 M(\varphi) = \begin{bmatrix}
 a & -h\cos\varphi + e \\[2pt]
@@ -468,35 +727,117 @@ H = \begin{bmatrix} -1/R_w \\ -1 \end{bmatrix},
 D = \begin{bmatrix} b_x & 0 \\ 0 & b_\varphi \end{bmatrix}.
 \end{equation}
 
-Cada coeficiente tiene un significado físico directo:
+Las tres piezas se leen directamente: $M(\varphi)$ es la inercia, $H\tau$ es la única manija
+que hay, $D\dot q$ son las pérdidas, y el último vector junta lo no lineal: la fuerza
+centrífuga y la gravedad.
 
-\begin{center}
-\begin{tabular}{@{}llr@{}}
-\toprule
-\textbf{Coef.} & \textbf{Qué es} & \textbf{Valor a $25^\circ$} \\
-\midrule
-$a$ & masa que hay que acelerar para avanzar, incluida la inercia de ruedas y rotores & 1{,}2499 kg \\
-$h$ & acoplamiento entre avance e inclinación: $m_b\,\ell$ & 0{,}0702 kg$\cdot$m \\
-$j$ & inercia del cuerpo alrededor del eje de la rueda & 0{,}010018 kg$\cdot$m$^2$ \\
-$k$ & par que hace la gravedad por radián: $m_b\,g\,\ell$ & 0{,}6891 N$\cdot$m \\
-$e$ & acoplamiento del rotor, constante (ver abajo) & 0{,}011400 \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{idea}
+Lo esencial del modelo cabe en una frase: \textbf{el robot tiene una sola manija}, que es
+$\tau$, y esa manija aparece en las \emph{dos} ecuaciones, con signos tales que empujar la
+rueda hacia un lado inclina el cuerpo hacia el otro. Todo el problema de control sale de ahí.
+\end{idea}
 
-\begin{ojo}
-El término $e$ es sutil y costó entenderlo. La velocidad del rotor del motor es
-$\dot\alpha_m = -n\,\dot x/R_w + (1-n)\,\dot\varphi$, con $n$ la reducción. Es
-\emph{lineal con coeficientes fijos}: no depende de $\varphi$. Por eso su contribución a
-$M_{12}$ es una constante y \textbf{no} puede meterse dentro de $h$, que sí va multiplicado
-por $\cos\varphi$. Con $e = 0$ se recupera el modelo clásico sin rotor.
-\end{ojo}
+\section{Linealizar: paso por paso}
 
-\section{Linealizar}
+\begin{idea}
+Para diseñar el control hace falta un sistema lineal. Como el robot va a trabajar cerca de la
+vertical, se reemplazan $\sin\varphi$ por $\varphi$ y $\cos\varphi$ por $1$, y el término
+centrífugo desaparece solo. Queda $\dot z = Az + BU$, y con eso ya se puede usar LQR.
+\end{idea}
 
-Alrededor de $\varphi = 0$, $\dot\varphi = 0$, con $\cos\varphi \to 1$ y $\sin\varphi \to
-\varphi$, el término cuadrático desaparece y queda un sistema lineal
-$\dot z = A z + B\,U$ con $z = [x;\ v;\ \varphi;\ \omega]$:
+\subsection{El punto de equilibrio}
+
+Un equilibrio es un estado donde todas las derivadas son cero. Poniendo
+$\dot x = \dot\varphi = \ddot x = \ddot\varphi = 0$ y $\tau = 0$ en \eqref{eq:fila1} y
+\eqref{eq:fila2}:
+
+\begin{equation}
+0 = 0, \qquad -k\sin\varphi = 0 \quad\Longrightarrow\quad \varphi = 0 \ \text{ o } \ \varphi = \pi .
+\end{equation}
+
+Hay dos: el robot parado ($\varphi = 0$) y el robot colgando cabeza abajo ($\varphi = \pi$).
+Se linealiza alrededor del primero. Notar que $x$ no aparece: \emph{cualquier} posición es
+equilibrio, lo que después se traduce en un polo en el origen.
+
+\subsection{Qué se aproxima, y qué error se comete}
+
+Para $\varphi$ chico:
+
+\begin{equation}
+\sin\varphi \approx \varphi - \frac{\varphi^3}{6} \approx \varphi,
+\qquad
+\cos\varphi \approx 1 - \frac{\varphi^2}{2} \approx 1,
+\qquad
+\sin\varphi\,\dot\varphi^{\,2} \approx \varphi\,\dot\varphi^{\,2} \approx 0 .
+\end{equation}
+
+El término centrífugo desaparece porque es producto de \emph{dos} cantidades chicas: un
+ángulo chico por una velocidad chica al cuadrado. En la jerga, es de segundo orden.
+
+\subsection{El sistema lineal}
+
+Con eso, \eqref{eq:fila1} y \eqref{eq:fila2} quedan:
+
+\begin{equation}\label{eq:lineal}
+\underbrace{\begin{bmatrix} a & -h+e \\ -h+e & j \end{bmatrix}}_{M_0}
+\begin{bmatrix} \ddot x \\ \ddot\varphi \end{bmatrix}
+=
+\begin{bmatrix} -\tau/R_w \\ -\tau \end{bmatrix}
+-
+\begin{bmatrix} b_x & 0 \\ 0 & b_\varphi \end{bmatrix}
+\begin{bmatrix} \dot x \\ \dot\varphi \end{bmatrix}
++
+\begin{bmatrix} 0 \\ k\,\varphi \end{bmatrix}.
+\end{equation}
+
+$M_0$ es la matriz de masa congelada en $\varphi = 0$: ya no depende del estado, que es
+justamente lo que hace lineal al sistema.
+
+\subsection{Despejar las dos aceleraciones}
+
+Hay que invertir una matriz de $2\times2$, que es la fórmula de siempre:
+
+\begin{equation}
+M_0^{-1} = \frac{1}{\Delta}\begin{bmatrix} j & h-e \\ h-e & a \end{bmatrix},
+\qquad
+\Delta = a\,j - (h-e)^2 .
+\end{equation}
+
+Con los números: $\Delta = 1{,}2499 \times 0{,}010018 - 0{,}058842^2 = 0{,}0090590$. Que
+$\Delta > 0$ no es un detalle: significa que $M_0$ es definida positiva, o sea que cualquier
+movimiento tiene energía cinética positiva. Si diera cero o negativo, el modelo estaría mal.
+
+\subsection{Las matrices $A$ y $B$}
+
+Falta una cosa más antes de escribirlas: la entrada real no es el par sino la \textbf{tensión}.
+Del modelo del motor (capítulo \ref{cap:motor}), $\tau = \beta_V U - b_m\,\omega_{rel}$, y como
+$\omega_{rel}$ es una combinación lineal de $\dot x$ y $\dot\varphi$, el término de la fuerza
+contraelectromotriz se absorbe en los rozamientos. Queda $b_{eje} = b_{mec} + b_m$, y la única
+entrada es $U$.
+
+Con $z = [x;\ v;\ \varphi;\ \omega]$, las filas 1 y 3 son triviales ($\dot x = v$,
+$\dot\varphi = \omega$) y las otras dos salen de multiplicar por $M_0^{-1}$:
+
+\begin{equation}
+A = \frac{1}{\Delta}
+\begin{bmatrix}
+0 & \Delta & 0 & 0 \\[3pt]
+0 & -j\left(\dfrac{b_{eje}}{R_w^2} + b_x\right) - (h-e)\dfrac{b_{eje}}{R_w}
+  & (h-e)\,k
+  & -j\dfrac{b_{eje}}{R_w} - (h-e)(b_{eje}+b_\varphi) \\[10pt]
+0 & 0 & 0 & \Delta \\[3pt]
+0 & -(h-e)\left(\dfrac{b_{eje}}{R_w^2} + b_x\right) - a\dfrac{b_{eje}}{R_w}
+  & a\,k
+  & -(h-e)\dfrac{b_{eje}}{R_w} - a(b_{eje}+b_\varphi)
+\end{bmatrix},
+\end{equation}
+
+\begin{equation}
+B = \frac{\beta_V}{\Delta}
+\begin{bmatrix} 0 \\[2pt] -\dfrac{j}{R_w} - (h-e) \\[8pt] 0 \\[2pt] -\dfrac{h-e}{R_w} - a \end{bmatrix}.
+\end{equation}
+
+Reemplazando los números:
 
 \begin{equation}
 A = \begin{bmatrix}
@@ -508,6 +849,103 @@ A = \begin{bmatrix}
 \qquad
 B = \begin{bmatrix} 0 \\ -1{,}805 \\ 0 \\ -15{,}880 \end{bmatrix}.
 \end{equation}
+
+Armadas a mano con las fórmulas de arriba, coinciden con las del código en
+$3\times10^{-14}$. No es una comprobación menor: quiere decir que lo que está escrito acá es
+literalmente lo que corre.
+
+\subsection{De dónde sale el polo inestable}
+
+Si por un momento se tiran todos los rozamientos, la cuarta fila queda sola:
+
+\begin{equation}
+\ddot\varphi = \frac{a\,k}{\Delta}\,\varphi
+\quad\Longrightarrow\quad
+\text{polos en } \pm\sqrt{\frac{a\,k}{\Delta}} = \pm\sqrt{95{,}07} = \pm 9{,}75\ \text{s}^{-1}.
+\end{equation}
+
+Es la misma ecuación que un péndulo invertido de libro, $\ddot\varphi = (g/\ell_{eq})\varphi$:
+una raíz positiva y una negativa, y la positiva es la que lo voltea. Con los rozamientos reales
+el polo baja a $7{,}345$ s$^{-1}$, porque el roce frena la caída, pero \textbf{no la evita}:
+sigue siendo positivo, y eso no hay rozamiento que lo arregle.
+
+De ahí sale el número que manda en todo el diseño: $\ln 2 / 7{,}345 = 94$ ms para que la
+inclinación se duplique.
+
+\subsection{¿Hasta dónde vale el modelo lineal?}
+
+Soltando el robot quieto a distintos ángulos, sin par, y comparando la aceleración que da el
+modelo no lineal con la del lineal:
+
+\begin{center}
+\small
+\begin{tabular}{@{}rrrrrrr@{}}
+\toprule
+$\varphi$ & \multicolumn{3}{c}{$\ddot x$ [m/s$^2$]} & \multicolumn{3}{c}{$\ddot\varphi$ [rad/s$^2$]} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+$[^\circ]$ & no lineal & lineal & error & no lineal & lineal & error \\
+\midrule
+1  & 0{,}078 & 0{,}078 & 0{,}0\% & 1{,}66  & 1{,}66  & 0{,}0\% \\
+2  & 0{,}156 & 0{,}156 & 0{,}1\% & 3{,}32  & 3{,}32  & 0{,}1\% \\
+5  & 0{,}387 & 0{,}391 & 0{,}9\% & 8{,}26  & 8{,}30  & 0{,}5\% \\
+\textbf{8}  & \textbf{0{,}610} & \textbf{0{,}625} & \textbf{2{,}4\%} & \textbf{13{,}12} & \textbf{13{,}28} & \textbf{1{,}2\%} \\
+10 & 0{,}753 & 0{,}781 & 3{,}8\% & 16{,}29 & 16{,}59 & 1{,}9\% \\
+15 & 1{,}079 & 1{,}172 & 8{,}7\% & 23{,}88 & 24{,}89 & 4{,}2\% \\
+20 & 1{,}349 & 1{,}562 & 15{,}8\% & 30{,}88 & 33{,}19 & 7{,}5\% \\
+30 & 1{,}690 & 2{,}344 & 38{,}7\% & 42{,}73 & 49{,}78 & 16{,}5\% \\
+45 & 1{,}686 & 3{,}515 & 108{,}5\% & 55{,}08 & 74{,}67 & 35{,}6\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+El error viene de dos lados, y no pesan igual:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+& $\varphi = 10^\circ$ & $\varphi = 30^\circ$ \\
+\midrule
+cambiar $\sin\varphi$ por $\varphi$ & $+0{,}5\%$ & $+4{,}7\%$ \\
+cambiar $\cos\varphi$ por $1$ (en el acople) & $+1{,}5\%$ & $+15{,}5\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{idea}
+La aproximación que primero se rompe no es la del seno, que es la que uno espera, sino la del
+\textbf{coseno en el acoplamiento}. Tiene sentido: el seno falla al orden $\varphi^3$ y el
+coseno al orden $\varphi^2$.
+
+Hasta $8^\circ$ el error es del 2\%, que es mucho menos que la incertidumbre de los parámetros
+medidos. Por eso el LQR se pesa justamente para que el robot no pase de $8^\circ$ (capítulo
+\ref{cap:lqr}): no es un número arbitrario, es hasta donde el modelo con el que se diseñó
+sigue siendo cierto.
+\end{idea}
+
+\begin{ojo}
+Que el \emph{modelo} lineal falle a $30^\circ$ no quiere decir que el \emph{control} falle ahí.
+Son dos cosas distintas. Simulando el lazo cerrado con la planta \textbf{no lineal} completa,
+el LQR levanta el robot desde:
+
+\begin{center}
+\small
+\begin{tabular}{@{}rrr@{}}
+\toprule
+Inclinación inicial & ¿Se levanta? & Cuánto se corre \\
+\midrule
+$10^\circ$ & sí & 42 mm \\
+$20^\circ$ & sí & 96 mm \\
+$30^\circ$ & sí & 181 mm \\
+$35^\circ$ & sí & 261 mm \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+O sea que el controlador diseñado sobre el modelo lineal funciona bastante más allá de donde
+ese modelo es preciso. Es lo habitual, y es parte de por qué conviene un método con márgenes
+garantizados como el LQR: el margen cubre, entre otras cosas, el error de haber linealizado.
+\end{ojo}
 
 \section{Qué dicen los polos y los ceros}
 
