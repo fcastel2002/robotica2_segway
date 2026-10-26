@@ -151,3 +151,11 @@
 (rule "traba_npth_chica"
 	(condition "A.Pad_Type == 'NPTH, mechanical' && A.Hole_Size_X < 3mm")
 	(constraint hole_clearance (min 0.7mm)))
+
+(rule "rayos_minimos_relleno"
+	(condition "A.Type == 'Pad'")
+	(constraint min_resolved_spokes 1))
+
+(rule "alimentacion_expansion_solida"
+	(condition "A.Type == 'Pad' && A.memberOfFootprint('J26')")
+	(constraint zone_connection solid))

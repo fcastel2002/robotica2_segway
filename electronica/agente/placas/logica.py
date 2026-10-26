@@ -28,24 +28,30 @@ UBICACION = {
     # R15 y R16 entre el 3V3 de J20.9 y las pistas de J8.
     "R13": (27.94, 13.97, 0), "R14": (43.18, 10.16, 270), "R24": (50.80, 12.70, 270),
     "R15": (25.40, 35.56, 180), "R16": (27.94, 40.64, 180),
+    # Expansión (ELE-037): tiras hembra pegadas a cada hilera de A1 y alimentación para sensores
+    "J24": (66.04, 16.51, 0), "J25": (96.52, 16.51, 0),
+    "J26": (38.10, 66.04, 90),
 }
 FIJAS = set(UBICACION) | {"H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J7", "J8", "J4"}
 
+# Nets de la hilera derecha de A1 (pines 23-44), que solo van a la tira de expansión J25
+HILERA_DER = ["GND", "GPIO43", "GPIO44", "GPIO1", "GPIO2", "GPIO42", "GPIO41", "GPIO40", "GPIO39", "GPIO38", "GPIO37",
+              "GPIO36", "GPIO35", "GPIO0", "GPIO45", "GPIO48", "GPIO47", "GPIO21", "GPIO20", "GPIO19", "GND", "GND"]
 W = 1.0          # señales y 3V3 (LOGICA mínimo 1,0)
 ESQUELETO = [
     # --- 3V3 de A1.1 por el borde superior
-    ("3V3_MCU", W, ["A1.1", (64.77, 16.51), (64.77, 10.16), (8.89, 10.16), "J7.1"]),
+    ("3V3_MCU", W, ["A1.1", "J24.1", (64.77, 16.51), (64.77, 10.16), (8.89, 10.16), "J7.1"]),
     ("3V3_MCU", W, [(27.94, 10.16), "R13.1"]),
     ("3V3_MCU", W, [(50.80, 10.16), "R24.1"]),
     ("3V3_MCU", W, [(22.86, 10.16), (22.86, 12.70)]),
     # --- Banda: A1.4-8 al oeste
-    ("ENC_IZQ_A", W, ["A1.4", (64.00, 24.13), (57.65, 17.78), (10.80, 17.78), "J7.2"]),
+    ("ENC_IZQ_A", W, ["A1.4", "J24.4", (64.00, 24.13), (57.65, 17.78), (10.80, 17.78), "J7.2"]),
     ("ENC_IZQ_A", W, ["R13.2", (38.10, 17.78)]),
-    ("ENC_IZQ_B", W, ["A1.5", (64.00, 26.67), (57.65, 20.32), "J7.3"]),
-    ("PARO_CONT", W, ["A1.6", (64.00, 29.21), (57.65, 22.86), (12.70, 22.86), (12.70, 31.75), "J4.2"]),
-    ("ENC_DER_A", W, ["A1.7", (64.00, 31.75), (57.65, 25.40), (15.24, 25.40), (15.24, 40.33), "J8.2"]),
-    ("ENC_DER_B", W, ["A1.8", (64.00, 34.29), (57.65, 27.94), (17.78, 27.94), (17.78, 43.83), "J8.3"]),
+    ("ENC_IZQ_B", W, ["A1.5", "J24.5", (64.00, 26.67), (57.65, 20.32), "J7.3"]),
+    ("PARO_CONT", W, ["A1.6", "J24.6", (64.00, 29.21), (57.65, 22.86), (12.70, 22.86), (12.70, 31.75), "J4.2"]),
+    ("ENC_DER_A", W, ["A1.7", "J24.7", (64.00, 31.75), (57.65, 25.40), (15.24, 25.40), (15.24, 40.33), "J8.2"]),
+    ("ENC_DER_B", W, ["A1.8", "J24.8", (64.00, 34.29), (57.65, 27.94), (17.78, 27.94), (17.78, 43.83), "J8.3"]),
     # --- 3V3 de J20.9: MPU, J8 y pull-ups de J8
     ("3V3_MCU", W, [(22.86, 30.48), (25.40, 33.02), "R15.1", (27.94, 38.10), "R16.1", (27.94, 62.23), "J20.9"]),
     ("3V3_MCU", W, [(27.94, 44.45), "A2.1"]),
@@ -53,24 +59,32 @@ ESQUELETO = [
     ("GND", W, ["J4.1", "J7.4", (3.30, 23.835)]),     # J4 tiene trabas NPTH detrás de los pines
     ("GND", W, ["J8.1", (3.30, 36.83)]),
     ("GND", W, ["A2.2", (35.56, 50.80)]),
-    ("GND", W, ["J20.11", (54.00, 64.77)]),
     ("3V3_MCU", W, [(27.94, 47.33), "J8.4"]),
     # --- I2C a través del MPU e INT
-    ("I2C_SCL", W, ["J20.7", (38.10, 59.69), "A2.3", (38.10, 36.83), "A1.9"]),
-    ("I2C_SDA", W, ["J20.5", (40.64, 57.15), "A2.4", (40.64, 39.37), "A1.10"]),
-    ("IMU_INT", W, ["A2.8", (50.80, 41.91), "A1.11"]),
+    ("I2C_SCL", W, ["J20.7", (38.10, 59.69), "A2.3", (38.10, 36.83), "J24.9", "A1.9"]),
+    ("I2C_SDA", W, ["J20.5", (40.64, 57.15), "A2.4", (40.64, 39.37), "J24.10", "A1.10"]),
+    ("IMU_INT", W, ["A2.8", (50.80, 41.91), "J24.11", "A1.11"]),
     # --- Rodeo superior de la columna impar de J20
-    ("VBAT_ADC", W, ["J20.1", (58.42, 46.99), "A1.13"]),
-    ("INA_ALERT", W, ["J20.3", (55.88, 54.61), (55.88, 44.45), "A1.12"]),
+    ("VBAT_ADC", W, ["J20.1", (58.42, 46.99), "J24.13", "A1.13"]),
+    ("INA_ALERT", W, ["J20.3", (55.88, 54.61), (55.88, 44.45), "J24.12", "A1.12"]),
     # --- Columna par de J20 en línea con A1.15-22
-    ("SERVO_IZQ_MCU", W, ["J20.2", "A1.15"]),
-    ("SERVO_DER_MCU", W, ["J20.4", "A1.16"]),
-    ("IN2_DER_MCU", W, ["J20.6", "A1.17"]),
-    ("IN1_DER_MCU", W, ["J20.8", "A1.18"]),
-    ("IN2_IZQ_MCU", W, ["J20.10", "A1.19"]),
-    ("IN1_IZQ_MCU", W, ["J20.12", "A1.20"]),
-    ("5V_MCU", 1.2, ["J20.13", "J20.14", "A1.21"]),
-    ("GND", 1.2, ["J20.15", "J20.16", "A1.22"]),
+    ("SERVO_IZQ_MCU", W, ["J20.2", "J24.15", "A1.15"]),
+    ("SERVO_DER_MCU", W, ["J20.4", "J24.16", "A1.16"]),
+    ("IN2_DER_MCU", W, ["J20.6", "J24.17", "A1.17"]),
+    ("IN1_DER_MCU", W, ["J20.8", "J24.18", "A1.18"]),
+    ("IN2_IZQ_MCU", W, ["J20.10", "J24.19", "A1.19"]),
+    ("IN1_IZQ_MCU", W, ["J20.12", "J24.20", "A1.20"]),
+    ("5V_MCU", 1.2, ["J20.13", "J20.14", "J24.21", "A1.21"]),
+    ("GND", 1.2, ["J20.15", "J20.16", "J24.22", "A1.22"]),
+    # --- Expansión: pines de A1 sin pista propia, unidos a su tira
+    ("3V3_MCU", W, ["J24.2", "A1.2"]),
+    ("RST", W, ["J24.3", "A1.3"]),
+    ("GPIO46", W, ["J24.14", "A1.14"]),
+] + [(n, W, [f"A1.{22 + k}", f"J25.{k}"]) for k, n in enumerate(HILERA_DER, start=1)] + [
+    # --- J26: 3V3 baja del riel de J20.9; 5V_MCU sale de J20.13 hacia el oeste
+    ("3V3_MCU", W, [(43.18, 62.23), "J26.3", "J26.4"]),
+    ("5V_MCU", 1.2, ["J26.5", "J26.6", (52.07, 67.31), "J20.13"]),
+    ("GND", W, ["J26.2", "J26.1", (35.30, 66.04)]),      # al relleno del oeste, entre W2 y J26
 ]
 # Puentes de alambre del lado de componentes (pads de 2,2 mm, taladro 0,9)
 PUENTES = [
@@ -83,5 +97,16 @@ RUTEAR = False
 ZONAS = [("GND", "placa", 0)]
 
 # Rótulos en B.Cu y escala de control de 50 mm (reglas_fabricacion_casera.md §6), en el relleno inferior
-ROTULOS = [("SEGWAY LOGICA v0.1", (24.13, 70.36), 2.5), ("LADO COBRE", (24.13, 74.17), 2.0)]
+ROTULOS = [("SEGWAY LOGICA v0.1", (24.13, 71.90), 2.5), ("LADO COBRE", (24.13, 75.15), 2.0)]
 ESCALA = (8.89, 78.74)
+
+# Los pads de GND de las tiras de expansión ya llegan por pista a su vecino de A1: alcanza con un rayo
+ENMIENDAS = """
+(rule "rayos_minimos_relleno"
+	(condition "A.Type == 'Pad'")
+	(constraint min_resolved_spokes 1))
+
+(rule "alimentacion_expansion_solida"
+	(condition "A.Type == 'Pad' && A.memberOfFootprint('J26')")
+	(constraint zone_connection solid))
+"""

@@ -48,7 +48,7 @@ Pin n a pin n con la placa de lógica:
 | 5 | I2C_SDA | 6 | IN2_DER_MCU |
 | 7 | I2C_SCL | 8 | IN1_DER_MCU |
 | 9 | 3V3_MCU | 10 | IN2_IZQ_MCU |
-| 11 | GND (sin conexión en esta placa) | 12 | IN1_IZQ_MCU |
+| 11 | sin conexión (en las dos placas) | 12 | IN1_IZQ_MCU |
 | 13 | 5V_MCU | 14 | 5V_MCU |
 | 15 | GND | 16 | GND |
 

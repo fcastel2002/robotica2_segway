@@ -19,7 +19,7 @@
   "15": "GND",
   "16": "GND"
  },
- "corriente": "5V_MCU en 2 hilos (≤0,5 A total: ESP32-S3 con Wi-Fi); GND en 3 hilos; resto señales",
+ "corriente": "5V_MCU en 2 hilos (ESP32-S3 con Wi-Fi y la expansión J26, ≤1 A por D2); GND en 2 hilos (15 y 16); pin 11 sin conexión en ambas placas; resto señales",
  "pines_A1": {
   "ENC_IZQ_A": {
    "pin": "4",

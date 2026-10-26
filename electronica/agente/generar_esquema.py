@@ -175,6 +175,8 @@ def aplicar_pcb(carpeta, nombre, spec):
 
 def alto_componente(comp, pines_por_ref):
     n = len(pines_por_ref.get(comp["ref"], []))
+    if ":Conn_01x" in comp["lib_id"]:   # una sola hilera: todos los pines del mismo lado
+        return max(15.24, (n + 3) * PASO)
     return max(15.24, (n / 2 + 3) * PASO) if n > 4 else 15.24
 
 

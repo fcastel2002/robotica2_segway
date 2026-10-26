@@ -10,6 +10,7 @@ Uso: python -I -X utf8 electronica/agente/dividir_v06_dos_placas.py
 - Pines de la ESP32-S3 reasignados por geometría (PINES_A1): la columna par del IDC queda alineada
   con los pines 15-22 de la hilera izquierda (pistas rectas) y la impar rodea el conector hacia los
   pines 10-13.
+- Expansión en la lógica (ELE-037): J24/J25 en paralelo a las hileras de A1 y J26 de alimentación.
 - Conector J20 en ambas: IDC de 2 x 8 pines a 2,54 mm (Connector_Generic:Conn_02x08_Odd_Even). Cable
   plano recto: el pin n de una placa va al pin n de la otra.
 Escribe cad/segway_potencia/especificacion_v0.6.json, cad/segway_logica/especificacion_v0.6.json y
@@ -48,6 +49,18 @@ GPIO_PIN = ["3V3", "3V3", "RST", "GPIO4", "GPIO5", "GPIO6", "GPIO7", "GPIO15", "
 # Cable J20 (IDC 2x8). Columna par (2..16) alineada con los pines 15..22 de A1; impar: 1, 3, 5, 7 hacia
 # A1.13 (VBAT), 12 (ALERT), 10, 9; 9 = 3V3; 11, 15 = GND; 13 = 5V_MCU (13-14 y 15-16 unidos en la placa). SCL y SDA
 # pasan por los pines 3 y 4 del MPU (VCC/GND quedan del lado de afuera, INT del lado de adentro hacia A1.11).
+# Pines de A1 sin uso en el robot: qué se puede hacer con cada uno desde la expansión (SUP-24, SUP-78)
+USO_LIBRE = {
+    "GPIO1": "libre: expansión (ADC1_CH0)", "GPIO2": "libre: expansión (ADC1_CH1)",
+    "GPIO38": "libre: expansión", "GPIO39": "libre: expansión (JTAG MTCK)", "GPIO40": "libre: expansión (JTAG MTDO)",
+    "GPIO41": "libre: expansión (JTAG MTDI)", "GPIO42": "libre: expansión (JTAG MTMS)", "GPIO47": "libre: expansión",
+    "GPIO21": "libre: expansión",
+    "GPIO35": "NO USAR: PSRAM octal", "GPIO36": "NO USAR: PSRAM octal", "GPIO37": "NO USAR: PSRAM octal",
+    "GPIO0": "strapping (BOOT): no forzar en el arranque", "GPIO45": "strapping (VDD_SPI): no forzar en el arranque",
+    "GPIO46": "strapping: no forzar en el arranque", "GPIO19": "USB D-", "GPIO20": "USB D+",
+    "GPIO43": "UART0 TX (USB-serie CH343P)", "GPIO44": "UART0 RX (USB-serie CH343P)", "GPIO48": "LED RGB WS2812",
+    "RST": "reset (EN): a GND reinicia",
+}
 CABLE = {
     "1": "VBAT_ADC", "2": "SERVO_IZQ_MCU", "3": "INA_ALERT", "4": "SERVO_DER_MCU",
     "5": "I2C_SDA", "6": "IN2_DER_MCU", "7": "I2C_SCL", "8": "IN1_DER_MCU",
@@ -122,17 +135,56 @@ def placa(nombre, refs):
         s.pop("gpio_table", None)
     else:
         red = {p.split(".")[1]: n["name"] for n in nets for p in n["pins"] if p.startswith("A1.")}
-        s["gpio_table"] = [{"function": red.get(str(i), "sin conexión"), "gpio": g, "board_pin": str(i),
-                            "net": red.get(str(i), "sin conexión"),
+        s["gpio_table"] = [{"function": red.get(str(i)) or USO_LIBRE.get(g, "libre: expansión"), "gpio": g, "board_pin": str(i),
+                            "net": red.get(str(i), g),
+                            "expansion": f"J24.{i}" if i <= 22 else f"J25.{i - 22}",
                             "justification": FUNCION.get(red.get(str(i)), "") + ("; pin asignado por geometría (DEC-17)" if red.get(str(i)) in PINES_A1 else "")}
                            for i, g in enumerate(GPIO_PIN, start=1)]
     s["cable_J20"] = CABLE
-    if nombre == "potencia":
-        for n in s["nets"]:
-            if n["name"] == "GND":
-                n["pins"] = [p for p in n["pins"] if p != "J20.11"]
-        s["no_connect"].append("J20.11")
+    # J20.11 sin conexión en las dos placas: en la potencia queda encerrado por el bus I2C y en la lógica
+    # por el 5V de J26 (ELE-037). El retorno de GND usa J20.15 y J20.16.
+    for n in s["nets"]:
+        if n["name"] == "GND":
+            n["pins"] = [p for p in n["pins"] if p != "J20.11"]
+    s["no_connect"].append("J20.11")
+    if nombre == "logica":
+        expansion(s)
     return s
+
+
+# Expansión (ELE-037): tiras hembra en paralelo a cada hilera de A1 (pin n de la tira = pin de A1 de al lado)
+# y una tira de alimentación para sensores. Los pines de A1 sin uso pasan a tener net propia con su nombre.
+EXPANSION = [
+    {"ref": "J24", "lib_id": "Connector_Generic:Conn_01x22", "value": "Expansión ESP32 IZQ (A1.1-22)",
+     "footprint": "segway_modulos:Zocalo_expansion_izq_1x22_P2.54mm", "block": "conectores", "dnp": False,
+     "source": "Pedido del equipo del 26/10/2026 [M]: pines hembra en paralelo a la controladora para sensores futuros",
+     "status": "provisorio [H]: tira hembra 1x22 junto a la hilera izquierda de A1 (SUP-78)", "supuestos": ["SUP-78"]},
+    {"ref": "J25", "lib_id": "Connector_Generic:Conn_01x22", "value": "Expansión ESP32 DER (A1.23-44)",
+     "footprint": "segway_modulos:Zocalo_expansion_der_1x22_P2.54mm", "block": "conectores", "dnp": False,
+     "source": "Pedido del equipo del 26/10/2026 [M]: pines hembra en paralelo a la controladora para sensores futuros",
+     "status": "provisorio [H]: tira hembra 1x22 junto a la hilera derecha de A1 (SUP-78)", "supuestos": ["SUP-78"]},
+    {"ref": "J26", "lib_id": "Connector_Generic:Conn_01x06", "value": "Alim. sensores 1-2 GND 3-4 3V3 5-6 5V",
+     "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x06_P2.54mm_Vertical", "block": "conectores", "dnp": False,
+     "source": "Pedido del equipo del 26/10/2026 [M]; presupuesto de corriente en SUP-79 [H]",
+     "status": "provisorio [H]: tira hembra 1x06 de alimentación para la expansión (SUP-79)", "supuestos": ["SUP-79"]},
+]
+J26 = {"1": "GND", "2": "GND", "3": "3V3_MCU", "4": "3V3_MCU", "5": "5V_MCU", "6": "5V_MCU"}
+
+
+def expansion(s):
+    s["components"] += [dict(c) for c in EXPANSION]
+    red = {p: n for n in s["nets"] for p in n["pins"]}
+    for i, g in enumerate(GPIO_PIN, start=1):
+        pin = f"J24.{i}" if i <= 22 else f"J25.{i - 22}"
+        n = red.get(f"A1.{i}")
+        if n is None:
+            n = {"name": g, "kind": "signal", "pins": [f"A1.{i}"]}
+            s["nets"].append(n)
+            s["no_connect"].remove(f"A1.{i}")
+        n["pins"].append(pin)
+    nombres = {n["name"]: n for n in s["nets"]}
+    for k, v in J26.items():
+        nombres[v]["pins"].append(f"J26.{k}")
 
 
 def main():
@@ -153,7 +205,7 @@ def main():
         print(f"{nombre}: {len(s['components'])} componentes, {len(s['nets'])} nets")
     tabla = {"cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
              "conector": J20["footprint"], "pines": CABLE,
-             "corriente": "5V_MCU en 2 hilos (≤0,5 A total: ESP32-S3 con Wi-Fi); GND en 3 hilos; resto señales",
+             "corriente": "5V_MCU en 2 hilos (ESP32-S3 con Wi-Fi y la expansión J26, ≤1 A por D2); GND en 2 hilos (15 y 16); pin 11 sin conexión en ambas placas; resto señales",
              "pines_A1": {k: {"pin": v[0], "gpio": v[1]} for k, v in PINES_A1.items()}}
     (CAD / "interconexion_v0.6.json").write_text(json.dumps(tabla, ensure_ascii=False, indent=1), encoding="utf-8")
     ambos = {n["name"] for n in pot["nets"]} & {n["name"] for n in log["nets"]}

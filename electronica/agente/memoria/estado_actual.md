@@ -1,15 +1,16 @@
 # Estado de electrónica
 
-Fecha de corte: 2026-10-20. Responsable humano: Matías. Entorno: Windows 11, Claude Code desde la raíz del repositorio.
+Fecha de corte: 2026-10-26. Responsable humano: Matías. Entorno: Windows 11, Claude Code desde la raíz del repositorio.
 
-## Al 20/10/2026 (lo más reciente)
+## Al 26/10/2026 (lo más reciente)
 
 - Controladora: Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16). El diseño se dividió en dos placas de una cara unidas por cable IDC 2×8 (DEC-17): `cad/segway_potencia/` (49 componentes) y `cad/segway_logica/` (11). Las especificaciones v0.6 se generan con `agente/dividir_v06_dos_placas.py` desde la v0.5; los esquemas, con `generar_esquema.py`. Ambos dan ERC 0 y netlist coincidente.
 - **Placa de lógica v0.1 terminada:** [pcb_v0.1.md](../../cad/segway_logica/pcb_v0.1.md). DRC 0/0/0, 2 puentes, PDF de transferencia y taladros. Ruteo a mano en [`agente/placas/logica.py`](../placas/logica.py) (TEC-04).
 - Constructor: `"C:/Program Files/KiCad/10.0/bin/python.exe" -I electronica/agente/construir_pcb.py --placa <logica|potencia> [--fabricar]`. Vista PNG: `agente/vista_pcb.py`.
 - **Placa de potencia v0.1 terminada:** [pcb_v0.1.md](../../cad/segway_potencia/pcb_v0.1.md). Mide 150 × 110 mm, tiene DRC 0/0/0, 7 puentes fijos y salidas de fabricación. Ruteo híbrido en [`agente/placas/potencia.py`](../placas/potencia.py) (TEC-05): `construir_pcb.py --placa potencia --costo-via 50 --costo-fcu 60 --fabricar`.
 - El cable J20 y los GPIO se reordenaron al rutear la potencia (SUP-28, SUP-72). La placa de lógica se re-verificó con ese orden.
-- **Siguiente:** feedback de Matías y el equipo sobre las dos placas. Pendientes de medición: separación de hileras de la DevKitC (SUP-22), módulos (SUP-HA), largo del cable y posición de las placas (mecánica).
+- **26/10/2026: expansión en la lógica (ELE-037).** J24/J25 (tiras hembra 1×22 junto a la ESP32-S3) y J26 (alimentación de sensores). 9 GPIO libres: 1, 2, 21, 38–42 y 47. J20.11 sin conexión en las dos placas. DRC 0/0/0.
+- **Siguiente:** revisión de supuestos para la versión final (ELE-038) y feedback del equipo sobre las dos placas. Pendientes de medición: separación de hileras de la DevKitC (SUP-22), módulos (SUP-HA), largo del cable y posición de las placas (mecánica).
 
 ## Historia anterior (hasta el 18/10/2026)
 

@@ -1,5 +1,5 @@
 Drill report for segway_logica.kicad_pcb
-Created on 2026-10-20T14:01:04
+Created on 2026-10-26T13:35:30
 
 Copper Layer Stackup:
     =============================================================
@@ -12,11 +12,11 @@ Drill file 'segway_logica.drl' contains
     =============================================================
     T1  0.800mm  0.0315"  (10 holes))
     T2  0.900mm  0.0354"  (4 holes))
-    T3  1.000mm  0.0394"  (68 holes))
+    T3  1.000mm  0.0394"  (118 holes))
     T4  1.100mm  0.0433"  (2 holes))
     T5  1.200mm  0.0472"  (8 holes))
 
-    Total plated holes count 92
+    Total plated holes count 142
 
 
 Not plated through holes are merged with plated holes

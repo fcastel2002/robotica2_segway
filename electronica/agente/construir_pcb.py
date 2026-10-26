@@ -160,6 +160,10 @@ PADS_CASEROS = {
     "R_Axial_DIN0207_L6.3mm_D2.5mm_P15.24mm_Horizontal": (0.9, 2.2, 2.2),
     "R_Axial_DIN0309_L9.0mm_D3.2mm_P20.32mm_Horizontal": (0.9, 2.2, 2.2),
     "R_Axial_DIN0309_L9.0mm_D3.2mm_P25.40mm_Horizontal": (0.9, 2.2, 2.2),
+    # Zócalos de expansión de la lógica (ELE-037): redondos de 1,8 (anillo 0,4) para no solapar los óvalos de A1
+    "Zocalo_expansion_izq_1x22_P2.54mm": (1.0, 1.8, 1.8),
+    "Zocalo_expansion_der_1x22_P2.54mm": (1.0, 1.8, 1.8),
+    "PinSocket_1x06_P2.54mm_Vertical": (1.0, 1.8, 2.6),
     # Módulos: solo los pads de paso 2,54 mm pasan a óvalo 1,8 x 2,6 (bornera y buck se conservan)
     "ROB-012_ESP32-S3-DevKitC-1_N16R8_44p": (1.0, 1.8, 2.6),
     "ROB-013_MPU6050_modulo_8p": (1.0, 1.8, 2.6),
