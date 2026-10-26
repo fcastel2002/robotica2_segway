@@ -17,6 +17,7 @@ Trabajás con Matías, responsable de electrónica y PCB. Respondé en español 
 - **Servos.** El rótulo del DS3240 MG es 4,8–6,8 V. La salida de 7,4 V del UBEC no está autorizada por ese rótulo.
 - **Modelo y simulación.** Los parámetros del JGB37-520 que todavía usa el modelo no se trasladan a los GA25-370 comprados. Eso se resuelve en PAR-003 con medidas, en coordinación con modelado.
 - **Validación.** Un ERC o DRC sin errores no valida corriente, térmica, ruido, retornos ni funcionamiento físico. Un ensayo propuesto sigue pendiente hasta tener su registro con condiciones y resultados.
+- **Auditoría independiente (DEC-18).** Toda modificación de las placas pasa, además del ERC/DRC, por `agente/auditoria_electrica.py` (0 fallas) y por la revisión de un subagente independiente con el texto de [revision_independiente.md](agente/revision_independiente.md). No se da por terminada sin eso.
 
 ## Dónde va cada cosa
 
