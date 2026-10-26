@@ -38,7 +38,7 @@ Lo demás va como estaba:
 | SUP-52 | Las borneras iguales se distinguen por posición y por los rótulos de polaridad en el cobre | Agente |
 | SUP-57 | Se dejan las 8 resistencias que protegen la ESP32 si un DRV se enchufa girado: los DRV van en zócalo | Agente |
 | SUP-61 | Sin agujeros para precintos. Si un módulo enchufado vibra, una gota de silicona o adhesivo termofusible | Agente |
-| SUP-14, 15, 73, 75, 76, 78, 79, 81 | Aceptados como están en las placas | Agente |
+| SUP-14, 15, 73, 75, 76, 78, 79, 81 | Aceptados como están en las placas | Matías ('grupo C: aceptado') |
 
 ## C. Lo que falta: datos del robot y de lo comprado
 

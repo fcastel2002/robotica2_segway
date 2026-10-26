@@ -644,10 +644,10 @@
    "grupo": "B",
    "tema": "Rótulos sin serigrafía",
    "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1-F5, VCC junto al pin 8 de A7 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas.",
-   "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H].",
+   "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Lo que no está en el cobre depende de la guía impresa: riesgo de conectar un servo o un encoder al revés.",
    "como_se_confirma": "Matías decide si hace la serigrafía por transferencia.",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
@@ -672,6 +672,14 @@
       "impacto_si_cambia": "Sin rótulos de cobre, la polaridad de las borneras depende de la guía impresa: riesgo de conectar la batería o un motor al revés."
      },
      "fuente": "ELE-039: revisión independiente del conexionado y control eléctrico (auditoria_electrica_v0.1.md)"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
     }
    ]
   },
@@ -679,11 +687,11 @@
    "grupo": "B",
    "tema": "Puentes de alambre",
    "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm (AWG 22) en la cara de componentes, rectos, con pads de 2,2 mm y taladro de 0,9 mm. Son huellas de placa W1… (sin símbolo), listadas en evidencia/puentes_pcb_v0.1.json de cada placa. Lógica: 2 (17,8 y 7,6 mm). Potencia: 7, de 5,1 a 15,5 mm (SDA ×2, 5V ×2, VM_LOG, GND ×2). Por un puente solo pasan señales o lógica de hasta 1 A.",
-   "base": "DEC-14 [M]; resultado del ruteo v0.1 [H].",
+   "base": "DEC-14 [M]; resultado del ruteo v0.1 [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error.",
    "como_se_confirma": "Montaje de las placas.",
-   "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
     "especificacion",
@@ -713,6 +721,14 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "CAMBIADO",
+      "base": "DEC-14 [M]; resultado del ruteo v0.1 [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
     }
    ]
   },
@@ -2703,11 +2719,11 @@
    "grupo": "I",
    "tema": "Bornera del encoder IZQ (J7)",
    "supuesto": "J7 tiene los extremos invertidos respecto de J8: 1 = 3V3, 2 = A, 3 = B, 4 = GND (J8: 1 = GND, 4 = 3V3). Así el ruteo de una cara cierra sin más puentes. Los rótulos de la serigrafía lo indican.",
-   "base": "Ruteo de la lógica v0.1 [H].",
+   "base": "Ruteo de la lógica v0.1 [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Cablear J7 como J8 invierte la alimentación del encoder IZQ.",
    "como_se_confirma": "Medir 3V3 entre J7.1 y J7.4 antes de conectar el encoder.",
-   "estado": "ASUMIDO",
-   "fecha": "20/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
     "especificacion",
@@ -2716,7 +2732,16 @@
    "alias": [],
    "id": "SUP-73",
    "valor": {},
-   "historial": []
+   "historial": [
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Ruteo de la lógica v0.1 [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    }
+   ]
   },
   {
    "grupo": "I",
@@ -2741,10 +2766,10 @@
    "grupo": "I",
    "tema": "INA226 sin separador",
    "supuesto": "La huella del INA226 (A7) se usa sin el agujero de tope del separador M3 (caía sobre el bus I2C). A7 va soldado (SUP-80), así que no hace falta separador ni tope.",
-   "base": "Ruteo de la potencia v0.1 (QUITAR_NPTH) [H].",
+   "base": "Ruteo de la potencia v0.1 (QUITAR_NPTH) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Sin separador, el módulo puede moverse con la vibración del robot.",
    "como_se_confirma": "Confirmado por SUP-80.",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
@@ -2761,6 +2786,14 @@
       "como_se_confirma": "Prueba de vibración con el robot andando."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Ruteo de la potencia v0.1 (QUITAR_NPTH) [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
     }
    ]
   },
@@ -2768,10 +2801,10 @@
    "grupo": "I",
    "tema": "Puentes bajo módulos en zócalo",
    "supuesto": "Los puentes W1, W2, W4 y W7 de la potencia pasan bajo el INA226 (A7) y el buck (A8), que van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa y enfundados en termocontraíble para que no toquen las soldaduras de abajo del módulo. El DRC lo marca como aviso (pth_inside_courtyard).",
-   "base": "Altura del zócalo hembra estándar (8,5 mm) [H].",
+   "base": "Altura del zócalo hembra estándar (8,5 mm) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Sin funda, un puente que se levante puede tocar un pad de la cara inferior del módulo.",
    "como_se_confirma": "Montar los cuatro puentes, enfundados, antes de soldar A7 y A8.",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
@@ -2789,6 +2822,14 @@
       "como_se_confirma": "Montaje en seco de A7 y A8 sobre los puentes."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Altura del zócalo hembra estándar (8,5 mm) [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
     }
    ]
   },
@@ -2824,10 +2865,10 @@
    "grupo": "I",
    "tema": "Tiras de expansión junto a la ESP32-S3 (J24, J25)",
    "supuesto": "Dos tiras hembra de 1 × 22 a 2,54 mm pegadas por fuera a las hileras de A1, pin a pin: J24.n = A1.n y J25.n = A1.(22 + n). Los pines sin uso de A1 tienen net propia con su nombre (GPIO1, RST…). Libres para sensores: GPIO1, 2, 21, 38-42 y 47. La DevKitC mide 28 mm de ancho con hileras a 25,4 mm: su borde queda a 1,3 mm de cada hilera y el Dupont enchufado en la tira, a 1,27 mm. Los courtyards de J24/J25 se recortaron de ese lado para no chocar con el de A1.",
-   "base": "Pedido del equipo del 26/10/2026 [M]; ancho de 28 mm del vendedor (dimensiones_vendedor.jpg) [V]; separación de 25,40 mm (SUP-22) [H].",
+   "base": "Pedido del equipo del 26/10/2026 [M]; ancho de 28 mm del vendedor (dimensiones_vendedor.jpg) [V]; separación de 25,40 mm (SUP-22) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Si la DevKitC es más ancha, los Dupont de J24/J25 no entran con la ESP32 enchufada: hay que usar cables con el plástico recortado o soldar a los pads.",
    "como_se_confirma": "E-01: medir el ancho de la DevKitC y probar en seco un Dupont en la tira con la ESP32 enchufada.",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
@@ -2849,16 +2890,25 @@
      "GPIO47"
     ]
    },
-   "historial": []
+   "historial": [
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Pedido del equipo del 26/10/2026 [M]; ancho de 28 mm del vendedor (dimensiones_vendedor.jpg) [V]; separación de 25,40 mm (SUP-22) [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    }
+   ]
   },
   {
    "grupo": "I",
    "tema": "Alimentación de la expansión (J26)",
    "supuesto": "J26, tira hembra de 1 × 6: 1-2 3V3_MCU, 3-4 GND y 5-6 5V_MCU. GND va en el medio para que un sensor de 3,3 V enchufado un pin corrido no quede en 5 V. Presupuesto para todos los sensores: unos 300 mA en 5V y 150 mA en 3V3. El 5V viene del buck A8 por D2 (1N5819, 1 A) y los pines 13-14 del cable, y llega con unos 4,6-4,7 V. El 3V3 sale del regulador de la DevKitC (SUP-25), que ya alimenta la ESP32-S3, la MPU, los INA y los encoders.",
-   "base": "D2 de 1 A (SUP-17), F5 de 1 A en VM_LOG (SUP-49), regulador SOT-223 de clase 1 A (SUP-25) y consumo de unos 350 mA de pico de la ESP32-S3 (SUP-31) [H].",
+   "base": "D2 de 1 A (SUP-17), F5 de 1 A en VM_LOG (SUP-49), regulador SOT-223 de clase 1 A (SUP-25) y consumo de unos 350 mA de pico de la ESP32-S3 (SUP-31) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Con más consumo en 3V3, el regulador de la DevKitC calienta y puede reiniciar la ESP32. Con más consumo en 5V, D2 y F5 quedan al límite.",
    "como_se_confirma": "E-02: medir 5V_MCU y 3V3 en J26 con los sensores conectados y Wi-Fi activo, y la temperatura del regulador de la DevKitC.",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
@@ -2878,6 +2928,14 @@
       "supuesto": "J26, tira hembra de 1 × 6: 1-2 GND, 3-4 3V3_MCU y 5-6 5V_MCU. Presupuesto para todos los sensores: unos 300 mA en 5V y 150 mA en 3V3. El 5V viene del buck A8 por D2 (1N5819, 1 A) y los pines 13-14 del cable, y llega con unos 4,6-4,7 V. El 3V3 sale del regulador de la DevKitC (SUP-25), que ya alimenta la ESP32-S3, la MPU, los INA y los encoders."
      },
      "fuente": "ELE-039: revisión independiente del conexionado y control eléctrico (auditoria_electrica_v0.1.md)"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "D2 de 1 A (SUP-17), F5 de 1 A en VM_LOG (SUP-49), regulador SOT-223 de clase 1 A (SUP-25) y consumo de unos 350 mA de pico de la ESP32-S3 (SUP-31) [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
     }
    ]
   },
@@ -2922,10 +2980,10 @@
    "grupo": "I",
    "tema": "I2C junto a PWM en el cable J20",
    "supuesto": "En el cable plano, SDA (5) y SCL (7) quedan entre IN2_DER (6) e IN1_DER (8), sin un GND intercalado. Se acepta para la v0.1 con el cable lo más corto posible, el I2C a 100 kHz, la fuerza de salida mínima en GPIO11-14 y el filtro de glitches del I2C de la ESP32-S3. Intercalar GND obliga a rehacer el ruteo de las dos placas.",
-   "base": "Revisión independiente del 26/10/2026 [H].",
+   "base": "Revisión independiente del 26/10/2026 [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Si el acople mete errores en el bus, hay que reordenar el cable (dos placas nuevas) o pasar el I2C a un cable aparte.",
    "como_se_confirma": "E-08: bus I2C leyendo los cuatro sensores con los dos motores a PWM máximo, contando errores de lectura.",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "26/10/2026",
    "refs": [],
    "afecta": [
@@ -2935,7 +2993,16 @@
    "alias": [],
    "id": "SUP-81",
    "valor": {},
-   "historial": []
+   "historial": [
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Revisión independiente del 26/10/2026 [H]."
+     },
+     "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    }
+   ]
   }
  ]
 }
