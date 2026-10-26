@@ -13,7 +13,8 @@ Fecha de corte: 2026-10-26. Responsable humano: Matías. Entorno: Windows 11, Cl
 - **26/10/2026: revisión de supuestos (ELE-038), en manos del equipo.** [Revisión](../../planificacion/2026-10-26-revision-supuestos-version-final.md). SUP-01 (casera) y SUP-28 (los pines los define el ruteo; el firmware se adapta) confirmados por Matías el 26/10. Pinout para el equipo de firmware: [pinout_firmware_placas_v0.1.md](../../interfaces/pinout_firmware_placas_v0.1.md); actualizarlo si cambia algún pin.
 - **26/10/2026: rótulos de cobre y control eléctrico (ELE-039).** [auditoria_electrica.py](../auditoria_electrica.py) es el control repetible del sistema (correrlo después de cada cambio); [informe](../../cad/auditoria_electrica_v0.1.md). Riesgo abierto principal: A7 y A8 entran girados (SUP-80).
 - **26/10/2026: decisiones del grupo 2 resueltas (DEC-20).** Montaje: A1-A4 en zócalo, A5-A8 soldados. Abiertos: batería (SUP-42), paro (SUP-45), mecánica (SUP-04, 05, 60, 72) y medidas.
-- **Siguiente:** con las respuestas, versión final v0.2: huellas medidas, rótulos de polaridad en el cobre, piezas recuperadas y fabricación (PDF casero o Gerbers). Pendientes de medición: separación de hileras de la DevKitC (SUP-22), módulos (SUP-HA), largo del cable y posición de las placas (mecánica).
+- **26/10/2026: PCB v0.2 lista (ELE-040).** [Potencia](../../cad/segway_potencia/pcb_v0.2.md), [lógica](../../cad/segway_logica/pcb_v0.2.md), [lista de compras](../../cad/lista_compras_v0.2.md), fabricación en `fabricacion/rev-0.2/`. Constructor: `construir_pcb.py --placa <p>` toma REVISION de `placas/<p>.py`.
+- **Siguiente:** cuando lleguen batería (SUP-42), mecánica (SUP-04, 05, 60, 72) y medidas (grupo 3), corregir huellas o contorno, auditar (DEC-18) y regenerar la fabricación. Sin cambios, la v0.2 es la que se fabrica.
 
 ## Historia anterior (hasta el 18/10/2026)
 

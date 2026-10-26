@@ -499,6 +499,18 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
   (symbol "ROB-013_MPU6050_modulo_8p"
     (pin_names
       (offset 1.016))

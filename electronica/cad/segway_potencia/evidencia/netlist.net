@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
-		(date "2026-10-26T14:11:26")
+		(date "2026-10-26T14:40:55")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ece5e7a3-7492-4576-8595-85d0bcf35b7b")
+			(tstamps "5688ea04-b7c6-406b-9af0-893db8b808aa")
 			(units
 				(unit
 					(name "A")
@@ -173,7 +173,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cb545d0a-5038-4198-84ae-196bf295d9f3")
+			(tstamps "76cd5f7f-a118-4f45-909d-f15897dbdbed")
 			(units
 				(unit
 					(name "A")
@@ -249,7 +249,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c3e8d8a7-7e25-4652-a939-6b2295eade19")
+			(tstamps "927a1585-1b86-473b-a97f-5911a1d182fd")
 			(units
 				(unit
 					(name "A")
@@ -325,7 +325,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "38699cb8-bd88-4d7a-a12f-26e305a6283d")
+			(tstamps "6690d4b5-dc7d-4f01-bcf9-3616fff63f7b")
 			(units
 				(unit
 					(name "A")
@@ -401,7 +401,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "42091fcc-bce3-4296-b14c-275f8fa6d664")
+			(tstamps "9f79782f-6858-4e20-8b83-eb30d5dcefbe")
 			(units
 				(unit
 					(name "A")
@@ -477,7 +477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b6efad67-d8a0-423e-92f7-33f2e0a567c9")
+			(tstamps "bb0c0f65-0c53-44ed-8909-29b145ab27cb")
 			(units
 				(unit
 					(name "A")
@@ -549,7 +549,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4ea7dd7e-86b4-48db-ab01-b49ee14b2242")
+			(tstamps "ae99c067-0cb9-4b10-b9a1-3dc32f46edf3")
 			(units
 				(unit
 					(name "A")
@@ -615,7 +615,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ecb37fe1-dba3-42b8-935c-7448e33d9653")
+			(tstamps "46e855a1-4321-4e91-8a1c-2e69d33c6d0a")
 			(units
 				(unit
 					(name "A")
@@ -681,7 +681,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "73d9d696-820b-40b6-84d1-7c77466fe766")
+			(tstamps "0afc08b5-c1b8-4dc4-a13a-7497af220784")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a860f35c-d98f-4c62-bd25-61fafb18bb05")
+			(tstamps "036781b9-c600-42a6-887f-3e9c529fe831")
 			(units
 				(unit
 					(name "A")
@@ -813,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "40a4fdaf-12cf-43c2-ab95-af77c3a98c82")
+			(tstamps "fe68a5a8-7aec-4b77-9875-6adaf47ebc77")
 			(units
 				(unit
 					(name "A")
@@ -879,7 +879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7ff32d0a-b5dc-4614-bc57-48f6792b7d57")
+			(tstamps "1d68325c-7394-46b9-8013-7572e7b2d8e1")
 			(units
 				(unit
 					(name "A")
@@ -945,7 +945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "47f96ddd-e723-4744-bcd4-247b41aa6e4e")
+			(tstamps "241f8414-a8b5-4f4e-bdf4-a3c7f83c4c36")
 			(units
 				(unit
 					(name "A")
@@ -1011,7 +1011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8a01c33a-1e83-42f2-8565-e42717d0c0d6")
+			(tstamps "e806b615-8269-4e6e-a9ce-0f2f2e2ea7ea")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f36edd47-223f-41cb-8668-c5a5b76d791b")
+			(tstamps "ceac1c42-973d-44e0-be17-5eb6abfb6441")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f47b64b6-8b7f-47cb-bf88-d013d2857b56")
+			(tstamps "a2271e51-9e17-4278-a9fc-866b3e610495")
 			(units
 				(unit
 					(name "A")
@@ -1209,7 +1209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cf4d1c94-0441-4680-a822-45308f3b72da")
+			(tstamps "1de9adf6-cd60-41de-9e33-7d56286dc3a2")
 			(units
 				(unit
 					(name "A")
@@ -1275,7 +1275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0092d6eb-ed74-4f65-adbd-567e601f4139")
+			(tstamps "a4b89901-5c90-4ddf-b997-a8f84f161b5f")
 			(units
 				(unit
 					(name "A")
@@ -1341,7 +1341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "48630442-cc25-448c-b336-6c373b56c3bb")
+			(tstamps "849e9aa1-c1bd-40c7-b715-8d29927ae299")
 			(units
 				(unit
 					(name "A")
@@ -1407,7 +1407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9f0f207d-29c5-4f8a-ac31-73f25c1ee854")
+			(tstamps "37d6ca95-fd90-4d6d-82ef-3edb92a2538f")
 			(units
 				(unit
 					(name "A")
@@ -1473,7 +1473,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9107abf4-ddea-4c5d-ab21-c601d10218f8")
+			(tstamps "fb45442b-1c2d-4ac4-8bc2-0ac8296d0fed")
 			(units
 				(unit
 					(name "A")
@@ -1539,7 +1539,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5d294db8-2cbe-49c4-9b2d-35b04d086fb1")
+			(tstamps "ef75975a-dcf2-4584-89e0-737fc7da4d40")
 			(units
 				(unit
 					(name "A")
@@ -1605,7 +1605,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "205a0a0d-0df1-4196-874a-e2335d02bbdb")
+			(tstamps "0a408c1a-378b-4015-a202-e00e1c4cfcbb")
 			(units
 				(unit
 					(name "A")
@@ -1622,30 +1622,30 @@
 		)
 		(comp
 			(ref "J3")
-			(value "Lazo interruptor+paro")
-			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal")
-			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(value "Interruptor+paro NC en serie, cable 1,5 mm² soldado")
+			(footprint "Connector_Wire:SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (REQ-17 abierto; igual tipo que J1: separarlas y rotular 'SW')")
+					(name "Estado") "v0.2 [M]: pads para soldar el cable del lazo interruptor general + hongo NC (SUP-45); 15 A como F1")
 				(field
 					(name "Fuente") "[CONTRATO] §2.9, §2.12; [ENERGIA] §2, §8")
 				(field
-					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal")
+					(name "Footprint") "Connector_Wire:SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Screw_Terminal_01x02")
-				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+				(lib "Connector_Generic")
+				(part "Conn_01x02")
+				(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (REQ-17 abierto; igual tipo que J1: separarlas y rotular 'SW')")
+				(value "v0.2 [M]: pads para soldar el cable del lazo interruptor general + hongo NC (SUP-45); 15 A como F1")
 			)
 			(property
 				(name "Fuente")
@@ -1661,17 +1661,17 @@
 			)
 			(property
 				(name "ki_keywords")
-				(value "screw terminal")
+				(value "connector")
 			)
 			(property
 				(name "ki_fp_filters")
-				(value "TerminalBlock*:*")
+				(value "Connector*:*_1x??_*")
 			)
 			(sheetpath
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f5333228-0376-4711-b374-8038504e9065")
+			(tstamps "d09ffc32-546f-46dd-80e0-c9bacd5f3e0b")
 			(units
 				(unit
 					(name "A")
@@ -1737,7 +1737,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "127280f8-56e5-40aa-ad2a-a9a8aab49c60")
+			(tstamps "30651cf0-4a42-4c42-bc74-66763f06486c")
 			(units
 				(unit
 					(name "A")
@@ -1803,7 +1803,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "96185cbd-1f41-44a1-99a2-225d4b30c618")
+			(tstamps "76735cbd-8ff7-487a-9ae2-1d05276c73f6")
 			(units
 				(unit
 					(name "A")
@@ -1869,7 +1869,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b2f0a932-e77b-4ab2-acd5-8f67776c6ddc")
+			(tstamps "c06ed397-7e7d-45ff-a631-cc9a31367214")
 			(units
 				(unit
 					(name "A")
@@ -1938,7 +1938,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3722eaa2-ac39-4010-b041-2d143c548a9a")
+			(tstamps "51bc15bf-8fc2-4547-ab4e-40ec4b1604fb")
 			(units
 				(unit
 					(name "A")
@@ -2007,7 +2007,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "73b4a930-81a2-448e-a36e-466ffeea9b67")
+			(tstamps "fb3dc5b2-6d06-4aa7-a801-de17539716aa")
 			(units
 				(unit
 					(name "A")
@@ -2073,7 +2073,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ebee4f08-f7c0-4b70-a9cd-fee397b736cf")
+			(tstamps "f7e144b8-fc42-4d53-b7a4-f010d8e33d94")
 			(units
 				(unit
 					(name "A")
@@ -2139,7 +2139,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fbf92c0d-4207-4ee1-9601-959cbe29b9b3")
+			(tstamps "c5052d0a-7b48-4884-8cad-9f7e3424d956")
 			(units
 				(unit
 					(name "A")
@@ -2208,7 +2208,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8d1bdf54-df5a-433b-b4aa-e6fe8fb6177d")
+			(tstamps "5c9c7bc9-c73a-40ca-a407-e11f0eda8ced")
 			(units
 				(unit
 					(name "A")
@@ -2316,7 +2316,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "60828961-714e-4232-b347-1f44fee3a807")
+			(tstamps "303ca246-48fe-4233-b339-a11c42a55701")
 			(units
 				(unit
 					(name "A")
@@ -2385,7 +2385,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "100139bf-f7e8-42dd-ab46-be92ff85f8a2")
+			(tstamps "72fe8271-344e-4384-b434-fbe37dc91f67")
 			(units
 				(unit
 					(name "A")
@@ -2451,7 +2451,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1130e3d0-a274-4670-a10f-676103aa5fa7")
+			(tstamps "fdc3cacf-4643-4a2c-8aef-2efefb06c55c")
 			(units
 				(unit
 					(name "A")
@@ -2517,7 +2517,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3d3411ad-66a7-40ba-ab4c-f74e906e4d68")
+			(tstamps "b6c16d4a-a0fd-49ae-ac5f-66e22b8723b9")
 			(units
 				(unit
 					(name "A")
@@ -2583,7 +2583,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "de9857e6-a7b9-4fa3-a9c9-3fb354119ffa")
+			(tstamps "96cf1852-718f-44dc-aaf4-69fe2869002c")
 			(units
 				(unit
 					(name "A")
@@ -2649,7 +2649,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "88b3919a-3d38-4ac4-974c-eaa75474e1eb")
+			(tstamps "3f675045-78ae-4de0-89fb-bdfd62abafcd")
 			(units
 				(unit
 					(name "A")
@@ -2715,7 +2715,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a2cd8e0f-76a1-4c6b-b82f-c82ae4bf8914")
+			(tstamps "19562433-abde-4eda-87d2-bcd70615038a")
 			(units
 				(unit
 					(name "A")
@@ -2781,7 +2781,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f4006ddb-6c9a-4c31-8ccf-407611b62c8e")
+			(tstamps "353cd785-327e-403a-90e9-bbda4c8fc650")
 			(units
 				(unit
 					(name "A")
@@ -2847,7 +2847,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2c23fbd8-9c28-4d8a-975c-174dc5746d02")
+			(tstamps "12e6ef84-e9c5-4af0-b550-4dce08885a62")
 			(units
 				(unit
 					(name "A")
@@ -2913,7 +2913,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8e5e53c8-5d7e-4492-b099-c7cc5f36a596")
+			(tstamps "e01080f3-fed2-4c60-8402-bba8255570a9")
 			(units
 				(unit
 					(name "A")
@@ -2979,7 +2979,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c6bd1a22-9c84-4e9e-8251-2f382faa8c15")
+			(tstamps "14ab7328-d3d1-4012-9f0f-161a2ad05131")
 			(units
 				(unit
 					(name "A")
@@ -3045,7 +3045,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9f55a302-1ea2-4eb9-b83d-57feda87f4ad")
+			(tstamps "e3450c36-305b-44e7-96eb-de09b5ab2cc2")
 			(units
 				(unit
 					(name "A")
@@ -3111,7 +3111,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c9815297-6d7d-4463-aa12-e6920aba994d")
+			(tstamps "b43f84ea-839a-46f6-bf0e-852aaf6771d9")
 			(units
 				(unit
 					(name "A")
@@ -3177,7 +3177,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "21d2efb8-38a3-4648-a38e-81cd33979e4b")
+			(tstamps "58a30597-0e14-4d5c-8837-b6a839ddd02a")
 			(units
 				(unit
 					(name "A")
@@ -3243,7 +3243,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0286d93c-6a2a-4a47-983c-303ba8fe3926")
+			(tstamps "ba34f634-e8d7-45be-9934-b6d453e38dc3")
 			(units
 				(unit
 					(name "A")
@@ -3309,7 +3309,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ccd4e8ee-2cb0-44a8-90c3-ed4e7c48c8b5")
+			(tstamps "a65796df-1b7c-45f8-b4d6-f748d8c3f9dc")
 			(units
 				(unit
 					(name "A")
@@ -3375,7 +3375,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b25441dd-353f-4a77-8fc5-f3b9a5b245a0")
+			(tstamps "48b89c89-8c0d-4bc1-a623-df91bd4d4f2f")
 			(units
 				(unit
 					(name "A")
@@ -3463,6 +3463,40 @@
 				(pin
 					(num "3")
 					(name "Pin_3")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x02")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x02")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
 					(type "passive")
 				)
 			)

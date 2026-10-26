@@ -45,7 +45,7 @@ Lo demás va como estaba:
 | # | ID | Qué necesito | Para qué |
 |---|---|---|---|
 | 1 | SUP-42 | Batería: química, cantidad de celdas y modelo del BMS (o foto de las etiquetas) | Tensiones máximas, TVS y divisor de medición |
-| 2 | SUP-45 | Parada de emergencia e interruptor: qué tienen o van a comprar. El hongo ideal tiene **dos contactos NC**: uno corta la potencia (J3) y el otro le avisa a la ESP32 (J4). El interruptor general tiene que aguantar 15 A en continua | Cableado de J3 y J4. Si el hongo tiene un solo contacto, J4 se puentea |
+| 2 | SUP-45 | **Resuelto en la v0.2:** pads para soldar el cable de cualquier interruptor. Solo falta saber cuántos contactos NC tiene el hongo que compren (ideal: dos) | Si tiene uno solo, J4 se puentea |
 | 3 | SUP-04 | Si las placas entran en el robot: potencia de 150 × 110 mm y lógica de 100 × 82 mm | Contorno |
 | 4 | SUP-05 | Dónde se atornillan al chasis: hoy son 4 agujeros M3 en las esquinas y separadores de 10 mm | Agujeros de fijación |
 | 5 | SUP-60 | Dónde va la placa de lógica y cómo queda orientada respecto del robot, porque la IMU va en ella | Ejes de la IMU en el firmware y el modelo |

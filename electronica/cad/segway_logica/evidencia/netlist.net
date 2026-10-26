@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-26T14:11:01")
+		(date "2026-10-26T14:40:18")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c91df7b1-e2d9-4402-b2ce-f1ef2ffbda8c")
+			(tstamps "6386a4fd-6a0e-42f2-9d4e-e4b380814424")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "bafa63cb-f1d5-458d-b3c0-1596ef5fae8f")
+			(tstamps "d5971209-baff-422e-8b14-5317054c23e7")
 			(units
 				(unit
 					(name "A")
@@ -316,30 +316,30 @@
 		)
 		(comp
 			(ref "J4")
-			(value "Paro MPT0,5 1=GND 2=PARO (NC)")
-			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal")
-			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(value "Paro NC 1=GND 2=PARO, cable soldado")
+			(footprint "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a GPIO6 sin R25 ni C15 (SUP-58)")
+					(name "Estado") "v0.2 [M]: pads para soldar el cable del segundo contacto NC del hongo; sin ese contacto, puentear 1-2 (SUP-45)")
 				(field
 					(name "Fuente") "[CONTRATO] §2.12; DEC-13 [M]; [PHX-MPT05] (6 A [V], AWG 28-20 de la hermana 1725708 [D])")
 				(field
-					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal")
+					(name "Footprint") "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Screw_Terminal_01x02")
-				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+				(lib "Connector_Generic")
+				(part "Conn_01x02")
+				(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a GPIO6 sin R25 ni C15 (SUP-58)")
+				(value "v0.2 [M]: pads para soldar el cable del segundo contacto NC del hongo; sin ese contacto, puentear 1-2 (SUP-45)")
 			)
 			(property
 				(name "Fuente")
@@ -355,17 +355,17 @@
 			)
 			(property
 				(name "ki_keywords")
-				(value "screw terminal")
+				(value "connector")
 			)
 			(property
 				(name "ki_fp_filters")
-				(value "TerminalBlock*:*")
+				(value "Connector*:*_1x??_*")
 			)
 			(sheetpath
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "44e4a827-ec5a-4bcf-bdcf-780c712e27e6")
+			(tstamps "dec6311b-df10-466f-9b14-4585de154463")
 			(units
 				(unit
 					(name "A")
@@ -431,7 +431,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d811f295-2ffb-40af-bd3a-2c63bc06e862")
+			(tstamps "f53b4918-c605-4e7c-9488-780e61601617")
 			(units
 				(unit
 					(name "A")
@@ -503,7 +503,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "26e3eb11-90bc-4ae2-bb6d-d43d1557587b")
+			(tstamps "cb52b42e-e7b3-4a12-ad66-c6773dbe72b8")
 			(units
 				(unit
 					(name "A")
@@ -575,7 +575,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "41fb6cf2-09be-48ac-bb69-554f872d574b")
+			(tstamps "0603fb96-8d7e-4069-845f-23e74c71e7b7")
 			(units
 				(unit
 					(name "A")
@@ -683,7 +683,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dc8614ee-badb-47a2-a759-dddcc64bf846")
+			(tstamps "1f222064-9244-4c52-98ab-8bcf2c336aef")
 			(units
 				(unit
 					(name "A")
@@ -809,7 +809,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0357c898-986e-46ec-bf97-02747b9ff606")
+			(tstamps "e4f1f87b-7c4d-407a-9608-b1062c04c5d7")
 			(units
 				(unit
 					(name "A")
@@ -935,7 +935,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5cebc64b-561a-4515-a231-e07b0867cc3a")
+			(tstamps "54b10f41-9839-46b3-a93e-7b64e19793f7")
 			(units
 				(unit
 					(name "A")
@@ -1013,7 +1013,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "456d788c-2d78-47e1-a446-9ba835980318")
+			(tstamps "60e99fc7-c199-4426-8012-ff0a1770bf3a")
 			(units
 				(unit
 					(name "A")
@@ -1079,7 +1079,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6d658019-c1e6-4a54-b9ea-61cc8ceaa128")
+			(tstamps "7dad71d5-6bbe-486f-a432-2fa31a77ce40")
 			(units
 				(unit
 					(name "A")
@@ -1145,7 +1145,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a64fadd5-4543-4069-b9ef-aa1a107fb554")
+			(tstamps "c56b923b-972b-4ad5-baf5-5a5eb75ed8a4")
 			(units
 				(unit
 					(name "A")
@@ -1211,7 +1211,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "aa8691c9-2b64-413e-ba1a-d66c3865b61c")
+			(tstamps "1ee2276b-a127-4114-a26b-30f8c3d64310")
 			(units
 				(unit
 					(name "A")
@@ -1277,7 +1277,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8308e86f-8ca5-471c-97f6-a3c19bc7b66a")
+			(tstamps "220fbdba-034d-4f2a-9619-98ecc326527e")
 			(units
 				(unit
 					(name "A")
@@ -1296,40 +1296,6 @@
 	(groups)
 	(variants)
 	(libparts
-		(libpart
-			(lib "Connector")
-			(part "Screw_Terminal_01x02")
-			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			(footprints
-				(fp "TerminalBlock*:*")
-			)
-			(fields
-				(field
-					(name "Reference") "J")
-				(field
-					(name "Value") "Screw_Terminal_01x02")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "Pin_1")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "Pin_2")
-					(type "passive")
-				)
-			)
-		)
 		(libpart
 			(lib "Connector")
 			(part "Screw_Terminal_01x04")
@@ -1370,6 +1336,40 @@
 				(pin
 					(num "4")
 					(name "Pin_4")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x02")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x02")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
 					(type "passive")
 				)
 			)

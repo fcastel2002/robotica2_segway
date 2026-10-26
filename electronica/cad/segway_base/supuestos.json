@@ -643,7 +643,7 @@
   {
    "grupo": "B",
    "tema": "Rótulos sin serigrafía",
-   "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1-F5, VCC junto al pin 8 de A7 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas.",
+   "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1 y F4 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas. Los valores de F2, F3 y F5 se sacaron del cobre (quedaban apilados entre dos fusibles y podían leerse como del otro) y el VCC de A7 también (quedaba más cerca de D2): A7 se orienta por su pad 1 cuadrado. Los servos J13 y J14 tienen la señal hacia el centro, entre los dos.",
    "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Lo que no está en el cobre depende de la guía impresa: riesgo de conectar un servo o un encoder al revés.",
    "como_se_confirma": "Matías decide si hace la serigrafía por transferencia.",
@@ -680,6 +680,13 @@
       "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H]."
      },
      "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1-F5, VCC junto al pin 8 de A7 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas."
+     },
+     "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
     }
    ]
   },
@@ -1713,11 +1720,11 @@
   {
    "grupo": "E",
    "tema": "Interruptor y paro en la potencia",
-   "supuesto": "J3 recibe el lazo en serie del interruptor general y del paro NC externo, que cortan toda la potencia. J4 (en la lógica) recibe el contacto NC del paro hacia GPIO6 y tiene 2 polos (1 GND, 2 PARO): el polo AUX desaparece junto con R26.",
-   "base": "§3 de diseno_v0.3.md; open_point 18; REQ-17.",
-   "impacto_si_cambia": "Si se quiere alimentar un paro remoto desde la placa, J4 vuelve a 3 polos con R26.",
-   "como_se_confirma": "El equipo confirma qué paro se usa y cómo se cablea.",
-   "estado": "ASUMIDO",
+   "supuesto": "J3 (potencia) son pads para soldar el cable de 1,5 mm² del lazo en serie del interruptor general y del hongo NC: si se abre cualquiera, se corta toda la potencia. J4 (lógica) son pads para soldar el cable del segundo contacto NC del hongo hacia GPIO6 (1 GND, 2 PARO); si el hongo tiene un solo contacto, J4 se puentea y el firmware no se entera del paro, pero la potencia se corta igual. Lo ideal: hongo con dos contactos NC e interruptor de 15 A o más en continua. El cable soldado en J3 se fija con un precinto al separador M3 de la esquina superior derecha, para que la vibración no lo corte en el pad.",
+   "base": "Matías, 26/10/2026 [M]: pines para soldar con cable cualquier interruptor de emergencia. §3 de diseno_v0.3.md; REQ-17.",
+   "impacto_si_cambia": "Si el hongo no tiene segundo contacto, la ESP32 no sabe que se apretó el paro (los motores igual quedan sin potencia).",
+   "como_se_confirma": "Al comprar el hongo: cantidad de contactos NC. Ensayo E-08 de paro con los motores en marcha.",
+   "estado": "CAMBIADO",
    "fecha": "26/10/2026",
    "refs": [
     "J3",
@@ -1735,6 +1742,22 @@
       "supuesto": "J3 recibe el lazo en serie del interruptor general y del paro NC externo, que cortan toda la potencia. J4 recibe el contacto NC del paro hacia PB12 y pasa a 2 polos (1 GND, 2 PARO): el polo AUX desaparece junto con R26."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "J3 recibe el lazo en serie del interruptor general y del paro NC externo, que cortan toda la potencia. J4 (en la lógica) recibe el contacto NC del paro hacia GPIO6 y tiene 2 polos (1 GND, 2 PARO): el polo AUX desaparece junto con R26.",
+      "estado": "ASUMIDO",
+      "base": "§3 de diseno_v0.3.md; open_point 18; REQ-17."
+     },
+     "fuente": "Matías, 26/10/2026: 'poneme pines para soldar con cable algún interruptor de emergencia'"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "J3 (potencia) son pads para soldar el cable de 1,5 mm² del lazo en serie del interruptor general y del hongo NC: si se abre cualquiera, se corta toda la potencia. J4 (lógica) son pads para soldar el cable del segundo contacto NC del hongo hacia GPIO6 (1 GND, 2 PARO); si el hongo tiene un solo contacto, J4 se puentea y el firmware no se entera del paro, pero la potencia se corta igual. Lo ideal: hongo con dos contactos NC e interruptor de 15 A o más en continua."
+     },
+     "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
     }
    ]
   },
@@ -2677,7 +2700,7 @@
    "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 VBAT_ADC, 2 SERVO_IZQ, 3 INA_ALERT, 4 SERVO_DER, 5 SDA, 6 IN2_DER, 7 SCL, 8 IN1_DER, 9 3V3, 10 IN2_IZQ, 11 sin conexión en las dos placas, 12 IN1_IZQ, 13 y 14 5V_MCU, 15 y 16 GND.",
    "base": "cad/interconexion_v0.6.json; ruteo v0.1 de las dos placas [H]. El pin 11 quedó encerrado en la potencia por el bus I2C y en la lógica por el 5V de J26.",
    "impacto_si_cambia": "Otro orden obliga a rehacer el ruteo de las dos placas.",
-   "como_se_confirma": "Mecánica fija el largo; continuidad pin a pin del cable armado.",
+   "como_se_confirma": "Antes de enchufarlo: continuidad pin 1 con pin 1 y pin 13 con pin 13 entre los dos conectores del cable. Un IDC prensado al revés une el pin n con el 17−n y lleva 5V_MCU a GPIO10 y GPIO8. Mecánica fija el largo.",
    "estado": "CAMBIADO",
    "fecha": "26/10/2026",
    "refs": [],
@@ -2712,6 +2735,13 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Pedido del equipo del 26/10/2026 [M]: pines hembra en paralelo a la controladora (ELE-037)"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "como_se_confirma": "Mecánica fija el largo; continuidad pin a pin del cable armado."
+     },
+     "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
     }
    ]
   },
@@ -2800,7 +2830,7 @@
   {
    "grupo": "I",
    "tema": "Puentes bajo módulos en zócalo",
-   "supuesto": "Los puentes W1, W2, W4 y W7 de la potencia pasan bajo el INA226 (A7) y el buck (A8), que van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa y enfundados en termocontraíble para que no toquen las soldaduras de abajo del módulo. El DRC lo marca como aviso (pth_inside_courtyard).",
+   "supuesto": "Bajo los módulos soldados pasan W1 (SDA, bajo A7) y W7 (GND, bajo A8), y el pad de W4 queda en el borde de A8; W2 queda al costado de A7. Los módulos van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa, enfundados en termocontraíble y se montan antes de soldar A7 y A8: después ya no se pueden reparar. El DRC lo marca como aviso (pth_inside_courtyard).",
    "base": "Altura del zócalo hembra estándar (8,5 mm) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Sin funda, un puente que se levante puede tocar un pad de la cara inferior del módulo.",
    "como_se_confirma": "Montar los cuatro puentes, enfundados, antes de soldar A7 y A8.",
@@ -2830,6 +2860,13 @@
       "base": "Altura del zócalo hembra estándar (8,5 mm) [H]."
      },
      "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "Los puentes W1, W2, W4 y W7 de la potencia pasan bajo el INA226 (A7) y el buck (A8), que van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa y enfundados en termocontraíble para que no toquen las soldaduras de abajo del módulo. El DRC lo marca como aviso (pth_inside_courtyard)."
+     },
+     "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
     }
    ]
   },
@@ -2942,7 +2979,7 @@
   {
    "grupo": "I",
    "tema": "Módulos que entran invertidos (A7, A8, A1)",
-   "supuesto": "Montaje de los módulos. **En zócalo:** A1 (ESP32-S3), A2 (MPU6050) y A3/A4 (DRV8871). **Soldados directo** sobre sus pines macho, con el espaciador de plástico de la tira (~2,5 mm): A5/A6 (INA219), A7 (INA226) y A8 (buck). A7 y A8 se sueldan porque en zócalo entran girados y queman la ESP32 o el INA. A1 queda en zócalo: es el más caro, se puede sacar para programarlo y una inversión se ve (antena y USB fuera de lugar). A2 está codificado con la posición 5 tapada. A3/A4 son los que más probablemente se quemen y hay repuestos. A5/A6 no entran girados, pero van en el camino de la corriente del motor: soldados son 4 contactos menos.",
+   "supuesto": "Montaje de los módulos. **En zócalo:** A1 (ESP32-S3), A2 (MPU6050) y A3/A4 (DRV8871). **Soldados directo** sobre sus pines macho, con el espaciador de plástico de la tira (~2,5 mm): A5/A6 (INA219), A7 (INA226) y A8 (buck). A7 y A8 se sueldan porque en zócalo entran girados y queman la ESP32 o el INA. A1 queda en zócalo porque es el más caro y se puede sacar para programarlo, pero **codificado**: se corta el pin 24 del módulo (GPIO43, TX del USB-serie, que el robot no usa por fuera) y se tapa la posición 24 del zócalo. Sin eso entra girada (5 V a GPIO43 y su 3V3 en corto) o corrida una posición (5 V a GPIO14 o corto del 5V); la antena a la vista no alcanza para evitarlo. A2 está codificado con la posición 5 tapada. A3/A4 son los que más probablemente se quemen y hay repuestos. A5/A6 no entran girados, pero van en el camino de la corriente del motor: soldados son 4 contactos menos.",
    "base": "Matías, 26/10/2026 [M]: 'SUP-80: soldados' y 'confío en tu criterio' para el resto de la lista. Control 4 de auditoria_electrica_v0.1.md.",
    "impacto_si_cambia": "Un módulo soldado se cambia desoldando. Se desvía de DEC-13 (todo enchufable) para A5-A8.",
    "como_se_confirma": "Confirmado. En el montaje: soldar A7 con VCC del lado de su rótulo y A8 con IN+ del lado del suyo, y medir J20.13 y J20.9 antes de conectar la lógica.",
@@ -2973,6 +3010,13 @@
       "como_se_confirma": "Matías decide si A7 y A8 van soldados o en zócalo."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "Montaje de los módulos. **En zócalo:** A1 (ESP32-S3), A2 (MPU6050) y A3/A4 (DRV8871). **Soldados directo** sobre sus pines macho, con el espaciador de plástico de la tira (~2,5 mm): A5/A6 (INA219), A7 (INA226) y A8 (buck). A7 y A8 se sueldan porque en zócalo entran girados y queman la ESP32 o el INA. A1 queda en zócalo: es el más caro, se puede sacar para programarlo y una inversión se ve (antena y USB fuera de lugar). A2 está codificado con la posición 5 tapada. A3/A4 son los que más probablemente se quemen y hay repuestos. A5/A6 no entran girados, pero van en el camino de la corriente del motor: soldados son 4 contactos menos."
+     },
+     "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
     }
    ]
   },

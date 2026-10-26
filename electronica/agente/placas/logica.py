@@ -1,4 +1,4 @@
-"""Placa de lógica v0.1 (DEC-17): ubicación y ruteo completo a mano, una cara (B.Cu), GND por relleno.
+"""Placa de lógica v0.2 (DEC-17): ubicación y ruteo completo a mano, una cara (B.Cu), GND por relleno.
 
 Coordenadas en mm desde la esquina superior izquierda del contorno, vista desde la cara de componentes;
 (x, y) = pad 1, rotación en grados.
@@ -16,6 +16,7 @@ Topología (el mapa de pines de dividir_v06_dos_placas.py está elegido para est
 """
 
 PROYECTO = "segway_logica"
+REVISION = "0.2"
 SPEC = "especificacion_v0.6.json"
 
 UBICACION = {
@@ -23,7 +24,7 @@ UBICACION = {
     "J20": (58.42, 52.07, 0),
     "A2": (33.02, 44.45, 0),
     # Borde oeste, entrada de cable hacia afuera (rotación 270: pin 1 arriba)
-    "J7": (7.62, 13.335, 270), "J4": (7.62, 29.21, 270), "J8": (7.62, 36.83, 270),
+    "J7": (7.62, 13.335, 270), "J4": (7.62, 28.04, 270), "J8": (7.62, 36.83, 270),
     # Pull-ups: R13 horizontal entre el riel y la pista A de J7; R14 y R24 verticales sobre la banda;
     # R15 y R16 entre el 3V3 de J20.9 y las pistas de J8.
     "R13": (27.94, 13.97, 0), "R14": (43.18, 10.16, 270), "R24": (50.80, 12.70, 270),
@@ -49,14 +50,14 @@ ESQUELETO = [
     ("ENC_IZQ_A", W, ["A1.4", "J24.4", (64.00, 24.13), (57.65, 17.78), (10.80, 17.78), "J7.2"]),
     ("ENC_IZQ_A", W, ["R13.2", (38.10, 17.78)]),
     ("ENC_IZQ_B", W, ["A1.5", "J24.5", (64.00, 26.67), (57.65, 20.32), "J7.3"]),
-    ("PARO_CONT", W, ["A1.6", "J24.6", (64.00, 29.21), (57.65, 22.86), (12.70, 22.86), (12.70, 31.75), "J4.2"]),
+    ("PARO_CONT", W, ["A1.6", "J24.6", (64.00, 29.21), (57.65, 22.86), (12.70, 22.86), (12.70, 32.64), "J4.2"]),
     ("ENC_DER_A", W, ["A1.7", "J24.7", (64.00, 31.75), (57.65, 25.40), (15.24, 25.40), (15.24, 40.33), "J8.2"]),
     ("ENC_DER_B", W, ["A1.8", "J24.8", (64.00, 34.29), (57.65, 27.94), (17.78, 27.94), (17.78, 43.83), "J8.3"]),
     # --- 3V3 de J20.9: MPU, J8 y pull-ups de J8
     ("3V3_MCU", W, [(22.86, 30.48), (25.40, 33.02), "R15.1", (27.94, 38.10), "R16.1", (27.94, 62.23), "J20.9"]),
     ("3V3_MCU", W, [(27.94, 44.45), "A2.1"]),
     # --- GND: cortos desde los pads hacia el relleno
-    ("GND", W, ["J4.1", "J7.4", (3.30, 23.835)]),     # J4 tiene trabas NPTH detrás de los pines
+    ("GND", W, ["J4.1", "J7.4", (3.30, 23.835)]),     # J4: pads para soldar el cable del paro (v0.2)
     ("GND", W, ["J8.1", (3.30, 36.83)]),
     ("GND", W, ["A2.2", (35.56, 50.80)]),
     ("3V3_MCU", W, [(27.94, 47.33), "J8.4"]),
@@ -97,7 +98,7 @@ RUTEAR = False
 ZONAS = [("GND", "placa", 0)]
 
 # Rótulos en B.Cu y escala de control de 50 mm (reglas_fabricacion_casera.md §6), en el relleno inferior
-ROTULOS = [("SEGWAY LOGICA v0.1", (24.13, 72.00), 2.0), ("LADO COBRE", (24.13, 75.15), 2.0),
+ROTULOS = [("SEGWAY LOGICA v0.2", (24.13, 72.00), 2.0), ("LADO COBRE", (24.13, 75.15), 2.0),
     # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py
     # Los de las franjas GND del borde oeste (V de J7 y J8, ENC DER) y del pasillo bajo J26 (5V) partían el relleno:
     # se sacaron; esos pines quedan rotulados en la guía de montaje

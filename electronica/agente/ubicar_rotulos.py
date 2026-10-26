@@ -111,7 +111,7 @@ def main():
     def pad_mas_cercano(x, y, ref):
         mejor = None
         for r_, lista in pads.items():
-            if r_ != ref:
+            if ref and r_ != ref:
                 continue
             for num, (px, py) in lista:
                 if num == "":
@@ -123,7 +123,9 @@ def main():
 
     ubicados, salida, sin_lugar = [], [], []
     solo = sys.argv[sys.argv.index("--solo") + 1].split(",") if "--solo" in sys.argv else None
-    for texto, ancla, alto, radio in cfg.ROTULOS_PEDIDOS:
+    for pedido in cfg.ROTULOS_PEDIDOS:
+        texto, ancla, alto, radio = pedido[:4]
+        estricto = len(pedido) > 4 and pedido[4]     # el pin marcado tiene que ser el pad más cercano de TODA la placa
         if solo and ancla not in solo:
             continue
         ref, _, num = ancla.partition(".")
@@ -158,7 +160,7 @@ def main():
                 r = caja(t.GetBoundingBox())
                 if any(cruza(r, u) for u in ubicados) or not libre(r):
                     continue
-                if num and pad_mas_cercano((r[0] + r[2]) / 2, (r[1] + r[3]) / 2, ref) != ancla:
+                if num and pad_mas_cercano((r[0] + r[2]) / 2, (r[1] + r[3]) / 2, None if estricto else ref) != ancla:
                     continue
                 hecho = (round(x, 2), round(y, 2), ang, r)
                 break

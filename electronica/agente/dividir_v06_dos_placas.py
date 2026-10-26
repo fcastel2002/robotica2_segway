@@ -150,7 +150,23 @@ def placa(nombre, refs):
     if nombre == "logica":
         expansion(s)
     textos_esp32(s)
+    for c in s["components"]:
+        c.update(CAMBIOS_PCB_V02.get(c["ref"], {}))
+    s["fecha"] = "2026-10-26"
+    s["revision_pcb_v02"] = "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)"
     return s
+
+
+# PCB v0.2 (26/10/2026): Matías pidió pines para soldar con cable el interruptor de emergencia, sin depender del modelo.
+# J3 (lazo de potencia, 15 A) y J4 (señal de paro) pasan de bornera a pads para cable soldado.
+CAMBIOS_PCB_V02 = {
+    "J3": {"lib_id": "Connector_Generic:Conn_01x02", "value": "Interruptor+paro NC en serie, cable 1,5 mm² soldado",
+           "footprint": "Connector_Wire:SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm",
+           "status": "v0.2 [M]: pads para soldar el cable del lazo interruptor general + hongo NC (SUP-45); 15 A como F1"},
+    "J4": {"lib_id": "Connector_Generic:Conn_01x02", "value": "Paro NC 1=GND 2=PARO, cable soldado",
+           "footprint": "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm",
+           "status": "v0.2 [M]: pads para soldar el cable del segundo contacto NC del hongo; sin ese contacto, puentear 1-2 (SUP-45)"},
+}
 
 
 # Textos heredados de la Blue Pill (ELE-039): los pines PAx/PBx de la v0.3 pasan a los GPIO de la ESP32-S3 y se

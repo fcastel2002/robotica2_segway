@@ -1,6 +1,6 @@
 {
  "revision": "v0.6",
- "fecha": "2026-10-20",
+ "fecha": "2026-10-26",
  "base": "v0.5 dividida en dos placas (DEC-17): placa de potencia",
  "resumen": "Placa base de interconexión simplificada para fabricación casera (DEC-14, DEC-15): 60 piezas (9 módulos enchufables + 51 componentes de agujero pasante), una sola capa de cobre B.Cu. Todo valor no medido es un supuesto de supuestos.md (SUP-xx).",
  "supuestos": "supuestos.md / supuestos.json",
@@ -310,13 +310,13 @@
   },
   {
    "ref": "J3",
-   "lib_id": "Connector:Screw_Terminal_01x02",
-   "value": "Lazo interruptor+paro",
-   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "Interruptor+paro NC en serie, cable 1,5 mm² soldado",
+   "footprint": "Connector_Wire:SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm",
    "block": "entrada_potencia",
    "dnp": false,
    "source": "[CONTRATO] §2.9, §2.12; [ENERGIA] §2, §8",
-   "status": "provisorio [H] (REQ-17 abierto; igual tipo que J1: separarlas y rotular 'SW')",
+   "status": "v0.2 [M]: pads para soldar el cable del lazo interruptor general + hongo NC (SUP-45); 15 A como F1",
    "supuestos": [
     "SUP-18",
     "SUP-45",
@@ -1472,5 +1472,6 @@
   "14": "5V_MCU",
   "15": "GND",
   "16": "GND"
- }
+ },
+ "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)"
 }

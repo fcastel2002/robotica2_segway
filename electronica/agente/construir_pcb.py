@@ -37,6 +37,7 @@ PCB = PROY / f"{NOMBRE}.kicad_pcb"
 PRO = PROY / f"{NOMBRE}.kicad_pro"
 SCH = PROY / f"{NOMBRE}.kicad_sch"
 EVID = PROY / "evidencia"
+REV = "0.1"
 FAB = PROY / "fabricacion" / "rev-0.1"
 CLI = Path(r"C:\Program Files\KiCad\10.0\bin\kicad-cli.exe")
 KFP = Path(r"C:\Program Files\KiCad\10.0\share\kicad\footprints")
@@ -164,6 +165,9 @@ PADS_CASEROS = {
     "Zocalo_expansion_izq_1x22_P2.54mm": (1.0, 1.8, 1.8),
     "Zocalo_expansion_der_1x22_P2.54mm": (1.0, 1.8, 1.8),
     "PinSocket_1x06_P2.54mm_Vertical": (1.0, 1.8, 2.6),
+    # Pads para cable soldado del interruptor y del paro (v0.2): 1,5 mm² con mecha de 1,8 y 0,5 mm² con mecha de 1,0
+    "SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm": (1.8, 3.4, 3.4),
+    "SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm": (1.0, 2.2, 2.2),
     # Módulos: solo los pads de paso 2,54 mm pasan a óvalo 1,8 x 2,6 (bornera y buck se conservan)
     "ROB-012_ESP32-S3-DevKitC-1_N16R8_44p": (1.0, 1.8, 2.6),
     "ROB-013_MPU6050_modulo_8p": (1.0, 1.8, 2.6),
@@ -189,6 +193,9 @@ def preparar_biblioteca(componentes, carpeta):
             texto = re.sub(r"(\n\t\(attr [^\n]*\))", lambda m: m.group(1) + f"\n\t(jumper_pad_groups {g})", texto, count=1)
             if "(jumper_pad_groups" not in texto:
                 raise SystemExit(f"No pude declarar los grupos internos en {nombre}")
+        if nombre.startswith("SolderWire-"):
+            # Los pads para cable de KiCad se excluyen de la lista de materiales; el símbolo no: sin esto la paridad falla
+            texto = texto.replace(" exclude_from_bom", "")
         if nombre in PADS_DUPLICADOS_UNIDOS:
             texto = texto.replace("(duplicate_pad_numbers_are_jumpers no)", "(duplicate_pad_numbers_are_jumpers yes)")
         (carpeta / f"{nombre}.kicad_mod").write_text(texto, encoding="utf-8")
@@ -885,7 +892,7 @@ def superposiciones(board):
 def cargar_placa(nombre):
     """Reemplaza las constantes de la placa por las de electronica/agente/placas/<nombre>.py y la especificación."""
     import importlib.util
-    global PROY, SPEC, NOMBRE, PCB, PRO, SCH, EVID, FAB, ANCHO, ALTO, RADIO, UBICACION, FIJAS, SOBRESALEN, ESQUELETO
+    global PROY, SPEC, NOMBRE, PCB, PRO, SCH, EVID, FAB, REV, ANCHO, ALTO, RADIO, UBICACION, FIJAS, SOBRESALEN, ESQUELETO
     global ANCHOS_RUTEO, IGNORAR, ZONAS, PUENTES, SIN_RELLENO, RUTEAR, ROTULOS, ESCALA, ENMIENDAS_PLACA, SIN_RUTEO, PUENTES_FR, QUITAR_NPTH, SEVERIDADES, NETS_FIJAS
     ruta = Path(__file__).resolve().parent / "placas" / f"{nombre}.py"
     spec_mod = importlib.util.spec_from_file_location(f"placa_{nombre}", ruta)
@@ -896,7 +903,8 @@ def cargar_placa(nombre):
     SPEC = PROY / cfg.SPEC
     PCB, PRO, SCH = (PROY / f"{NOMBRE}.{e}" for e in ("kicad_pcb", "kicad_pro", "kicad_sch"))
     EVID = PROY / "evidencia"
-    FAB = PROY / "fabricacion" / "rev-0.1"
+    REV = getattr(cfg, "REVISION", "0.1")
+    FAB = PROY / "fabricacion" / f"rev-{REV}"
     tablero = json.loads(SPEC.read_text(encoding="utf-8"))["pcb"]["board"]
     ANCHO, ALTO, RADIO = float(tablero["width_mm"]), float(tablero["height_mm"]), float(tablero["corner_radius"])
     UBICACION, FIJAS, SOBRESALEN, ESQUELETO = cfg.UBICACION, set(cfg.FIJAS), set(cfg.SOBRESALEN), list(cfg.ESQUELETO)
@@ -1150,8 +1158,8 @@ def main():
     p(f"   {len(viol)} violaciones, {len(sin)} sin conectar, {len(par)} de paridad")
     for (sev, tipo), c in sorted(cuenta.items()):
         p(f"     {sev:8s} {tipo:35s} {c}")
-    shutil.copyfile(tmp / "drc.json", EVID / "drc_pcb_v0.1.json")
-    (EVID / "puentes_pcb_v0.1.json").write_text(json.dumps(puentes, ensure_ascii=False, indent=1), encoding="utf-8")
+    shutil.copyfile(tmp / "drc.json", EVID / f"drc_pcb_v{REV}.json")
+    (EVID / f"puentes_pcb_v{REV}.json").write_text(json.dumps(puentes, ensure_ascii=False, indent=1), encoding="utf-8")
     if not [v for v in viol if v["severity"] == "error"] and not sin and "--fabricar" in sys.argv:
         p("6. Fabricación")
         for f in fabricar():

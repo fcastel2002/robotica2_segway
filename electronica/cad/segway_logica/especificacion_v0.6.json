@@ -1,6 +1,6 @@
 {
  "revision": "v0.6",
- "fecha": "2026-10-20",
+ "fecha": "2026-10-26",
  "base": "v0.5 dividida en dos placas (DEC-17): placa de logica",
  "resumen": "Placa base de interconexión simplificada para fabricación casera (DEC-14, DEC-15): 60 piezas (9 módulos enchufables + 51 componentes de agujero pasante), una sola capa de cobre B.Cu. Todo valor no medido es un supuesto de supuestos.md (SUP-xx).",
  "supuestos": "supuestos.md / supuestos.json",
@@ -458,13 +458,13 @@
   },
   {
    "ref": "J4",
-   "lib_id": "Connector:Screw_Terminal_01x02",
-   "value": "Paro MPT0,5 1=GND 2=PARO (NC)",
-   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "Paro NC 1=GND 2=PARO, cable soldado",
+   "footprint": "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm",
    "block": "conectores",
    "dnp": false,
    "source": "[CONTRATO] §2.12; DEC-13 [M]; [PHX-MPT05] (6 A [V], AWG 28-20 de la hermana 1725708 [D])",
-   "status": "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a GPIO6 sin R25 ni C15 (SUP-58)",
+   "status": "v0.2 [M]: pads para soldar el cable del segundo contacto NC del hongo; sin ese contacto, puentear 1-2 (SUP-45)",
    "supuestos": [
     "SUP-45",
     "SUP-58",
@@ -1431,5 +1431,6 @@
   "14": "5V_MCU",
   "15": "GND",
   "16": "GND"
- }
+ },
+ "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)"
 }

@@ -10,7 +10,7 @@ Sale con código 1 si algún control da FALLA. Controles:
     independiente del 26/10/2026 contra las fichas y los símbolos: si alguien cambia una net, salta acá.
  3. Ningún pin de la ESP32-S3 (3,3 V, no tolera 5 V) en una net de 5 V, batería o motor, en ninguna de las
     dos placas (las nets del cable se siguen a la potencia).
- 4. Módulos que entran girados 180°: qué net le llega a cada pin y si eso quema algo.
+ 4. Módulos enchufados que entran girados 180° o corridos una posición: qué net le llega a cada pin y si eso quema algo.
  5. Direcciones I2C sin repetir.
  6. Cuellos de pista: el tramo más angosto de cada net de potencia y su calentamiento (IPC-2221, cobre de
     35 µm, capa externa) con la corriente de diseño.
@@ -25,7 +25,7 @@ import pcbnew
 
 RAIZ = Path(__file__).resolve().parents[2]
 CAD = RAIZ / "electronica" / "cad"
-SALIDA = CAD / "auditoria_electrica_v0.1.md"
+SALIDA = CAD / "auditoria_electrica_v0.2.md"
 OX = OY = 25.4
 
 ESPERADO = {
@@ -58,8 +58,11 @@ ALIMENTACION_ESP32 = {"1", "2", "21", "22", "23", "43", "44"}
 # Tensión de cada net (V), para juzgar un módulo girado
 TENSION = {"GND": 0, "3V3_MCU": 3.3, "5V": 5, "5V_MCU": 4.65, "VM_LOG": 12.6, "VM_LOG_F": 12.6, "VM_BUS": 12.6,
            "VM_IZQ": 12.6, "VM_IZQ_F": 12.6, "VM_DER": 12.6, "VM_DER_F": 12.6, "V_SERVO": 6.0, "VM_UBEC": 12.6}
-# Módulos codificados mecánicamente: posiciones tapadas en el zócalo
-CODIFICADOS = {("logica", "A2"): {"5"}}
+# Módulos codificados mecánicamente: pin quitado del módulo y esa posición del zócalo tapada
+# A2: pin 5 (XDA, sin uso). A1: pin 24 (GPIO43, TX del USB-serie; el robot no lo usa por fuera). Revisión v0.2.
+CODIFICADOS = {("logica", "A2"): {"5"}, ("logica", "A1"): {"24"}}
+# Módulos soldados (DEC-20): no se pueden enchufar mal después del montaje
+SOLDADOS = {"potencia": {"A5", "A6", "A7", "A8"}}
 # Corriente de diseño por net (A) para el control de cuellos (SUP-10, SUP-43, SUP-47, SUP-48)
 CORRIENTE = {"VBAT_P": 10, "VBAT_F": 10, "VBAT_SW": 10, "VM_BUS": 10, "VM_IZQ_F": 2.3, "VM_IZQ": 2.3, "VM_DER_F": 2.3,
              "VM_DER": 2.3, "MOT_IZQ_1": 2.3, "MOT_IZQ_2": 2.3, "MOT_DER_1": 2.3, "MOT_DER_2": 2.3, "VM_UBEC": 3.8,
@@ -125,7 +128,20 @@ def main():
             malos.append(f"A1.{i} → {n} en la potencia")
     reg("FALLA" if malos else "OK", "Señales de la ESP32-S3 sin 5 V ni batería", "; ".join(malos) or f"{revisadas} pines de señal revisados en las dos placas")
 
-    # 4. Módulos girados 180°
+    # 4. Módulos enchufados girados 180° o corridos una posición
+    def tension(n):
+        return TENSION.get(n)          # None = señal de 3,3 V
+
+    def peligroso(n_mod, n_placa):
+        vm, vp = tension(n_mod), tension(n_placa)
+        if n_mod == n_placa or not n_mod or not n_placa:
+            return False
+        if vp is not None and vp > 3.6 and (vm is None or vp > vm + 0.5):
+            return True                # 5 V o batería sobre una señal o un riel más bajo
+        if vm == 0 and vp not in (None, 0):
+            return True                # GND del módulo sobre una alimentación: corto
+        return vm not in (None, 0) and vp == 0   # alimentación del módulo sobre GND: corto
+
     for placa in ("potencia", "logica"):
         b = pcbnew.LoadBoard(str(CAD / f"segway_{placa}" / f"segway_{placa}.kicad_pcb"))
         red = specs[placa][1]
@@ -133,34 +149,41 @@ def main():
             ref = f.GetReference()
             if not ref.startswith("A"):
                 continue
+            if ref in SOLDADOS.get(placa, set()):
+                reg("OK", f"{ref} ({placa}): soldado", "No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20)")
+                continue
             pads = [(pd.GetNumber(), pcbnew.ToMM(pd.GetPosition().x), pcbnew.ToMM(pd.GetPosition().y))
                     for pd in f.Pads() if pd.GetAttribute() != pcbnew.PAD_ATTRIB_NPTH and pd.GetNumber()]
             if not pads:
                 continue
+            tapados = CODIFICADOS.get((placa, ref), set())
             cx = (min(p[1] for p in pads) + max(p[1] for p in pads)) / 2
             cy = (min(p[2] for p in pads) + max(p[2] for p in pads)) / 2
-            destino = {}
-            for num, x, y in pads:
-                gx, gy = 2 * cx - x, 2 * cy - y
-                hit = [n2 for n2, x2, y2 in pads if abs(x2 - gx) < 0.3 and abs(y2 - gy) < 0.3]
-                if not hit:
-                    destino = None
-                    break
-                destino[num] = hit[0]
-            if destino is None:
-                continue
-            tapados = CODIFICADOS.get((placa, ref), set())
-            if tapados and any(destino[k] in tapados and k not in tapados for k in destino):
-                reg("OK", f"{ref} girado 180° ({placa})", f"Entra girado por geometría, pero lo impide la posición tapada {', '.join(sorted(tapados))}")
-                continue
-            peligros = []
-            for k, j in destino.items():
-                n_mod, n_placa = red.get(f"{ref}.{k}"), red.get(f"{ref}.{j}")
-                if n_mod and n_placa and n_mod != n_placa and n_mod in TENSION and n_placa in TENSION:
-                    if TENSION[n_placa] > TENSION[n_mod] + 0.5 or (TENSION[n_mod] == 0 and TENSION[n_placa] > 0):
-                        peligros.append(f"pin {k} ({n_mod}) recibe {n_placa}")
-            if peligros:
-                reg("AVISO", f"{ref} entra girado 180° ({placa})", "Sin traba mecánica. Girado: " + "; ".join(peligros[:4]) + (" …" if len(peligros) > 4 else ""))
+            transformaciones = {"girado 180°": lambda x, y: (2 * cx - x, 2 * cy - y)}
+            for d, nombre in ((2.54, "+1"), (-2.54, "-1")):
+                transformaciones[f"corrido {nombre} en x"] = lambda x, y, d=d: (x + d, y)
+                transformaciones[f"corrido {nombre} en y"] = lambda x, y, d=d: (x, y + d)
+            for nombre, tr in transformaciones.items():
+                destino, al_aire = {}, 0
+                for num, x, y in pads:
+                    if num in tapados:
+                        continue           # ese pin se quitó del módulo
+                    gx, gy = tr(x, y)
+                    hit = [n2 for n2, x2, y2 in pads if abs(x2 - gx) < 0.3 and abs(y2 - gy) < 0.3]
+                    if hit:
+                        destino[num] = hit[0]
+                    else:
+                        al_aire += 1
+                # Girado tienen que entrar todos los pines; corrido puede quedar uno por hilera fuera del zócalo
+                if (nombre.startswith("girado") and al_aire) or al_aire > 2 or not destino:
+                    continue
+                if any(j in tapados for j in destino.values()):
+                    reg("OK", f"{ref} {nombre} ({placa})", f"Lo impide la posición tapada {', '.join(sorted(tapados))}")
+                    continue
+                peligros = [f"pin {k} ({red.get(f'{ref}.{k}')}) sobre {red.get(f'{ref}.{j}')}"
+                            for k, j in destino.items() if peligroso(red.get(f"{ref}.{k}"), red.get(f"{ref}.{j}"))]
+                if peligros:
+                    reg("FALLA", f"{ref} {nombre} ({placa})", "Entra sin traba y quema: " + "; ".join(peligros[:4]) + (" …" if len(peligros) > 4 else ""))
 
     # 5. Direcciones I2C
     dirs = {}
@@ -201,7 +224,7 @@ def main():
         "rango del ADC con 12 dB ≈ 3,1 V")
     v_in = 3.3 * 100 / (100 + 4.7)
     i_rev = (12.6 - 3.3 - 0.3) / 4.7
-    reg("OK", "Entradas de los DRV8871", f"En alto el DRV ve {v_in:.2f} V (VIH 1,5 V). Con un DRV girado entran {i_rev:.1f} mA al GPIO por 4,7 kΩ")
+    reg("OK", "Entradas de los DRV8871", f"En alto el DRV ve {v_in:.2f} V (VIH 1,5 V). Si VM llegara a un IN (DRV dañado o mal enchufado) entran {i_rev:.1f} mA al GPIO por 4,7 kΩ")
     v5 = 5.0 - 0.35
     margen = v5 - 1.1 - 3.3
     reg("AVISO", "Margen del regulador de 3,3 V de la DevKitC",
@@ -214,7 +237,7 @@ def main():
         "fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08")
 
     # Informe
-    lineas = ["# Control eléctrico de las placas v0.1 (lógica + potencia)", "",
+    lineas = ["# Control eléctrico de las placas v0.2 (lógica + potencia)", "",
               f"Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resultado: **{fallas} fallas, {avisos} avisos**. "
               "Complementa al ERC, el DRC y la comparación de netlist, que no detectan estos casos. No reemplaza a los ensayos de banco.", "",
               "| Estado | Control | Detalle |", "|---|---|---|"]

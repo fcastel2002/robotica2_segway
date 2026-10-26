@@ -44,3 +44,10 @@ Después de cualquier cambio en el esquema, las huellas, la ubicación o el rute
 > 7. Cualquier cosa que haga que la placa no funcione o se queme al enchufarla.
 >
 > Para cada hallazgo indicá: severidad (CRÍTICO, IMPORTANTE o MENOR), componente y pin, qué dice la especificación, qué dice la ficha y tu certeza. Separá lo verificado con fuente de lo que es sospecha, y marcá como "no verificable" lo que dependa de un dato que falta. Lo que revisaste y está bien, decilo explícitamente. Máximo 900 palabras.
+
+## Registro de revisiones
+
+| Fecha | Versión | Hallazgos principales | Qué se hizo |
+|---|---|---|---|
+| 26/10/2026 | v0.1 | A7 y A8 entran girados y queman; aleta de Q1 con tensión; 3V3 junto a 5V en J26; I2C junto a PWM en el cable; textos de la Blue Pill | A7/A8 soldados (DEC-20), J26 reordenado, SUP-20/80/81, control automático creado |
+| 26/10/2026 | v0.2 | A1 entra girada o corrida una posición (el control automático lo describía mal); cable IDC prensado al revés; rótulos de fusibles y VCC ambiguos; W2 no pasa bajo A7; J3 sin alivio de tensión | A1 codificada (pin 24 cortado y tapado); el control ahora prueba giros y corrimientos y marca FALLA sin la codificación; prueba de continuidad del cable; rótulos ambiguos quitados; precinto en J3 |

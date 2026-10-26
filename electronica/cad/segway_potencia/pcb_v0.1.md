@@ -1,5 +1,7 @@
 # Placa de potencia v0.1: PCB casera de una cara
 
+> Reemplazada por la [v0.2](pcb_v0.2.md) el 26/10/2026. Se conserva como historial.
+
 Fecha: 20/10/2026; rótulos de cobre y control eléctrico del 26/10/2026. Origen: DEC-17 (dos placas unidas por cable plano). Reglas: [fabricación casera](../segway_base/reglas_fabricacion_casera.md). Supuestos: [lista](../segway_base/supuestos.md), en particular SUP-04, SUP-13, SUP-14, SUP-15, SUP-20, SUP-72 y SUP-75 a SUP-81. Control eléctrico de las dos placas: [auditoria_electrica_v0.1.md](../auditoria_electrica_v0.1.md).
 
 ![Placa de potencia v0.1, cobre visto desde la cara de componentes](evidencia/pcb_potencia_v0.1.png)

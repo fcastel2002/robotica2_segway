@@ -1,4 +1,4 @@
-"""Placa de potencia v0.1 (DEC-17): ubicación y esqueleto de potencia a mano, una cara (B.Cu).
+"""Placa de potencia v0.2 (DEC-17): ubicación y esqueleto de potencia a mano, una cara (B.Cu).
 
 Coordenadas en mm desde la esquina superior izquierda del contorno (150 x 95), vista desde la cara de
 componentes; (x, y) = pad 1, rotación en grados.
@@ -20,6 +20,7 @@ Topología:
 """
 
 PROYECTO = "segway_potencia"
+REVISION = "0.2"
 SPEC = "especificacion_v0.6.json"
 
 UBICACION = {
@@ -188,7 +189,7 @@ SIN_RELLENO = [[(67.5, 32.5), (72.5, 32.5), (72.5, 38.6), (67.5, 38.6)],
 ANCHOS_RUTEO = {"GND": 1200, "LOGICA": 1200, "kicad_default": 1000, "MOTOR": 2000, "SERVO": 3500}
 RUTEAR = True
 
-ROTULOS = [("POTENCIA v0.1", (135.50, 90.00), 2.0), ("LADO COBRE", (135.50, 94.50), 2.0),
+ROTULOS = [("POTENCIA v0.2", (135.50, 90.00), 2.0), ("LADO COBRE", (135.50, 94.50), 2.0),
     # Rótulos de conectores y fusibles (SUP-14), ubicados con ubicar_rotulos.py
     ("BAT", (140.50, 74.54), 2.0, 90),
     ("SW", (145.00, 15.44), 2.0, 0),
@@ -198,9 +199,10 @@ ROTULOS = [("POTENCIA v0.1", (135.50, 90.00), 2.0), ("LADO COBRE", (135.50, 94.5
     ("+", (27.86, 100.00), 2.0, 90), ("-", (18.86, 104.50), 2.0, 0), ("UBEC 6V", (14.61, 101.00), 2.0, 90),
     ("SERVO DER", (33.60, 88.50), 2.0, 0),
     ("VOLT", (59.54, 88.00), 2.0, 0), ("-", (145.50, 73.58), 2.0, 0), ("-", (66.54, 80.00), 2.0, 0),
-    ("VCC", (75.51, 43.26), 2.0, 90), ("IN+", (86.00, 71.50), 2.0, 90),     # A7 y A8 entran invertidos (ELE-039)
-    ("15A", (145.33, 46.46), 2.0, 90), ("4A", (119.04, 9.58), 2.0, 0), ("4A", (108.04, 33.13), 2.0, 0),
-    ("1A", (108.04, 38.79), 2.0, 0), ("7,5A", (126.80, 81.96), 2.0, 90),
+    ("IN+", (86.00, 71.50), 2.0, 90),     # orientación de A8 (SUP-80)
+    # Fusibles: solo F1 y F4. Los de F2, F3 y F5 quedaban apilados entre dos fusibles y se podían leer como del
+    # otro (revisión independiente v0.2): un 4 A en F5 deja sin protección al INA226 y al buck
+    ("15A", (145.33, 46.46), 2.0, 90), ("7,5A", (126.80, 81.96), 2.0, 90),
 ]
 ESCALA = None
 
@@ -261,6 +263,6 @@ ROTULOS_PEDIDOS = [
     ("S", "J14.3", 2.0, 7), ("-", "J14.1", 2.0, 7), ("SERVO DER", "J14", 2.0, 16),
     ("-", "J18.1", 2.0, 7), ("VOLT", "J18", 2.0, 16),
     ("1", "J20.1", 2.0, 7),
-    ("VCC", "A7.8", 2.0, 7), ("IN+", "A8.1", 2.0, 7),     # orientación de los módulos que entran invertidos
+    ("VCC", "A7.8", 2.0, 7, True), ("IN+", "A8.1", 2.0, 7),     # orientación de los módulos que entran invertidos
     ("15A", "F1", 2.0, 16), ("4A", "F2", 2.0, 16), ("4A", "F3", 2.0, 16), ("1A", "F5", 2.0, 16), ("7,5A", "F4", 2.0, 16),
 ]

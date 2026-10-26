@@ -29,7 +29,7 @@ Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). To
 
 Pines libres para sensores nuevos: **1, 2, 21, 38, 39, 40, 41, 42 y 47**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.1.md#expansión-para-sensores-ele-037)). GPIO1 y GPIO2 tienen ADC1.
 
-No usar: 35, 36 y 37 (PSRAM), 19 y 20 (USB nativo), 43 y 44 (UART0 del USB-serie), 45 y 46 (strapping). No grabar el eFuse `STRAP_JTAG_SEL`, porque GPIO3 es la entrada de batería (SUP-24).
+No usar: 35, 36 y 37 (PSRAM), 19 y 20 (USB nativo), 43 y 44 (UART0 del USB-serie; el pin 24 del módulo, GPIO43, se corta para codificar el zócalo), 45 y 46 (strapping). No grabar el eFuse `STRAP_JTAG_SEL`, porque GPIO3 es la entrada de batería (SUP-24).
 
 ## Detalle por bloque
 
