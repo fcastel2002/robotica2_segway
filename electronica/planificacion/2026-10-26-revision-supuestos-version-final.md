@@ -43,7 +43,7 @@ La lista de componentes, el esquema y el mapa de pines **no cambian** en ningún
 
 ## 2. Decisiones del equipo
 
-Versión en limpio para llevar a la reunión: [decisiones del equipo](2026-10-26-decisiones-del-equipo.md).
+**Resueltas el 26/10/2026**: Matías decidió SUP-80 y SUP-33 y delegó el resto en el criterio del agente. Ver [decisiones resueltas y pendientes](2026-10-26-decisiones-del-equipo.md); la tabla de abajo queda como antecedente. Solo siguen abiertos los datos del robot (batería, paro, mecánica).
 
 | ID | Tema | Qué asumí | Qué hace falta |
 |---|---|---|---|

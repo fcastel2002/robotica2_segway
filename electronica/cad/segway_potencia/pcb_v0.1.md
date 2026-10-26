@@ -43,7 +43,7 @@ Ubicación y esqueleto en [`agente/placas/potencia.py`](../../agente/placas/pote
 
 - **A7 (INA226)** entra girado: su VCC recibe 12,6 V y el shunt queda en corto sobre el 3V3. El pin 8 (VCC) va del lado del rótulo VCC.
 - **A8 (buck)** entra girado 180°: su masa une VM_LOG con el 5V y llegan 12 V a la ESP32. El pin IN+ va del lado del rótulo IN+.
-- **Recomendación:** soldar A7 y A8 directo sobre sus pines macho (con el espaciador de plástico, que deja lugar a los puentes W1, W2, W4 y W7 de abajo) en lugar de enchufarlos, y enfundar esos puentes con termocontraíble. Lo decide Matías: se desvía de DEC-13.
+- **Decidido (26/10/2026):** A5, A6, A7 y A8 van **soldados** sobre sus pines macho, con el espaciador de plástico, que deja lugar a los puentes W1, W2, W4 y W7 de abajo. Esos puentes se enfundan en termocontraíble. A3/A4 (DRV8871) van en zócalo. Tabla completa en [decisiones](../../planificacion/2026-10-26-decisiones-del-equipo.md).
 - **Q1:** la aleta del TO-220 es el drenador y queda con tensión de batería. El disipador no puede tocar el chasis, o va con mica y buje aislante (SUP-20).
 
 ### Orden del cable J20 (SUP-72)
@@ -75,9 +75,9 @@ Pin n a pin n con la placa de lógica:
 2. **Planchar y atacar.** Después, **estañar** la barra VM_BUS, el lomo GND, las pistas de batería y motores y el cuello del drenaje de Q1.
 3. **Taladrar** según el mapa.
 4. **Montar** en este orden:
-   1. Puentes W1–W7 (alambre estañado de 0,6 mm; W3 y W7 de 15,5 mm).
+   1. Puentes W1–W7 (alambre estañado de 0,6 mm; W3 y W7 de 15,5 mm). W1, W2, W4 y W7 enfundados en termocontraíble: quedan bajo A7 y A8.
    2. Resistencias y diodos.
-   3. Zócalos de los módulos (A7 y A8: zócalo o soldados directo según SUP-80, siempre con VCC e IN+ del lado de su rótulo).
+   3. Zócalos de A3 y A4 (DRV8871). Puentes A0 en A5 y A1 en A6. A5, A6, A7 y A8 **soldados** sobre sus pines: A7 con VCC del lado de su rótulo y A8 con IN+ del lado del suyo (SUP-80).
    4. Portafusibles, Q1, electrolíticos.
    5. Borneras e IDC.
 5. **Comprobar antes de enchufar los módulos:**
