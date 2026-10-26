@@ -33,6 +33,8 @@ Los 79 están cubiertos; 6 aparecen en dos grupos (por ejemplo, SUP-32 es a la v
 
 La lista de componentes, el esquema y el mapa de pines **no cambian** en ningún caso.
 
+**Respuesta de Matías (26/10/2026): se hacen en casa.** SUP-01 sigue confirmado y valen las placas de una cara.
+
 ## 2. Decisiones del equipo
 
 | ID | Tema | Qué asumí | Qué hace falta |
