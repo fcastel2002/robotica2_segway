@@ -16,7 +16,7 @@ Los 79 están cubiertos; 6 aparecen en dos grupos (por ejemplo, SUP-32 es a la v
 
 ## Hallazgos de esta revisión
 
-1. **Mapa de pines: resuelto.** [`board_pins.h`](../../firmware/segway_v01/main/board_pins.h) tiene pines distintos de los de las placas, pero son de pruebas en protoboard. Matías confirmó el 26/10/2026 que los pines los define el ruteo y que el firmware se actualiza después con la [gpio_table](../cad/segway_logica/especificacion_v0.6.json) (SUP-28 confirmado).
+1. **Mapa de pines: resuelto.** [`board_pins.h`](../../firmware/segway_v01/main/board_pins.h) tiene pines distintos de los de las placas, pero son de pruebas en protoboard. Matías confirmó el 26/10/2026 que los pines los define el ruteo y que el firmware se actualiza después con la [gpio_table](../cad/segway_logica/especificacion_v0.6.json) (SUP-28 confirmado). Guía para el código: [pinout para el firmware](../interfaces/pinout_firmware_placas_v0.1.md).
 2. **Faltan los rótulos de polaridad en el cobre (SUP-14).** El supuesto decía que BAT +/−, M IZQ/DER, UBEC IN/OUT, etc. iban en el cobre, pero la v0.1 solo tiene el nombre de la placa. Se agregan en la versión final; mientras tanto la polaridad depende de la guía impresa.
 3. **Las pistas de batería son más finas que lo que pide SUP-10.** Miden 3,5–4,5 mm y SUP-10 pide 5 mm o más para 10 A. SUP-10 ya prevé la solución: estañarlas o soldarles encima un alambre de 1,5 mm². Si la placa se fabrica afuera con cobre de 70 µm (pregunta 1), el problema desaparece.
 4. **Texto viejo de la Blue Pill.** 25 supuestos todavía hablaban de PB12, PA3, I2C2, 3V3_PER o del buck A9. Se reescribieron para la ESP32-S3 y las dos placas, sin cambiar lo que asumen ([historial](../cad/segway_base/supuestos.md#historial)).
