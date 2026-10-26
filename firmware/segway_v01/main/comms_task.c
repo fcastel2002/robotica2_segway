@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "freertos/task.h"
-#include "driver/usb_serial_jtag.h"
-#include "driver/usb_serial_jtag_vfs.h"
+#include "driver/uart.h"
+#include "driver/uart_vfs.h"
 #include "esp_check.h"
 
 #include "board_config.h"
@@ -14,6 +14,7 @@
 
 #define RAD2DEG     57.29578f
 #define CMD_LINE_MAX    64
+#define CONSOLE_UART    UART_NUM_0      // conector UART de la placa (CH343)
 
 // Las líneas que no son datos empiezan con '#', para que un graficador CSV las ignore.
 #define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns\n"
@@ -34,8 +35,10 @@ static void print_help(void)
 {
     printf("# comandos: arm | disarm | set <param> <valor> | servo [l|r] <grados> | get\n"
            "#           cal | tlm on | tlm off | help\n"
+           "#           servo [l|r] off|on | motor [l|r] <-100..100> | motor stop\n"
            "# param: kp ki kd ref(grados) umax deadband\n"
-           "# servo: %.0f a %.0f grados; sin l/r mueve los dos\n",
+           "# servo: %.0f a %.0f grados; sin l/r mueve los dos; off suelta, on agarra\n"
+           "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n",
            SERVO_MIN_DEG, SERVO_MAX_DEG);
 }
 
@@ -93,14 +96,40 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             a = b;
         }
         float deg;
-        if (side == -2 || !parse_float(a, &deg)) {
-            printf("# error: servo [l|r] <grados>\n");
+        if (side != -2 && a != NULL && strcmp(a, "off") == 0) {
+            cmd = (command_t){ .type = CMD_SERVO_RELEASE, .servo = side };
+        } else if (side != -2 && a != NULL && strcmp(a, "on") == 0) {
+            cmd = (command_t){ .type = CMD_SERVO_HOLD, .servo = side };
+        } else if (side == -2 || !parse_float(a, &deg)) {
+            printf("# error: servo [l|r] <grados|off|on>\n");
             return;
+        } else {
+            if (deg < SERVO_MIN_DEG || deg > SERVO_MAX_DEG) {
+                printf("# aviso: fuera de rango, se limita a %.0f-%.0f\n", SERVO_MIN_DEG, SERVO_MAX_DEG);
+            }
+            cmd = (command_t){ .type = CMD_SERVO, .servo = side, .value = deg };
         }
-        if (deg < SERVO_MIN_DEG || deg > SERVO_MAX_DEG) {
-            printf("# aviso: fuera de rango, se limita a %.0f-%.0f\n", SERVO_MIN_DEG, SERVO_MAX_DEG);
+    } else if (strcmp(word, "motor") == 0) {
+        char *a = strtok(NULL, " \t");
+        char *b = strtok(NULL, " \t");
+        if (a != NULL && strcmp(a, "stop") == 0) {
+            cmd = (command_t){ .type = CMD_MOTOR_STOP };
+        } else {
+            int side = MOTOR_BOTH;
+            if (b != NULL) {    // "motor l 40": el primer argumento es el lado
+                side = (a && strcmp(a, "l") == 0) ? MOTOR_LEFT : (a && strcmp(a, "r") == 0) ? MOTOR_RIGHT : -2;
+                a = b;
+            }
+            float pct;
+            if (side == -2 || !parse_float(a, &pct)) {
+                printf("# error: motor [l|r] <-100..100> | motor stop\n");
+                return;
+            }
+            if (pct < -100.0f || pct > 100.0f) {
+                printf("# aviso: fuera de rango, se limita a -100..100\n");
+            }
+            cmd = (command_t){ .type = CMD_MOTOR, .motor = side, .value = pct / 100.0f };
         }
-        cmd = (command_t){ .type = CMD_SERVO, .servo = side, .value = deg };
     } else if (strcmp(word, "get") == 0) {
         print_params(last);
         return;
@@ -140,7 +169,7 @@ static void comms_task(void *arg)
 
         // Comandos: lectura sin espera, armando líneas de a un carácter
         char ch;
-        while (usb_serial_jtag_read_bytes(&ch, 1, 0) == 1) {
+        while (uart_read_bytes(CONSOLE_UART, &ch, 1, 0) == 1) {
             if (ch == '\r' || ch == '\n') {
                 if (len > 0) {
                     line[len] = '\0';
@@ -173,10 +202,10 @@ static void comms_task(void *arg)
 
 void comms_task_start(QueueHandle_t telemetry_q, QueueHandle_t command_q)
 {
-    // Con el driver instalado, printf y la lectura de comandos comparten el puerto USB
-    usb_serial_jtag_driver_config_t cfg = USB_SERIAL_JTAG_DRIVER_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(usb_serial_jtag_driver_install(&cfg));
-    usb_serial_jtag_vfs_use_driver();
+    // Con el driver instalado, printf y la lectura de comandos comparten el UART0.
+    // La consola ya lo dejó configurado a CONFIG_ESP_CONSOLE_UART_BAUDRATE.
+    ESP_ERROR_CHECK(uart_driver_install(CONSOLE_UART, 256, 2048, 0, NULL, 0));
+    uart_vfs_dev_use_driver(CONSOLE_UART);
 
     s_ctx = (comms_ctx_t){ telemetry_q, command_q };
     xTaskCreatePinnedToCore(comms_task, "comms", COMMS_STACK, &s_ctx,

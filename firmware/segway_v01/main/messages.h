@@ -7,6 +7,7 @@
 #include "supervisor.h"
 #include "balance.h"
 #include "servo.h"
+#include "motor.h"
 
 typedef enum {
     PARAM_KP = 0,
@@ -24,15 +25,21 @@ typedef enum {
     CMD_CALIBRATE,
     CMD_SET,
     CMD_SERVO,
+    CMD_SERVO_RELEASE,  // servo suelto (sin pulsos)
+    CMD_SERVO_HOLD,     // vuelve a agarrar el servo en su posición actual
+    CMD_MOTOR,          // motor a mano: solo en DISARMED o FAULT
+    CMD_MOTOR_STOP,
 } command_type_t;
 
 #define SERVO_BOTH  (-1)
+#define MOTOR_BOTH  (-1)
 
 typedef struct {
     command_type_t type;
     param_id_t     param;   // solo para CMD_SET
-    int            servo;   // solo para CMD_SERVO: SERVO_LEFT, SERVO_RIGHT o SERVO_BOTH
-    float          value;   // valor del parámetro o ángulo del servo en grados
+    int            servo;   // CMD_SERVO*: SERVO_LEFT, SERVO_RIGHT o SERVO_BOTH
+    int            motor;   // CMD_MOTOR: MOTOR_LEFT, MOTOR_RIGHT o MOTOR_BOTH
+    float          value;   // valor del parámetro, grados del servo o comando del motor [-1, 1]
 } command_t;
 
 typedef struct {

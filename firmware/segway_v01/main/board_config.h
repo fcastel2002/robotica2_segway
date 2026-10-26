@@ -41,7 +41,7 @@
 #define SERVO_US_AT_180_DEG     2500
 #define SERVO_MIN_DEG           45.0f       // 1000 us, el rango de servo_test
 #define SERVO_MAX_DEG           135.0f      // 2000 us
-#define SERVO_INIT_DEG          90.0f       // posición al encender
+#define SERVO_INIT_DEG          90.0f       // posición supuesta al agarrar (arrancan sueltos)
 #define SERVO_MAX_SPEED_DPS     90.0f       // velocidad de movimiento hacia la posición pedida
 #define SERVO_L_INVERT          0           // 1 si el servo está montado en espejo
 #define SERVO_R_INVERT          1

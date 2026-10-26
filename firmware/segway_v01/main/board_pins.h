@@ -2,10 +2,10 @@
 // Valores por defecto: cambiarlos acá cuando se defina el cableado real.
 //
 // No usar:
-//   19, 20     USB nativo (programación y consola)
+//   19, 20     USB nativo (sin uso: consola y flasheo van por UART0)
 //   26-37      flash y PSRAM octal del módulo N16R8
 //   3, 45, 46  pines de arranque (el 0 solo como entrada de botón)
-//   43, 44     UART0, consola de respaldo
+//   43, 44     UART0: consola y comandos (conector UART de la placa)
 #pragma once
 
 // Bus I2C compartido: MPU-6050 ahora, INA226 más adelante

@@ -28,19 +28,51 @@ static control_ctx_t s_ctx;
 
 // Aplica un comando recibido y devuelve lo que el supervisor tiene que saber de él.
 static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
-                               float servo_target[SERVO_COUNT])
+                               const float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
+                               bool servo_free[SERVO_COUNT], float motor_manual[MOTOR_COUNT])
 {
     switch (c->type) {
-    case CMD_ARM:    return SUP_CMD_ARM;
-    case CMD_DISARM: return SUP_CMD_DISARM;
+    case CMD_ARM:
+        for (int i = 0; i < MOTOR_COUNT; i++) motor_manual[i] = 0.0f;
+        return SUP_CMD_ARM;
+    case CMD_DISARM:
+        for (int i = 0; i < MOTOR_COUNT; i++) motor_manual[i] = 0.0f;
+        return SUP_CMD_DISARM;
     case CMD_CALIBRATE: return SUP_CMD_CALIBRATE;
     case CMD_SERVO: {
         float deg = fminf(fmaxf(c->value, SERVO_MIN_DEG), SERVO_MAX_DEG);
         for (int i = 0; i < SERVO_COUNT; i++) {
-            if (c->servo == SERVO_BOTH || c->servo == i) servo_target[i] = deg;
+            if (c->servo == SERVO_BOTH || c->servo == i) {
+                servo_target[i] = deg;
+                servo_free[i] = false;
+            }
         }
         break;
     }
+    case CMD_SERVO_RELEASE:
+    case CMD_SERVO_HOLD:
+        for (int i = 0; i < SERVO_COUNT; i++) {
+            if (c->servo == SERVO_BOTH || c->servo == i) {
+                servo_free[i] = (c->type == CMD_SERVO_RELEASE);
+                if (servo_free[i]) {
+                    servo_release(i);
+                } else {
+                    servo_target[i] = servo_pos[i];     // agarra donde quedó, sin moverse
+                    servo_set_deg(i, servo_pos[i]);
+                }
+            }
+        }
+        break;
+    case CMD_MOTOR: {
+        float u = fminf(fmaxf(c->value, -p->u_max), p->u_max);
+        for (int i = 0; i < MOTOR_COUNT; i++) {
+            if (c->motor == MOTOR_BOTH || c->motor == i) motor_manual[i] = u;
+        }
+        break;
+    }
+    case CMD_MOTOR_STOP:
+        for (int i = 0; i < MOTOR_COUNT; i++) motor_manual[i] = 0.0f;
+        break;
     case CMD_SET:
         switch (c->param) {
         case PARAM_KP:       p->gains.kp = c->value; break;
@@ -58,12 +90,13 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
 
 // Acerca los servos a su objetivo sin superar SERVO_MAX_SPEED_DPS: un salto brusco con
 // el peso del robot encima sacudiría la estructura.
-static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT], float dt)
+static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT],
+                          const bool free[SERVO_COUNT], float dt)
 {
     float max_step = SERVO_MAX_SPEED_DPS * dt;
     for (int i = 0; i < SERVO_COUNT; i++) {
         float diff = target[i] - pos[i];
-        if (diff == 0.0f) continue;
+        if (free[i] || diff == 0.0f) continue;
         pos[i] += fminf(fmaxf(diff, -max_step), max_step);
         servo_set_deg(i, pos[i]);
     }
@@ -91,9 +124,11 @@ static void control_task(void *arg)
     float ramp = 0.0f;              // 0..1 durante el armado
     float u = 0.0f;
     float servo_pos[SERVO_COUNT], servo_target[SERVO_COUNT];
+    bool servo_free[SERVO_COUNT];       // sueltos al encender: sin pulsos hasta el primer comando
+    float motor_manual[MOTOR_COUNT] = { 0.0f };     // comando a mano, solo en DISARMED
     for (int i = 0; i < SERVO_COUNT; i++) {
-        servo_pos[i] = servo_target[i] = SERVO_INIT_DEG;
-        servo_set_deg(i, SERVO_INIT_DEG);
+        servo_pos[i] = servo_target[i] = SERVO_INIT_DEG;    // posición supuesta al agarrar
+        servo_free[i] = true;
     }
     uint32_t overruns_total = 0, exec_max = 0, window_max = 0;
     int window_n = 0;
@@ -113,7 +148,8 @@ static void control_task(void *arg)
         sup_cmd_t cmd = SUP_CMD_NONE;
         command_t c;
         while (xQueueReceive(ctx->command_q, &c, 0) == pdTRUE) {
-            sup_cmd_t r = apply_command(&c, &params, servo_target);
+            sup_cmd_t r = apply_command(&c, &params, servo_pos, servo_target, servo_free,
+                                     motor_manual);
             if (r != SUP_CMD_NONE) cmd = r;
         }
 
@@ -162,12 +198,23 @@ static void control_task(void *arg)
             }
             motor_set(MOTOR_LEFT, u);
             motor_set(MOTOR_RIGHT, u);
+        } else if (st == SUP_DISARMED || st == SUP_FAULT) {
+            // Desarmado, o en falla (p. ej. sin IMU, para probar en banco): motores a mano
+            // con "motor ...". El lazo de equilibrio no participa.
+            u = 0.0f;
+            if (motor_manual[MOTOR_LEFT] == 0.0f && motor_manual[MOTOR_RIGHT] == 0.0f) {
+                motor_stop_all();
+            } else {
+                motor_set(MOTOR_LEFT, motor_manual[MOTOR_LEFT]);
+                motor_set(MOTOR_RIGHT, motor_manual[MOTOR_RIGHT]);
+            }
         } else {
             u = 0.0f;
+            motor_manual[MOTOR_LEFT] = motor_manual[MOTOR_RIGHT] = 0.0f;
             motor_stop_all();
         }
         // Los servos no dependen del estado: todavía no participan del equilibrio
-        update_servos(servo_pos, servo_target, dt);
+        update_servos(servo_pos, servo_target, servo_free, dt);
 
         // 5. Telemetría y medición del ciclo
         uint32_t exec_us = (uint32_t)(esp_timer_get_time() - t0);

@@ -30,3 +30,6 @@ fp-info-cache
 
 # Python
 __pycache__/
+
+# ESP-IDF: salida de compilación
+firmware/**/build/

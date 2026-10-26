@@ -53,3 +53,8 @@ void servo_set_deg(servo_side_t side, float deg)
     ledc_set_duty(MODE, FIRST_CH + side, duty);
     ledc_update_duty(MODE, FIRST_CH + side);
 }
+
+void servo_release(servo_side_t side)
+{
+    ledc_stop(MODE, FIRST_CH + side, 0);    // salida en bajo, sin pulsos
+}

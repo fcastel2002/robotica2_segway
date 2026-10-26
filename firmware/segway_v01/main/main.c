@@ -3,7 +3,7 @@
 //
 // app_main inicializa el hardware, crea las colas y lanza las dos tareas:
 //   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos
-//   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por USB
+//   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0
 // Si la IMU no responde, igual se lanzan las tareas: el supervisor pasa a FAULT y
 // la telemetría lo muestra.
 
@@ -33,7 +33,7 @@ void app_main(void)
     ESP_ERROR_CHECK(motor_init(motors, MOTOR_PWM_FREQ_HZ, MOTOR_SLOW_DECAY));
     motor_stop_all();
 
-    // Servos sin pulsos: la tarea de control los lleva a SERVO_INIT_DEG en su primer ciclo
+    // Servos sin pulsos: quedan sueltos hasta el primer comando "servo"
     const servo_pins_t servos[SERVO_COUNT] = {
         [SERVO_LEFT]  = { PIN_SERVO_L, SERVO_L_INVERT },
         [SERVO_RIGHT] = { PIN_SERVO_R, SERVO_R_INVERT },
