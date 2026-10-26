@@ -16,7 +16,7 @@ Los 79 están cubiertos; 6 aparecen en dos grupos (por ejemplo, SUP-32 es a la v
 
 ## Hallazgos de esta revisión
 
-1. **El firmware usa otro mapa de pines.** [`firmware/segway_v01/main/board_pins.h`](../../firmware/segway_v01/main/board_pins.h) tiene los pines del prototipo con L298N (I2C en 8/9, motores en 4-7 y 17-18, encoders en 11-14). Las placas usan el mapa de SUP-28, que salió de rutear en una cara: I2C en 17/16, motores en 11-14, encoders en 4, 5, 7 y 15. **Francisco tiene que pasar `board_pins.h` a la tabla de SUP-28** ([gpio_table](../cad/segway_logica/especificacion_v0.6.json)). Cambiar las placas para que coincidan con el firmware obliga a rehacer el ruteo de las dos.
+1. **Mapa de pines: resuelto.** [`board_pins.h`](../../firmware/segway_v01/main/board_pins.h) tiene pines distintos de los de las placas, pero son de pruebas en protoboard. Matías confirmó el 26/10/2026 que los pines los define el ruteo y que el firmware se actualiza después con la [gpio_table](../cad/segway_logica/especificacion_v0.6.json) (SUP-28 confirmado).
 2. **Faltan los rótulos de polaridad en el cobre (SUP-14).** El supuesto decía que BAT +/−, M IZQ/DER, UBEC IN/OUT, etc. iban en el cobre, pero la v0.1 solo tiene el nombre de la placa. Se agregan en la versión final; mientras tanto la polaridad depende de la guía impresa.
 3. **Las pistas de batería son más finas que lo que pide SUP-10.** Miden 3,5–4,5 mm y SUP-10 pide 5 mm o más para 10 A. SUP-10 ya prevé la solución: estañarlas o soldarles encima un alambre de 1,5 mm². Si la placa se fabrica afuera con cobre de 70 µm (pregunta 1), el problema desaparece.
 4. **Texto viejo de la Blue Pill.** 25 supuestos todavía hablaban de PB12, PA3, I2C2, 3V3_PER o del buck A9. Se reescribieron para la ESP32-S3 y las dos placas, sin cambiar lo que asumen ([historial](../cad/segway_base/supuestos.md#historial)).
@@ -54,7 +54,7 @@ La lista de componentes, el esquema y el mapa de pines **no cambian** en ningún
 | SUP-60 | Posición de la IMU | La MPU6050 va en la placa de lógica, sin pistas debajo | Mecánica y modelado: dónde va la placa y cómo queda orientada respecto del robot |
 | SUP-61 | Sujeción de los módulos | Solo por los zócalos, sin precintos | Aceptar o pedir agujeros para precintos |
 | SUP-72 | Cable entre placas | IDC 2 × 8 con cable plano recto | Mecánica fija el largo |
-| SUP-28 | Mapa de pines | El de las placas (hallazgo 1) | Firmware lo adopta |
+| SUP-28 | Mapa de pines | El de las placas | **Confirmado** (26/10): el firmware se adapta |
 | SUP-73 | J7 invertida | El encoder IZQ va 1 = 3V3, 4 = GND (al revés que J8) para ahorrar un puente | Aceptar (está rotulado) |
 | SUP-75 | INA226 sin separador | Se sostiene solo por el zócalo | Aceptar |
 | SUP-76 | Puentes bajo módulos | 4 puentes de la potencia pasan bajo el INA226 y el buck: obliga a montarlos en zócalo | Aceptar |

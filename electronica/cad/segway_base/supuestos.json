@@ -1105,11 +1105,11 @@
    "grupo": "C",
    "tema": "Asignación de pines (ESP32-S3)",
    "supuesto": "Por geometría de las dos placas de una cara: encoder IZQ A/B en GPIO4/5, paro en GPIO6, encoder DER A/B en GPIO7/15, I2C SCL en GPIO16 y SDA en GPIO17, INT de la IMU en GPIO18, ALERT en GPIO8, batería en GPIO3 (ADC1_CH2), servos IZQ/DER en GPIO9/10, IN2/IN1 del DRV DER en GPIO11/12 y del DRV IZQ en GPIO13/14. Tabla completa en gpio_table de segway_logica/especificacion_v0.6.json.",
-   "base": "dividir_v06_dos_placas.py (PINES_A1); matriz GPIO del ESP32-S3 [D].",
+   "base": "dividir_v06_dos_placas.py (PINES_A1); matriz GPIO del ESP32-S3 [D]. Matías, 26/10/2026 [M]: los pines se eligen como convenga al ruteo y el firmware se actualiza después; los pines de board_pins.h son de pruebas en protoboard.",
    "impacto_si_cambia": "Cambiar un pin obliga a rehacer el ruteo; el firmware lee la misma tabla.",
-   "como_se_confirma": "Revisión con el equipo de firmware.",
-   "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "como_se_confirma": "Confirmado. El firmware de las placas copia la gpio_table de segway_logica/especificacion_v0.6.json.",
+   "estado": "CONFIRMADO",
+   "fecha": "26/10/2026",
    "refs": [
     "A1"
    ],
@@ -1147,6 +1147,15 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "base": "dividir_v06_dos_placas.py (PINES_A1); matriz GPIO del ESP32-S3 [D].",
+      "estado": "CAMBIADO",
+      "como_se_confirma": "Revisión con el equipo de firmware."
+     },
+     "fuente": "Matías, 26/10/2026: el pinout lo define el ruteo de las placas; el firmware se adapta"
     }
    ]
   },
