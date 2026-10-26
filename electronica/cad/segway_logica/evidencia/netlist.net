@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-26T13:27:40")
+		(date "2026-10-26T14:11:01")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "92264445-8cd0-4737-871c-6569aa92422f")
+			(tstamps "c91df7b1-e2d9-4402-b2ce-f1ef2ffbda8c")
 			(units
 				(unit
 					(name "A")
@@ -245,7 +245,7 @@
 			(description "ROB-013. Modulo MPU6050 de 8 pines, formato GY-521 segun imagen de Matias del 17/10/2026. Orden VCC,GND,SCL,SDA,XDA,XCL,AD0,INT leido de la serigrafia [V]; numeracion 1=VCC provisoria hasta ver el pad cuadrado del ejemplar. Huella v0.4: segway_modulos:ROB-013_MPU6050_modulo_8p (zocalo 1x08 de 2,54 mm y dos NPTH de 3,2 mm para separadores; contorno supuesto sin medir, SUP-36). En la v0.4 AD0 queda sin conexion: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66). Codificacion propuesta: pin 5 (XDA, sin uso) retirado de la tira macho y posicion 5 del zocalo tapada; invertido (n -> 9-n), el pin 4 (SDA) cae en la 5 y no entra.")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (orden de pines [V]/[M]; zócalo estándar 1x08 (DEC-13); alimentado desde 3V3_PER; contorno del módulo pendiente de medida; codificación propuesta: retirar el pin 5 (XDA, sin uso) de la tira macho y tapar la posición 5 del zócalo, porque invertido llevaría 3V3_PER a INT y el VCC del módulo a PB14) | v0.4: huella segway_modulos:ROB-013_MPU6050_modulo_8p (1x08 + 2 NPTH de 3,2 mm, contorno supuesto); AD0 (pin 7) sin conexión: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66); sin pistas debajo")
+					(name "Estado") "provisorio [H] (orden de pines [V]/[M]; zócalo estándar 1x08 (DEC-13); alimentado desde 3V3_MCU; contorno del módulo pendiente de medida; codificación propuesta: retirar el pin 5 (XDA, sin uso) de la tira macho y tapar la posición 5 del zócalo, porque invertido llevaría 3V3_MCU a INT y el VCC del módulo a PB14) | v0.4: huella segway_modulos:ROB-013_MPU6050_modulo_8p (1x08 + 2 NPTH de 3,2 mm, contorno supuesto); AD0 (pin 7) sin conexión: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66); sin pistas debajo")
 				(field
 					(name "Fuente") "DEC-09 [M]; [CAP]/ROB-013_MPU6050/referencia_modulo_matias_2026-10-17.png [V]; [DS-MPU] p.14, p.15, p.21, p.33")
 				(field
@@ -263,7 +263,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (orden de pines [V]/[M]; zócalo estándar 1x08 (DEC-13); alimentado desde 3V3_PER; contorno del módulo pendiente de medida; codificación propuesta: retirar el pin 5 (XDA, sin uso) de la tira macho y tapar la posición 5 del zócalo, porque invertido llevaría 3V3_PER a INT y el VCC del módulo a PB14) | v0.4: huella segway_modulos:ROB-013_MPU6050_modulo_8p (1x08 + 2 NPTH de 3,2 mm, contorno supuesto); AD0 (pin 7) sin conexión: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66); sin pistas debajo")
+				(value "provisorio [H] (orden de pines [V]/[M]; zócalo estándar 1x08 (DEC-13); alimentado desde 3V3_MCU; contorno del módulo pendiente de medida; codificación propuesta: retirar el pin 5 (XDA, sin uso) de la tira macho y tapar la posición 5 del zócalo, porque invertido llevaría 3V3_MCU a INT y el VCC del módulo a PB14) | v0.4: huella segway_modulos:ROB-013_MPU6050_modulo_8p (1x08 + 2 NPTH de 3,2 mm, contorno supuesto); AD0 (pin 7) sin conexión: la pull-down del GY-521 fija 0x68 (SUP-36, SUP-66); sin pistas debajo")
 			)
 			(property
 				(name "Fuente")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ec0acb78-ae0d-4820-8117-9d04a78ea7c6")
+			(tstamps "bafa63cb-f1d5-458d-b3c0-1596ef5fae8f")
 			(units
 				(unit
 					(name "A")
@@ -321,7 +321,7 @@
 			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a PB12 sin R25 ni C15 (SUP-58)")
+					(name "Estado") "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a GPIO6 sin R25 ni C15 (SUP-58)")
 				(field
 					(name "Fuente") "[CONTRATO] §2.12; DEC-13 [M]; [PHX-MPT05] (6 A [V], AWG 28-20 de la hermana 1725708 [D])")
 				(field
@@ -339,7 +339,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a PB12 sin R25 ni C15 (SUP-58)")
+				(value "provisorio [H] (REQ-17; reemplaza al XH-3; sin contacto remoto hay que puentear 1-2; paso 2,54 mm distinto de J18 para no confundirlas) | v0.4: pasa a 2 polos al eliminar PARO_AUX y R26 (SUP-45, SUP-71); entrada directa a GPIO6 sin R25 ni C15 (SUP-58)")
 			)
 			(property
 				(name "Fuente")
@@ -365,7 +365,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "54632c43-e786-4008-ae45-9940c0b301fa")
+			(tstamps "44e4a827-ec5a-4bcf-bdcf-780c712e27e6")
 			(units
 				(unit
 					(name "A")
@@ -387,7 +387,7 @@
 			(description "Generic screw terminal, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69); pines 1 y 4 invertidos por ruteo (DEC-17)")
+					(name "Estado") "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_MCU (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69); pines 1 y 4 invertidos por ruteo (DEC-17)")
 				(field
 					(name "Fuente") "DEC-13 [M]; DEC-01 [M] (negro GND, amarillo y verde señales, azul V+ del encoder); [PHX-PT15] (17,5 A IEC, 10 A UL, AWG 26-16); [CONTRATO] §2.4")
 				(field
@@ -405,7 +405,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69); pines 1 y 4 invertidos por ruteo (DEC-17)")
+				(value "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_MCU (V_ENC unido, R30 eliminada, SUP-53, SUP-64); C20 eliminado (SUP-69); pines 1 y 4 invertidos por ruteo (DEC-17)")
 			)
 			(property
 				(name "Fuente")
@@ -431,7 +431,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "73c7c322-5f5c-441e-ba7c-1c6799c059e1")
+			(tstamps "d811f295-2ffb-40af-bd3a-2c63bc06e862")
 			(units
 				(unit
 					(name "A")
@@ -459,7 +459,7 @@
 			(description "Generic screw terminal, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (SUP-53); C21 eliminado (SUP-69)")
+					(name "Estado") "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_MCU (SUP-53); C21 eliminado (SUP-69)")
 				(field
 					(name "Fuente") "DEC-13 [M]; DEC-01 [M] (negro GND, amarillo y verde señales, azul V+ del encoder); [PHX-PT15] (17,5 A IEC, 10 A UL, AWG 26-16); [CONTRATO] §2.4")
 				(field
@@ -477,7 +477,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_PER (SUP-53); C21 eliminado (SUP-69)")
+				(value "provisorio [H] (reemplaza al XH-4: los hilos del encoder se atornillan; A/B por color [H], invertirlos solo cambia el signo; calibre sin medir: puntera de 0,25 mm² si es AWG 26-28; alternativa MPT 0,5 de 2,54 mm con el mismo orden) | v0.4: pin 4 en 3V3_MCU (SUP-53); C21 eliminado (SUP-69)")
 			)
 			(property
 				(name "Fuente")
@@ -503,7 +503,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1de07c2a-3f4d-41d9-a5fb-3581d9824d0a")
+			(tstamps "26e3eb11-90bc-4ae2-bb6d-d43d1557587b")
 			(units
 				(unit
 					(name "A")
@@ -575,7 +575,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7431fb75-0ad7-4c69-9cbd-8fb6577d3ca7")
+			(tstamps "41fb6cf2-09be-48ac-bb69-554f872d574b")
 			(units
 				(unit
 					(name "A")
@@ -683,7 +683,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fd0114d4-68cb-4d1f-967a-7f835ad4a043")
+			(tstamps "dc8614ee-badb-47a2-a759-dddcc64bf846")
 			(units
 				(unit
 					(name "A")
@@ -809,7 +809,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5467b8d8-a747-4820-a570-c10b4743ddc4")
+			(tstamps "0357c898-986e-46ec-bf97-02747b9ff606")
 			(units
 				(unit
 					(name "A")
@@ -886,7 +886,7 @@
 		)
 		(comp
 			(ref "J26")
-			(value "Alim. sensores 1-2 GND 3-4 3V3 5-6 5V")
+			(value "Alim. sensores 1-2 3V3 3-4 GND 5-6 5V")
 			(footprint "Connector_PinSocket_2.54mm:PinSocket_1x06_P2.54mm_Vertical")
 			(description "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
@@ -935,7 +935,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a1c160e8-43cb-4d04-b0b0-a0e9fe32cd3b")
+			(tstamps "5cebc64b-561a-4515-a231-e07b0867cc3a")
 			(units
 				(unit
 					(name "A")
@@ -969,9 +969,9 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -987,11 +987,11 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 			)
 			(property
 				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -1013,7 +1013,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0d188fe5-ea88-4832-8e18-3fbe77eb7c02")
+			(tstamps "456d788c-2d78-47e1-a446-9ba835980318")
 			(units
 				(unit
 					(name "A")
@@ -1035,9 +1035,9 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -1053,11 +1053,11 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 			)
 			(property
 				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -1079,7 +1079,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c02144e7-8157-4224-add9-b6b54af007e8")
+			(tstamps "6d658019-c1e6-4a54-b9ea-61cc8ceaa128")
 			(units
 				(unit
 					(name "A")
@@ -1101,9 +1101,9 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -1119,11 +1119,11 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 			)
 			(property
 				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -1145,7 +1145,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "acc22c11-ba51-47e1-a254-da7da4465e11")
+			(tstamps "a64fadd5-4543-4069-b9ef-aa1a107fb554")
 			(units
 				(unit
 					(name "A")
@@ -1167,9 +1167,9 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -1185,11 +1185,11 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_PER: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_PER, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
+				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
 			)
 			(property
 				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_PER: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -1211,7 +1211,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "edf35ef9-577d-4d66-ae42-d8ac7b285c0c")
+			(tstamps "aa8691c9-2b64-413e-ba1a-d66c3865b61c")
 			(units
 				(unit
 					(name "A")
@@ -1233,7 +1233,7 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_PER el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a PB12 (R25 y C15 eliminados, SUP-58, SUP-71)")
+					(name "Estado") "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_MCU el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a GPIO6 (R25 y C15 eliminados, SUP-58, SUP-71)")
 				(field
 					(name "Fuente") "[CONTRATO] §2.12 (nivel definido por pull externo); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
 				(field
@@ -1251,7 +1251,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_PER el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a PB12 (R25 y C15 eliminados, SUP-58, SUP-71)")
+				(value "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_MCU el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a GPIO6 (R25 y C15 eliminados, SUP-58, SUP-71)")
 			)
 			(property
 				(name "Fuente")
@@ -1277,7 +1277,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "59875211-f600-4cf5-9761-a229e4e99bc8")
+			(tstamps "8308e86f-8ca5-471c-97f6-a3c19bc7b66a")
 			(units
 				(unit
 					(name "A")
@@ -2064,14 +2064,14 @@
 			)
 			(node
 				(ref "J26")
-				(pin "3")
-				(pinfunction "Pin_3_3")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
 				(ref "J26")
-				(pin "4")
-				(pinfunction "Pin_4_4")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -2337,14 +2337,14 @@
 			)
 			(node
 				(ref "J26")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "3")
+				(pinfunction "Pin_3_3")
 				(pintype "passive")
 			)
 			(node
 				(ref "J26")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "4")
+				(pinfunction "Pin_4_4")
 				(pintype "passive")
 			)
 			(node

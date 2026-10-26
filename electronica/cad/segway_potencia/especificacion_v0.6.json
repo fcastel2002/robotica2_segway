@@ -273,7 +273,7 @@
    "block": "sensores",
    "dnp": false,
    "source": "[CAP]/ROB-009_INA226/referencia_compra.png [V]; [DS-226] p.3, p.5, p.15, p.18 Tabla 6-2, p.26-28; [ENERGIA] §5.1 (R100 solo apto para lógica); [DS-226] p.4 §5.1 (VS 6 V abs.)",
-   "status": "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_PER y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de PB13 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67)",
+   "status": "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_MCU y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de GPIO8 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67) | v0.6: sin el tope NPTH (caía sobre el bus I2C, SUP-75): se puede enchufar invertido. Rótulo VCC en el cobre junto al pin 8; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)",
    "supuestos": [
     "SUP-35",
     "SUP-38"
@@ -438,7 +438,7 @@
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "entrada_potencia",
    "dnp": false,
-   "source": "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "source": "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
    "status": "provisorio [H] (química del pack pendiente; muestrear con ≥ 28,5 ciclos) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-51",
@@ -466,7 +466,7 @@
    "footprint": "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm",
    "block": "entrada_potencia",
    "dnp": false,
-   "source": "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "source": "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
    "status": "provisorio [H] | v0.4: THT: disco P5,00 en lugar de 0805",
    "supuestos": [
     "SUP-51",
@@ -507,7 +507,7 @@
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "motores",
    "dnp": false,
-   "source": "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "source": "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
    "status": "provisorio [H] (lado MCU de R35; 2,2 kΩ cubre un pull-up interno de 30 kΩ: 0,22 V < VIL; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-57",
@@ -535,8 +535,8 @@
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "motores",
    "dnp": false,
-   "source": "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (nueva, a ratificar: protege PA6 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "source": "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
+   "status": "provisorio [H] (nueva, a ratificar: protege GPIO14 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-57",
     "SUP-16"
@@ -550,7 +550,7 @@
    "block": "motores",
    "dnp": false,
    "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (nueva; protege PA7) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "status": "provisorio [H] (nueva; protege GPIO13) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-57",
     "SUP-16"
@@ -634,7 +634,7 @@
    "block": "motores",
    "dnp": false,
    "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (nueva; protege PB0) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "status": "provisorio [H] (nueva; protege GPIO12) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-57",
     "SUP-16"
@@ -648,7 +648,7 @@
    "block": "motores",
    "dnp": false,
    "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (nueva; protege PB1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "status": "provisorio [H] (nueva; protege GPIO11) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-57",
     "SUP-16"
@@ -732,7 +732,7 @@
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "servos",
    "dnp": false,
-   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
    "status": "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-56",
@@ -746,7 +746,7 @@
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "servos",
    "dnp": false,
-   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
    "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-56",
@@ -786,7 +786,7 @@
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "servos",
    "dnp": false,
-   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
    "status": "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-56",
@@ -800,7 +800,7 @@
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "servos",
    "dnp": false,
-   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
+   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
    "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
    "supuestos": [
     "SUP-56",
@@ -828,7 +828,7 @@
    "block": "logica",
    "dnp": false,
    "source": "[ENERGIA] §2.2 (fila Lógica); consumo de la rama ≈0,1 A [H] (§7 del documento: ≈0,55 W de cargas con rendimiento 80 % [H] a 7,5 V); [DS-226] p.5 (81,92 mV / 0,1 Ω = 0,82 A de rango del R100)",
-   "status": "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entradas de A8/A9 (C24 eliminado, SUP-69)",
+   "status": "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entrada de A8 (C24 eliminado, SUP-69)",
    "supuestos": [
     "SUP-49",
     "SUP-19"
@@ -842,7 +842,7 @@
    "block": "logica",
    "dnp": false,
    "source": "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)",
-   "status": "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69)",
+   "status": "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)",
    "supuestos": [
     "SUP-37",
     "SUP-38"
@@ -1466,7 +1466,7 @@
   "8": "IN1_DER_MCU",
   "9": "3V3_MCU",
   "10": "IN2_IZQ_MCU",
-  "11": "GND",
+  "11": "sin conexión",
   "12": "IN1_IZQ_MCU",
   "13": "5V_MCU",
   "14": "5V_MCU",

@@ -917,11 +917,14 @@ def cargar_placa(nombre):
 
 
 def rotulos_cobre(board):
-    """ROTULOS: [(texto, (x, y), alto_mm)] en B.Cu, espejados (se leen derechos del lado cobre), y ESCALA:
+    """ROTULOS: [(texto, (x, y), alto_mm[, ángulo])] en B.Cu, espejados (se leen derechos del lado cobre), y ESCALA:
     (x, y) del extremo izquierdo de una barra de control de 50,00 mm con marcas cada 10 mm
     (reglas_fabricacion_casera.md §6)."""
-    for texto, (x, y), alto in ROTULOS:
+    for rot in ROTULOS:
+        texto, (x, y), alto = rot[:3]
         tx = pcbnew.PCB_TEXT(board)
+        if len(rot) > 3:
+            tx.SetTextAngleDegrees(rot[3])
         tx.SetText(texto)
         tx.SetLayer(pcbnew.B_Cu)
         tx.SetPosition(V(x, y))

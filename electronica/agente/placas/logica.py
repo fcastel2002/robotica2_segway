@@ -81,10 +81,10 @@ ESQUELETO = [
     ("RST", W, ["J24.3", "A1.3"]),
     ("GPIO46", W, ["J24.14", "A1.14"]),
 ] + [(n, W, [f"A1.{22 + k}", f"J25.{k}"]) for k, n in enumerate(HILERA_DER, start=1)] + [
-    # --- J26: 3V3 baja del riel de J20.9; 5V_MCU sale de J20.13 hacia el oeste
-    ("3V3_MCU", W, [(43.18, 62.23), "J26.3", "J26.4"]),
+    # --- J26 (1-2 3V3, 3-4 GND, 5-6 5V): 3V3 baja del riel de J20.9; GND por el relleno de abajo;
+    #     5V_MCU sale de J20.13 hacia el oeste
+    ("3V3_MCU", W, [(38.10, 62.23), "J26.1", "J26.2"]),
     ("5V_MCU", 1.2, ["J26.5", "J26.6", (52.07, 67.31), "J20.13"]),
-    ("GND", W, ["J26.2", "J26.1", (35.30, 66.04)]),      # al relleno del oeste, entre W2 y J26
 ]
 # Puentes de alambre del lado de componentes (pads de 2,2 mm, taladro 0,9)
 PUENTES = [
@@ -97,7 +97,13 @@ RUTEAR = False
 ZONAS = [("GND", "placa", 0)]
 
 # Rótulos en B.Cu y escala de control de 50 mm (reglas_fabricacion_casera.md §6), en el relleno inferior
-ROTULOS = [("SEGWAY LOGICA v0.1", (24.13, 71.90), 2.5), ("LADO COBRE", (24.13, 75.15), 2.0)]
+ROTULOS = [("SEGWAY LOGICA v0.1", (24.13, 72.00), 2.0), ("LADO COBRE", (24.13, 75.15), 2.0),
+    # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py
+    # Los de las franjas GND del borde oeste (V de J7 y J8, ENC DER) y del pasillo bajo J26 (5V) partían el relleno:
+    # se sacaron; esos pines quedan rotulados en la guía de montaje
+    ("ENC IZQ", (14.62, 6.59), 2.0, 0), ("G", (11.62, 36.83), 2.0, 0),
+    ("1", (52.92, 52.07), 2.0, 0),
+]
 ESCALA = (8.89, 78.74)
 
 # Los pads de GND de las tiras de expansión ya llegan por pista a su vecino de A1: alcanza con un rayo
@@ -110,3 +116,12 @@ ENMIENDAS = """
 	(condition "A.Type == 'Pad' && A.memberOfFootprint('J26')")
 	(constraint zone_connection solid))
 """
+
+# Rótulos de cobre pedidos (SUP-14): ubicar_rotulos.py busca el lugar y el resultado va a ROTULOS.
+ROTULOS_PEDIDOS = [
+    ("V", "J7.1", 2.0, 7), ("G", "J7.4", 2.0, 7), ("ENC IZQ", "J7", 2.0, 16),
+    ("G", "J8.1", 2.0, 7), ("V", "J8.4", 2.0, 7), ("ENC DER", "J8", 2.0, 16),
+    ("PARO", "J4", 2.0, 16),
+    ("1", "J20.1", 2.0, 7),
+    ("3V3", "J26.1", 2.0, 7), ("G", "J26.3", 2.0, 7), ("5V", "J26.5", 2.0, 7),
+]

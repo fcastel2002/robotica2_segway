@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 6,
+ "revision_lista": 7,
  "fecha": "26/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -643,9 +643,9 @@
   {
    "grupo": "B",
    "tema": "Rótulos sin serigrafía",
-   "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre de la v0.1 solo están el nombre de la placa y LADO COBRE (y la escala en la lógica). Faltan los rótulos críticos de 2 mm de alto o más: BAT +/−, SW, M IZQ/M DER, UBEC IN/OUT, el pin 1 de J20 y los de J26; se agregan en la v0.2 donde haya lugar en el relleno. Después del ataque se estañan las pistas.",
+   "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1-F5, VCC junto al pin 8 de A7 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas.",
    "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H].",
-   "impacto_si_cambia": "Sin rótulos de cobre, la polaridad de las borneras depende de la guía impresa: riesgo de conectar la batería o un motor al revés.",
+   "impacto_si_cambia": "Lo que no está en el cobre depende de la guía impresa: riesgo de conectar un servo o un encoder al revés.",
    "como_se_confirma": "Matías decide si hace la serigrafía por transferencia.",
    "estado": "ASUMIDO",
    "fecha": "26/10/2026",
@@ -664,6 +664,14 @@
       "impacto_si_cambia": "Si se hace una segunda transferencia en la cara de componentes, se suma la serigrafía y se achican los textos de cobre."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre de la v0.1 solo están el nombre de la placa y LADO COBRE (y la escala en la lógica). Faltan los rótulos críticos de 2 mm de alto o más: BAT +/−, SW, M IZQ/M DER, UBEC IN/OUT, el pin 1 de J20 y los de J26; se agregan en la v0.2 donde haya lugar en el relleno. Después del ataque se estañan las pistas.",
+      "impacto_si_cambia": "Sin rótulos de cobre, la polaridad de las borneras depende de la guía impresa: riesgo de conectar la batería o un motor al revés."
+     },
+     "fuente": "ELE-039: revisión independiente del conexionado y control eléctrico (auditoria_electrica_v0.1.md)"
     }
    ]
   },
@@ -828,12 +836,12 @@
   {
    "grupo": "B",
    "tema": "Disipador de Q1",
-   "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W.",
+   "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W. La aleta del TO-220 es el drenador (VBAT_SW): el disipador queda con tensión de batería, así que no puede tocar el chasis ni otro disipador, o se monta con mica y buje aislante.",
    "base": "§8 de diseno_v0.3.md: 0,5 W a 5 A y 4,5-6,8 W a 15 A ([DS-IRF4905] p.1-2). Corriente continua según SUP-43.",
    "impacto_si_cambia": "Si la corriente continua es mayor, hace falta un disipador más grande o un MOSFET de menor RDS(on) (open_point 5).",
    "como_se_confirma": "E-04/E-06: temperatura de Q1 con termómetro IR en marcha.",
    "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "fecha": "26/10/2026",
    "refs": [
     "Q1"
    ],
@@ -850,7 +858,15 @@
     "rth_max_C_W": 15
    },
    "id": "SUP-20",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W."
+     },
+     "fuente": "ELE-039: revisión independiente del conexionado y control eléctrico (auditoria_electrica_v0.1.md)"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -2720,7 +2736,7 @@
   {
    "grupo": "I",
    "tema": "Alimentación de la expansión (J26)",
-   "supuesto": "J26, tira hembra de 1 × 6: 1-2 GND, 3-4 3V3_MCU y 5-6 5V_MCU. Presupuesto para todos los sensores: unos 300 mA en 5V y 150 mA en 3V3. El 5V viene del buck A8 por D2 (1N5819, 1 A) y los pines 13-14 del cable, y llega con unos 4,6-4,7 V. El 3V3 sale del regulador de la DevKitC (SUP-25), que ya alimenta la ESP32-S3, la MPU, los INA y los encoders.",
+   "supuesto": "J26, tira hembra de 1 × 6: 1-2 3V3_MCU, 3-4 GND y 5-6 5V_MCU. GND va en el medio para que un sensor de 3,3 V enchufado un pin corrido no quede en 5 V. Presupuesto para todos los sensores: unos 300 mA en 5V y 150 mA en 3V3. El 5V viene del buck A8 por D2 (1N5819, 1 A) y los pines 13-14 del cable, y llega con unos 4,6-4,7 V. El 3V3 sale del regulador de la DevKitC (SUP-25), que ya alimenta la ESP32-S3, la MPU, los INA y los encoders.",
    "base": "D2 de 1 A (SUP-17), F5 de 1 A en VM_LOG (SUP-49), regulador SOT-223 de clase 1 A (SUP-25) y consumo de unos 350 mA de pico de la ESP32-S3 (SUP-31) [H].",
    "impacto_si_cambia": "Con más consumo en 3V3, el regulador de la DevKitC calienta y puede reiniciar la ESP32. Con más consumo en 5V, D2 y F5 quedan al límite.",
    "como_se_confirma": "E-02: medir 5V_MCU y 3V3 en J26 con los sensores conectados y Wi-Fi activo, y la temperatura del regulador de la DevKitC.",
@@ -2737,6 +2753,58 @@
     "5V_mA": 300,
     "3V3_mA": 150
    },
+   "historial": [
+    {
+     "fecha": "26/10/2026",
+     "antes": {
+      "supuesto": "J26, tira hembra de 1 × 6: 1-2 GND, 3-4 3V3_MCU y 5-6 5V_MCU. Presupuesto para todos los sensores: unos 300 mA en 5V y 150 mA en 3V3. El 5V viene del buck A8 por D2 (1N5819, 1 A) y los pines 13-14 del cable, y llega con unos 4,6-4,7 V. El 3V3 sale del regulador de la DevKitC (SUP-25), que ya alimenta la ESP32-S3, la MPU, los INA y los encoders."
+     },
+     "fuente": "ELE-039: revisión independiente del conexionado y control eléctrico (auditoria_electrica_v0.1.md)"
+    }
+   ]
+  },
+  {
+   "grupo": "I",
+   "tema": "Módulos que entran invertidos (A7, A8, A1)",
+   "supuesto": "Tres módulos entran girados 180° en su zócalo. A7 (INA226, 1 × 8): su VCC recibe 12,6 V y el shunt queda en corto sobre el 3V3. A8 (buck, 4 pads en rectángulo): su masa une VM_LOG con el 5V y llegan 12 V a la ESP32-S3. A1 (ESP32-S3): sus 3V3 caen en GND (lo delatan la antena y los USB). Mitigación en la v0.1: rótulos VCC (A7) e IN+ (A8) en el cobre y control en el montaje. Recomendación: soldar A7 y A8 directo sobre sus pines macho, con el espaciador de plástico, en lugar de enchufarlos. Así no se pueden invertir al reemplazarlos y siguen dejando lugar a los puentes de abajo (SUP-76), que conviene enfundar con termocontraíble.",
+   "base": "Revisión independiente del 26/10/2026; control 4 de auditoria_electrica_v0.1.md [H].",
+   "impacto_si_cambia": "Soldarlos directo se desvía de DEC-13 (módulos enchufables): cambiar el módulo obliga a desoldar.",
+   "como_se_confirma": "Matías decide si A7 y A8 van soldados o en zócalo.",
+   "estado": "ASUMIDO",
+   "fecha": "26/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb",
+    "montaje"
+   ],
+   "alias": [],
+   "id": "SUP-80",
+   "valor": {
+    "modulos": [
+     "A7",
+     "A8",
+     "A1"
+    ]
+   },
+   "historial": []
+  },
+  {
+   "grupo": "I",
+   "tema": "I2C junto a PWM en el cable J20",
+   "supuesto": "En el cable plano, SDA (5) y SCL (7) quedan entre IN2_DER (6) e IN1_DER (8), sin un GND intercalado. Se acepta para la v0.1 con el cable lo más corto posible, el I2C a 100 kHz, la fuerza de salida mínima en GPIO11-14 y el filtro de glitches del I2C de la ESP32-S3. Intercalar GND obliga a rehacer el ruteo de las dos placas.",
+   "base": "Revisión independiente del 26/10/2026 [H].",
+   "impacto_si_cambia": "Si el acople mete errores en el bus, hay que reordenar el cable (dos placas nuevas) o pasar el I2C a un cable aparte.",
+   "como_se_confirma": "E-08: bus I2C leyendo los cuatro sensores con los dos motores a PWM máximo, contando errores de lectura.",
+   "estado": "ASUMIDO",
+   "fecha": "26/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb",
+    "montaje"
+   ],
+   "alias": [],
+   "id": "SUP-81",
+   "valor": {},
    "historial": []
   }
  ]

@@ -2,24 +2,30 @@
 
 Fecha: 26/10/2026. Tarea: ELE-038. Para: Matías y el equipo. Lista completa con el detalle de cada uno: [supuestos.md](../cad/segway_base/supuestos.md).
 
-Hay 79 supuestos: 1 confirmado, 14 cambiados por decisiones ya tomadas y 64 asumidos por el agente para poder avanzar. No hace falta revisarlos uno por uno: esta página los ordena según **quién los cierra y cómo**.
+Hay 81 supuestos: 2 confirmados, 13 cambiados por decisiones ya tomadas y 66 asumidos por el agente para poder avanzar. No hace falta revisarlos uno por uno: esta página los ordena según **quién los cierra y cómo**.
 
 | Grupo | Cantidad | Qué hace falta | ¿Bloquea la fabricación? |
 |---|---|---|---|
 | [1. La pregunta que cambia todo](#1-la-pregunta-que-cambia-todo) | 1 | Una respuesta | Sí |
-| [2. Decisiones del equipo](#2-decisiones-del-equipo) | 23 | Sí/no o elegir una opción | Sí |
+| [2. Decisiones del equipo](#2-decisiones-del-equipo) | 25 | Sí/no o elegir una opción | Sí |
 | [3. Medir antes de taladrar](#3-medir-antes-de-taladrar) | 25 | Calibre, fotos y multímetro sobre lo comprado | Sí |
 | [4. Se validan después, en el banco o el robot](#4-se-validan-después-en-el-banco-o-el-robot) | 23 | Nada por ahora: se ensayan con las placas armadas | No |
 | [5. Ya decididos o eliminados](#5-ya-decididos-o-eliminados) | 13 | Una confirmación en bloque | No |
 
-Los 79 están cubiertos; 6 aparecen en dos grupos (por ejemplo, SUP-32 es a la vez una decisión y una medida). Se responde con una línea por supuesto, como dice [supuestos.md](../cad/segway_base/supuestos.md#cómo-se-usa): `SUP-33: confirmado`, `SUP-04: la potencia mide 140 × 110` o `SUP-62: recuperar TP8`. Para el grupo 5 alcanza con `grupo 5: confirmado`.
+Los 81 están cubiertos; 6 aparecen en dos grupos (por ejemplo, SUP-32 es a la vez una decisión y una medida). Se responde con una línea por supuesto, como dice [supuestos.md](../cad/segway_base/supuestos.md#cómo-se-usa): `SUP-33: confirmado`, `SUP-04: la potencia mide 140 × 110` o `SUP-62: recuperar TP8`. Para el grupo 5 alcanza con `grupo 5: confirmado`.
 
 ## Hallazgos de esta revisión
 
 1. **Mapa de pines: resuelto.** [`board_pins.h`](../../firmware/segway_v01/main/board_pins.h) tiene pines distintos de los de las placas, pero son de pruebas en protoboard. Matías confirmó el 26/10/2026 que los pines los define el ruteo y que el firmware se actualiza después con la [gpio_table](../cad/segway_logica/especificacion_v0.6.json) (SUP-28 confirmado). Guía para el código: [pinout para el firmware](../interfaces/pinout_firmware_placas_v0.1.md).
-2. **Faltan los rótulos de polaridad en el cobre (SUP-14).** El supuesto decía que BAT +/−, M IZQ/DER, UBEC IN/OUT, etc. iban en el cobre, pero la v0.1 solo tiene el nombre de la placa. Se agregan en la versión final; mientras tanto la polaridad depende de la guía impresa.
+2. **Rótulos de polaridad en el cobre (SUP-14): agregados el 26/10/2026** en las dos placas, donde entran sin partir el relleno GND. Los que no entran (el + de J1 y de J11, servos, J26, PARO) quedan en la guía de montaje.
 3. **Las pistas de batería son más finas que lo que pide SUP-10.** Miden 3,5–4,5 mm y SUP-10 pide 5 mm o más para 10 A. SUP-10 ya prevé la solución: estañarlas o soldarles encima un alambre de 1,5 mm². Si la placa se fabrica afuera con cobre de 70 µm (pregunta 1), el problema desaparece.
-4. **Texto viejo de la Blue Pill.** 25 supuestos todavía hablaban de PB12, PA3, I2C2, 3V3_PER o del buck A9. Se reescribieron para la ESP32-S3 y las dos placas, sin cambiar lo que asumen ([historial](../cad/segway_base/supuestos.md#historial)).
+4. **Revisión independiente del conexionado y control eléctrico (26/10/2026).** Un revisor que no participó del diseño comparó cada pin con las fichas de los módulos, y el script [`auditoria_electrica.py`](../agente/auditoria_electrica.py) quedó como control repetible ([informe](../cad/auditoria_electrica_v0.1.md): 0 fallas, 6 avisos). El conexionado de los módulos, el cable, la polaridad de Q1, los diodos y los electrolíticos, y los niveles de la ESP32 están bien. Lo nuevo:
+   - **A7 (INA226) y A8 (buck) entran girados en su zócalo y así queman la ESP32 o el INA (SUP-80).** Quedan rótulos de orientación en el cobre y un control con el tester antes de conectar el cable. Recomiendo soldarlos directo (decisión del grupo 2).
+   - **La aleta de Q1 tiene tensión de batería:** el disipador va aislado (SUP-20).
+   - **J26 se reordenó** con GND en el medio (1–2 3V3, 3–4 GND, 5–6 5V), para que un sensor corrido un pin no reciba 5 V.
+   - **I2C junto a PWM en el cable (SUP-81):** se acepta con cable corto y 100 kHz; se prueba en E-08.
+   - **3V3 con poco margen** si el regulador de la DevKitC es un AMS1117: medir en E-02.
+5. **Texto viejo de la Blue Pill.** 25 supuestos todavía hablaban de PB12, PA3, I2C2, 3V3_PER o del buck A9. Se reescribieron para la ESP32-S3 y las dos placas, sin cambiar lo que asumen ([historial](../cad/segway_base/supuestos.md#historial)).
 
 ## 1. La pregunta que cambia todo
 
@@ -60,6 +66,8 @@ La lista de componentes, el esquema y el mapa de pines **no cambian** en ningún
 | SUP-76 | Puentes bajo módulos | 4 puentes de la potencia pasan bajo el INA226 y el buck: obliga a montarlos en zócalo | Aceptar |
 | SUP-15 | Puentes de alambre | 7 en la potencia y 2 en la lógica | Aceptar (solo si es casera) |
 | SUP-57 | Protección de los DRV | R1–R4 y R35–R38 protegen la ESP32 si un DRV se enchufa girado | Aceptar o quitarlas (8 piezas menos) |
+| SUP-80 | A7 y A8 se pueden enchufar girados | Rótulos de orientación y control con el tester | **Recomiendo soldarlos directo** sobre sus pines (se desvía de DEC-13). Sí o no |
+| SUP-81 | I2C junto a PWM en el cable | Se acepta con cable corto y 100 kHz | Aceptar |
 | SUP-78, SUP-79 | Expansión de la lógica | J24/J25 junto a la ESP32 y J26 de alimentación; hasta 300 mA en 5V y 150 mA en 3V3 para sensores | Confirmar que es lo que pidió el equipo |
 
 ## 3. Medir antes de taladrar

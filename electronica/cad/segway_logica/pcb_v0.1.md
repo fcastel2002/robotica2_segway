@@ -1,6 +1,6 @@
 # Placa de lógica v0.1: PCB casera de una cara
 
-Fecha: 26/10/2026 (expansión agregada; la primera versión es del 20/10/2026). Decisión de origen: DEC-17 (dos placas unidas por cable plano). Reglas: [fabricación casera](../segway_base/reglas_fabricacion_casera.md). Supuestos: [lista](../segway_base/supuestos.md), en particular SUP-04, SUP-07, SUP-15, SUP-24, SUP-28, SUP-72 a SUP-74, SUP-78 y SUP-79.
+Fecha: 26/10/2026 (expansión y rótulos de cobre agregados; la primera versión es del 20/10/2026). Decisión de origen: DEC-17 (dos placas unidas por cable plano). Reglas: [fabricación casera](../segway_base/reglas_fabricacion_casera.md). Supuestos: [lista](../segway_base/supuestos.md), en particular SUP-04, SUP-07, SUP-14, SUP-15, SUP-24, SUP-28, SUP-72 a SUP-74 y SUP-78 a SUP-81. Control eléctrico de las dos placas: [auditoria_electrica_v0.1.md](../auditoria_electrica_v0.1.md).
 
 ![Placa de lógica v0.1, cobre visto desde la cara de componentes](evidencia/pcb_logica_v0.1.png)
 
@@ -25,6 +25,8 @@ El ruteo se hizo a mano por topología: [`agente/placas/logica.py`](../../agente
 - **3V3 en dos mitades.** La mitad del riel superior viene de A1.1 y alimenta J7, R13, R14 y R24. La otra viene de J20.9 y alimenta el MPU, J8, R15, R16 y J26. W1 las une.
 - **GND por relleno.** W2 une la cara de cobre que queda encerrada bajo el MPU. No hay relleno alrededor de la antena (SUP-74).
 - **J7 invertida (SUP-73):** 1 = 3V3, 4 = GND. **J8:** 1 = GND, 4 = 3V3.
+- **Rótulos de cobre (SUP-14):** ENC IZQ, G de J8 y el pin 1 de J20. Las V de J7/J8, PARO y J26 no entran sin partir el relleno GND: quedan en la guía de montaje.
+- **Orientación de A1 (SUP-80):** la DevKitC entra girada 180° en sus zócalos y así sus 3V3 caen en GND. La antena va hacia el borde superior y los USB-C hacia el inferior, como en la guía.
 - **Expansión.** Cada pin de J24 y J25 está unido por pista al pin de A1 que tiene al lado (detalle abajo).
 
 Mapa de pines de A1 (SUP-28):
@@ -48,7 +50,7 @@ Cable J20 (SUP-72): el pin n de una placa va al pin n de la otra. La tabla compl
 Pedido del equipo del 26/10/2026: pines hembra en paralelo a la controladora para sumar sensores más adelante, por ejemplo un ultrasonido o un infrarrojo.
 
 - **J24 y J25** son tiras hembra de 1 × 22 a 2,54 mm, pegadas por fuera a cada hilera de la ESP32-S3. Cada pin está unido al pin de A1 que tiene al lado: J24.n = A1.n y J25.n = A1.(22 + n). Se enchufan cables Dupont macho.
-- **J26** es una tira hembra de 1 × 6 para alimentar los sensores, junto al IDC: 1–2 GND, 3–4 3V3, 5–6 5V.
+- **J26** es una tira hembra de 1 × 6 para alimentar los sensores, junto al IDC: **1–2 3V3, 3–4 GND, 5–6 5V**. GND va en el medio: un sensor de 3,3 V enchufado un pin corrido no queda en 5 V.
 - En lugar de J24 + el zócalo izquierdo de A1 se puede soldar una sola tira hembra de **2 × 22**, que ocupa las dos hileras. Lo mismo del lado derecho con J25.
 
 ### Pines libres para sensores (J25, hilera derecha)
@@ -81,8 +83,8 @@ Quedan **9 GPIO libres**: 1, 2, 21, 38, 39, 40, 41, 42 y 47. GPIO1 y GPIO2 son l
 ### Cuidados al conectar sensores
 
 - **La ESP32-S3 no tolera 5 V en sus pines (SUP-25).** Un sensor alimentado con 5 V que devuelve 5 V necesita un divisor.
-  - **Ultrasonido HC-SR04:** VCC a J26.5 y GND a J26.1. TRIG va directo a un GPIO libre. ECHO entra por un divisor de 1 kΩ en serie y 2 kΩ a GND. La alternativa sin divisor es un módulo de 3,3 V (HC-SR04P o RCWL-1601) alimentado desde J26.3.
-  - **Infrarrojo digital** (módulos tipo FC-51 o TCRT5000 con comparador): alimentarlo con 3V3 (J26.3), así su salida ya es de 3,3 V.
+  - **Ultrasonido HC-SR04:** VCC a J26.5 y GND a J26.3. TRIG va directo a un GPIO libre. ECHO entra por un divisor de 1 kΩ en serie y 2 kΩ a GND. La alternativa sin divisor es un módulo de 3,3 V (HC-SR04P o RCWL-1601) alimentado desde J26.1.
+  - **Infrarrojo digital** (módulos tipo FC-51 o TCRT5000 con comparador): alimentarlo con 3V3 (J26.1), así su salida ya es de 3,3 V.
   - **Infrarrojo analógico** (Sharp GP2Y0A21): se alimenta con 5 V y su salida no pasa de unos 3,1 V. Va a GPIO1 o GPIO2 con atenuación de 11 dB.
 - **Corriente disponible (SUP-79):** hasta unos 300 mA en 5V y 150 mA en 3V3 entre todos los sensores. El 5V llega por el cable desde el buck A8 a través de D2, un Schottky de 1 A, así que en J26 hay unos 4,6–4,7 V.
 - Los cables enchufados en J25.1–5 quedan junto a la antena: conviene sacarlos hacia el costado y no por encima de la placa.
@@ -112,7 +114,7 @@ Quedan **9 GPIO libres**: 1, 2, 21, 38, 39, 40, 41, 42 y 47. GPIO1 y GPIO2 son l
    - Continuidad de W1 (3V3 entre A1.1 y J20.9) y de W2 (GND entre A2.2 y J20.15).
    - Que no haya corto 3V3–GND ni 5V_MCU–GND.
    - J7.1 = 3V3 y J7.4 = GND; J8.1 = GND y J8.4 = 3V3.
-   - J26: 1–2 = GND, 3–4 = 3V3, 5–6 = 5V_MCU. Cada pin de J24 y J25 tiene continuidad con el pin de A1 de al lado y no con sus vecinos.
+   - J26: 1–2 = 3V3, 3–4 = GND, 5–6 = 5V_MCU. Cada pin de J24 y J25 tiene continuidad con el pin de A1 de al lado y no con sus vecinos.
 
 ## Pendiente
 

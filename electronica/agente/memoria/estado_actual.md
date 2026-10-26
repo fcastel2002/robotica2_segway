@@ -11,6 +11,7 @@ Fecha de corte: 2026-10-26. Responsable humano: Matías. Entorno: Windows 11, Cl
 - El cable J20 y los GPIO se reordenaron al rutear la potencia (SUP-28, SUP-72). La placa de lógica se re-verificó con ese orden.
 - **26/10/2026: expansión en la lógica (ELE-037).** J24/J25 (tiras hembra 1×22 junto a la ESP32-S3) y J26 (alimentación de sensores). 9 GPIO libres: 1, 2, 21, 38–42 y 47. J20.11 sin conexión en las dos placas. DRC 0/0/0.
 - **26/10/2026: revisión de supuestos (ELE-038), en manos del equipo.** [Revisión](../../planificacion/2026-10-26-revision-supuestos-version-final.md). SUP-01 (casera) y SUP-28 (los pines los define el ruteo; el firmware se adapta) confirmados por Matías el 26/10. Pinout para el equipo de firmware: [pinout_firmware_placas_v0.1.md](../../interfaces/pinout_firmware_placas_v0.1.md); actualizarlo si cambia algún pin.
+- **26/10/2026: rótulos de cobre y control eléctrico (ELE-039).** [auditoria_electrica.py](../auditoria_electrica.py) es el control repetible del sistema (correrlo después de cada cambio); [informe](../../cad/auditoria_electrica_v0.1.md). Riesgo abierto principal: A7 y A8 entran girados (SUP-80).
 - **Siguiente:** con las respuestas, versión final v0.2: huellas medidas, rótulos de polaridad en el cobre, piezas recuperadas y fabricación (PDF casero o Gerbers). Pendientes de medición: separación de hileras de la DevKitC (SUP-22), módulos (SUP-HA), largo del cable y posición de las placas (mecánica).
 
 ## Historia anterior (hasta el 18/10/2026)

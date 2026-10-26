@@ -1,6 +1,6 @@
 # Placa de potencia v0.1: PCB casera de una cara
 
-Fecha: 20/10/2026. Origen: DEC-17 (dos placas unidas por cable plano). Reglas: [fabricación casera](../segway_base/reglas_fabricacion_casera.md). Supuestos: [lista](../segway_base/supuestos.md), en particular SUP-04, SUP-13, SUP-15, SUP-72 y SUP-75 a SUP-77.
+Fecha: 20/10/2026; rótulos de cobre y control eléctrico del 26/10/2026. Origen: DEC-17 (dos placas unidas por cable plano). Reglas: [fabricación casera](../segway_base/reglas_fabricacion_casera.md). Supuestos: [lista](../segway_base/supuestos.md), en particular SUP-04, SUP-13, SUP-14, SUP-15, SUP-20, SUP-72 y SUP-75 a SUP-81. Control eléctrico de las dos placas: [auditoria_electrica_v0.1.md](../auditoria_electrica_v0.1.md).
 
 ![Placa de potencia v0.1, cobre visto desde la cara de componentes](evidencia/pcb_potencia_v0.1.png)
 
@@ -37,6 +37,15 @@ Ubicación y esqueleto en [`agente/placas/potencia.py`](../../agente/placas/pote
   - Bus de GND (y 93,5) y bus de V_SERVO (y 104,5), con los headers J13 y J14 entre ambos.
   - Las resistencias serie R5/R6 pasan por encima del bus de GND.
 
+- **Rótulos de cobre (SUP-14).** BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, el valor de cada fusible (15A, 4A, 4A, 1A, 7,5A), VCC junto al pin 8 de A7 e IN+ junto al pin 1 de A8. Sin lugar: el + de J1 y de J11, y J13/J14: van en la guía de montaje.
+
+### Cuidado al montar: módulos que entran invertidos (SUP-80)
+
+- **A7 (INA226)** entra girado: su VCC recibe 12,6 V y el shunt queda en corto sobre el 3V3. El pin 8 (VCC) va del lado del rótulo VCC.
+- **A8 (buck)** entra girado 180°: su masa une VM_LOG con el 5V y llegan 12 V a la ESP32. El pin IN+ va del lado del rótulo IN+.
+- **Recomendación:** soldar A7 y A8 directo sobre sus pines macho (con el espaciador de plástico, que deja lugar a los puentes W1, W2, W4 y W7 de abajo) en lugar de enchufarlos, y enfundar esos puentes con termocontraíble. Lo decide Matías: se desvía de DEC-13.
+- **Q1:** la aleta del TO-220 es el drenador y queda con tensión de batería. El disipador no puede tocar el chasis, o va con mica y buje aislante (SUP-20).
+
 ### Orden del cable J20 (SUP-72)
 
 Pin n a pin n con la placa de lógica:
@@ -68,7 +77,7 @@ Pin n a pin n con la placa de lógica:
 4. **Montar** en este orden:
    1. Puentes W1–W7 (alambre estañado de 0,6 mm; W3 y W7 de 15,5 mm).
    2. Resistencias y diodos.
-   3. Zócalos de los módulos.
+   3. Zócalos de los módulos (A7 y A8: zócalo o soldados directo según SUP-80, siempre con VCC e IN+ del lado de su rótulo).
    4. Portafusibles, Q1, electrolíticos.
    5. Borneras e IDC.
 5. **Comprobar antes de enchufar los módulos:**
@@ -76,6 +85,7 @@ Pin n a pin n con la placa de lógica:
    - Continuidad de cada puente.
    - Que J20.13/14 lleguen al cátodo de D2.
    - Que los tres GND de los INA (A5.2, A6.2, A7.7) estén unidos al GND general.
+6. **Con A7 y A8 puestos y la placa de lógica todavía desconectada:** alimentar con fuente limitada a 0,5 A y medir J20.13 (5V_MCU, entre 4,5 y 5,2 V) y J20.9 sin tensión. Si J20.13 da más de 5,5 V, A8 está girado; si J20.9 tiene tensión, A7 está girado. En los dos casos, corregir antes de conectar el cable.
 
 ## Pendiente y riesgos
 

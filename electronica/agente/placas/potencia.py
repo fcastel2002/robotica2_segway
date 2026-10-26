@@ -188,7 +188,20 @@ SIN_RELLENO = [[(67.5, 32.5), (72.5, 32.5), (72.5, 38.6), (67.5, 38.6)],
 ANCHOS_RUTEO = {"GND": 1200, "LOGICA": 1200, "kicad_default": 1000, "MOTOR": 2000, "SERVO": 3500}
 RUTEAR = True
 
-ROTULOS = [("POTENCIA v0.1", (135.50, 90.00), 2.0), ("LADO COBRE", (135.50, 94.50), 2.0)]
+ROTULOS = [("POTENCIA v0.1", (135.50, 90.00), 2.0), ("LADO COBRE", (135.50, 94.50), 2.0),
+    # Rótulos de conectores y fusibles (SUP-14), ubicados con ubicar_rotulos.py
+    ("BAT", (140.50, 74.54), 2.0, 90),
+    ("SW", (145.00, 15.44), 2.0, 0),
+    ("M IZQ", (54.73, 11.12), 2.0, 90),
+    ("M DER", (6.73, 13.12), 2.0, 90),     # sin "+": quedaba junto a la pata negativa de C5
+    ("+", (123.88, 104.50), 2.0, 0), ("-", (109.30, 104.50), 2.0, 0), ("UBEC IN", (104.34, 100.00), 2.0, 0),
+    ("+", (27.86, 100.00), 2.0, 90), ("-", (18.86, 104.50), 2.0, 0), ("UBEC 6V", (14.61, 101.00), 2.0, 90),
+    ("SERVO DER", (33.60, 88.50), 2.0, 0),
+    ("VOLT", (59.54, 88.00), 2.0, 0), ("-", (145.50, 73.58), 2.0, 0), ("-", (66.54, 80.00), 2.0, 0),
+    ("VCC", (75.51, 43.26), 2.0, 90), ("IN+", (86.00, 71.50), 2.0, 90),     # A7 y A8 entran invertidos (ELE-039)
+    ("15A", (145.33, 46.46), 2.0, 90), ("4A", (119.04, 9.58), 2.0, 0), ("4A", (108.04, 33.13), 2.0, 0),
+    ("1A", (108.04, 38.79), 2.0, 0), ("7,5A", (126.80, 81.96), 2.0, 90),
+]
 ESCALA = None
 
 # Electrolíticos de los DRV (paso 2,5 mm): las pistas que salen de un pad quedan a 0,6 mm del otro, igual
@@ -234,3 +247,20 @@ SEVERIDADES = {"pth_inside_courtyard": "warning"}
 NETS_FIJAS = ["5V", "5V_MCU", "VM_LOG", "VM_LOG_F", "I2C_SDA", "I2C_SCL", "3V3_MCU", "INA_ALERT",
               "SERVO_IZQ_MCU", "SERVO_DER_MCU", "SERVO_IZQ_SIG", "SERVO_DER_SIG",
               "IN1_IZQ_MCU", "IN2_IZQ_MCU", "IN1_IZQ", "IN2_IZQ", "VBAT_ADC"]
+
+# Rótulos de cobre pedidos (SUP-14): ubicar_rotulos.py busca el lugar y el resultado va a ROTULOS.
+# (texto, ancla, alto, radio de búsqueda): con "REF.PAD" el rótulo marca ese pin.
+ROTULOS_PEDIDOS = [
+    ("+", "J1.2", 2.0, 7), ("-", "J1.1", 2.0, 7), ("BAT", "J1", 2.0, 16),
+    ("SW", "J3", 2.0, 16),
+    ("+", "J11.1", 2.0, 7), ("M IZQ", "J11", 2.0, 16),
+    ("M DER", "J12", 2.0, 16),
+    ("+", "J15.2", 2.0, 7), ("-", "J15.1", 2.0, 7), ("UBEC IN", "J15", 2.0, 16),
+    ("+", "J16.2", 2.0, 7), ("-", "J16.1", 2.0, 7), ("UBEC 6V", "J16", 2.0, 16),
+    ("S", "J13.3", 2.0, 7), ("-", "J13.1", 2.0, 7), ("SERVO IZQ", "J13", 2.0, 16),
+    ("S", "J14.3", 2.0, 7), ("-", "J14.1", 2.0, 7), ("SERVO DER", "J14", 2.0, 16),
+    ("-", "J18.1", 2.0, 7), ("VOLT", "J18", 2.0, 16),
+    ("1", "J20.1", 2.0, 7),
+    ("VCC", "A7.8", 2.0, 7), ("IN+", "A8.1", 2.0, 7),     # orientación de los módulos que entran invertidos
+    ("15A", "F1", 2.0, 16), ("4A", "F2", 2.0, 16), ("4A", "F3", 2.0, 16), ("1A", "F5", 2.0, 16), ("7,5A", "F4", 2.0, 16),
+]

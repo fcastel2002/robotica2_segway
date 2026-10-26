@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
-		(date "2026-10-20T13:51:37")
+		(date "2026-10-26T14:11:26")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ec9401c1-ab99-4301-87ec-580f0894a244")
+			(tstamps "ece5e7a3-7492-4576-8595-85d0bcf35b7b")
 			(units
 				(unit
 					(name "A")
@@ -173,7 +173,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fb0c1a6d-5e84-463b-84d0-14f93340e857")
+			(tstamps "cb545d0a-5038-4198-84ae-196bf295d9f3")
 			(units
 				(unit
 					(name "A")
@@ -249,7 +249,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9e4c56f9-49f5-42da-8c8d-e296a1cb0b92")
+			(tstamps "c3e8d8a7-7e25-4652-a939-6b2295eade19")
 			(units
 				(unit
 					(name "A")
@@ -325,7 +325,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d57d5c21-eb76-4d59-b4a7-24c2d28a5c8d")
+			(tstamps "38699cb8-bd88-4d7a-a12f-26e305a6283d")
 			(units
 				(unit
 					(name "A")
@@ -365,7 +365,7 @@
 			(description "ROB-009. Modulo INA226 de 8 pines tipo CJMCU-226 (shunt R100 [H]). Orden IN+, IN-, VBS, ALE, SCL, SDA, GND, VCC leido de la captura de compra [V]. A0/A1 no expuestos: direccion de fabrica 0x40 [H]. ALE = ALERT open-drain [H por rotulo]. Pinout PENDIENTE de E-01. Una tira 1x08 admite insercion invertida (n -> 9-n: VM_LOG_F sobre VCC, 6 V abs.): tope mecanico en la huella. Huella v0.4: segway_modulos:ROB-009_INA226_modulo_8p con NPTH de 3,2 mm para un tornillo M3x16 del lado opuesto al cuerpo (SUP-35, SUP-38).")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_PER y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de PB13 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67)")
+					(name "Estado") "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_MCU y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de GPIO8 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67) | v0.6: sin el tope NPTH (caía sobre el bus I2C, SUP-75): se puede enchufar invertido. Rótulo VCC en el cobre junto al pin 8; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
 				(field
 					(name "Fuente") "[CAP]/ROB-009_INA226/referencia_compra.png [V]; [DS-226] p.3, p.5, p.15, p.18 Tabla 6-2, p.26-28; [ENERGIA] §5.1 (R100 solo apto para lógica); [DS-226] p.4 §5.1 (VS 6 V abs.)")
 				(field
@@ -383,7 +383,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_PER y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de PB13 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67)")
+				(value "provisorio [H] (orden [V]; dirección de fábrica 0x40 [H], sujeta a aprobar el cambio del contrato §4.1; ubicación en la rama lógica = propuesta [H] que se desvía de [ENERGIA] §5.2 (INA226 en el bus), pendiente de Matías, REQ-14; unión VBS-IN− interna pendiente E-01; la 1x08 no tiene pin libre para codificar: invertido lleva VM_LOG_F a VCC (6 V abs.) y deja el shunt entre 3V3_MCU y GND, así que la huella lleva un tope mecánico contra el cuerpo invertido y el contorno serigrafiado) | v0.4: huella segway_modulos:ROB-009_INA226_modulo_8p con tope NPTH de 3,2 mm (M3x16) contra la inserción invertida; ALERT con pull-up interna de GPIO8 (R21 eliminada, SUP-71); JP8 eliminado (SUP-67) | v0.6: sin el tope NPTH (caía sobre el bus I2C, SUP-75): se puede enchufar invertido. Rótulo VCC en el cobre junto al pin 8; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
 			)
 			(property
 				(name "Fuente")
@@ -401,7 +401,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5d44abf1-e370-4918-9e79-04f01f964628")
+			(tstamps "42091fcc-bce3-4296-b14c-275f8fa6d664")
 			(units
 				(unit
 					(name "A")
@@ -441,7 +441,7 @@
 			(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
 			(fields
 				(field
-					(name "Estado") "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69)")
+					(name "Estado") "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
 				(field
 					(name "Fuente") "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)")
 				(field
@@ -459,7 +459,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69)")
+				(value "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
 			)
 			(property
 				(name "Fuente")
@@ -477,7 +477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "34cfba84-1cca-438c-a18f-15c22ae97a1e")
+			(tstamps "b6efad67-d8a0-423e-92f7-33f2e0a567c9")
 			(units
 				(unit
 					(name "A")
@@ -549,7 +549,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "661a1666-2768-4947-8d36-7f52a41ff65a")
+			(tstamps "4ea7dd7e-86b4-48db-ab01-b49ee14b2242")
 			(units
 				(unit
 					(name "A")
@@ -615,7 +615,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e48c38ad-42b3-4343-8a42-aa79fba44258")
+			(tstamps "ecb37fe1-dba3-42b8-935c-7448e33d9653")
 			(units
 				(unit
 					(name "A")
@@ -681,7 +681,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "59a4d37a-835f-46cc-a32e-46ccdf9ffa3e")
+			(tstamps "73d9d696-820b-40b6-84d1-7c77466fe766")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7787fde0-97f3-498f-931f-366ebb7ae6e1")
+			(tstamps "a860f35c-d98f-4c62-bd25-61fafb18bb05")
 			(units
 				(unit
 					(name "A")
@@ -813,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "38513add-2a0f-43f8-ba32-f8fe76a13ef4")
+			(tstamps "40a4fdaf-12cf-43c2-ab95-af77c3a98c82")
 			(units
 				(unit
 					(name "A")
@@ -879,7 +879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6e259b7e-2e55-40f6-bcbe-c8511cf3b8f2")
+			(tstamps "7ff32d0a-b5dc-4614-bc57-48f6792b7d57")
 			(units
 				(unit
 					(name "A")
@@ -903,7 +903,7 @@
 				(field
 					(name "Estado") "provisorio [H] | v0.4: THT: disco P5,00 en lugar de 0805")
 				(field
-					(name "Fuente") "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
 				(field
@@ -923,7 +923,7 @@
 			)
 			(property
 				(name "Fuente")
-				(value "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -945,7 +945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fc9aaf93-57bf-42e6-a147-00c649cd7626")
+			(tstamps "47f96ddd-e723-4744-bcd4-247b41aa6e4e")
 			(units
 				(unit
 					(name "A")
@@ -1011,7 +1011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "553217c3-8ad3-4dfe-8054-6ab926412730")
+			(tstamps "8a01c33a-1e83-42f2-8565-e42717d0c0d6")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "07717581-f5d2-40a2-8031-7e886045aa9d")
+			(tstamps "f36edd47-223f-41cb-8668-c5a5b76d791b")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5718c021-0eb8-46f8-8216-b2f388239a46")
+			(tstamps "f47b64b6-8b7f-47cb-bf88-d013d2857b56")
 			(units
 				(unit
 					(name "A")
@@ -1209,7 +1209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fe6af4a3-1d66-41b2-a364-7705ac7a1124")
+			(tstamps "cf4d1c94-0441-4680-a822-45308f3b72da")
 			(units
 				(unit
 					(name "A")
@@ -1275,7 +1275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "98486588-f2f0-46dd-9ca1-4c96210fb0f8")
+			(tstamps "0092d6eb-ed74-4f65-adbd-567e601f4139")
 			(units
 				(unit
 					(name "A")
@@ -1341,7 +1341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b1f04d03-23d4-400a-a162-a1763514a8dc")
+			(tstamps "48630442-cc25-448c-b336-6c373b56c3bb")
 			(units
 				(unit
 					(name "A")
@@ -1407,7 +1407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e19d5b81-0265-4abc-a190-91aba59c0170")
+			(tstamps "9f0f207d-29c5-4f8a-ac31-73f25c1ee854")
 			(units
 				(unit
 					(name "A")
@@ -1473,7 +1473,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d7e416e7-005e-4825-b520-245cb7ba6246")
+			(tstamps "9107abf4-ddea-4c5d-ab21-c601d10218f8")
 			(units
 				(unit
 					(name "A")
@@ -1495,7 +1495,7 @@
 			(description "Fuse")
 			(fields
 				(field
-					(name "Estado") "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entradas de A8/A9 (C24 eliminado, SUP-69)")
+					(name "Estado") "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entrada de A8 (C24 eliminado, SUP-69)")
 				(field
 					(name "Fuente") "[ENERGIA] §2.2 (fila Lógica); consumo de la rama ≈0,1 A [H] (§7 del documento: ≈0,55 W de cargas con rendimiento 80 % [H] a 7,5 V); [DS-226] p.5 (81,92 mV / 0,1 Ω = 0,82 A de rango del R100)")
 				(field
@@ -1513,7 +1513,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entradas de A8/A9 (C24 eliminado, SUP-69)")
+				(value "provisorio [H]: ATM de 1 A (SUP-49, propuesta 17), acota la falla de un regulador enchufado girado; verificar en E-02 que no abre con la carga de las entrada de A8 (C24 eliminado, SUP-69)")
 			)
 			(property
 				(name "Fuente")
@@ -1539,7 +1539,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d6e77ffb-8d18-4a4b-8c27-de130f7bfe42")
+			(tstamps "5d294db8-2cbe-49c4-9b2d-35b04d086fb1")
 			(units
 				(unit
 					(name "A")
@@ -1605,7 +1605,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2d2f22aa-ebab-4953-8360-f2912cc7ab40")
+			(tstamps "205a0a0d-0df1-4196-874a-e2335d02bbdb")
 			(units
 				(unit
 					(name "A")
@@ -1671,7 +1671,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dab52c56-4089-458b-83bb-8a724bbf9018")
+			(tstamps "f5333228-0376-4711-b374-8038504e9065")
 			(units
 				(unit
 					(name "A")
@@ -1737,7 +1737,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "75002424-1ea0-40ba-9014-267a9b14a797")
+			(tstamps "127280f8-56e5-40aa-ad2a-a9a8aab49c60")
 			(units
 				(unit
 					(name "A")
@@ -1803,7 +1803,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c6ceabdd-7b3f-42cb-adc4-7f3be94cd8d3")
+			(tstamps "96185cbd-1f41-44a1-99a2-225d4b30c618")
 			(units
 				(unit
 					(name "A")
@@ -1869,7 +1869,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "feabbdf3-86de-4ab5-a22d-91b6b31d0e9c")
+			(tstamps "b2f0a932-e77b-4ab2-acd5-8f67776c6ddc")
 			(units
 				(unit
 					(name "A")
@@ -1938,7 +1938,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "70915524-e9fc-4740-ab72-2ea85fde1993")
+			(tstamps "3722eaa2-ac39-4010-b041-2d143c548a9a")
 			(units
 				(unit
 					(name "A")
@@ -2007,7 +2007,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "968af3e0-8399-4c02-b909-15e0e4b4a29e")
+			(tstamps "73b4a930-81a2-448e-a36e-466ffeea9b67")
 			(units
 				(unit
 					(name "A")
@@ -2073,7 +2073,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "153adf53-940d-4cb1-8ffe-c10e76eef826")
+			(tstamps "ebee4f08-f7c0-4b70-a9cd-fee397b736cf")
 			(units
 				(unit
 					(name "A")
@@ -2139,7 +2139,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e863c620-07ef-433a-9f83-a5b1bfb4ad21")
+			(tstamps "fbf92c0d-4207-4ee1-9601-959cbe29b9b3")
 			(units
 				(unit
 					(name "A")
@@ -2208,7 +2208,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "eed3eebd-d2b8-4f04-a2bc-82e1c057e8e8")
+			(tstamps "8d1bdf54-df5a-433b-b4aa-e6fe8fb6177d")
 			(units
 				(unit
 					(name "A")
@@ -2316,7 +2316,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "507f2fee-739c-4b41-bb46-82e4ea3921ea")
+			(tstamps "60828961-714e-4232-b347-1f44fee3a807")
 			(units
 				(unit
 					(name "A")
@@ -2343,7 +2343,7 @@
 				(field
 					(name "Estado") "provisorio [H] (lado MCU de R35; 2,2 kΩ cubre un pull-up interno de 30 kΩ: 0,22 V < VIL; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
-					(name "Fuente") "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -2363,7 +2363,7 @@
 			)
 			(property
 				(name "Fuente")
-				(value "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -2385,7 +2385,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "84dbe1d7-add3-4bfc-9462-cd690e2c86ae")
+			(tstamps "100139bf-f7e8-42dd-ab46-be92ff85f8a2")
 			(units
 				(unit
 					(name "A")
@@ -2451,7 +2451,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d80e7d9d-ba0b-4b08-b3e1-cb336db43080")
+			(tstamps "1130e3d0-a274-4670-a10f-676103aa5fa7")
 			(units
 				(unit
 					(name "A")
@@ -2517,7 +2517,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "200107df-9aed-47fa-b238-0a81b0693627")
+			(tstamps "3d3411ad-66a7-40ba-ab4c-f74e906e4d68")
 			(units
 				(unit
 					(name "A")
@@ -2583,7 +2583,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "14debda7-c81a-4976-b796-6e1cd1845511")
+			(tstamps "de9857e6-a7b9-4fa3-a9c9-3fb354119ffa")
 			(units
 				(unit
 					(name "A")
@@ -2607,7 +2607,7 @@
 				(field
 					(name "Estado") "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
-					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -2627,7 +2627,7 @@
 			)
 			(property
 				(name "Fuente")
-				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -2649,7 +2649,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "59815820-6fa8-4c47-8b85-32053c51482e")
+			(tstamps "88b3919a-3d38-4ac4-974c-eaa75474e1eb")
 			(units
 				(unit
 					(name "A")
@@ -2673,7 +2673,7 @@
 				(field
 					(name "Estado") "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
-					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -2693,7 +2693,7 @@
 			)
 			(property
 				(name "Fuente")
-				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -2715,7 +2715,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d82b461a-7e8b-4edd-8108-012d0998b099")
+			(tstamps "a2cd8e0f-76a1-4c6b-b82f-c82ae4bf8914")
 			(units
 				(unit
 					(name "A")
@@ -2739,7 +2739,7 @@
 				(field
 					(name "Estado") "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
-					(name "Fuente") "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -2759,7 +2759,7 @@
 			)
 			(property
 				(name "Fuente")
-				(value "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -2781,7 +2781,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a3a7564e-06ed-4fbf-821d-ef93bfdb8710")
+			(tstamps "f4006ddb-6c9a-4c31-8ccf-407611b62c8e")
 			(units
 				(unit
 					(name "A")
@@ -2805,7 +2805,7 @@
 				(field
 					(name "Estado") "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
-					(name "Fuente") "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -2825,7 +2825,7 @@
 			)
 			(property
 				(name "Fuente")
-				(value "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -2847,7 +2847,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2b90cc6e-29c1-439e-b232-7110d971f655")
+			(tstamps "2c23fbd8-9c28-4d8a-975c-174dc5746d02")
 			(units
 				(unit
 					(name "A")
@@ -2871,7 +2871,7 @@
 				(field
 					(name "Estado") "provisorio [H] (química del pack pendiente; muestrear con ≥ 28,5 ciclos) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
-					(name "Fuente") "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -2891,7 +2891,7 @@
 			)
 			(property
 				(name "Fuente")
-				(value "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -2913,7 +2913,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c63e975f-309b-4d2a-af51-174fa8e1188c")
+			(tstamps "8e5e53c8-5d7e-4492-b099-c7cc5f36a596")
 			(units
 				(unit
 					(name "A")
@@ -2979,7 +2979,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "27ee938b-b151-4d3c-a926-56db30ec7cdf")
+			(tstamps "c6bd1a22-9c84-4e9e-8251-2f382faa8c15")
 			(units
 				(unit
 					(name "A")
@@ -3045,7 +3045,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "817e2771-a586-473d-8871-29e229226171")
+			(tstamps "9f55a302-1ea2-4eb9-b83d-57feda87f4ad")
 			(units
 				(unit
 					(name "A")
@@ -3111,7 +3111,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ac5714af-4273-41c2-aa29-74c104c6dd0a")
+			(tstamps "c9815297-6d7d-4463-aa12-e6920aba994d")
 			(units
 				(unit
 					(name "A")
@@ -3133,9 +3133,9 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (nueva, a ratificar: protege PA6 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+					(name "Estado") "provisorio [H] (nueva, a ratificar: protege GPIO14 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
-					(name "Fuente") "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+					(name "Fuente") "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
 					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
 				(field
@@ -3151,11 +3151,11 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (nueva, a ratificar: protege PA6 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(value "provisorio [H] (nueva, a ratificar: protege GPIO14 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 			)
 			(property
 				(name "Fuente")
-				(value "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
+				(value "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 			)
 			(property
 				(name "Sheetname")
@@ -3177,7 +3177,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0079cd48-2610-4d9a-ab28-2ec2d3059cf4")
+			(tstamps "21d2efb8-38a3-4648-a38e-81cd33979e4b")
 			(units
 				(unit
 					(name "A")
@@ -3199,7 +3199,7 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (nueva; protege PA7) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+					(name "Estado") "provisorio [H] (nueva; protege GPIO13) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
 					(name "Fuente") "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
 				(field
@@ -3217,7 +3217,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (nueva; protege PA7) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(value "provisorio [H] (nueva; protege GPIO13) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 			)
 			(property
 				(name "Fuente")
@@ -3243,7 +3243,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4bb49d9f-c760-46eb-84d8-579aaf8ec162")
+			(tstamps "0286d93c-6a2a-4a47-983c-303ba8fe3926")
 			(units
 				(unit
 					(name "A")
@@ -3265,7 +3265,7 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (nueva; protege PB0) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+					(name "Estado") "provisorio [H] (nueva; protege GPIO12) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
 					(name "Fuente") "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
 				(field
@@ -3283,7 +3283,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (nueva; protege PB0) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(value "provisorio [H] (nueva; protege GPIO12) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 			)
 			(property
 				(name "Fuente")
@@ -3309,7 +3309,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5a261652-1bd4-4c72-8e33-8baa64540c3d")
+			(tstamps "ccd4e8ee-2cb0-44a8-90c3-ed4e7c48c8b5")
 			(units
 				(unit
 					(name "A")
@@ -3331,7 +3331,7 @@
 			(description "Resistor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (nueva; protege PB1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+					(name "Estado") "provisorio [H] (nueva; protege GPIO11) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 				(field
 					(name "Fuente") "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
 				(field
@@ -3349,7 +3349,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (nueva; protege PB1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
+				(value "provisorio [H] (nueva; protege GPIO11) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
 			)
 			(property
 				(name "Fuente")
@@ -3375,7 +3375,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b1bb6648-2b3a-4f24-99ba-5460ed96125a")
+			(tstamps "b25441dd-353f-4a77-8fc5-f3b9a5b245a0")
 			(units
 				(unit
 					(name "A")

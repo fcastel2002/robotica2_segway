@@ -140,16 +140,44 @@ def placa(nombre, refs):
                             "expansion": f"J24.{i}" if i <= 22 else f"J25.{i - 22}",
                             "justification": FUNCION.get(red.get(str(i)), "") + ("; pin asignado por geometría (DEC-17)" if red.get(str(i)) in PINES_A1 else "")}
                            for i, g in enumerate(GPIO_PIN, start=1)]
-    s["cable_J20"] = CABLE
     # J20.11 sin conexión en las dos placas: en la potencia queda encerrado por el bus I2C y en la lógica
     # por el 5V de J26 (ELE-037). El retorno de GND usa J20.15 y J20.16.
     for n in s["nets"]:
         if n["name"] == "GND":
             n["pins"] = [p for p in n["pins"] if p != "J20.11"]
     s["no_connect"].append("J20.11")
+    s["cable_J20"] = dict(CABLE, **{"11": "sin conexión"})
     if nombre == "logica":
         expansion(s)
+    textos_esp32(s)
     return s
+
+
+# Textos heredados de la Blue Pill (ELE-039): los pines PAx/PBx de la v0.3 pasan a los GPIO de la ESP32-S3 y se
+# marca como histórica la justificación basada en el datasheet del STM32. Las nets y los valores no cambian.
+REEMPLAZOS = [("3V3_PER", "3V3_MCU"), ("PB12", "GPIO6"), ("pull-up interna de PB13", "pull-up interna de GPIO8"),
+              ("entradas de A8/A9", "entrada de A8"), ("protege PA6", "protege GPIO14"), ("protege PA7", "protege GPIO13"),
+              ("protege PB0", "protege GPIO12"), ("protege PB1", "protege GPIO11")]
+ESTADO_V06 = {
+    "A7": " | v0.6: sin el tope NPTH (caía sobre el bus I2C, SUP-75): se puede enchufar invertido. Rótulo VCC en el cobre "
+          "junto al pin 8; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)",
+    "A8": " | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; "
+          "si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)",
+}
+NOTA_STM32 = " | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)"
+
+
+def textos_esp32(s):
+    for c in s["components"]:
+        for k in ("value", "source", "status"):
+            v = c.get(k, "")
+            for a, b in REEMPLAZOS:
+                v = v.replace(a, b)
+            c[k] = v
+        if c["ref"] in ESTADO_V06:
+            c["status"] += ESTADO_V06[c["ref"]]
+        if "[DS-STM32]" in c.get("source", "") or "[RM0008]" in c.get("source", ""):
+            c["source"] += NOTA_STM32
 
 
 # Expansión (ELE-037): tiras hembra en paralelo a cada hilera de A1 (pin n de la tira = pin de A1 de al lado)
@@ -163,12 +191,13 @@ EXPANSION = [
      "footprint": "segway_modulos:Zocalo_expansion_der_1x22_P2.54mm", "block": "conectores", "dnp": False,
      "source": "Pedido del equipo del 26/10/2026 [M]: pines hembra en paralelo a la controladora para sensores futuros",
      "status": "provisorio [H]: tira hembra 1x22 junto a la hilera derecha de A1 (SUP-78)", "supuestos": ["SUP-78"]},
-    {"ref": "J26", "lib_id": "Connector_Generic:Conn_01x06", "value": "Alim. sensores 1-2 GND 3-4 3V3 5-6 5V",
+    {"ref": "J26", "lib_id": "Connector_Generic:Conn_01x06", "value": "Alim. sensores 1-2 3V3 3-4 GND 5-6 5V",
      "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x06_P2.54mm_Vertical", "block": "conectores", "dnp": False,
      "source": "Pedido del equipo del 26/10/2026 [M]; presupuesto de corriente en SUP-79 [H]",
      "status": "provisorio [H]: tira hembra 1x06 de alimentación para la expansión (SUP-79)", "supuestos": ["SUP-79"]},
 ]
-J26 = {"1": "GND", "2": "GND", "3": "3V3_MCU", "4": "3V3_MCU", "5": "5V_MCU", "6": "5V_MCU"}
+# GND en el medio: un sensor de 3,3 V corrido un pin no queda en 5 V (revisión independiente, ELE-039)
+J26 = {"1": "3V3_MCU", "2": "3V3_MCU", "3": "GND", "4": "GND", "5": "5V_MCU", "6": "5V_MCU"}
 
 
 def expansion(s):
@@ -204,7 +233,7 @@ def main():
         (d / "especificacion_v0.6.json").write_text(json.dumps(s, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"{nombre}: {len(s['components'])} componentes, {len(s['nets'])} nets")
     tabla = {"cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
-             "conector": J20["footprint"], "pines": CABLE,
+             "conector": J20["footprint"], "pines": dict(CABLE, **{"11": "sin conexión"}),
              "corriente": "5V_MCU en 2 hilos (ESP32-S3 con Wi-Fi y la expansión J26, ≤1 A por D2); GND en 2 hilos (15 y 16); pin 11 sin conexión en ambas placas; resto señales",
              "pines_A1": {k: {"pin": v[0], "gpio": v[1]} for k, v in PINES_A1.items()}}
     (CAD / "interconexion_v0.6.json").write_text(json.dumps(tabla, ensure_ascii=False, indent=1), encoding="utf-8")
