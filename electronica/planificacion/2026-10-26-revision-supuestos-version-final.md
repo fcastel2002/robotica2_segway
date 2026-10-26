@@ -43,6 +43,8 @@ La lista de componentes, el esquema y el mapa de pines **no cambian** en ningún
 
 ## 2. Decisiones del equipo
 
+Versión en limpio para llevar a la reunión: [decisiones del equipo](2026-10-26-decisiones-del-equipo.md).
+
 | ID | Tema | Qué asumí | Qué hace falta |
 |---|---|---|---|
 | SUP-33 | Segundo DRV8871 | Un segundo módulo igual a A3 para el motor derecho. Hoy hay **uno solo** comprado | Confirmar la compra |
