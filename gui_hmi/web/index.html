@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Segway · telemetría</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <header>
+    <h1>Segway · telemetría</h1>
+    <div class="controles">
+      <select id="fuente" title="De dónde vienen los datos">
+        <option value="puente">Puente (WiFi o simulado)</option>
+        <option value="usb">USB directo</option>
+      </select>
+      <select id="baudios" title="Velocidad del puerto USB: igual que Serial.begin() del ESP32" hidden>
+        <option>115200</option>
+        <option>230400</option>
+        <option>460800</option>
+        <option>921600</option>
+      </select>
+      <button id="conectar">Conectar</button>
+      <span id="estado" class="estado">desconectado</span>
+      <span class="relleno"></span>
+      <label>Ventana
+        <select id="ventana">
+          <option value="5">5 s</option>
+          <option value="10" selected>10 s</option>
+          <option value="30">30 s</option>
+          <option value="60">60 s</option>
+        </select>
+      </label>
+      <button id="pausa" title="Congela los gráficos; los datos y la grabación siguen">Pausar</button>
+      <button id="grabar" title="Guarda todo lo que llega en un CSV">Grabar CSV</button>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <table id="variables">
+        <thead><tr><th></th><th>Variable</th><th>Valor</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p id="sin-datos" class="tenue">Esperando datos…</p>
+    </aside>
+    <section id="graficos"></section>
+  </main>
+
+  <details id="mensajes">
+    <summary>Mensajes del robot <span id="n-mensajes" class="tenue"></span></summary>
+    <pre id="consola"></pre>
+  </details>
+
+  <script src="app.js"></script>
+</body>
+</html>
