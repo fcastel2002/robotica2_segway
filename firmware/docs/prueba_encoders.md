@@ -8,8 +8,8 @@ queda en `FAULT`, pero la telemetría y los encoders andan igual.
 
 | Señal | GPIO | Notas |
 |---|---|---|
-| Encoder izquierdo A / B | 11 / 12 | |
-| Encoder derecho A / B | 13 / 14 | |
+| Encoder izquierdo A / B | 13 / 14 | Cruzados respecto del plan original: medido con los motores el 29/10 |
+| Encoder derecho A / B | 11 / 12 | |
 | Alimentación de los encoders | 3,3 V y GND del ESP32 | **No 5 V**: las salidas suben a la tensión de alimentación y los GPIO no toleran 5 V |
 
 El firmware activa los pull-ups internos de A y B, así que también funcionan encoders con salida a

@@ -33,10 +33,12 @@
 
 // Encoders de cuadratura de las ruedas (hall del motor, alimentados a 3,3 V: las salidas
 // no pueden subir a 5 V, los GPIO del ESP32 no lo toleran)
-#define PIN_ENC_L_A         11
-#define PIN_ENC_L_B         12
-#define PIN_ENC_R_A         13
-#define PIN_ENC_R_B         14
+// 29/10: medido con los motores (el motor izquierdo movía las cuentas de 13/14 y el derecho las
+// de 11/12): el encoder izquierdo está cableado en 13/14 y el derecho en 11/12
+#define PIN_ENC_L_A         13
+#define PIN_ENC_L_B         14
+#define PIN_ENC_R_A         11
+#define PIN_ENC_R_B         12
 
 // Reservados para versiones posteriores (no se configuran en la v0.1)
 #define PIN_BATT_ADC        1       // debe ser ADC1 (GPIO1-10) para convivir con WiFi

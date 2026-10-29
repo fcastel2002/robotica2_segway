@@ -11,6 +11,7 @@
 #include "esp_check.h"
 
 #include "board_config.h"
+#include "imu_mpu6050.h"
 #include "messages.h"
 
 #define RAD2DEG     57.29578f
@@ -21,7 +22,8 @@
 // Desde m_l, columnas del banco de pruebas: ~120 caracteres por línea a 50 Hz, la mitad de
 // lo que entra a 115200 baudios.
 #define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r," \
-                    "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps\n"
+                    "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps," \
+                    "x_mm,v_mms\n"
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -33,6 +35,8 @@ static comms_ctx_t s_ctx;
 static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_KP] = "kp", [PARAM_KI] = "ki", [PARAM_KD] = "kd",
     [PARAM_REF] = "ref", [PARAM_UMAX] = "umax", [PARAM_DEADBAND] = "deadband",
+    [PARAM_LQR] = "lqr", [PARAM_KX] = "kx", [PARAM_KV] = "kv", [PARAM_KPHI] = "kphi",
+    [PARAM_KW] = "kw", [PARAM_NOTCH] = "notch",
 };
 
 static void print_help(void)
@@ -40,7 +44,7 @@ static void print_help(void)
     printf("# comandos: arm | disarm | set <param> <valor> | servo [l|r] <grados> | get\n"
            "#           cal | tlm on | tlm off | enc reset | help\n"
            "#           servo [l|r] off|on | servo lim l|r <min> <max> | motor [l|r] <-100..100> | motor stop\n"
-           "# param: kp ki kd ref(grados) umax deadband\n"
+           "# param: kp ki kd ref(grados) umax deadband | lqr (0 PID, 1 LQR; vale al armar) kx kv kphi kw\n"
            "# servo: grados dentro de sus límites (get los muestra); sin l/r mueve los dos; off suelta, on agarra\n"
            "# servo lim: límites en vivo, entre %.0f y %.0f; se pierden al reiniciar (copiarlos a board_config.h)\n"
            "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n",
@@ -53,6 +57,11 @@ static void print_params(const telemetry_t *t)
     printf("# kp=%.4f ki=%.4f kd=%.4f ref=%.2f umax=%.2f deadband=%.3f\n",
            p->gains.kp, p->gains.ki, p->gains.kd, p->theta_ref * RAD2DEG,
            p->u_max, p->deadband);
+    printf("# lqr=%d kx=%.3f kv=%.3f kphi=%.3f kw=%.3f notch=%.1f\n", p->use_lqr ? 1 : 0,
+           p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, p->notch_hz);
+    imu_stats_t e = imu_stats();
+    printf("# imu fallas: i2c=%lu cero=%lu baja=%lu\n", (unsigned long)e.i2c_errors,
+           (unsigned long)e.zero_reads, (unsigned long)e.low_reads);
     printf("# servo l=%.1f r=%.1f lim_l=%.1f..%.1f lim_r=%.1f..%.1f\n",
            t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT],
            t->servo_lim[SERVO_LEFT][0], t->servo_lim[SERVO_LEFT][1],
@@ -256,14 +265,15 @@ static void comms_task(void *arg)
             float servo_l = last.servo_free[SERVO_LEFT] ? NAN : last.servo_deg[SERVO_LEFT];
             float servo_r = last.servo_free[SERVO_RIGHT] ? NAN : last.servo_deg[SERVO_RIGHT];
             printf("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld,"
-                   "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f\n",
+                   "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%.1f,%.0f\n",
                    (unsigned long)last.t_ms, supervisor_state_name(last.state),
                    last.theta * RAD2DEG, last.theta_rate * RAD2DEG, last.u,
                    (unsigned long)last.loop_us_max, (unsigned long)last.overruns,
                    (long)last.enc[ENC_LEFT], (long)last.enc[ENC_RIGHT],
                    last.motor_cmd[MOTOR_LEFT], last.motor_cmd[MOTOR_RIGHT], servo_l, servo_r,
                    last.accel[0], last.accel[1], last.accel[2],
-                   last.gyro[0] * RAD2DEG, last.gyro[1] * RAD2DEG, last.gyro[2] * RAD2DEG);
+                   last.gyro[0] * RAD2DEG, last.gyro[1] * RAD2DEG, last.gyro[2] * RAD2DEG,
+                   last.x * 1e3f, last.v * 1e3f);
         }
         fflush(stdout);
     }

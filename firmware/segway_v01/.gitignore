@@ -1,2 +1,5 @@
 test_control
 test_control.exe
+banco_lqr
+banco_lqr.exe
+test_host/banco_lqr.csv

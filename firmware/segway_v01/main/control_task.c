@@ -12,6 +12,7 @@
 #include "imu_mpu6050.h"
 #include "messages.h"
 #include "motor.h"
+#include "odometry.h"
 #include "servo.h"
 #include "supervisor.h"
 
@@ -101,6 +102,12 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
         case PARAM_REF:      p->theta_ref = c->value * DEG2RAD; break;
         case PARAM_UMAX:     p->u_max = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
         case PARAM_DEADBAND: p->deadband = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
+        case PARAM_LQR:      p->use_lqr = c->value != 0.0f; break;     // vale desde el próximo arm
+        case PARAM_KX:       p->lqr.kx = c->value; break;
+        case PARAM_KV:       p->lqr.kv = c->value; break;
+        case PARAM_KPHI:     p->lqr.kphi = c->value; break;
+        case PARAM_KW:       p->lqr.kw = c->value; break;
+        case PARAM_NOTCH:    p->notch_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
         default: break;
         }
         break;
@@ -128,18 +135,25 @@ static void control_task(void *arg)
 
     balance_params_t params = {
         .gains     = { DEFAULT_KP, DEFAULT_KI, DEFAULT_KD },
+        .lqr       = { DEFAULT_LQR_KX, DEFAULT_LQR_KV, DEFAULT_LQR_KPHI, DEFAULT_LQR_KW },
+        .use_lqr   = DEFAULT_USE_LQR,
         .theta_ref = DEFAULT_THETA_REF_DEG * DEG2RAD,
         .u_max     = DEFAULT_U_MAX,
         .deadband  = DEFAULT_DEADBAND,
+        .notch_hz  = DEFAULT_NOTCH_HZ,
     };
     supervisor_t sup;
     attitude_t att;
     balance_t bal;
+    odometry_t odo;
     supervisor_init(&sup);
     attitude_reset(&att);
     balance_reset(&bal);
+    odometry_reset(&odo);
 
     bool calibrated = false;
+    bool lqr_activo = false;        // la ley se fija al armar: no cambia en pleno equilibrio
+    const float tau_vel = 1.0f / (6.2831853f * VEL_FILTER_HZ);    // [s]
     bool overrun = false;
     float ramp = 0.0f;              // 0..1 durante el armado
     float u = 0.0f;
@@ -200,6 +214,7 @@ static void control_task(void *arg)
             .calibrated = calibrated,
             .overrun    = overrun,
             .tilt_err   = att.theta - params.theta_ref,
+            .saturated  = sup.state == SUP_BALANCING && fabsf(u) >= 0.98f * params.u_max,
             .cmd        = cmd,
         };
         sup_state_t st = supervisor_step(&sup, &in, TILT_LIMIT_DEG * DEG2RAD,
@@ -210,16 +225,25 @@ static void control_task(void *arg)
             attitude_reset(&att);
         }
 
+        // Odometría: avance y velocidad de las ruedas respecto del piso, con x = 0 donde se
+        // armó (el LQR lo lleva de vuelta ahí). Se resetea antes de usarla en el primer ciclo.
+        if (st == SUP_BALANCING && prev != SUP_BALANCING) odometry_reset(&odo);
+        float cuentas = 0.5f * ((float)encoder_get(ENC_LEFT) + (float)encoder_get(ENC_RIGHT));
+        odometry_update(&odo, cuentas, att.theta, ENC_COUNTS_PER_REV, WHEEL_RADIUS_M, dt, tau_vel);
+
         // 4. Control y actuación. Fuera de BALANCING se apaga en cada ciclo, no solo al salir.
         float applied[MOTOR_COUNT] = { 0.0f };      // para la telemetría
         if (st == SUP_BALANCING) {
             if (prev != SUP_BALANCING) {
                 balance_reset(&bal);
                 ramp = 0.0f;
+                lqr_activo = params.use_lqr;
             }
             ramp = fminf(ramp + dt / ARM_RAMP_S, 1.0f);
             if (imu_ok) {   // con una lectura fallida aislada se mantiene el último comando
-                u = balance_step(&bal, &params, att.theta, att.rate, dt, ramp * params.u_max);
+                u = lqr_activo
+                    ? balance_lqr_step(&bal, &params, odo.x, odo.v, att.theta, att.rate, dt, ramp * params.u_max)
+                    : balance_step(&bal, &params, att.theta, att.rate, dt, ramp * params.u_max);
             }
             motor_set(MOTOR_LEFT, u);
             motor_set(MOTOR_RIGHT, u);
@@ -270,6 +294,8 @@ static void control_task(void *arg)
             .servo_lim   = { { servo_lim[SERVO_LEFT][0], servo_lim[SERVO_LEFT][1] },
                              { servo_lim[SERVO_RIGHT][0], servo_lim[SERVO_RIGHT][1] } },
             .motor_cmd   = { applied[MOTOR_LEFT], applied[MOTOR_RIGHT] },
+            .x           = odo.x,
+            .v           = odo.v,
         };
         for (int i = 0; i < 3; i++) {
             t.accel[i] = imu_ok ? s.accel[i] : NAN;

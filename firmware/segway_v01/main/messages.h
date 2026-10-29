@@ -17,6 +17,12 @@ typedef enum {
     PARAM_REF,          // en grados para el usuario, en radianes internamente
     PARAM_UMAX,
     PARAM_DEADBAND,
+    PARAM_LQR,          // 0: PID, 1: LQR
+    PARAM_KX,           // ganancias del LQR, en fracción de PWM por unidad SI
+    PARAM_KV,
+    PARAM_KPHI,
+    PARAM_KW,
+    PARAM_NOTCH,        // Hz del rechaza banda del LQR (0 = sin filtro)
     PARAM_COUNT,
 } param_id_t;
 
@@ -64,4 +70,6 @@ typedef struct {
     // sensor y con el sesgo del giróscopo. NAN si la lectura de este ciclo falló.
     float            accel[3];      // m/s²
     float            gyro[3];       // rad/s
+    float            x;             // m, avance de las ruedas desde que se armó (odometría)
+    float            v;             // m/s, filtrada
 } telemetry_t;

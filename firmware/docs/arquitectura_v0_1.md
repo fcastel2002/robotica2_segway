@@ -48,6 +48,8 @@ ESP-IDF**: es C puro, se puede compilar y probar en la PC y comparar contra la s
 | Control | `attitude` | Filtro complementario y corrección de la deriva del giróscopo | `attitude_update(&est, &imu, dt)` |
 | Control | `pid` | PID genérico con anti-windup y saturación | `pid_update(&pid, error, rate, dt)` |
 | Control | `balance` | Arma el comando: error de ángulo, derivada con el giróscopo y zona muerta del motor | `balance_step(&ctrl, &est) → u` |
+| Control | `balance` (LQR, 29/10) | Los cuatro estados: `u = kx·x + kv·v + kphi·(θ − ref) + kw·ω`, con la misma zona muerta; se elige con `set lqr 1` | `balance_lqr_step(&p, x, v, θ, ω, límite) → u` |
+| Control | `odometry` (29/10) | Avance y velocidad respecto del piso desde los encoders: suma la inclinación, porque el encoder mide la rueda respecto del cuerpo | `odometry_update(&o, cuentas, θ, …)` |
 | Aplicación | `supervisor` | Máquina de estados y reglas de seguridad | `supervisor_step(&sup, &est, cmd)` |
 | Aplicación | `messages.h` | Mensajes entre tareas; los parámetros ajustables son `balance_params_t` | `command_t`, `telemetry_t` |
 | Aplicación | `comms` | Envío de telemetría e interpretación de comandos de texto | — |
@@ -122,7 +124,7 @@ Reglas de seguridad de la v0.1:
 [interfaz web](../../gui_hmi/README.md) (USB directo), con Teleplot (VS Code) o con un script de Python.
 
 ```text
-t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps
+t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms
 ```
 
 Qué es cada columna: [README de `segway_v01`](../segway_v01/README.md#consola).
@@ -138,6 +140,7 @@ Qué es cada columna: [README de `segway_v01`](../segway_v01/README.md#consola).
 | `get` | Imprimir todos los parámetros actuales y la posición de los servos |
 | `tlm on` / `tlm off` | Activar o pausar la telemetría |
 | `enc reset` | Poner en cero las cuentas de los encoders |
+| `set lqr 1` / `set kx 6.1` | Equilibrar con el LQR desde el próximo `arm`; ganancias `kx`, `kv`, `kphi`, `kw` ([README](../segway_v01/README.md#lqr)) |
 
 Los parámetros vuelven a los valores de `board_config.h` al reiniciar. Cuando estén bien ajustados se
 copian ahí a mano. El guardado en NVS queda para más adelante.
@@ -154,8 +157,8 @@ Preliminar: hay que confirmarla contra la serigrafía del clon antes de cablear.
 | Motor izquierdo IN1 / IN2 / ENA | 4 / 5 / 6 | IN por MCPWM a 20 kHz; EN digital. Quitar el puente ENA del L298N |
 | Motor derecho IN3 / IN4 / ENB | 7 / 17 / 18 | Ídem; con el puente ENB puesto, `PIN_MOTOR_R_EN = -1` |
 | Falla de motores (parada de emergencia) | 21 | **Reservado**: entrada de falla del MCPWM, corte por hardware |
-| Encoder izquierdo A / B | 11 / 12 | PCNT x4, pull-up interno; solo se leen (telemetría), no entran al control |
-| Encoder derecho A / B | 13 / 14 | Ídem; prueba en [`prueba_encoders.md`](prueba_encoders.md) |
+| Encoder izquierdo A / B | 13 / 14 | PCNT x4, pull-up interno; entran al LQR por la odometría. Cableados al revés del plan: corregido en `board_pins.h` el 29/10 |
+| Encoder derecho A / B | 11 / 12 | Ídem; prueba en [`prueba_encoders.md`](prueba_encoders.md) |
 | Servo izquierdo / derecho | 15 / 16 | LEDC 50 Hz. `servo_test` usa GPIO4, que ahora es de un motor |
 | Batería (divisor resistivo) | 1 | ADC1_CH0. ADC1 funciona aunque se use WiFi |
 | Botón de armado (opcional) | 0 | Botón BOOT de la placa; se puede leer después del arranque |
@@ -213,7 +216,8 @@ Cada paso tiene una prueba concreta antes de pasar al siguiente.
 
 ## 10. Puntos abiertos
 
-- **Montaje de la IMU:** qué eje mide la inclinación y con qué signo. Se define en el paso 2.
+- **Montaje de la IMU:** qué eje mide la inclinación y con qué signo. Se define en el paso 2,
+  con la [prueba de la IMU](prueba_imu.md).
 - **L298N:** es bipolar y pierde unos 2 V, así que el motor ve ~10,5 V con la LiPo llena y `umax`
   arranca en 1,0. Conmuta lento: si calienta o pierde par con PWM bajo, bajar `MOTOR_PWM_FREQ_HZ` a
   5–10 kHz. Con EN en alto, el L298N frena en el apagado del PWM en ambos modos de decaimiento.

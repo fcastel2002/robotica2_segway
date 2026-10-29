@@ -32,11 +32,15 @@ sup_state_t supervisor_step(supervisor_t *s, const sup_input_t *in,
         if (in->calibrated) s->state = SUP_DISARMED;
         break;
     case SUP_DISARMED:
+        s->saturated = 0;
         if (in->cmd == SUP_CMD_ARM && tilt < arm_window) s->state = SUP_BALANCING;
         else if (in->cmd == SUP_CMD_CALIBRATE)           s->state = SUP_CALIBRATING;
         break;
     case SUP_BALANCING:
-        if (tilt > tilt_limit)                s->state = SUP_FALLEN;
+        // Con el comando en el tope mucho tiempo, el control no está ganando: se cayó, está en el
+        // aire (donde el LQR acelera las ruedas sin freno) o el ángulo que ve es falso
+        s->saturated = in->saturated ? s->saturated + 1 : 0;
+        if (tilt > tilt_limit || s->saturated >= SATURATION_LIMIT_CYCLES) s->state = SUP_FALLEN;
         else if (in->cmd == SUP_CMD_DISARM)   s->state = SUP_DISARMED;
         break;
     case SUP_FALLEN:

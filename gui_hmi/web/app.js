@@ -10,7 +10,7 @@ const MAX_MENSAJES = 300;
 // Columnas del CSV de firmware/segway_v01 (CSV_HEADER en main/comms_task.c). Si llega otro
 // encabezado, lo reemplaza.
 const COLUMNAS_FIRMWARE = 't_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,'
-  + 'm_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps';
+  + 'm_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms';
 const CLAVES_TIEMPO = ['t', 't_ms'];  // milisegundos del robot
 // Funciones (muestra, t, textos) llamadas con cada muestra antes de guardarla: pueden agregar
 // columnas calculadas a la muestra, que se grafican y graban como las demás (banco.js).
