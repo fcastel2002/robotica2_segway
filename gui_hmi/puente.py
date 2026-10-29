@@ -61,7 +61,7 @@ def escuchar_udp(puerto: int) -> None:
 # Columnas de firmware/segway_v01 (CSV_HEADER en main/comms_task.c)
 ENCABEZADO = ("t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,"
               "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps")
-SERVO_LIM, SERVO_DPS = (80.0, 100.0), 90.0  # board_config.h: límites provisorios y velocidad
+SERVO_LIM, SERVO_DPS = (0.0, 180.0), 90.0  # board_config.h: límites provisorios y velocidad
 
 
 def simular(frecuencia_hz: float) -> None:

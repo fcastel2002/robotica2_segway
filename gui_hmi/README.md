@@ -98,7 +98,7 @@ cada cosa a mano. Los valores se apagan si pasa más de 1 s sin datos.
 | **IMU** | Inclinación filtrada y su velocidad, con un dibujo del robot; acelerómetro (m/s²) y giróscopo (°/s) **crudos, en los ejes del sensor y con sesgo**; \|a\|, que quieto tiene que dar 9,81. `sin lectura` si falla el I²C | **Calibrar giróscopo** (`cal`, solo en `DISARMED`, dejarlo quieto 2 s) |
 | **Encoders** | Cuentas, vueltas, RPM y distancia de cada rueda | **Encoders a cero**; cargar las cuentas por vuelta (880 si el encoder es de 11 pulsos) y el radio de la rueda, que se recuerdan |
 | **Motores** | El PWM **aplicado** de verdad a cada puente H, que puede ser menos que lo pedido por `umax` | Deslizadores (ver abajo); **escalón**; **umax** |
-| **Servos de las patas** | Ángulo actual de cada servo, o `suelto` | **Ir a** un ángulo escrito (el primero, con confirmación), deslizador y pasos ±1/±5° una vez agarrado, **Soltar**, **Calibrar límites** |
+| **Servos de las patas** | Ángulo actual de cada servo, o `suelto` | Deslizador de 0 a 180°, pasos ±1/±5° una vez agarrado, **Ir a** un ángulo escrito y **Soltar** |
 | **Sistema** | Estado, tiempo encendido, muestras por segundo, ciclos excedidos y peor ciclo de control contra los 5000 µs del período | — |
 
 Para orientar la IMU (paso 2 de la puesta en marcha): inclinar el robot hacia adelante tiene que
@@ -112,20 +112,12 @@ para encontrar la zona muerta (subir el % hasta que gire) y para la curva PWM �
 ensayo E-04. Se corta al mover un deslizador, con **Parar motores**, **Desarmar**, Esc, al
 ocultar la pestaña o si el robot sale de `DISARMED`/`FAULT`.
 
-**Servos**: a diferencia de los motores, quedan donde se los deja, porque sostienen la pata. Un servo
-no informa dónde está: **suelto (al encender o después de Soltar) su posición es desconocida**, y el
-primer pulso lo hace saltar al ángulo pedido a la velocidad del servo, sin rampa. Por eso, mientras
-está suelto, su deslizador y sus pasos están bloqueados: el primer ángulo se escribe en **Ir a**, la
-página pide confirmar que es seguro para la pata y no lo manda si está fuera de los límites. Ya
-agarrado, el deslizador y los pasos −5/−1/+1/+5 lo mueven a 90 °/s como máximo. Cada servo se maneja
-por separado. Los ángulos son del servo, no de la pata.
-
-**Calibrar límites** (dentro de la tarjeta): cada servo tiene su mínimo y su máximo, provisorios en
-80–100°. Se agarra el servo, se lo acerca a un extremo con −1/+1 mirando la pata y, antes de que
-toque o fuerce, **aquí** fija ese extremo en la posición actual. Para ir más lejos se escribe un límite
-más amplio y **Aplicar** (`servo lim`, entre 0 y 180°). Los límites en vivo se pierden al reiniciar: el
-botón **Copiar** da las cuatro líneas para pegar en
-[`board_config.h`](../firmware/segway_v01/main/board_config.h) y volver a grabar.
+**Servos**: a diferencia de los motores, quedan donde se los deja, porque sostienen la pata. Se
+mueven a cualquier ángulo de 0 a 180° (del servo, no de la pata), cada uno por separado. Un servo no
+informa dónde está: **suelto (al encender o después de Soltar) su posición es desconocida** y el
+primer ángulo lo hace ir directo, a la velocidad del servo. Por eso, suelto, el deslizador manda el
+ángulo una sola vez, al soltarlo, y los pasos ±1/±5 se habilitan recién cuando está agarrado. Ya
+agarrado, se mueve a 90 °/s como máximo.
 
 Las RPM (`rpm_l`, `rpm_r`) y \|a\| (`a_ms2`) los calcula la página y se agregan a cada muestra:
 también aparecen en **Gráficos** y en el CSV grabado. Las RPM son la derivada de las cuentas en

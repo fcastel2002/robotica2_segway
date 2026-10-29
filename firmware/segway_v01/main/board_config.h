@@ -30,8 +30,8 @@
 // El L298N es lento para conmutar: si calienta mucho o pierde par con PWM bajo, bajar a 5-10 kHz.
 #define MOTOR_PWM_FREQ_HZ       20000       // inaudible
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
-#define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
-#define MOTOR_R_INVERT          0           // 29/10: con 1 las ruedas giraban al revés una de otra
+#define MOTOR_L_INVERT          1           // poner en 1 si la rueda gira al revés
+#define MOTOR_R_INVERT          1           // 29/10: con 1 las ruedas giraban al revés una de otra
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
@@ -47,13 +47,14 @@
 #define SERVO_FREQ_HZ           50
 #define SERVO_US_AT_0_DEG       500         // ficha del DS3240: 500-2500 us para 180°
 #define SERVO_US_AT_180_DEG     2500
-// Provisorios, ±10° del centro hasta medirlos (pedido de Francisco: empezar de a poco)
-#define SERVO_L_MIN_DEG         80.0f
-#define SERVO_L_MAX_DEG         100.0f
-#define SERVO_R_MIN_DEG         80.0f
-#define SERVO_R_MAX_DEG         100.0f
+// Provisorios, todo el recorrido, hasta medirlos con la calibración: 90° ya está fuera del
+// rango físico, así que un rango chico alrededor del centro no servía
+#define SERVO_L_MIN_DEG         0.0f
+#define SERVO_L_MAX_DEG         30.0f
+#define SERVO_R_MIN_DEG         0.0f
+#define SERVO_R_MAX_DEG         30.0f
 #define SERVO_HARD_MIN_DEG      0.0f        // "servo lim" no puede salir de acá
-#define SERVO_HARD_MAX_DEG      180.0f
+#define SERVO_HARD_MAX_DEG      30.0f
 #define SERVO_MAX_SPEED_DPS     90.0f       // velocidad de movimiento hacia la posición pedida
 #define SERVO_L_INVERT          0           // 1 si el servo está montado en espejo
 #define SERVO_R_INVERT          1

@@ -48,7 +48,7 @@ Prueba de los encoders a mano: [`../docs/prueba_encoders.md`](../docs/prueba_enc
 |---|---|
 | `arm` / `disarm` | Armar (solo desde DISARMED y a menos de 5° de la referencia) o desarmar |
 | `set kp 0.8` | Cambiar `kp`, `ki`, `kd`, `ref` (grados), `umax` o `deadband` en vivo |
-| `servo 100` / `servo l 100` / `servo r 80` | Mover los dos servos o uno (grados del servo, dentro de sus límites y a 90°/s). Suelto, la posición es desconocida: el primer ángulo va **directo**, sin rampa |
+| `servo 100` / `servo l 100` / `servo r 80` | Mover los dos servos o uno (grados del servo y a 90°/s; fuera de sus límites se rechaza sin moverse). Suelto, la posición es desconocida: el primer ángulo va **directo**, sin rampa |
 | `servo off` / `servo l on` | Soltar (posición desconocida desde ahí) o agarrar donde está; `on` no hace nada si la posición es desconocida |
 | `servo lim l 70 110` | Límites de un servo en vivo (0-180°); se pierden al reiniciar: copiarlos a `board_config.h` (`SERVO_L_MIN_DEG`…). Provisorios: 80-100° |
 | `cal` | Recalibrar el giróscopo sin reiniciar (solo en DISARMED; dejar quieto 2 s) |

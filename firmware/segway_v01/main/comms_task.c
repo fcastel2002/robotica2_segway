@@ -138,13 +138,19 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             printf("# error: servo [l|r] <grados|off|on>\n");
             return;
         } else {
+            // Fuera de límites se rechaza, no se recorta: recortar podría llevar la pata a una
+            // zona que tampoco es segura (p. ej. con límites provisorios todavía sin medir).
             for (int i = 0; i < SERVO_COUNT; i++) {
                 if (side != SERVO_BOTH && side != i) continue;
                 const float *lim = last->servo_lim[i];
                 if (deg < lim[0] || deg > lim[1]) {
-                    printf("# aviso: servo %s fuera de límites, se limita a %.1f-%.1f\n",
-                           i == SERVO_LEFT ? "l" : "r", lim[0], lim[1]);
+                    printf("# error: servo %s: %.1f fuera de sus límites %.1f-%.1f, no se mueve "
+                           "(cambiarlos con servo lim)\n", i == SERVO_LEFT ? "l" : "r", deg, lim[0], lim[1]);
+                    return;
                 }
+            }
+            for (int i = 0; i < SERVO_COUNT; i++) {
+                if (side != SERVO_BOTH && side != i) continue;
                 if (isnan(last->servo_deg[i])) {
                     printf("# aviso: servo %s sin posición conocida: va directo, a la velocidad del servo\n",
                            i == SERVO_LEFT ? "l" : "r");

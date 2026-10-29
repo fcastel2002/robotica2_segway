@@ -172,54 +172,27 @@
           <!-- "servo [l|r] <grados|off>": límites y velocidad los pone el firmware (board_config.h).
                Un servo suelto no tiene posición conocida: el primer ángulo se escribe (Ir a). -->
           <div class="servo" data-lado="l">
-            <label>izq <input id="servo-l" type="range" min="80" max="100" step="1" value="90" disabled><output id="objetivo-l">—</output></label>
+            <label>izq <input id="servo-l" type="range" min="0" max="180" step="1" value="90"><output id="objetivo-l">—</output></label>
             <span class="tenue">actual <output data-col="servo_l_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output></span>
             <span class="pasos"><button data-paso="l -5" disabled>−5</button><button data-paso="l -1" disabled>−1</button><button data-paso="l 1" disabled>+1</button><button data-paso="l 5" disabled>+5</button></span>
             <form class="ir-a" title="Primer ángulo de un servo suelto: va directo, a la velocidad del servo">
-              <input type="number" step="1" placeholder="°" required><button>Ir a</button>
+              <input type="number" min="0" max="180" step="1" placeholder="°" required><button>Ir a</button>
             </form>
             <button data-servo="l off" title="Sin pulsos: el servo queda sin fuerza y la posición deja de conocerse">Soltar</button>
           </div>
           <div class="servo" data-lado="r">
-            <label>der <input id="servo-r" type="range" min="80" max="100" step="1" value="90" disabled><output id="objetivo-r">—</output></label>
+            <label>der <input id="servo-r" type="range" min="0" max="180" step="1" value="90"><output id="objetivo-r">—</output></label>
             <span class="tenue">actual <output data-col="servo_r_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output></span>
             <span class="pasos"><button data-paso="r -5" disabled>−5</button><button data-paso="r -1" disabled>−1</button><button data-paso="r 1" disabled>+1</button><button data-paso="r 5" disabled>+5</button></span>
             <form class="ir-a" title="Primer ángulo de un servo suelto: va directo, a la velocidad del servo">
-              <input type="number" step="1" placeholder="°" required><button>Ir a</button>
+              <input type="number" min="0" max="180" step="1" placeholder="°" required><button>Ir a</button>
             </form>
             <button data-servo="r off" title="Sin pulsos: el servo queda sin fuerza y la posición deja de conocerse">Soltar</button>
           </div>
           <div class="acciones">
             <button data-servo="off">Soltar los dos</button>
           </div>
-          <p class="tenue">Sueltos al encender: el primer ángulo se escribe en <b>Ir a</b> y el servo va directo (tiene que ser un ángulo seguro). Agarrado, se mueve con el deslizador o los pasos a 90 °/s como máximo, sin salir de los límites. Ángulo del servo, no de la pata.</p>
-
-          <!-- "servo lim l|r <min> <max>": límites en vivo; se pierden al reiniciar la placa -->
-          <details id="calibracion" class="calibracion">
-            <summary>Calibrar límites</summary>
-            <ol class="tenue">
-              <li>Llevar el servo a un ángulo seguro con <b>Ir a</b> y acercarlo a un extremo con −1/+1, mirando la pata.</li>
-              <li>Antes de que la pata toque o fuerce: <b>aquí</b> en ese extremo (fija la posición actual).</li>
-              <li>Para ir más lejos, escribir un límite más amplio y <b>Aplicar</b>. De a poco.</li>
-              <li>Copiar las líneas a <code>board_config.h</code> y grabar: si no, se pierden al reiniciar.</li>
-            </ol>
-            <table class="limites">
-              <thead><tr><th></th><th>mínimo</th><th>máximo</th><th></th></tr></thead>
-              <tbody>
-                <tr data-lado="l"><th>izq</th>
-                  <td><input data-lim="min" type="number" min="0" max="180" step="1" value="80"><button data-fijar="min" title="El mínimo pasa a ser la posición actual">aquí</button></td>
-                  <td><input data-lim="max" type="number" min="0" max="180" step="1" value="100"><button data-fijar="max" title="El máximo pasa a ser la posición actual">aquí</button></td>
-                  <td><button data-aplicar>Aplicar</button></td></tr>
-                <tr data-lado="r"><th>der</th>
-                  <td><input data-lim="min" type="number" min="0" max="180" step="1" value="80"><button data-fijar="min" title="El mínimo pasa a ser la posición actual">aquí</button></td>
-                  <td><input data-lim="max" type="number" min="0" max="180" step="1" value="100"><button data-fijar="max" title="El máximo pasa a ser la posición actual">aquí</button></td>
-                  <td><button data-aplicar>Aplicar</button></td></tr>
-              </tbody>
-            </table>
-            <p id="lim-estado" class="tenue">Límites de la placa: sin leer todavía (Leer parámetros).</p>
-            <pre id="lim-codigo"></pre>
-            <button id="lim-copiar">Copiar para board_config.h</button>
-          </details>
+          <p class="tenue">0 a 180°, ángulo del servo. Sueltos al encender: el primer ángulo (deslizador al soltarlo, o <b>Ir a</b>) va directo; después se mueven a 90 °/s como máximo.</p>
         </fieldset>
       </article>
 

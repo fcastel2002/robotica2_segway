@@ -114,15 +114,13 @@ setInterval(() => { // 10 veces por segundo, como la tabla de app.js
 
   for (const el of document.querySelectorAll('[data-requiere-conexion]')) el.disabled = !fuente;
   if (!fuente) servoEnviado.l = servoEnviado.r = null;
-  // Suelto: deslizador y pasos bloqueados. Agarrado y sin tocar (p. ej. al conectar), el
-  // deslizador sigue al servo.
+  // Suelto: los pasos no tienen desde dónde contar. Agarrado y sin tocar (p. ej. al conectar),
+  // el deslizador sigue al servo.
   for (const lado in LADOS) {
     const suelto = !agarrado(lado);
-    $(`servo-${lado}`).disabled = suelto;
     for (const b of document.querySelectorAll(`[data-paso^="${lado} "]`)) b.disabled = suelto;
     if (suelto) {
       servoEnviado[lado] = null;
-      $(`objetivo-${lado}`).textContent = '—';
     } else if (servoEnviado[lado] === null && servoPendiente[lado] === null
                && document.activeElement !== $(`servo-${lado}`)) {
       ponerServo(lado, Math.round(ultima[`servo_${lado}_deg`]));
@@ -216,7 +214,6 @@ function ponerServo(lado, grados) {
 function mandarServo(lado) {
   clearTimeout(servoPendiente[lado]);
   servoPendiente[lado] = null;
-  if (!agarrado(lado)) return; // nunca agarrar un servo suelto desde el deslizador
   const v = Number($(`servo-${lado}`).value);
   if (v !== servoEnviado[lado]) enviar(`servo ${lado} ${v}`, true);
   servoEnviado[lado] = v;
@@ -226,7 +223,9 @@ for (const lado in LADOS) {
   const deslizador = $(`servo-${lado}`);
   deslizador.addEventListener('input', () => {
     ponerServo(lado, deslizador.value);
-    servoPendiente[lado] ??= setTimeout(() => mandarServo(lado), PERIODO_SERVO_MS);
+    // Suelto no hay rampa: mandar mientras se arrastra lo haría saltar por el camino.
+    // Se manda una vez, al soltar.
+    if (agarrado(lado)) servoPendiente[lado] ??= setTimeout(() => mandarServo(lado), PERIODO_SERVO_MS);
   });
   deslizador.addEventListener('change', () => mandarServo(lado)); // al soltar: el valor final
 }
@@ -246,13 +245,6 @@ for (const form of document.querySelectorAll('.servo .ir-a')) {
   form.onsubmit = (e) => {
     e.preventDefault();
     const v = Number(form.elements[0].value);
-    const lim = limites[lado];
-    if (lim && (v < lim[0] || v > lim[1])) {
-      mensaje(`[servo ${LADOS[lado]}] ${v}° está fuera de los límites ${lim[0]}–${lim[1]}°: no se mandó`);
-      return;
-    }
-    if (!agarrado(lado) && !confirm(`El servo ${LADOS[lado]} está suelto: va DIRECTO a ${v}°, a la `
-        + 'velocidad del servo. ¿Es un ángulo seguro para la pata?')) return;
     ponerServo(lado, v);
     servoEnviado[lado] = v;
     enviar(`servo ${lado} ${v}`);
@@ -267,76 +259,7 @@ for (const b of document.querySelectorAll('[data-servo]')) {
   };
 }
 
-// ---------- Límites de los servos ----------
-// Los vigentes en la placa llegan con "get" (# servo l=90.0 r=90.0 lim_l=80.0..100.0 lim_r=…).
-// "servo lim" los cambia en vivo; para que queden hay que copiarlos a board_config.h.
-
-const limites = { l: null, r: null };  // [mínimo, máximo] leídos de la placa
-
-alMensaje.push((texto) => {
-  const m = /lim_l=([\d.]+)\.\.([\d.]+) lim_r=([\d.]+)\.\.([\d.]+)/.exec(texto);
-  if (!m) return;
-  limites.l = [Number(m[1]), Number(m[2])];
-  limites.r = [Number(m[3]), Number(m[4])];
-  for (const lado in LADOS) {
-    const [min, max] = limites[lado];
-    const fila = document.querySelector(`.limites tr[data-lado="${lado}"]`);
-    for (const [clave, v] of [['min', min], ['max', max]]) {
-      const casilla = fila.querySelector(`[data-lim="${clave}"]`);
-      if (document.activeElement !== casilla) casilla.value = v;
-    }
-    const deslizador = $(`servo-${lado}`);
-    deslizador.min = min;
-    deslizador.max = max;
-    if (agarrado(lado)) $(`objetivo-${lado}`).textContent = `${deslizador.value}°`; // acotado solo
-  }
-  const f = (v) => `${v.toFixed(1)}f`.padEnd(15);
-  $('lim-codigo').textContent = [
-    `#define SERVO_L_MIN_DEG         ${f(limites.l[0])}`,
-    `#define SERVO_L_MAX_DEG         ${f(limites.l[1])}`,
-    `#define SERVO_R_MIN_DEG         ${f(limites.r[0])}`,
-    `#define SERVO_R_MAX_DEG         ${f(limites.r[1])}`,
-  ].map((l) => l.trimEnd()).join('\n');
-  $('lim-estado').textContent = `Límites de la placa: izq ${limites.l.join('–')}°, der ${limites.r.join('–')}°.`;
-});
-
-for (const fila of document.querySelectorAll('.limites tr[data-lado]')) {
-  const lado = fila.dataset.lado;
-  const casilla = (clave) => fila.querySelector(`[data-lim="${clave}"]`);
-  const aplicar = async () => {
-    const min = Number(casilla('min').value), max = Number(casilla('max').value);
-    if (!(min >= 0 && max <= 180 && min < max)) {
-      mensaje(`[límites] ${LADOS[lado]}: hace falta 0 ≤ mínimo < máximo ≤ 180 (${min}, ${max})`);
-      return;
-    }
-    await enviar(`servo lim ${lado} ${min} ${max}`);
-    await enviar('get'); // confirma lo que quedó y actualiza deslizadores y líneas
-  };
-  fila.querySelector('[data-aplicar]').onclick = aplicar;
-  for (const b of fila.querySelectorAll('[data-fijar]')) {
-    b.onclick = () => { // el extremo pasa a ser la posición actual del servo
-      const actual = ultima[`servo_${lado}_deg`];
-      if (!Number.isFinite(actual)) {
-        mensaje(`[límites] el servo ${LADOS[lado]} está suelto: agarrarlo y llevarlo al extremo primero`);
-        return;
-      }
-      casilla(b.dataset.fijar).value = actual;
-      aplicar();
-    };
-  }
-}
-
-$('lim-copiar').onclick = async () => {
-  const texto = $('lim-codigo').textContent;
-  if (!texto) { mensaje('[límites] todavía no se leyeron de la placa: Leer parámetros'); return; }
-  try {
-    await navigator.clipboard.writeText(texto);
-    $('lim-copiar').textContent = 'Copiado';
-    setTimeout(() => { $('lim-copiar').textContent = 'Copiar para board_config.h'; }, 1500);
-  } catch { mensaje('[límites] no se pudo copiar: seleccionar el texto a mano'); }
-};
-
-// Al conectar se piden los parámetros: los límites tienen que estar antes de mover nada
+// Al conectar se piden los parámetros (llena umax)
 let estabaConectado = false;
 setInterval(() => {
   if (fuente && !estabaConectado) setTimeout(() => enviar('get', true), 600); // después del "tlm on"

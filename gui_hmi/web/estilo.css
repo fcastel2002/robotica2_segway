@@ -214,16 +214,6 @@ fieldset:disabled fieldset:disabled { opacity: 1; } /* no apagar dos veces */
 .pasos button:first-child { border-radius: 6px 0 0 6px; }
 .pasos button:last-child { border-radius: 0 6px 6px 0; }
 
-.calibracion { margin-top: 10px; border-top: 1px solid var(--borde); padding-top: 8px; }
-.calibracion summary { cursor: pointer; font-weight: 600; font-size: 13px; }
-.calibracion ol { margin: 6px 0; padding-left: 20px; font-size: 12px; }
-.limites tbody tr { cursor: default; }
-.limites tbody tr:hover { background: none; }
-.limites td { text-align: left; white-space: nowrap; }
-.limites input { width: 3.8em; margin-right: 3px; }
-.limites button { padding: 4px 6px; font-size: 12px; }
-#lim-codigo { margin: 8px 0; padding: 8px; font-size: 12px; background: var(--fondo); border: 1px solid var(--borde); border-radius: 6px; overflow-x: auto; }
-#lim-codigo:empty { display: none; }
 
 main { flex: 1; display: flex; min-height: 0; }
 aside {
