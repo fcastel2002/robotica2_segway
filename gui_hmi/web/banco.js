@@ -199,12 +199,29 @@ $('limite').onsubmit = async (e) => {
 
 // ---------- Servos ----------
 // A diferencia de los motores, quedan donde se los deja: el servo sostiene la pata. Un servo
-// suelto no tiene posición conocida (el firmware manda "nan"): su deslizador y sus pasos se
-// bloquean y el primer ángulo se escribe en "Ir a", porque el servo va directo hasta ahí.
+// suelto no tiene posición conocida (el firmware manda "nan"): el primer ángulo lo hace ir
+// directo, así que el deslizador lo manda una sola vez, al soltarlo, y los pasos esperan a que
+// esté agarrado. Los límites son los de board_config.h, que la placa informa con "get".
 
 const servoEnviado = { l: null, r: null };   // último ángulo mandado a cada servo agarrado
 const servoPendiente = { l: null, r: null }; // envío demorado mientras se arrastra
 const agarrado = (lado) => Number.isFinite(ultima[`servo_${lado}_deg`]);
+const limites = { l: null, r: null };        // [mínimo, máximo] de la placa; null sin leer
+
+// "# servo l=90.0 r=nan lim_l=30.0..60.0 lim_r=120.0..150.0" (respuesta de get)
+alMensaje.push((texto) => {
+  const m = /lim_l=([\d.]+)\.\.([\d.]+) lim_r=([\d.]+)\.\.([\d.]+)/.exec(texto);
+  if (!m) return;
+  limites.l = [Number(m[1]), Number(m[2])];
+  limites.r = [Number(m[3]), Number(m[4])];
+  for (const lado in LADOS) {
+    const [min, max] = limites[lado];
+    const irA = document.querySelector(`.servo[data-lado="${lado}"] .ir-a input`);
+    for (const el of [$(`servo-${lado}`), irA]) { el.min = min; el.max = max; }
+    $(`lim-${lado}`).textContent = `${min}–${max}°`;
+    $(`objetivo-${lado}`).textContent = `${$(`servo-${lado}`).value}°`; // el navegador lo acotó
+  }
+});
 
 function ponerServo(lado, grados) {
   $(`servo-${lado}`).value = grados;
@@ -245,6 +262,11 @@ for (const form of document.querySelectorAll('.servo .ir-a')) {
   form.onsubmit = (e) => {
     e.preventDefault();
     const v = Number(form.elements[0].value);
+    const lim = limites[lado];
+    if (lim && (v < lim[0] || v > lim[1])) { // el navegador ya lo frena; por si acaso
+      mensaje(`[servo ${LADOS[lado]}] ${v}° fuera de los límites ${lim[0]}–${lim[1]}° de board_config.h: no se mandó`);
+      return;
+    }
     ponerServo(lado, v);
     servoEnviado[lado] = v;
     enviar(`servo ${lado} ${v}`);
@@ -259,7 +281,7 @@ for (const b of document.querySelectorAll('[data-servo]')) {
   };
 }
 
-// Al conectar se piden los parámetros (llena umax)
+// Al conectar se piden los parámetros: umax y los límites de los servos
 let estabaConectado = false;
 setInterval(() => {
   if (fuente && !estabaConectado) setTimeout(() => enviar('get', true), 600); // después del "tlm on"

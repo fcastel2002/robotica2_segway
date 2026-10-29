@@ -98,7 +98,7 @@ cada cosa a mano. Los valores se apagan si pasa más de 1 s sin datos.
 | **IMU** | Inclinación filtrada y su velocidad, con un dibujo del robot; acelerómetro (m/s²) y giróscopo (°/s) **crudos, en los ejes del sensor y con sesgo**; \|a\|, que quieto tiene que dar 9,81. `sin lectura` si falla el I²C | **Calibrar giróscopo** (`cal`, solo en `DISARMED`, dejarlo quieto 2 s) |
 | **Encoders** | Cuentas, vueltas, RPM y distancia de cada rueda | **Encoders a cero**; cargar las cuentas por vuelta (880 si el encoder es de 11 pulsos) y el radio de la rueda, que se recuerdan |
 | **Motores** | El PWM **aplicado** de verdad a cada puente H, que puede ser menos que lo pedido por `umax` | Deslizadores (ver abajo); **escalón**; **umax** |
-| **Servos de las patas** | Ángulo actual de cada servo, o `suelto` | Deslizador de 0 a 180°, pasos ±1/±5° una vez agarrado, **Ir a** un ángulo escrito y **Soltar** |
+| **Servos de las patas** | Ángulo actual de cada servo, o `suelto` | Deslizador, pasos ±1/±5° una vez agarrado, **Ir a** un ángulo escrito y **Soltar**, todo dentro de los límites de `board_config.h` |
 | **Sistema** | Estado, tiempo encendido, muestras por segundo, ciclos excedidos y peor ciclo de control contra los 5000 µs del período | — |
 
 Para orientar la IMU (paso 2 de la puesta en marcha): inclinar el robot hacia adelante tiene que
@@ -113,7 +113,11 @@ ensayo E-04. Se corta al mover un deslizador, con **Parar motores**, **Desarmar*
 ocultar la pestaña o si el robot sale de `DISARMED`/`FAULT`.
 
 **Servos**: a diferencia de los motores, quedan donde se los deja, porque sostienen la pata. Se
-mueven a cualquier ángulo de 0 a 180° (del servo, no de la pata), cada uno por separado. Un servo no
+mueven a cualquier ángulo (del servo, no de la pata) dentro de sus límites, cada uno por separado.
+Los límites son `SERVO_L_MIN_DEG` … `SERVO_R_MAX_DEG` de
+[`board_config.h`](../firmware/segway_v01/main/board_config.h): la página los lee de la placa al
+conectar (respuesta de `get`), los muestra al lado de cada servo y no deja pasarlos con el
+deslizador, los pasos ni **Ir a**. Si igual llega un pedido de afuera, el firmware lo rechaza sin moverse. Un servo no
 informa dónde está: **suelto (al encender o después de Soltar) su posición es desconocida** y el
 primer ángulo lo hace ir directo, a la velocidad del servo. Por eso, suelto, el deslizador manda el
 ángulo una sola vez, al soltarlo, y los pasos ±1/±5 se habilitan recién cuando está agarrado. Ya

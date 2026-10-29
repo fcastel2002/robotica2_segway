@@ -173,7 +173,7 @@
                Un servo suelto no tiene posición conocida: el primer ángulo se escribe (Ir a). -->
           <div class="servo" data-lado="l">
             <label>izq <input id="servo-l" type="range" min="0" max="180" step="1" value="90"><output id="objetivo-l">—</output></label>
-            <span class="tenue">actual <output data-col="servo_l_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output></span>
+            <span class="tenue">actual <output data-col="servo_l_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output> · límites <output id="lim-l" title="SERVO_L_MIN_DEG / MAX_DEG de board_config.h, leídos de la placa">—</output></span>
             <span class="pasos"><button data-paso="l -5" disabled>−5</button><button data-paso="l -1" disabled>−1</button><button data-paso="l 1" disabled>+1</button><button data-paso="l 5" disabled>+5</button></span>
             <form class="ir-a" title="Primer ángulo de un servo suelto: va directo, a la velocidad del servo">
               <input type="number" min="0" max="180" step="1" placeholder="°" required><button>Ir a</button>
@@ -182,7 +182,7 @@
           </div>
           <div class="servo" data-lado="r">
             <label>der <input id="servo-r" type="range" min="0" max="180" step="1" value="90"><output id="objetivo-r">—</output></label>
-            <span class="tenue">actual <output data-col="servo_r_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output></span>
+            <span class="tenue">actual <output data-col="servo_r_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output> · límites <output id="lim-r" title="SERVO_R_MIN_DEG / MAX_DEG de board_config.h, leídos de la placa">—</output></span>
             <span class="pasos"><button data-paso="r -5" disabled>−5</button><button data-paso="r -1" disabled>−1</button><button data-paso="r 1" disabled>+1</button><button data-paso="r 5" disabled>+5</button></span>
             <form class="ir-a" title="Primer ángulo de un servo suelto: va directo, a la velocidad del servo">
               <input type="number" min="0" max="180" step="1" placeholder="°" required><button>Ir a</button>
@@ -192,7 +192,7 @@
           <div class="acciones">
             <button data-servo="off">Soltar los dos</button>
           </div>
-          <p class="tenue">0 a 180°, ángulo del servo. Sueltos al encender: el primer ángulo (deslizador al soltarlo, o <b>Ir a</b>) va directo; después se mueven a 90 °/s como máximo.</p>
+          <p class="tenue">Ángulo del servo, dentro de los límites de <code>board_config.h</code>. Sueltos al encender: el primer ángulo (deslizador al soltarlo, o <b>Ir a</b>) va directo; después se mueven a 90 °/s como máximo.</p>
         </fieldset>
       </article>
 
