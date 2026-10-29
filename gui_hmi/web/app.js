@@ -9,8 +9,13 @@ const MAX_MENSAJES = 300;
 
 // Columnas del CSV de firmware/segway_v01 (CSV_HEADER en main/comms_task.c). Si llega otro
 // encabezado, lo reemplaza.
-const COLUMNAS_FIRMWARE = 't_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r';
+const COLUMNAS_FIRMWARE = 't_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,'
+  + 'm_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps';
 const CLAVES_TIEMPO = ['t', 't_ms'];  // milisegundos del robot
+// Funciones (muestra, t, textos) llamadas con cada muestra antes de guardarla: pueden agregar
+// columnas calculadas a la muestra, que se grafican y graban como las demás (banco.js).
+const alRecibir = [];
+const alMensaje = [];  // funciones (texto) llamadas con cada mensaje '#' del robot (banco.js)
 
 const series = new Map();      // nombre -> { t: [], v: [], fila, celda, grafico }
 const textos = new Map();      // columnas de texto (estado) -> { valor, celda }
@@ -86,6 +91,7 @@ function procesarLinea(linea) {
   } else {
     t = performance.now() / 1000;
   }
+  for (const f of alRecibir) f(muestra, t, leida.textos);
   for (const [nombre, v] of Object.entries(muestra)) {
     if (nombre === claveT) continue;
     const s = series.get(nombre) || nuevaSerie(nombre);
@@ -103,6 +109,7 @@ function procesarLinea(linea) {
 let ultimoMensaje = '', repeticiones = 0;
 function mensaje(texto) {
   leerParametros(texto);
+  for (const f of alMensaje) f(texto);
   const linea = `${new Date().toLocaleTimeString()}  ${texto}`;
   if (texto === ultimoMensaje && mensajes.length) { // p. ej. "ok: motor" al mover un deslizador
     mensajes[mensajes.length - 1] = `${linea}  (×${++repeticiones})`;
@@ -134,9 +141,14 @@ function conectarPuente() {
   return { nombre: 'puente', enviar, cerrar: () => es.close() };
 }
 
-async function conectarUsb() {
-  const puerto = await navigator.serial.requestPort();
-  await puerto.open({ baudRate: Number($('baudios').value) });
+// puerto: uno ya autorizado (reconexión automática); sin él, el navegador pide elegir
+async function conectarUsb(puerto) {
+  puerto ??= await navigator.serial.requestPort();
+  try {
+    await puerto.open({ baudRate: Number($('baudios').value) });
+  } catch (err) {
+    throw new Error(`${err.message} ¿Lo tiene otro programa? Cerrar el monitor de ESP-IDF.`);
+  }
   estado('USB conectado', 'ok');
   let seguir = true;
   let lector;
@@ -177,11 +189,11 @@ async function conectarUsb() {
   };
 }
 
-async function conectar() {
+async function conectar(puerto) {
   const tipo = $('fuente').value;
   borrarHistoria();
   try {
-    fuente = tipo === 'usb' ? await conectarUsb() : conectarPuente();
+    fuente = tipo === 'usb' ? await conectarUsb(puerto) : conectarPuente();
     $('conectar').textContent = 'Desconectar';
     $('comandos').hidden = false;
   } catch (err) {
@@ -523,11 +535,12 @@ $('motores-mantener').addEventListener('change', (e) => { if (!e.target.checked)
 document.addEventListener('visibilitychange', () => { if (document.hidden) frenarMotores(); });
 addEventListener('pagehide', () => frenarMotores());
 
-// La respuesta de "get" (# kp=0.8 ki=0 ...) llena las casillas de ganancias.
+// La respuesta de "get" (# kp=0.8 ki=0 ...) llena las casillas de ganancias y las que tengan
+// data-param (umax en el banco de pruebas).
 function leerParametros(texto) {
   if (!texto.startsWith('kp=')) return;
   for (const [, nombre, valor] of texto.matchAll(/(\w+)=([-+\d.eE]+)/g)) {
-    const casilla = $('ganancias').elements[nombre];
+    const casilla = $('ganancias').elements[nombre] ?? document.querySelector(`[data-param="${nombre}"]`);
     if (casilla && document.activeElement !== casilla) casilla.value = Number(valor);
   }
 }
@@ -573,6 +586,16 @@ async function cerrarFuente() { // frena antes de soltar el puerto: después ya 
 $('conectar').onclick = () => {
   if (fuente) cerrarFuente(); else conectar();
 };
+
+// Un puerto que ya se eligió una vez queda autorizado: al abrir la página o al enchufar la placa
+// se conecta solo, sin el diálogo. Con más de uno autorizado no adivina: hay que tocar Conectar.
+async function conectarUsbAutorizado() {
+  if (fuente || $('fuente').value !== 'usb' || !('serial' in navigator)) return;
+  const puertos = await navigator.serial.getPorts();
+  if (puertos.length === 1) conectar(puertos[0]);
+  else if (puertos.length > 1) estado('varios puertos autorizados: tocar Conectar y elegir uno');
+}
+if ('serial' in navigator) navigator.serial.addEventListener('connect', conectarUsbAutorizado);
 function recordar(clave, valor) { try { localStorage.setItem(clave, valor); } catch { /* sin almacenamiento */ } }
 function recuperar(clave) { try { return localStorage.getItem(clave); } catch { return null; } }
 for (const id of ['fuente', 'baudios']) { // la última fuente y velocidad elegidas
@@ -580,10 +603,17 @@ for (const id of ['fuente', 'baudios']) { // la última fuente y velocidad elegi
   if (guardado && [...$(id).options].some((o) => o.value === guardado)) $(id).value = guardado;
   $(id).addEventListener('change', () => recordar(`segway.${id}`, $(id).value));
 }
+// puente.py abre la página con ?fuente=usb (robot real) o ?fuente=puente (--simular)
+const fuentePedida = new URLSearchParams(location.search).get('fuente');
+if (['usb', 'puente'].includes(fuentePedida)) {
+  $('fuente').value = fuentePedida;
+  recordar('segway.fuente', fuentePedida);
+}
 
-$('fuente').onchange = () => {
+$('fuente').onchange = async () => {
   $('baudios').hidden = $('fuente').value !== 'usb';
-  if (fuente) cerrarFuente();
+  if (fuente) await cerrarFuente();
+  conectarUsbAutorizado();
 };
 $('pausa').onclick = () => {
   pausado = !pausado;
@@ -613,5 +643,7 @@ $('baudios').hidden = $('fuente').value !== 'usb';
 leerColores();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', leerColores);
 requestAnimationFrame(cuadro);
-// Abierta desde el puente: conectar sola. El USB necesita un clic (el navegador pide elegir el puerto).
+// Abierta desde el puente: conectar sola. El USB, solo si el puerto ya se eligió alguna vez
+// (la primera vez el navegador exige un clic en Conectar para mostrar el diálogo).
 if (location.protocol.startsWith('http') && $('fuente').value === 'puente') conectar();
+else conectarUsbAutorizado();

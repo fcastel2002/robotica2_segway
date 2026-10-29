@@ -31,7 +31,7 @@
 #define MOTOR_PWM_FREQ_HZ       20000       // inaudible
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
 #define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
-#define MOTOR_R_INVERT          1           // los motores están enfrentados
+#define MOTOR_R_INVERT          0           // 29/10: con 1 las ruedas giraban al revés una de otra
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
@@ -41,14 +41,19 @@
 #define ENC_GLITCH_NS           1000        // descarta pulsos de menos de 1 us (ruido)
 
 // --- Servos de las patas: todavía sin función en el control, solo posición a mano ---
-// Ángulo del servo (0-180°, 90° al centro), no de la pata. Los límites protegen el mecanismo:
-// ampliarlos solo después de comprobar a mano hasta dónde llega la pata sin forzar.
+// Ángulo del servo (0-180°, 90° al centro), no de la pata. Los límites protegen el mecanismo,
+// uno por servo porque el brazo nunca queda calzado igual en las dos patas. Se miden con la
+// calibración del banco de pruebas (gui_hmi), que genera estas líneas; en vivo: "servo lim".
 #define SERVO_FREQ_HZ           50
 #define SERVO_US_AT_0_DEG       500         // ficha del DS3240: 500-2500 us para 180°
 #define SERVO_US_AT_180_DEG     2500
-#define SERVO_MIN_DEG           45.0f       // 1000 us, el rango de servo_test
-#define SERVO_MAX_DEG           135.0f      // 2000 us
-#define SERVO_INIT_DEG          90.0f       // posición supuesta al agarrar (arrancan sueltos)
+// Provisorios, ±10° del centro hasta medirlos (pedido de Francisco: empezar de a poco)
+#define SERVO_L_MIN_DEG         80.0f
+#define SERVO_L_MAX_DEG         100.0f
+#define SERVO_R_MIN_DEG         80.0f
+#define SERVO_R_MAX_DEG         100.0f
+#define SERVO_HARD_MIN_DEG      0.0f        // "servo lim" no puede salir de acá
+#define SERVO_HARD_MAX_DEG      180.0f
 #define SERVO_MAX_SPEED_DPS     90.0f       // velocidad de movimiento hacia la posición pedida
 #define SERVO_L_INVERT          0           // 1 si el servo está montado en espejo
 #define SERVO_R_INVERT          1

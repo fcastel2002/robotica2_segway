@@ -112,8 +112,9 @@ Reglas de seguridad de la v0.1:
 3. Si comms no recibe nada, no pasa nada: el control no depende de la telemetría.
 4. Rampa de arranque: al armar, la salida máxima sube de 0 a 100 % en 0,5 s.
 5. Opcional, si se agrega `battery_adc`: desarmar por debajo de 3,4 V/celda (10,2 V).
-6. Servos: al encender van a `SERVO_INIT_DEG`; cada pedido se limita a `SERVO_MIN_DEG`–`SERVO_MAX_DEG`
-   (45–135° por defecto) y se recorre a no más de 90°/s. No dependen del estado del supervisor.
+6. Servos: arrancan sueltos y con posición desconocida; el primer ángulo pedido se aplica directo
+   (sin rampa) y los siguientes a 90°/s; soltar vuelve a dejarla desconocida. Cada pedido se limita a los límites de ese servo
+   (`SERVO_L_MIN_DEG`… en `board_config.h`, 80–100° provisorios; en vivo con `servo lim`) y se recorre a no más de 90°/s. No dependen del estado del supervisor.
 
 ## 6. Interfaz de telemetría y comandos
 
@@ -121,8 +122,10 @@ Reglas de seguridad de la v0.1:
 [interfaz web](../../gui_hmi/README.md) (USB directo), con Teleplot (VS Code) o con un script de Python.
 
 ```text
-t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r
+t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps
 ```
+
+Qué es cada columna: [README de `segway_v01`](../segway_v01/README.md#consola).
 
 **Comandos:** texto terminado en salto de línea.
 

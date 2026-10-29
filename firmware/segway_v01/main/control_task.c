@@ -29,8 +29,9 @@ static control_ctx_t s_ctx;
 
 // Aplica un comando recibido y devuelve lo que el supervisor tiene que saber de él.
 static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
-                               const float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
-                               bool servo_free[SERVO_COUNT], float motor_manual[MOTOR_COUNT])
+                               float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
+                               bool servo_free[SERVO_COUNT], float servo_lim[SERVO_COUNT][2],
+                               float motor_manual[MOTOR_COUNT])
 {
     switch (c->type) {
     case CMD_ARM:
@@ -40,28 +41,43 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
         for (int i = 0; i < MOTOR_COUNT; i++) motor_manual[i] = 0.0f;
         return SUP_CMD_DISARM;
     case CMD_CALIBRATE: return SUP_CMD_CALIBRATE;
-    case CMD_SERVO: {
-        float deg = fminf(fmaxf(c->value, SERVO_MIN_DEG), SERVO_MAX_DEG);
+    case CMD_SERVO:
         for (int i = 0; i < SERVO_COUNT; i++) {
             if (c->servo == SERVO_BOTH || c->servo == i) {
-                servo_target[i] = deg;
+                servo_target[i] = fminf(fmaxf(c->value, servo_lim[i][0]), servo_lim[i][1]);
                 servo_free[i] = false;
-            }
-        }
-        break;
-    }
-    case CMD_SERVO_RELEASE:
-    case CMD_SERVO_HOLD:
-        for (int i = 0; i < SERVO_COUNT; i++) {
-            if (c->servo == SERVO_BOTH || c->servo == i) {
-                servo_free[i] = (c->type == CMD_SERVO_RELEASE);
-                if (servo_free[i]) {
-                    servo_release(i);
-                } else {
-                    servo_target[i] = servo_pos[i];     // agarra donde quedó, sin moverse
+                if (isnan(servo_pos[i])) {
+                    // Posición desconocida: no hay desde dónde rampear. El servo va directo
+                    // al objetivo a su propia velocidad, así que el objetivo tiene que ser seguro.
+                    servo_pos[i] = servo_target[i];
                     servo_set_deg(i, servo_pos[i]);
                 }
             }
+        }
+        break;
+    case CMD_SERVO_LIMITS:
+        // Solo cambia los próximos pedidos: no mueve un servo que haya quedado afuera
+        for (int i = 0; i < SERVO_COUNT; i++) {
+            if (c->servo == SERVO_BOTH || c->servo == i) {
+                servo_lim[i][0] = c->value;
+                servo_lim[i][1] = c->value2;
+            }
+        }
+        break;
+    case CMD_SERVO_RELEASE:
+    case CMD_SERVO_HOLD:
+        for (int i = 0; i < SERVO_COUNT; i++) {
+            if (c->servo != SERVO_BOTH && c->servo != i) continue;
+            if (c->type == CMD_SERVO_RELEASE) {
+                // Suelto, la pata puede caer o moverse a mano: la posición deja de conocerse
+                servo_free[i] = true;
+                servo_pos[i] = servo_target[i] = NAN;
+                servo_release(i);
+            } else if (!isnan(servo_pos[i])) {
+                servo_free[i] = false;
+                servo_target[i] = servo_pos[i];     // agarra donde está, sin moverse
+                servo_set_deg(i, servo_pos[i]);
+            }   // sin posición conocida no se agarra: hace falta un ángulo (comms avisa)
         }
         break;
     case CMD_MOTOR: {
@@ -100,7 +116,7 @@ static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT
     float max_step = SERVO_MAX_SPEED_DPS * dt;
     for (int i = 0; i < SERVO_COUNT; i++) {
         float diff = target[i] - pos[i];
-        if (free[i] || diff == 0.0f) continue;
+        if (free[i] || isnan(diff) || diff == 0.0f) continue;
         pos[i] += fminf(fmaxf(diff, -max_step), max_step);
         servo_set_deg(i, pos[i]);
     }
@@ -129,9 +145,13 @@ static void control_task(void *arg)
     float u = 0.0f;
     float servo_pos[SERVO_COUNT], servo_target[SERVO_COUNT];
     bool servo_free[SERVO_COUNT];       // sueltos al encender: sin pulsos hasta el primer comando
+    float servo_lim[SERVO_COUNT][2] = {
+        [SERVO_LEFT]  = { SERVO_L_MIN_DEG, SERVO_L_MAX_DEG },
+        [SERVO_RIGHT] = { SERVO_R_MIN_DEG, SERVO_R_MAX_DEG },
+    };
     float motor_manual[MOTOR_COUNT] = { 0.0f };     // comando a mano, solo en DISARMED
     for (int i = 0; i < SERVO_COUNT; i++) {
-        servo_pos[i] = servo_target[i] = SERVO_INIT_DEG;    // posición supuesta al agarrar
+        servo_pos[i] = servo_target[i] = NAN;   // desconocida hasta el primer ángulo pedido
         servo_free[i] = true;
     }
     uint32_t overruns_total = 0, exec_max = 0, window_max = 0;
@@ -153,7 +173,7 @@ static void control_task(void *arg)
         command_t c;
         while (xQueueReceive(ctx->command_q, &c, 0) == pdTRUE) {
             sup_cmd_t r = apply_command(&c, &params, servo_pos, servo_target, servo_free,
-                                     motor_manual);
+                                        servo_lim, motor_manual);
             if (r != SUP_CMD_NONE) cmd = r;
         }
 
@@ -191,6 +211,7 @@ static void control_task(void *arg)
         }
 
         // 4. Control y actuación. Fuera de BALANCING se apaga en cada ciclo, no solo al salir.
+        float applied[MOTOR_COUNT] = { 0.0f };      // para la telemetría
         if (st == SUP_BALANCING) {
             if (prev != SUP_BALANCING) {
                 balance_reset(&bal);
@@ -202,6 +223,7 @@ static void control_task(void *arg)
             }
             motor_set(MOTOR_LEFT, u);
             motor_set(MOTOR_RIGHT, u);
+            applied[MOTOR_LEFT] = applied[MOTOR_RIGHT] = u;
         } else if (st == SUP_DISARMED || st == SUP_FAULT) {
             // Desarmado, o en falla (p. ej. sin IMU, para probar en banco): motores a mano
             // con "motor ...". El lazo de equilibrio no participa.
@@ -211,6 +233,8 @@ static void control_task(void *arg)
             } else {
                 motor_set(MOTOR_LEFT, motor_manual[MOTOR_LEFT]);
                 motor_set(MOTOR_RIGHT, motor_manual[MOTOR_RIGHT]);
+                applied[MOTOR_LEFT] = motor_manual[MOTOR_LEFT];
+                applied[MOTOR_RIGHT] = motor_manual[MOTOR_RIGHT];
             }
         } else {
             u = 0.0f;
@@ -242,7 +266,15 @@ static void control_task(void *arg)
             .enc         = { encoder_get(ENC_LEFT), encoder_get(ENC_RIGHT) },
             .params      = params,
             .servo_deg   = { servo_pos[SERVO_LEFT], servo_pos[SERVO_RIGHT] },
+            .servo_free  = { servo_free[SERVO_LEFT], servo_free[SERVO_RIGHT] },
+            .servo_lim   = { { servo_lim[SERVO_LEFT][0], servo_lim[SERVO_LEFT][1] },
+                             { servo_lim[SERVO_RIGHT][0], servo_lim[SERVO_RIGHT][1] } },
+            .motor_cmd   = { applied[MOTOR_LEFT], applied[MOTOR_RIGHT] },
         };
+        for (int i = 0; i < 3; i++) {
+            t.accel[i] = imu_ok ? s.accel[i] : NAN;
+            t.gyro[i]  = imu_ok ? s.gyro[i] : NAN;
+        }
         xQueueOverwrite(ctx->telemetry_q, &t);
     }
 }

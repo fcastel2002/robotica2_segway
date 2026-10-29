@@ -28,6 +28,7 @@ typedef enum {
     CMD_SERVO,
     CMD_SERVO_RELEASE,  // servo suelto (sin pulsos)
     CMD_SERVO_HOLD,     // vuelve a agarrar el servo en su posición actual
+    CMD_SERVO_LIMITS,   // límites de un servo en vivo: value = mínimo, value2 = máximo
     CMD_MOTOR,          // motor a mano: solo en DISARMED o FAULT
     CMD_MOTOR_STOP,
     CMD_ENC_RESET,      // cuentas de los encoders a cero
@@ -42,6 +43,7 @@ typedef struct {
     int            servo;   // CMD_SERVO*: SERVO_LEFT, SERVO_RIGHT o SERVO_BOTH
     int            motor;   // CMD_MOTOR: MOTOR_LEFT, MOTOR_RIGHT o MOTOR_BOTH
     float          value;   // valor del parámetro, grados del servo o comando del motor [-1, 1]
+    float          value2;  // CMD_SERVO_LIMITS: máximo
 } command_t;
 
 typedef struct {
@@ -55,4 +57,11 @@ typedef struct {
     int32_t          enc[ENC_COUNT];    // cuentas acumuladas de las ruedas (x4)
     balance_params_t params;        // copia de los parámetros vigentes, para "get"
     float            servo_deg[SERVO_COUNT];    // posición actual (en camino al objetivo)
+    bool             servo_free[SERVO_COUNT];   // suelto: sin pulsos, la posición no se conoce
+    float            servo_lim[SERVO_COUNT][2]; // límites vigentes, mínimo y máximo, para "get"
+    float            motor_cmd[MOTOR_COUNT];    // lo aplicado a cada motor [-1, 1]
+    // Para el banco de pruebas: la IMU tal como la entrega el driver, en los ejes del
+    // sensor y con el sesgo del giróscopo. NAN si la lectura de este ciclo falló.
+    float            accel[3];      // m/s²
+    float            gyro[3];       // rad/s
 } telemetry_t;

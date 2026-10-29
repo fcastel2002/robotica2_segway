@@ -20,8 +20,9 @@ colector abierto. Los pines se cambian en [`board_pins.h`](../segway_v01/main/bo
 1. Grabar el firmware: `idf.py -B C:\esp\build\segway_v01 -p COM5 flash` (desde la terminal de
    ESP-IDF, en `firmware/segway_v01`). Cerrar el monitor, porque ocupa el puerto.
 2. Correr `python gui_hmi/puente.py`, abrir <http://localhost:8000> en Chrome o Edge, elegir
-   **USB directo** a **115200** y **Conectar**. Aparecen `enc_l` y `enc_r` con sus gráficos.
-3. **Encoders a cero**.
+   **USB directo** a **115200** y **Conectar**. En la pestaña **Banco de pruebas**, la tarjeta
+   **Encoders** muestra cuentas, vueltas y RPM de cada rueda (en **Gráficos** están `enc_l` y `enc_r`).
+3. **Encoders a cero** (en la tarjeta **Encoders**).
 4. Marcar la rueda izquierda con cinta y darle **una vuelta completa hacia adelante** a mano
    (el sentido en que avanza el robot). `enc_l` tiene que subir; anotar el valor final.
 5. Volver una vuelta hacia atrás: tiene que regresar a ~0. Si no vuelve, se pierden pulsos

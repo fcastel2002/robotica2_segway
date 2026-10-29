@@ -1,8 +1,13 @@
 # Interfaz de telemetría (`gui_hmi/`)
 
-Página web para ver en tiempo real las variables del Segway durante pruebas y operación: un gráfico
-por variable, valor actual, pausa, cursor para leer valores, consola con los `Serial.println()` del
-robot y grabación a CSV.
+Página web para probar el Segway y ver sus variables en tiempo real. Tiene dos pestañas:
+
+- **[Banco de pruebas](#banco-de-pruebas)**: cada sensor y cada actuador por separado, sin el lazo de
+  control. IMU cruda, encoders con RPM, motores a mano con prueba de escalón, servos de las patas y
+  estado del sistema.
+- **Gráficos**: un gráfico por variable, valor actual, pausa y cursor para leer valores.
+
+Las dos comparten la consola con los mensajes del robot y la grabación a CSV.
 
 ![Arquitectura: ESP32 → puente.py → navegador, o ESP32 → navegador por USB](diagramas/arquitectura.png)
 
@@ -11,20 +16,42 @@ robot y grabación a CSV.
 ## Cómo correrla
 
 Requisito: **Python 3.9 o más nuevo**, el mismo que ya usan para las figuras de `modelado/`. No hace falta
-`pip install`, Node ni nada más.
+`pip install`, Node ni nada más. Para USB directo, **Chrome o Edge**.
+
+### En un solo comando (Windows)
+
+Desde la raíz del repo, o con doble clic en `gui_hmi/banco.cmd`:
+
+| Comando | Qué hace |
+|---|---|
+| `gui_hmi\banco` | Puente + página + conexión USB automática |
+| `gui_hmi\banco -Grabar` | Antes compila y graba `firmware/segway_v01` |
+| `gui_hmi\banco -Simular` | Sin robot, con datos falsos |
+
+- Abre la página en una ventana propia de Chrome o Edge, ya en **USB directo**.
+- **La primera vez** hay que tocar **Conectar** y elegir el puerto de la placa. Desde ahí el navegador
+  lo recuerda: al abrir la página o al enchufar la placa se conecta sola, sin diálogo.
+- `-Grabar` activa ESP-IDF (instalación del instalador EIM en `C:\Espressif`), busca el puerto (el único
+  que haya, o el del conversor CH343) y corre `idf.py build flash` en la misma carpeta `build/` que usa
+  VS Code. Con varios puertos: `-Puerto COM5`. No abre el monitor, así que el puerto queda libre.
+- Si ya hay un puente corriendo, abre la página y no levanta otro. Ctrl+C cierra el puente.
+
+### A mano, en cualquier sistema
 
 ```bash
 python gui_hmi/puente.py --simular
 ```
 
-Abrir <http://localhost:8000>. Con `--simular` el puente genera datos falsos (parecidos a un Segway
-que oscila y recibe empujones) para probar la interfaz sin robot. Con el robot de verdad:
+Abre <http://localhost:8000> (`--sin-navegador` para que no lo haga). Con `--simular` el puente
+genera datos falsos (parecidos a un Segway que oscila y recibe empujones) para probar la interfaz sin
+robot. Con el robot de verdad:
 
 ```bash
 python gui_hmi/puente.py
 ```
 
-y la compu tiene que estar en la misma red WiFi que el ESP32. La primera vez Windows pregunta si deja
+Abre la página en **USB directo**. Para WiFi, la compu tiene que estar en la misma red que el ESP32
+y hay que elegir **Puente** en el selector. La primera vez Windows pregunta si deja
 pasar a Python por el firewall: aceptar **también en redes públicas**, porque la red que arma el ESP32
 suele quedar clasificada como pública.
 
@@ -34,7 +61,7 @@ Opciones: `--http 8000` (puerto de la página), `--udp 4210` (puerto donde llega
 ### Por USB, sin puente
 
 Con el ESP32 enchufado por USB, la página puede leer el puerto serie directamente (Web Serial). Elegir
-**USB directo** en el selector, la velocidad igual a `Serial.begin(...)` y **Conectar**. Solo anda en
+**USB directo** en el selector, la velocidad igual a la del firmware (115200) y **Conectar**. Solo anda en
 Chrome o Edge (Firefox y Safari no tienen Web Serial). Sirve para el banco; con el robot equilibrando, el
 cable estorba y conviene WiFi. El puente igual tiene que estar corriendo, porque es el que sirve la página.
 
@@ -45,18 +72,68 @@ cable estorba y conviene WiFi. El puente igual tiene que estar corriendo, porque
 
 Al conectar aparece una barra con los comandos de texto de `segway_v01`
 ([lista](../firmware/segway_v01/README.md#consola)): **Desarmar** (también con **Esc** desde cualquier lado
-de la página), **Armar**, **Parar motores**, **Calibrar**, **Leer parámetros**, **Encoders a cero**, casillas
+de la página), **Armar**, **Parar motores**, **Leer parámetros**, casillas
 de `kp`, `ki`, `kd` y `ref` que se mandan con `set` (y se llenan solas con la respuesta de `get`) y una
 línea para cualquier otro comando. Lo enviado aparece en **Mensajes del robot** precedido de `>`.
+Calibrar el giróscopo, poner los encoders a cero, los motores y los servos están en el
+[banco de pruebas](#banco-de-pruebas).
 
 Por USB los comandos van al puerto serie. Con el puente solo los entiende el robot simulado de
 `--simular`, que imita la consola de `segway_v01` (CSV, estados, `arm`, `disarm`, `get`, `enc reset`,
-`motor`: a 100 % las ruedas simuladas giran a 370 RPM con 880 cuentas por vuelta).
+`set umax`, `motor`: a 100 % las ruedas simuladas giran a 370 RPM con 880 cuentas por vuelta;
+`servo`: arrancan sueltos y se mueven a 90 °/s; la IMU cruda sale del ángulo simulado).
 Esc no es una parada de emergencia: depende de que el cable y la página respondan.
+
+## Banco de pruebas
+
+![Pestaña Banco de pruebas con el robot simulado](capturas/banco_de_pruebas.png)
+
+Para los ensayos de puesta en marcha (E-03 a E-06 del
+[plan de electrónica](../electronica/ensayos/plan_de_ensayos.md), [prueba de encoders](../firmware/docs/prueba_encoders.md)).
+No usa el lazo de equilibrio: con el robot en `DISARMED` (o en `FAULT`, si no hay IMU) se mueve
+cada cosa a mano. Los valores se apagan si pasa más de 1 s sin datos.
+
+| Tarjeta | Qué muestra | Qué se puede hacer |
+|---|---|---|
+| **IMU** | Inclinación filtrada y su velocidad, con un dibujo del robot; acelerómetro (m/s²) y giróscopo (°/s) **crudos, en los ejes del sensor y con sesgo**; \|a\|, que quieto tiene que dar 9,81. `sin lectura` si falla el I²C | **Calibrar giróscopo** (`cal`, solo en `DISARMED`, dejarlo quieto 2 s) |
+| **Encoders** | Cuentas, vueltas, RPM y distancia de cada rueda | **Encoders a cero**; cargar las cuentas por vuelta (880 si el encoder es de 11 pulsos) y el radio de la rueda, que se recuerdan |
+| **Motores** | El PWM **aplicado** de verdad a cada puente H, que puede ser menos que lo pedido por `umax` | Deslizadores (ver abajo); **escalón**; **umax** |
+| **Servos de las patas** | Ángulo actual de cada servo, o `suelto` | **Ir a** un ángulo escrito (el primero, con confirmación), deslizador y pasos ±1/±5° una vez agarrado, **Soltar**, **Calibrar límites** |
+| **Sistema** | Estado, tiempo encendido, muestras por segundo, ciclos excedidos y peor ciclo de control contra los 5000 µs del período | — |
+
+Para orientar la IMU (paso 2 de la puesta en marcha): inclinar el robot hacia adelante tiene que
+dar inclinación y °/s positivos. Si no, cambiar `IMU_AXIS_*` e `IMU_SIGN_*` en
+[`board_config.h`](../firmware/segway_v01/main/board_config.h). El acelerómetro crudo dice qué eje
+del sensor apunta hacia arriba (el que marca ~9,8) y el giróscopo, alrededor de cuál se cabecea.
+
+**Escalón**: pone una o las dos ruedas al % pedido durante el tiempo pedido, frena y anota en la
+tarjeta y en los mensajes las RPM medias de la **segunda mitad**, cuando la rueda ya aceleró. Sirve
+para encontrar la zona muerta (subir el % hasta que gire) y para la curva PWM → velocidad del
+ensayo E-04. Se corta al mover un deslizador, con **Parar motores**, **Desarmar**, Esc, al
+ocultar la pestaña o si el robot sale de `DISARMED`/`FAULT`.
+
+**Servos**: a diferencia de los motores, quedan donde se los deja, porque sostienen la pata. Un servo
+no informa dónde está: **suelto (al encender o después de Soltar) su posición es desconocida**, y el
+primer pulso lo hace saltar al ángulo pedido a la velocidad del servo, sin rampa. Por eso, mientras
+está suelto, su deslizador y sus pasos están bloqueados: el primer ángulo se escribe en **Ir a**, la
+página pide confirmar que es seguro para la pata y no lo manda si está fuera de los límites. Ya
+agarrado, el deslizador y los pasos −5/−1/+1/+5 lo mueven a 90 °/s como máximo. Cada servo se maneja
+por separado. Los ángulos son del servo, no de la pata.
+
+**Calibrar límites** (dentro de la tarjeta): cada servo tiene su mínimo y su máximo, provisorios en
+80–100°. Se agarra el servo, se lo acerca a un extremo con −1/+1 mirando la pata y, antes de que
+toque o fuerce, **aquí** fija ese extremo en la posición actual. Para ir más lejos se escribe un límite
+más amplio y **Aplicar** (`servo lim`, entre 0 y 180°). Los límites en vivo se pierden al reiniciar: el
+botón **Copiar** da las cuatro líneas para pegar en
+[`board_config.h`](../firmware/segway_v01/main/board_config.h) y volver a grabar.
+
+Las RPM (`rpm_l`, `rpm_r`) y \|a\| (`a_ms2`) los calcula la página y se agregan a cada muestra:
+también aparecen en **Gráficos** y en el CSV grabado. Las RPM son la derivada de las cuentas en
+0,2 s; con 880 cuentas por vuelta, una cuenta en esa ventana son 0,34 RPM.
 
 ### Motores a mano
 
-El recuadro **Motores** tiene un deslizador por rueda, de −100 a 100 % de PWM (positivo hacia
+La tarjeta **Motores** tiene un deslizador por rueda, de −100 a 100 % de PWM (positivo hacia
 adelante), y manda `motor`, `motor l` o `motor r`, como mucho 10 veces por segundo mientras se arrastra.
 El firmware los aplica solo en `DISARMED` o `FAULT`, limitados por `umax` (por ejemplo,
 `set umax 0.3` para probar con poco); en otro estado el recuadro se deshabilita.
@@ -73,7 +150,9 @@ motores. Los comandos salen de a uno y en orden, así el `motor stop` del final 
 ## Qué tiene que mandar el ESP32
 
 Entiende dos formatos. El de `firmware/segway_v01` es **CSV con encabezado**: una línea
-`# t_ms,estado,theta_deg,…` con los nombres y después una línea de valores por muestra. Las líneas que
+`# t_ms,estado,theta_deg,…` con los nombres y después una línea de valores por muestra
+([columnas](../firmware/segway_v01/README.md#consola); el banco de pruebas usa las que estén y deja
+`—` en las que falten, así que un firmware viejo se sigue leyendo). Las líneas que
 empiezan con `#` van a la consola; las columnas de texto (`estado`) se muestran en la tabla y en la
 barra de arriba sin graficarse. Si la página se conecta con el robot ya andando, manda `tlm on` para que
 el firmware repita el encabezado (y además ya conoce las columnas de `segway_v01`).
@@ -136,10 +215,13 @@ Cuidados del lado del robot:
 
 | Archivo | Qué hace |
 |---|---|
-| `puente.py` | Recibe UDP, genera datos simulados y sirve la página. Reenvía los datos al navegador con Server-Sent Events. Usa solo la biblioteca estándar |
+| `banco.cmd`, `banco.ps1` | Todo en un comando: grabar el firmware (opcional), puente y página |
+| `puente.py` | Recibe UDP, genera datos simulados, sirve la página y la abre en Chrome o Edge. Reenvía los datos al navegador con Server-Sent Events. Usa solo la biblioteca estándar |
 | `web/index.html`, `web/estilo.css` | La página |
-| `web/app.js` | Interpreta las líneas, guarda 60 s por variable, dibuja en `<canvas>`, lee USB y graba el CSV. No usa bibliotecas |
+| `web/app.js` | Interpreta las líneas, guarda 60 s por variable, dibuja en `<canvas>`, lee USB, manda comandos, motores a mano y graba el CSV. No usa bibliotecas |
+| `web/banco.js` | Pestaña Banco de pruebas: tarjetas de sensores y actuadores, columnas calculadas (RPM, \|a\|), escalón y servos. Usa la conexión y `enviar()` de `app.js` |
 | `diagramas/` | Diagrama de arquitectura (`.bob` editable, `.svg`, `.png`) |
+| `capturas/` | Capturas de la página para esta documentación |
 
 El CSV grabado tiene una columna `pc_ms` (hora de la compu, en ms desde 1970) y una columna por
 variable, con las variables en el orden en que aparecieron. Se abre con `readtable` en MATLAB.
@@ -148,3 +230,6 @@ variable, con las variables en el orden en que aparecieron. Se abre con `readtab
 
 - WiFi en el firmware, y que el puente reenvíe los comandos por UDP.
 - Probar Web Serial con la placa real (lectura y comandos): verificado solo con `--simular`.
+- Probar el banco de pruebas con la placa: verificado solo con `--simular` (HMI-003).
+- Tiempo de espera de los motores en el firmware: hoy, si se corta el cable con una rueda girando,
+  nadie la frena.

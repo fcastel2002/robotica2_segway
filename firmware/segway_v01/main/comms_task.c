@@ -1,5 +1,6 @@
 #include "comms_task.h"
 
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +18,10 @@
 #define CONSOLE_UART    UART_NUM_0      // conector UART de la placa (CH343)
 
 // Las líneas que no son datos empiezan con '#', para que un graficador CSV las ignore.
-#define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r\n"
+// Desde m_l, columnas del banco de pruebas: ~120 caracteres por línea a 50 Hz, la mitad de
+// lo que entra a 115200 baudios.
+#define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r," \
+                    "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps\n"
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -35,11 +39,12 @@ static void print_help(void)
 {
     printf("# comandos: arm | disarm | set <param> <valor> | servo [l|r] <grados> | get\n"
            "#           cal | tlm on | tlm off | enc reset | help\n"
-           "#           servo [l|r] off|on | motor [l|r] <-100..100> | motor stop\n"
+           "#           servo [l|r] off|on | servo lim l|r <min> <max> | motor [l|r] <-100..100> | motor stop\n"
            "# param: kp ki kd ref(grados) umax deadband\n"
-           "# servo: %.0f a %.0f grados; sin l/r mueve los dos; off suelta, on agarra\n"
+           "# servo: grados dentro de sus límites (get los muestra); sin l/r mueve los dos; off suelta, on agarra\n"
+           "# servo lim: límites en vivo, entre %.0f y %.0f; se pierden al reiniciar (copiarlos a board_config.h)\n"
            "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n",
-           SERVO_MIN_DEG, SERVO_MAX_DEG);
+           SERVO_HARD_MIN_DEG, SERVO_HARD_MAX_DEG);
 }
 
 static void print_params(const telemetry_t *t)
@@ -48,7 +53,10 @@ static void print_params(const telemetry_t *t)
     printf("# kp=%.4f ki=%.4f kd=%.4f ref=%.2f umax=%.2f deadband=%.3f\n",
            p->gains.kp, p->gains.ki, p->gains.kd, p->theta_ref * RAD2DEG,
            p->u_max, p->deadband);
-    printf("# servo l=%.1f r=%.1f\n", t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT]);
+    printf("# servo l=%.1f r=%.1f lim_l=%.1f..%.1f lim_r=%.1f..%.1f\n",
+           t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT],
+           t->servo_lim[SERVO_LEFT][0], t->servo_lim[SERVO_LEFT][1],
+           t->servo_lim[SERVO_RIGHT][0], t->servo_lim[SERVO_RIGHT][1]);
 }
 
 static bool parse_float(const char *str, float *out)
@@ -62,7 +70,7 @@ static bool parse_float(const char *str, float *out)
 // Interpreta una línea. Lo que afecta al control se envía como command_t; lo que es
 // solo de la consola (get, tlm, help) se resuelve acá.
 static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *last,
-                        bool *tlm_on)
+                        int *get_wait, bool *tlm_on)
 {
     char *word = strtok(line, " \t");
     if (word == NULL) return;
@@ -90,6 +98,21 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
     } else if (strcmp(word, "servo") == 0) {
         char *a = strtok(NULL, " \t");
         char *b = strtok(NULL, " \t");
+        if (a != NULL && strcmp(a, "lim") == 0) {      // "servo lim l 70 110"
+            char *mn = strtok(NULL, " \t");
+            char *mx = strtok(NULL, " \t");
+            int side = (b && strcmp(b, "l") == 0) ? SERVO_LEFT
+                     : (b && strcmp(b, "r") == 0) ? SERVO_RIGHT : -2;
+            float lo, hi;
+            if (side == -2 || !parse_float(mn, &lo) || !parse_float(mx, &hi) || lo >= hi
+                || lo < SERVO_HARD_MIN_DEG || hi > SERVO_HARD_MAX_DEG) {
+                printf("# error: servo lim l|r <min> <max>, con %.0f <= min < max <= %.0f\n",
+                       SERVO_HARD_MIN_DEG, SERVO_HARD_MAX_DEG);
+                return;
+            }
+            cmd = (command_t){ .type = CMD_SERVO_LIMITS, .servo = side, .value = lo, .value2 = hi };
+            goto send;
+        }
         int side = SERVO_BOTH;
         if (b != NULL) {        // "servo l 100": el primer argumento es el lado
             side = (strcmp(a, "l") == 0) ? SERVO_LEFT : (strcmp(a, "r") == 0) ? SERVO_RIGHT : -2;
@@ -99,13 +122,33 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
         if (side != -2 && a != NULL && strcmp(a, "off") == 0) {
             cmd = (command_t){ .type = CMD_SERVO_RELEASE, .servo = side };
         } else if (side != -2 && a != NULL && strcmp(a, "on") == 0) {
+            bool known = false;
+            for (int i = 0; i < SERVO_COUNT; i++) {
+                if (side != SERVO_BOTH && side != i) continue;
+                if (isnan(last->servo_deg[i])) {
+                    printf("# error: servo %s sin posición conocida, no se agarra: mandar un ángulo seguro\n",
+                           i == SERVO_LEFT ? "l" : "r");
+                } else {
+                    known = true;
+                }
+            }
+            if (!known) return;
             cmd = (command_t){ .type = CMD_SERVO_HOLD, .servo = side };
         } else if (side == -2 || !parse_float(a, &deg)) {
             printf("# error: servo [l|r] <grados|off|on>\n");
             return;
         } else {
-            if (deg < SERVO_MIN_DEG || deg > SERVO_MAX_DEG) {
-                printf("# aviso: fuera de rango, se limita a %.0f-%.0f\n", SERVO_MIN_DEG, SERVO_MAX_DEG);
+            for (int i = 0; i < SERVO_COUNT; i++) {
+                if (side != SERVO_BOTH && side != i) continue;
+                const float *lim = last->servo_lim[i];
+                if (deg < lim[0] || deg > lim[1]) {
+                    printf("# aviso: servo %s fuera de límites, se limita a %.1f-%.1f\n",
+                           i == SERVO_LEFT ? "l" : "r", lim[0], lim[1]);
+                }
+                if (isnan(last->servo_deg[i])) {
+                    printf("# aviso: servo %s sin posición conocida: va directo, a la velocidad del servo\n",
+                           i == SERVO_LEFT ? "l" : "r");
+                }
             }
             cmd = (command_t){ .type = CMD_SERVO, .servo = side, .value = deg };
         }
@@ -138,7 +181,7 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
         }
         cmd = (command_t){ .type = CMD_ENC_RESET };
     } else if (strcmp(word, "get") == 0) {
-        print_params(last);
+        *get_wait = 2;          // se contesta dos telemetrías después (ver comms_task)
         return;
     } else if (strcmp(word, "tlm") == 0) {
         char *arg = strtok(NULL, " \t");
@@ -150,6 +193,7 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
         return;
     }
 
+send:
     if (xQueueSend(ctx->command_q, &cmd, 0) != pdTRUE) {
         printf("# error: cola de comandos llena\n");
     } else {
@@ -163,6 +207,7 @@ static void comms_task(void *arg)
     telemetry_t last = { 0 };
     sup_state_t shown_state = SUP_INIT;
     bool tlm_on = true;
+    int get_wait = 0;
     char line[CMD_LINE_MAX];
     size_t len = 0;
 
@@ -180,7 +225,7 @@ static void comms_task(void *arg)
             if (ch == '\r' || ch == '\n') {
                 if (len > 0) {
                     line[len] = '\0';
-                    handle_line(line, ctx, &last, &tlm_on);
+                    handle_line(line, ctx, &last, &get_wait, &tlm_on);
                     len = 0;
                 }
             } else if (len < CMD_LINE_MAX - 1) {
@@ -197,12 +242,22 @@ static void comms_task(void *arg)
                    supervisor_state_name(last.state));
             shown_state = last.state;
         }
+        // "get" no contesta con la foto de esta vuelta, que puede ser anterior a un "set" de la
+        // misma tanda, sino con la siguiente: para entonces el control (cada 5 ms) ya lo aplicó.
+        if (get_wait > 0 && --get_wait == 0) print_params(&last);
         if (tlm_on) {
-            printf("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld\n",
+            // Servo suelto: "nan", porque sin pulsos no se sabe dónde está
+            float servo_l = last.servo_free[SERVO_LEFT] ? NAN : last.servo_deg[SERVO_LEFT];
+            float servo_r = last.servo_free[SERVO_RIGHT] ? NAN : last.servo_deg[SERVO_RIGHT];
+            printf("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld,"
+                   "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f\n",
                    (unsigned long)last.t_ms, supervisor_state_name(last.state),
                    last.theta * RAD2DEG, last.theta_rate * RAD2DEG, last.u,
                    (unsigned long)last.loop_us_max, (unsigned long)last.overruns,
-                   (long)last.enc[ENC_LEFT], (long)last.enc[ENC_RIGHT]);
+                   (long)last.enc[ENC_LEFT], (long)last.enc[ENC_RIGHT],
+                   last.motor_cmd[MOTOR_LEFT], last.motor_cmd[MOTOR_RIGHT], servo_l, servo_r,
+                   last.accel[0], last.accel[1], last.accel[2],
+                   last.gyro[0] * RAD2DEG, last.gyro[1] * RAD2DEG, last.gyro[2] * RAD2DEG);
         }
         fflush(stdout);
     }
