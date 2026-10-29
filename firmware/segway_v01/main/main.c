@@ -2,7 +2,7 @@
 // Arquitectura y orden de puesta en marcha: firmware/docs/arquitectura_v0_1.md
 //
 // app_main inicializa el hardware, crea las colas y lanza las dos tareas:
-//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos
+//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos; encoders
 //   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0
 // Si la IMU no responde, igual se lanzan las tareas: el supervisor pasa a FAULT y
 // la telemetría lo muestra.
@@ -16,6 +16,7 @@
 #include "board_pins.h"
 #include "comms_task.h"
 #include "control_task.h"
+#include "encoder.h"
 #include "imu_mpu6050.h"
 #include "messages.h"
 #include "motor.h"
@@ -39,6 +40,12 @@ void app_main(void)
         [SERVO_RIGHT] = { PIN_SERVO_R, SERVO_R_INVERT },
     };
     ESP_ERROR_CHECK(servo_init(servos, SERVO_FREQ_HZ, SERVO_US_AT_0_DEG, SERVO_US_AT_180_DEG));
+
+    const enc_pins_t encoders[ENC_COUNT] = {
+        [ENC_LEFT]  = { PIN_ENC_L_A, PIN_ENC_L_B, ENC_L_INVERT },
+        [ENC_RIGHT] = { PIN_ENC_R_A, PIN_ENC_R_B, ENC_R_INVERT },
+    };
+    ESP_ERROR_CHECK(encoder_init(encoders, ENC_GLITCH_NS));
 
     // Bus I2C compartido. Los pull-ups internos son débiles: los módulos suelen traer los suyos.
     i2c_master_bus_config_t bus_cfg = {

@@ -80,6 +80,57 @@ button.grabando { border-color: var(--grabando); color: var(--grabando); font-we
 .estado.ok::before { color: var(--ok); }
 .estado.error::before { color: var(--error); }
 
+.estado-robot {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+}
+.estado-robot.activo { color: var(--ok); border-color: var(--ok); }
+.estado-robot.alerta { color: var(--error); border-color: var(--error); }
+
+.comandos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+.comandos[hidden], .estado-robot[hidden] { display: none; }
+button.peligro { border-color: var(--error); color: var(--error); font-weight: 600; }
+.ganancias, .linea-comando { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ganancias label { color: var(--tenue); font-size: 12px; }
+.linea-comando { flex: 1; min-width: 220px; }
+input {
+  font: inherit;
+  padding: 4px 8px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  background: var(--fondo);
+  color: var(--texto);
+}
+.ganancias input { width: 6.5em; }
+.linea-comando input { flex: 1; min-width: 0; }
+tr.texto { cursor: default; }
+.motores {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 4px 10px 6px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+}
+.motores legend { color: var(--tenue); font-size: 12px; padding: 0 4px; }
+.motores label { display: flex; align-items: center; gap: 6px; }
+.motores input[type=range] { width: 180px; max-width: 40vw; padding: 0; }
+.motores output { min-width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
+.motores:disabled { opacity: 0.5; }
+
 main { flex: 1; display: flex; min-height: 0; }
 aside {
   width: 270px;

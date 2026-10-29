@@ -33,6 +33,13 @@
 #define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
 #define MOTOR_R_INVERT          1           // los motores están enfrentados
 
+// --- Encoders de las ruedas ---
+// Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
+// (guía en firmware/docs/prueba_encoders.md); el derecho se supone invertido como su motor.
+#define ENC_L_INVERT            0
+#define ENC_R_INVERT            1
+#define ENC_GLITCH_NS           1000        // descarta pulsos de menos de 1 us (ruido)
+
 // --- Servos de las patas: todavía sin función en el control, solo posición a mano ---
 // Ángulo del servo (0-180°, 90° al centro), no de la pata. Los límites protegen el mecanismo:
 // ampliarlos solo después de comprobar a mano hasta dónde llega la pata sin forzar.

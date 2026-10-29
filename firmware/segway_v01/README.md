@@ -9,8 +9,8 @@ La arquitectura, la máquina de estados y el orden de puesta en marcha están en
 
 | Qué | Archivo |
 |---|---|
-| Pines | [`main/board_pins.h`](main/board_pins.h) |
-| Ganancias iniciales, límites, frecuencias, montaje de la IMU, sentido de motores y servos, rango de los servos | [`main/board_config.h`](main/board_config.h) |
+| Pines (encoders en 11-14) | [`main/board_pins.h`](main/board_pins.h) |
+| Ganancias iniciales, límites, frecuencias, montaje de la IMU, sentido de motores, encoders y servos, rango de los servos | [`main/board_config.h`](main/board_config.h) |
 
 ## Compilar, grabar y monitorear
 
@@ -26,8 +26,12 @@ idf.py -B C:\esp\build\segway_v01 -p COM4 build flash monitor
 Al arrancar imprime una línea CSV cada 20 ms. Las líneas que empiezan con `#` son mensajes.
 
 ```text
-t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns
+t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r
 ```
+
+`enc_l` y `enc_r` son las cuentas acumuladas de los encoders (x4; avanzar suma). Para verlas
+graficadas y mandar comandos con botones, usar la [interfaz web](../../gui_hmi/README.md) por USB.
+Prueba de los encoders a mano: [`../docs/prueba_encoders.md`](../docs/prueba_encoders.md).
 
 | Comando | Efecto |
 |---|---|
@@ -36,7 +40,8 @@ t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns
 | `servo 100` / `servo l 100` / `servo r 80` | Mover los dos servos o uno (grados del servo, limitado a 45-135° y a 90°/s) |
 | `cal` | Recalibrar el giróscopo sin reiniciar (solo en DISARMED; dejar quieto 2 s) |
 | `get` | Ver los parámetros vigentes y la posición de los servos |
-| `tlm on` / `tlm off` | Activar o pausar la telemetría |
+| `tlm on` / `tlm off` | Activar o pausar la telemetría (`tlm on` reimprime el encabezado) |
+| `enc reset` | Poner en cero las cuentas de los dos encoders |
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
 Las ganancias arrancan en cero, así que `arm` no mueve nada hasta cargarlas.

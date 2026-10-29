@@ -8,6 +8,7 @@
 #include "attitude.h"
 #include "balance.h"
 #include "board_config.h"
+#include "encoder.h"
 #include "imu_mpu6050.h"
 #include "messages.h"
 #include "motor.h"
@@ -72,6 +73,9 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
     }
     case CMD_MOTOR_STOP:
         for (int i = 0; i < MOTOR_COUNT; i++) motor_manual[i] = 0.0f;
+        break;
+    case CMD_ENC_RESET:
+        encoder_reset();
         break;
     case CMD_SET:
         switch (c->param) {
@@ -235,6 +239,7 @@ static void control_task(void *arg)
             .u           = u,
             .loop_us_max = window_max,
             .overruns    = overruns_total,
+            .enc         = { encoder_get(ENC_LEFT), encoder_get(ENC_RIGHT) },
             .params      = params,
             .servo_deg   = { servo_pos[SERVO_LEFT], servo_pos[SERVO_RIGHT] },
         };

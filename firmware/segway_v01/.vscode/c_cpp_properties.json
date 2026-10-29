@@ -3,7 +3,7 @@
     {
       "name": "ESP-IDF",
       "compilerPath": "",
-      "compileCommands": "c:\\Users\\caste\\OneDrive\\Documentos\\GitHub\\robotica2_segway\\firmware\\segway_v01\\build\\compile_commands.json",
+      "compileCommands": "d:\\05.Estudios\\robotica2_repo_segway\\firmware\\segway_v01\\build\\default\\compile_commands.json",
       "intelliSenseMode": "gcc-x86",
       "includePath": [
         "${workspaceFolder}/**"

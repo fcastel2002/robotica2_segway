@@ -22,6 +22,7 @@
       </select>
       <button id="conectar">Conectar</button>
       <span id="estado" class="estado">desconectado</span>
+      <span id="estado-robot" class="estado-robot" title="Estado del supervisor del robot" hidden></span>
       <span class="relleno"></span>
       <label>Ventana
         <select id="ventana">
@@ -35,6 +36,47 @@
       <button id="grabar" title="Guarda todo lo que llega en un CSV">Grabar CSV</button>
     </div>
   </header>
+
+  <!-- Comandos de texto de firmware/segway_v01 (main/comms_task.c) -->
+  <div id="comandos" class="comandos" hidden>
+    <button data-comando="disarm" class="peligro" title="También con la tecla Esc">Desarmar (Esc)</button>
+    <button data-comando="arm" title="Solo desde DISARMED y a menos de 5° de la referencia">Armar</button>
+    <button data-comando="motor stop">Parar motores</button>
+    <button data-comando="cal" title="Recalibrar el giróscopo: dejar el robot quieto 2 s">Calibrar</button>
+    <button data-comando="get">Leer parámetros</button>
+    <button data-comando="enc reset" title="Pone en cero las cuentas de los dos encoders">Encoders a cero</button>
+    <form id="ganancias" class="ganancias" title="Se mandan como set &lt;param&gt; &lt;valor&gt;; se pierden al reiniciar">
+      <label>kp <input name="kp" type="number" step="any"></label>
+      <label>ki <input name="ki" type="number" step="any"></label>
+      <label>kd <input name="kd" type="number" step="any"></label>
+      <label>ref° <input name="ref" type="number" step="any"></label>
+      <button>Cargar</button>
+    </form>
+    <form id="linea-comando" class="linea-comando">
+      <input id="texto-comando" list="sugerencias" placeholder="servo 100 · motor l 30 · set umax 0.8 · help" autocomplete="off">
+      <datalist id="sugerencias">
+        <option value="help"></option>
+        <option value="servo 90"></option>
+        <option value="servo off"></option>
+        <option value="servo on"></option>
+        <option value="motor 20"></option>
+        <option value="set umax 0.8"></option>
+        <option value="set deadband 0.05"></option>
+        <option value="tlm on"></option>
+        <option value="tlm off"></option>
+      </datalist>
+      <button>Enviar</button>
+    </form>
+    <!-- Motores a mano: "motor l|r <-100..100>"; el firmware lo acepta solo en DISARMED o FAULT -->
+    <fieldset id="motores" class="motores" title="% de PWM con signo (+ adelante), limitado por umax">
+      <legend>Motores</legend>
+      <label>izq <input id="motor-l" type="range" min="-100" max="100" step="1" value="0"><output id="valor-l">0 %</output></label>
+      <label>der <input id="motor-r" type="range" min="-100" max="100" step="1" value="0"><output id="valor-r">0 %</output></label>
+      <label title="Mover un deslizador mueve los dos"><input id="motores-juntos" type="checkbox" checked> juntos</label>
+      <label title="Sin tildar, el motor frena al soltar el deslizador"><input id="motores-mantener" type="checkbox"> mantener al soltar</label>
+      <span id="motores-aviso" class="tenue"></span>
+    </fieldset>
+  </div>
 
   <main>
     <aside>

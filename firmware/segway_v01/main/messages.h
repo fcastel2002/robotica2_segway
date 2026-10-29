@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 #include "supervisor.h"
+#include "encoder.h"
 #include "balance.h"
 #include "servo.h"
 #include "motor.h"
@@ -29,6 +30,7 @@ typedef enum {
     CMD_SERVO_HOLD,     // vuelve a agarrar el servo en su posición actual
     CMD_MOTOR,          // motor a mano: solo en DISARMED o FAULT
     CMD_MOTOR_STOP,
+    CMD_ENC_RESET,      // cuentas de los encoders a cero
 } command_type_t;
 
 #define SERVO_BOTH  (-1)
@@ -50,6 +52,7 @@ typedef struct {
     float            u;             // comando a los motores [-1, 1]
     uint32_t         loop_us_max;   // peor ciclo de la última ventana de 200 ms
     uint32_t         overruns;      // ciclos excedidos desde el arranque
+    int32_t          enc[ENC_COUNT];    // cuentas acumuladas de las ruedas (x4)
     balance_params_t params;        // copia de los parámetros vigentes, para "get"
     float            servo_deg[SERVO_COUNT];    // posición actual (en camino al objetivo)
 } telemetry_t;

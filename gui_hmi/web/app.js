@@ -1,12 +1,20 @@
-// Interfaz de telemetría del Segway. Sin bibliotecas: lee líneas "nombre:valor,nombre:valor"
-// del puente (Server-Sent Events) o del puerto USB (Web Serial) y las grafica en <canvas>.
+// Interfaz de telemetría del Segway. Sin bibliotecas: lee líneas "nombre:valor,nombre:valor" o
+// CSV con encabezado (el formato de firmware/segway_v01) del puente (Server-Sent Events) o del
+// puerto USB (Web Serial), las grafica en <canvas> y manda comandos de texto al robot.
 'use strict';
 
 const HISTORIA_S = 60;         // segundos guardados en memoria por variable (= ventana máxima)
-const GRAFICOS_INICIALES = 6;  // las primeras variables que aparecen se grafican solas
+const GRAFICOS_INICIALES = 8;  // las primeras variables que aparecen se grafican solas
 const MAX_MENSAJES = 300;
 
+// Columnas del CSV de firmware/segway_v01 (CSV_HEADER en main/comms_task.c). Si llega otro
+// encabezado, lo reemplaza.
+const COLUMNAS_FIRMWARE = 't_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r';
+const CLAVES_TIEMPO = ['t', 't_ms'];  // milisegundos del robot
+
 const series = new Map();      // nombre -> { t: [], v: [], fila, celda, grafico }
+const textos = new Map();      // columnas de texto (estado) -> { valor, celda }
+let columnas = COLUMNAS_FIRMWARE.split(',');
 let tAhora = 0;                // tiempo del último dato recibido, en segundos
 let tPausa = 0;
 let tRobotPrevio = -Infinity;
@@ -22,42 +30,87 @@ const $ = (id) => document.getElementById(id);
 
 // ---------- Entrada de datos ----------
 
-const PAR = /^([A-Za-z_][\w.]*):([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?|nan|[-+]?inf)$/i;
+const NUMERO = String.raw`[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?|nan|[-+]?inf`;
+const PAR = new RegExp(String.raw`^([A-Za-z_][\w.]*):(${NUMERO})$`, 'i');
+const ES_NUMERO = new RegExp(`^(?:${NUMERO})$`, 'i');
+const ENCABEZADO = /^[A-Za-z_]\w*(?:,[A-Za-z_]\w*)+$/;
+const PALABRA = /^[A-Za-z_][\w?]*$/;
+
+// "theta:0.5,u:0.1" -> { numeros, textos }, o null si alguna parte no es un par
+function leerPares(linea) {
+  const numeros = {};
+  for (const token of linea.split(',')) {
+    const m = PAR.exec(token.trim());
+    if (!m) return null;
+    numeros[m[1]] = Number(m[2]); // "nan"/"inf" quedan como NaN y se dibujan como hueco
+  }
+  return { numeros, textos: {} };
+}
+
+// "1234,BALANCING,0.52,..." con las columnas del último encabezado, o null si no encaja
+function leerCsv(linea) {
+  const campos = linea.split(',').map((c) => c.trim());
+  if (campos.length !== columnas.length) return null;
+  const numeros = {}, palabras = {};
+  for (let i = 0; i < campos.length; i++) {
+    if (ES_NUMERO.test(campos[i])) numeros[columnas[i]] = Number(campos[i]);
+    else if (PALABRA.test(campos[i])) palabras[columnas[i]] = campos[i];
+    else return null;
+  }
+  return Object.keys(numeros).length ? { numeros, textos: palabras } : null;
+}
 
 function procesarLinea(linea) {
   linea = linea.trim();
   if (!linea) return;
-  const muestra = {};
-  for (const token of linea.split(',')) {
-    const m = PAR.exec(token.trim());
-    if (!m) { // no es telemetría: es un mensaje de texto del robot
-      mensaje(linea);
-      return;
-    }
-    muestra[m[1]] = Number(m[2]); // "nan"/"inf" quedan como NaN y se dibujan como hueco
+  if (linea.startsWith('#')) { // el firmware marca con '#' todo lo que no es dato
+    const texto = linea.replace(/^#\s*/, '');
+    if (ENCABEZADO.test(texto)) columnas = texto.split(',');
+    mensaje(texto);
+    return;
   }
+  if (ENCABEZADO.test(linea)) { columnas = linea.split(','); return; } // encabezado sin '#'
+  const leida = leerPares(linea) ?? leerCsv(linea);
+  if (!leida) { // no es telemetría: es un mensaje de texto del robot
+    mensaje(linea);
+    return;
+  }
+  const muestra = leida.numeros;
 
   let t;
-  if ('t' in muestra) {
-    t = muestra.t / 1000;
+  const claveT = CLAVES_TIEMPO.find((k) => k in muestra);
+  if (claveT) {
+    t = muestra[claveT] / 1000;
     if (t < tRobotPrevio - 1) borrarHistoria(); // el ESP32 se reinició
     tRobotPrevio = t;
   } else {
     t = performance.now() / 1000;
   }
   for (const [nombre, v] of Object.entries(muestra)) {
-    if (nombre === 't') continue;
+    if (nombre === claveT) continue;
     const s = series.get(nombre) || nuevaSerie(nombre);
     s.t.push(t);
     s.v.push(v);
   }
   tAhora = t;
   lineasPorSegundo++;
-  if (grabacion) grabacion.push({ pc: Date.now(), m: muestra });
+  for (const [nombre, v] of Object.entries(leida.textos)) {
+    (textos.get(nombre) || nuevoTexto(nombre)).valor = v;
+  }
+  if (grabacion) grabacion.push({ pc: Date.now(), m: { ...muestra, ...leida.textos } });
 }
 
+let ultimoMensaje = '', repeticiones = 0;
 function mensaje(texto) {
-  mensajes.push(`${new Date().toLocaleTimeString()}  ${texto}`);
+  leerParametros(texto);
+  const linea = `${new Date().toLocaleTimeString()}  ${texto}`;
+  if (texto === ultimoMensaje && mensajes.length) { // p. ej. "ok: motor" al mover un deslizador
+    mensajes[mensajes.length - 1] = `${linea}  (×${++repeticiones})`;
+  } else {
+    mensajes.push(linea);
+    repeticiones = 1;
+  }
+  ultimoMensaje = texto;
   if (mensajes.length > MAX_MENSAJES) mensajes.shift();
   mensajesNuevos = true;
 }
@@ -74,7 +127,11 @@ function conectarPuente() {
   es.onopen = () => estado('puente conectado', 'ok');
   es.onerror = () => estado('sin puente, reintentando… (¿está corriendo puente.py?)', 'error');
   es.onmessage = (e) => e.data.split('\n').forEach(procesarLinea);
-  return { nombre: 'puente', cerrar: () => es.close() };
+  const enviar = async (texto) => {
+    const r = await fetch('comando', { method: 'POST', body: texto });
+    if (!r.ok) throw new Error(`el puente respondió ${r.status}`);
+  };
+  return { nombre: 'puente', enviar, cerrar: () => es.close() };
 }
 
 async function conectarUsb() {
@@ -106,8 +163,16 @@ async function conectarUsb() {
     await puerto.close().catch(() => {});
     if (seguir) desconectado('USB desconectado (¿se desenchufó?)', 'error');
   })();
+  const codificador = new TextEncoder();
+  const enviar = async (texto) => {
+    const escritor = puerto.writable.getWriter();
+    try { await escritor.write(codificador.encode(texto + '\n')); } finally { escritor.releaseLock(); }
+  };
+  // Si el robot ya había arrancado, el encabezado CSV se perdió: "tlm on" lo vuelve a imprimir.
+  setTimeout(() => { if (seguir) enviar('tlm on').catch(() => {}); }, 300);
   return {
     nombre: 'usb',
+    enviar,
     cerrar: () => { seguir = false; lector?.cancel(); },
   };
 }
@@ -118,6 +183,7 @@ async function conectar() {
   try {
     fuente = tipo === 'usb' ? await conectarUsb() : conectarPuente();
     $('conectar').textContent = 'Desconectar';
+    $('comandos').hidden = false;
   } catch (err) {
     if (err.name !== 'NotFoundError') estado(`error: ${err.message}`, 'error'); // NotFound = canceló el diálogo
   }
@@ -125,7 +191,10 @@ async function conectar() {
 
 function desconectado(texto = 'desconectado', clase = '') {
   fuente = null;
+  ponerDeslizadores(0); // ya no se puede mandar nada: el próximo conectar arranca en cero
+  enviado.l = enviado.r = 0;
   $('conectar').textContent = 'Conectar';
+  $('comandos').hidden = true;
   estado(texto, clase);
 }
 
@@ -154,6 +223,18 @@ function nuevaSerie(nombre) {
   });
   mostrarGrafico(nombre, casilla.checked);
   return s;
+}
+
+function nuevoTexto(nombre) { // columna de texto (el estado del supervisor): se lee, no se grafica
+  const fila = document.createElement('tr');
+  fila.className = 'texto';
+  fila.innerHTML = '<td></td><td></td><td></td>';
+  fila.cells[1].textContent = nombre;
+  const x = { valor: '', celda: fila.cells[2] };
+  textos.set(nombre, x);
+  $('variables').tBodies[0].prepend(fila);
+  $('sin-datos').hidden = true;
+  return x;
 }
 
 function mostrarGrafico(nombre, visible) {
@@ -318,6 +399,20 @@ setInterval(() => { // 10 veces por segundo: los números se pueden leer
     s.celda.textContent = texto;
     if (s.grafico) s.grafico.valor.textContent = texto;
   }
+  for (const x of textos.values()) x.celda.textContent = x.valor;
+  const estadoRobot = textos.get('estado')?.valor;
+  $('estado-robot').hidden = !estadoRobot;
+  if (estadoRobot) {
+    $('estado-robot').textContent = estadoRobot;
+    $('estado-robot').className = `estado-robot ${CLASE_ESTADO[estadoRobot] ?? ''}`;
+  }
+  // El firmware ignora "motor" fuera de DISARMED y FAULT: los deslizadores lo reflejan
+  const motoresHabilitados = !estadoRobot || ESTADOS_MOTOR_A_MANO.includes(estadoRobot);
+  if ($('motores').disabled === motoresHabilitados) {
+    $('motores').disabled = !motoresHabilitados;
+    $('motores-aviso').textContent = motoresHabilitados ? '' : `solo en ${ESTADOS_MOTOR_A_MANO.join(' o ')}`;
+    if (!motoresHabilitados) ponerDeslizadores(0);
+  }
   if (grabacion) $('grabar').textContent = `Detener y guardar (${grabacion.length})`;
   if (mensajesNuevos) {
     const consola = $('consola');
@@ -353,14 +448,142 @@ function descargarCsv(filas) {
   URL.revokeObjectURL(enlace.href);
 }
 
+// ---------- Comandos al robot ----------
+
+const CLASE_ESTADO = { BALANCING: 'activo', FALLEN: 'alerta', FAULT: 'alerta' };
+
+// Los comandos salen de a uno y en orden: por USB, un segundo write mientras el primero no
+// terminó falla (el puerto queda tomado), y se perdería p. ej. el "motor stop" al soltar.
+let colaEnvio = Promise.resolve();
+
+// silencioso: no se anota en la consola (los deslizadores mandan muchos comandos seguidos)
+function enviar(texto, silencioso = false) {
+  texto = texto.trim();
+  if (!texto) return colaEnvio;
+  if (!fuente?.enviar) { mensaje(`[sin conexión] no se mandó: ${texto}`); return colaEnvio; }
+  if (!silencioso) {
+    mensaje(`> ${texto}`);
+    $('mensajes').open = true;
+  }
+  const destino = fuente;
+  colaEnvio = colaEnvio.then(() => destino.enviar(texto))
+    .catch((err) => mensaje(`[error al mandar] ${err.message}`));
+  return colaEnvio;
+}
+
+// ---------- Motores a mano ----------
+// El firmware deja el último "motor" aplicado hasta que llega otro: no tiene tiempo de espera.
+// Por eso la página frena por su cuenta al soltar el deslizador (salvo "mantener"), al
+// desconectar y al ocultar o cerrar la pestaña. Si se corta el cable, no hay quien frene.
+
+const ESTADOS_MOTOR_A_MANO = ['DISARMED', 'FAULT'];
+const PERIODO_MOTOR_MS = 100;    // como mucho 10 comandos por segundo mientras se arrastra
+const enviado = { l: 0, r: 0 };  // último porcentaje mandado a cada motor
+let envioPendiente = null;
+
+function ponerDeslizadores(pct) {
+  for (const lado of ['l', 'r']) {
+    $(`motor-${lado}`).value = pct;
+    $(`valor-${lado}`).textContent = `${pct} %`;
+  }
+}
+
+function mandarMotores() {
+  clearTimeout(envioPendiente);
+  envioPendiente = null;
+  const l = Number($('motor-l').value), r = Number($('motor-r').value);
+  const antes = { ...enviado };
+  if (l === antes.l && r === antes.r) return colaEnvio;
+  enviado.l = l; // se anota antes de mandar: la cola respeta el orden de las llamadas
+  enviado.r = r;
+  if (l === 0 && r === 0) return enviar('motor stop', true);
+  if (l === r) return enviar(`motor ${l}`, true);
+  if (l !== antes.l) enviar(`motor l ${l}`, true);
+  return r !== antes.r ? enviar(`motor r ${r}`, true) : colaEnvio;
+}
+
+function frenarMotores() {
+  ponerDeslizadores(0);
+  return mandarMotores();
+}
+
+for (const lado of ['l', 'r']) {
+  const deslizador = $(`motor-${lado}`);
+  deslizador.addEventListener('input', () => {
+    if ($('motores-juntos').checked) ponerDeslizadores(deslizador.value);
+    else $(`valor-${lado}`).textContent = `${deslizador.value} %`;
+    envioPendiente ??= setTimeout(mandarMotores, PERIODO_MOTOR_MS);
+  });
+  deslizador.addEventListener('change', () => { // se soltó
+    if (!$('motores-mantener').checked) ponerDeslizadores(0);
+    mandarMotores();
+  });
+}
+$('motores-mantener').addEventListener('change', (e) => { if (!e.target.checked) frenarMotores(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) frenarMotores(); });
+addEventListener('pagehide', () => frenarMotores());
+
+// La respuesta de "get" (# kp=0.8 ki=0 ...) llena las casillas de ganancias.
+function leerParametros(texto) {
+  if (!texto.startsWith('kp=')) return;
+  for (const [, nombre, valor] of texto.matchAll(/(\w+)=([-+\d.eE]+)/g)) {
+    const casilla = $('ganancias').elements[nombre];
+    if (casilla && document.activeElement !== casilla) casilla.value = Number(valor);
+  }
+}
+
+for (const boton of document.querySelectorAll('[data-comando]')) {
+  boton.onclick = () => {
+    // "motor stop", "disarm" y "arm" ponen en cero el motor a mano del firmware
+    if (['motor stop', 'disarm', 'arm'].includes(boton.dataset.comando)) {
+      ponerDeslizadores(0);
+      enviado.l = enviado.r = 0;
+    }
+    enviar(boton.dataset.comando);
+  };
+}
+$('linea-comando').onsubmit = (e) => {
+  e.preventDefault();
+  enviar($('texto-comando').value);
+  $('texto-comando').select();
+};
+$('ganancias').onsubmit = async (e) => {
+  e.preventDefault();
+  for (const casilla of $('ganancias').querySelectorAll('input')) {
+    if (casilla.value !== '') await enviar(`set ${casilla.name} ${casilla.value}`);
+  }
+  await enviar('get');
+};
+document.addEventListener('keydown', (e) => { // Esc desarma desde cualquier lado de la página
+  if (e.key === 'Escape' && fuente) {
+    ponerDeslizadores(0);
+    enviado.l = enviado.r = 0;
+    enviar('disarm');
+  }
+});
+
 // ---------- Botones ----------
 
+async function cerrarFuente() { // frena antes de soltar el puerto: después ya no se puede
+  await frenarMotores();
+  fuente.cerrar();
+  desconectado();
+}
+
 $('conectar').onclick = () => {
-  if (fuente) { fuente.cerrar(); desconectado(); } else conectar();
+  if (fuente) cerrarFuente(); else conectar();
 };
+function recordar(clave, valor) { try { localStorage.setItem(clave, valor); } catch { /* sin almacenamiento */ } }
+function recuperar(clave) { try { return localStorage.getItem(clave); } catch { return null; } }
+for (const id of ['fuente', 'baudios']) { // la última fuente y velocidad elegidas
+  const guardado = recuperar(`segway.${id}`);
+  if (guardado && [...$(id).options].some((o) => o.value === guardado)) $(id).value = guardado;
+  $(id).addEventListener('change', () => recordar(`segway.${id}`, $(id).value));
+}
+
 $('fuente').onchange = () => {
   $('baudios').hidden = $('fuente').value !== 'usb';
-  if (fuente) { fuente.cerrar(); desconectado(); }
+  if (fuente) cerrarFuente();
 };
 $('pausa').onclick = () => {
   pausado = !pausado;
@@ -383,9 +606,12 @@ if (!('serial' in navigator)) {
   const opcion = $('fuente').querySelector('[value=usb]');
   opcion.disabled = true;
   opcion.textContent += ' (requiere Chrome o Edge)';
+  if ($('fuente').value === 'usb') $('fuente').value = 'puente';
 }
+$('baudios').hidden = $('fuente').value !== 'usb';
 
 leerColores();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', leerColores);
 requestAnimationFrame(cuadro);
-if (location.protocol.startsWith('http')) conectar(); // abierta desde el puente: conectar sola
+// Abierta desde el puente: conectar sola. El USB necesita un clic (el navegador pide elegir el puerto).
+if (location.protocol.startsWith('http') && $('fuente').value === 'puente') conectar();

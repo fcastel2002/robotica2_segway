@@ -33,3 +33,13 @@ __pycache__/
 
 # ESP-IDF: salida de compilación
 firmware/**/build/
+
+# Configuración local de cada PC (rutas de ESP-IDF, puertos COM, editor): no se versiona,
+# porque cambia entre máquinas. Cada uno la arma con la extensión de ESP-IDF
+# ("ESP-IDF: Select Current ESP-IDF Version").
+.vscode/
+*.code-workspace
+**/.claude/worktrees/
+**/.claude/settings.local.json
+**/.claude/launch.json
+sdkconfig.old

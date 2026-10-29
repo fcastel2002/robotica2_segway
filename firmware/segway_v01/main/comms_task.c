@@ -17,7 +17,7 @@
 #define CONSOLE_UART    UART_NUM_0      // conector UART de la placa (CH343)
 
 // Las líneas que no son datos empiezan con '#', para que un graficador CSV las ignore.
-#define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns\n"
+#define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r\n"
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -34,7 +34,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
 static void print_help(void)
 {
     printf("# comandos: arm | disarm | set <param> <valor> | servo [l|r] <grados> | get\n"
-           "#           cal | tlm on | tlm off | help\n"
+           "#           cal | tlm on | tlm off | enc reset | help\n"
            "#           servo [l|r] off|on | motor [l|r] <-100..100> | motor stop\n"
            "# param: kp ki kd ref(grados) umax deadband\n"
            "# servo: %.0f a %.0f grados; sin l/r mueve los dos; off suelta, on agarra\n"
@@ -130,6 +130,13 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             }
             cmd = (command_t){ .type = CMD_MOTOR, .motor = side, .value = pct / 100.0f };
         }
+    } else if (strcmp(word, "enc") == 0) {
+        char *arg = strtok(NULL, " \t");
+        if (arg == NULL || strcmp(arg, "reset") != 0) {
+            printf("# error: enc reset\n");
+            return;
+        }
+        cmd = (command_t){ .type = CMD_ENC_RESET };
     } else if (strcmp(word, "get") == 0) {
         print_params(last);
         return;
@@ -191,10 +198,11 @@ static void comms_task(void *arg)
             shown_state = last.state;
         }
         if (tlm_on) {
-            printf("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu\n",
+            printf("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld\n",
                    (unsigned long)last.t_ms, supervisor_state_name(last.state),
                    last.theta * RAD2DEG, last.theta_rate * RAD2DEG, last.u,
-                   (unsigned long)last.loop_us_max, (unsigned long)last.overruns);
+                   (unsigned long)last.loop_us_max, (unsigned long)last.overruns,
+                   (long)last.enc[ENC_LEFT], (long)last.enc[ENC_RIGHT]);
         }
         fflush(stdout);
     }

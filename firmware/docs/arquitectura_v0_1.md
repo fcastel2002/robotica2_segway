@@ -117,11 +117,11 @@ Reglas de seguridad de la v0.1:
 
 ## 6. Interfaz de telemetría y comandos
 
-**Telemetría:** una línea CSV cada 20 ms por la consola USB. Se puede graficar con Teleplot (VS Code)
-o con un script de Python.
+**Telemetría:** una línea CSV cada 20 ms por la consola USB. Se grafica con la
+[interfaz web](../../gui_hmi/README.md) (USB directo), con Teleplot (VS Code) o con un script de Python.
 
 ```text
-t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns
+t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r
 ```
 
 **Comandos:** texto terminado en salto de línea.
@@ -134,6 +134,7 @@ t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns
 | `servo 100` / `servo l 100` / `servo r 80` | Mover los dos servos o uno solo (grados del servo) |
 | `get` | Imprimir todos los parámetros actuales y la posición de los servos |
 | `tlm on` / `tlm off` | Activar o pausar la telemetría |
+| `enc reset` | Poner en cero las cuentas de los encoders |
 
 Los parámetros vuelven a los valores de `board_config.h` al reiniciar. Cuando estén bien ajustados se
 copian ahí a mano. El guardado en NVS queda para más adelante.
@@ -150,8 +151,8 @@ Preliminar: hay que confirmarla contra la serigrafía del clon antes de cablear.
 | Motor izquierdo IN1 / IN2 / ENA | 4 / 5 / 6 | IN por MCPWM a 20 kHz; EN digital. Quitar el puente ENA del L298N |
 | Motor derecho IN3 / IN4 / ENB | 7 / 17 / 18 | Ídem; con el puente ENB puesto, `PIN_MOTOR_R_EN = -1` |
 | Falla de motores (parada de emergencia) | 21 | **Reservado**: entrada de falla del MCPWM, corte por hardware |
-| Encoder izquierdo A / B | 11 / 12 | **Reservado** (PCNT) |
-| Encoder derecho A / B | 13 / 14 | **Reservado** (PCNT) |
+| Encoder izquierdo A / B | 11 / 12 | PCNT x4, pull-up interno; solo se leen (telemetría), no entran al control |
+| Encoder derecho A / B | 13 / 14 | Ídem; prueba en [`prueba_encoders.md`](prueba_encoders.md) |
 | Servo izquierdo / derecho | 15 / 16 | LEDC 50 Hz. `servo_test` usa GPIO4, que ahora es de un motor |
 | Batería (divisor resistivo) | 1 | ADC1_CH0. ADC1 funciona aunque se use WiFi |
 | Botón de armado (opcional) | 0 | Botón BOOT de la placa; se puede leer después del arranque |
