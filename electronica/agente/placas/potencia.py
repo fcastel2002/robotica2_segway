@@ -126,10 +126,10 @@ ESQUELETO = [
     ("SERVO_DER_MCU", 1.0, ["J20.4", (42.50, 69.85), "R6.1"]),
     ("SERVO_IZQ_SIG", 1.0, ["R5.2", "J13.3"]),
     ("SERVO_DER_SIG", 1.0, ["R6.2", "J14.3"]),
-    # J20: 5V_MCU y GND unidos entre columnas; 5V_MCU sube a D2 por el lado de A7
+    # J20: 5V_MCU y GND unidos entre columnas
     ("5V_MCU", 1.0, ["J20.13", "J20.14"]),
     ("GND", 1.0, ["J20.15", "J20.16"]),
-    # v0.3: sin D2. 5V de A8 a J20.13: salta el bus A7->A5 (W3) y VM_LOG_F (W4)
+    # 5V de A8 a J20.13: salta el bus A7->A5 (W1) y VM_LOG_F (W2)
     ("5V_MCU", 1.2, ["J20.13", (63.50, 57.15), (63.50, 44.00), (79.00, 44.00), (81.50, 41.50)]),
     ("5V_MCU", 1.2, [(97.03, 41.50), (97.03, 62.48)]),
     # v0.4: el 5V rodea por el este el pad OUT- de A8 y entra a OUT+ por la derecha
@@ -137,10 +137,8 @@ ESQUELETO = [
     # Entradas del DRV IZQ: R35/R36 verticales (el relleno pasa bajo sus cuerpos), pull-downs R1/R2
     ("IN1_IZQ_MCU", 1.0, ["J20.12", (50.60, 59.69), (50.60, 39.60), (64.92, 39.60), "A3.3"]),     # v0.4: directo
     ("IN2_IZQ_MCU", 1.0, ["J20.10", (46.99, 62.23), (46.99, 37.70), (62.38, 37.70), "A3.4"]),
-    # VBAT: bajo el buck y entre los pads de W5, hasta el divisor R22/R23/C14
-    # GND de los INA: de W6 baja entre los pads de W2 hasta W7
-    ("GND", 1.0, [(94.00, 45.00), (94.00, 63.00)]),     # v0.4: GND de los INA, de W5 a W6
-    # VM_LOG de A7 al buck y, saltando VBAT (W5), al voltímetro
+    ("GND", 1.0, [(94.00, 45.00), (94.00, 63.00)]),     # v0.4: GND de los INA, de W3 a W4
+    # VM_LOG de A7 al buck (pasa por debajo del módulo hasta IN+)
     ("VM_LOG", 1.2, ["A7.3", (77.35, 60.96), (77.35, 68.50), (87.00, 68.50), (87.00, 85.50), "A8.1"]),
     ("VM_LOG", 1.0, ["A7.2", (77.35, 63.50)]),
     # --- Lógica de potencia: F5 -> A7 (shunt) -> buck y voltímetro
@@ -193,6 +191,8 @@ ROTULOS = [("POTENCIA", (133.50, 80.60), 2.0), ("v0.4", (133.50, 84.00), 2.0), (
     ("+", (26.86, 87.00), 2.0, 90), ("-", (18.86, 91.50), 2.0, 0), ("UBEC 6V", (14.61, 87.00), 2.0, 90),
     ("SERVO DER", (31.60, 75.50), 2.0, 0), ("VOLT", (101.30, 60.50), 2.0, 90),
     ("15A", (143.33, 46.46), 2.0, 90),
+    # v0.4: borde de entrada de A8, entre IN+ (pad cuadrado) e IN-
+    ("IN", (81.50, 81.05), 2.0, 0),
 ]
 ESCALA = None
 
@@ -217,9 +217,9 @@ PUENTES = [
     ("5V_MCU", [(97.03, 62.48), (97.03, 70.10)]),      # 5V sobre VM_LOG_F
     ("GND", [(86.54, 45.00), (94.00, 45.00)]),         # GND de los INA sobre SCL y SDA
     ("GND", [(94.00, 63.00), (94.00, 70.00)]),         # ... y sobre VM_LOG_F hasta el relleno bajo A8
-    # v0.4: GND del cable (J20.15/16) en diagonal sobre las líneas IN y de servo, al norte del cuerpo de J20 y
-    # al oeste de su carcasa (antes pasaba 0,3 mm debajo de ella), hasta el GND entre R6 y R5
-    ("GND", [(53.00, 42.50), (46.50, 74.00)]),
+    # v0.4: GND del cable (J20.15/16) en diagonal sobre las líneas IN y de servo: arranca al norte del cuerpo de J20
+    # y pasa al oeste de su carcasa, a 1,5 mm (antes pasaba 0,3 mm debajo de ella), hasta el GND entre R6 y R5
+    ("GND", [(53.00, 42.50), (45.00, 74.00)]),
 ]
 # El agujero de tope del INA226 (separador M3 opcional) cae sobre el bus: se quita (SUP-75)
 QUITAR_NPTH = ["ROB-009_INA226_modulo_8p"]
@@ -246,6 +246,6 @@ ROTULOS_PEDIDOS = [
     ("SERVO IZQ", "J13", 2.0, 16), ("SERVO DER", "J14", 2.0, 16),
     ("-", "J18.1", 2.0, 7), ("VOLT", "J18", 2.0, 16),
     ("1", "J20.1", 2.0, 7),
-    ("IN+", "A8.1", 2.0, 7),
+    ("IN", "A8.1", 2.0, 7),
     ("15A", "F1", 2.0, 16), ("7,5A", "F4", 2.0, 16),
 ]

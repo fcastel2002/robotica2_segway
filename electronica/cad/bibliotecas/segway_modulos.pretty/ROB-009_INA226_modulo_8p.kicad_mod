@@ -2,7 +2,7 @@
 	(version 20260206)
 	(generator "segway_huellas_a")
 	(layer "F.Cu")
-	(descr "Pines 5 = SDA y 6 = SCL según el módulo comprado (foto del 31/10/2026; la captura del vendedor decía SCL, SDA). ROB-009 modulo INA226 tipo CJMCU-226 (shunt R100) soldado sobre pines macho con el espaciador de la tira desde la v0.1 (DEC-20, REQ-22). Pad n = pin n del simbolo segway_modulos:ROB-009_INA226_modulo_8p (1 IN+, 2 IN-, 3 VBS, 4 ALE, 5 SDA, 6 SCL, 7 GND, 8 VCC), hilera vertical a la izquierda y cuerpo hacia +X, como la captura de compra ROB-009/referencia_compra.png. En las fotos del 31/10/2026 el borde lejano del modulo queda a 18,0-18,7 mm de la hilera (revision independiente v0.4): en la placa de potencia se dejo 1,5 mm mas de aire hacia J20. SUPUESTOS (captura de catalogo escalada con el paso de 2,54 mm, no medido): placa 18,6 x 20,8 mm (SUP-HA-INA-1); hilera a 1,3 mm del borde y centrada (SUP-HA-INA-2); cuatro agujeros grandes del modulo (IN+/IN- de potencia, sin uso) a 14,6 mm de la hilera con paso 5,08 mm (SUP-HA-INA-3). Codificacion: la 1x08 no tiene pin libre, asi que lleva un tope mecanico: NPTH 3,2 mm a 9 mm del lado opuesto al cuerpo para un tornillo M3 x 16 vertical con tuerca (o separador de nylon >= 13 mm) que choca con el modulo invertido (SUP-HA-INA-4; diseno_v0.3.md propuesta 16). Fabricacion casera: pad 2,2 mm, taladro 1,0 mm.")
+	(descr "Pines 5 = SDA y 6 = SCL según el módulo comprado (foto del 31/10/2026; la captura del vendedor decía SCL, SDA). ROB-009 modulo INA226 tipo CJMCU-226 (shunt R100) soldado sobre pines macho con el espaciador de la tira desde la v0.1 (DEC-20, REQ-22). Pad n = pin n del simbolo segway_modulos:ROB-009_INA226_modulo_8p (1 IN+, 2 IN-, 3 VBS, 4 ALE, 5 SDA, 6 SCL, 7 GND, 8 VCC), hilera vertical a la izquierda y cuerpo hacia +X, como la captura de compra ROB-009/referencia_compra.png. En las fotos del 31/10/2026 el borde lejano del modulo queda a 18,0-18,7 mm de la hilera (revision independiente v0.4): en la placa de potencia se dejo 1,5 mm mas de aire hacia J20, y el contorno y el courtyard se llevaron a 18,7 mm. SUPUESTOS (captura de catalogo escalada con el paso de 2,54 mm, no medido): placa 18,6 x 20,8 mm (SUP-HA-INA-1); hilera a 1,3 mm del borde y centrada (SUP-HA-INA-2); cuatro agujeros grandes del modulo (IN+/IN- de potencia, sin uso) a 14,6 mm de la hilera con paso 5,08 mm (SUP-HA-INA-3). Codificacion: la 1x08 no tiene pin libre, asi que lleva un tope mecanico: NPTH 3,2 mm a 9 mm del lado opuesto al cuerpo para un tornillo M3 x 16 vertical con tuerca (o separador de nylon >= 13 mm) que choca con el modulo invertido (SUP-HA-INA-4; diseno_v0.3.md propuesta 16). Fabricacion casera: pad 2,2 mm, taladro 1,0 mm.")
 	(tags "INA226 CJMCU-226 modulo zocalo 1x08 tope THT casero")
 	(property "Reference" "REF**"
 		(at 8 -3.11 0)
@@ -28,7 +28,7 @@
 	(duplicate_pad_numbers_are_jumpers no)
 	(fp_line
 		(start -1.3 -1.51)
-		(end 17.3 -1.51)
+		(end 18.7 -1.51)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -36,8 +36,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 17.3 -1.51)
-		(end 17.3 19.29)
+		(start 18.7 -1.51)
+		(end 18.7 19.29)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -45,7 +45,7 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 17.3 19.29)
+		(start 18.7 19.29)
 		(end -1.3 19.29)
 		(stroke
 			(width 0.1)
@@ -64,7 +64,7 @@
 	)
 	(fp_line
 		(start -1.41 -1.62)
-		(end 17.41 -1.62)
+		(end 18.81 -1.62)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -72,8 +72,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 17.41 -1.62)
-		(end 17.41 19.4)
+		(start 18.81 -1.62)
+		(end 18.81 19.4)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -81,7 +81,7 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 17.41 19.4)
+		(start 18.81 19.4)
 		(end -1.41 19.4)
 		(stroke
 			(width 0.12)
@@ -140,7 +140,7 @@
 	)
 	(fp_line
 		(start -1.8 -2.01)
-		(end 17.8 -2.01)
+		(end 19.2 -2.01)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -148,8 +148,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 17.8 -2.01)
-		(end 17.8 19.79)
+		(start 19.2 -2.01)
+		(end 19.2 19.79)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -157,7 +157,7 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 17.8 19.79)
+		(start 19.2 19.79)
 		(end -1.8 19.79)
 		(stroke
 			(width 0.05)

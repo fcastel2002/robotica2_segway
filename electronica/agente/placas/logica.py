@@ -123,7 +123,7 @@ ROTULOS = [("LOGICA v0.4", (40.00, 77.00), 2.0), ("LADO COBRE", (40.00, 80.80), 
     ("1", (52.92, 52.07), 2.0, 0),
     # v0.3: ultrasonido y buck de 3,3 V
     # v0.4: "5V" y "CABLE" de J27 partían el GND (franja sur y paso entre J20 y la DevKitC); J27 va en la guía
-    ("IN+", (21.55, 91.50), 2.0, 90), ("3V3", (21.55, 77.20), 2.0, 90),     # A9 (v0.4)     # J27 y A9 (v0.3); la "G" de J27.4 partía el GND
+    ("IN", (21.55, 91.50), 2.0, 90), ("OUT", (21.55, 77.20), 2.0, 90),     # entre los dos pads de cada borde; el cuadrado es IN+     # A9 (v0.4)     # J27 y A9 (v0.3); la "G" de J27.4 partía el GND
 ]
 ESCALA = None     # v0.3: sus marcas cortaban la franja sur de GND; se mide el contorno (100 x 96 mm)
 
@@ -143,6 +143,6 @@ ROTULOS_PEDIDOS = [
     ("ENC IZQ", "J7", 2.0, 12), ("G", "J8.1", 2.0, 5), ("1", "J20.1", 2.0, 5),
     # v0.3
     ("5V", "J27.1", 2.0, 6), ("G", "J27.4", 2.0, 6), ("SR04", "J27", 2.0, 12),
-    ("IN+", "A9.1", 2.0, 7), ("3V3", "A9.3", 2.0, 7),
+    ("IN", "A9.1", 2.0, 7), ("OUT", "A9.3", 2.0, 7),
     ("CABLE", "J27", 2.0, 12), ("+", "C30.1", 2.0, 5),
 ]

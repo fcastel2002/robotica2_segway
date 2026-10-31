@@ -10,6 +10,7 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 - **Fuera las resistencias de pull-up** R13–R16 (encoders) y R24 (paro): se usan las pull-ups internas de la ESP32, que **hay que activar en el firmware**. Si un encoder de colector abierto necesita más, se agrega una de 10 kΩ en su bornera, entre V y la señal.
 - **GPIO3 libre:** la batería la mide el INA226 de la potencia. J20.1 queda sin conexión.
 - **Puentes:** 5. W5 une el relleno del oeste con el centro, por encima de la salida de 3,3 V de A9.
+- **Rótulos de A9:** «IN» y «OUT» entre los dos pads de cada borde (antes «IN+» y «3V3», que no decían a qué pad se referían).
 - **Título acortado** a «LOGICA v0.4»: «SEGWAY LOGICA» tocaba el pad OUT+ de A9.
 - **J27 sin rótulos de cobre:** partían el relleno de masa. Su orden (VCC, TRIG, ECHO, GND, con VCC abajo) va en la guía de montaje.
 
@@ -113,21 +114,21 @@ Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ult
 |---|---|
 | `segway_logica_cobre_BCu_1a1.pdf` | Transferencia de tóner. B.Cu + contorno, escala 1, **sin espejar** (SUP-07). En el papel, «LOGICA v0.4» y «LADO COBRE» se leen al revés. |
 | `segway_logica_montaje_cara_superior.pdf` | Guía de montaje: serigrafía y contornos de la cara de componentes |
-| `segway_logica.drl`, `segway_logica-drl_map.pdf`, `segway_logica_taladros.rpt` | Taladros: 0,8 mm (8), 0,9 (10), 1,0 (124), 1,2 (8) y 1,3 (4, los de A9). Sin metalizar: 4 M3 y los 2 agujeros del MPU, de 3,2 mm. |
+| `segway_logica.drl`, `segway_logica-drl_map.pdf`, `segway_logica_taladros.rpt` | Taladros: 0,8 mm (8), 0,9 (10), 1,0 (124), 1,2 (8) y 1,5 (4, los de A9: más grandes para absorber el error de medida de las fotos). Sin metalizar: 4 M3 y los 2 agujeros del MPU, de 3,2 mm. |
 
 ## Pasos
 
 1. **Imprimir** el PDF de cobre en láser, a tamaño real (100 %). Medir con calibre el contorno impreso: **100,0 × 96,0 mm**.
 2. **Verificar la orientación.** En el papel, los rótulos se leen al revés.
 3. **Planchar, atacar y limpiar.** Después de transferir, los rótulos se leen derechos mirando la cara de cobre.
-4. **Taladrar** con mecha de 0,8, 0,9, 1,0, 1,2 o 1,3 mm según el mapa; los M3 con 3,2 mm.
+4. **Taladrar** con mecha de 0,8, 0,9, 1,0, 1,2 o 1,5 mm según el mapa; los M3 con 3,2 mm.
 5. **Montar** en este orden:
    1. Puentes W1–W5 (alambre estañado de 0,6 mm, del lado de componentes).
    2. Resistencias R41–R43.
    3. Zócalos hembra de A1 (2 × 22, posición 24 tapada) y A2 (1 × 8, posición 5 tapada), y las tiras de expansión J24, J25 (1 × 22) y J26 (1 × 6). Soldar J24 y J25 con la ESP32 enchufada, para que queden alineadas con su zócalo.
    4. IDC J20, con la muesca hacia afuera de la placa.
    5. Borneras J7 y J8, J27 (tira hembra 1 × 4) y C30 (el + hacia A9).
-   6. A9 soldado sobre 4 pines macho con el espaciador: IN+ abajo y OUT+ arriba del lado este (rótulos IN+ y 3V3), GND del lado oeste. Los rótulos del módulo están en su cara de abajo: comprobarlos antes de presentarlo.
+   6. A9 soldado sobre 4 pines macho con el espaciador: IN+ abajo y OUT+ arriba del lado este (rótulos IN y OUT en el cobre, entre los dos pads de cada borde; el pad cuadrado es IN+), GND del lado oeste. Los rótulos del módulo están en su cara de abajo: comprobarlos antes de presentarlo.
    7. Cable del paro soldado en J4 (1 = GND, 2 = PARO), o un puente entre sus dos pads si el hongo tiene un solo contacto.
 6. **Comprobar antes de enchufar los módulos:**
    - Continuidad de W1 (3V3 entre A1.1 y J20.9) y de W2–W5 (GND contra J20.15).

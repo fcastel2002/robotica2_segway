@@ -15,8 +15,8 @@ La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, l
 | A3, A4 | DRV8871 (2 unidades; hay más de repuesto) | Zócalo, con pines macho en lugar de sus borneras |
 | A5, A6 | INA219 MCU-219 | Soldado, con pines macho en lugar de su bornera. Puente A0 en A5 y A1 en A6 |
 | A7 | INA226 | Soldado, con el pin 1 (IN+) en el pad cuadrado |
-| A8 | Mini buck de 5 V (ROB-006), placa de potencia | Soldado sobre 4 pines macho, IN+ del lado del rótulo IN+ |
-| A9 | Mini buck de 3,3 V (ROB-005), placa de lógica: alimenta la ESP32 y la IMU | Soldado sobre 4 pines macho, IN+ del lado del rótulo IN+ |
+| A8 | Mini buck de 5 V (ROB-006, tipo Mini-360), placa de potencia | Soldado sobre 4 pines macho, IN+ en el pad cuadrado, junto al rótulo IN |
+| A9 | Mini buck de 3,3 V (ROB-005, tipo Mini-360), placa de lógica: alimenta la ESP32 y la IMU | Soldado sobre 4 pines macho, IN+ en el pad cuadrado, junto al rótulo IN |
 | — | UBEC YSIDO 6 A, voltímetro ROB-004, ultrasonido HC-SR04 | Fuera de las placas, con cables a J15/J16, a los pads J18 y a J27 (cable Dupont de 4 hilos) |
 
 ## 2. Componentes de la placa de potencia
@@ -92,7 +92,7 @@ Las posiciones tapadas (24 de A1 y 5 de A2) se tapan con un pin macho cortado al
 | — | Papel ilustración o de transferencia, percloruro férrico o persulfato de sodio |
 | — | Mechas de 0,8, 0,9, 1,0, 1,1, 1,2, 1,3, 1,5, 1,8, 2,0, 2,5 y 3,2 mm (ver los informes de taladros) |
 | 0,5 m | Alambre de cobre estañado de 0,6 mm para los 10 puentes (5 en la potencia y 5 en la lógica) |
-| 20 cm | Termocontraíble de 1,5 mm para los puentes que quedan bajo A7 y A8 |
+| 20 cm | Termocontraíble de 1,5 mm para W5 de la potencia (largo, en diagonal) |
 | 8 + 16 | Separadores M3 de 10 mm y tornillos M3 × 6 |
 | — | Estaño, flux y malla desoldante |
 

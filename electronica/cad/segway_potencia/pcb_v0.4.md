@@ -28,7 +28,7 @@ Los errores del buck, de las borneras y de W5 los encontró la [revisión indepe
 |---|---|
 | Contorno | 148 × 96 mm, esquinas de 3 mm, 4 agujeros M3 a 4 mm de cada esquina |
 | Componentes | 32 del esquema y 5 puentes de alambre |
-| Puentes ([lista](evidencia/puentes_pcb_v0.4.json)) | W1 (5V, 15,5 mm), W2 (5V, 7,6 mm), W3 (GND de los INA, 7,5 mm), W4 (GND, 7,0 mm), W5 (GND del cable, 32,2 mm, en diagonal) |
+| Puentes ([lista](evidencia/puentes_pcb_v0.4.json)) | W1 (5V, 15,5 mm), W2 (5V, 7,6 mm), W3 (GND de los INA, 7,5 mm), W4 (GND, 7,0 mm), W5 (GND del cable, 32,5 mm, en diagonal) |
 | DRC (kicad-cli 10.0.7, con paridad de esquema) | **0 errores, 0 sin conectar, 0 de paridad** ([informe](evidencia/drc_pcb_v0.4.json)) |
 | Avisos | Ningún puente dentro del contorno de un componente. Los pads caseros son más grandes que los de la biblioteca (`lib_footprint_mismatch`). El resto es serigrafía, que solo va en la guía impresa. |
 
@@ -39,7 +39,7 @@ Los errores del buck, de las borneras y de W5 los encontró la [revisión indepe
 | A3, A4 (DRV8871) | **Zócalo**: tira hembra 1 × 4 y 4 posiciones sueltas para los agujeros de las borneras (paso 5,0 mm). Al módulo se le desueldan sus borneras y se le ponen pines macho |
 | A5, A6 (INA219) | **Soldados**, con pines macho en los agujeros de su bornera. Antes: puente A0 en A5 y A1 en A6 |
 | A7 (INA226) | **Soldado**, con el pin 1 (IN+) en el pad cuadrado |
-| A8 (buck de 5 V) | **Soldado** sobre 4 pines macho: IN+ abajo a la izquierda (pad cuadrado), OUT+ abajo a la derecha, IN− y OUT− arriba. Los rótulos del módulo están en su cara de abajo, la que queda contra la placa: comprobarlos antes de presentarlo |
+| A8 (buck de 5 V) | **Soldado** sobre 4 pines macho: IN+ abajo a la izquierda (pad cuadrado), OUT+ abajo a la derecha, IN− y OUT− arriba. En el cobre, el rótulo «IN» marca el borde de entrada. Los rótulos del módulo están en su cara de abajo, la que queda contra la placa: comprobarlos antes de presentarlo |
 
 Los módulos soldados quedan unos 2,5 mm sobre la placa (espaciador de la tira). Los puentes van pegados a la placa y se montan antes. W5 pasa junto a la carcasa de J20: dejarlo bien apoyado.
 
@@ -63,7 +63,7 @@ Los módulos soldados quedan unos 2,5 mm sobre la placa (espaciador de la tira).
 |---|---|
 | `segway_potencia_cobre_BCu_1a1.pdf` | Transferencia de tóner. B.Cu + contorno, escala 1, **sin espejar** (SUP-07). En el papel, los rótulos se leen al revés |
 | `segway_potencia_montaje_cara_superior.pdf` | Guía de montaje |
-| `segway_potencia.drl`, `segway_potencia-drl_map.pdf`, `segway_potencia_taladros.rpt` | Taladros: 0,8 mm (14), 0,9 (10), 1,0 (56), 1,1 (3), 1,2 (4), 1,3 (16), 1,5 (8), 1,8 (18) y 2,0 (2). Sin metalizar: 4 M3 de 3,2 mm y la traba del portafusible ATO, de 2,5 mm |
+| `segway_potencia.drl`, `segway_potencia-drl_map.pdf`, `segway_potencia_taladros.rpt` | Taladros: 0,8 mm (14), 0,9 (10), 1,0 (56), 1,1 (3), 1,2 (4), 1,3 (12), 1,5 (12, incluidos los 4 de A8: más grandes para absorber el error de medida de las fotos), 1,8 (18) y 2,0 (2). Sin metalizar: 4 M3 de 3,2 mm y la traba del portafusible ATO, de 2,5 mm |
 
 ## Pasos
 
