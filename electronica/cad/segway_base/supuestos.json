@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 14,
+ "revision_lista": 15,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -435,11 +435,11 @@
    "grupo": "B",
    "tema": "Agujeros de fijación",
    "supuesto": "Cuatro agujeros M3 (taladro de 3,2 mm) en las esquinas, con el centro a 4 mm de cada borde y un círculo sin cobre de 7 mm de diámetro para la cabeza del tornillo o el separador. La placa va sobre separadores de 10 mm para que las soldaduras del lado del cobre no toquen el chasis.",
-   "base": "Práctica habitual [H]. Open_point 16 de especificacion_v0.3.json: fijación sin definir.",
+   "base": "Práctica habitual [H]. Open_point 16 de especificacion_v0.3.json: fijación sin definir. Confirmado por Matías el 31/10/2026 (mecánica: agujeros de fijación) [M].",
    "impacto_si_cambia": "Si el chasis tiene otros puntos de fijación, se mueven los agujeros y se reubican los componentes cercanos.",
    "como_se_confirma": "Plano o medida del chasis (Francisco) con la posición de los puntos de fijación.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "pcb"
@@ -452,7 +452,16 @@
     "separador_mm": 10
    },
    "id": "SUP-05",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "Práctica habitual [H]. Open_point 16 de especificacion_v0.3.json: fijación sin definir.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Matías, 31/10/2026: 'sup batería, confirmo. sup36, tmb. supuestos mecánicos, todo ok' [M]"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -1626,11 +1635,11 @@
    "grupo": "D",
    "tema": "MPU6050 GY-521 (A2)",
    "supuesto": "Formato GY-521 (DEC-09) con tira 1×08 en el orden VCC, GND, SCL, SDA, XDA, XCL, AD0, INT, alimentado desde 3V3_MCU. El regulador propio del GY-521 funciona con 3,3 V de entrada. AD0 queda sin conexión en la placa: la pull-down del módulo fija la dirección 0x68. Codificación: se retira el pin 5 (XDA) y se tapa esa posición.",
-   "base": "DEC-09; open_point 25; [DS-MPU] p.15; pull-down de AD0 de unos 4,7 kΩ en el GY-521 [H].",
+   "base": "DEC-09; open_point 25; [DS-MPU] p.15; pull-down de AD0 de unos 4,7 kΩ en el GY-521 [H]. Confirmado por Matías el 31/10/2026 (MPU6050 GY-521; la foto del módulo muestra la tira INT, AD0, XCL, XDA, SDA, SCL, GND, VCC vista desde los componentes) [M].",
    "impacto_si_cambia": "Si el módulo no tiene pull-down en AD0, la dirección queda indefinida y se recupera R39. Si su regulador no funciona con 3,3 V, la MPU pasa a 5V y cambia la net de VCC.",
    "como_se_confirma": "E-01: sin alimentar, resistencia entre AD0 y GND. E-02: tensión en el VDD del chip con VCC = 3,3 V.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [
     "A2"
    ],
@@ -1651,6 +1660,14 @@
       "supuesto": "Formato GY-521 (DEC-09) con tira 1×08 en el orden VCC, GND, SCL, SDA, XDA, XCL, AD0, INT, alimentado desde 3V3_PER. El regulador propio del GY-521 funciona con 3,3 V de entrada. AD0 queda sin conexión en la placa base: la pull-down del módulo fija la dirección 0x68. Codificación: se retira el pin 5 (XDA) y se tapa esa posición."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "DEC-09; open_point 25; [DS-MPU] p.15; pull-down de AD0 de unos 4,7 kΩ en el GY-521 [H].",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Matías, 31/10/2026: 'sup batería, confirmo. sup36, tmb. supuestos mecánicos, todo ok' [M]"
     }
    ]
   },
@@ -1857,11 +1874,11 @@
    "grupo": "E",
    "tema": "Batería",
    "supuesto": "Pack de 3 celdas (ROB-014): 11,1 V nominales y 12,6 V con carga completa (hipótesis de litio). El bus puede llegar a 13,6 V si se carga con el robot conectado. El BMS (ROB-003) va en el pack. La salida del pack llega a J1 en cables sueltos de AWG 14.",
-   "base": "DEC-03 y DEC-10; ficha del BMS, p.1 (carga de 12,6-13,6 V) [V]; open_point 20.",
+   "base": "DEC-03 y DEC-10; ficha del BMS, p.1 (carga de 12,6-13,6 V) [V]; open_point 20. Confirmado por Matías el 31/10/2026 (batería) [M].",
    "impacto_si_cambia": "Con otra química u otra cantidad de celdas cambian D1, el divisor y la tensión de entrada de todos los módulos.",
    "como_se_confirma": "Etiquetas de las celdas y del BMS (preguntas B.4-B.6 de datos-fisicos-faltantes).",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [
     "J1",
     "D1",
@@ -1878,7 +1895,16 @@
     "V_carga_max": 13.6
    },
    "id": "SUP-42",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "DEC-03 y DEC-10; ficha del BMS, p.1 (carga de 12,6-13,6 V) [V]; open_point 20.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Matías, 31/10/2026: 'sup batería, confirmo. sup36, tmb. supuestos mecánicos, todo ok' [M]"
+    }
+   ]
   },
   {
    "grupo": "E",
@@ -2500,11 +2526,11 @@
    "grupo": "G",
    "tema": "Posición de la IMU",
    "supuesto": "La MPU6050 (A2) va sobre la placa base, a más de 6 mm de conectores y tornillos, lejos de los DRV, los bucks, el UBEC y las pistas de potencia, y sin pistas debajo.",
-   "base": "§10 de diseno_v0.3.md; [DS-MPU] p.43; ratificación heredada (11) del open_point 20.",
+   "base": "§10 de diseno_v0.3.md; [DS-MPU] p.43; ratificación heredada (11) del open_point 20. Confirmado por Matías el 31/10/2026 (mecánica: posición de la IMU) [M].",
    "impacto_si_cambia": "Si mecánica pide la IMU en otro lugar (por ejemplo, sobre el eje), A2 pasa a un conector con cable.",
    "como_se_confirma": "Francisco y modelado confirman dónde va la IMU y cómo se orienta respecto de los ejes del robot.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [
     "A2"
    ],
@@ -2513,7 +2539,16 @@
    ],
    "alias": [],
    "id": "SUP-60",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "§10 de diseno_v0.3.md; [DS-MPU] p.43; ratificación heredada (11) del open_point 20.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Matías, 31/10/2026: 'sup batería, confirmo. sup36, tmb. supuestos mecánicos, todo ok' [M]"
+    }
+   ]
   },
   {
    "grupo": "G",
@@ -3006,10 +3041,10 @@
    "grupo": "I",
    "tema": "Cable entre placas (J20)",
    "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 sin conexión, 2 SERVO_IZQ, 3 INA_ALERT, 4 SERVO_DER, 5 SDA, 6 IN2_DER, 7 SCL, 8 IN1_DER, 9 3V3, 10 IN2_IZQ, 11 sin conexión, 12 IN1_IZQ, 13 y 14 5V_MCU, 15 y 16 GND.",
-   "base": "cad/interconexion_v0.6.json; ruteo v0.1 de las dos placas [H]. El pin 11 quedó encerrado en la potencia por el bus I2C y en la lógica por el 5V de J26.",
+   "base": "cad/interconexion_v0.6.json; ruteo v0.1 de las dos placas [H]. El pin 11 quedó encerrado en la potencia por el bus I2C y en la lógica por el 5V de J26. Confirmado por Matías el 31/10/2026 (mecánica: cable entre placas) [M].",
    "impacto_si_cambia": "Otro orden obliga a rehacer el ruteo de las dos placas.",
    "como_se_confirma": "Antes de enchufarlo: continuidad pin 1 con pin 1 y pin 13 con pin 13 entre los dos conectores del cable. Un IDC prensado al revés une el pin n con el 17−n y lleva 5V_MCU a GPIO10 y GPIO8. Mecánica fija el largo.",
-   "estado": "CAMBIADO",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
@@ -3057,6 +3092,14 @@
       "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 VBAT_ADC, 2 SERVO_IZQ, 3 INA_ALERT, 4 SERVO_DER, 5 SDA, 6 IN2_DER, 7 SCL, 8 IN1_DER, 9 3V3, 10 IN2_IZQ, 11 sin conexión en las dos placas, 12 IN1_IZQ, 13 y 14 5V_MCU, 15 y 16 GND."
      },
      "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "cad/interconexion_v0.6.json; ruteo v0.1 de las dos placas [H]. El pin 11 quedó encerrado en la potencia por el bus I2C y en la lógica por el 5V de J26.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026: 'sup batería, confirmo. sup36, tmb. supuestos mecánicos, todo ok' [M]"
     }
    ]
   },
