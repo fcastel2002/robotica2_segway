@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 18,
+ "revision_lista": 19,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -2032,12 +2032,12 @@
   {
    "grupo": "E",
    "tema": "Interruptor y paro en la potencia",
-   "supuesto": "J3 (potencia) son pads para soldar el cable de 1,5 mm² del lazo en serie del interruptor general y del hongo NC: si se abre cualquiera, se corta toda la potencia. J4 (lógica) son pads para soldar el cable del segundo contacto NC del hongo hacia GPIO6 (1 GND, 2 PARO); si el hongo tiene un solo contacto, J4 se puentea y el firmware no se entera del paro, pero la potencia se corta igual. Lo ideal: hongo con dos contactos NC e interruptor de 15 A o más en continua. El cable soldado en J3 se fija con un precinto al separador M3 de la esquina superior derecha, para que la vibración no lo corte en el pad.",
+   "supuesto": "J3 (potencia) son 2 pads para soldar el cable de 1,5 mm² del lazo en serie del interruptor general y del botón de parada de emergencia: si se abre cualquiera, se corta toda la potencia. Matías (31/10/2026): el botón es un interruptor o pulsador simple, con un contacto, así que J4 (lógica, aviso a GPIO6) se puentea con alambre y el firmware no se entera del paro, pero la potencia se corta igual. Como J3 lleva toda la corriente de la batería (fusible F1 de 15 A), el botón y el interruptor tienen que soportar 15 A o más en continua y quedar abiertos al soltarlos (con retención): un pulsador momentáneo solo cortaría mientras se mantiene apretado. El cable soldado en J3 se fija con un precinto al separador M3 de la esquina superior derecha.",
    "base": "Matías, 26/10/2026 [M]: pines para soldar con cable cualquier interruptor de emergencia. §3 de diseno_v0.3.md; REQ-17.",
    "impacto_si_cambia": "Si el hongo no tiene segundo contacto, la ESP32 no sabe que se apretó el paro (los motores igual quedan sin potencia).",
-   "como_se_confirma": "Al comprar el hongo: cantidad de contactos NC. Ensayo E-08 de paro con los motores en marcha.",
+   "como_se_confirma": "Corriente nominal del botón y del interruptor (15 A o más en continua) y que el botón quede trabado al apretarlo. Ensayo E-08 de paro con los motores en marcha.",
    "estado": "CAMBIADO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "J3",
     "J4"
@@ -2070,6 +2070,14 @@
       "supuesto": "J3 (potencia) son pads para soldar el cable de 1,5 mm² del lazo en serie del interruptor general y del hongo NC: si se abre cualquiera, se corta toda la potencia. J4 (lógica) son pads para soldar el cable del segundo contacto NC del hongo hacia GPIO6 (1 GND, 2 PARO); si el hongo tiene un solo contacto, J4 se puentea y el firmware no se entera del paro, pero la potencia se corta igual. Lo ideal: hongo con dos contactos NC e interruptor de 15 A o más en continua."
      },
      "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "J3 (potencia) son pads para soldar el cable de 1,5 mm² del lazo en serie del interruptor general y del hongo NC: si se abre cualquiera, se corta toda la potencia. J4 (lógica) son pads para soldar el cable del segundo contacto NC del hongo hacia GPIO6 (1 GND, 2 PARO); si el hongo tiene un solo contacto, J4 se puentea y el firmware no se entera del paro, pero la potencia se corta igual. Lo ideal: hongo con dos contactos NC e interruptor de 15 A o más en continua. El cable soldado en J3 se fija con un precinto al separador M3 de la esquina superior derecha, para que la vibración no lo corte en el pad.",
+      "como_se_confirma": "Al comprar el hongo: cantidad de contactos NC. Ensayo E-08 de paro con los motores en marcha."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: el paro es un interruptor o pulsador simple; alcanza con dos pads para soldar sus cables"
     }
    ]
   },
