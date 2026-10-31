@@ -42,9 +42,11 @@ UBICACION = {
     "J13": (59.42, 86.00, 270), "C8": (65.50, 87.50, 90), "J15": (113.80, 91.50, 0),
     # --- Banda lógica
     # J20 con la columna impar (bus I2C, ALERT, VBAT, 5V) mirando a A7; A7 girado 180° (VCC arriba)
-    "J20": (58.42, 72.39, 180), "A7": (80.01, 66.04, 180),
+    # v0.4 (revisión independiente): A7 1,44 mm al este; en las fotos el módulo llega a 18,7 mm de su tira y tocaba J20
+    "J20": (58.42, 72.39, 180), "A7": (81.45, 66.04, 180),
     # v0.3: sin D2; J18 (voltímetro, pads para soldar) sobre VM_LOG_F junto al lomo.
-    # v0.4: huella del mini buck corregida: IN+ (81,5; 85,5) y OUT+ (100,5; 85,5) abajo, GND arriba
+    # v0.4: huella del mini buck corregida (sin espejar y con las medidas de las fotos, tipo Mini-360):
+    # IN+ (81,5; 85,5) y OUT+ (95,8; 85,5) abajo, GND (IN- y OUT-) arriba, en y 76,6
     "A8": (81.50, 85.50, 0), "J18": (110.10, 61.00, 180),
     "D4": (108.34, 57.66, 90),
 }
@@ -81,19 +83,19 @@ ESQUELETO = [
     # Ramas de los DRV por arriba (la del canal DER bajo el cuerpo de J11)
     ("GND", MOT, [(113.54, 6.00), (110.00, 4.00), (26.00, 4.00), (26.00, 9.50)]),
     ("GND", MOT, [(26.00, 9.50), (26.00, 12.00)]),
-    ("GND", MOT, [(26.00, 12.00), (24.21, 14.50), "A4.6"]),
+    ("GND", MOT, [(26.00, 12.00), (25.50, 14.50), "A4.6"]),
     ("GND", MOT, [(113.54, 9.50), (74.00, 9.50)]),
     ("GND", MOT, [(74.00, 9.50), (74.00, 12.00)]),
-    ("GND", MOT, [(74.00, 12.00), (72.21, 14.50), "A3.6"]),
+    ("GND", MOT, [(74.00, 12.00), (73.50, 14.50), "A3.6"]),
     # --- Canal IZQ (este): F2 -> A5 (shunt) -> A3
     ("VM_IZQ_F", MOT, ["F2.2", "A5.8"]),
     # Corredor bajo A3/A5 a 1,5 mm para dejar lugar al bus I2C (y 25,7-30,8)
-    ("VM_IZQ", 1.5, ["A5.7", (88.30, 20.93), (68.71, 20.93), "A3.5"]),
+    ("VM_IZQ", 1.5, ["A5.7", (88.30, 20.93), (68.50, 20.93), "A3.5"]),
     ("MOT_IZQ_1", MOT, ["A3.7", (64.77, 12.50), "J11.1"]),
     ("MOT_IZQ_2", MOT, ["A3.8", (59.69, 12.50), "J11.2"]),
     # --- Canal DER (oeste): F3 -> corredor -> A6 (shunt) -> A4
     ("VM_DER_F", 1.5, ["F3.2", (106.00, 23.43), (43.80, 23.43), "A6.8"]),
-    ("VM_DER", MOT, ["A6.7", (40.30, 21.43), (20.71, 21.43), "A4.5"]),
+    ("VM_DER", MOT, ["A6.7", (40.30, 21.43), (20.50, 21.43), "A4.5"]),
     ("MOT_DER_1", MOT, ["A4.7", (16.77, 12.50), "J12.1"]),
     ("MOT_DER_2", MOT, ["A4.8", (11.69, 12.50), "J12.2"]),
     # --- Servos
@@ -130,7 +132,8 @@ ESQUELETO = [
     # v0.3: sin D2. 5V de A8 a J20.13: salta el bus A7->A5 (W3) y VM_LOG_F (W4)
     ("5V_MCU", 1.2, ["J20.13", (63.50, 57.15), (63.50, 44.00), (79.00, 44.00), (81.50, 41.50)]),
     ("5V_MCU", 1.2, [(97.03, 41.50), (97.03, 62.48)]),
-    ("5V_MCU", 1.2, [(97.03, 70.10), (97.03, 83.00), "A8.3"]),
+    # v0.4: el 5V rodea por el este el pad OUT- de A8 y entra a OUT+ por la derecha
+    ("5V_MCU", 1.2, [(97.03, 70.10), (99.00, 72.07), (99.00, 85.50), "A8.3"]),
     # Entradas del DRV IZQ: R35/R36 verticales (el relleno pasa bajo sus cuerpos), pull-downs R1/R2
     ("IN1_IZQ_MCU", 1.0, ["J20.12", (50.60, 59.69), (50.60, 39.60), (64.92, 39.60), "A3.3"]),     # v0.4: directo
     ("IN2_IZQ_MCU", 1.0, ["J20.10", (46.99, 62.23), (46.99, 37.70), (62.38, 37.70), "A3.4"]),
@@ -214,7 +217,9 @@ PUENTES = [
     ("5V_MCU", [(97.03, 62.48), (97.03, 70.10)]),      # 5V sobre VM_LOG_F
     ("GND", [(86.54, 45.00), (94.00, 45.00)]),         # GND de los INA sobre SCL y SDA
     ("GND", [(94.00, 63.00), (94.00, 70.00)]),         # ... y sobre VM_LOG_F hasta el relleno bajo A8
-    ("GND", [(53.00, 56.00), (53.00, 77.50)]),         # v0.4: GND del cable (J20.15/16) sobre las líneas IN y de servo
+    # v0.4: GND del cable (J20.15/16) en diagonal sobre las líneas IN y de servo, al norte del cuerpo de J20 y
+    # al oeste de su carcasa (antes pasaba 0,3 mm debajo de ella), hasta el GND entre R6 y R5
+    ("GND", [(53.00, 42.50), (46.50, 74.00)]),
 ]
 # El agujero de tope del INA226 (separador M3 opcional) cae sobre el bus: se quita (SUP-75)
 QUITAR_NPTH = ["ROB-009_INA226_modulo_8p"]

@@ -30,7 +30,8 @@ UBICACION = {
     "J26": (38.10, 66.04, 90),
     # v0.3 (franja inferior nueva, y 72-94): A9 buck de 3,3 V vertical al oeste (IN+ abajo, OUT+ arriba, GND al este),
     # J27 del ultrasonido y su divisor al este, bajo la DevKitC
-    # v0.4: huella del mini buck corregida (estaba espejada). IN+ y OUT+ al este (x 26), GND al oeste (x 12)
+    # v0.4: huella del mini buck corregida (estaba espejada y era de 19 x 14 mm; el módulo es tipo Mini-360, 14,3 x 8,9).
+    # IN+ (26; 91,5) y OUT+ (26; 77,2) al este, GND (IN- y OUT-) al oeste en x 17,1
     "A9": (26.00, 91.50, 90), "C30": (32.00, 88.00, 270),
     # J27 vertical al oeste de la DevKitC, fuera del paso de sus USB-C (revisión v0.3); pin 1 (5V) abajo.
     # La pista de TRIG pasa por debajo del cuerpo de R41.
@@ -113,7 +114,8 @@ RUTEAR = False
 ZONAS = [("GND", "placa", 0)]
 
 # Rótulos en B.Cu y escala de control de 50 mm (reglas_fabricacion_casera.md §6), en el relleno inferior
-ROTULOS = [("SEGWAY LOGICA", (38.00, 77.00), 2.0), ("LADO COBRE", (38.00, 80.80), 2.0), ("v0.4", (40.00, 84.60), 2.0),
+# v0.4: el título se acortó; «SEGWAY LOGICA» tocaba el pad OUT+ de A9 en su nueva posición
+ROTULOS = [("LOGICA v0.4", (40.00, 77.00), 2.0), ("LADO COBRE", (40.00, 80.80), 2.0),
     # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py
     # Los de las franjas GND del borde oeste (V de J7 y J8, ENC DER) y del pasillo bajo J26 (5V) partían el relleno:
     # se sacaron; esos pines quedan rotulados en la guía de montaje
@@ -121,7 +123,7 @@ ROTULOS = [("SEGWAY LOGICA", (38.00, 77.00), 2.0), ("LADO COBRE", (38.00, 80.80)
     ("1", (52.92, 52.07), 2.0, 0),
     # v0.3: ultrasonido y buck de 3,3 V
     # v0.4: "5V" y "CABLE" de J27 partían el GND (franja sur y paso entre J20 y la DevKitC); J27 va en la guía
-    ("IN+", (21.50, 90.50), 2.0, 90), ("3V3", (21.50, 73.50), 2.0, 90),     # A9 (v0.4)     # J27 y A9 (v0.3); la "G" de J27.4 partía el GND
+    ("IN+", (21.55, 91.50), 2.0, 90), ("3V3", (21.55, 77.20), 2.0, 90),     # A9 (v0.4)     # J27 y A9 (v0.3); la "G" de J27.4 partía el GND
 ]
 ESCALA = None     # v0.3: sus marcas cortaban la franja sur de GND; se mide el contorno (100 x 96 mm)
 

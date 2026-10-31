@@ -6,10 +6,11 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 
 ## Qué cambió desde la v0.3
 
-- **Buck de 3,3 V (A9) corregido:** la huella estaba **espejada**, según la serigrafía del módulo comprado. Ahora IN+ y OUT+ quedan al este (x 26) y GND al oeste (x 12). La salida de 3,3 V sube directo a la pista de 3V3 de J20.9.
+- **Buck de 3,3 V (A9) corregido:** la huella estaba **espejada**, según la serigrafía del módulo comprado, y era de otro tamaño: el módulo es tipo **Mini-360** (17 × 11 mm, pads a 14,3 × 8,9 mm, medidos en las fotos por la [revisión independiente](../../agente/revision_independiente.md)). Ahora IN+ y OUT+ quedan al este (x 26) y GND al oeste (x 17,1). La salida de 3,3 V sube directo a la pista de 3V3 de J20.9.
 - **Fuera las resistencias de pull-up** R13–R16 (encoders) y R24 (paro): se usan las pull-ups internas de la ESP32, que **hay que activar en el firmware**. Si un encoder de colector abierto necesita más, se agrega una de 10 kΩ en su bornera, entre V y la señal.
 - **GPIO3 libre:** la batería la mide el INA226 de la potencia. J20.1 queda sin conexión.
 - **Puentes:** 5. W5 une el relleno del oeste con el centro, por encima de la salida de 3,3 V de A9.
+- **Título acortado** a «LOGICA v0.4»: «SEGWAY LOGICA» tocaba el pad OUT+ de A9.
 - **J27 sin rótulos de cobre:** partían el relleno de masa. Su orden (VCC, TRIG, ECHO, GND, con VCC abajo) va en la guía de montaje.
 
 ## Resumen
@@ -103,14 +104,14 @@ Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ult
 - **USB y batería:** hasta identificar el chip de A9, **no enchufar el USB con la batería conectada**. Programar con la batería desconectada, o con la batería y sin USB (por Wi-Fi).
   - **Con los dos a la vez:** quedan en paralelo el regulador de la DevKitC y A9. Si A9 es un buck síncrono, puede absorber corriente.
   - **Con solo USB:** el 3V3 de la DevKitC llega al revés a A9 y deja unos 2,7 V en 5V_MCU y unos 2 V en la potencia. No se espera daño, pero las lecturas de los INA y del voltímetro son falsas (SUP-26).
-- **Antes de soldar A9**, comparar la serigrafía del módulo con la de la placa: IN+ y OUT+ del mismo lado (este), IN− y OUT− del otro. Medir con calibre la distancia entre pads (14 y 19 mm supuestos). La huella de la v0.3 estaba espejada y habría puesto la salida en corto (SUP-37).
+- **Antes de soldar A9**, comparar la serigrafía del módulo con la de la placa: IN+ y OUT+ del mismo lado (este), IN− y OUT− del otro. Medir con calibre la distancia entre pads (14,3 y 8,9 mm, medidos en fotos). La huella de la v0.3 estaba espejada y habría puesto la salida en corto (SUP-37).
 - **J24.21** es el 5V del USB de la DevKitC: no unirlo con el 5V de J26 o J27.
 
 ## Archivos de fabricación (`fabricacion/rev-0.4/`)
 
 | Archivo | Uso |
 |---|---|
-| `segway_logica_cobre_BCu_1a1.pdf` | Transferencia de tóner. B.Cu + contorno, escala 1, **sin espejar** (SUP-07). En el papel, «SEGWAY LOGICA», «v0.4» y «LADO COBRE» se leen al revés. |
+| `segway_logica_cobre_BCu_1a1.pdf` | Transferencia de tóner. B.Cu + contorno, escala 1, **sin espejar** (SUP-07). En el papel, «LOGICA v0.4» y «LADO COBRE» se leen al revés. |
 | `segway_logica_montaje_cara_superior.pdf` | Guía de montaje: serigrafía y contornos de la cara de componentes |
 | `segway_logica.drl`, `segway_logica-drl_map.pdf`, `segway_logica_taladros.rpt` | Taladros: 0,8 mm (8), 0,9 (10), 1,0 (124), 1,2 (8) y 1,3 (4, los de A9). Sin metalizar: 4 M3 y los 2 agujeros del MPU, de 3,2 mm. |
 
@@ -126,11 +127,11 @@ Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ult
    3. Zócalos hembra de A1 (2 × 22, posición 24 tapada) y A2 (1 × 8, posición 5 tapada), y las tiras de expansión J24, J25 (1 × 22) y J26 (1 × 6). Soldar J24 y J25 con la ESP32 enchufada, para que queden alineadas con su zócalo.
    4. IDC J20, con la muesca hacia afuera de la placa.
    5. Borneras J7 y J8, J27 (tira hembra 1 × 4) y C30 (el + hacia A9).
-   6. A9 soldado sobre 4 pines macho con el espaciador: IN+ abajo y OUT+ arriba del lado este (rótulos IN+ y 3V3), GND del lado oeste.
+   6. A9 soldado sobre 4 pines macho con el espaciador: IN+ abajo y OUT+ arriba del lado este (rótulos IN+ y 3V3), GND del lado oeste. Los rótulos del módulo están en su cara de abajo: comprobarlos antes de presentarlo.
    7. Cable del paro soldado en J4 (1 = GND, 2 = PARO), o un puente entre sus dos pads si el hongo tiene un solo contacto.
 6. **Comprobar antes de enchufar los módulos:**
    - Continuidad de W1 (3V3 entre A1.1 y J20.9) y de W2–W5 (GND contra J20.15).
-   - Que no haya corto 3V3–GND ni 5V_MCU–GND.
+   - Que no haya corto 3V3–GND ni 5V_MCU–GND, ni **continuidad entre el pad IN+ y el pad OUT+ de A9**: si la hay, A9 quedó girado o dado vuelta y pondría 5 V en la ESP32 (SUP-37).
    - J7.1 = 3V3 y J7.4 = GND; J8.1 = GND y J8.4 = 3V3.
    - J26: 1–2 = 3V3, 3–4 = GND, 5–6 = 5V_MCU. Cada pin de J24 y J25 tiene continuidad con el pin de A1 de al lado y no con sus vecinos.
 
