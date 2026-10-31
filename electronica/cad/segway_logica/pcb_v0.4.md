@@ -104,7 +104,7 @@ Quedan **9 GPIO libres**: 1, 2, 21, 38, 39, 40, 41, 42 y 47 (GPIO3 lee el Sharp 
 
 ## Cuidados de alimentación
 
-- **USB y batería:** hasta identificar el chip de A9, **no enchufar el USB con la batería conectada**. Programar con la batería desconectada, o con la batería y sin USB (por Wi-Fi).
+- **USB y batería:** el chip de A9 no se pudo identificar: como regla fija, **no enchufar el USB con la batería conectada**. Programar con la batería desconectada, o con la batería y sin USB (por Wi-Fi).
   - **Con los dos a la vez:** quedan en paralelo el regulador de la DevKitC y A9. Si A9 es un buck síncrono, puede absorber corriente.
   - **Con solo USB:** el 3V3 de la DevKitC llega al revés a A9 y deja unos 2,7 V en 5V_MCU y unos 2 V en la potencia. No se espera daño, pero las lecturas de los INA y del voltímetro son falsas (SUP-26).
 - **Antes de soldar A9**, comparar la serigrafía del módulo con la de la placa: IN+ y OUT+ del mismo lado (este), IN− y OUT− del otro. Los pads están a 14,3 × 8,5 mm (medidos con calibre). La huella de la v0.3 estaba espejada y habría puesto la salida en corto (SUP-37).

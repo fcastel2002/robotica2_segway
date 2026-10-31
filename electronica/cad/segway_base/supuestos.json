@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 19,
+ "revision_lista": 20,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -364,11 +364,11 @@
    "grupo": "B",
    "tema": "Placa virgen",
    "supuesto": "FR-4 simple faz de 1,6 mm con cobre de 35 µm (1 oz). Si solo se consigue pertinax (FR-2), sirve igual, con más cuidado al taladrar.",
-   "base": "Formato más común de placa virgen en el mercado local [H]. Los 35 µm son la base de todos los anchos de SUP-10 (IPC-2221).",
+   "base": "Formato más común de placa virgen en el mercado local [H]. Los 35 µm son la base de todos los anchos de SUP-10 (IPC-2221). Matías (31/10/2026): placa virgen 'la común básica' [M].",
    "impacto_si_cambia": "Con cobre de 18 µm, los anchos de potencia casi se duplican y el tronco no entra: hay que reforzarlo con cable.",
    "como_se_confirma": "Leer la etiqueta o la ficha de la placa que se compre y medir el espesor total con calibre.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "reglas",
@@ -381,7 +381,16 @@
     "cobre_um": 35
    },
    "id": "SUP-03",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Formato más común de placa virgen en el mercado local [H]. Los 35 µm son la base de todos los anchos de SUP-10 (IPC-2221)."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -474,10 +483,10 @@
    "grupo": "B",
    "tema": "Impresión para la transferencia",
    "supuesto": "Impresora láser monocroma a escala 1:1, sin 'ajustar a página', con máxima densidad de tóner, en papel ilustración o couché brillante de 90-150 g o en papel de transferencia. Ninguna de las dos placas v0.3 tiene escala de control: se mide el contorno impreso (148 x 96 mm y 100 x 96 mm).",
-   "base": "Práctica habitual del método de la plancha [H].",
+   "base": "Práctica habitual del método de la plancha [H]. Matías (31/10/2026): queda a cargo del equipo [M].",
    "impacto_si_cambia": "Con una escala distinta de 1:1, los módulos no entran en los zócalos. Con impresora de chorro de tinta, el método no funciona.",
    "como_se_confirma": "Imprimir una prueba y medir con calibre la escala de 50 mm, el contorno de la potencia y la separación de hileras de la ESP32-S3 (25,40 mm).",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
@@ -504,6 +513,14 @@
       "supuesto": "Impresora láser monocroma a escala 1:1, sin 'ajustar a página', con máxima densidad de tóner, en papel ilustración o couché brillante de 90-150 g o en papel de transferencia. El PDF de la lógica trae una escala de control de 50 mm; el de la potencia no tiene lugar libre, así que se mide su contorno de 150 × 110 mm."
      },
      "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Práctica habitual del método de la plancha [H]."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
     }
    ]
   },
@@ -511,11 +528,11 @@
    "grupo": "B",
    "tema": "Espejado del PDF de cobre",
    "supuesto": "La capa B.Cu se imprime SIN espejar, tal como la dibuja KiCad (vista desde la cara de componentes). Al apoyar el tóner contra el cobre, la transferencia invierte la imagen una vez y queda correcta vista desde abajo. KiCad dibuja espejados los textos de B.Cu: en el papel se leen al revés y en el cobre, derechos.",
-   "base": "Geometría de la transferencia (una sola inversión) y convención de KiCad para las capas inferiores [H, verificar con la prueba].",
+   "base": "Geometría de la transferencia (una sola inversión) y convención de KiCad para las capas inferiores [H, verificar con la prueba]. Matías (31/10/2026): queda a cargo del equipo [M].",
    "impacto_si_cambia": "Si el PDF sale espejado, la ESP32-S3 y las tiras 1×8 quedan invertidas, y los módulos no encajan o se conectan al revés.",
    "como_se_confirma": "En la impresión de prueba, el texto de cobre se lee al revés en el papel. Después de transferir, se lee derecho mirando la cara de cobre.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "fabricacion"
@@ -532,6 +549,14 @@
       "impacto_si_cambia": "Si el PDF sale espejado, la Blue Pill y las tiras 1×8 quedan invertidas, y los módulos no encajan o se conectan al revés."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Geometría de la transferencia (una sola inversión) y convención de KiCad para las capas inferiores [H, verificar con la prueba]."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
     }
    ]
   },
@@ -539,11 +564,11 @@
    "grupo": "B",
    "tema": "Ataque químico",
    "supuesto": "Percloruro férrico o persulfato de sodio, tibio y con agitación. Se supone un sobreataque lateral de hasta 0,1 mm por borde, ya cubierto por los mínimos de SUP-09.",
-   "base": "Práctica habitual de PCB casera [H].",
+   "base": "Práctica habitual de PCB casera [H]. Matías (31/10/2026): queda a cargo del equipo [M].",
    "impacto_si_cambia": "Con mucho sobreataque, las pistas de 0,8 mm pueden cortarse: se sube el mínimo a 1,0 mm.",
    "como_se_confirma": "Matías informa qué ácido usa. Revisar la primera placa con lupa y medir algunas pistas.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "reglas",
@@ -551,7 +576,16 @@
    ],
    "alias": [],
    "id": "SUP-08",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Práctica habitual de PCB casera [H]."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -608,10 +642,10 @@
    "grupo": "B",
    "tema": "Mechas, pads y anillos",
    "supuesto": "Mechas que pide la v0.4 (informes de taladros de cada placa): 0,8; 0,9; 1,0; 1,1; 1,2; 1,3; 1,5; 1,8; 2,0; 2,5 y 3,2 mm (minitaladro). Resistencias y diodos chicos: 0,8-0,9 mm. Tiras de 2,54 mm y TO-220: 1,0 mm. Borneras, portafusibles, electrolíticos y diodos DO-15: 1,1-1,8 mm. Pads de los mini buck: 1,5 mm (absorben el error de medida). Anillo mínimo de 0,5 mm (0,6 mm en potencia). Cada pad deja un punto central sin cobre de 0,5 mm como guía para la mecha. Si falta alguna mecha, se usa la inmediata superior.",
-   "base": "Huellas ya creadas en segway_modulos.pretty (pad de 2,2 mm con taladro de 1,0 mm en paso 2,54 y de 2,8 mm con 1,3 mm en bornera) y práctica casera [H].",
+   "base": "Huellas ya creadas en segway_modulos.pretty (pad de 2,2 mm con taladro de 1,0 mm en paso 2,54 y de 2,8 mm con 1,3 mm en bornera) y práctica casera [H]. Matías (31/10/2026): 'estamos cubiertos con mechas' [M].",
    "impacto_si_cambia": "Con otras mechas cambian los diámetros de taladro y de pad de las huellas. Sin la mecha de 1,3 mm, las borneras no entran.",
    "como_se_confirma": "Matías informa qué mechas tiene. Probar cada mecha con una bornera y con un pin de la tira antes de taladrar la placa.",
-   "estado": "ASUMIDO",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
@@ -651,6 +685,14 @@
       "como_se_confirma": "Matías informa qué mechas tiene. Probar cada mecha con una bornera y con un pin de la tira antes de taladrar la placa."
      },
      "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Huellas ya creadas en segway_modulos.pretty (pad de 2,2 mm con taladro de 1,0 mm en paso 2,54 y de 2,8 mm con 1,3 mm en bornera) y práctica casera [H]."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
     }
    ]
   },
@@ -1221,7 +1263,7 @@
    "supuesto": "La ESP32-S3 se alimenta por sus pines 3V3 (1 y 2) desde A9, el mini buck de 3,3 V de la placa de lógica, que toma 5V_MCU del cable (pines 13 y 14) y alimenta también la IMU, los encoders y, por J20.9, los INA de la potencia. El pin 5V de la DevKitC (21) queda fuera de 5V_MCU: solo lo alimenta el USB (net 5V_USB, repetida en J24.21). Con USB y batería a la vez, el regulador de la DevKitC y A9 quedan en paralelo sobre 3V3; los dos son de 3,3 V nominales.",
    "base": "Pedido del equipo del 31/10/2026 [M]; pinout del vendedor [V]. Elimina el margen de ~0,25 V que dejaba el regulador de la DevKitC con 5V_MCU después de D2.",
    "impacto_si_cambia": "Si A9 tiene ripple o sobretensión, llega directo a la ESP32 sin el regulador de la DevKitC en el medio.",
-   "como_se_confirma": "E-02: medir 3V3_MCU con batería, con USB y con los dos; temperatura de A9 con Wi-Fi activo. Hasta identificar el chip de A9 (SUP-37), no enchufar el USB con la batería conectada: si A9 es síncrono puede absorber corriente del regulador de la DevKitC. Con solo USB, el 3V3 llega al revés a A9 y deja unos 2,7 V en 5V_MCU y unos 2 V en la potencia (lecturas falsas, sin daño esperado).",
+   "como_se_confirma": "E-02: medir 3V3_MCU con batería y con USB por separado; temperatura de A9 con Wi-Fi activo. Los chips de los mini bucks no se pudieron identificar (fotos del 31/10/2026: '8337 / 2618' en el de 5 V y 'GMH4A' en el de 3,3 V, sin hoja de datos pública). Regla permanente: no enchufar el USB con la batería conectada, porque si A9 es síncrono puede absorber corriente del regulador de la DevKitC. Programar con la batería desconectada (el 3V3 llega al revés a A9 y deja unos 2,7 V en 5V_MCU y unos 2 V en la potencia: lecturas falsas, sin daño esperado) o con batería y sin USB (por Wi-Fi).",
    "estado": "CAMBIADO",
    "fecha": "31/10/2026",
    "refs": [
@@ -1268,6 +1310,13 @@
       "como_se_confirma": "E-02: medir 3V3_MCU con batería, con USB y con los dos; temperatura de A9 con Wi-Fi activo."
      },
      "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "como_se_confirma": "E-02: medir 3V3_MCU con batería, con USB y con los dos; temperatura de A9 con Wi-Fi activo. Hasta identificar el chip de A9 (SUP-37), no enchufar el USB con la batería conectada: si A9 es síncrono puede absorber corriente del regulador de la DevKitC. Con solo USB, el 3V3 llega al revés a A9 y deja unos 2,7 V en 5V_MCU y unos 2 V en la potencia (lecturas falsas, sin daño esperado)."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
     }
    ],
    "valor": {}
@@ -1633,11 +1682,11 @@
   {
    "grupo": "D",
    "tema": "INA226 (A7)",
-   "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SDA, SCL, GND, VCC (pin 5 = SDA, pin 6 = SCL), con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT usa la pull-up interna de GPIO8 (el módulo parece traer la suya). Va soldado (SUP-80). También mide la tensión de la batería (VBS) desde la v0.4. El borde lejano del módulo queda a 18,0-18,7 mm de la tira: en la potencia, A7 se corrió 1,44 mm al este para dejar más de 1 mm de aire con la carcasa de J20.",
+   "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SDA, SCL, GND, VCC (pin 5 = SDA, pin 6 = SCL), con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT usa la pull-up interna de GPIO8 (el módulo parece traer la suya). Va soldado (SUP-80). También mide la tensión de la batería (VBS) desde la v0.4. El borde lejano del módulo queda a 17,5 mm de la tira (medido con calibre), dentro de la huella (18,7 mm): con A7 corrido 1,44 mm al este quedan más de 2 mm de aire con la carcasa de J20.",
    "base": "Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: la serigrafía del módulo dice SDA, SCL; la captura del vendedor decía SCL, SDA y la huella estaba al revés hasta la v0.3.",
    "impacto_si_cambia": "Si el orden de pines es otro, se rehace la huella. Si ALERT necesita un flanco rápido, se recupera R21.",
-   "como_se_confirma": "Antes de soldar: medir con calibre del borde del módulo a la tira y probar en seco que no toque la carcasa de J20.",
-   "estado": "CAMBIADO",
+   "como_se_confirma": "Medido con calibre por Matías el 31/10/2026 (17,5 mm). Al soldar: probar en seco que no toque la carcasa de J20.",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [
     "A7"
@@ -1686,6 +1735,15 @@
       "como_se_confirma": "E-01: foto del módulo con la serigrafía legible y medida del contorno."
      },
      "fuente": "Revisión independiente de la PCB v0.4 (DEC-18): tamaño del mini buck, paso de las borneras del DRV8871 y aire entre A7 y J20"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SDA, SCL, GND, VCC (pin 5 = SDA, pin 6 = SCL), con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT usa la pull-up interna de GPIO8 (el módulo parece traer la suya). Va soldado (SUP-80). También mide la tensión de la batería (VBS) desde la v0.4. El borde lejano del módulo queda a 18,0-18,7 mm de la tira: en la potencia, A7 se corrió 1,44 mm al este para dejar más de 1 mm de aire con la carcasa de J20.",
+      "como_se_confirma": "Antes de soldar: medir con calibre del borde del módulo a la tira y probar en seco que no toque la carcasa de J20.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
     }
    ]
   },
@@ -1735,7 +1793,7 @@
    "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): módulo tipo Mini-360 (placa de unos 17 × 11 mm, inductor 4R7, marca EY9), no un MP1584 de 22 × 17. Cuatro pads en las esquinas. Vistos desde la cara de componentes con IN+ en (0, 0): IN− en (0, −8,5), OUT+ en (14,3, 0) y OUT− en (14,3, −8,5). IN y OUT en bordes opuestos, los dos + del mismo lado. IN− y OUT− son la misma masa. Los Mini-360 suelen admitir 4,75-23 V de entrada y 1,8 A de salida: alcanza para 12,6 V de batería y para la ESP32.",
    "base": "Medidas con calibre de Matías del 31/10/2026 [M]: 14,3 mm de IN a OUT (igual que en las fotos) y 8,5 mm de + a − (en las fotos se había estimado 8,9). Serigrafía IN+/IN−/OUT+/OUT− en la cara de abajo, según las fotos. Hasta la v0.3 la huella estaba espejada y era de 19 × 14 mm.",
    "impacto_si_cambia": "Montado girado o dado vuelta, el módulo pone en corto su entrada con su salida (VM_LOG con 5V_MCU en A8, 5V_MCU con 3V3_MCU en A9), porque IN− y OUT− están unidos.",
-   "como_se_confirma": "Después de soldar y antes de alimentar: el multímetro no tiene que marcar continuidad entre los pads IN+ y OUT+ de cada buck. Leer el marcado del chip (SUP-26).",
+   "como_se_confirma": "Después de soldar y antes de alimentar: el multímetro no tiene que marcar continuidad entre los pads IN+ y OUT+ de cada buck. Las fotos del 31/10/2026 muestran la tensión (5V o 3.3V) y la flecha IN → OUT en la cara de abajo: leerlas antes de soldar para no cambiar A8 por A9. Chip sin identificar (SUP-26).",
    "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [
@@ -1807,6 +1865,13 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Medidas con calibre de Matías, 31/10/2026 [M]: mini bucks 14,3 mm de IN a OUT y 8,5 mm de + a −; DRV 'todo perfecto'; INA219 '15,72 mm es correcto'; 'tira hembra, borneras y portafusible todo ok'"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "como_se_confirma": "Después de soldar y antes de alimentar: el multímetro no tiene que marcar continuidad entre los pads IN+ y OUT+ de cada buck. Leer el marcado del chip (SUP-26)."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
     }
    ]
   },
@@ -2035,8 +2100,8 @@
    "supuesto": "J3 (potencia) son 2 pads para soldar el cable de 1,5 mm² del lazo en serie del interruptor general y del botón de parada de emergencia: si se abre cualquiera, se corta toda la potencia. Matías (31/10/2026): el botón es un interruptor o pulsador simple, con un contacto, así que J4 (lógica, aviso a GPIO6) se puentea con alambre y el firmware no se entera del paro, pero la potencia se corta igual. Como J3 lleva toda la corriente de la batería (fusible F1 de 15 A), el botón y el interruptor tienen que soportar 15 A o más en continua y quedar abiertos al soltarlos (con retención): un pulsador momentáneo solo cortaría mientras se mantiene apretado. El cable soldado en J3 se fija con un precinto al separador M3 de la esquina superior derecha.",
    "base": "Matías, 26/10/2026 [M]: pines para soldar con cable cualquier interruptor de emergencia. §3 de diseno_v0.3.md; REQ-17.",
    "impacto_si_cambia": "Si el hongo no tiene segundo contacto, la ESP32 no sabe que se apretó el paro (los motores igual quedan sin potencia).",
-   "como_se_confirma": "Corriente nominal del botón y del interruptor (15 A o más en continua) y que el botón quede trabado al apretarlo. Ensayo E-08 de paro con los motores en marcha.",
-   "estado": "CAMBIADO",
+   "como_se_confirma": "Matías elige y verifica el botón y el interruptor (15 A o más en continua, botón con traba) [M]. Ensayo E-08 de paro con los motores en marcha.",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [
     "J3",
@@ -2078,6 +2143,14 @@
       "como_se_confirma": "Al comprar el hongo: cantidad de contactos NC. Ensayo E-08 de paro con los motores en marcha."
      },
      "fuente": "Matías, 31/10/2026 [M]: el paro es un interruptor o pulsador simple; alcanza con dos pads para soldar sus cables"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "como_se_confirma": "Corriente nominal del botón y del interruptor (15 A o más en continua) y que el botón quede trabado al apretarlo. Ensayo E-08 de paro con los motores en marcha.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: INA226 'unos 17,5 mm'; botón 'pondré uno que verifique'; placa virgen 'la común básica'; 'estamos cubiertos con mechas'; 'no te preocupes del ácido ni de la impresión'; fotos de los dos mini bucks"
     }
    ]
   },

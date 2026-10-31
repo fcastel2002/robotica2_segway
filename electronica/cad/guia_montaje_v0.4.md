@@ -98,7 +98,7 @@ Alambre de cobre estañado de 0,6 mm, del lado de los componentes, pegado a la p
 - Recién entonces conectar el cable J20: en la lógica, J26.1 tiene que dar 3,3 V.
 - Después, enchufar la ESP32 y los DRV8871.
 
-**USB y batería:** hasta identificar el chip del buck A9, no enchufar el USB de la ESP32 con la batería conectada. Programar con la batería desconectada, o con batería y sin USB (por Wi-Fi).
+**USB y batería:** el chip del buck A9 no se pudo identificar, así que como regla fija no se enchufa el USB de la ESP32 con la batería conectada. Programar con la batería desconectada, o con batería y sin USB (por Wi-Fi).
 
 ## 6. Lo que se quitó y por qué
 
