@@ -10,7 +10,7 @@ Con las fotos de los módulos comprados y el pedido del equipo de dejar en la pl
 
 - **INA226 (A7) corregido:** su tira es IN+, IN−, VBS, ALE, **SDA, SCL**, GND, VCC. En la v0.3 SDA y SCL estaban invertidos y el I2C del INA226 no hubiera andado. Con el orden real ya no se cruzan, y se fueron dos puentes.
 - **Buck de 5 V (A8) corregido:** la huella estaba **espejada**: el IN− del módulo caía en la salida de 5 V y la ponía en corto. Además era de otro tamaño: el módulo comprado es tipo **Mini-360** (17 × 11 mm, pads a 14,3 × 8,9 mm), no un MP1584 de 22 × 17. Ahora IN+ y OUT+ quedan abajo y GND arriba. VM_LOG le llega por debajo del módulo, y el 5V rodea por el este el pad OUT−.
-- **Fuera lo que los módulos ya resuelven** (de 48 a 28 componentes, contando la segunda pasada de abajo):
+- **Fuera lo que los módulos ya resuelven** (de 48 a 30 componentes, contando la segunda pasada de abajo):
   - C4 y C5: el DRV8871 comprado ya trae 47 µF/50 V.
   - R1–R4 y R35–R38: las entradas de los DRV van directo; el DRV tiene pull-down interno y no entra girado.
   - R7 y R8: pull-down de los servos.
@@ -18,8 +18,8 @@ Con las fotos de los módulos comprados y el pedido del equipo de dejar en la pl
   - R22, R23 y C14: la batería la mide el INA226; J20.1 queda sin conexión.
 - **Borneras del DRV8871 (A3, A4):** el clon comprado tiene borneras de **paso 5,0 mm**, no de 3,5 mm como la Adafruit. Los 4 agujeros se corrieron hasta 1,6 mm (SUP-32).
 - **A7 (INA226) 1,44 mm al este:** en las fotos, el módulo llega a 18,7 mm de su tira y tocaba la carcasa de J20.
-- **Puentes:** 5 (antes 6). W5 lleva el GND del cable (J20.15/16) en diagonal, por encima de las líneas de los DRV y de los servos, hasta el relleno entre W7 y W6. Arranca al norte del cuerpo de J20 y pasa al oeste de su carcasa, a 1,5 mm.
-- **Sin D4/R28 (LED) ni R5/R6** (pedido del equipo). Las resistencias de los servos, además, saltaban el bus de masa de los servos: en sus agujeros van los puentes **W6 y W7**, donde entra una resistencia de 1 kΩ si se quiere recuperar la protección. Para qué está cada pieza que queda: [guía de montaje](../guia_montaje_v0.4.md).
+- **Puentes:** 5 (antes 6). W5 lleva el GND del cable (J20.15/16) en diagonal, por encima de las líneas de los DRV y de los servos, hasta el relleno entre R6 y R5. Arranca al norte del cuerpo de J20 y pasa al oeste de su carcasa, a 1,5 mm.
+- **Sin D4/R28 (LED de encendido)** (pedido del equipo). R5/R6 se quitaron y volvieron: la revisión independiente mostró que protegen la ESP32 con un conector de servo girado o corrido un pin. Para qué está cada pieza que queda: [guía de montaje](../guia_montaje_v0.4.md).
 
 Los errores del buck, de las borneras y de W5 los encontró la [revisión independiente](../../agente/revision_independiente.md) midiendo las fotos (DEC-18).
 
@@ -28,8 +28,8 @@ Los errores del buck, de las borneras y de W5 los encontró la [revisión indepe
 | Dato | Valor |
 |---|---|
 | Contorno | 148 × 96 mm, esquinas de 3 mm, 4 agujeros M3 a 4 mm de cada esquina |
-| Componentes | 28 del esquema y 7 puentes de alambre |
-| Puentes ([lista](evidencia/puentes_pcb_v0.4.json)) | W1 (5V, 15,5 mm), W2 (5V, 7,6 mm), W3 (GND de los INA, 7,5 mm), W4 (GND, 7,0 mm), W5 (GND del cable, 32,5 mm, en diagonal), W6 y W7 (señal de cada servo sobre el bus de masa, 10,2 mm) |
+| Componentes | 30 del esquema y 5 puentes de alambre |
+| Puentes ([lista](evidencia/puentes_pcb_v0.4.json)) | W1 (5V, 15,5 mm), W2 (5V, 7,6 mm), W3 (GND de los INA, 7,5 mm), W4 (GND, 7,0 mm), W5 (GND del cable, 32,5 mm, en diagonal) |
 | DRC (kicad-cli 10.0.7, con paridad de esquema) | **0 errores, 0 sin conectar, 0 de paridad** ([informe](evidencia/drc_pcb_v0.4.json)) |
 | Avisos | Ningún puente dentro del contorno de un componente. Los pads caseros son más grandes que los de la biblioteca (`lib_footprint_mismatch`). El resto es serigrafía, que solo va en la guía impresa. |
 
@@ -64,7 +64,7 @@ Los módulos soldados quedan unos 2,5 mm sobre la placa (espaciador de la tira).
 |---|---|
 | `segway_potencia_cobre_BCu_1a1.pdf` | Transferencia de tóner. B.Cu + contorno, escala 1, **sin espejar** (SUP-07). En el papel, los rótulos se leen al revés |
 | `segway_potencia_montaje_cara_superior.pdf` | Guía de montaje |
-| `segway_potencia.drl`, `segway_potencia-drl_map.pdf`, `segway_potencia_taladros.rpt` | Taladros: 0,8 mm (6), 0,9 (14), 1,0 (56), 1,1 (3), 1,2 (4), 1,3 (12), 1,5 (12, incluidos los 4 de A8: más grandes para absorber el error de medida de las fotos), 1,8 (18) y 2,0 (2). Sin metalizar: 4 M3 de 3,2 mm y la traba del portafusible ATO, de 2,5 mm |
+| `segway_potencia.drl`, `segway_potencia-drl_map.pdf`, `segway_potencia_taladros.rpt` | Taladros: 0,8 mm (10), 0,9 (10), 1,0 (56), 1,1 (3), 1,2 (4), 1,3 (12), 1,5 (12, incluidos los 4 de A8: más grandes para absorber el error de medida de las fotos), 1,8 (18) y 2,0 (2). Sin metalizar: 4 M3 de 3,2 mm y la traba del portafusible ATO, de 2,5 mm |
 
 ## Pasos
 
@@ -72,7 +72,7 @@ Los módulos soldados quedan unos 2,5 mm sobre la placa (espaciador de la tira).
 2. **Planchar y atacar.** Después, **estañar** la barra VM_BUS, el lomo GND, las pistas de batería y de motores, el bus de servos y el cuello del drenaje de Q1.
 3. **Taladrar** según el mapa.
 4. **Montar** en este orden:
-   1. Puentes W1–W7 (alambre estañado de 0,6 mm); W5 es largo y en diagonal: enfundarlo.
+   1. Puentes W1–W5 (alambre estañado de 0,6 mm); W5 es largo y en diagonal: enfundarlo.
    2. Resistencias y diodos.
    3. Zócalos de A3 y A4.
    4. A5 y A6 con sus puentes de dirección ya hechos, A7 y A8, soldados y orientados.

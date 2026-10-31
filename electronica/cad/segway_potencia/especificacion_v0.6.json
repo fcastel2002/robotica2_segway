@@ -519,6 +519,20 @@
    ]
   },
   {
+   "ref": "R5",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
+   "status": "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-56",
+    "SUP-16"
+   ]
+  },
+  {
    "ref": "C8",
    "lib_id": "Device:C_Polarized",
    "value": "470µ/16V low-ESR",
@@ -542,6 +556,20 @@
    "status": "provisorio [H] (orden JR GND-V+-SIG [D distribuidor], verificar en el ejemplar E-01/E-05; contacto de 2,54 mm ≈3 A [H] < bloqueo 3,1-3,9 A: medir la temperatura del contacto con el servo bloqueado en E-05/E-06; serigrafiar 'S + −' y los colores del cable junto al header)",
    "supuestos": [
     "SUP-56"
+   ]
+  },
+  {
+   "ref": "R6",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "servos",
+   "dnp": false,
+   "source": "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
+   "status": "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
+   "supuestos": [
+    "SUP-56",
+    "SUP-16"
    ]
   },
   {
@@ -798,7 +826,15 @@
    "name": "SERVO_IZQ_MCU",
    "kind": "signal",
    "pins": [
-    "J20.2",
+    "R5.1",
+    "J20.2"
+   ]
+  },
+  {
+   "name": "SERVO_IZQ_SIG",
+   "kind": "signal",
+   "pins": [
+    "R5.2",
     "J13.3"
    ]
   },
@@ -806,7 +842,15 @@
    "name": "SERVO_DER_MCU",
    "kind": "signal",
    "pins": [
-    "J20.4",
+    "R6.1",
+    "J20.4"
+   ]
+  },
+  {
+   "name": "SERVO_DER_SIG",
+   "kind": "signal",
+   "pins": [
+    "R6.2",
     "J14.3"
    ]
   },

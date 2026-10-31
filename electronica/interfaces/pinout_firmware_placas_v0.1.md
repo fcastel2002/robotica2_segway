@@ -17,13 +17,13 @@ Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). To
 | 16 | I2C_SCL | salida | I2C0 | ídem | Empezar a 100 kHz |
 | 18 | IMU_INT | entrada | GPIO con interrupción | MPU6050 (A2, pin INT) | Para sincronizar el lazo con la IMU |
 | 8 | INA_ALERT | entrada | GPIO con interrupción | INA226 por el cable (J20.3) | Colector abierto, activo bajo: **activar la pull-up interna** |
-| 9 | SERVO_IZQ | salida | LEDC 50 Hz | J13 (potencia), por el cable (J20.2) | Pulso de 3,3 V directo (sin resistencia desde la v0.4). Configurar el pin apenas arranca: flotando, el servo puede dar un tirón |
+| 9 | SERVO_IZQ | salida | LEDC 50 Hz | J13 (potencia), por el cable (J20.2) | Pulso de 3,3 V, 1 kΩ en serie. Configurar el pin apenas arranca: sin pull-down, el servo puede dar un tirón |
 | 10 | SERVO_DER | salida | LEDC 50 Hz | J14 (potencia), por el cable (J20.4) | ídem |
 | 14 | IN1_IZQ | salida | MCPWM o LEDC | DRV8871 IZQ (A3), por el cable (J20.12) | Motor IZQ en J11 |
 | 13 | IN2_IZQ | salida | MCPWM o LEDC | DRV8871 IZQ (A3), por el cable (J20.10) | |
 | 12 | IN1_DER | salida | MCPWM o LEDC | DRV8871 DER (A4), por el cable (J20.8) | Motor DER en J12 |
 | 11 | IN2_DER | salida | MCPWM o LEDC | DRV8871 DER (A4), por el cable (J20.6) | |
-| 47 | US_TRIG | salida | GPIO / RMT | J27.2 directo (lógica; sin R43 desde la v0.4) | HC-SR04, pulso de 10 µs |
+| 47 | US_TRIG | salida | GPIO / RMT | J27.2 por R43 de 1 kΩ (lógica) | HC-SR04, pulso de 10 µs |
 | 21 | US_ECHO | entrada | GPIO con captura / MCPWM capture | J27.3 por R41/R42 | Ya llega a 3,0 V |
 | 48 | LED RGB | salida | RMT (WS2812) | En la DevKitC | Indicador de estado |
 | 0 | BOOT | entrada | GPIO | Botón de la DevKitC | Se puede leer como botón después del arranque |

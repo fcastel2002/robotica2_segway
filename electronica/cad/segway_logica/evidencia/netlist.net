@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-31T13:00:23")
+		(date "2026-10-31T13:11:01")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ea0f35eb-51ad-4e4b-9d27-ffa4c45e61db")
+			(tstamps "9e0fac5e-df99-417f-a98c-9f61aa62c0c7")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a7fbb381-d287-4e09-abcb-3245f42f7501")
+			(tstamps "1d5d05d3-0758-47ac-b65a-7d9e21f6d44a")
 			(units
 				(unit
 					(name "A")
@@ -357,7 +357,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d77e66bf-be59-45b4-bebc-ce761ccd9606")
+			(tstamps "f745808c-ef39-468b-9b75-7c1a4cf67d1c")
 			(units
 				(unit
 					(name "A")
@@ -429,7 +429,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "96c59525-973d-4a4e-91d8-bc7ddd764b4b")
+			(tstamps "8fc5c96c-0588-4a5d-86f0-5b3892d55153")
 			(units
 				(unit
 					(name "A")
@@ -495,7 +495,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "95a12e87-efae-40b6-be11-1cde4f1277e4")
+			(tstamps "fb47ed85-1a54-425f-aa00-729ea9cce2b5")
 			(units
 				(unit
 					(name "A")
@@ -567,7 +567,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "569a8987-aac6-433c-bd01-93866d46ae14")
+			(tstamps "c24cd924-3139-43bb-9b98-4c357cc7720a")
 			(units
 				(unit
 					(name "A")
@@ -639,7 +639,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cd70d7b4-1936-4641-8e58-0c2f2c2c5e7d")
+			(tstamps "394ae14e-e420-4c27-851d-bbd053da532b")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a563acf4-bc6d-4051-997d-969b7e95f1c6")
+			(tstamps "6f6cee98-9ef2-4a78-aac2-f7009c25afea")
 			(units
 				(unit
 					(name "A")
@@ -873,7 +873,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4109a579-15db-44b0-a1e9-f30be3d6d813")
+			(tstamps "a39bd191-539c-45c3-9402-6bd7a6d8cc39")
 			(units
 				(unit
 					(name "A")
@@ -999,7 +999,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5752860b-7e15-4f59-a534-bac41ac85eb8")
+			(tstamps "e2bdfbef-9ced-4aef-8869-a7297271cb87")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9a3a054f-9709-4459-bfe0-a57009b405f9")
+			(tstamps "f8c75b31-4d86-4581-b6b9-0b03c61a8d73")
 			(units
 				(unit
 					(name "A")
@@ -1149,7 +1149,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ac20b44f-5e41-43d5-b4bb-200c929242c9")
+			(tstamps "433fd3ad-6d6d-43c4-a8a0-10bf9041f256")
 			(units
 				(unit
 					(name "A")
@@ -1215,7 +1215,73 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "972e6541-d45d-4bec-978d-90ebf1a33750")
+			(tstamps "60a7fd31-cfa3-4af6-8f68-28f411456923")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R43")
+			(value "1k 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]")
+				(field
+					(name "Fuente") "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]")
+			)
+			(property
+				(name "Fuente")
+				(value "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_logica")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_logica.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "32cc3476-52e8-4edf-825a-ce3ac90698d0")
 			(units
 				(unit
 					(name "A")
@@ -3055,14 +3121,29 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J27")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(ref "R43")
+				(pin "1")
 				(pintype "passive")
 			)
 		)
 		(net
 			(code "43")
+			(name "/US_TRIG_S")
+			(class "Default")
+			(node
+				(ref "J27")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R43")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "44")
 			(name "unconnected-(A2-AD0-Pad7)")
 			(class "Default")
 			(node
@@ -3073,7 +3154,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "45")
 			(name "unconnected-(A2-XCL-Pad6)")
 			(class "Default")
 			(node
@@ -3084,7 +3165,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "46")
 			(name "unconnected-(A2-XDA-Pad5)")
 			(class "Default")
 			(node
@@ -3095,7 +3176,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "47")
 			(name "unconnected-(J20-Pin_1-Pad1)")
 			(class "Default")
 			(node
@@ -3106,7 +3187,7 @@
 			)
 		)
 		(net
-			(code "47")
+			(code "48")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

@@ -1,5 +1,5 @@
 Drill report for segway_potencia.kicad_pcb
-Created on 2026-10-31T13:01:54
+Created on 2026-10-31T13:13:16
 
 Copper Layer Stackup:
     =============================================================
@@ -10,8 +10,8 @@ Copper Layer Stackup:
 Drill file 'segway_potencia.drl' contains
     plated through holes:
     =============================================================
-    T1  0.800mm  0.0315"  (6 holes))
-    T2  0.900mm  0.0354"  (14 holes))
+    T1  0.800mm  0.0315"  (10 holes))
+    T2  0.900mm  0.0354"  (10 holes))
     T3  1.000mm  0.0394"  (56 holes))
     T4  1.100mm  0.0433"  (3 holes))
     T5  1.200mm  0.0472"  (4 holes))

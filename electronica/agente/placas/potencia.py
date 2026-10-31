@@ -14,10 +14,10 @@ Topología:
   pasa bajo el cuerpo de J11), el VM del INA al DRV va por el corredor bajo los módulos, y el VM del canal
   DER (F3) cruza por ese corredor. Borneras de motor arriba de las salidas, entrada de cable al norte.
 - Franja inferior de servos (v0.3): bus GND (y 80,5) y bus V_SERVO (y 91,5) con los headers entre ambos; las
-  señales pasan por encima del bus GND con los puentes W6/W7 (antes, las resistencias R5/R6). El retorno baja en x 76,5 a un
+  resistencias serie R5/R6 pasan por encima del bus GND hacia el lado de señales. El retorno baja en x 76,5 a un
   bus inferior (y 91,5) hasta J15.1 y el lomo.
 - Banda lógica en el medio (J20, INA226, buck 5 V, divisor, resistencias de entrada de los DRV) con relleno GND
-  propio. Ese relleno toca el bus de servos, así que se une al lomo por una rama en y 57,66 y por J15 (SUP-77).
+  propio. Ese relleno toca el bus de servos y se une al lomo por el bus inferior (y 91,5) hasta J15 (SUP-77).
 """
 
 PROYECTO = "segway_potencia"
@@ -36,9 +36,9 @@ UBICACION = {
     "A4": (22.00, 35.56, 180), "A6": (36.00, 33.50, 0), "A3": (70.00, 35.56, 180), "A5": (84.00, 33.50, 0),
     "J12": (16.77, 7.62, 180), "J11": (64.77, 7.62, 180),
     # v0.4: sin C4/C5 (cada DRV trae 47 µF/50 V)
-    # --- Servos (franja inferior, al oeste): las líneas de J20.2/J20.4 bajan derecho a W6/W7
+    # --- Servos (franja inferior, al oeste): las líneas de J20.2/J20.4 bajan derecho a R5/R6
     # v0.3: franja de servos 13 mm más arriba (bus GND y 80,5, headers y 86, bus V_SERVO y 91,5)
-    "J16": (22.86, 91.50, 0), "J14": (33.56, 86.00, 90),     # v0.4: R5/R6 pasan a puentes W6/W7
+    "J16": (22.86, 91.50, 0), "J14": (33.56, 86.00, 90), "R6": (42.50, 75.84, 270), "R5": (50.50, 75.84, 270),
     "J13": (59.42, 86.00, 270), "C8": (65.50, 87.50, 90), "J15": (113.80, 91.50, 0),
     # --- Banda lógica
     # J20 con la columna impar (bus I2C, ALERT, VBAT, 5V) mirando a A7; A7 girado 180° (VCC arriba)
@@ -50,7 +50,7 @@ UBICACION = {
     "A8": (81.50, 85.50, 0), "J18": (110.10, 61.00, 180),
 }
 FIJAS = {"J1", "F1", "J3", "Q1", "D3", "R29", "C3", "D1", "C1", "F2", "F3", "F5", "F4",
-         "A4", "A6", "A3", "A5", "J12", "J11", "J16", "J14", "C8", "J13", "J15",
+         "A4", "A6", "A3", "A5", "J12", "J11", "J16", "J14", "R6", "C8", "J13", "R5", "J15",
          "A7", "A8", "J18", "J20",
          "H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J1", "J3", "J11", "J12", "J15", "J16"}
@@ -78,7 +78,6 @@ ESQUELETO = [
     ("GND", 2.0, [(131.35, 50.80), (131.35, 57.00), "D1.2", "C1.2"]),
     # Lomo GND: pista de 4 mm (la ve Freerouting) más la zona de ZONAS que la ensancha donde hay lugar
     ("GND", 4.0, ["C1.2", (132.50, 74.90), (113.54, 74.90), (113.54, 57.66), (113.54, 6.00)]),
-    ("GND", 1.2, [(113.54, 57.66), (108.34, 57.66)]),     # única unión del relleno lógico con el lomo (era la rama de D4.1)
     # Ramas de los DRV por arriba (la del canal DER bajo el cuerpo de J11)
     ("GND", MOT, [(113.54, 6.00), (110.00, 4.00), (26.00, 4.00), (26.00, 9.50)]),
     ("GND", MOT, [(26.00, 9.50), (26.00, 12.00)]),
@@ -120,12 +119,11 @@ ESQUELETO = [
     # R4 y R3); IN2 va al oeste por y 67,31 hasta R38 con una rama a R4
     ("IN1_DER_MCU", 1.0, ["J20.8", (16.92, 64.77), "A4.3"]),     # v0.4: directo, sin resistencias
     ("IN2_DER_MCU", 1.0, ["J20.6", (14.38, 67.31), "A4.4"]),
-    # v0.4: sin R5/R6; la señal salta el bus GND de los servos con los puentes W6/W7 (en sus mismos agujeros entra
-    # una resistencia de 1 kΩ si se quiere la protección contra el conector JR al revés)
-    ("SERVO_IZQ_MCU", 1.0, ["J20.2", (50.50, 72.39), (50.50, 75.84)]),
-    ("SERVO_DER_MCU", 1.0, ["J20.4", (42.50, 69.85), (42.50, 75.84)]),
-    ("SERVO_IZQ_MCU", 1.0, [(50.50, 86.00), "J13.3"]),
-    ("SERVO_DER_MCU", 1.0, [(42.50, 86.00), "J14.3"]),
+    # R5/R6 (1 kΩ) saltan el bus GND de los servos y protegen GPIO9/10 con el conector JR girado o corrido
+    ("SERVO_IZQ_MCU", 1.0, ["J20.2", (50.50, 72.39), "R5.1"]),
+    ("SERVO_DER_MCU", 1.0, ["J20.4", (42.50, 69.85), "R6.1"]),
+    ("SERVO_IZQ_SIG", 1.0, ["R5.2", "J13.3"]),
+    ("SERVO_DER_SIG", 1.0, ["R6.2", "J14.3"]),
     # J20: 5V_MCU y GND unidos entre columnas
     ("5V_MCU", 1.0, ["J20.13", "J20.14"]),
     ("GND", 1.0, ["J20.15", "J20.16"]),
@@ -193,6 +191,7 @@ ROTULOS = [("POTENCIA", (133.50, 80.60), 2.0), ("v0.4", (133.50, 84.00), 2.0), (
     ("15A", (143.33, 46.46), 2.0, 90),
     # v0.4: borde de entrada de A8, entre IN+ (pad cuadrado) e IN-
     ("IN", (81.50, 81.05), 2.0, 0),
+    ("SERVO IZQ", (68.88, 75.50), 2.0, 0),
 ]
 ESCALA = None
 
@@ -218,10 +217,8 @@ PUENTES = [
     ("GND", [(86.54, 45.00), (94.00, 45.00)]),         # GND de los INA sobre SCL y SDA
     ("GND", [(94.00, 63.00), (94.00, 70.00)]),         # ... y sobre VM_LOG_F hasta el relleno bajo A8
     # v0.4: GND del cable (J20.15/16) en diagonal sobre las líneas IN y de servo: arranca al norte del cuerpo de J20
-    # y pasa al oeste de su carcasa, a 1,5 mm (antes pasaba 0,3 mm debajo de ella), hasta el GND entre W7 y W6
+    # y pasa al oeste de su carcasa, a 1,5 mm (antes pasaba 0,3 mm debajo de ella), hasta el GND entre R6 y R5
     ("GND", [(53.00, 42.50), (45.00, 74.00)]),
-    ("SERVO_IZQ_MCU", [(50.50, 75.84), (50.50, 86.00)]),     # v0.4: en lugar de R5, sobre el bus GND de los servos
-    ("SERVO_DER_MCU", [(42.50, 75.84), (42.50, 86.00)]),     # v0.4: en lugar de R6
 ]
 # El agujero de tope del INA226 (separador M3 opcional) cae sobre el bus: se quita (SUP-75)
 QUITAR_NPTH = ["ROB-009_INA226_modulo_8p"]
@@ -233,7 +230,7 @@ SEVERIDADES = {"pth_inside_courtyard": "warning"}
 
 # Nets que el esqueleto ya completa (con los puentes fijos): fuera de Freerouting
 NETS_FIJAS = ["IN1_DER_MCU", "IN2_DER_MCU", "5V_MCU", "VM_LOG", "VM_LOG_F", "I2C_SDA", "I2C_SCL", "3V3_MCU", "INA_ALERT",
-              "SERVO_IZQ_MCU", "SERVO_DER_MCU",
+              "SERVO_IZQ_MCU", "SERVO_DER_MCU", "SERVO_IZQ_SIG", "SERVO_DER_SIG",
               "IN1_IZQ_MCU", "IN2_IZQ_MCU"]
 
 # Rótulos de cobre pedidos (SUP-14): ubicar_rotulos.py busca el lugar y el resultado va a ROTULOS.
@@ -246,6 +243,7 @@ ROTULOS_PEDIDOS = [
     ("+", "J15.2", 2.0, 7), ("-", "J15.1", 2.0, 7), ("UBEC IN", "J15", 2.0, 16),
     ("+", "J16.2", 2.0, 7), ("-", "J16.1", 2.0, 7), ("UBEC 6V", "J16", 2.0, 16),
     ("SERVO IZQ", "J13", 2.0, 16), ("SERVO DER", "J14", 2.0, 16),
+    ("-", "J13.1", 2.0, 7), ("-", "J14.1", 2.0, 7),
     ("-", "J18.1", 2.0, 7), ("VOLT", "J18", 2.0, 16),
     ("1", "J20.1", 2.0, 7),
     ("IN", "A8.1", 2.0, 7),

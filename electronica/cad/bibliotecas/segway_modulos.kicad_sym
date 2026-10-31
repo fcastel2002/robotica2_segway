@@ -579,6 +579,20 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   (symbol "ROB-008_DRV8871_modulo_8p"
     (pin_names
       (offset 1.016))

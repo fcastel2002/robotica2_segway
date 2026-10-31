@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 13,
+ "revision_lista": 14,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -299,7 +299,7 @@
   {
    "grupo": "A",
    "tema": "Cantidad de piezas de la v0.4",
-   "supuesto": "La v0.4 tiene 41 piezas en dos placas: 28 en la potencia y 13 en la lógica, con J20 en cada una, más 12 puentes de alambre (7 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8 y el divisor del ECHO (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md.",
+   "supuesto": "La v0.4 tiene 44 piezas en dos placas: 30 en la potencia y 14 en la lógica, con J20 en cada una, más 10 puentes de alambre (5 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8, las resistencias de protección de la ESP32 (R5, R6 y R43) y el divisor del ECHO (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md.",
    "base": "Pedido del equipo del 31/10/2026 [M]: los módulos ya traen su electrónica; agregar solo lo que pida un datasheet o haga falta.",
    "impacto_si_cambia": "Cada elemento que el equipo quiera recuperar se reincorpora desde su fila del grupo H. La especificación v0.3 conserva valores, nets y fuentes de todos.",
    "como_se_confirma": "Matías aprobó el criterio el 31/10/2026: solo lo necesario más las protecciones que cuidan módulos caros.",
@@ -343,6 +343,13 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "La v0.4 tiene 41 piezas en dos placas: 28 en la potencia y 13 en la lógica, con J20 en cada una, más 12 puentes de alambre (7 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8 y el divisor del ECHO (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md."
+     },
+     "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
     }
    ]
   },
@@ -736,7 +743,7 @@
   {
    "grupo": "B",
    "tema": "Puentes de alambre",
-   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 7 (W1 y W2 de 5V; W3, W4 y W5 de GND; W6 y W7, señal de cada servo sobre el bus de masa de los servos). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A.",
+   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 5 (W1 y W2 de 5V; W3, W4 y W5 de GND). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A.",
    "base": "DEC-14 [M]; resultado del ruteo v0.1 [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error.",
    "como_se_confirma": "Montaje de las placas.",
@@ -794,6 +801,13 @@
       "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 5 (W1 y W2 de 5V, W3, W4 y W5 de GND). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A."
      },
      "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 7 (W1 y W2 de 5V; W3, W4 y W5 de GND; W6 y W7, señal de cada servo sobre el bus de masa de los servos). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A."
+     },
+     "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
     }
    ]
   },
@@ -2302,9 +2316,9 @@
   {
    "grupo": "F",
    "tema": "Servos",
-   "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Sin resistencia en serie desde la v0.4 (R5/R6 quitadas): la señal salta el bus de masa de los servos con los puentes W6/W7; en esos mismos agujeros entra una resistencia de 1 kΩ si se quiere recuperar la protección. Sin pull-down: el firmware configura los pines apenas arranca.",
+   "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie, que además saltan el bus de masa de los servos. Protegen el GPIO si el conector JR entra girado o corrido un pin (con el conector corrido, los 6 V del servo llegan al GPIO). Se quitaron y volvieron en la v0.4 por la revisión independiente. Sin pull-down: el firmware configura los pines apenas arranca.",
    "base": "Pedido del equipo del 31/10/2026 [M]; [DS-SERVO] p.3.",
-   "impacto_si_cambia": "Con el conector JR enchufado al revés, el GND del servo queda sobre el GPIO: el pin queda en corto con masa mientras esté en alto. Desenchufar enseguida. Durante el arranque de la ESP32 los servos pueden dar un tirón.",
+   "impacto_si_cambia": "Sin R5/R6, un conector corrido un pin quema el GPIO y puede subir el 3V3 de la lógica. Durante el arranque de la ESP32 los servos pueden dar un tirón.",
    "como_se_confirma": "E-05: probar el pulso y medir la temperatura de J13/J14 con el servo bloqueado.",
    "estado": "CAMBIADO",
    "fecha": "31/10/2026",
@@ -2348,6 +2362,14 @@
       "impacto_si_cambia": "Durante el arranque de la ESP32 los servos pueden moverse un instante."
      },
      "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Sin resistencia en serie desde la v0.4 (R5/R6 quitadas): la señal salta el bus de masa de los servos con los puentes W6/W7; en esos mismos agujeros entra una resistencia de 1 kΩ si se quiere recuperar la protección. Sin pull-down: el firmware configura los pines apenas arranca.",
+      "impacto_si_cambia": "Con el conector JR enchufado al revés, el GND del servo queda sobre el GPIO: el pin queda en corto con masa mientras esté en alto. Desenchufar enseguida. Durante el arranque de la ESP32 los servos pueden dar un tirón."
+     },
+     "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
     }
    ]
   },
@@ -3173,7 +3195,7 @@
   {
    "grupo": "I",
    "tema": "Masa de la lógica en la placa de potencia",
-   "supuesto": "En la potencia v0.4 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja en x 76,5 a un bus inferior hasta J15 y el lomo; además se une al lomo por una rama en y 57,66 (la que antes iba a D4.1). El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.1 y J20.11 quedan sin conexión en las dos placas.",
+   "supuesto": "En la potencia v0.4 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja en x 76,5 a un bus inferior (y 91,5) hasta J15.1 y el lomo: esa es su única unión con el lomo (la rama que iba a D4.1 nunca tocó el relleno lógico, según la revisión independiente). El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.1 y J20.11 quedan sin conexión en las dos placas.",
    "base": "Criterio de masa en estrella (§10 de diseno_v0.3.md) adaptado al ruteo de una cara [H].",
    "impacto_si_cambia": "Unos mV de caída en el relleno pueden mover la lectura de VBAT_ADC unos 0,1 V (R23 y C14 están en esa zona). El firmware usa el INA226 como medida principal de la batería.",
    "como_se_confirma": "E-03: medir la diferencia de GND entre J20.15 y C1− con los servos en carga.",
@@ -3210,6 +3232,13 @@
       "supuesto": "En la potencia v0.3 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja por A8.2 a un bus inferior hasta J15 y el lomo: el relleno queda unido al lomo por esa ruta y por la rama de D4.1. El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.11 queda sin conexión en las dos placas."
      },
      "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "En la potencia v0.4 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja en x 76,5 a un bus inferior hasta J15 y el lomo; además se une al lomo por una rama en y 57,66 (la que antes iba a D4.1). El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.1 y J20.11 quedan sin conexión en las dos placas."
+     },
+     "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
     }
    ]
   },
@@ -3380,9 +3409,9 @@
   {
    "grupo": "I",
    "tema": "Conector del ultrasonido (J27)",
-   "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale directo de GPIO47 (R43 quitada en la v0.4). ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conectarlo con un cable Dupont de 4 hilos de colores, respetando el orden: enchufado directo entra girado.",
+   "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale de GPIO47 por R43 de 1 kΩ en serie (se quitó y volvió en la v0.4: GPIO47 comparte el dominio VDD_SPI de la memoria). ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conectarlo con un cable Dupont de 4 hilos de colores, respetando el orden: enchufado directo entra girado. J27 no tiene rótulos de cobre (partían el relleno de masa): el orden está en la guía de montaje.",
    "base": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V. Orden de pines del HC-SR04 (VCC, Trig, Echo, GND) [V].",
-   "impacto_si_cambia": "Con el sensor girado se invierte su alimentación y el sensor se quema. GPIO21 queda protegido por R41; GPIO47 ya no tiene resistencia en serie.",
+   "impacto_si_cambia": "Con el sensor girado se invierte su alimentación y el sensor se quema; R43 y R41 limitan la corriente hacia los GPIO.",
    "como_se_confirma": "Medir 3,0 V en GPIO21 con ECHO en alto y comprobar la lectura de distancia con un objeto a 20 cm.",
    "estado": "ASUMIDO",
    "fecha": "31/10/2026",
@@ -3413,6 +3442,14 @@
       "impacto_si_cambia": "Con el sensor girado se invierte su alimentación; con R43 y R41 la corriente hacia los GPIO queda por debajo de 2 mA."
      },
      "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale directo de GPIO47 (R43 quitada en la v0.4). ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conectarlo con un cable Dupont de 4 hilos de colores, respetando el orden: enchufado directo entra girado.",
+      "impacto_si_cambia": "Con el sensor girado se invierte su alimentación y el sensor se quema. GPIO21 queda protegido por R41; GPIO47 ya no tiene resistencia en serie."
+     },
+     "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
     }
    ]
   }

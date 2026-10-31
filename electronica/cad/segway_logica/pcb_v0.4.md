@@ -12,7 +12,7 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 - **Puentes:** 5. W5 une el relleno del oeste con el centro, por encima de la salida de 3,3 V de A9.
 - **Rótulos de A9:** «IN» y «OUT» entre los dos pads de cada borde (antes «IN+» y «3V3», que no decían a qué pad se referían).
 - **Título acortado** a «LOGICA v0.4»: «SEGWAY LOGICA» tocaba el pad OUT+ de A9.
-- **Sin C30 ni R43** (pedido del equipo): el mini buck trae su capacitor de entrada y TRIG va directo de GPIO47 a J27.2. Para qué está cada pieza que queda: [guía de montaje](../guia_montaje_v0.4.md).
+- **Sin C30** (pedido del equipo): el mini buck trae su capacitor de entrada. R43 se quitó y volvió: la revisión independiente mostró que protege GPIO47 con el HC-SR04 girado. Para qué está cada pieza que queda: [guía de montaje](../guia_montaje_v0.4.md).
 - **J27 sin rótulos de cobre:** partían el relleno de masa. Su orden (VCC, TRIG, ECHO, GND, con VCC abajo) va en la guía de montaje.
 
 ## Resumen
@@ -21,7 +21,7 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 |---|---|
 | Contorno | 100 × 96 mm, esquinas de 3 mm, 4 agujeros M3 a 4 mm de cada esquina |
 | Cobre | Una cara (B.Cu), pistas de 1,0 mm (5V_MCU y GND de J20: 1,2 mm), separación ≥ 0,7 mm, relleno GND |
-| Componentes | 13 del esquema: A1 ESP32-S3-DevKitC-1, A2 MPU6050, A9 buck de 3,3 V, J20 IDC 2×8, J4 paro (pads para cable), J7 y J8 encoders, J27 ultrasonido con el divisor R41/R42, y la expansión J24, J25 y J26 |
+| Componentes | 14 del esquema: A1 ESP32-S3-DevKitC-1, A2 MPU6050, A9 buck de 3,3 V, J20 IDC 2×8, J4 paro (pads para cable), J7 y J8 encoders, J27 ultrasonido con R41–R43, y la expansión J24, J25 y J26 |
 | Puentes de alambre | 5, en la cara de componentes: **W1** 3V3 de 17,8 mm y **W2**–**W5** de GND (7,6, 7,4, 7,0 y 5,5 mm) ([lista](evidencia/puentes_pcb_v0.4.json)) |
 | DRC (kicad-cli 10.0.7, con paridad de esquema) | **0 errores, 0 sin conectar, 0 de paridad** ([informe](evidencia/drc_pcb_v0.4.json)) |
 | Avisos del DRC que quedan | 17 `lib_footprint_mismatch`: los pads caseros son más grandes que los de la biblioteca, a propósito. 4 `lib_footprint_issues`: los puentes W no están en una biblioteca. El resto es serigrafía, que solo va en la guía impresa. |
@@ -115,7 +115,7 @@ Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ult
 |---|---|
 | `segway_logica_cobre_BCu_1a1.pdf` | Transferencia de tóner. B.Cu + contorno, escala 1, **sin espejar** (SUP-07). En el papel, «LOGICA v0.4» y «LADO COBRE» se leen al revés. |
 | `segway_logica_montaje_cara_superior.pdf` | Guía de montaje: serigrafía y contornos de la cara de componentes |
-| `segway_logica.drl`, `segway_logica-drl_map.pdf`, `segway_logica_taladros.rpt` | Taladros: 0,8 mm (4), 0,9 (10), 1,0 (124), 1,2 (8) y 1,5 (4, los de A9: más grandes para absorber el error de medida de las fotos). Sin metalizar: 4 M3 y los 2 agujeros del MPU, de 3,2 mm. |
+| `segway_logica.drl`, `segway_logica-drl_map.pdf`, `segway_logica_taladros.rpt` | Taladros: 0,8 mm (6), 0,9 (10), 1,0 (124), 1,2 (8) y 1,5 (4, los de A9: más grandes para absorber el error de medida de las fotos). Sin metalizar: 4 M3 y los 2 agujeros del MPU, de 3,2 mm. |
 
 ## Pasos
 
@@ -125,7 +125,7 @@ Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ult
 4. **Taladrar** con mecha de 0,8, 0,9, 1,0, 1,2 o 1,5 mm según el mapa; los M3 con 3,2 mm.
 5. **Montar** en este orden:
    1. Puentes W1–W5 (alambre estañado de 0,6 mm, del lado de componentes).
-   2. Resistencias R41 y R42.
+   2. Resistencias R41–R43.
    3. Zócalos hembra de A1 (2 × 22, posición 24 tapada) y A2 (1 × 8, posición 5 tapada), y las tiras de expansión J24, J25 (1 × 22) y J26 (1 × 6). Soldar J24 y J25 con la ESP32 enchufada, para que queden alineadas con su zócalo.
    4. IDC J20, con la muesca hacia afuera de la placa.
    5. Borneras J7 y J8, y J27 (tira hembra 1 × 4).

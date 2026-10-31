@@ -6,7 +6,7 @@ Las placas son una **interfaz entre los módulos comprados**: casi todo lo que l
 
 ## 1. Componentes que no son módulos, y para qué están
 
-Criterio del equipo (31/10/2026): solo lo que pide una hoja de datos, lo que hace falta para que funcione y las protecciones que cuidan módulos caros. Todo lo demás se quitó (ver la sección 6).
+Criterio del equipo (31/10/2026): solo lo que pide una hoja de datos, lo que hace falta para que funcione y las protecciones que cuidan módulos caros (la ESP32 entre ellos). Todo lo demás se quitó (ver la sección 6).
 
 ### Placa de potencia
 
@@ -23,7 +23,8 @@ Criterio del equipo (31/10/2026): solo lo que pide una hoja de datos, lo que hac
 | C1 | Electrolítico de 470 µF / 35 V low-ESR | Reserva de energía a la entrada: la hoja del DRV8871 pide capacidad en la alimentación de los motores | Caídas de tensión cuando los motores arrancan, con reinicios de la ESP32 | **Con polaridad:** el − hacia el lado de J1 (franja del capacitor) |
 | C3 | Cerámico de 10 µF / 50 V | Lo pide la ficha del BMS (nota 3) entre P+ y P− | El BMS puede cortar o leer mal en los transitorios | Sin polaridad |
 | C8 | Electrolítico de 470 µF / 16 V low-ESR | Reserva de energía para los servos | Los servos hacen caer la tensión cuando hacen fuerza a la vez | **Con polaridad:** el − hacia el bus de masa |
-| W1–W7 | Puentes de alambre estañado de 0,6 mm | La placa es de una cara: donde una pista tiene que cruzar otra, salta por arriba con un alambre | La placa no funciona: quedan conexiones abiertas | Ver la sección 3 |
+| R5, R6 | Resistencias de 1 kΩ | En serie con la señal de cada servo. Si el conector del servo entra girado o corrido un pin, limitan la corriente que llega al pin de la ESP32. Además pasan por encima del bus de masa de los servos | Con el conector corrido un pin, los 6 V del servo llegan al pin de la ESP32 sin límite: se quema el pin y puede subir el 3,3 V de toda la lógica | Sin polaridad |
+| W1–W5 | Puentes de alambre estañado de 0,6 mm | La placa es de una cara: donde una pista tiene que cruzar otra, salta por arriba con un alambre | La placa no funciona: quedan conexiones abiertas | Ver la sección 3 |
 
 Además, **fuera de la placa**, un **fusible en línea de 20 A** junto al pack de baterías: protege el cable entre la batería y J1.
 
@@ -33,6 +34,7 @@ Además, **fuera de la placa**, un **fusible en línea de 20 A** junto al pack d
 |---|---|---|---|---|
 | R41 | Resistencia de 2,2 kΩ 1 % | Con R42, baja el ECHO del ultrasonido de 5 V a 3,0 V | **La ESP32 se daña:** sus pines aguantan 3,3 V y el HC-SR04 responde con 5 V | Sin polaridad |
 | R42 | Resistencia de 3,3 kΩ 1 % | La otra mitad del divisor | Ídem | Sin polaridad |
+| R43 | Resistencia de 1 kΩ | En serie con TRIG (GPIO47). Si el sensor se enchufa girado o con TRIG y ECHO cruzados, limita la corriente hacia la ESP32 | Con el sensor girado, GPIO47 queda a unos 4,3 V sin límite. Ese pin comparte la alimentación de la memoria de la ESP32 | Sin polaridad |
 | W1–W5 | Puentes de alambre estañado de 0,6 mm | Igual que en la potencia | La placa no funciona | Ver la sección 3 |
 
 ## 2. Módulos: zócalo o soldados, y orientación
@@ -59,7 +61,6 @@ Alambre de cobre estañado de 0,6 mm, del lado de los componentes, pegado a la p
 | Potencia | W1, W2 | 5 V del buck A8 hacia el cable J20 |
 | Potencia | W3, W4 | Masa de los INA |
 | Potencia | W5 | Masa del cable J20 con la masa general. **Largo (32 mm) y en diagonal**: enfundarlo en termocontraíble y no dejarlo debajo de la carcasa de J20 |
-| Potencia | W6, W7 | Señal de cada servo, por encima del bus de masa de los servos. En esos mismos agujeros se puede soldar una resistencia de 1 kΩ en lugar del alambre (ver la sección 6) |
 | Lógica | W1 | 3,3 V entre las dos mitades del riel |
 | Lógica | W2–W5 | Masa entre zonas del relleno |
 
@@ -68,7 +69,7 @@ Alambre de cobre estañado de 0,6 mm, del lado de los componentes, pegado a la p
 1. **Imprimir** el PDF de cobre a tamaño real y medir el contorno con calibre: **148 × 96 mm** (potencia) y **100 × 96 mm** (lógica).
 2. **Planchar, atacar y taladrar.** En la potencia, estañar la barra VM_BUS, el lomo de masa y las pistas de batería, de motores y de servos.
 3. **Puentes de alambre** (sección 3).
-4. **Resistencias y diodos**: R29, D3 y D1 en la potencia; R41 y R42 en la lógica. Cuidado con la banda de D1 y D3.
+4. **Resistencias y diodos**: R5, R6, R29, D3 y D1 en la potencia; R41, R42 y R43 en la lógica. Cuidado con la banda de D1 y D3.
 5. **Zócalos**: A1, A2, A3, A4 y las tiras de expansión J24 y J25 (soldarlas con la ESP32 enchufada, para que queden alineadas).
 6. **Módulos soldados**: A5 y A6 (con su puente de dirección ya hecho), A7, A8 y A9.
 7. **Portafusibles, Q1 con su disipador aislado y electrolíticos** (cuidado con la polaridad).
@@ -101,10 +102,8 @@ En la v0.4 se sacó todo lo que los módulos ya resuelven o que solo era protecc
 | C4, C5 | Capacitores de 470 µF junto a cada DRV8871 | El módulo trae su propio 47 µF/50 V |
 | R1–R4, R35–R38 | Pull-down y resistencias en serie en las entradas de los DRV | El DRV8871 tiene pull-down interno |
 | R7, R8 | Pull-down de las señales de los servos | El firmware configura esos pines apenas arranca |
-| R5, R6 | 1 kΩ en serie con cada servo: protegían la ESP32 si el conector del servo se enchufa al revés | Puentes W6/W7. **Si un servo se enchufa al revés, el pin de la ESP32 queda en corto con masa: desenchufarlo enseguida.** Para recuperar la protección, soldar una resistencia de 1 kΩ en lugar del alambre |
 | C9 | Segundo capacitor de los servos | Queda C8 |
 | R22, R23, C14 | Divisor para medir la batería por una entrada analógica | La tensión de la batería la mide el INA226 |
 | R13–R16, R24 | Pull-ups de encoders y paro | Pull-ups internas de la ESP32 (**activarlas en el firmware**) |
 | D4, R28 | LED de encendido | Sin indicador en la placa; el voltímetro muestra la tensión |
 | C30 | Capacitor en la entrada del buck de 3,3 V | El módulo trae el suyo |
-| R43 | 1 kΩ en serie con TRIG del ultrasonido: protegía la ESP32 si el sensor se enchufa girado | Respetar el orden de J27: 1 VCC, 2 TRIG, 3 ECHO, 4 GND (VCC hacia abajo). Usarlo con un cable marcado |

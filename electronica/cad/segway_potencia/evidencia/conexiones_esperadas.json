@@ -116,11 +116,19 @@
   "C8.1"
  ],
  "SERVO_IZQ_MCU": [
-  "J20.2",
+  "R5.1",
+  "J20.2"
+ ],
+ "SERVO_IZQ_SIG": [
+  "R5.2",
   "J13.3"
  ],
  "SERVO_DER_MCU": [
-  "J20.4",
+  "R6.1",
+  "J20.4"
+ ],
+ "SERVO_DER_SIG": [
+  "R6.2",
   "J14.3"
  ],
  "VM_LOG_F": [

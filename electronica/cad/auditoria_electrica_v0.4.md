@@ -6,18 +6,18 @@ Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resul
 |---|---|---|
 | OK | Cable J20, pin n con pin n | 16 pines con la misma net en las dos placas (pin 11 sin conexión en ambas) |
 | OK | Pines críticos de los módulos (potencia) | 69 pines en su net |
-| OK | Pines críticos de los módulos (logica) | 34 pines en su net |
+| OK | Pines críticos de los módulos (logica) | 36 pines en su net |
 | OK | Señales de la ESP32-S3 sin 5 V ni batería | 37 pines de señal revisados en las dos placas |
 | OK | A8 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
-| OK | A7 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | A6 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
+| OK | A7 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | A5 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
-| OK | A1 girado 180° (logica) | Lo impide la posición tapada 24 |
-| OK | A1 corrido +1 en y (logica) | Lo impide la posición tapada 24 |
-| OK | A1 corrido -1 en y (logica) | Lo impide la posición tapada 24 |
 | OK | A2 girado 180° (logica) | Lo impide la posición tapada 5 |
 | OK | A2 corrido +1 en x (logica) | Lo impide la posición tapada 5 |
 | OK | A2 corrido -1 en x (logica) | Lo impide la posición tapada 5 |
+| OK | A1 girado 180° (logica) | Lo impide la posición tapada 24 |
+| OK | A1 corrido +1 en y (logica) | Lo impide la posición tapada 24 |
+| OK | A1 corrido -1 en y (logica) | Lo impide la posición tapada 24 |
 | OK | A9 (logica): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | Direcciones I2C | 0x40 A7, 0x41 A5, 0x44 A6, 0x68 A2. Requiere soldar A0 en A5 y A1 en A6 |
 | AVISO | Cuellos de pista con la corriente de diseño | 3 nets superan 20 °C en su tramo más angosto (tabla abajo) |
@@ -33,22 +33,22 @@ Tramo más angosto de cada net con su corriente de diseño. La barra y las zonas
 
 | Placa | Net | I (A) | Ancho mínimo (mm) | Largo del tramo (mm) | ΔT IPC-2221 (°C) | Tiene zona | Estado |
 |---|---|---|---|---|---|---|---|
-| potencia | 3V3_MCU | 0.5 | 1.00 | 14.0 | 0 | no | OK |
+| potencia | 3V3_MCU | 0.5 | 1.00 | 3.1 | 0 | no | OK |
 | potencia | 5V_MCU | 0.8 | 1.00 | 2.5 | 1 | no | OK |
-| potencia | MOT_DER_1 | 2.3 | 2.00 | 5.4 | 3 | no | OK |
-| potencia | MOT_DER_2 | 2.3 | 2.00 | 5.4 | 3 | no | OK |
-| potencia | MOT_IZQ_1 | 2.3 | 2.00 | 4.9 | 3 | no | OK |
+| potencia | MOT_DER_1 | 2.3 | 2.00 | 4.9 | 3 | no | OK |
+| potencia | MOT_DER_2 | 2.3 | 2.00 | 4.9 | 3 | no | OK |
+| potencia | MOT_IZQ_1 | 2.3 | 2.00 | 5.4 | 3 | no | OK |
 | potencia | MOT_IZQ_2 | 2.3 | 2.00 | 4.9 | 3 | no | OK |
 | potencia | VBAT_F | 10 | 4.50 | 4.5 | 22 | no | AVISO |
 | potencia | VBAT_P | 10 | 3.50 | 3.9 | 33 | no | AVISO |
-| potencia | VM_BUS | 10 | 3.00 | 2.3 | 42 | sí | AVISO |
-| potencia | VM_DER | 2.3 | 2.00 | 3.7 | 3 | no | OK |
-| potencia | VM_DER_F | 2.3 | 1.50 | 62.2 | 5 | no | OK |
-| potencia | VM_IZQ | 2.3 | 1.50 | 3.1 | 5 | no | OK |
+| potencia | VM_BUS | 10 | 3.00 | 0.5 | 42 | sí | AVISO |
+| potencia | VM_DER | 2.3 | 2.00 | 3.6 | 3 | no | OK |
+| potencia | VM_DER_F | 2.3 | 1.50 | 5.5 | 5 | no | OK |
+| potencia | VM_IZQ | 2.3 | 1.50 | 3.2 | 5 | no | OK |
 | potencia | VM_IZQ_F | 2.3 | 2.00 | 16.8 | 3 | no | OK |
 | potencia | VM_LOG | 0.3 | 1.00 | 4.1 | 0 | no | OK |
-| potencia | VM_LOG_F | 0.3 | 1.20 | 15.0 | 0 | no | OK |
+| potencia | VM_LOG_F | 0.3 | 1.20 | 5.0 | 0 | no | OK |
 | potencia | VM_UBEC | 3.8 | 3.50 | 12.0 | 4 | no | OK |
 | potencia | V_SERVO | 3.0 | 1.20 | 3.0 | 12 | no | OK |
-| logica | 3V3_MCU | 0.5 | 1.00 | 24.1 | 0 | no | OK |
-| logica | 5V_MCU | 0.8 | 1.20 | 0.5 | 1 | no | OK |
+| logica | 3V3_MCU | 0.5 | 1.00 | 3.6 | 0 | no | OK |
+| logica | 5V_MCU | 0.8 | 1.20 | 2.5 | 1 | no | OK |

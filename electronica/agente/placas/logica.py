@@ -35,7 +35,7 @@ UBICACION = {
     "A9": (26.00, 91.50, 90),     # v0.4: sin C30 (el mini buck trae su capacitor de entrada)
     # J27 vertical al oeste de la DevKitC, fuera del paso de sus USB-C (revisión v0.3); pin 1 (5V) abajo.
     # La pista de TRIG pasa por debajo del cuerpo de R41.
-    "J27": (63.50, 87.50, 180), "R41": (67.00, 82.42, 0), "R42": (93.50, 76.00, 270),     # v0.4: sin R43
+    "J27": (63.50, 87.50, 180), "R41": (67.00, 82.42, 0), "R42": (93.50, 76.00, 270), "R43": (80.16, 78.00, 180),
 }
 FIJAS = set(UBICACION) | {"H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J7", "J8", "J4"}
@@ -94,7 +94,9 @@ ESQUELETO = [
     # A9 -> 3V3_MCU: sube a la esquina de la pista de 3V3 de J20.9 (W1 la une con A1.1)
     ("3V3_MCU", 1.2, ["A9.3", (26.00, 64.17), (27.94, 62.23)]),
     # Ultrasonido: TRIG (A1.39) y ECHO (A1.40) bajan por debajo de la DevKitC
-    ("US_TRIG", W, ["A1.39", (85.50, 57.15), (85.50, 78.00), (70.00, 78.00), (70.00, 84.96), "J27.2"]),     # v0.4: sin R43
+    # R43 (1 kΩ) protege GPIO47 con el HC-SR04 girado o con TRIG y ECHO cruzados
+    ("US_TRIG", W, ["A1.39", (85.50, 57.15), (85.50, 78.00), "R43.1"]),
+    ("US_TRIG_S", W, ["R43.2", (70.00, 78.00), (70.00, 84.96), "J27.2"]),
     ("US_ECHO", W, ["A1.40", (90.60, 59.69), (90.60, 76.00), "R42.1"]),
     ("US_ECHO", W, [(90.60, 76.00), (90.60, 82.42), "R41.2"]),
     ("US_ECHO_5V", W, ["R41.1", "J27.3"]),

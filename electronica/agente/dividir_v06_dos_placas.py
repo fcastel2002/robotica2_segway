@@ -167,15 +167,14 @@ def placa(nombre, refs):
 # - Fuera lo que los módulos ya resuelven: C4/C5 (el DRV trae 47 µF/50 V), R1-R4 y R35-R38 (el DRV8871 tiene
 #   pull-down interno y no entra girado), R7/R8 (pull-down de servos), C9 (queda C8), R22/R23/C14 (la batería la mide
 #   el INA226), R13-R16 y R24 (pull-ups internas de la ESP32). J20.1 queda sin conexión en las dos placas.
-# - Segunda pasada (Matías, 31/10/2026): fuera también las protecciones que ninguna hoja de datos pide y no cuidan
-#   módulos caros: D4/R28 (LED de encendido), R5/R6 (serie de los servos), R43 (serie de TRIG) y C30 (el mini buck
-#   trae su capacitor de entrada). Se quedan F1-F5, Q1/R29/D3, D1, C1, C3, C8 y R41/R42.
+# - Segunda pasada (Matías, 31/10/2026): fuera D4/R28 (LED de encendido) y C30 (el mini buck trae su capacitor de
+#   entrada). R5/R6 y R43 se quitaron y volvieron (revisión independiente): protegen GPIO de la ESP32 con un conector
+#   de servo corrido o el HC-SR04 girado. Se quedan F1-F5, Q1/R29/D3, D1, C1, C3, C8, R5/R6 y R41-R43.
 QUITAR_V04 = {"potencia": {"C4", "C5", "R1", "R2", "R3", "R4", "R35", "R36", "R37", "R38", "R7", "R8", "C9", "R22", "R23", "C14",
-                           "D4", "R28", "R5", "R6"},
-              "logica": {"R13", "R14", "R15", "R16", "R24", "C30", "R43"}}
-UNIR_V04 = {"potencia": {"IN1_IZQ": "IN1_IZQ_MCU", "IN2_IZQ": "IN2_IZQ_MCU", "IN1_DER": "IN1_DER_MCU", "IN2_DER": "IN2_DER_MCU",
-                         "SERVO_IZQ_SIG": "SERVO_IZQ_MCU", "SERVO_DER_SIG": "SERVO_DER_MCU"},
-            "logica": {"US_TRIG_S": "US_TRIG"}}
+                           "D4", "R28"},
+              "logica": {"R13", "R14", "R15", "R16", "R24", "C30"}}
+UNIR_V04 = {"potencia": {"IN1_IZQ": "IN1_IZQ_MCU", "IN2_IZQ": "IN2_IZQ_MCU", "IN1_DER": "IN1_DER_MCU", "IN2_DER": "IN2_DER_MCU"},
+            "logica": {}}
 
 
 def cambios_v04(s, nombre):
