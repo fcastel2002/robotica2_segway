@@ -8,12 +8,13 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 
 - **Buck de 3,3 V (A9) corregido:** la huella estaba **espejada**, según la serigrafía del módulo comprado, y era de otro tamaño: el módulo es tipo **Mini-360** (17 × 11 mm, pads a 14,3 × 8,5 mm, medidos con calibre por Matías el 31/10/2026; en las fotos se habían estimado 8,9). Ahora IN+ y OUT+ quedan al este (x 26) y GND al oeste (x 17,5). La salida de 3,3 V sube directo a la pista de 3V3 de J20.9.
 - **Fuera las resistencias de pull-up** R13–R16 (encoders) y R24 (paro): se usan las pull-ups internas de la ESP32, que **hay que activar en el firmware**. Si un encoder de colector abierto necesita más, se agrega una de 10 kΩ en su bornera, entre V y la señal.
-- **GPIO3 libre:** la batería la mide el INA226 de la potencia. J20.1 queda sin conexión.
+- **GPIO3 lee el sensor de distancia:** la batería la mide el INA226 de la potencia (J20.1 queda sin conexión) y GPIO3 (ADC1) pasó a leer el Sharp de J27.
+- **Sharp en lugar del HC-SR04 (ELE-044):** J27 sigue el orden del carrier Pololu #2474: 1 EN (sin conexión, arriba), 2 OUT, 3 VCC (5 V), 4 GND. OUT pasa por el divisor R41 10k / R42 15k (3,6 V → 2,2 V) y sube a A1.13 (GPIO3) por debajo de la DevKitC. Sale R43; GPIO47 y GPIO21 quedan libres.
 - **Puentes:** 5. W5 une el relleno del oeste con el centro, por encima de la salida de 3,3 V de A9.
 - **Rótulos de A9:** «IN» y «OUT» entre los dos pads de cada borde (antes «IN+» y «3V3», que no decían a qué pad se referían).
 - **Título acortado** a «LOGICA v0.4»: «SEGWAY LOGICA» tocaba el pad OUT+ de A9.
-- **Sin C30** (pedido del equipo): el mini buck trae su capacitor de entrada. R43 se quitó y volvió: la revisión independiente mostró que protege GPIO47 con el HC-SR04 girado. Para qué está cada pieza que queda: [guía de montaje](../guia_montaje_v0.4.md).
-- **J27 sin rótulos de cobre:** partían el relleno de masa. Su orden (VCC, TRIG, ECHO, GND, con VCC abajo) va en la guía de montaje.
+- **Sin C30** (pedido del equipo): el mini buck trae su capacitor de entrada. R43 se quitó y volvió, y salió con el HC-SR04 (ya no hay TRIG). Para qué está cada pieza que queda: [guía de montaje](../guia_montaje_v0.4.md).
+- **J27 sin rótulos de cobre:** partían el relleno de masa. Su orden (EN, OUT, VCC, GND, con EN arriba) va en la guía de montaje.
 
 ## Resumen
 
@@ -21,10 +22,10 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 |---|---|
 | Contorno | 100 × 96 mm, esquinas de 3 mm, 4 agujeros M3 a 4 mm de cada esquina |
 | Cobre | Una cara (B.Cu), pistas de 1,0 mm (5V_MCU y GND de J20: 1,2 mm), separación ≥ 0,7 mm, relleno GND |
-| Componentes | 14 del esquema: A1 ESP32-S3-DevKitC-1, A2 MPU6050, A9 buck de 3,3 V, J20 IDC 2×8, J4 paro (pads para cable), J7 y J8 encoders, J27 ultrasonido con R41–R43, y la expansión J24, J25 y J26 |
+| Componentes | 13 del esquema: A1 ESP32-S3-DevKitC-1, A2 MPU6050, A9 buck de 3,3 V, J20 IDC 2×8, J4 paro (pads para cable), J7 y J8 encoders, J27 sensor de distancia Sharp con R41/R42, y la expansión J24, J25 y J26 |
 | Puentes de alambre | 5, en la cara de componentes: **W1** 3V3 de 17,8 mm y **W2**–**W5** de GND (7,6, 7,4, 7,0 y 5,5 mm) ([lista](evidencia/puentes_pcb_v0.4.json)) |
 | DRC (kicad-cli 10.0.7, con paridad de esquema) | **0 errores, 0 sin conectar, 0 de paridad** ([informe](evidencia/drc_pcb_v0.4.json)) |
-| Avisos del DRC que quedan | 17 `lib_footprint_mismatch`: los pads caseros son más grandes que los de la biblioteca, a propósito. 4 `lib_footprint_issues`: los puentes W no están en una biblioteca. El resto es serigrafía, que solo va en la guía impresa. |
+| Avisos del DRC que quedan | 12 `lib_footprint_mismatch`: los pads caseros son más grandes que los de la biblioteca, a propósito. 5 `lib_footprint_issues`: los puentes W no están en una biblioteca. El resto es serigrafía, que solo va en la guía impresa. |
 
 ## Cómo se diseñó
 
@@ -44,7 +45,7 @@ Mapa de pines de A1 (SUP-28):
 
 | Pin físico | GPIO | Net | Pin físico | GPIO | Net |
 |---|---|---|---|---|---|
-| 4 | GPIO4 | ENC_IZQ_A | 13 | GPIO3 | Libre desde la v0.4 (solo en J24.13) |
+| 4 | GPIO4 | ENC_IZQ_A | 13 | GPIO3 | DIST_SUELO (Sharp de J27 por R41/R42) |
 | 5 | GPIO5 | ENC_IZQ_B | 15 | GPIO9 | SERVO_IZQ_MCU |
 | 6 | GPIO6 | PARO_CONT | 16 | GPIO10 | SERVO_DER_MCU |
 | 7 | GPIO7 | ENC_DER_A | 17 | GPIO11 | IN2_DER_MCU |
@@ -84,17 +85,17 @@ La hilera izquierda (J24) repite pines que ya usa el robot: sirve para medir o e
 | 14 | 36 | GPIO0 | Strapping (botón BOOT): no forzar en el arranque |
 | 15 | 37 | GPIO45 | Strapping: no forzar en el arranque |
 | 16 | 38 | GPIO48 | LED RGB de la placa |
-| 17 | 39 | GPIO47 | TRIG del ultrasonido (J27.2) |
-| 18 | 40 | GPIO21 | ECHO del ultrasonido (J27.3, por el divisor R41/R42) |
+| 17 | 39 | GPIO47 | Libre (era el TRIG del HC-SR04) |
+| 18 | 40 | GPIO21 | Libre (era el ECHO del HC-SR04) |
 | 19–20 | 41–42 | GPIO20, 19 | USB nativo D+ y D−: no usar |
 | 21–22 | 43–44 | GND | GND |
 
-Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ultrasonido de J27). GPIO1 y GPIO2 son los únicos con ADC1, el que funciona junto con el Wi-Fi.
+Quedan **9 GPIO libres**: 1, 2, 21, 38, 39, 40, 41, 42 y 47 (GPIO3 lee el Sharp de J27). GPIO1 y GPIO2 son los únicos con ADC1, el que funciona junto con el Wi-Fi.
 
 ### Cuidados al conectar sensores
 
 - **La ESP32-S3 no tolera 5 V en sus pines (SUP-25).** Un sensor alimentado con 5 V que devuelve 5 V necesita un divisor.
-  - **Ultrasonido HC-SR04:** va en **J27**, que ya trae los 5 V y el divisor de ECHO. Se enchufa directo o con un cable Dupont de 4 hilos respetando el orden VCC, TRIG, ECHO, GND.
+  - **Sharp GP2Y0A60SZLF (Pololu #2474):** va en **J27**, que ya trae los 5 V y el divisor. Cable Dupont de 4 hilos, pin n con pin n: EN, OUT, VCC, GND.
   - **Infrarrojo digital** (módulos tipo FC-51 o TCRT5000 con comparador): alimentarlo con 3V3 (J26.1), así su salida ya es de 3,3 V.
   - **Infrarrojo analógico** (Sharp GP2Y0A21): se alimenta con 5 V y su salida no pasa de unos 3,1 V. Va a GPIO1 o GPIO2 con atenuación de 11 dB.
 - **Corriente disponible (SUP-79):** hasta unos 300 mA en 5V y 200 mA en 3V3 entre todos los sensores (J26 y J27). El 5V llega directo del buck A8 (5,0 V). El 3V3 sale de A9, que también alimenta la ESP32.
@@ -125,7 +126,7 @@ Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ult
 4. **Taladrar** con mecha de 0,8, 0,9, 1,0, 1,2 o 1,5 mm según el mapa; los M3 con 3,2 mm.
 5. **Montar** en este orden:
    1. Puentes W1–W5 (alambre estañado de 0,6 mm, del lado de componentes).
-   2. Resistencias R41–R43.
+   2. Resistencias R41 y R42.
    3. Zócalos hembra de A1 (2 × 22, posición 24 tapada) y A2 (1 × 8, posición 5 tapada), y las tiras de expansión J24, J25 (1 × 22) y J26 (1 × 6). Soldar J24 y J25 con la ESP32 enchufada, para que queden alineadas con su zócalo.
    4. IDC J20, con la muesca hacia afuera de la placa.
    5. Borneras J7 y J8, y J27 (tira hembra 1 × 4).

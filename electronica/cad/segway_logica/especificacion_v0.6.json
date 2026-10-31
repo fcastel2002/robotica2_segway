@@ -515,12 +515,12 @@
   {
    "ref": "J27",
    "lib_id": "Connector_Generic:Conn_01x04",
-   "value": "HC-SR04 1=VCC 2=TRIG 3=ECHO 4=GND",
+   "value": "Sharp GP2Y0A60SZLF (Pololu 2474) 1=EN 2=OUT 3=VCC 4=GND",
    "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical",
    "block": "conectores",
    "dnp": false,
-   "source": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V",
-   "status": "provisorio [H]: orden de pines del HC-SR04 (SUP-82)",
+   "source": "Matías, 31/10/2026 [M]: Pololu #2474 en lugar del HC-SR04, mirando al suelo para detectar escalones; orden de pines de la foto del carrier",
+   "status": "v0.4 [M]: EN sin conexión (pull-up de 10 kΩ en el carrier); OUT por el divisor R41/R42 a GPIO3 (SUP-82)",
    "supuestos": [
     "SUP-82"
    ]
@@ -528,11 +528,11 @@
   {
    "ref": "R41",
    "lib_id": "Device:R",
-   "value": "2k2 1%",
+   "value": "10k 1%",
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "conectores",
    "dnp": false,
-   "source": "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)",
+   "source": "Divisor de la salida del Sharp: 3,6 V x 15k / 25k = 2,2 V en GPIO3; 5 V en el peor caso -> 3,0 V (SUP-82)",
    "status": "provisorio [H]",
    "supuestos": [
     "SUP-82"
@@ -541,24 +541,11 @@
   {
    "ref": "R42",
    "lib_id": "Device:R",
-   "value": "3k3 1%",
+   "value": "15k 1%",
    "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
    "block": "conectores",
    "dnp": false,
-   "source": "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)",
-   "status": "provisorio [H]",
-   "supuestos": [
-    "SUP-82"
-   ]
-  },
-  {
-   "ref": "R43",
-   "lib_id": "Device:R",
-   "value": "1k 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "conectores",
-   "dnp": false,
-   "source": "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)",
+   "source": "Divisor de la salida del Sharp: 3,6 V x 15k / 25k = 2,2 V en GPIO3; 5 V en el peor caso -> 3,0 V (SUP-82)",
    "status": "provisorio [H]",
    "supuestos": [
     "SUP-82"
@@ -593,11 +580,13 @@
    ]
   },
   {
-   "name": "GPIO3",
+   "name": "DIST_SUELO",
    "kind": "signal",
    "pins": [
     "A1.13",
-    "J24.13"
+    "J24.13",
+    "R41.2",
+    "R42.1"
    ]
   },
   {
@@ -663,7 +652,7 @@
     "J26.5",
     "J26.6",
     "A9.1",
-    "J27.1"
+    "J27.3"
    ]
   },
   {
@@ -904,22 +893,19 @@
    ]
   },
   {
-   "name": "US_TRIG",
+   "name": "GPIO47",
    "kind": "signal",
    "pins": [
     "A1.39",
-    "J25.17",
-    "R43.1"
+    "J25.17"
    ]
   },
   {
-   "name": "US_ECHO",
+   "name": "GPIO21",
    "kind": "signal",
    "pins": [
     "A1.40",
-    "J25.18",
-    "R41.2",
-    "R42.1"
+    "J25.18"
    ]
   },
   {
@@ -947,18 +933,10 @@
    ]
   },
   {
-   "name": "US_TRIG_S",
+   "name": "SHARP_OUT",
    "kind": "signal",
    "pins": [
-    "R43.2",
-    "J27.2"
-   ]
-  },
-  {
-   "name": "US_ECHO_5V",
-   "kind": "signal",
-   "pins": [
-    "J27.3",
+    "J27.2",
     "R41.1"
    ]
   }
@@ -968,7 +946,8 @@
   "A2.6",
   "A2.7",
   "J20.11",
-  "J20.1"
+  "J20.1",
+  "J27.1"
  ],
  "fuentes_power": {
   "5V_MCU": "J20.13",
@@ -1103,12 +1082,12 @@
    "justification": "entrada; pull-up del INA226; pin asignado por geometría (DEC-17)"
   },
   {
-   "function": "libre: expansión (ADC1_CH2)",
+   "function": "Distancia al suelo: Sharp (J27.2) por el divisor R41/R42",
    "gpio": "GPIO3",
    "board_pin": "13",
-   "net": "GPIO3",
+   "net": "DIST_SUELO",
    "expansion": "J24.13",
-   "justification": "v0.4: la batería la mide el INA226"
+   "justification": "ADC1_CH2 (funciona con Wi-Fi); fuera de la zona de la antena; sin strapping con eFuses de fábrica"
   },
   {
    "function": "strapping: no forzar en el arranque",
@@ -1311,20 +1290,20 @@
    "justification": ""
   },
   {
-   "function": "TRIG del ultrasonido (J27.2)",
+   "function": "libre: expansión",
    "gpio": "GPIO47",
    "board_pin": "39",
-   "net": "US_TRIG",
+   "net": "GPIO47",
    "expansion": "J25.17",
-   "justification": ""
+   "justification": "v0.4: el HC-SR04 se reemplazó por el Sharp"
   },
   {
-   "function": "ECHO del ultrasonido (J27.3, divisor R41/R42)",
+   "function": "libre: expansión",
    "gpio": "GPIO21",
    "board_pin": "40",
-   "net": "US_ECHO",
+   "net": "GPIO21",
    "expansion": "J25.18",
-   "justification": ""
+   "justification": "v0.4: el HC-SR04 se reemplazó por el Sharp"
   },
   {
    "function": "USB D+",

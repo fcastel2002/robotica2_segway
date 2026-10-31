@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 17,
+ "revision_lista": 18,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -299,7 +299,7 @@
   {
    "grupo": "A",
    "tema": "Cantidad de piezas de la v0.4",
-   "supuesto": "La v0.4 tiene 44 piezas en dos placas: 30 en la potencia y 14 en la lógica, con J20 en cada una, más 10 puentes de alambre (5 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8, las resistencias de protección de la ESP32 (R5, R6 y R43) y el divisor del ECHO (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md.",
+   "supuesto": "La v0.4 tiene 43 piezas en dos placas: 30 en la potencia y 13 en la lógica, con J20 en cada una, más 10 puentes de alambre (5 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8, las resistencias de protección de la ESP32 en los servos (R5, R6) y el divisor del sensor de distancia Sharp (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md.",
    "base": "Pedido del equipo del 31/10/2026 [M]: los módulos ya traen su electrónica; agregar solo lo que pida un datasheet o haga falta.",
    "impacto_si_cambia": "Cada elemento que el equipo quiera recuperar se reincorpora desde su fila del grupo H. La especificación v0.3 conserva valores, nets y fuentes de todos.",
    "como_se_confirma": "Matías aprobó el criterio el 31/10/2026: solo lo necesario más las protecciones que cuidan módulos caros.",
@@ -350,6 +350,13 @@
       "supuesto": "La v0.4 tiene 41 piezas en dos placas: 28 en la potencia y 13 en la lógica, con J20 en cada una, más 12 puentes de alambre (7 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8 y el divisor del ECHO (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md."
      },
      "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "La v0.4 tiene 44 piezas en dos placas: 30 en la potencia y 14 en la lógica, con J20 en cada una, más 10 puentes de alambre (5 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8, las resistencias de protección de la ESP32 (R5, R6 y R43) y el divisor del ECHO (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: Pololu #2474 en lugar del HC-SR04, mirando al piso para detectar escalones; foto del carrier con el orden EN, OUT, VCC, GND"
     }
    ]
   },
@@ -3520,12 +3527,12 @@
   },
   {
    "grupo": "I",
-   "tema": "Conector del ultrasonido (J27)",
-   "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale de GPIO47 por R43 de 1 kΩ en serie (se quitó y volvió en la v0.4: GPIO47 comparte el dominio VDD_SPI de la memoria). ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conectarlo con un cable Dupont de 4 hilos de colores, respetando el orden: enchufado directo entra girado. J27 no tiene rótulos de cobre (partían el relleno de masa): el orden está en la guía de montaje.",
-   "base": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V. Orden de pines del HC-SR04 (VCC, Trig, Echo, GND) [V].",
-   "impacto_si_cambia": "Con el sensor girado se invierte su alimentación y el sensor se quema; R43 y R41 limitan la corriente hacia los GPIO.",
-   "como_se_confirma": "Medir 3,0 V en GPIO21 con ECHO en alto y comprobar la lectura de distancia con un objeto a 20 cm.",
-   "estado": "ASUMIDO",
+   "tema": "Conector del sensor de distancia (J27)",
+   "supuesto": "J27, tira hembra de 1 × 4 en el orden del carrier Pololu #2474 (Sharp GP2Y0A60SZLF, versión de 5 V): 1 EN (sin conexión; el carrier lo sube a VCC con 10 kΩ), 2 OUT, 3 VCC (5V_MCU), 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C, con EN arriba. OUT pasa por R41 de 10 kΩ y R42 de 15 kΩ a GND (× 0,6) antes de GPIO3 (ADC1_CH2): 3,6 V a 10 cm quedan en 2,2 V, y 5 V en el peor caso, en 3,0 V. El sensor mira al piso para detectar escalones y va a más de 12 cm del piso en todas las posiciones. Cable Dupont de 4 hilos, pin n con pin n. Sin rótulos de cobre: el orden está en la guía de montaje.",
+   "base": "Decisión de Matías del 31/10/2026 [M] (reemplaza al HC-SR04). Orden de pines de la foto del carrier [M]. Ficha de Pololu: 2,7-5,5 V, 33 mA, salida de 3,6 V a 10 cm a 0,6 V a 150 cm con 5 V, actualización cada 16,5 ms, EN con pull-up de 10 kΩ [V].",
+   "impacto_si_cambia": "Con el cable girado (salida en 5 V, GND suelto) o corrido hacia el pin 4 (VCC en GND, salida en 5 V) el sensor puede dañarse; la ESP32 queda protegida por el divisor (3,0 V como máximo). El pad cuadrado del carrier es GND y el de J27 es EN: unirlos deja el cable girado. Si el piso queda a menos de 10 cm, la lectura se dobla y no sirve.",
+   "como_se_confirma": "Con el sensor montado: medir GPIO3 con el piso a la altura de trabajo y con un escalón; comprobar que la tensión baja al pasar el borde.",
+   "estado": "CAMBIADO",
    "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
@@ -3562,6 +3569,18 @@
       "impacto_si_cambia": "Con el sensor girado se invierte su alimentación y el sensor se quema. GPIO21 queda protegido por R41; GPIO47 ya no tiene resistencia en serie."
      },
      "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "tema": "Conector del ultrasonido (J27)",
+      "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale de GPIO47 por R43 de 1 kΩ en serie (se quitó y volvió en la v0.4: GPIO47 comparte el dominio VDD_SPI de la memoria). ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conectarlo con un cable Dupont de 4 hilos de colores, respetando el orden: enchufado directo entra girado. J27 no tiene rótulos de cobre (partían el relleno de masa): el orden está en la guía de montaje.",
+      "base": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V. Orden de pines del HC-SR04 (VCC, Trig, Echo, GND) [V].",
+      "impacto_si_cambia": "Con el sensor girado se invierte su alimentación y el sensor se quema; R43 y R41 limitan la corriente hacia los GPIO.",
+      "como_se_confirma": "Medir 3,0 V en GPIO21 con ECHO en alto y comprobar la lectura de distancia con un objeto a 20 cm.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: Pololu #2474 en lugar del HC-SR04, mirando al piso para detectar escalones; foto del carrier con el orden EN, OUT, VCC, GND"
     }
    ]
   }

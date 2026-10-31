@@ -18,7 +18,8 @@ Fecha de corte: 2026-10-31. Responsable humano: Matías. Entorno: Windows 11, Cl
 - **31/10/2026: PCB v0.4 (ELE-042).** Con las [fotos de los módulos](../../componentes_comprados/fotos/README.md): INA226 con SDA/SCL corregidos y mini buck sin espejar. La placa queda como interfaz: potencia 32 piezas y lógica 15, con pull-ups internas en el firmware y la batería medida por el INA226. [Potencia](../../cad/segway_potencia/pcb_v0.4.md), [lógica](../../cad/segway_logica/pcb_v0.4.md), [compras](../../cad/lista_compras_v0.4.md). Tras la revisión independiente: mini buck tipo Mini-360 (pads a 14,3 × 8,9 mm) y borneras del DRV8871 a paso 5,0 mm, medidos en las fotos.
 - **31/10/2026: segunda pasada (ELE-043).** Fuera D4/R28 y C30; R5/R6 y R43 volvieron tras la revisión independiente (protegen la ESP32): potencia 30 piezas, lógica 14, 5 puentes cada una. [Guía de montaje](../../cad/guia_montaje_v0.4.md) con el porqué de cada componente.
 - **31/10/2026: medidas con calibre (ELE-045).** Buck a 14,3 × 8,5 mm, el resto de los módulos confirmado; supuestos de batería, MPU y mecánica confirmados.
-- **Siguiente:** reemplazar el HC-SR04 por el Sharp GP2Y0A60SZLF en J27 (ELE-044) y medir el borde del INA226 frente a J20 (SUP-35).
+- **31/10/2026: Sharp en J27 (ELE-044).** Pololu #2474 mirando al piso; OUT por 10k/15k a GPIO3; sin R43. Lógica con 13 piezas, potencia con 30.
+- **Siguiente:** medir el borde del INA226 frente a J20 (SUP-35); quedan supuestos de datos (paro, voltímetro, encoders, TVS, disipador, fabricación, chip de los bucks).
 
 ## Historia anterior (hasta el 18/10/2026)
 

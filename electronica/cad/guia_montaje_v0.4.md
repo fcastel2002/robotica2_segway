@@ -32,9 +32,8 @@ Además, **fuera de la placa**, un **fusible en línea de 20 A** junto al pack d
 
 | Ref. | Qué es | Para qué está | Qué pasa si no está | Cómo se monta |
 |---|---|---|---|---|
-| R41 | Resistencia de 2,2 kΩ 1 % | Con R42, baja el ECHO del ultrasonido de 5 V a 3,0 V | **La ESP32 se daña:** sus pines aguantan 3,3 V y el HC-SR04 responde con 5 V | Sin polaridad |
-| R42 | Resistencia de 3,3 kΩ 1 % | La otra mitad del divisor | Ídem | Sin polaridad |
-| R43 | Resistencia de 1 kΩ | En serie con TRIG (GPIO47). Si el sensor se enchufa girado o con TRIG y ECHO cruzados, limita la corriente hacia la ESP32 | Con el sensor girado, GPIO47 queda a unos 4,3 V sin límite. Ese pin comparte la alimentación de la memoria de la ESP32 | Sin polaridad |
+| R41 | Resistencia de 10 kΩ 1 % | Con R42, baja la salida del sensor de distancia Sharp (J27) antes de entrar a GPIO3: de 3,6 V como máximo a 2,2 V | **La ESP32 se daña o lee mal:** el Sharp alimentado con 5 V entrega hasta 3,6 V cerca del piso, y la entrada analógica de la ESP32 llega a 3,1 V. Con el cable mal enchufado pueden llegar 5 V: el divisor los baja a 3,0 V | Sin polaridad |
+| R42 | Resistencia de 15 kΩ 1 % | La otra mitad del divisor, hacia masa | Ídem | Sin polaridad |
 | W1–W5 | Puentes de alambre estañado de 0,6 mm | Igual que en la potencia | La placa no funciona | Ver la sección 3 |
 
 ## 2. Módulos: zócalo o soldados, y orientación
@@ -51,6 +50,14 @@ Además, **fuera de la placa**, un **fusible en línea de 20 A** junto al pack d
 Los módulos soldados quedan unos 2,5 mm sobre la placa (el espaciador de plástico de la tira de pines).
 
 **Por qué algunos van soldados:** A5–A9 se pueden enchufar girados y se queman. Soldados con la orientación verificada no hay riesgo. Los que van en zócalo están codificados (A1, A2) o no se dañan girados (A3, A4).
+
+### Sensor de distancia Sharp (J27, placa de lógica)
+
+Pololu #2474 (Sharp GP2Y0A60SZLF, versión de 5 V), mirando al piso para detectar escalones. Va con un cable Dupont de 4 hilos, **pin n con pin n** en el orden del carrier: **1 EN, 2 OUT, 3 VCC, 4 GND** (pin 1 arriba en la placa; en el carrier, GND es el pad cuadrado). EN queda sin conexión: el carrier ya lo deja activo.
+
+- **Altura:** el piso tiene que quedar a más de unos 12 cm del sensor en todas las posiciones del robot. Por debajo de 10 cm la lectura se dobla y no se distingue de una distancia mayor.
+- **Cable girado o corrido un pin:** la ESP32 queda protegida por el divisor (como máximo 3,0 V en GPIO3). El sensor sí puede dañarse en dos casos: **cable girado** (su salida queda en 5 V con su GND suelto) y **corrido hacia el pin 4** (su VCC en GND y su salida en 5 V). Marcar el pin 1 en las dos puntas del cable. **Ojo:** en el carrier el pad cuadrado es GND (su pin 4), y en J27 el pad cuadrado es el pin 1 (EN): unir «cuadrado con cuadrado» lo deja girado.
+- **Sin sensor o con el cable suelto,** GPIO3 lee unos 0 V, lo mismo que «muy lejos»: el firmware lo interpreta como escalón y frena, que es la falla segura.
 
 ## 3. Puentes de alambre
 
@@ -69,11 +76,11 @@ Alambre de cobre estañado de 0,6 mm, del lado de los componentes, pegado a la p
 1. **Imprimir** el PDF de cobre a tamaño real y medir el contorno con calibre: **148 × 96 mm** (potencia) y **100 × 96 mm** (lógica).
 2. **Planchar, atacar y taladrar.** En la potencia, estañar la barra VM_BUS, el lomo de masa y las pistas de batería, de motores y de servos.
 3. **Puentes de alambre** (sección 3).
-4. **Resistencias y diodos**: R5, R6, R29, D3 y D1 en la potencia; R41, R42 y R43 en la lógica. Cuidado con la banda de D1 y D3.
+4. **Resistencias y diodos**: R5, R6, R29, D3 y D1 en la potencia; R41 y R42 en la lógica. Cuidado con la banda de D1 y D3.
 5. **Zócalos**: A1, A2, A3, A4 y las tiras de expansión J24 y J25 (soldarlas con la ESP32 enchufada, para que queden alineadas).
 6. **Módulos soldados**: A5 y A6 (con su puente de dirección ya hecho), A7, A8 y A9.
 7. **Portafusibles, Q1 con su disipador aislado y electrolíticos** (cuidado con la polaridad).
-8. **Borneras, headers de servo, conector IDC J20** (con la muesca como en la guía impresa), J26 y J27.
+8. **Borneras, headers de servo, conector IDC J20** (con la muesca como en la guía impresa), J26 y J27 (tira hembra 1 × 4 del Sharp).
 9. **Cables soldados**: J3 (interruptor general y paro en serie, 1,5 mm², con precinto), J4 (contacto del paro) y J18 (voltímetro).
 
 ## 5. Comprobaciones antes de alimentar
@@ -107,3 +114,4 @@ En la v0.4 se sacó todo lo que los módulos ya resuelven o que solo era protecc
 | R13–R16, R24 | Pull-ups de encoders y paro | Pull-ups internas de la ESP32 (**activarlas en el firmware**) |
 | D4, R28 | LED de encendido | Sin indicador en la placa; el voltímetro muestra la tensión |
 | C30 | Capacitor en la entrada del buck de 3,3 V | El módulo trae el suyo |
+| R43 | Resistencia en serie con el TRIG del HC-SR04 | El Sharp no tiene TRIG: el ultrasonido se reemplazó (ELE-044) |

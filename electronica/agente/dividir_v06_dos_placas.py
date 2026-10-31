@@ -169,10 +169,19 @@ def placa(nombre, refs):
 #   el INA226), R13-R16 y R24 (pull-ups internas de la ESP32). J20.1 queda sin conexión en las dos placas.
 # - Segunda pasada (Matías, 31/10/2026): fuera D4/R28 (LED de encendido) y C30 (el mini buck trae su capacitor de
 #   entrada). R5/R6 y R43 se quitaron y volvieron (revisión independiente): protegen GPIO de la ESP32 con un conector
-#   de servo corrido o el HC-SR04 girado. Se quedan F1-F5, Q1/R29/D3, D1, C1, C3, C8, R5/R6 y R41-R43.
+#   de servo corrido o el HC-SR04 girado. Se quedan F1-F5, Q1/R29/D3, D1, C1, C3, C8, R5/R6 y R41/R42.
+# - Sharp en lugar del HC-SR04 (Matías, 31/10/2026, ELE-044): el Pololu #2474 (GP2Y0A60SZLF, 5 V, analógico) mira al
+#   suelo para detectar escalones. J27 sigue el orden del carrier (foto): 1 EN, 2 OUT, 3 VCC, 4 GND. EN queda sin
+#   conexión (el carrier lo sube a VCC con 10 kΩ; unido a la ESP32 le metería 5 V). OUT llega a 3,6 V a 10 cm (ficha de
+#   Pololu): R41 10k / R42 15k lo bajan a 2,2 V (5 V en el peor caso -> 3,0 V) y van a GPIO3, el ADC1 libre fuera de la
+#   zona de la antena. Sale R43 (ya no hay TRIG); GPIO47 y GPIO21 quedan libres en la expansión.
 QUITAR_V04 = {"potencia": {"C4", "C5", "R1", "R2", "R3", "R4", "R35", "R36", "R37", "R38", "R7", "R8", "C9", "R22", "R23", "C14",
                            "D4", "R28"},
-              "logica": {"R13", "R14", "R15", "R16", "R24", "C30"}}
+              "logica": {"R13", "R14", "R15", "R16", "R24", "C30", "R43"}}
+SHARP = {"value": "Sharp GP2Y0A60SZLF (Pololu 2474) 1=EN 2=OUT 3=VCC 4=GND",
+         "source": "Matías, 31/10/2026 [M]: Pololu #2474 en lugar del HC-SR04, mirando al suelo para detectar escalones; orden de pines de la foto del carrier",
+         "status": "v0.4 [M]: EN sin conexión (pull-up de 10 kΩ en el carrier); OUT por el divisor R41/R42 a GPIO3 (SUP-82)"}
+DIVISOR = "Divisor de la salida del Sharp: 3,6 V x 15k / 25k = 2,2 V en GPIO3; 5 V en el peor caso -> 3,0 V (SUP-82)"
 UNIR_V04 = {"potencia": {"IN1_IZQ": "IN1_IZQ_MCU", "IN2_IZQ": "IN2_IZQ_MCU", "IN1_DER": "IN1_DER_MCU", "IN2_DER": "IN2_DER_MCU"},
             "logica": {}}
 
@@ -211,8 +220,33 @@ def cambios_v04(s, nombre):
                 g.update(function="libre: expansión (ADC1_CH2)", net="GPIO3", justification="v0.4: la batería la mide el INA226")
             if g["net"] in ("ENC_IZQ_A", "ENC_IZQ_B", "ENC_DER_A", "ENC_DER_B", "PARO_CONT"):
                 g["justification"] = (g.get("justification", "") + "; v0.4: pull-up interna de la ESP32").lstrip("; ")
+    if nombre == "logica":
+        sharp_v04(s)
     s["revision_pcb_v04"] = ("INA226 con SDA/SCL corregidos, huella del mini buck corregida (estaba espejada) y sin los "
                              "componentes que los módulos ya resuelven (fotos y pedido del equipo del 31/10/2026)")
+
+
+def sharp_v04(s):
+    for c in s["components"]:
+        if c["ref"] == "J27":
+            c.update(SHARP)
+        elif c["ref"] == "R41":
+            c.update(value="10k 1%", source=DIVISOR)
+        elif c["ref"] == "R42":
+            c.update(value="15k 1%", source=DIVISOR)
+    nets = {n["name"]: n for n in s["nets"]}
+    nets["5V_MCU"]["pins"] = ["J27.3" if p == "J27.1" else p for p in nets["5V_MCU"]["pins"]]
+    nets["US_TRIG"].update(name="GPIO47", pins=["A1.39", "J25.17"])
+    nets["US_ECHO"].update(name="GPIO21", pins=["A1.40", "J25.18"])
+    nets["US_ECHO_5V"].update(name="SHARP_OUT", pins=["J27.2", "R41.1"])
+    nets["GPIO3"].update(name="DIST_SUELO", pins=["A1.13", "J24.13", "R41.2", "R42.1"])
+    s["no_connect"].append("J27.1")
+    for g in s["gpio_table"]:
+        if g["gpio"] == "GPIO3":
+            g.update(function="Distancia al suelo: Sharp (J27.2) por el divisor R41/R42", net="DIST_SUELO",
+                     justification="ADC1_CH2 (funciona con Wi-Fi); fuera de la zona de la antena; sin strapping con eFuses de fábrica")
+        elif g["gpio"] in ("GPIO47", "GPIO21"):
+            g.update(function="libre: expansión", net=g["gpio"], justification="v0.4: el HC-SR04 se reemplazó por el Sharp")
 
 
 # PCB v0.3 (31/10/2026), pedidos del equipo: ESP32 e IMU alimentadas con 3,3 V, ultrasonido a 5 V y placas que

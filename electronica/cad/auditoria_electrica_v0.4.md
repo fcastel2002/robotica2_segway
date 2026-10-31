@@ -6,25 +6,25 @@ Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resul
 |---|---|---|
 | OK | Cable J20, pin n con pin n | 16 pines con la misma net en las dos placas (pin 11 sin conexión en ambas) |
 | OK | Pines críticos de los módulos (potencia) | 69 pines en su net |
-| OK | Pines críticos de los módulos (logica) | 36 pines en su net |
+| OK | Pines críticos de los módulos (logica) | 34 pines en su net |
 | OK | Señales de la ESP32-S3 sin 5 V ni batería | 37 pines de señal revisados en las dos placas |
 | OK | A8 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | A5 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | A7 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | A6 (potencia): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
+| OK | A9 (logica): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | A2 girado 180° (logica) | Lo impide la posición tapada 5 |
 | OK | A2 corrido +1 en x (logica) | Lo impide la posición tapada 5 |
 | OK | A2 corrido -1 en x (logica) | Lo impide la posición tapada 5 |
 | OK | A1 girado 180° (logica) | Lo impide la posición tapada 24 |
 | OK | A1 corrido +1 en y (logica) | Lo impide la posición tapada 24 |
 | OK | A1 corrido -1 en y (logica) | Lo impide la posición tapada 24 |
-| OK | A9 (logica): soldado | No se enchufa: se orienta una sola vez al soldarlo, con el pad 1 cuadrado (DEC-20) |
 | OK | Direcciones I2C | 0x40 A7, 0x41 A5, 0x44 A6, 0x68 A2. Requiere soldar A0 en A5 y A1 en A6 |
 | AVISO | Cuellos de pista con la corriente de diseño | 3 nets superan 20 °C en su tramo más angosto (tabla abajo) |
 | OK | Medición de batería | La mide el INA226 (VBS, en VM_LOG); el divisor R22/R23 se quitó en la v0.4. J20.1 sin conexión en las dos placas |
 | OK | Entradas de los DRV8871 | Directas desde GPIO11-14 (3,3 V > VIH 1,5 V). El DRV8871 tiene pull-down interno: con la ESP32 en reset los motores quedan libres. El módulo no entra girado (control 4) |
 | OK | Alimentación de la ESP32-S3 y la IMU | 3V3_MCU sale de A9 (buck de 3,3 V) con 5 V de entrada: sin la caída del regulador de la DevKitC. El pin 5V de la DevKitC queda solo con el USB (5V_USB) |
-| OK | ECHO del ultrasonido | 5 V × 3k3/(2k2+3k3) = 3.00 V en GPIO21 (VIH 2,48 V, máximo 3,6 V) |
+| OK | Salida del Sharp | 3,6 V a 10 cm × 15k/(10k+15k) = 2.16 V en GPIO3 (ADC1, rango de 0 a 3,1 V con 12 dB); con 5 V en J27.2 (cable girado o corrido) llegan 3.00 V, debajo del máximo de 3,6 V |
 | AVISO | Cable J20: I2C junto a líneas de PWM | SDA (5) y SCL (7) van entre IN2_DER (6) e IN1_DER (8), sin GND intercalado. Mitigación: cable corto, I2C a 100 kHz, fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08 |
 
 ## Cuellos de pista

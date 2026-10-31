@@ -49,20 +49,20 @@ ESPERADO = {
         # v0.3: la ESP32 se alimenta por sus pines 3V3 desde A9; su pin 5V queda solo con el USB
         "A1": {"1": "3V3_MCU", "2": "3V3_MCU", "21": "5V_USB", "22": "GND", "23": "GND", "43": "GND", "44": "GND"},
         "A9": {"1": "5V_MCU", "2": "GND", "3": "3V3_MCU", "4": "GND"},
-        "J27": {"1": "5V_MCU", "2": "US_TRIG_S", "3": "US_ECHO_5V", "4": "GND"},
-        "R43": {"1": "US_TRIG", "2": "US_TRIG_S"},
-        "R41": {"1": "US_ECHO_5V", "2": "US_ECHO"}, "R42": {"1": "US_ECHO", "2": "GND"},
+        # v0.4 (ELE-044): Sharp GP2Y0A60SZLF en el orden del carrier; EN (1) sin conexión
+        "J27": {"1": None, "2": "SHARP_OUT", "3": "5V_MCU", "4": "GND"},
+        "R41": {"1": "SHARP_OUT", "2": "DIST_SUELO"}, "R42": {"1": "DIST_SUELO", "2": "GND"},
         "A2": {"1": "3V3_MCU", "2": "GND", "3": "I2C_SCL", "4": "I2C_SDA", "8": "IMU_INT"},
         "J7": {"1": "3V3_MCU", "4": "GND"}, "J8": {"1": "GND", "4": "3V3_MCU"},
         "J26": {"1": "3V3_MCU", "2": "3V3_MCU", "3": "GND", "4": "GND", "5": "5V_MCU", "6": "5V_MCU"},
     },
 }
 # Nets que no pueden llegar a un pin de señal de la ESP32-S3
-PROHIBIDAS = {"5V", "5V_MCU", "5V_USB", "US_ECHO_5V", "US_TRIG_S", "VBAT_P", "VBAT_F", "VBAT_SW", "VM_BUS", "VM_IZQ", "VM_IZQ_F", "VM_DER", "VM_DER_F",
+PROHIBIDAS = {"5V", "5V_MCU", "5V_USB", "SHARP_OUT", "VBAT_P", "VBAT_F", "VBAT_SW", "VM_BUS", "VM_IZQ", "VM_IZQ_F", "VM_DER", "VM_DER_F",
               "VM_LOG", "VM_LOG_F", "VM_UBEC", "V_SERVO", "MOT_IZQ_1", "MOT_IZQ_2", "MOT_DER_1", "MOT_DER_2", "Q_POL_G"}
 ALIMENTACION_ESP32 = {"1", "2", "21", "22", "23", "43", "44"}     # el 21 es 5V_USB (pin 5V de la DevKitC)
 # Tensión de cada net (V), para juzgar un módulo girado
-TENSION = {"GND": 0, "3V3_MCU": 3.3, "5V_MCU": 5.0, "5V_USB": 5.0, "US_ECHO_5V": 5.0, "VM_LOG": 12.6, "VM_LOG_F": 12.6, "VM_BUS": 12.6,
+TENSION = {"GND": 0, "3V3_MCU": 3.3, "5V_MCU": 5.0, "5V_USB": 5.0, "SHARP_OUT": 5.0, "VM_LOG": 12.6, "VM_LOG_F": 12.6, "VM_BUS": 12.6,
            "VM_IZQ": 12.6, "VM_IZQ_F": 12.6, "VM_DER": 12.6, "VM_DER_F": 12.6, "V_SERVO": 6.0, "VM_UBEC": 12.6}
 # Módulos codificados mecánicamente: pin quitado del módulo y esa posición del zócalo tapada
 # A2: pin 5 (XDA, sin uso). A1: pin 24 (GPIO43, TX del USB-serie; el robot no lo usa por fuera). Revisión v0.2.
@@ -231,8 +231,9 @@ def main():
         "los motores quedan libres. El módulo no entra girado (control 4)")
     reg("OK", "Alimentación de la ESP32-S3 y la IMU", "3V3_MCU sale de A9 (buck de 3,3 V) con 5 V de entrada: sin la caída del regulador "
         "de la DevKitC. El pin 5V de la DevKitC queda solo con el USB (5V_USB)")
-    k_echo = 3.3 / (2.2 + 3.3)
-    reg("OK", "ECHO del ultrasonido", f"5 V × 3k3/(2k2+3k3) = {5 * k_echo:.2f} V en GPIO21 (VIH 2,48 V, máximo 3,6 V)")
+    k_div = 15 / (10 + 15)
+    reg("OK", "Salida del Sharp", f"3,6 V a 10 cm × 15k/(10k+15k) = {3.6 * k_div:.2f} V en GPIO3 (ADC1, rango de 0 a 3,1 V con 12 dB); "
+        f"con 5 V en J27.2 (cable girado o corrido) llegan {5 * k_div:.2f} V, debajo del máximo de 3,6 V")
     reg("AVISO", "Cable J20: I2C junto a líneas de PWM",
         "SDA (5) y SCL (7) van entre IN2_DER (6) e IN1_DER (8), sin GND intercalado. Mitigación: cable corto, I2C a 100 kHz, "
         "fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08")

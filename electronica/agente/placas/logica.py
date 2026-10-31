@@ -33,16 +33,17 @@ UBICACION = {
     # v0.4: huella del mini buck corregida (estaba espejada y era de 19 x 14 mm; el módulo es tipo Mini-360, 14,3 x 8,5 medido con calibre).
     # IN+ (26; 91,5) y OUT+ (26; 77,2) al este, GND (IN- y OUT-) al oeste en x 17,5
     "A9": (26.00, 91.50, 90),     # v0.4: sin C30 (el mini buck trae su capacitor de entrada)
-    # J27 vertical al oeste de la DevKitC, fuera del paso de sus USB-C (revisión v0.3); pin 1 (5V) abajo.
-    # La pista de TRIG pasa por debajo del cuerpo de R41.
-    "J27": (63.50, 87.50, 180), "R41": (67.00, 82.42, 0), "R42": (93.50, 76.00, 270), "R43": (80.16, 78.00, 180),
+    # J27 vertical al oeste de la DevKitC, fuera del paso de sus USB-C (revisión v0.3).
+    # v0.4 (ELE-044): Sharp GP2Y0A60SZLF en el orden del carrier, pin 1 (EN, sin conexión) arriba; VCC (pin 3) queda
+    # en la línea del 5V que viene del oeste y GND (pin 4) en la franja sur. El divisor R41/R42 sube a GPIO3 (A1.13).
+    "J27": (63.50, 82.92, 0), "R41": (67.00, 85.46, 0), "R42": (80.16, 80.00, 180),
 }
 FIJAS = set(UBICACION) | {"H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J7", "J8", "J4"}
 
 # Nets de la hilera derecha de A1 (pines 23-44), que solo van a la tira de expansión J25
 HILERA_DER = ["GND", "GPIO43", "GPIO44", "GPIO1", "GPIO2", "GPIO42", "GPIO41", "GPIO40", "GPIO39", "GPIO38", "GPIO37",
-              "GPIO36", "GPIO35", "GPIO0", "GPIO45", "GPIO48", "US_TRIG", "US_ECHO", "GPIO20", "GPIO19", "GND", "GND"]
+              "GPIO36", "GPIO35", "GPIO0", "GPIO45", "GPIO48", "GPIO47", "GPIO21", "GPIO20", "GPIO19", "GND", "GND"]
 W = 1.0          # señales y 3V3 (LOGICA mínimo 1,0)
 ESQUELETO = [
     # --- 3V3 de A1.1 por el borde superior
@@ -67,7 +68,7 @@ ESQUELETO = [
     ("I2C_SDA", W, ["J20.5", (40.64, 57.15), "A2.4", (40.64, 39.37), "J24.10", "A1.10"]),
     ("IMU_INT", W, ["A2.8", (50.80, 41.91), "J24.11", "A1.11"]),
     # --- Rodeo superior de la columna impar de J20
-    ("GPIO3", W, ["J24.13", "A1.13"]),            # v0.4: libre (J20.1 sin conexión; la batería la mide el INA226)
+    ("DIST_SUELO", W, ["J24.13", "A1.13"]),       # v0.4: GPIO3 (ADC1_CH2) lee el Sharp de J27 (ELE-044)
     ("INA_ALERT", W, ["J20.3", (55.88, 54.61), (55.88, 44.45), "J24.12", "A1.12"]),
     # --- Columna par de J20 en línea con A1.15-22
     ("SERVO_IZQ_MCU", W, ["J20.2", "J24.15", "A1.15"]),
@@ -90,16 +91,14 @@ ESQUELETO = [
     ("5V_MCU", 1.2, ["J26.5", "J26.6", (52.07, 67.31), "J20.13"]),
     # --- v0.3: 5V_MCU baja a la franja inferior y va al oeste hasta A9 y al este hasta J27
     ("5V_MCU", 1.2, [(52.07, 67.31), (52.07, 88.00), (28.00, 88.00), "A9.1"]),
-    ("5V_MCU", 1.2, [(52.07, 88.00), (63.50, 88.00), "J27.1"]),
+    ("5V_MCU", 1.2, [(52.07, 88.00), "J27.3"]),
     # A9 -> 3V3_MCU: sube a la esquina de la pista de 3V3 de J20.9 (W1 la une con A1.1)
     ("3V3_MCU", 1.2, ["A9.3", (26.00, 64.17), (27.94, 62.23)]),
-    # Ultrasonido: TRIG (A1.39) y ECHO (A1.40) bajan por debajo de la DevKitC
-    # R43 (1 kΩ) protege GPIO47 con el HC-SR04 girado o con TRIG y ECHO cruzados
-    ("US_TRIG", W, ["A1.39", (85.50, 57.15), (85.50, 78.00), "R43.1"]),
-    ("US_TRIG_S", W, ["R43.2", (70.00, 78.00), (70.00, 84.96), "J27.2"]),
-    ("US_ECHO", W, ["A1.40", (90.60, 59.69), (90.60, 76.00), "R42.1"]),
-    ("US_ECHO", W, [(90.60, 76.00), (90.60, 82.42), "R41.2"]),
-    ("US_ECHO_5V", W, ["R41.1", "J27.3"]),
+    # v0.4 (ELE-044): Sharp. OUT (J27.2) -> R41 -> nodo del divisor (R42 a GND) -> GPIO3 (A1.13), que baja por
+    # debajo de la DevKitC, al este de su hilera izquierda
+    ("SHARP_OUT", W, ["J27.2", "R41.1"]),
+    ("DIST_SUELO", W, ["R41.2", (80.16, 85.46), "R42.1"]),
+    ("DIST_SUELO", W, ["A1.13", (72.00, 46.99), (72.00, 72.00), (80.16, 72.00), "R42.1"]),
 ]
 # Puentes de alambre del lado de componentes (pads de 2,2 mm, taladro 0,9)
 PUENTES = [
@@ -143,7 +142,6 @@ ENMIENDAS = """
 ROTULOS_PEDIDOS = [
     ("ENC IZQ", "J7", 2.0, 12), ("G", "J8.1", 2.0, 5), ("1", "J20.1", 2.0, 5),
     # v0.3
-    ("5V", "J27.1", 2.0, 6), ("G", "J27.4", 2.0, 6), ("SR04", "J27", 2.0, 12),
+    # v0.4: los rótulos de J27 partían el GND; su orden de pines va en la guía de montaje
     ("IN", "A9.1", 2.0, 7), ("OUT", "A9.3", 2.0, 7),
-    ("CABLE", "J27", 2.0, 12),
 ]

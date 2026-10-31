@@ -4,7 +4,7 @@ Fecha: 31/10/2026 (v0.4: menos componentes, ver la nota; v0.3: buck de 3,3 V A9,
 
 ## Nota de la v0.4
 
-La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, la protección de entrada (Q1, D3, R29 y el TVS D1), los capacitores C1, C3 y C8, las resistencias de protección de los servos (R5, R6) y el divisor y la protección del ultrasonido (R41–R43). Se quitaron C4, C5, C9, C14, C30, D4, R1–R4, R7, R8, R13–R16, R22–R24, R28 y R35–R38. Para qué está cada pieza: [guía de montaje](guia_montaje_v0.4.md).
+La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, la protección de entrada (Q1, D3, R29 y el TVS D1), los capacitores C1, C3 y C8, las resistencias de protección de los servos (R5, R6) y el divisor del sensor de distancia Sharp (R41, R42). Se quitaron C4, C5, C9, C14, C30, D4, R43 (ya no hay ultrasonido), R1–R4, R7, R8, R13–R16, R22–R24, R28 y R35–R38. Para qué está cada pieza: [guía de montaje](guia_montaje_v0.4.md).
 
 ## 1. Módulos (ya comprados)
 
@@ -17,7 +17,7 @@ La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, l
 | A7 | INA226 | Soldado, con el pin 1 (IN+) en el pad cuadrado |
 | A8 | Mini buck de 5 V (ROB-006, tipo Mini-360), placa de potencia | Soldado sobre 4 pines macho, IN+ en el pad cuadrado, junto al rótulo IN |
 | A9 | Mini buck de 3,3 V (ROB-005, tipo Mini-360), placa de lógica: alimenta la ESP32 y la IMU | Soldado sobre 4 pines macho, IN+ en el pad cuadrado, junto al rótulo IN |
-| — | UBEC YSIDO 6 A, voltímetro ROB-004, ultrasonido HC-SR04 | Fuera de las placas, con cables a J15/J16, a los pads J18 y a J27 (cable Dupont de 4 hilos) |
+| — | UBEC YSIDO 6 A, voltímetro ROB-004, sensor de distancia Pololu #2474 (Sharp GP2Y0A60SZLF, 5 V; reemplaza al HC-SR04) | Fuera de las placas, con cables a J15/J16, a los pads J18 y a J27 (cable Dupont de 4 hilos, pin n con pin n) |
 
 ## 2. Componentes de la placa de potencia
 
@@ -53,10 +53,9 @@ La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, l
 | 1 | J20 | Conector IDC macho 2 × 8 con caja | |
 | 2 | J24, J25 | Tira hembra 1 × 22 (expansión) | |
 | 1 | J26 | Tira hembra 1 × 6 (alimentación de sensores) | |
-| 1 | J27 | Tira hembra 1 × 4 (ultrasonido HC-SR04) | |
-| 1 | R41 | 2,2 kΩ 1 % 1/4 W (divisor de ECHO) | axial |
-| 1 | R42 | 3,3 kΩ 1 % 1/4 W (divisor de ECHO) | axial |
-| 1 | R43 | 1 kΩ 1 % 1/4 W (serie de TRIG) | axial |
+| 1 | J27 | Tira hembra 1 × 4 (sensor Sharp: 1 EN, 2 OUT, 3 VCC, 4 GND) | |
+| 1 | R41 | 10 kΩ 1 % 1/4 W (divisor de la salida del Sharp) | axial |
+| 1 | R42 | 15 kΩ 1 % 1/4 W (divisor de la salida del Sharp) | axial |
 | — | J4 | Pads para soldar el cable del paro | |
 
 ## 4. Zócalos y pines
