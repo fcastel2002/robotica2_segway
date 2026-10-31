@@ -21,7 +21,7 @@ Topología:
 """
 
 PROYECTO = "segway_potencia"
-REVISION = "0.4"
+REVISION = "0.5"
 SPEC = "especificacion_v0.6.json"
 
 UBICACION = {
@@ -181,7 +181,7 @@ SIN_RELLENO = [[(67.50, 32.5), (72.50, 32.5), (72.50, 38.6), (67.50, 38.6)],
 ANCHOS_RUTEO = {"GND": 1200, "LOGICA": 1200, "kicad_default": 1000, "MOTOR": 2000, "SERVO": 3500}
 RUTEAR = True
 
-ROTULOS = [("POTENCIA", (133.50, 80.60), 2.0), ("v0.4", (133.50, 84.00), 2.0), ("LADO COBRE", (133.50, 87.40), 2.0),
+ROTULOS = [("POTENCIA", (133.50, 80.60), 2.0), ("v0.5", (133.50, 84.00), 2.0), ("LADO COBRE", (133.50, 87.40), 2.0),
     # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py sobre la v0.3
     ("-", (143.00, 73.58), 2.0, 0), ("BAT", (138.50, 74.54), 2.0, 90), ("SW", (143.00, 15.48), 2.0, 0),
     ("M IZQ", (54.73, 11.12), 2.0, 90), ("M DER", (6.73, 13.12), 2.0, 90),

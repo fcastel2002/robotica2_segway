@@ -15,7 +15,7 @@ Topología (el mapa de pines de dividir_v06_dos_placas.py está elegido para est
 """
 
 PROYECTO = "segway_logica"
-REVISION = "0.4"
+REVISION = "0.5"
 SPEC = "especificacion_v0.6.json"
 
 UBICACION = {
@@ -115,7 +115,7 @@ ZONAS = [("GND", "placa", 0)]
 
 # Rótulos en B.Cu y escala de control de 50 mm (reglas_fabricacion_casera.md §6), en el relleno inferior
 # v0.4: el título se acortó; «SEGWAY LOGICA» tocaba el pad OUT+ de A9 en su nueva posición
-ROTULOS = [("LOGICA v0.4", (40.00, 77.00), 2.0), ("LADO COBRE", (40.00, 80.80), 2.0),
+ROTULOS = [("LOGICA v0.5", (40.00, 77.00), 2.0), ("LADO COBRE", (40.00, 80.80), 2.0),
     # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py
     # Los de las franjas GND del borde oeste (V de J7 y J8, ENC DER) y del pasillo bajo J26 (5V) partían el relleno:
     # se sacaron; esos pines quedan rotulados en la guía de montaje

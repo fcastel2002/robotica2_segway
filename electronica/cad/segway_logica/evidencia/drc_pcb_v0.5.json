@@ -1,0 +1,3352 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-10-31T15:33:51",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.7",
+    "schematic_parity": [],
+    "source": "segway_logica.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "La huella 'R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal' no coincide con la copia en la biblioteca 'Resistor_THT'",
+            "items": [
+                {
+                    "description": "Huella R42",
+                    "pos": {
+                        "x": 105.56,
+                        "y": 105.4
+                    },
+                    "uuid": "0b1ea645-2daf-4727-a94f-f46a74f31710"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm' no coincide con la copia en la biblioteca 'Connector_Wire'",
+            "items": [
+                {
+                    "description": "Huella J4",
+                    "pos": {
+                        "x": 33.019999,
+                        "y": 53.44
+                    },
+                    "uuid": "21be7d89-7418-489e-a9ba-d1349fde64aa"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'PinSocket_1x06_P2.54mm_Vertical' no coincide con la copia en la biblioteca 'Connector_PinSocket_2.54mm'",
+            "items": [
+                {
+                    "description": "Huella J26",
+                    "pos": {
+                        "x": 63.5,
+                        "y": 91.44
+                    },
+                    "uuid": "452368bf-20f3-447c-82a7-41f9c85caf0c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'IDC-Header_2x08_P2.54mm_Vertical' no coincide con la copia en la biblioteca 'Connector_IDC'",
+            "items": [
+                {
+                    "description": "Huella J20",
+                    "pos": {
+                        "x": 83.82,
+                        "y": 77.47
+                    },
+                    "uuid": "4826d4ee-ccb3-42a8-9daf-993afb965e61"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W1",
+                    "pos": {
+                        "x": 48.26,
+                        "y": 38.099999
+                    },
+                    "uuid": "49253a32-26e9-4dc3-9fe2-cc8f58f6f1db"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W2",
+                    "pos": {
+                        "x": 58.42,
+                        "y": 83.82
+                    },
+                    "uuid": "611c92f8-bcb5-42d4-8160-6abfec660190"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W5",
+                    "pos": {
+                        "x": 48.9,
+                        "y": 93.4
+                    },
+                    "uuid": "672e0331-82d0-4be5-8de2-d41a4cc36581"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La huella 'PinSocket_1x04_P2.54mm_Vertical' no coincide con la copia en la biblioteca 'Connector_PinSocket_2.54mm'",
+            "items": [
+                {
+                    "description": "Huella J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 108.32
+                    },
+                    "uuid": "693127da-d42c-4507-8f5b-581d429834c8"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W4",
+                    "pos": {
+                        "x": 85.4,
+                        "y": 109.4
+                    },
+                    "uuid": "76a47bd3-a54b-4ba2-8169-60dfff1e7190"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La huella 'Zocalo_expansion_izq_1x22_P2.54mm' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella J24",
+                    "pos": {
+                        "x": 91.44,
+                        "y": 41.91
+                    },
+                    "uuid": "92696047-9ddd-48cb-8384-5427a73a9df2"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'Zocalo_expansion_der_1x22_P2.54mm' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella J25",
+                    "pos": {
+                        "x": 121.919999,
+                        "y": 41.91
+                    },
+                    "uuid": "9e292b7f-c598-4086-874e-918af38e85f6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_PT-1,5-4-3.5-H_1x04_P3.50mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J7",
+                    "pos": {
+                        "x": 33.019999,
+                        "y": 38.735
+                    },
+                    "uuid": "a4e12984-9653-4b75-afd4-4bf9640b80ae"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_PT-1,5-4-3.5-H_1x04_P3.50mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J8",
+                    "pos": {
+                        "x": 33.019999,
+                        "y": 62.23
+                    },
+                    "uuid": "b3901771-430b-4e97-bb41-6ec63064f996"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'ROB-012_ESP32-S3-DevKitC-1_N16R8_44p' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 41.91
+                    },
+                    "uuid": "be15085a-cd3e-4984-93d0-8741c10ce556"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W3",
+                    "pos": {
+                        "x": 74.9,
+                        "y": 97.4
+                    },
+                    "uuid": "c9f0a025-84f2-4bab-8a3e-575bdb67ef5e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La huella 'ROB-013_MPU6050_modulo_8p' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella A2",
+                    "pos": {
+                        "x": 58.42,
+                        "y": 69.85
+                    },
+                    "uuid": "cceb47d1-fcc4-4d3b-8ca2-8d9f7d4b184d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal' no coincide con la copia en la biblioteca 'Resistor_THT'",
+            "items": [
+                {
+                    "description": "Huella R41",
+                    "pos": {
+                        "x": 92.4,
+                        "y": 110.859999
+                    },
+                    "uuid": "fe38a15f-cab6-45bb-a76d-997067ed0033"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de W3 en F.Silkscreen",
+                    "pos": {
+                        "x": 74.9,
+                        "y": 97.4
+                    },
+                    "uuid": "389e3310-7c11-4d84-aa5a-a79b6a099dd2"
+                },
+                {
+                    "description": "Campo de referencia de W3",
+                    "pos": {
+                        "x": 79.25,
+                        "y": 99.9
+                    },
+                    "uuid": "4f47f4a1-dd2c-483c-ad58-afa1c13d51b1"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 96.58
+                    },
+                    "uuid": "32f77d19-d28c-431b-bdf6-9a0898b52932"
+                },
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 90.11,
+                        "y": 43.18
+                    },
+                    "uuid": "f1ac1b15-c7f5-48af-b3f3-fd79139b983a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 91.44,
+                        "y": 40.58
+                    },
+                    "uuid": "a3b8e4fb-828f-4100-bbfa-43b22eca3eac"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 40.58
+                    },
+                    "uuid": "762f5da1-dfb9-4ebb-ba53-2732400d82e8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 90.11,
+                        "y": 96.58
+                    },
+                    "uuid": "63f1c5f2-999a-4af9-9860-24fc4c7a8aba"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "c0eecb05-e91a-47c9-8938-5f4017ca16a8"
+                },
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 91.679999,
+                        "y": 40.31
+                    },
+                    "uuid": "e17a8588-de44-4486-96a1-d52d5efecff1"
+                },
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 90.11,
+                        "y": 43.18
+                    },
+                    "uuid": "f1ac1b15-c7f5-48af-b3f3-fd79139b983a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 91.44,
+                        "y": 40.58
+                    },
+                    "uuid": "a3b8e4fb-828f-4100-bbfa-43b22eca3eac"
+                },
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 91.679999,
+                        "y": 40.31
+                    },
+                    "uuid": "e17a8588-de44-4486-96a1-d52d5efecff1"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de W4",
+                    "pos": {
+                        "x": 87.0,
+                        "y": 112.9
+                    },
+                    "uuid": "167f2610-cc4f-4fc3-a7b5-7682ba9c624b"
+                },
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 87.57,
+                        "y": 109.59
+                    },
+                    "uuid": "715d24d1-7a11-4fdb-bf3e-b4673fc58c08"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de W5 en F.Silkscreen",
+                    "pos": {
+                        "x": 48.9,
+                        "y": 93.4
+                    },
+                    "uuid": "28aa378b-fa59-490d-b051-6d7b03300eb9"
+                },
+                {
+                    "description": "Campo de referencia de W5",
+                    "pos": {
+                        "x": 53.25,
+                        "y": 93.4
+                    },
+                    "uuid": "eed8c441-af6e-4e02-8c6b-9584cdd53e7e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R42 en F.Silkscreen",
+                    "pos": {
+                        "x": 104.52,
+                        "y": 105.4
+                    },
+                    "uuid": "0b471e02-00fa-4447-b105-1530b82fc8b0"
+                },
+                {
+                    "description": "Pad PTH 1 [/DIST_SUELO] de R42",
+                    "pos": {
+                        "x": 105.56,
+                        "y": 105.4
+                    },
+                    "uuid": "010a30bc-19c8-45da-8bf8-33df146764f5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R41 en F.Silkscreen",
+                    "pos": {
+                        "x": 101.52,
+                        "y": 110.859999
+                    },
+                    "uuid": "0053164b-7d98-4fec-ace9-520637b839b4"
+                },
+                {
+                    "description": "Pad PTH 2 [/DIST_SUELO] de R41",
+                    "pos": {
+                        "x": 102.56,
+                        "y": 110.859999
+                    },
+                    "uuid": "f2940598-9c25-4a10-a588-0265ef829f57"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R42 en F.Silkscreen",
+                    "pos": {
+                        "x": 96.44,
+                        "y": 105.4
+                    },
+                    "uuid": "91108245-d807-44ad-8610-d2ce73510ecd"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de R42",
+                    "pos": {
+                        "x": 95.4,
+                        "y": 105.4
+                    },
+                    "uuid": "b27bf622-ff24-4d47-aabf-d485668abfad"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 22 [/GND] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 95.25
+                    },
+                    "uuid": "6b2becc7-9c90-41f4-a813-0f04fc69cdab"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 20 [/IN1_IZQ_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 90.17
+                    },
+                    "uuid": "e56e7000-6a4d-45c9-801b-4a689f2c1552"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 21 [/5V_USB] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 92.71
+                    },
+                    "uuid": "7dc79a45-ae46-434a-a087-ef26c8922c6c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 8 [/ENC_DER_B] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 59.69
+                    },
+                    "uuid": "550bbf92-6e52-499a-9b32-d2109bcc9b32"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 13 [/DIST_SUELO] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 72.39
+                    },
+                    "uuid": "4d7af804-0aca-4f63-944c-3fb4dd64762c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 6 [/PARO_CONT] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 54.61
+                    },
+                    "uuid": "9bd43555-ca32-497f-aabb-f894fdc06d7d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 7 [/ENC_DER_A] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 57.15
+                    },
+                    "uuid": "d9160375-b271-4950-a1ce-7c69c7bf7ae5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 9 [/I2C_SCL] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 62.23
+                    },
+                    "uuid": "f4833813-e889-4651-a9b7-1f28f5e061d6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 10 [/I2C_SDA] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 64.77
+                    },
+                    "uuid": "d1f38a0c-6756-4ffd-9ced-64b8b1105b03"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 11 [/IMU_INT] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 67.31
+                    },
+                    "uuid": "815c801c-b360-431b-ad7e-a5fabcd4c24e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 12 [/INA_ALERT] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 69.85
+                    },
+                    "uuid": "10efe16e-8e3d-4fa2-b022-ab3596465c52"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 16 [/SERVO_DER_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 80.01
+                    },
+                    "uuid": "46c3b1db-21eb-4946-a625-c575a7a56ebf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 17 [/IN2_DER_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 82.55
+                    },
+                    "uuid": "6d4237b6-b7fc-429c-bcdb-a31898e4ed09"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 14 [/GPIO46] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 74.93
+                    },
+                    "uuid": "d9c5d644-294c-4217-a961-0770cd453ce2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 15 [/SERVO_IZQ_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 77.47
+                    },
+                    "uuid": "0a641276-6ca0-4270-8da7-4f0bf8a8f0ad"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 18 [/IN1_DER_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 85.09
+                    },
+                    "uuid": "5897edfd-41ac-4106-967e-2887b2bc79cf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 19 [/IN2_IZQ_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 87.63
+                    },
+                    "uuid": "d8245cb0-0e5c-458b-ba3d-524a422900d6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 3 [/RST] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 46.99
+                    },
+                    "uuid": "97996874-aec4-413f-b5e4-73786fd3e519"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 2 [/3V3_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 44.45
+                    },
+                    "uuid": "3b705d97-8bcb-4a16-841e-885ec4507dc7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 4 [/ENC_IZQ_A] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 49.53
+                    },
+                    "uuid": "03360f9e-a876-4457-8716-c492f73218db"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 43.18
+                    },
+                    "uuid": "609ff9dc-0212-443b-9e19-6685f8fdec6e"
+                },
+                {
+                    "description": "Pad PTH 5 [/ENC_IZQ_B] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 52.07
+                    },
+                    "uuid": "7a6b7f76-527d-4d61-82e2-3c6a817a4648"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 35 [/GPIO35] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 72.39
+                    },
+                    "uuid": "b2767b18-e063-4656-808e-a3f09980dc2f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 40 [/GPIO21] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 85.09
+                    },
+                    "uuid": "8f85a0ac-ebfc-4f37-87a8-424af0da4a1f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 31 [/GPIO39] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 62.23
+                    },
+                    "uuid": "86e92867-f99c-4924-ae8e-3f9609fe8dd8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 32 [/GPIO38] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 64.77
+                    },
+                    "uuid": "99d35fde-2d8a-4f16-91fb-37861be1f415"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 33 [/GPIO37] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 67.31
+                    },
+                    "uuid": "bd079f7c-88da-4684-9869-5d3e94b81cb4"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 34 [/GPIO36] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 69.85
+                    },
+                    "uuid": "471f8502-c224-4693-9c7a-ce531d51dc87"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 36 [/GPIO0] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 74.93
+                    },
+                    "uuid": "23f6ed45-417e-4a91-a671-0511e38ca2df"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 37 [/GPIO45] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 77.47
+                    },
+                    "uuid": "432522c0-9b7b-4597-9e2b-c43b9513ac2f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 38 [/GPIO48] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 80.01
+                    },
+                    "uuid": "9b72d3bf-37e2-4bfe-a920-af5830ac7314"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 39 [/GPIO47] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 82.55
+                    },
+                    "uuid": "9b6d5b45-c33c-426d-819c-d174edc56eb7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 25 [/GPIO44] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 46.99
+                    },
+                    "uuid": "3f318a12-5c1e-46e0-994a-de92832f32f1"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 30 [/GPIO40] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 59.69
+                    },
+                    "uuid": "8dc2368b-7ad7-4380-8a9c-855cb1cb3eec"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 24 [/GPIO43] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 44.45
+                    },
+                    "uuid": "3bd7fdfa-14bf-4ba6-bb98-b43fe4f375f4"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 26 [/GPIO1] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 49.53
+                    },
+                    "uuid": "9db0aeb3-a427-43a0-b7e9-5d5aeb781b9a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 27 [/GPIO2] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 52.07
+                    },
+                    "uuid": "14239e68-3e05-4a52-a78d-de4f971b284e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 28 [/GPIO42] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 54.61
+                    },
+                    "uuid": "584e6184-87e7-4360-ab7e-9020930540fa"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 29 [/GPIO41] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 57.15
+                    },
+                    "uuid": "f954ae48-03ef-44a9-85fc-fdc4654ef63b"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 44 [/GND] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 95.25
+                    },
+                    "uuid": "bf879b8f-2cb2-45d5-9c83-ad410bb01c7c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 43 [/GND] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 92.71
+                    },
+                    "uuid": "d9848157-892e-4f4a-aaca-ce2042e6f149"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 41 [/GPIO20] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 87.63
+                    },
+                    "uuid": "927d7c7d-acfd-440d-887f-9fce2237d6c6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J25 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.589999,
+                        "y": 43.18
+                    },
+                    "uuid": "0a1c8057-af2a-456c-ae17-7cd3dbec4152"
+                },
+                {
+                    "description": "Pad PTH 42 [/GPIO19] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 90.17
+                    },
+                    "uuid": "860da281-8406-4d8b-83f6-1b34b8be8b07"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 22 [/GND] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 95.25
+                    },
+                    "uuid": "6b2becc7-9c90-41f4-a813-0f04fc69cdab"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 20 [/IN1_IZQ_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 90.17
+                    },
+                    "uuid": "e56e7000-6a4d-45c9-801b-4a689f2c1552"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 21 [/5V_USB] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 92.71
+                    },
+                    "uuid": "7dc79a45-ae46-434a-a087-ef26c8922c6c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 8 [/ENC_DER_B] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 59.69
+                    },
+                    "uuid": "550bbf92-6e52-499a-9b32-d2109bcc9b32"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 13 [/DIST_SUELO] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 72.39
+                    },
+                    "uuid": "4d7af804-0aca-4f63-944c-3fb4dd64762c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 6 [/PARO_CONT] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 54.61
+                    },
+                    "uuid": "9bd43555-ca32-497f-aabb-f894fdc06d7d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 7 [/ENC_DER_A] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 57.15
+                    },
+                    "uuid": "d9160375-b271-4950-a1ce-7c69c7bf7ae5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 9 [/I2C_SCL] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 62.23
+                    },
+                    "uuid": "f4833813-e889-4651-a9b7-1f28f5e061d6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 10 [/I2C_SDA] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 64.77
+                    },
+                    "uuid": "d1f38a0c-6756-4ffd-9ced-64b8b1105b03"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 11 [/IMU_INT] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 67.31
+                    },
+                    "uuid": "815c801c-b360-431b-ad7e-a5fabcd4c24e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 12 [/INA_ALERT] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 69.85
+                    },
+                    "uuid": "10efe16e-8e3d-4fa2-b022-ab3596465c52"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 16 [/SERVO_DER_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 80.01
+                    },
+                    "uuid": "46c3b1db-21eb-4946-a625-c575a7a56ebf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 17 [/IN2_DER_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 82.55
+                    },
+                    "uuid": "6d4237b6-b7fc-429c-bcdb-a31898e4ed09"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 14 [/GPIO46] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 74.93
+                    },
+                    "uuid": "d9c5d644-294c-4217-a961-0770cd453ce2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 15 [/SERVO_IZQ_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 77.47
+                    },
+                    "uuid": "0a641276-6ca0-4270-8da7-4f0bf8a8f0ad"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 18 [/IN1_DER_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 85.09
+                    },
+                    "uuid": "5897edfd-41ac-4106-967e-2887b2bc79cf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 19 [/IN2_IZQ_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 87.63
+                    },
+                    "uuid": "d8245cb0-0e5c-458b-ba3d-524a422900d6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 3 [/RST] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 46.99
+                    },
+                    "uuid": "97996874-aec4-413f-b5e4-73786fd3e519"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 1 [/3V3_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 41.91
+                    },
+                    "uuid": "c55dd24b-1643-4781-b55d-abe9c7edda60"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 2 [/3V3_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 44.45
+                    },
+                    "uuid": "3b705d97-8bcb-4a16-841e-885ec4507dc7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 4 [/ENC_IZQ_A] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 49.53
+                    },
+                    "uuid": "03360f9e-a876-4457-8716-c492f73218db"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.679999,
+                        "y": 97.08
+                    },
+                    "uuid": "4f7e20b9-8c91-4392-aebc-8a6e34c9981b"
+                },
+                {
+                    "description": "Pad PTH 5 [/ENC_IZQ_B] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 52.07
+                    },
+                    "uuid": "7a6b7f76-527d-4d61-82e2-3c6a817a4648"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 35 [/GPIO35] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 72.39
+                    },
+                    "uuid": "b2767b18-e063-4656-808e-a3f09980dc2f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 40 [/GPIO21] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 85.09
+                    },
+                    "uuid": "8f85a0ac-ebfc-4f37-87a8-424af0da4a1f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 31 [/GPIO39] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 62.23
+                    },
+                    "uuid": "86e92867-f99c-4924-ae8e-3f9609fe8dd8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 32 [/GPIO38] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 64.77
+                    },
+                    "uuid": "99d35fde-2d8a-4f16-91fb-37861be1f415"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 33 [/GPIO37] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 67.31
+                    },
+                    "uuid": "bd079f7c-88da-4684-9869-5d3e94b81cb4"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 34 [/GPIO36] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 69.85
+                    },
+                    "uuid": "471f8502-c224-4693-9c7a-ce531d51dc87"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 36 [/GPIO0] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 74.93
+                    },
+                    "uuid": "23f6ed45-417e-4a91-a671-0511e38ca2df"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 37 [/GPIO45] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 77.47
+                    },
+                    "uuid": "432522c0-9b7b-4597-9e2b-c43b9513ac2f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 38 [/GPIO48] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 80.01
+                    },
+                    "uuid": "9b72d3bf-37e2-4bfe-a920-af5830ac7314"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 39 [/GPIO47] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 82.55
+                    },
+                    "uuid": "9b6d5b45-c33c-426d-819c-d174edc56eb7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 25 [/GPIO44] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 46.99
+                    },
+                    "uuid": "3f318a12-5c1e-46e0-994a-de92832f32f1"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 30 [/GPIO40] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 59.69
+                    },
+                    "uuid": "8dc2368b-7ad7-4380-8a9c-855cb1cb3eec"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 23 [/GND] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 41.91
+                    },
+                    "uuid": "0a845890-bd41-4b9c-8f74-9d2aec758b4e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 24 [/GPIO43] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 44.45
+                    },
+                    "uuid": "3bd7fdfa-14bf-4ba6-bb98-b43fe4f375f4"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 26 [/GPIO1] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 49.53
+                    },
+                    "uuid": "9db0aeb3-a427-43a0-b7e9-5d5aeb781b9a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 27 [/GPIO2] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 52.07
+                    },
+                    "uuid": "14239e68-3e05-4a52-a78d-de4f971b284e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 28 [/GPIO42] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 54.61
+                    },
+                    "uuid": "584e6184-87e7-4360-ab7e-9020930540fa"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 29 [/GPIO41] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 57.15
+                    },
+                    "uuid": "f954ae48-03ef-44a9-85fc-fdc4654ef63b"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 44 [/GND] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 95.25
+                    },
+                    "uuid": "bf879b8f-2cb2-45d5-9c83-ad410bb01c7c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 43 [/GND] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 92.71
+                    },
+                    "uuid": "d9848157-892e-4f4a-aaca-ce2042e6f149"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 41 [/GPIO20] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 87.63
+                    },
+                    "uuid": "927d7c7d-acfd-440d-887f-9fce2237d6c6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 120.679999,
+                        "y": 40.080001
+                    },
+                    "uuid": "e942995e-007b-44eb-9888-8591236ac986"
+                },
+                {
+                    "description": "Pad PTH 42 [/GPIO19] de A1",
+                    "pos": {
+                        "x": 119.379999,
+                        "y": 90.17
+                    },
+                    "uuid": "860da281-8406-4d8b-83f6-1b34b8be8b07"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J24 en F.Silkscreen",
+                    "pos": {
+                        "x": 92.77,
+                        "y": 40.58
+                    },
+                    "uuid": "762f5da1-dfb9-4ebb-ba53-2732400d82e8"
+                },
+                {
+                    "description": "Pad PTH 1 [/3V3_MCU] de A1",
+                    "pos": {
+                        "x": 93.979999,
+                        "y": 41.91
+                    },
+                    "uuid": "c55dd24b-1643-4781-b55d-abe9c7edda60"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 91.679999,
+                        "y": 40.31
+                    },
+                    "uuid": "e17a8588-de44-4486-96a1-d52d5efecff1"
+                },
+                {
+                    "description": "Pad PTH 2 [/3V3_MCU] de J24",
+                    "pos": {
+                        "x": 91.44,
+                        "y": 44.45
+                    },
+                    "uuid": "4b403f6e-45e9-4963-8ea5-34e571d5e1e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A1 en F.Silkscreen",
+                    "pos": {
+                        "x": 91.679999,
+                        "y": 40.31
+                    },
+                    "uuid": "e17a8588-de44-4486-96a1-d52d5efecff1"
+                },
+                {
+                    "description": "Pad PTH 1 [/3V3_MCU] de J24",
+                    "pos": {
+                        "x": 91.44,
+                        "y": 41.91
+                    },
+                    "uuid": "81ebd4fe-8dd9-4da5-8348-42eb7015177e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 87.57,
+                        "y": 109.59
+                    },
+                    "uuid": "715d24d1-7a11-4fdb-bf3e-b4673fc58c08"
+                },
+                {
+                    "description": "Pad PTH 2 [/SHARP_OUT] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 110.86
+                    },
+                    "uuid": "868ca1f8-7050-4f98-9051-19b67ba8e501"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 87.57,
+                        "y": 109.59
+                    },
+                    "uuid": "715d24d1-7a11-4fdb-bf3e-b4673fc58c08"
+                },
+                {
+                    "description": "Pad PTH 3 [/5V_MCU] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 113.4
+                    },
+                    "uuid": "0f769982-1152-455b-89cc-95d70fc83b86"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 87.57,
+                        "y": 109.59
+                    },
+                    "uuid": "715d24d1-7a11-4fdb-bf3e-b4673fc58c08"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 115.94
+                    },
+                    "uuid": "e9c1cff8-e68e-4144-a788-a24c71c79d29"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 90.23,
+                        "y": 109.59
+                    },
+                    "uuid": "39299581-b31b-4732-81e7-b8cf9270695d"
+                },
+                {
+                    "description": "Pad PTH 2 [/SHARP_OUT] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 110.86
+                    },
+                    "uuid": "868ca1f8-7050-4f98-9051-19b67ba8e501"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 90.23,
+                        "y": 109.59
+                    },
+                    "uuid": "39299581-b31b-4732-81e7-b8cf9270695d"
+                },
+                {
+                    "description": "Pad PTH 3 [/5V_MCU] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 113.4
+                    },
+                    "uuid": "0f769982-1152-455b-89cc-95d70fc83b86"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 90.23,
+                        "y": 109.59
+                    },
+                    "uuid": "39299581-b31b-4732-81e7-b8cf9270695d"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 115.94
+                    },
+                    "uuid": "e9c1cff8-e68e-4144-a788-a24c71c79d29"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J27 en F.Silkscreen",
+                    "pos": {
+                        "x": 90.23,
+                        "y": 106.99
+                    },
+                    "uuid": "3f6ad35e-f309-4133-8b32-23a25d4ca346"
+                },
+                {
+                    "description": "Pad PTH 1 [unconnected-(J27-Pin_1-Pad1)] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 108.32
+                    },
+                    "uuid": "038c5d34-6965-40ef-9543-6bed29e1f15f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Campo de referencia de W4",
+                    "pos": {
+                        "x": 87.0,
+                        "y": 112.9
+                    },
+                    "uuid": "167f2610-cc4f-4fc3-a7b5-7682ba9c624b"
+                },
+                {
+                    "description": "Pad PTH 3 [/5V_MCU] de J27",
+                    "pos": {
+                        "x": 88.9,
+                        "y": 113.4
+                    },
+                    "uuid": "0f769982-1152-455b-89cc-95d70fc83b86"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R41 en F.Silkscreen",
+                    "pos": {
+                        "x": 93.44,
+                        "y": 110.859999
+                    },
+                    "uuid": "cb74443e-1ec7-40e9-ac19-9a08eb9690f7"
+                },
+                {
+                    "description": "Pad PTH 1 [/SHARP_OUT] de R41",
+                    "pos": {
+                        "x": 92.4,
+                        "y": 110.859999
+                    },
+                    "uuid": "141767bf-34b9-4c64-8ed7-8681db2393ef"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 62.17,
+                        "y": 90.11
+                    },
+                    "uuid": "dfc452db-9174-4616-ac6c-8c572689343d"
+                },
+                {
+                    "description": "Pad PTH 1 [/3V3_MCU] de J26",
+                    "pos": {
+                        "x": 63.5,
+                        "y": 91.44
+                    },
+                    "uuid": "f6ef7695-f319-47ae-a033-f251daa3a8e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 90.11
+                    },
+                    "uuid": "8e2173f3-77d0-42a2-9b8a-69f8268e8d33"
+                },
+                {
+                    "description": "Pad PTH 2 [/3V3_MCU] de J26",
+                    "pos": {
+                        "x": 66.04,
+                        "y": 91.44
+                    },
+                    "uuid": "ba6682b4-7538-4f6e-a49c-5dbe81cf3b1f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 90.11
+                    },
+                    "uuid": "8e2173f3-77d0-42a2-9b8a-69f8268e8d33"
+                },
+                {
+                    "description": "Pad PTH 3 [/GND] de J26",
+                    "pos": {
+                        "x": 68.58,
+                        "y": 91.44
+                    },
+                    "uuid": "2a330c79-81af-4dcb-ac0c-2353fac5fb51"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 90.11
+                    },
+                    "uuid": "8e2173f3-77d0-42a2-9b8a-69f8268e8d33"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de J26",
+                    "pos": {
+                        "x": 71.12,
+                        "y": 91.44
+                    },
+                    "uuid": "f319185e-b189-4aac-b9ff-6f2f68cef147"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 90.11
+                    },
+                    "uuid": "8e2173f3-77d0-42a2-9b8a-69f8268e8d33"
+                },
+                {
+                    "description": "Pad PTH 5 [/5V_MCU] de J26",
+                    "pos": {
+                        "x": 73.66,
+                        "y": 91.44
+                    },
+                    "uuid": "3624063e-6364-4e52-a0aa-70a96c3395d7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 90.11
+                    },
+                    "uuid": "8e2173f3-77d0-42a2-9b8a-69f8268e8d33"
+                },
+                {
+                    "description": "Pad PTH 6 [/5V_MCU] de J26",
+                    "pos": {
+                        "x": 76.2,
+                        "y": 91.44
+                    },
+                    "uuid": "890ccbc7-9ff2-41ab-81ac-665654b00ad9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 92.77
+                    },
+                    "uuid": "b33d1c12-9a53-4365-810b-5c711c842ca0"
+                },
+                {
+                    "description": "Pad PTH 2 [/3V3_MCU] de J26",
+                    "pos": {
+                        "x": 66.04,
+                        "y": 91.44
+                    },
+                    "uuid": "ba6682b4-7538-4f6e-a49c-5dbe81cf3b1f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 92.77
+                    },
+                    "uuid": "b33d1c12-9a53-4365-810b-5c711c842ca0"
+                },
+                {
+                    "description": "Pad PTH 3 [/GND] de J26",
+                    "pos": {
+                        "x": 68.58,
+                        "y": 91.44
+                    },
+                    "uuid": "2a330c79-81af-4dcb-ac0c-2353fac5fb51"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 92.77
+                    },
+                    "uuid": "b33d1c12-9a53-4365-810b-5c711c842ca0"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de J26",
+                    "pos": {
+                        "x": 71.12,
+                        "y": 91.44
+                    },
+                    "uuid": "f319185e-b189-4aac-b9ff-6f2f68cef147"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 92.77
+                    },
+                    "uuid": "b33d1c12-9a53-4365-810b-5c711c842ca0"
+                },
+                {
+                    "description": "Pad PTH 5 [/5V_MCU] de J26",
+                    "pos": {
+                        "x": 73.66,
+                        "y": 91.44
+                    },
+                    "uuid": "3624063e-6364-4e52-a0aa-70a96c3395d7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de J26 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.77,
+                        "y": 92.77
+                    },
+                    "uuid": "b33d1c12-9a53-4365-810b-5c711c842ca0"
+                },
+                {
+                    "description": "Pad PTH 6 [/5V_MCU] de J26",
+                    "pos": {
+                        "x": 76.2,
+                        "y": 91.44
+                    },
+                    "uuid": "890ccbc7-9ff2-41ab-81ac-665654b00ad9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 52.66,
+                        "y": 101.14
+                    },
+                    "uuid": "b0b36884-26c3-41cd-add8-a19af444a327"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de A9",
+                    "pos": {
+                        "x": 42.9,
+                        "y": 102.6
+                    },
+                    "uuid": "5963b1c4-f2cb-4881-be31-5006363ebda7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 52.66,
+                        "y": 101.14
+                    },
+                    "uuid": "b0b36884-26c3-41cd-add8-a19af444a327"
+                },
+                {
+                    "description": "Pad PTH 3 [/3V3_MCU] de A9",
+                    "pos": {
+                        "x": 51.4,
+                        "y": 102.6
+                    },
+                    "uuid": "2df0c070-a680-465c-96af-f8abfb19cbd9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 41.64,
+                        "y": 101.14
+                    },
+                    "uuid": "c9cce4d4-2a9b-47d6-9b6e-d9be1c1a14be"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de A9",
+                    "pos": {
+                        "x": 42.9,
+                        "y": 116.9
+                    },
+                    "uuid": "8b2a166c-03c2-4e6b-8648-9ddf34a88d1d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 41.64,
+                        "y": 101.14
+                    },
+                    "uuid": "c9cce4d4-2a9b-47d6-9b6e-d9be1c1a14be"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de A9",
+                    "pos": {
+                        "x": 42.9,
+                        "y": 102.6
+                    },
+                    "uuid": "5963b1c4-f2cb-4881-be31-5006363ebda7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 41.64,
+                        "y": 118.36
+                    },
+                    "uuid": "727c8035-688c-41e5-8e56-3b8664b39249"
+                },
+                {
+                    "description": "Pad PTH 1 [/5V_MCU] de A9",
+                    "pos": {
+                        "x": 51.4,
+                        "y": 116.9
+                    },
+                    "uuid": "a137a62e-3490-4ed2-94a9-eb883ea1e583"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 41.64,
+                        "y": 118.36
+                    },
+                    "uuid": "727c8035-688c-41e5-8e56-3b8664b39249"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de A9",
+                    "pos": {
+                        "x": 42.9,
+                        "y": 116.9
+                    },
+                    "uuid": "8b2a166c-03c2-4e6b-8648-9ddf34a88d1d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 52.66,
+                        "y": 118.36
+                    },
+                    "uuid": "764bcd5c-78fc-4937-b14f-bdfd706ba76f"
+                },
+                {
+                    "description": "Pad PTH 1 [/5V_MCU] de A9",
+                    "pos": {
+                        "x": 51.4,
+                        "y": 116.9
+                    },
+                    "uuid": "a137a62e-3490-4ed2-94a9-eb883ea1e583"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A9 en F.Silkscreen",
+                    "pos": {
+                        "x": 52.66,
+                        "y": 118.36
+                    },
+                    "uuid": "764bcd5c-78fc-4937-b14f-bdfd706ba76f"
+                },
+                {
+                    "description": "Pad PTH 3 [/3V3_MCU] de A9",
+                    "pos": {
+                        "x": 51.4,
+                        "y": 102.6
+                    },
+                    "uuid": "2df0c070-a680-465c-96af-f8abfb19cbd9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        }
+    ]
+}

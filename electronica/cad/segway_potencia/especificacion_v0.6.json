@@ -225,7 +225,7 @@
   {
    "ref": "A4",
    "lib_id": "segway_modulos:ROB-008_DRV8871_modulo_8p",
-   "value": "DRV8871 mód. DER (prov., enchufable)",
+   "value": "DRV8871 mód. DER (enchufable)",
    "footprint": "segway_modulos:ROB-008_DRV8871_modulo_8p",
    "block": "motores",
    "dnp": false,

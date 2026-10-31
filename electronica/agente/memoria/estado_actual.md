@@ -19,7 +19,8 @@ Fecha de corte: 2026-10-31. Responsable humano: Matías. Entorno: Windows 11, Cl
 - **31/10/2026: segunda pasada (ELE-043).** Fuera D4/R28 y C30; R5/R6 y R43 volvieron tras la revisión independiente (protegen la ESP32): potencia 30 piezas, lógica 14, 5 puentes cada una. [Guía de montaje](../../cad/guia_montaje_v0.4.md) con el porqué de cada componente.
 - **31/10/2026: medidas con calibre (ELE-045).** Buck a 14,3 × 8,5 mm, el resto de los módulos confirmado; supuestos de batería, MPU y mecánica confirmados.
 - **31/10/2026: Sharp en J27 (ELE-044).** Pololu #2474 mirando al piso; OUT por 10k/15k a GPIO3; sin R43. Lógica con 13 piezas, potencia con 30.
-- **Siguiente:** las placas v0.4 están listas para fabricar. Datos que pueden llegar después, con los componentes: TVS comprado (SUP-17), cables del voltímetro (SUP-39), encoders (SUP-53/55) y ubicación de las placas y largo de J20 (SUP-04). Chips de los bucks sin identificar: no usar USB con batería (SUP-26).
+- **31/10/2026: placas v0.5 (ELE-046).** Es la v0.4 final renombrada. Documento para el equipo: [placas_v0.5.pdf](../../cad/placas_v0.5.pdf) (se regenera con agente/generar_documento_placas.py). Archivos de fabricación y STEP 3D en fabricacion/rev-0.5.
+- **Siguiente:** las placas v0.5 están listas para fabricar. Datos que pueden llegar después, con los componentes: TVS comprado (SUP-17), cables del voltímetro (SUP-39), encoders (SUP-53/55) y ubicación de las placas y largo de J20 (SUP-04). Chips de los bucks sin identificar: no usar USB con batería (SUP-26).
 
 ## Historia anterior (hasta el 18/10/2026)
 

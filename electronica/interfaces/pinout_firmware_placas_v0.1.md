@@ -1,6 +1,6 @@
 # Pinout de la ESP32-S3 en las placas v0.1: guía para el firmware
 
-Fecha: 31/10/2026. Placas: lógica y potencia v0.4 (casera, una cara). La ESP32 se alimenta por sus pines 3V3 desde el buck A9 de la placa de lógica; su pin 5V queda solo para el USB. Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
+Fecha: 31/10/2026. Placas: lógica y potencia v0.5 (casera, una cara). La ESP32 se alimenta por sus pines 3V3 desde el buck A9 de la placa de lógica; su pin 5V queda solo para el USB. Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
 
 Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). Todos los pines son de **3,3 V y no toleran 5 V**.
 
@@ -29,7 +29,7 @@ Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). To
 
 Sensor de distancia en J27 (v0.4, ELE-044): Sharp GP2Y0A60SZLF en el carrier Pololu #2474, mirando al piso para detectar escalones. Su salida entra a **GPIO3** por un divisor 10k/15k: la distancia es aproximadamente proporcional a 1 / (V_pin / 0,6 − 0,4); calibrar contra el piso real. Debajo de 10 cm la lectura se dobla: con el sensor a la altura correcta, una lectura menor a la del piso indica un obstáculo y una mayor, un escalón. **GPIO47 y GPIO21 quedan libres** (el HC-SR04 ya no se usa).
 
-Pines libres para sensores nuevos: **1, 2, 21, 38, 39, 40, 41, 42 y 47**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.4.md#expansión-para-sensores-ele-037)). GPIO3 ya no está libre: lee el Sharp de J27. GPIO1 y GPIO2 tienen ADC1.
+Pines libres para sensores nuevos: **1, 2, 21, 38, 39, 40, 41, 42 y 47**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.5.md#expansión-para-sensores-ele-037)). GPIO3 ya no está libre: lee el Sharp de J27. GPIO1 y GPIO2 tienen ADC1.
 
 No usar: 35, 36 y 37 (PSRAM), 19 y 20 (USB nativo), 43 y 44 (UART0 del USB-serie; el pin 24 del módulo, GPIO43, se corta para codificar el zócalo), 45 y 46 (strapping). No grabar el eFuse `STRAP_JTAG_SEL`, porque GPIO3 es un pin de strapping de JTAG (queda libre en J24.13; SUP-24).
 
@@ -87,7 +87,7 @@ Cada motor tiene solo dos entradas, IN1 e IN2. **No hay EN**: en el código va `
 Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se quiere conservar el del prototipo en protoboard.
 
 ```c
-// Placas v0.4 (lógica + potencia), ver electronica/interfaces/pinout_firmware_placas_v0.1.md
+// Placas v0.5 (lógica + potencia), ver electronica/interfaces/pinout_firmware_placas_v0.1.md
 #define PIN_I2C_SDA         17
 #define PIN_I2C_SCL         16
 #define PIN_IMU_INT         18

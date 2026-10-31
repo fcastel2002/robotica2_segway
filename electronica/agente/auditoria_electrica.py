@@ -25,7 +25,7 @@ import pcbnew
 
 RAIZ = Path(__file__).resolve().parents[2]
 CAD = RAIZ / "electronica" / "cad"
-SALIDA = CAD / "auditoria_electrica_v0.4.md"
+SALIDA = CAD / "auditoria_electrica_v0.5.md"
 OX = OY = 25.4
 
 ESPERADO = {
@@ -239,7 +239,7 @@ def main():
         "fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08")
 
     # Informe
-    lineas = ["# Control eléctrico de las placas v0.4 (lógica + potencia)", "",
+    lineas = ["# Control eléctrico de las placas v0.5 (lógica + potencia)", "",
               f"Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resultado: **{fallas} fallas, {avisos} avisos**. "
               "Complementa al ERC, el DRC y la comparación de netlist, que no detectan estos casos. No reemplaza a los ensayos de banco.", "",
               "| Estado | Control | Detalle |", "|---|---|---|"]
