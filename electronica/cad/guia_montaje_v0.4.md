@@ -81,7 +81,7 @@ Alambre de cobre estañado de 0,6 mm, del lado de los componentes, pegado a la p
 6. **Módulos soldados**: A5 y A6 (con su puente de dirección ya hecho), A7, A8 y A9.
 7. **Portafusibles, Q1 con su disipador aislado y electrolíticos** (cuidado con la polaridad).
 8. **Borneras, headers de servo, conector IDC J20** (con la muesca como en la guía impresa), J26 y J27 (tira hembra 1 × 4 del Sharp).
-9. **Cables soldados**: J3 (interruptor general y paro en serie, 1,5 mm², con precinto), J4 (contacto del paro) y J18 (voltímetro).
+9. **Cables soldados**: J3 (interruptor general y paro en serie, 1,5 mm², con precinto), J4 (aviso del paro a la ESP32: con un botón de un solo contacto, **puentear J4 con un alambre**; si queda abierto, el firmware cree que el paro está apretado) y J18 (voltímetro).
 
 ## 5. Comprobaciones antes de alimentar
 
