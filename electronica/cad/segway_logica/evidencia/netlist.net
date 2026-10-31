@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-31T11:46:01")
+		(date "2026-10-31T13:00:23")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dea0606c-0eac-4f50-9653-fc189c5a0615")
+			(tstamps "ea0f35eb-51ad-4e4b-9d27-ffa4c45e61db")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "50dd4887-012d-4dab-911f-a6b0fe6df3c5")
+			(tstamps "a7fbb381-d287-4e09-abcb-3245f42f7501")
 			(units
 				(unit
 					(name "A")
@@ -357,7 +357,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "33dfe5aa-beef-4d9f-a217-275a77e9381a")
+			(tstamps "d77e66bf-be59-45b4-bebc-ce761ccd9606")
 			(units
 				(unit
 					(name "A")
@@ -373,72 +373,6 @@
 						)
 						(pin
 							(num "4")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "C30")
-			(value "47µ/16V")
-			(footprint "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
-			(description "Polarized capacitor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H]")
-				(field
-					(name "Fuente") "Revisión independiente v0.3: capacidad local en la entrada de A9 (5V_MCU por cable)")
-				(field
-					(name "Footprint") "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Polarized capacitor")
-			)
-			(libsource
-				(lib "Device")
-				(part "C_Polarized")
-				(description "Polarized capacitor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H]")
-			)
-			(property
-				(name "Fuente")
-				(value "Revisión independiente v0.3: capacidad local en la entrada de A9 (5V_MCU por cable)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "cap capacitor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "CP_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "b80517b4-6ca3-41e5-b4c3-1731e5c8501a")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
 						)
 					)
 				)
@@ -495,7 +429,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1c324dee-f7e4-4011-9cde-cfdd971d4522")
+			(tstamps "96c59525-973d-4a4e-91d8-bc7ddd764b4b")
 			(units
 				(unit
 					(name "A")
@@ -561,7 +495,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a81cd94d-acbe-4f87-b5b0-a08d425c348c")
+			(tstamps "95a12e87-efae-40b6-be11-1cde4f1277e4")
 			(units
 				(unit
 					(name "A")
@@ -633,7 +567,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "14517e2e-ab4d-4667-8aa7-9120b30d8735")
+			(tstamps "569a8987-aac6-433c-bd01-93866d46ae14")
 			(units
 				(unit
 					(name "A")
@@ -705,7 +639,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9d55e9ac-da38-4e71-ad98-10d0fdd85799")
+			(tstamps "cd70d7b4-1936-4641-8e58-0c2f2c2c5e7d")
 			(units
 				(unit
 					(name "A")
@@ -813,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f4fb8f47-725e-43cc-adb6-8c9476913517")
+			(tstamps "a563acf4-bc6d-4051-997d-969b7e95f1c6")
 			(units
 				(unit
 					(name "A")
@@ -939,7 +873,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3a9c69bf-aecf-4f2d-9c06-b745e23d8236")
+			(tstamps "4109a579-15db-44b0-a1e9-f30be3d6d813")
 			(units
 				(unit
 					(name "A")
@@ -1065,7 +999,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ea26c179-c970-441f-ba8e-d5ec7ff0aeb0")
+			(tstamps "5752860b-7e15-4f59-a534-bac41ac85eb8")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5d9baade-b79f-4e97-a93b-bac624d5a27c")
+			(tstamps "9a3a054f-9709-4459-bfe0-a57009b405f9")
 			(units
 				(unit
 					(name "A")
@@ -1215,7 +1149,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "44632965-5b10-4159-89e4-0d457281b8d2")
+			(tstamps "ac20b44f-5e41-43d5-b4bb-200c929242c9")
 			(units
 				(unit
 					(name "A")
@@ -1281,73 +1215,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "06df4563-b57b-459b-8e99-9da25ba7e382")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R43")
-			(value "1k 1%")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H]")
-				(field
-					(name "Fuente") "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H]")
-			)
-			(property
-				(name "Fuente")
-				(value "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "faa793bb-502e-4219-8e1c-ba54670d608d")
+			(tstamps "972e6541-d45d-4bec-978d-90ebf1a33750")
 			(units
 				(unit
 					(name "A")
@@ -1776,40 +1644,6 @@
 				(pin
 					(num "16")
 					(name "Pin_16")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Device")
-			(part "C_Polarized")
-			(description "Polarized capacitor")
-			(footprints
-				(fp "CP_*")
-			)
-			(fields
-				(field
-					(name "Reference") "C")
-				(field
-					(name "Value") "C_Polarized")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Polarized capacitor")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "")
 					(type "passive")
 				)
 			)
@@ -2293,11 +2127,6 @@
 				(pintype "power_in")
 			)
 			(node
-				(ref "C30")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
 				(ref "J20")
 				(pin "13")
 				(pinfunction "Pin_13_13")
@@ -2482,11 +2311,6 @@
 				(pin "4")
 				(pinfunction "OUT-_4")
 				(pintype "power_in")
-			)
-			(node
-				(ref "C30")
-				(pin "2")
-				(pintype "passive")
 			)
 			(node
 				(ref "J20")
@@ -3231,29 +3055,14 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R43")
-				(pin "1")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "43")
-			(name "/US_TRIG_S")
-			(class "Default")
-			(node
 				(ref "J27")
 				(pin "2")
 				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
-			(node
-				(ref "R43")
-				(pin "2")
-				(pintype "passive")
-			)
 		)
 		(net
-			(code "44")
+			(code "43")
 			(name "unconnected-(A2-AD0-Pad7)")
 			(class "Default")
 			(node
@@ -3264,7 +3073,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "44")
 			(name "unconnected-(A2-XCL-Pad6)")
 			(class "Default")
 			(node
@@ -3275,7 +3084,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "45")
 			(name "unconnected-(A2-XDA-Pad5)")
 			(class "Default")
 			(node
@@ -3286,7 +3095,7 @@
 			)
 		)
 		(net
-			(code "47")
+			(code "46")
 			(name "unconnected-(J20-Pin_1-Pad1)")
 			(class "Default")
 			(node
@@ -3297,7 +3106,7 @@
 			)
 		)
 		(net
-			(code "48")
+			(code "47")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

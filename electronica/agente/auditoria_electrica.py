@@ -40,26 +40,24 @@ ESPERADO = {
         "Q1": {"1": "Q_POL_G", "2": "VBAT_SW", "3": "VM_BUS"},
         "D1": {"1": "VM_BUS", "2": "GND"}, "D3": {"1": "VM_BUS", "2": "Q_POL_G"},
         "J18": {"1": "GND", "2": "VM_LOG_F"},
-        "D4": {"1": "GND", "2": "LED_VM_A"},
         "C1": {"1": "VM_BUS", "2": "GND"},
         "C8": {"1": "V_SERVO", "2": "GND"},
         "J1": {"1": "GND", "2": "VBAT_P"}, "J15": {"1": "GND", "2": "VM_UBEC"}, "J16": {"1": "GND", "2": "V_SERVO"},
-        "J13": {"1": "GND", "2": "V_SERVO", "3": "SERVO_IZQ_SIG"}, "J14": {"1": "GND", "2": "V_SERVO", "3": "SERVO_DER_SIG"},
+        "J13": {"1": "GND", "2": "V_SERVO", "3": "SERVO_IZQ_MCU"}, "J14": {"1": "GND", "2": "V_SERVO", "3": "SERVO_DER_MCU"},
     },
     "logica": {
         # v0.3: la ESP32 se alimenta por sus pines 3V3 desde A9; su pin 5V queda solo con el USB
         "A1": {"1": "3V3_MCU", "2": "3V3_MCU", "21": "5V_USB", "22": "GND", "23": "GND", "43": "GND", "44": "GND"},
         "A9": {"1": "5V_MCU", "2": "GND", "3": "3V3_MCU", "4": "GND"},
-        "J27": {"1": "5V_MCU", "2": "US_TRIG_S", "3": "US_ECHO_5V", "4": "GND"},
+        "J27": {"1": "5V_MCU", "2": "US_TRIG", "3": "US_ECHO_5V", "4": "GND"},
         "R41": {"1": "US_ECHO_5V", "2": "US_ECHO"}, "R42": {"1": "US_ECHO", "2": "GND"},
-        "R43": {"1": "US_TRIG", "2": "US_TRIG_S"}, "C30": {"1": "5V_MCU", "2": "GND"},
         "A2": {"1": "3V3_MCU", "2": "GND", "3": "I2C_SCL", "4": "I2C_SDA", "8": "IMU_INT"},
         "J7": {"1": "3V3_MCU", "4": "GND"}, "J8": {"1": "GND", "4": "3V3_MCU"},
         "J26": {"1": "3V3_MCU", "2": "3V3_MCU", "3": "GND", "4": "GND", "5": "5V_MCU", "6": "5V_MCU"},
     },
 }
 # Nets que no pueden llegar a un pin de señal de la ESP32-S3
-PROHIBIDAS = {"5V", "5V_MCU", "5V_USB", "US_ECHO_5V", "US_TRIG_S", "VBAT_P", "VBAT_F", "VBAT_SW", "VM_BUS", "VM_IZQ", "VM_IZQ_F", "VM_DER", "VM_DER_F",
+PROHIBIDAS = {"5V", "5V_MCU", "5V_USB", "US_ECHO_5V", "VBAT_P", "VBAT_F", "VBAT_SW", "VM_BUS", "VM_IZQ", "VM_IZQ_F", "VM_DER", "VM_DER_F",
               "VM_LOG", "VM_LOG_F", "VM_UBEC", "V_SERVO", "MOT_IZQ_1", "MOT_IZQ_2", "MOT_DER_1", "MOT_DER_2", "Q_POL_G"}
 ALIMENTACION_ESP32 = {"1", "2", "21", "22", "23", "43", "44"}     # el 21 es 5V_USB (pin 5V de la DevKitC)
 # Tensión de cada net (V), para juzgar un módulo girado

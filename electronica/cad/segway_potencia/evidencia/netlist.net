@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
-		(date "2026-10-31T11:46:17")
+		(date "2026-10-31T13:00:12")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e1fb2906-1e22-4c80-a162-85d108f360b5")
+			(tstamps "c9d111df-1f96-459d-b4f8-f80fd99f15a6")
 			(units
 				(unit
 					(name "A")
@@ -173,7 +173,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2aebdc13-a79f-4189-96b5-c52faea7512b")
+			(tstamps "e5457454-61b3-48f7-9bd4-05a3ef050e82")
 			(units
 				(unit
 					(name "A")
@@ -249,7 +249,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9e61cc01-256a-4dcf-820f-976a0f05f0e0")
+			(tstamps "49bd4331-140f-4de9-be8b-18534428522c")
 			(units
 				(unit
 					(name "A")
@@ -325,7 +325,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9ac07422-4b19-4616-822a-0bf517731244")
+			(tstamps "ae611521-6d2b-42e1-b232-946763f56555")
 			(units
 				(unit
 					(name "A")
@@ -401,7 +401,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c92ed00e-d3e7-4b26-83e7-076e05b33f0e")
+			(tstamps "c065083f-9449-48ba-aa04-2c2630cc7c93")
 			(units
 				(unit
 					(name "A")
@@ -477,7 +477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "321dee77-0bac-42a5-8db4-90ad4fe3accd")
+			(tstamps "3daf3892-802c-4744-9f91-3ebf710c34b9")
 			(units
 				(unit
 					(name "A")
@@ -549,7 +549,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b3084901-e6da-4231-a63f-e2063f474ae1")
+			(tstamps "fece3a08-461f-4826-9dc0-32894189737c")
 			(units
 				(unit
 					(name "A")
@@ -615,7 +615,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dddfeee3-515e-48d9-a426-cc63cb5e03d9")
+			(tstamps "aa5418e0-da12-4e0b-97e3-caaebcb12b70")
 			(units
 				(unit
 					(name "A")
@@ -681,7 +681,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dd65adae-329c-4bcf-a0bf-75dfbdb8a88c")
+			(tstamps "6573b7da-de34-4005-9843-94dbcd2d757b")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "23e22010-f64d-41e8-b06c-e53826cf4982")
+			(tstamps "ac573370-f5ba-4037-8fc0-e3f1f9c439a9")
 			(units
 				(unit
 					(name "A")
@@ -813,73 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "84126474-9dad-43db-8fac-016170ba1877")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "D4")
-			(value "LED rojo 3mm VM")
-			(footprint "LED_THT:LED_D3.0mm")
-			(description "Light emitting diode")
-			(fields
-				(field
-					(name "Estado") "provisorio [H]")
-				(field
-					(name "Fuente") "Device.kicad_sym LED 1=K 2=A")
-				(field
-					(name "Footprint") "LED_THT:LED_D3.0mm")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Light emitting diode")
-			)
-			(libsource
-				(lib "Device")
-				(part "LED")
-				(description "Light emitting diode")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H]")
-			)
-			(property
-				(name "Fuente")
-				(value "Device.kicad_sym LED 1=K 2=A")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "LED diode")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "LED* LED_SMD:* LED_THT:*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "0ac02bcd-dd0c-4b2d-b616-af7bfb4fdc3e")
+			(tstamps "0e2ab266-00c7-48d9-b985-3802cff4339a")
 			(units
 				(unit
 					(name "A")
@@ -945,7 +879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f83a917b-8f35-45d2-a7ba-08a11e0f86df")
+			(tstamps "67ab4bba-14a5-4f8b-8ced-05fbce098863")
 			(units
 				(unit
 					(name "A")
@@ -1011,7 +945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "43d39b01-1159-4c0a-b9d9-21c1b7b4a34d")
+			(tstamps "2ec7ded7-e9ea-4f30-ac38-1cb0ec0d3f64")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dcf44f1c-b472-428d-87bd-55b4928fdf28")
+			(tstamps "bfb21277-0120-4d64-b03f-bfad6ac5fa48")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "07d5bf3e-3714-469b-9a59-3e3a79310ca9")
+			(tstamps "b5f6d273-69f4-462b-8611-cefd426c0fb9")
 			(units
 				(unit
 					(name "A")
@@ -1209,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "05bf1818-86b6-4993-81e1-0f442912fc5a")
+			(tstamps "448f8c00-7099-4978-b01e-b6a18443be74")
 			(units
 				(unit
 					(name "A")
@@ -1275,7 +1209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "177f1221-7676-49d4-82b0-3f450502d12d")
+			(tstamps "bb2680d4-ec28-4f17-aa5e-51c31268f974")
 			(units
 				(unit
 					(name "A")
@@ -1341,7 +1275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1bac5889-135f-49c5-8d4a-f861f4603901")
+			(tstamps "5f6a4cc9-471f-4670-a87e-a732506e5780")
 			(units
 				(unit
 					(name "A")
@@ -1407,7 +1341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "95a2543c-4e87-40da-a172-49218332bb80")
+			(tstamps "a51703ff-ae05-4fd6-8d68-33b63635e4fe")
 			(units
 				(unit
 					(name "A")
@@ -1473,7 +1407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "033b7def-9650-46fe-b4a3-109ba089f570")
+			(tstamps "ed06f3f1-6c67-4682-ab41-71fa4c1ff4e5")
 			(units
 				(unit
 					(name "A")
@@ -1539,7 +1473,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ffae3231-4244-4e7d-9a2b-ff968b1e30f8")
+			(tstamps "3ff73bff-e040-4fda-b9b1-108d33a13d42")
 			(units
 				(unit
 					(name "A")
@@ -1608,7 +1542,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f167e206-e651-49da-b70b-3761ae40389e")
+			(tstamps "e5d798c1-2838-4bb0-ba32-7a1248212d9e")
 			(units
 				(unit
 					(name "A")
@@ -1677,7 +1611,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "77684062-9b1b-4401-95ae-3b19355ea664")
+			(tstamps "156140ae-3f29-4476-a793-cb24d02f1625")
 			(units
 				(unit
 					(name "A")
@@ -1743,7 +1677,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b5476a2a-0c68-4769-ae7e-596ed8dfdbee")
+			(tstamps "29d3c187-33b5-4ee5-abb7-0df95b961e18")
 			(units
 				(unit
 					(name "A")
@@ -1809,7 +1743,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3e36e0ba-4751-47d0-bf07-365299d10403")
+			(tstamps "3bb1955a-b16a-490f-8cd8-db68cb12267b")
 			(units
 				(unit
 					(name "A")
@@ -1875,7 +1809,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "51fa9877-55e6-4269-9e14-06f574a8a9a8")
+			(tstamps "416126ba-6c7b-4bd1-9d3d-04c00845db4b")
 			(units
 				(unit
 					(name "A")
@@ -1983,7 +1917,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5e6091b2-653e-47ba-8f93-a7a22e9a8605")
+			(tstamps "e41a3fd6-9532-4ca2-a29b-2917951b81eb")
 			(units
 				(unit
 					(name "A")
@@ -1996,204 +1930,6 @@
 						)
 						(pin
 							(num "3")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R5")
-			(value "1k 1%")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-				(field
-					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PA8 FT: VIN ≤ VDD + 4 V, inyección −5/+0 mA); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "c29766fe-1dee-4405-8122-89afebf36857")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R6")
-			(value "1k 1%")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-				(field
-					(name "Fuente") "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (1 kΩ nominal: con el JR invertido la corriente de reposo del servo vuelve por la resistencia al pin, ≤ 6 V/1 kΩ = 6 mA; con 470 Ω llegaría a 12,8 mA; verificar en E-05 que el servo responde y, si no, 470 Ω dentro del rango 330 Ω-1 kΩ) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §2.2; [CONTRATO] §2.5; [DS-STM32] p.37 Tablas 6-7 (PB15 FT); [DS-STM32] Tabla 37 p.64 (niveles garantizados hasta 8 mA); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "22e326df-fd19-4216-90e0-32598bca2761")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R28")
-			(value "5k1")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-				(field
-					(name "Fuente") "[ENERGIA] §8 (apagado); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §8 (apagado); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "ccb65bef-1ab4-40db-a4f8-0211b90d6f84")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
 						)
 					)
 				)
@@ -2250,7 +1986,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a0243b3d-b42f-4eb3-9ffa-7be202f170cf")
+			(tstamps "431d1e45-4289-4cde-821f-59f3b941de47")
 			(units
 				(unit
 					(name "A")
@@ -2615,44 +2351,6 @@
 				(pin
 					(num "2")
 					(name "")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Device")
-			(part "LED")
-			(description "Light emitting diode")
-			(footprints
-				(fp "LED*")
-				(fp "LED_SMD:*")
-				(fp "LED_THT:*")
-			)
-			(fields
-				(field
-					(name "Reference") "D")
-				(field
-					(name "Value") "LED")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Light emitting diode")
-				(field
-					(name "Sim.Pins") "1=K 2=A")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "K")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "A")
 					(type "passive")
 				)
 			)
@@ -3146,12 +2844,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "D4")
-				(pin "1")
-				(pinfunction "K_1")
-				(pintype "passive")
-			)
-			(node
 				(ref "J1")
 				(pin "1")
 				(pinfunction "Pin_1_1")
@@ -3350,22 +3042,6 @@
 		)
 		(net
 			(code "11")
-			(name "/LED_VM_A")
-			(class "Default")
-			(node
-				(ref "D4")
-				(pin "2")
-				(pinfunction "A_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R28")
-				(pin "2")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "12")
 			(name "/MOT_DER_1")
 			(class "Default")
 			(node
@@ -3382,7 +3058,7 @@
 			)
 		)
 		(net
-			(code "13")
+			(code "12")
 			(name "/MOT_DER_2")
 			(class "Default")
 			(node
@@ -3399,7 +3075,7 @@
 			)
 		)
 		(net
-			(code "14")
+			(code "13")
 			(name "/MOT_IZQ_1")
 			(class "Default")
 			(node
@@ -3416,7 +3092,7 @@
 			)
 		)
 		(net
-			(code "15")
+			(code "14")
 			(name "/MOT_IZQ_2")
 			(class "Default")
 			(node
@@ -3433,7 +3109,7 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "15")
 			(name "/Q_POL_G")
 			(class "Default")
 			(node
@@ -3455,24 +3131,8 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "16")
 			(name "/SERVO_DER_MCU")
-			(class "Default")
-			(node
-				(ref "J20")
-				(pin "4")
-				(pinfunction "Pin_4_4")
-				(pintype "passive")
-			)
-			(node
-				(ref "R6")
-				(pin "1")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "18")
-			(name "/SERVO_DER_SIG")
 			(class "Default")
 			(node
 				(ref "J14")
@@ -3481,30 +3141,15 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R6")
-				(pin "2")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "19")
-			(name "/SERVO_IZQ_MCU")
-			(class "Default")
-			(node
 				(ref "J20")
-				(pin "2")
-				(pinfunction "Pin_2_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R5")
-				(pin "1")
+				(pin "4")
+				(pinfunction "Pin_4_4")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "20")
-			(name "/SERVO_IZQ_SIG")
+			(code "17")
+			(name "/SERVO_IZQ_MCU")
 			(class "Default")
 			(node
 				(ref "J13")
@@ -3513,13 +3158,14 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R5")
+				(ref "J20")
 				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "21")
+			(code "18")
 			(name "/VBAT_F")
 			(class "Default")
 			(node
@@ -3535,7 +3181,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "19")
 			(name "/VBAT_P")
 			(class "Default")
 			(node
@@ -3551,7 +3197,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "20")
 			(name "/VBAT_SW")
 			(class "Default")
 			(node
@@ -3568,7 +3214,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "21")
 			(name "/VM_BUS")
 			(class "Default")
 			(node
@@ -3619,14 +3265,9 @@
 				(pinfunction "S_3")
 				(pintype "passive")
 			)
-			(node
-				(ref "R28")
-				(pin "1")
-				(pintype "passive")
-			)
 		)
 		(net
-			(code "25")
+			(code "22")
 			(name "/VM_DER")
 			(class "Default")
 			(node
@@ -3655,7 +3296,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "23")
 			(name "/VM_DER_F")
 			(class "Default")
 			(node
@@ -3677,7 +3318,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "24")
 			(name "/VM_IZQ")
 			(class "Default")
 			(node
@@ -3706,7 +3347,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "25")
 			(name "/VM_IZQ_F")
 			(class "Default")
 			(node
@@ -3728,7 +3369,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "26")
 			(name "/VM_LOG")
 			(class "Default")
 			(node
@@ -3751,7 +3392,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "27")
 			(name "/VM_LOG_F")
 			(class "Default")
 			(node
@@ -3773,7 +3414,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "28")
 			(name "/VM_UBEC")
 			(class "Default")
 			(node
@@ -3789,7 +3430,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "29")
 			(name "/V_SERVO")
 			(class "Default")
 			(node
@@ -3817,7 +3458,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "30")
 			(name "unconnected-(J20-Pin_1-Pad1)")
 			(class "Default")
 			(node
@@ -3828,7 +3469,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "31")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

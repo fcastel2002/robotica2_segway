@@ -4,7 +4,7 @@ Fecha: 31/10/2026 (v0.4: menos componentes, ver la nota; v0.3: buck de 3,3 V A9,
 
 ## Nota de la v0.4
 
-La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, la protección de entrada (Q1, D3, R29 y el TVS D1), los capacitores de reserva C1, C3, C8 y C30, el LED de encendido, las resistencias de los servos (R5 y R6) y el divisor del ultrasonido (R41–R43). Se quitaron C4, C5, C9, C14, R1–R4, R7, R8, R13–R16, R22–R24 y R35–R38.
+La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, la protección de entrada (Q1, D3, R29 y el TVS D1), los capacitores C1, C3 y C8 y el divisor del ultrasonido (R41 y R42). Se quitaron C4, C5, C9, C14, C30, D4, R1–R8, R13–R16, R22–R24, R28, R35–R38 y R43. Para qué está cada pieza: [guía de montaje](guia_montaje_v0.4.md).
 
 ## 1. Módulos (ya comprados)
 
@@ -23,15 +23,12 @@ La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, l
 
 | Cant. | Ref. | Valor | Encapsulado | Repuesto |
 |---|---|---|---|---|
-| 2 | R5, R6 | 1 kΩ 1 % 1/4 W | axial | |
 | 1 | R29 | 10 kΩ 1/4 W | axial | |
-| 1 | R28 | 5,1 kΩ 1/4 W | axial | |
 | 1 | C1 | 470 µF 35 V low-ESR | radial Ø10, paso 5 | |
 | 1 | C8 | 470 µF 16 V low-ESR | radial Ø8, paso 3,5 | |
 | 1 | C3 | 10 µF 50 V multicapa X7R | radial, paso 5 | |
 | 1 | D1 | TVS SA15A (alt. P6KE18A; **no** P6KE15A) | DO-15 | |
 | 1 | D3 | Zener BZX79-C12 (12 V, 0,5 W) | DO-35 | |
-| 1 | D4 | LED rojo de 3 mm | | |
 | 1 | Q1 | IRF4905 (MOSFET P) | TO-220 | |
 | 1 | — | Disipador para TO-220 de 15 °C/W o menos, con **mica y buje aislante** (la aleta tiene tensión de batería) | | |
 | 1 | F1 | Portafusible ATO de PCB + fusible ATO **15 A lento** | | 2 fusibles |
@@ -58,8 +55,6 @@ La placa quedó como interfaz entre módulos. Solo lleva conectores, fusibles, l
 | 1 | J27 | Tira hembra 1 × 4 (ultrasonido HC-SR04) | |
 | 1 | R41 | 2,2 kΩ 1 % 1/4 W (divisor de ECHO) | axial |
 | 1 | R42 | 3,3 kΩ 1 % 1/4 W (divisor de ECHO) | axial |
-| 1 | R43 | 1 kΩ 1 % 1/4 W (serie de TRIG) | axial |
-| 1 | C30 | 47 µF 16 V electrolítico (entrada de A9) | radial Ø6,3, paso 2,5 |
 | — | J4 | Pads para soldar el cable del paro | |
 
 ## 4. Zócalos y pines
@@ -91,7 +86,7 @@ Las posiciones tapadas (24 de A1 y 5 de A2) se tapan con un pin macho cortado al
 | 2 | Placa virgen simple faz FR-4 de 10 × 15 cm, 1,6 mm, cobre de 35 µm: una para la potencia (148 × 96 mm) y otra para la lógica (100 × 96 mm) |
 | — | Papel ilustración o de transferencia, percloruro férrico o persulfato de sodio |
 | — | Mechas de 0,8, 0,9, 1,0, 1,1, 1,2, 1,3, 1,5, 1,8, 2,0, 2,5 y 3,2 mm (ver los informes de taladros) |
-| 0,5 m | Alambre de cobre estañado de 0,6 mm para los 10 puentes (5 en la potencia y 5 en la lógica) |
+| 0,5 m | Alambre de cobre estañado de 0,6 mm para los 12 puentes (7 en la potencia y 5 en la lógica) |
 | 20 cm | Termocontraíble de 1,5 mm para W5 de la potencia (largo, en diagonal) |
 | 8 + 16 | Separadores M3 de 10 mm y tornillos M3 × 6 |
 | — | Estaño, flux y malla desoldante |

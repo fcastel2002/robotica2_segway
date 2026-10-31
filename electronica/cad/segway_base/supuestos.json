@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 11,
+ "revision_lista": 13,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -299,11 +299,11 @@
   {
    "grupo": "A",
    "tema": "Cantidad de piezas de la v0.4",
-   "supuesto": "La v0.4 tiene 47 piezas en dos placas: 32 en la potencia y 15 en la lógica, con J20 en cada una, más 10 puentes de alambre (5 y 5). La placa es una interfaz entre módulos: solo lleva conectores, fusibles, las protecciones de entrada y lo que los módulos no traen.",
+   "supuesto": "La v0.4 tiene 41 piezas en dos placas: 28 en la potencia y 13 en la lógica, con J20 en cada una, más 12 puentes de alambre (7 y 5). La placa es una interfaz entre módulos: conectores, fusibles, la protección contra batería invertida (Q1, R29, D3), el TVS D1, los capacitores C1, C3 y C8 y el divisor del ECHO (R41, R42). Para qué está cada pieza: cad/guia_montaje_v0.4.md.",
    "base": "Pedido del equipo del 31/10/2026 [M]: los módulos ya traen su electrónica; agregar solo lo que pida un datasheet o haga falta.",
    "impacto_si_cambia": "Cada elemento que el equipo quiera recuperar se reincorpora desde su fila del grupo H. La especificación v0.3 conserva valores, nets y fuentes de todos.",
-   "como_se_confirma": "Matías confirma que 60 piezas está bien o dice qué más quitar o recuperar.",
-   "estado": "CAMBIADO",
+   "como_se_confirma": "Matías aprobó el criterio el 31/10/2026: solo lo necesario más las protecciones que cuidan módulos caros.",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
@@ -334,6 +334,15 @@
       "estado": "ASUMIDO"
      },
      "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "La v0.4 tiene 47 piezas en dos placas: 32 en la potencia y 15 en la lógica, con J20 en cada una, más 10 puentes de alambre (5 y 5). La placa es una interfaz entre módulos: solo lleva conectores, fusibles, las protecciones de entrada y lo que los módulos no traen.",
+      "como_se_confirma": "Matías confirma que 60 piezas está bien o dice qué más quitar o recuperar.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
     }
    ]
   },
@@ -575,12 +584,12 @@
   {
    "grupo": "B",
    "tema": "Mechas, pads y anillos",
-   "supuesto": "Mechas disponibles: 0,8; 1,0; 1,3 y 3,2 mm (minitaladro). Resistencias, diodos DO-35/DO-41, LED y cerámicos: taladro de 0,8 mm y pad de 2,0 mm. Tiras de 2,54 mm (zócalos y headers) y TO-220: taladro de 1,0 mm y pad de 2,2 mm (oval de 1,8 × 2,6 mm en el TO-220). Borneras de 5,08 y 3,5 mm, portafusibles, electrolíticos grandes y diodos DO-15/DO-201: taladro de 1,3 mm y pad de 2,8-3,0 mm. Anillo mínimo de 0,5 mm (0,6 mm en potencia). Cada pad deja un punto central sin cobre de 0,5 mm como guía para la mecha.",
+   "supuesto": "Mechas que pide la v0.4 (informes de taladros de cada placa): 0,8; 0,9; 1,0; 1,1; 1,2; 1,3; 1,5; 1,8; 2,0; 2,5 y 3,2 mm (minitaladro). Resistencias y diodos chicos: 0,8-0,9 mm. Tiras de 2,54 mm y TO-220: 1,0 mm. Borneras, portafusibles, electrolíticos y diodos DO-15: 1,1-1,8 mm. Pads de los mini buck: 1,5 mm (absorben el error de medida). Anillo mínimo de 0,5 mm (0,6 mm en potencia). Cada pad deja un punto central sin cobre de 0,5 mm como guía para la mecha. Si falta alguna mecha, se usa la inmediata superior.",
    "base": "Huellas ya creadas en segway_modulos.pretty (pad de 2,2 mm con taladro de 1,0 mm en paso 2,54 y de 2,8 mm con 1,3 mm en bornera) y práctica casera [H].",
    "impacto_si_cambia": "Con otras mechas cambian los diámetros de taladro y de pad de las huellas. Sin la mecha de 1,3 mm, las borneras no entran.",
    "como_se_confirma": "Matías informa qué mechas tiene. Probar cada mecha con una bornera y con un pin de la tira antes de taladrar la placa.",
    "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "huellas",
@@ -611,7 +620,16 @@
     "anillo_min_mm": 0.5
    },
    "id": "SUP-11",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Mechas disponibles: 0,8; 1,0; 1,3 y 3,2 mm (minitaladro). Resistencias, diodos DO-35/DO-41, LED y cerámicos: taladro de 0,8 mm y pad de 2,0 mm. Tiras de 2,54 mm (zócalos y headers) y TO-220: taladro de 1,0 mm y pad de 2,2 mm (oval de 1,8 × 2,6 mm en el TO-220). Borneras de 5,08 y 3,5 mm, portafusibles, electrolíticos grandes y diodos DO-15/DO-201: taladro de 1,3 mm y pad de 2,8-3,0 mm. Anillo mínimo de 0,5 mm (0,6 mm en potencia). Cada pad deja un punto central sin cobre de 0,5 mm como guía para la mecha.",
+      "como_se_confirma": "Matías informa qué mechas tiene. Probar cada mecha con una bornera y con un pin de la tira antes de taladrar la placa."
+     },
+     "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -718,7 +736,7 @@
   {
    "grupo": "B",
    "tema": "Puentes de alambre",
-   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 5 (W1 y W2 de 5V, W3, W4 y W5 de GND). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A.",
+   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 7 (W1 y W2 de 5V; W3, W4 y W5 de GND; W6 y W7, señal de cada servo sobre el bus de masa de los servos). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A.",
    "base": "DEC-14 [M]; resultado del ruteo v0.1 [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error.",
    "como_se_confirma": "Montaje de las placas.",
@@ -769,6 +787,13 @@
       "estado": "CONFIRMADO"
      },
      "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 5 (W1 y W2 de 5V, W3, W4 y W5 de GND). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
     }
    ]
   },
@@ -1031,12 +1056,12 @@
   {
    "grupo": "C",
    "tema": "Pines reservados de la ESP32-S3",
-   "supuesto": "Sin conexión: GPIO35, 36 y 37 (PSRAM octal del N16R8), GPIO0, 45 y 46 (strapping), GPIO19 y 20 (USB nativo), GPIO43 y 44 (UART0 del CH343P), GPIO48 (LED RGB WS2812) y RST. GPIO3 se usa como entrada analógica de VBAT_ADC (ADC1_CH2): su función de strapping (fuente de JTAG) solo actúa con el eFuse STRAP_JTAG_SEL grabado, que de fábrica no lo está.",
+   "supuesto": "Sin conexión: GPIO35, 36 y 37 (PSRAM octal del N16R8), GPIO0, 45 y 46 (strapping), GPIO19 y 20 (USB nativo), GPIO43 y 44 (UART0 del CH343P), GPIO48 (LED RGB WS2812) y RST. GPIO3 queda libre desde la v0.4 (solo en J24.13): su función de strapping (fuente de JTAG) solo actúa con el eFuse STRAP_JTAG_SEL grabado, que de fábrica no lo está.",
    "base": "ESP32-S3 datasheet, tabla de strapping pins [D]; pinout del vendedor [V].",
    "impacto_si_cambia": "No grabar el eFuse STRAP_JTAG_SEL.",
-   "como_se_confirma": "Primer arranque con la batería conectada.",
+   "como_se_confirma": "Primer arranque de la ESP32 montada.",
    "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A1"
    ],
@@ -1073,6 +1098,14 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Sin conexión: GPIO35, 36 y 37 (PSRAM octal del N16R8), GPIO0, 45 y 46 (strapping), GPIO19 y 20 (USB nativo), GPIO43 y 44 (UART0 del CH343P), GPIO48 (LED RGB WS2812) y RST. GPIO3 se usa como entrada analógica de VBAT_ADC (ADC1_CH2): su función de strapping (fuente de JTAG) solo actúa con el eFuse STRAP_JTAG_SEL grabado, que de fábrica no lo está.",
+      "como_se_confirma": "Primer arranque con la batería conectada."
+     },
+     "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
     }
    ],
    "valor": {}
@@ -1681,12 +1714,12 @@
   {
    "grupo": "D",
    "tema": "Codificación de A7, A8 y A9",
-   "supuesto": "A8 es el único buck de la placa, así que no hay riesgo de confundirlo con otro módulo igual. Lleva la flecha IN→OUT en la guía de montaje. El pin ciego o tope definitivo se agrega cuando E-01 muestre una asimetría usable. A7 (INA226) quedó sin agujero de tope (SUP-75).",
+   "supuesto": "A8 y A9 son los únicos bucks de cada placa, así que no se confunden con otro módulo igual. Van soldados (no hay tope mecánico posible: los 4 pads forman un rectángulo). Lo que protege es el procedimiento: rótulo «IN» en el cobre, pad cuadrado en IN+ y la prueba de continuidad IN+/OUT+ antes de alimentar (SUP-37). A7 (INA226) quedó sin agujero de tope (SUP-75) y va soldado.",
    "base": "Propuesta 16 de diseno_v0.3.md y open_point 23 de especificacion_v0.3.json.",
    "impacto_si_cambia": "Si no hay una asimetría usable, se decide con Matías soldar el módulo directo, lo que se desvía de DEC-13.",
    "como_se_confirma": "E-01: fotos de los módulos y medición de los componentes altos y de los agujeros libres.",
    "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A7",
     "A8",
@@ -1705,6 +1738,13 @@
       "supuesto": "En la v0.1, la huella de A8 va rotada 90° respecto de la de A9, con rótulos grandes de cobre (5V y 3V3) y la flecha IN→OUT. El pin ciego o tope definitivo se agrega cuando E-01 muestre una asimetría usable. La huella de A7 lleva dibujado un tope contra el cuerpo invertido."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "A8 es el único buck de la placa, así que no hay riesgo de confundirlo con otro módulo igual. Lleva la flecha IN→OUT en la guía de montaje. El pin ciego o tope definitivo se agrega cuando E-01 muestre una asimetría usable. A7 (INA226) quedó sin agujero de tope (SUP-75)."
+     },
+     "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
     }
    ]
   },
@@ -2037,7 +2077,7 @@
   {
    "grupo": "E",
    "tema": "Electrolíticos y condensador del BMS",
-   "supuesto": "C1: 470 µF/35 V low-ESR junto a J1/Q1. C8: 470 µF/16 V en el bus de servos (uno solo desde la v0.4). C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). C30: 47 µF/16 V en la entrada de A9. C4/C5 se quitaron en la v0.4: cada DRV8871 trae 47 µF/50 V.",
+   "supuesto": "C1: 470 µF/35 V low-ESR junto a J1/Q1. C8: 470 µF/16 V en el bus de servos. C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Desde la v0.4 no van C4/C5 (cada DRV8871 trae 47 µF/50 V) ni C30 (el mini buck trae su capacitor de entrada).",
    "base": "§8 de diseno_v0.3.md; Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]; nota 3 de la ficha del BMS, p.2 [V].",
    "impacto_si_cambia": "Si E-04 muestra sobretensión al frenar, se suma C2 (SUP-63) o más bulk.",
    "como_se_confirma": "E-04/E-08: osciloscopio sobre VM_BUS durante el frenado.",
@@ -2065,13 +2105,21 @@
       "estado": "ASUMIDO"
      },
      "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "C1: 470 µF/35 V low-ESR junto a J1/Q1. C8: 470 µF/16 V en el bus de servos (uno solo desde la v0.4). C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). C30: 47 µF/16 V en la entrada de A9. C4/C5 se quitaron en la v0.4: cada DRV8871 trae 47 µF/50 V.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
     }
    ]
   },
   {
    "grupo": "E",
    "tema": "Divisor de batería y LED de alimentación",
-   "supuesto": "Sin divisor de batería desde la v0.4: la tensión de la batería la mide el INA226 (VBS, después de F5). J20.1 queda sin conexión en las dos placas y GPIO3 queda libre. LED rojo D4 con R28 de 5,1 kΩ en VM_BUS (2,1 mA).",
+   "supuesto": "Sin divisor de batería desde la v0.4: la tensión de la batería la mide el INA226 (VBS, después de F5). J20.1 queda sin conexión en las dos placas y GPIO3 queda libre. Sin LED de encendido (D4/R28 quitados): la tensión la muestra el voltímetro.",
    "base": "Pedido del equipo del 31/10/2026 [M]: solo lo necesario; el INA226 ya mide la tensión del bus [D].",
    "impacto_si_cambia": "Si el bus I2C falla, el firmware se queda sin medida de batería.",
    "como_se_confirma": "E-02: comparar la lectura del ADC con el multímetro.",
@@ -2108,6 +2156,13 @@
       "estado": "ASUMIDO"
      },
      "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Sin divisor de batería desde la v0.4: la tensión de la batería la mide el INA226 (VBS, después de F5). J20.1 queda sin conexión en las dos placas y GPIO3 queda libre. LED rojo D4 con R28 de 5,1 kΩ en VM_BUS (2,1 mA)."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
     }
    ]
   },
@@ -2247,9 +2302,9 @@
   {
    "grupo": "F",
    "tema": "Servos",
-   "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie: protegen el GPIO si el conector JR se enchufa al revés (el GND del servo quedaría sobre la señal). Sin pull-down desde la v0.4 (R7/R8 quitadas): el firmware configura los pines apenas arranca.",
+   "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Sin resistencia en serie desde la v0.4 (R5/R6 quitadas): la señal salta el bus de masa de los servos con los puentes W6/W7; en esos mismos agujeros entra una resistencia de 1 kΩ si se quiere recuperar la protección. Sin pull-down: el firmware configura los pines apenas arranca.",
    "base": "Pedido del equipo del 31/10/2026 [M]; [DS-SERVO] p.3.",
-   "impacto_si_cambia": "Durante el arranque de la ESP32 los servos pueden moverse un instante.",
+   "impacto_si_cambia": "Con el conector JR enchufado al revés, el GND del servo queda sobre el GPIO: el pin queda en corto con masa mientras esté en alto. Desenchufar enseguida. Durante el arranque de la ESP32 los servos pueden dar un tirón.",
    "como_se_confirma": "E-05: probar el pulso y medir la temperatura de J13/J14 con el servo bloqueado.",
    "estado": "CAMBIADO",
    "fecha": "31/10/2026",
@@ -2285,6 +2340,14 @@
       "estado": "ASUMIDO"
      },
      "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie: protegen el GPIO si el conector JR se enchufa al revés (el GND del servo quedaría sobre la señal). Sin pull-down desde la v0.4 (R7/R8 quitadas): el firmware configura los pines apenas arranca.",
+      "impacto_si_cambia": "Durante el arranque de la ESP32 los servos pueden moverse un instante."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
     }
    ]
   },
@@ -2920,12 +2983,12 @@
   {
    "grupo": "I",
    "tema": "Cable entre placas (J20)",
-   "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 VBAT_ADC, 2 SERVO_IZQ, 3 INA_ALERT, 4 SERVO_DER, 5 SDA, 6 IN2_DER, 7 SCL, 8 IN1_DER, 9 3V3, 10 IN2_IZQ, 11 sin conexión en las dos placas, 12 IN1_IZQ, 13 y 14 5V_MCU, 15 y 16 GND.",
+   "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 sin conexión, 2 SERVO_IZQ, 3 INA_ALERT, 4 SERVO_DER, 5 SDA, 6 IN2_DER, 7 SCL, 8 IN1_DER, 9 3V3, 10 IN2_IZQ, 11 sin conexión, 12 IN1_IZQ, 13 y 14 5V_MCU, 15 y 16 GND.",
    "base": "cad/interconexion_v0.6.json; ruteo v0.1 de las dos placas [H]. El pin 11 quedó encerrado en la potencia por el bus I2C y en la lógica por el 5V de J26.",
    "impacto_si_cambia": "Otro orden obliga a rehacer el ruteo de las dos placas.",
    "como_se_confirma": "Antes de enchufarlo: continuidad pin 1 con pin 1 y pin 13 con pin 13 entre los dos conectores del cable. Un IDC prensado al revés une el pin n con el 17−n y lleva 5V_MCU a GPIO10 y GPIO8. Mecánica fija el largo.",
    "estado": "CAMBIADO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "especificacion",
@@ -2965,6 +3028,13 @@
       "como_se_confirma": "Mecánica fija el largo; continuidad pin a pin del cable armado."
      },
      "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "IDC macho de 2 × 8 pines a 2,54 mm en cada placa y cable plano de 16 hilos recto (pin n con pin n). 1 VBAT_ADC, 2 SERVO_IZQ, 3 INA_ALERT, 4 SERVO_DER, 5 SDA, 6 IN2_DER, 7 SCL, 8 IN1_DER, 9 3V3, 10 IN2_IZQ, 11 sin conexión en las dos placas, 12 IN1_IZQ, 13 y 14 5V_MCU, 15 y 16 GND."
+     },
+     "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
     }
    ]
   },
@@ -3103,7 +3173,7 @@
   {
    "grupo": "I",
    "tema": "Masa de la lógica en la placa de potencia",
-   "supuesto": "En la potencia v0.3 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja por A8.2 a un bus inferior hasta J15 y el lomo: el relleno queda unido al lomo por esa ruta y por la rama de D4.1. El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.11 queda sin conexión en las dos placas.",
+   "supuesto": "En la potencia v0.4 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja en x 76,5 a un bus inferior hasta J15 y el lomo; además se une al lomo por una rama en y 57,66 (la que antes iba a D4.1). El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.1 y J20.11 quedan sin conexión en las dos placas.",
    "base": "Criterio de masa en estrella (§10 de diseno_v0.3.md) adaptado al ruteo de una cara [H].",
    "impacto_si_cambia": "Unos mV de caída en el relleno pueden mover la lectura de VBAT_ADC unos 0,1 V (R23 y C14 están en esa zona). El firmware usa el INA226 como medida principal de la batería.",
    "como_se_confirma": "E-03: medir la diferencia de GND entre J20.15 y C1− con los servos en carga.",
@@ -3133,6 +3203,13 @@
       "impacto_si_cambia": "La corriente de los servos comparte unos 20 mm de cobre con la masa de la lógica."
      },
      "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "En la potencia v0.3 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja por A8.2 a un bus inferior hasta J15 y el lomo: el relleno queda unido al lomo por esa ruta y por la rama de D4.1. El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.11 queda sin conexión en las dos placas."
+     },
+     "fuente": "Repaso de la lista al cerrar la v0.4: textos desactualizados respecto de las placas"
     }
    ]
   },
@@ -3303,9 +3380,9 @@
   {
    "grupo": "I",
    "tema": "Conector del ultrasonido (J27)",
-   "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale de GPIO47 por R43 de 1 kΩ en serie. ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conviene conectarlo con un cable Dupont de 4 hilos de colores: enchufado directo entra girado y su alimentación queda invertida (el sensor se quema; la ESP32 queda protegida por R43 y R41).",
+   "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale directo de GPIO47 (R43 quitada en la v0.4). ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conectarlo con un cable Dupont de 4 hilos de colores, respetando el orden: enchufado directo entra girado.",
    "base": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V. Orden de pines del HC-SR04 (VCC, Trig, Echo, GND) [V].",
-   "impacto_si_cambia": "Con el sensor girado se invierte su alimentación; con R43 y R41 la corriente hacia los GPIO queda por debajo de 2 mA.",
+   "impacto_si_cambia": "Con el sensor girado se invierte su alimentación y el sensor se quema. GPIO21 queda protegido por R41; GPIO47 ya no tiene resistencia en serie.",
    "como_se_confirma": "Medir 3,0 V en GPIO21 con ECHO en alto y comprobar la lectura de distancia con un objeto a 20 cm.",
    "estado": "ASUMIDO",
    "fecha": "31/10/2026",
@@ -3328,6 +3405,14 @@
       "impacto_si_cambia": "Si el módulo es la versión de 3,3 V (HC-SR04P o RCWL-1601), igual funciona con 5 V; si tiene otro orden de pines, se cruza el cable."
      },
      "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale de GPIO47 por R43 de 1 kΩ en serie. ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conviene conectarlo con un cable Dupont de 4 hilos de colores: enchufado directo entra girado y su alimentación queda invertida (el sensor se quema; la ESP32 queda protegida por R43 y R41).",
+      "impacto_si_cambia": "Con el sensor girado se invierte su alimentación; con R43 y R41 la corriente hacia los GPIO queda por debajo de 2 mA."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
     }
    ]
   }

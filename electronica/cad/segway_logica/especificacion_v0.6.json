@@ -550,32 +550,6 @@
    "supuestos": [
     "SUP-82"
    ]
-  },
-  {
-   "ref": "R43",
-   "lib_id": "Device:R",
-   "value": "1k 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "conectores",
-   "dnp": false,
-   "source": "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)",
-   "status": "provisorio [H]",
-   "supuestos": [
-    "SUP-82"
-   ]
-  },
-  {
-   "ref": "C30",
-   "lib_id": "Device:C_Polarized",
-   "value": "47µ/16V",
-   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
-   "block": "logica",
-   "dnp": false,
-   "source": "Revisión independiente v0.3: capacidad local en la entrada de A9 (5V_MCU por cable)",
-   "status": "provisorio [H]",
-   "supuestos": [
-    "SUP-26"
-   ]
   }
  ],
  "nets": [
@@ -602,8 +576,7 @@
     "A9.2",
     "A9.4",
     "J27.4",
-    "R42.2",
-    "C30.2"
+    "R42.2"
    ]
   },
   {
@@ -677,8 +650,7 @@
     "J26.5",
     "J26.6",
     "A9.1",
-    "J27.1",
-    "C30.1"
+    "J27.1"
    ]
   },
   {
@@ -924,7 +896,7 @@
    "pins": [
     "A1.39",
     "J25.17",
-    "R43.1"
+    "J27.2"
    ]
   },
   {
@@ -959,14 +931,6 @@
    "pins": [
     "A1.21",
     "J24.21"
-   ]
-  },
-  {
-   "name": "US_TRIG_S",
-   "kind": "signal",
-   "pins": [
-    "R43.2",
-    "J27.2"
    ]
   },
   {

@@ -32,10 +32,10 @@ UBICACION = {
     # J27 del ultrasonido y su divisor al este, bajo la DevKitC
     # v0.4: huella del mini buck corregida (estaba espejada y era de 19 x 14 mm; el módulo es tipo Mini-360, 14,3 x 8,9).
     # IN+ (26; 91,5) y OUT+ (26; 77,2) al este, GND (IN- y OUT-) al oeste en x 17,1
-    "A9": (26.00, 91.50, 90), "C30": (32.00, 88.00, 270),
+    "A9": (26.00, 91.50, 90),     # v0.4: sin C30 (el mini buck trae su capacitor de entrada)
     # J27 vertical al oeste de la DevKitC, fuera del paso de sus USB-C (revisión v0.3); pin 1 (5V) abajo.
     # La pista de TRIG pasa por debajo del cuerpo de R41.
-    "J27": (63.50, 87.50, 180), "R41": (67.00, 82.42, 0), "R42": (93.50, 76.00, 270), "R43": (80.16, 78.00, 180),
+    "J27": (63.50, 87.50, 180), "R41": (67.00, 82.42, 0), "R42": (93.50, 76.00, 270),     # v0.4: sin R43
 }
 FIJAS = set(UBICACION) | {"H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J7", "J8", "J4"}
@@ -89,13 +89,12 @@ ESQUELETO = [
     ("3V3_MCU", W, [(38.10, 62.23), "J26.1", "J26.2"]),
     ("5V_MCU", 1.2, ["J26.5", "J26.6", (52.07, 67.31), "J20.13"]),
     # --- v0.3: 5V_MCU baja a la franja inferior y va al oeste hasta A9 y al este hasta J27
-    ("5V_MCU", 1.2, [(52.07, 67.31), (52.07, 88.00), (28.00, 88.00), "A9.1"]),     # C30.1 sobre esta pista
+    ("5V_MCU", 1.2, [(52.07, 67.31), (52.07, 88.00), (28.00, 88.00), "A9.1"]),
     ("5V_MCU", 1.2, [(52.07, 88.00), (63.50, 88.00), "J27.1"]),
     # A9 -> 3V3_MCU: sube a la esquina de la pista de 3V3 de J20.9 (W1 la une con A1.1)
     ("3V3_MCU", 1.2, ["A9.3", (26.00, 64.17), (27.94, 62.23)]),
     # Ultrasonido: TRIG (A1.39) y ECHO (A1.40) bajan por debajo de la DevKitC
-    ("US_TRIG", W, ["A1.39", (85.50, 57.15), (85.50, 78.00), "R43.1"]),
-    ("US_TRIG_S", W, ["R43.2", (70.00, 78.00), (70.00, 84.96), "J27.2"]),
+    ("US_TRIG", W, ["A1.39", (85.50, 57.15), (85.50, 78.00), (70.00, 78.00), (70.00, 84.96), "J27.2"]),     # v0.4: sin R43
     ("US_ECHO", W, ["A1.40", (90.60, 59.69), (90.60, 76.00), "R42.1"]),
     ("US_ECHO", W, [(90.60, 76.00), (90.60, 82.42), "R41.2"]),
     ("US_ECHO_5V", W, ["R41.1", "J27.3"]),
@@ -134,7 +133,7 @@ ENMIENDAS = """
 	(constraint min_resolved_spokes 1))
 
 (rule "alimentacion_expansion_solida"
-	(condition "A.Type == 'Pad' && (A.memberOfFootprint('J26') || A.memberOfFootprint('C30'))")
+	(condition "A.Type == 'Pad' && A.memberOfFootprint('J26')")
 	(constraint zone_connection solid))
 """
 
@@ -144,5 +143,5 @@ ROTULOS_PEDIDOS = [
     # v0.3
     ("5V", "J27.1", 2.0, 6), ("G", "J27.4", 2.0, 6), ("SR04", "J27", 2.0, 12),
     ("IN", "A9.1", 2.0, 7), ("OUT", "A9.3", 2.0, 7),
-    ("CABLE", "J27", 2.0, 12), ("+", "C30.1", 2.0, 5),
+    ("CABLE", "J27", 2.0, 12),
 ]
