@@ -475,7 +475,7 @@ function enviar(texto, silencioso = false) {
   if (!fuente?.enviar) { mensaje(`[sin conexión] no se mandó: ${texto}`); return colaEnvio; }
   if (!silencioso) {
     mensaje(`> ${texto}`);
-    $('mensajes').open = true;
+    verMensajes(true);
   }
   const destino = fuente;
   colaEnvio = colaEnvio.then(() => destino.enviar(texto))
@@ -535,10 +535,10 @@ $('motores-mantener').addEventListener('change', (e) => { if (!e.target.checked)
 document.addEventListener('visibilitychange', () => { if (document.hidden) frenarMotores(); });
 addEventListener('pagehide', () => frenarMotores());
 
-// La respuesta de "get" (# kp=0.8 ki=0 ...) llena las casillas de ganancias y las que tengan
-// data-param (umax en el banco de pruebas).
+// La respuesta de "get" (# kp=0.8 ki=0 ... y # lqr=1 kx=6.1 ...) llena las casillas de la tarjeta
+// Control y las que tengan data-param (umax en Motores).
 function leerParametros(texto) {
-  if (!texto.startsWith('kp=')) return;
+  if (!/^(kp|lqr)=/.test(texto)) return;
   for (const [, nombre, valor] of texto.matchAll(/(\w+)=([-+\d.eE]+)/g)) {
     const casilla = $('ganancias').elements[nombre] ?? document.querySelector(`[data-param="${nombre}"]`);
     if (casilla && document.activeElement !== casilla) casilla.value = Number(valor);
@@ -558,15 +558,23 @@ for (const boton of document.querySelectorAll('[data-comando]')) {
 $('linea-comando').onsubmit = (e) => {
   e.preventDefault();
   enviar($('texto-comando').value);
+  // tras un "set" a mano se piden los parámetros: así la página se entera del nuevo valor (ref, umax…)
+  if (/^\s*set\s/.test($('texto-comando').value)) enviar('get', true);
   $('texto-comando').select();
 };
 $('ganancias').onsubmit = async (e) => {
   e.preventDefault();
-  for (const casilla of $('ganancias').querySelectorAll('input')) {
+  for (const casilla of $('ganancias').querySelectorAll('input, select')) {
     if (casilla.value !== '') await enviar(`set ${casilla.name} ${casilla.value}`);
   }
   await enviar('get');
 };
+function verMensajes(abrir) {
+  $('consola').hidden = !abrir;
+  $('ver-mensajes').setAttribute('aria-expanded', String(abrir));
+  if (abrir) $('consola').scrollTop = $('consola').scrollHeight;
+}
+$('ver-mensajes').onclick = () => verMensajes($('consola').hidden);
 document.addEventListener('keydown', (e) => { // Esc desarma desde cualquier lado de la página
   if (e.key === 'Escape' && fuente) {
     ponerDeslizadores(0);

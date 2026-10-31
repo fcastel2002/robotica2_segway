@@ -6,12 +6,19 @@
 const VENTANA_RPM_S = 0.2;      // ventana de la derivada de los encoders: 10 muestras a 50 Hz
 const DATO_VIEJO_MS = 1000;     // sin datos por más tiempo, los valores se apagan
 const PERIODO_SERVO_MS = 100;   // como mucho 10 comandos por segundo mientras se arrastra
+const VENTANA_ARMADO_DEG = 5;   // ARM_WINDOW_DEG de board_config.h: arm solo a menos de esto de ref
 
 let ultima = {};                // última muestra, números y textos
 let ultimaLlegada = -Infinity;  // performance.now() de la última muestra
 let muestrasPorSegundo = 0;
 const historiaEnc = [];         // [{ t, l, r }] que cubren VENTANA_RPM_S
 let escalon = null;             // prueba de escalón en curso
+let refGrados = null;           // ref de la placa, de la respuesta de "get"; null sin leer
+
+alMensaje.push((texto) => { // "# kp=… ref=9.00 umax=…"
+  const m = /^kp=.*\bref=([-+\d.eE]+)/.exec(texto);
+  if (m) refGrados = Number(m[1]);
+});
 
 const LADOS = { l: 'izq', r: 'der' };
 const acotar = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -54,7 +61,7 @@ for (const el of document.querySelectorAll('.medidor')) {
   el.innerHTML = '<span></span><span class="barra"><i></i></span><output>—</output>';
   el.firstChild.textContent = nombre;
 }
-const celdas = [...document.querySelectorAll('#banco [data-col]')];
+const celdas = [...document.querySelectorAll('.vista [data-col]')]; // banco y configuración
 
 function texto(el, v) {
   if (v === undefined) return '—';
@@ -87,10 +94,10 @@ function duracion(ms) {
 
 setInterval(() => { // 10 veces por segundo, como la tabla de app.js
   const viejo = performance.now() - ultimaLlegada > DATO_VIEJO_MS;
-  $('banco').classList.toggle('viejo', viejo);
-  $('banco-aviso').hidden = !viejo;
+  document.body.classList.toggle('datos-viejos', viejo);
+  $('aviso-datos').hidden = !viejo;
   if (viejo) {
-    $('banco-aviso').textContent = fuente
+    $('aviso-datos').textContent = fuente
       ? 'Conectado, pero no llegan datos: ¿velocidad equivocada, tlm off o el robot se reinició sin encabezado? Probar «tlm on».'
       : 'Sin conexión: conectar por USB, o correr puente.py --simular para probar la página sin robot.';
   }
@@ -103,9 +110,19 @@ setInterval(() => { // 10 veces por segundo, como la tabla de app.js
     valores[`vueltas_${lado}`] = c / cpr;
     valores[`dist_${lado}_mm`] = (c / cpr) * 2 * Math.PI * radio;
   }
+  // El control y la ventana de armado usan θ − ref, no el ángulo crudo de la IMU
+  if (refGrados !== null && ultima.theta_deg !== undefined) valores.theta_rel = ultima.theta_deg - refGrados;
   for (const el of celdas) mostrar(el, valores[el.dataset.col]);
+  $('ref-actual').textContent = refGrados === null ? '—' : `${refGrados.toFixed(2)}°`;
+  const armable = $('armable');
+  if (viejo || valores.theta_rel === undefined || ultima.estado !== 'DISARMED') armable.textContent = '';
+  else {
+    const dentro = Math.abs(valores.theta_rel) < VENTANA_ARMADO_DEG;
+    armable.textContent = dentro ? 'se puede armar' : `fuera de ±${VENTANA_ARMADO_DEG}° para armar`;
+    armable.className = `etiqueta ${dentro ? 'activo' : 'alerta'}`;
+  }
 
-  const theta = ultima.theta_deg;
+  const theta = valores.theta_rel ?? ultima.theta_deg;
   $('robot-dibujo').setAttribute('transform', `rotate(${Number.isFinite(theta) ? acotar(theta, -90, 90) : 0})`);
   const imu = $('imu-estado');
   imu.textContent = ultima.ax_ms2 === undefined ? '' : Number.isNaN(ultima.ax_ms2) ? 'sin lectura' : 'ok';
@@ -281,25 +298,33 @@ for (const b of document.querySelectorAll('[data-servo]')) {
   };
 }
 
-// Al conectar se piden los parámetros: umax y los límites de los servos
-let estabaConectado = false;
-setInterval(() => {
-  if (fuente && !estabaConectado) setTimeout(() => enviar('get', true), 600); // después del "tlm on"
-  estabaConectado = Boolean(fuente);
-}, 200);
+// Al conectar se piden los parámetros (tarjeta Control, umax y límites de los servos) con la
+// primera muestra: recién ahí se sabe que la respuesta va a llegar (con el puente, antes de abrir
+// los eventos se perdería).
+let parametrosPedidos = false;
+alRecibir.push(() => {
+  if (parametrosPedidos || !fuente) return;
+  parametrosPedidos = true;
+  enviar('get', true);
+});
+setInterval(() => { if (!fuente) parametrosPedidos = false; }, 200);
 
-// ---------- Pestañas ----------
+// ---------- Menú lateral ----------
 
+const VISTAS = [...document.querySelectorAll('[data-vista]')].map((b) => b.dataset.vista);
 function mostrarVista(id) {
   for (const b of document.querySelectorAll('[data-vista]')) {
     const activa = b.dataset.vista === id;
-    b.setAttribute('aria-selected', String(activa));
+    if (activa) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
     $(b.dataset.vista).hidden = !activa;
   }
   recordar('segway.vista', id);
 }
-for (const b of document.querySelectorAll('[data-vista]')) b.onclick = () => mostrarVista(b.dataset.vista);
-mostrarVista(recuperar('segway.vista') === 'vista-graficos' ? 'vista-graficos' : 'banco');
+for (const b of document.querySelectorAll('[data-vista], [data-ir]')) {
+  b.onclick = () => mostrarVista(b.dataset.vista ?? b.dataset.ir);
+}
+const vistaGuardada = recuperar('segway.vista');
+mostrarVista(VISTAS.includes(vistaGuardada) ? vistaGuardada : 'banco');
 
 for (const id of ['cpr', 'radio']) { // dependen del motor y la rueda: se recuerdan
   const guardado = recuperar(`segway.${id}`);

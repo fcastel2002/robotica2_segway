@@ -1,13 +1,17 @@
 # Interfaz de telemetría (`gui_hmi/`)
 
-Página web para probar el Segway y ver sus variables en tiempo real. Tiene dos pestañas:
+Página web para probar el Segway y ver sus variables en tiempo real. Tiene tres secciones, que se
+eligen en el menú lateral:
 
-- **[Banco de pruebas](#banco-de-pruebas)**: cada sensor y cada actuador por separado, sin el lazo de
-  control. IMU cruda, encoders con RPM, motores a mano con prueba de escalón, servos de las patas y
-  estado del sistema.
-- **Gráficos**: un gráfico por variable, valor actual, pausa y cursor para leer valores.
+- **[Banco de pruebas](#banco-de-pruebas)**: cada sensor y cada actuador por separado, en tres grupos
+  (sensores, actuadores, control y sistema). IMU cruda, encoders con RPM, motores a mano con prueba de
+  escalón, servos de las patas, parámetros del control y estado del sistema.
+- **Gráficos**: un gráfico por variable, valor actual, ventana, pausa y cursor para leer valores.
+- **[Configuración](#configuración)**: lo que se ajusta una vez: comprobar la aplicación puente del
+  joystick y calibrar la IMU.
 
-Las dos comparten la consola con los mensajes del robot y la grabación a CSV.
+Las tres comparten la barra de arriba (conexión, **Grabar CSV**, estado del robot, **Armar**, **Parar
+motores** y **Desarmar**) y la de abajo (mensajes del robot y línea de comandos).
 
 ![Arquitectura: ESP32 → puente.py → navegador, o ESP32 → navegador por USB](diagramas/arquitectura.png)
 
@@ -70,18 +74,19 @@ cable estorba y conviene WiFi. El puente igual tiene que estar corriendo, porque
 
 ### Comandos
 
-Al conectar aparece una barra con los comandos de texto de `segway_v01`
-([lista](../firmware/segway_v01/README.md#consola)): **Desarmar** (también con **Esc** desde cualquier lado
-de la página), **Armar**, **Parar motores**, **Leer parámetros**, casillas
-de `kp`, `ki`, `kd` y `ref` que se mandan con `set` (y se llenan solas con la respuesta de `get`) y una
-línea para cualquier otro comando. Lo enviado aparece en **Mensajes del robot** precedido de `>`.
-Calibrar el giróscopo, poner los encoders a cero, los motores y los servos están en el
-[banco de pruebas](#banco-de-pruebas).
+Al conectar aparecen arriba a la derecha los comandos de seguridad de `segway_v01`
+([lista](../firmware/segway_v01/README.md#consola)), visibles desde cualquier sección: **Armar**,
+**Parar motores** y **Desarmar** (también con **Esc** desde cualquier lado de la página). Abajo, al lado
+de **Mensajes del robot**, hay una línea para cualquier otro comando; lo enviado aparece en los mensajes
+precedido de `>`. Los parámetros del control están en la tarjeta **Control** del
+[banco de pruebas](#banco-de-pruebas), y recalibrar el giróscopo (`cal`), en [Configuración](#configuración).
 
 Por USB los comandos van al puerto serie. Con el puente solo los entiende el robot simulado de
-`--simular`, que imita la consola de `segway_v01` (CSV, estados, `arm`, `disarm`, `get`, `enc reset`,
-`set umax`, `motor`: a 100 % las ruedas simuladas giran a 370 RPM con 880 cuentas por vuelta;
-`servo`: arrancan sueltos y se mueven a 90 °/s; la IMU cruda sale del ángulo simulado).
+`--simular`, que imita la consola de `segway_v01` (CSV con las mismas columnas, estados, `arm`, `disarm`,
+`get`, `enc reset`, `set` de cualquier parámetro, que `get` devuelve; `motor`: a 100 % las ruedas
+simuladas giran a 370 RPM con 880 cuentas por vuelta; `servo`: arrancan sueltos y se mueven a 90 °/s; la
+IMU cruda sale del ángulo simulado). Armado, el ángulo oscila y recibe empujones; desarmado se aquieta,
+como el robot apoyado, y así se puede probar la calibración de la IMU.
 Esc no es una parada de emergencia: depende de que el cable y la página respondan.
 
 ## Banco de pruebas
@@ -90,15 +95,19 @@ Esc no es una parada de emergencia: depende de que el cable y la página respond
 
 Para los ensayos de puesta en marcha (E-03 a E-06 del
 [plan de electrónica](../electronica/ensayos/plan_de_ensayos.md), [prueba de encoders](../firmware/docs/prueba_encoders.md)).
-No usa el lazo de equilibrio: con el robot en `DISARMED` (o en `FAULT`, si no hay IMU) se mueve
-cada cosa a mano. Los valores se apagan si pasa más de 1 s sin datos.
+Con el robot en `DISARMED` (o en `FAULT`, si no hay IMU) se mueve cada cosa a mano. Las tarjetas van en
+tres columnas fijas (sensores, actuadores, control y sistema), así no saltan de lugar cuando cambia el
+alto de alguna. Los valores se apagan si pasa más de 1 s sin datos.
+
+(La captura es anterior al menú lateral.)
 
 | Tarjeta | Qué muestra | Qué se puede hacer |
 |---|---|---|
-| **IMU** | Inclinación filtrada y su velocidad, con un dibujo del robot; acelerómetro (m/s²) y giróscopo (°/s) **crudos, en los ejes del sensor y con sesgo**; \|a\|, que quieto tiene que dar 9,81. `sin lectura` si falla el I²C | **Calibrar giróscopo** (`cal`, solo en `DISARMED`, dejarlo quieto 2 s) |
+| **IMU** | En grande, la inclinación **respecto del equilibrio** (θ − `ref`, la que usa el control; `ref` se lee con `get`, que la página pide sola después de un `set` a mano) y si está dentro de los ±5° para armar; debajo, el ángulo total de la IMU y `ref`. Velocidad angular y un dibujo del robot; acelerómetro (m/s²) y giróscopo (°/s) **crudos, en los ejes del sensor y con sesgo**; \|a\|, que quieto tiene que dar 9,81. `sin lectura` si falla el I²C | — (la calibración está en [Configuración](#configuración)) |
 | **Encoders** | Cuentas, vueltas, RPM y distancia de cada rueda | **Encoders a cero**; cargar las cuentas por vuelta (880 si el encoder es de 11 pulsos) y el radio de la rueda, que se recuerdan |
 | **Motores** | El PWM **aplicado** de verdad a cada puente H, que puede ser menos que lo pedido por `umax` | Deslizadores (ver abajo); **escalón**; **umax** |
 | **Servos de las patas** | Ángulo actual de cada servo, o `suelto` | Deslizador, pasos ±1/±5° una vez agarrado, **Ir a** un ángulo escrito y **Soltar**, todo dentro de los límites de `board_config.h` |
+| **Control** | Los parámetros que devuelve `get`: controlador (PID o LQR), `kp ki kd`, `kx kv kphi kw`, `ref`, `deadband` y `notch` | **Cargar** manda un `set` por casilla y después `get`; **Leer parámetros** (`get`). Se piden solos al conectar y se pierden al reiniciar la placa; `lqr` vale desde el próximo `arm` |
 | **Sistema** | Estado, tiempo encendido, muestras por segundo, ciclos excedidos y peor ciclo de control contra los 5000 µs del período | — |
 
 Para orientar la IMU (paso 2 de la puesta en marcha): inclinar el robot hacia adelante tiene que
@@ -142,6 +151,57 @@ El firmware no tiene tiempo de espera: aplica el último `motor` hasta que llega
 frena sola al soltar (sin "mantener"), al desconectar, al cambiar de pestaña o minimizar y al cerrarla.
 **Si se corta el cable USB con la rueda girando, nadie la frena**: desconectar la alimentación de los
 motores. Los comandos salen de a uno y en orden, así el `motor stop` del final nunca se pierde.
+
+## Configuración
+
+Lo que se ajusta una vez, separado del banco para no tocarlo por error. Lo hace
+[`web/configuracion.js`](web/configuracion.js). Nada de esta sección cambia el firmware.
+
+### Joystick (aplicación puente)
+
+El joystick de PS4 se conecta por Bluetooth a la laptop. Una **aplicación puente en la laptop** (todavía
+no existe) lo lee y manda los comandos de movimiento al robot por WiFi. La tarjeta **Joystick** solo
+comprueba que esa aplicación ande: mientras Configuración está a la vista, cada 2 s (cada 10 s si no
+responde, y en el momento con **Comprobar**) le pide `GET <dirección>/estado`. La dirección, `http://localhost:8001` de entrada, se
+recuerda. Muestra si la aplicación responde, si tiene el joystick conectado, a dónde está mandando y,
+en **Prueba**, el avance y el giro que manda (para ver que la palanca llega).
+
+Formato propuesto de la respuesta (todos los campos son opcionales; se puede cambiar cuando se escriba
+la aplicación):
+
+```json
+{
+  "joystick": { "conectado": true, "nombre": "Wireless Controller", "bateria": 80 },
+  "robot":    { "conectado": true, "destino": "192.168.4.1:4211" },
+  "mando":    { "avance": 0.25, "giro": -0.10 }
+}
+```
+
+`avance` y `giro` van de −1 a 1. La página se sirve desde otro puerto, así que la aplicación tiene que
+contestar con el encabezado `Access-Control-Allow-Origin: *`; si no, el navegador descarta la
+respuesta y la tarjeta dice que no responde.
+
+### Calibración de la IMU
+
+Se hace una vez. La página la calcula con la **telemetría cruda que ya manda `segway_v01`** (columnas
+`ax_ms2 … gz_dps` y `theta_deg`, en los ejes del sensor): promedios con el robot quieto. Cada medición
+se descarta si el robot se movió (giróscopo con más de 1 °/s de desvío o acelerómetro con más de
+0,15 m/s²); el indicador **quieto / en movimiento** del título avisa antes de medir.
+
+| Paso | Cómo | Resultado |
+|---|---|---|
+| **Sesgo del giróscopo** | Quieto, en cualquier posición, 3 s | Sesgo de x, y, z en °/s y el ruido |
+| **Acelerómetro, 6 posiciones** | Apoyarlo con cada eje del sensor hacia arriba y hacia abajo, 2 s cada una (la página detecta qué cara está arriba y rechaza si está inclinado más de 14°) | Por eje, con sus dos caras: offset = (arriba + abajo)/2 y escala = (arriba − abajo)/(2 g). El 29/10 \|a\| daba 10,31 (escala ~5 % alta) |
+| **Cero de inclinación** | Sostenido en su punto de equilibrio, con las patas en la posición de uso, 3 s | θ₀ promedio. **Usar como ref** lo manda con `set ref` (vale desde ya, se pierde al reiniciar) |
+
+El resultado queda en este navegador (`localStorage`) y **Copiar** lo pasa al portapapeles como texto y
+JSON. **Guardar en la placa** está deshabilitado hasta que el firmware pueda guardarlo en la memoria no
+volátil (NVS), que `idf.py flash` no borra (`idf.py erase-flash` sí). Mientras tanto, el firmware actual
+sigue midiendo solo el sesgo de cabeceo al encender (2 s quieto); **Recalibrar (cal)** lo repite.
+
+La telemetría trae el giróscopo con 0,1 °/s de resolución; el ruido del sensor hace que el promedio de
+150 muestras resuelva por debajo, pero el firmware que guarde la calibración debería medir el sesgo él
+mismo, a 200 Hz y con resolución completa.
 
 ## Qué tiene que mandar el ESP32
 
@@ -215,7 +275,8 @@ Cuidados del lado del robot:
 | `puente.py` | Recibe UDP, genera datos simulados, sirve la página y la abre en Chrome o Edge. Reenvía los datos al navegador con Server-Sent Events. Usa solo la biblioteca estándar |
 | `web/index.html`, `web/estilo.css` | La página |
 | `web/app.js` | Interpreta las líneas, guarda 60 s por variable, dibuja en `<canvas>`, lee USB, manda comandos, motores a mano y graba el CSV. No usa bibliotecas |
-| `web/banco.js` | Pestaña Banco de pruebas: tarjetas de sensores y actuadores, columnas calculadas (RPM, \|a\|), escalón y servos. Usa la conexión y `enviar()` de `app.js` |
+| `web/banco.js` | Banco de pruebas: tarjetas de sensores y actuadores, columnas calculadas (RPM, \|a\|), escalón, servos, pedido de parámetros al conectar y menú lateral. Usa la conexión y `enviar()` de `app.js` |
+| `web/configuracion.js` | Configuración: consulta a la aplicación puente del joystick y calibración de la IMU con la telemetría cruda |
 | `diagramas/` | Diagrama de arquitectura (`.bob` editable, `.svg`, `.png`) |
 | `capturas/` | Capturas de la página para esta documentación |
 
@@ -225,6 +286,11 @@ variable, con las variables en el orden en que aparecieron. Se abre con `readtab
 ## Qué falta
 
 - WiFi en el firmware, y que el puente reenvíe los comandos por UDP.
+- La aplicación puente del joystick (PS4 por Bluetooth a la laptop, comandos al robot por WiFi), con
+  `GET /estado` como en [Configuración](#joystick-aplicación-puente).
+- Guardar la calibración de la IMU en la NVS de la placa y aplicarla (sesgo, offset y escala del
+  acelerómetro, cero de inclinación); recién ahí se habilita **Guardar en la placa**.
+- Rehacer la captura del banco de pruebas con el menú lateral (en esta PC no hay Chrome ni Edge).
 - Probar Web Serial con la placa real (lectura y comandos): verificado solo con `--simular`.
 - Probar el banco de pruebas con la placa: verificado solo con `--simular` (HMI-003).
 - Tiempo de espera de los motores en el firmware: hoy, si se corta el cable con una rueda girando,

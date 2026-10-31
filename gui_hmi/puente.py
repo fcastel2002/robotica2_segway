@@ -60,14 +60,16 @@ def escuchar_udp(puerto: int) -> None:
 
 # Columnas de firmware/segway_v01 (CSV_HEADER en main/comms_task.c)
 ENCABEZADO = ("t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,"
-              "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps")
+              "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms")
+RADIO_MM = 40.0
 SERVO_LIM, SERVO_DPS = (0.0, 30.0), 90.0  # board_config.h: 0-30° estricto (cuatro barras) y velocidad
 
 
 def simular(frecuencia_hz: float) -> None:
     """Imita la consola de firmware/segway_v01: CSV con encabezado, mensajes con '#' y comandos.
 
-    El ángulo oscila y de vez en cuando recibe un empujón. Las ruedas obedecen a "motor":
+    Armado, el ángulo oscila y de vez en cuando recibe un empujón; desarmado se aquieta, como el
+    robot apoyado (así se puede probar la calibración de la IMU). Las ruedas obedecen a "motor":
     a 100 % giran a 370 RPM (el JGA25-370 sin carga) con 880 cuentas por vuelta. Los servos
     arrancan sueltos y van a la posición pedida a 90 °/s. La IMU cruda sale del ángulo con los
     ejes de board_config.h (x adelante, z arriba, cabeceo en y) y un sesgo de giróscopo. No es
@@ -80,7 +82,9 @@ def simular(frecuencia_hz: float) -> None:
     estado = "DISARMED"
     enc = [0.0, 0.0]
     pwm = [0.0, 0.0]  # -1..1, como motor_manual del firmware
-    umax = 1.0
+    # Parámetros de "set": los mismos nombres que el firmware; "get" los devuelve
+    par = dict(kp=0.0, ki=0.0, kd=0.0, ref=1.0, umax=1.0, deadband=0.18,
+               lqr=0.0, kx=6.10, kv=5.84, kphi=9.91, kw=1.26, notch=7.5)
     servo = [math.nan, math.nan]  # suelto al encender: posición desconocida
     servo_objetivo = [90.0, 90.0]
     servo_suelto = [True, True]
@@ -112,7 +116,7 @@ def simular(frecuencia_hz: float) -> None:
                     difundir("# error: motor [l|r] <-100..100> | motor stop")
                     continue
                 for i in lados:
-                    pwm[i] = max(-umax, min(umax, valor))
+                    pwm[i] = max(-par["umax"], min(par["umax"], valor))
             elif palabras[:2] == ["servo", "lim"]:
                 try:
                     i = {"l": 0, "r": 1}[palabras[2]]
@@ -149,28 +153,35 @@ def simular(frecuencia_hz: float) -> None:
                         if math.isnan(servo[i]):
                             servo[i] = servo_objetivo[i]  # va directo: no hay desde dónde rampear
                         servo_suelto[i] = False
-            elif palabras[:2] == ["set", "umax"] and len(palabras) == 3:
+            elif palabras[:1] == ["set"]:
                 try:
-                    umax = max(0.0, min(1.0, float(palabras[2])))
-                except ValueError:
+                    assert len(palabras) == 3 and palabras[1] in par
+                    par[palabras[1]] = float(palabras[2])
+                except (AssertionError, ValueError):
                     difundir("# error: set <param> <valor>")
                     continue
+                par["umax"] = max(0.0, min(1.0, par["umax"]))
             elif palabras == ["enc", "reset"]:
                 enc = [0.0, 0.0]
             elif palabras == ["tlm", "on"]:
                 difundir("# " + ENCABEZADO)
                 continue
             elif palabras[:1] == ["get"]:
-                difundir(f"# kp=0.0000 ki=0.0000 kd=0.0000 ref=0.00 umax={umax:.2f} deadband=0.000")
+                difundir(f"# kp={par['kp']:.4f} ki={par['ki']:.4f} kd={par['kd']:.4f} ref={par['ref']:.2f} "
+                         f"umax={par['umax']:.2f} deadband={par['deadband']:.3f}")
+                difundir(f"# lqr={int(par['lqr'] != 0)} kx={par['kx']:.3f} kv={par['kv']:.3f} "
+                         f"kphi={par['kphi']:.3f} kw={par['kw']:.3f} notch={par['notch']:.1f}")
                 difundir(f"# servo l={servo[0]:.1f} r={servo[1]:.1f} lim_l={lim[0][0]:.1f}..{lim[0][1]:.1f} "
                          f"lim_r={lim[1][0]:.1f}..{lim[1][1]:.1f}")
                 continue
             difundir(f"# ok: {palabras[0]}" if palabras else "# error: línea vacía")
 
         t = time.monotonic() - t0
-        if random.random() < 0.4 * dt:  # empujón: salto de velocidad angular
+        armado = estado == "BALANCING"
+        if armado and random.random() < 0.4 * dt:  # empujón: salto de velocidad angular
             dtheta += random.choice((-1, 1)) * random.uniform(20, 50)
-        dtheta += (-wn**2 * theta - 2 * zeta * wn * dtheta + 3 * math.sin(2 * math.pi * 0.3 * t)) * dt
+        forzado = 3 * math.sin(2 * math.pi * 0.3 * t) if armado else 0.0
+        dtheta += (-wn**2 * theta - 2 * zeta * wn * dtheta + forzado) * dt
         theta += dtheta * dt
         u = max(-1.0, min(1.0, 0.012 * theta + 0.001 * dtheta)) if estado == "BALANCING" else 0.0
         aplicado = list(pwm) if estado in ("DISARMED", "FAULT") else [u, u]  # "motor" solo ahí
@@ -185,9 +196,11 @@ def simular(frecuencia_hz: float) -> None:
         imu = (f"{g * math.sin(rad) + random.gauss(0, 0.05):.2f},{random.gauss(0, 0.05):.2f},"
                f"{g * math.cos(rad) + random.gauss(0, 0.05):.2f},{random.gauss(0, 0.3):.1f},"
                f"{dtheta + 0.8 + random.gauss(0, 0.3):.1f},{random.gauss(0, 0.3):.1f}")
+        x_mm = (enc[0] + enc[1]) / 2 / 880 * 2 * math.pi * RADIO_MM
+        v_mms = (aplicado[0] + aplicado[1]) / 2 * cuentas_por_s / 880 * 2 * math.pi * RADIO_MM
         difundir(f"{int(t * 1000)},{estado},{theta + random.gauss(0, 0.05):.2f},{dtheta:.1f},{u:.3f},"
                  f"{random.randint(180, 260)},0,{round(enc[0])},{round(enc[1])},"
-                 f"{aplicado[0]:.2f},{aplicado[1]:.2f},{servos},{imu}")
+                 f"{aplicado[0]:.2f},{aplicado[1]:.2f},{servos},{imu},{x_mm:.1f},{v_mms:.0f}")
         n += 1
         time.sleep(max(0.0, t0 + n * dt - time.monotonic()))
 
