@@ -1,5 +1,7 @@
 # Guía de montaje de las placas v0.5
 
+> **Reemplazado por [guia_montaje_v0.6.md](guia_montaje_v0.6.md) el 31/10/2026** (v0.6: placas compactadas y sin Q1).
+
 > **v0.5 (31/10/2026):** es la v0.4 final con otro nombre, para que no se confunda con los PDF de la v0.4 que circularon antes. Incluye la huella del mini buck medida con calibre (14,3 × 8,5 mm) y, en la lógica, el sensor Sharp en J27. **Descartar cualquier impresión de la v0.4.** Documento para el equipo: [placas_v0.5.pdf](placas_v0.5.pdf).
 
 Fecha: 31/10/2026. Para el equipo que arma las placas. Detalle técnico de cada placa: [potencia](segway_potencia/pcb_v0.5.md) y [lógica](segway_logica/pcb_v0.5.md). Qué comprar: [lista de compras](lista_compras_v0.5.md). Pines para el firmware: [pinout](../interfaces/pinout_firmware_placas_v0.1.md).

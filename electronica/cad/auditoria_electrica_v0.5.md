@@ -1,5 +1,7 @@
 # Control eléctrico de las placas v0.5 (lógica + potencia)
 
+> **Reemplazado por [auditoria_electrica_v0.6.md](auditoria_electrica_v0.6.md) el 31/10/2026** (v0.6: placas compactadas y sin Q1).
+
 Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resultado: **0 fallas, 2 avisos**. Complementa al ERC, el DRC y la comparación de netlist, que no detectan estos casos. No reemplaza a los ensayos de banco.
 
 | Estado | Control | Detalle |

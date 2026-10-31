@@ -1,5 +1,7 @@
 # Placa de potencia v0.5: PCB casera de una cara
 
+> **Reemplazada por la [v0.6](pcb_v0.6.md) el 31/10/2026** (placas compactadas y sin Q1).
+
 > **v0.5 (31/10/2026):** es la v0.4 final con otro nombre, para que no se confunda con los PDF de la v0.4 que circularon antes. Incluye la huella del mini buck medida con calibre (14,3 × 8,5 mm) y, en la lógica, el sensor Sharp en J27. **Descartar cualquier impresión de la v0.4.** Documento para el equipo: [placas_v0.5.pdf](../placas_v0.5.pdf).
 
 Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../planificacion/2026-10-26-decisiones-del-equipo.md). Reglas: [fabricación casera](../segway_base/reglas_fabricacion_casera.md). Supuestos: [lista](../segway_base/supuestos.md). Control eléctrico: [auditoria_electrica_v0.5.md](../auditoria_electrica_v0.5.md). Compras: [lista_compras_v0.5.md](../lista_compras_v0.5.md). Fotos de los módulos: [componentes_comprados/fotos](../../componentes_comprados/fotos/README.md).

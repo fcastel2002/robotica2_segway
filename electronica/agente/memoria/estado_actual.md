@@ -20,7 +20,8 @@ Fecha de corte: 2026-10-31. Responsable humano: Matías. Entorno: Windows 11, Cl
 - **31/10/2026: medidas con calibre (ELE-045).** Buck a 14,3 × 8,5 mm, el resto de los módulos confirmado; supuestos de batería, MPU y mecánica confirmados.
 - **31/10/2026: Sharp en J27 (ELE-044).** Pololu #2474 mirando al piso; OUT por 10k/15k a GPIO3; sin R43. Lógica con 13 piezas, potencia con 30.
 - **31/10/2026: placas v0.5 (ELE-046).** Es la v0.4 final renombrada. Documento para el equipo: [placas_v0.5.pdf](../../cad/placas_v0.5.pdf) (se regenera con agente/generar_documento_placas.py). Archivos de fabricación y STEP 3D en fabricacion/rev-0.5.
-- **Siguiente:** las placas v0.5 están listas para fabricar. Datos que pueden llegar después, con los componentes: TVS comprado (SUP-17), cables del voltímetro (SUP-39), encoders (SUP-53/55) y ubicación de las placas y largo de J20 (SUP-04). Chips de los bucks sin identificar: no usar USB con batería (SUP-26).
+- **31/10/2026: placas v0.6 (ELE-047).** Potencia 124 × 74 mm y lógica 95,25 × 59,6 mm, sin Q1 (conector polarizado en la batería). PDF [consolidado](../../cad/placas_v0.6_consolidado.pdf) y [completo](../../cad/placas_v0.6_completo.pdf) (agente/generar_documento_placas_*.py). El contorno de cada placa está en TABLERO de placas/*.py (la spec todavía dice 148 × 96 y 100 × 96).
+- **Siguiente:** las placas v0.6 están listas para fabricar. Datos que pueden llegar después, con los componentes: TVS comprado (SUP-17), cables del voltímetro (SUP-39), encoders (SUP-53/55) y ubicación de las placas y largo de J20 (SUP-04). Chips de los bucks sin identificar: no usar USB con batería (SUP-26).
 
 ## Historia anterior (hasta el 18/10/2026)
 

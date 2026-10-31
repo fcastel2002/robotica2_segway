@@ -49,6 +49,7 @@ JAVA = Path(r"D:\Usuario\Matias\Herramientas\java\jdk-25.0.4.1+1-jre\bin\java.ex
 
 OX, OY = 25.4, 25.4          # desplazamiento de la placa en la hoja (múltiplo de 2,54)
 ANCHO, ALTO, RADIO = 160.0, 100.0, 3.0
+AGUJEROS = None
 
 
 def p(*a):
@@ -406,7 +407,7 @@ def contorno(board):
 
 
 def agujeros(board, spec, libtmp):
-    for i, (x, y) in enumerate(spec["pcb"]["board"]["mounting_holes"], start=1):
+    for i, (x, y) in enumerate(AGUJEROS or spec["pcb"]["board"]["mounting_holes"], start=1):
         fp = pcbnew.FootprintLoad(str(libtmp), "MountingHole_3.2mm_M3")
         fp.SetFPID(pcbnew.LIB_ID("MountingHole", "MountingHole_3.2mm_M3"))
         fp.SetReference(f"H{i}")
@@ -907,6 +908,10 @@ def cargar_placa(nombre):
     REV = getattr(cfg, "REVISION", "0.1")
     FAB = PROY / "fabricacion" / f"rev-{REV}"
     tablero = json.loads(SPEC.read_text(encoding="utf-8"))["pcb"]["board"]
+    # v0.6: la placa puede fijar su contorno y sus agujeros (TABLERO, mismas claves que pcb.board de la spec)
+    tablero.update(getattr(cfg, "TABLERO", {}))
+    global AGUJEROS
+    AGUJEROS = tablero["mounting_holes"]
     ANCHO, ALTO, RADIO = float(tablero["width_mm"]), float(tablero["height_mm"]), float(tablero["corner_radius"])
     UBICACION, FIJAS, SOBRESALEN, ESQUELETO = cfg.UBICACION, set(cfg.FIJAS), set(cfg.SOBRESALEN), list(cfg.ESQUELETO)
     ANCHOS_RUTEO = getattr(cfg, "ANCHOS_RUTEO", ANCHOS_RUTEO)

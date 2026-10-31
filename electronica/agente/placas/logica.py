@@ -1,42 +1,63 @@
-"""Placa de lógica v0.4 (DEC-17): ubicación y ruteo completo a mano, una cara (B.Cu), GND por relleno.
+"""Placa de lógica v0.6 compacta: ubicación y ruteo completo a mano, una cara (B.Cu), GND por relleno.
 
 Coordenadas en mm desde la esquina superior izquierda del contorno, vista desde la cara de componentes;
 (x, y) = pad 1, rotación en grados.
 
-Topología (el mapa de pines de dividir_v06_dos_placas.py está elegido para esto):
-- A1 vertical a la derecha, antena arriba (sin cobre alrededor), USB-C hacia el borde inferior.
-- J20: la columna par queda a la altura de A1.15-22 (ocho pistas rectas). La impar rodea el conector:
-  J20.1 -> A1.13 (VBAT), J20.3 -> A1.12 (ALERT), J20.5 -> SDA y J20.7 -> SCL pasan por los pines 4 y 3
-  del MPU y siguen a A1.10 y A1.9. INT (A2.8) sale del lado de adentro hacia A1.11.
-- Banda superior: A1.4-8 suben 6,35 mm (para pasar sobre los agujeros del MPU) y van al oeste: J7 A/B,
-  paro, J8 A/B. El riel de 3V3 de A1.1 corre por arriba de la banda y alimenta J7.1.
-- 3V3 sale de A9 a la mitad de J20.9 (MPU, J8.4, J26 y los INA por el cable). Las dos mitades de 3V3 se unen con el puente W1.
-- GND por relleno. La cara bajo el MPU queda encerrada por SCL y 3V3: puente W2 al relleno general.
+Planta (v0.6, compactada de 100 x 96 a ANCHO x ALTO):
+- A1 vertical al este con J24/J25 pegadas. El alto de la placa es el de la DevKitC: la antena sobresale del borde
+  superior (sin cobre debajo ni alrededor) y los dos USB-C quedan sobre el borde inferior.
+- Al este de J25 queda una franja libre (los agujeros M3 de esa esquina no pueden pisar la tira); lleva los rótulos.
+- Borde superior: J8, J4 y J7 con la entrada del cable hacia afuera. Sus pistas bajan a A1.4-8.
+- J20 junto a J24, un paso más arriba que A1.15: la columna par baja 2,54 mm en diagonal hasta A1.15-22.
+- A2 (MPU) girada 90° a la izquierda de J20: SDA y SCL van derecho de A2.4/A2.3 a J20.5/J20.7.
+- R41/R42 arriba de J20: cruzan por debajo a INA_ALERT, INT, SDA y SCL (que pasan entre sus pads) y sacan
+  SHARP_OUT y GND del lazo que forman ALERT, J20 y la tira J24.
+- Columna oeste: J26 arriba, A9 (buck de 3,3 V) abajo. 5V_MCU llega por el corredor bajo A2 y sube por el borde
+  oeste; 3V3_MCU baja de J8.4 por x 16,8 hasta A9.OUT+ y el corredor que lleva a A2.1 y J20.9. Entre los pads de
+  A9 no pasa ninguna pista: ahí van los rótulos IN y OUT.
+- J27 (Sharp) arriba de A2, al lado del divisor; no queda en el paso del cable USB-C.
+- Puentes: W1 une los sectores de GND que encierran las bajadas del borde superior (J7.4, J8.1/J4.1, R42.2, J26)
+  y llega al relleno general por J27.4; W2 une A2.2 con J20.15 sobre el corredor; W3 lleva 5V_MCU de la columna
+  oeste a J27 sobre la bajada de 3V3; W4 une A9.IN- con la franja sur.
 """
 
 PROYECTO = "segway_logica"
-REVISION = "0.5"
+REVISION = "0.6"
 SPEC = "especificacion_v0.6.json"
 
+P = 58.0                     # x de la hilera izquierda de A1 (pines 1-22)
+Y1 = 3.1                     # y de A1.1: pad a 2,2 mm del borde superior; la antena queda afuera
+ALTO = 59.6                  # A1.22 a 2,26 mm del borde inferior (USB-C en el borde)
+ANCHO = P + 37.25            # J25 y los agujeros M3 del este sin pisarse
+TABLERO = {"width_mm": ANCHO, "height_mm": ALTO, "corner_radius": 3.0,
+           "mounting_holes": [[4, 4], [ANCHO - 4, 4], [4, ALTO - 4], [ANCHO - 4, ALTO - 4]]}
+
+
+def yA(k):
+    """y del pin k de la hilera izquierda de A1 (y de J24.k)."""
+    return round(Y1 + 2.54 * (k - 1), 2)
+
+
+XJ = P - 2.54                # tira J24
+XJ20 = P - 10.16             # columna impar de J20
+XC = P - 23.23               # columna de pines de A2 (rot 90; A2.1 abajo, A2.8 arriba)
+XAL = XC + 2.5               # bajada de INA_ALERT entre A2 y J20
+XR41, XR42 = XC + 4.70, XC + 7.80
+YRI, YRO = 33.9, 23.74       # pads de R41/R42 dentro y fuera del lazo de ALERT
+X3V3 = 16.8                  # bajada de 3V3_MCU por la columna oeste
+X5V = 2.6                    # subida de 5V_MCU por el borde oeste
+Y5V = 52.2                   # 5V_MCU bajo la fila IN de A9 (sube a 51,2 lejos de H3)
 UBICACION = {
-    "A1": (68.58, 16.51, 0),
-    "J20": (58.42, 52.07, 0),
-    "A2": (33.02, 44.45, 0),
-    # Borde oeste, entrada de cable hacia afuera (rotación 270: pin 1 arriba)
-    "J7": (7.62, 13.335, 270), "J4": (7.62, 28.04, 270), "J8": (7.62, 36.83, 270),
-    # v0.4: sin R13-R16 ni R24 (pull-ups internas de la ESP32)
-    # Expansión (ELE-037): tiras hembra pegadas a cada hilera de A1 y alimentación para sensores
-    "J24": (66.04, 16.51, 0), "J25": (96.52, 16.51, 0),
-    "J26": (38.10, 66.04, 90),
-    # v0.3 (franja inferior nueva, y 72-94): A9 buck de 3,3 V vertical al oeste (IN+ abajo, OUT+ arriba, GND al este),
-    # J27 del ultrasonido y su divisor al este, bajo la DevKitC
-    # v0.4: huella del mini buck corregida (estaba espejada y era de 19 x 14 mm; el módulo es tipo Mini-360, 14,3 x 8,5 medido con calibre).
-    # IN+ (26; 91,5) y OUT+ (26; 77,2) al este, GND (IN- y OUT-) al oeste en x 17,5
-    "A9": (26.00, 91.50, 90),     # v0.4: sin C30 (el mini buck trae su capacitor de entrada)
-    # J27 vertical al oeste de la DevKitC, fuera del paso de sus USB-C (revisión v0.3).
-    # v0.4 (ELE-044): Sharp GP2Y0A60SZLF en el orden del carrier, pin 1 (EN, sin conexión) arriba; VCC (pin 3) queda
-    # en la línea del 5V que viene del oeste y GND (pin 4) en la franja sur. El divisor R41/R42 sube a GPIO3 (A1.13).
-    "J27": (63.50, 82.92, 0), "R41": (67.00, 85.46, 0), "R42": (80.16, 80.00, 180),
+    "A1": (P, Y1, 0), "J24": (XJ, Y1, 0), "J25": (P + 27.94, Y1, 0),
+    "J20": (XJ20, yA(14), 0),
+    "A2": (XC, yA(14) + 12.70, 90),
+    "R41": (XR41, YRO, 270), "R42": (XR42, YRI, 90),
+    # Borde superior, entrada del cable hacia afuera (rot 180: pin 1 al este)
+    "J8": (28.44, 5.5, 180), "J4": (32.53, 5.3, 0), "J7": (P - 6.23, 5.5, 180),
+    # A9 vertical: IN+ (cuadrado) abajo a la derecha, OUT+ arriba a la derecha, IN- y OUT- al oeste
+    "A9": (14.1, 45.5, 90),
+    "J26": (6.0, 12.0, 0),
+    "J27": (P - 31.38, 26.6, 270),
 }
 FIJAS = set(UBICACION) | {"H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J7", "J8", "J4"}
@@ -45,87 +66,78 @@ SOBRESALEN = {"J7", "J8", "J4"}
 HILERA_DER = ["GND", "GPIO43", "GPIO44", "GPIO1", "GPIO2", "GPIO42", "GPIO41", "GPIO40", "GPIO39", "GPIO38", "GPIO37",
               "GPIO36", "GPIO35", "GPIO0", "GPIO45", "GPIO48", "GPIO47", "GPIO21", "GPIO20", "GPIO19", "GND", "GND"]
 W = 1.0          # señales y 3V3 (LOGICA mínimo 1,0)
-ESQUELETO = [
-    # --- 3V3 de A1.1 por el borde superior
-    ("3V3_MCU", W, ["A1.1", "J24.1", (64.77, 16.51), (64.77, 10.16), (8.89, 10.16), "J7.1"]),
-    ("3V3_MCU", W, [(22.86, 10.16), (22.86, 12.70)]),
-    # --- Banda: A1.4-8 al oeste
-    ("ENC_IZQ_A", W, ["A1.4", "J24.4", (64.00, 24.13), (57.65, 17.78), (10.80, 17.78), "J7.2"]),
-    ("ENC_IZQ_B", W, ["A1.5", "J24.5", (64.00, 26.67), (57.65, 20.32), "J7.3"]),
-    ("PARO_CONT", W, ["A1.6", "J24.6", (64.00, 29.21), (57.65, 22.86), (12.70, 22.86), (12.70, 32.64), "J4.2"]),
-    ("ENC_DER_A", W, ["A1.7", "J24.7", (64.00, 31.75), (57.65, 25.40), (15.24, 25.40), (15.24, 40.33), "J8.2"]),
-    ("ENC_DER_B", W, ["A1.8", "J24.8", (64.00, 34.29), (57.65, 27.94), (17.78, 27.94), (17.78, 43.83), "J8.3"]),
-    # --- 3V3 de J20.9: MPU, J8 y pull-ups de J8
-    ("3V3_MCU", W, [(22.86, 30.48), (25.40, 33.02), (25.40, 35.56), (27.94, 38.10), (27.94, 62.23), "J20.9"]),
-    ("3V3_MCU", W, [(27.94, 44.45), "A2.1"]),
-    # --- GND: cortos desde los pads hacia el relleno
-    ("GND", W, ["J4.1", "J7.4", (3.30, 23.835)]),     # J4: pads para soldar el cable del paro (v0.2)
-    ("GND", W, ["J8.1", (3.30, 36.83)]),
-    ("GND", W, ["A2.2", (35.56, 50.80)]),
-    ("3V3_MCU", W, [(27.94, 47.33), "J8.4"]),
-    # --- I2C a través del MPU e INT
-    ("I2C_SCL", W, ["J20.7", (38.10, 59.69), "A2.3", (38.10, 36.83), "J24.9", "A1.9"]),
-    ("I2C_SDA", W, ["J20.5", (40.64, 57.15), "A2.4", (40.64, 39.37), "J24.10", "A1.10"]),
-    ("IMU_INT", W, ["A2.8", (50.80, 41.91), "J24.11", "A1.11"]),
-    # --- Rodeo superior de la columna impar de J20
-    ("DIST_SUELO", W, ["J24.13", "A1.13"]),       # v0.4: GPIO3 (ADC1_CH2) lee el Sharp de J27 (ELE-044)
-    ("INA_ALERT", W, ["J20.3", (55.88, 54.61), (55.88, 44.45), "J24.12", "A1.12"]),
-    # --- Columna par de J20 en línea con A1.15-22
-    ("SERVO_IZQ_MCU", W, ["J20.2", "J24.15", "A1.15"]),
-    ("SERVO_DER_MCU", W, ["J20.4", "J24.16", "A1.16"]),
-    ("IN2_DER_MCU", W, ["J20.6", "J24.17", "A1.17"]),
-    ("IN1_DER_MCU", W, ["J20.8", "J24.18", "A1.18"]),
-    ("IN2_IZQ_MCU", W, ["J20.10", "J24.19", "A1.19"]),
-    ("IN1_IZQ_MCU", W, ["J20.12", "J24.20", "A1.20"]),
-    ("5V_MCU", 1.2, ["J20.13", "J20.14"]),
-    ("5V_USB", 1.0, ["J24.21", "A1.21"]),          # v0.3: el pin 5V de la DevKitC ya no se alimenta desde el cable
-    ("GND", 1.2, ["J20.15", "J20.16", "J24.22", "A1.22"]),
-    # --- Expansión: pines de A1 sin pista propia, unidos a su tira
-    ("3V3_MCU", W, ["J24.2", "A1.2"]),
+W5 = 1.2         # 5V_MCU y GND de J20
+# Columna par de J20 (J20.2k) a A1.(14+k): cada pista baja 2,54 mm en diagonal entre J20 y J24
+PARES = ["SERVO_IZQ_MCU", "SERVO_DER_MCU", "IN2_DER_MCU", "IN1_DER_MCU", "IN2_IZQ_MCU", "IN1_IZQ_MCU"]
+JOG = [(n, W, [f"J20.{2 * k}", (XJ20 + 3.81, yA(13 + k)), (XJ - 1.27, yA(14 + k)), f"J24.{14 + k}", f"A1.{14 + k}"])
+       for k, n in enumerate(PARES, start=1)]
+# Puentes de alambre (cara de componentes, rectos)
+WG_N, WG_J7, WG_J8, WG_Q, WG_O = (P - 12.4, 23.2), (P - 16.6, 12.0), (P - 25.0, 12.0), (19.12, 12.5), (11.5, 17.0)
+WG_A2, WG_J20 = (P - 16.5, 46.3), (P - 16.5, 55.0)
+W5_O, W5_Q = (4.5, 27.5), (P - 36.46, 23.3)
+WG_A9, WG_S = (9.6, 49.8), (9.85, 55.4)
+ESQUELETO = JOG + [
+    ("GND", W5, ["J20.16", (XJ20 + 3.81, yA(21)), (XJ - 1.27, yA(22)), "J24.22", "A1.22"]),
+    ("GND", W5, ["J20.15", "J20.16"]),
+    ("5V_MCU", W5, ["J20.13", "J20.14"]),
+    ("5V_USB", W, ["J24.21", "A1.21"]),          # el pin 5V de la DevKitC no se alimenta desde el cable
+    # --- Expansión: pines de A1 sin otra pista, unidos a su tira
+    ("3V3_MCU", W, ["J24.1", "A1.1"]), ("3V3_MCU", W, ["J24.2", "A1.2", "J24.2", "J24.1"]),
     ("RST", W, ["J24.3", "A1.3"]),
-    ("GPIO46", W, ["J24.14", "A1.14"]),
+    ("GND", W5, ["A1.22", (P + 3.0, yA(22))]),    # A1.22 al relleno entre las hileras (no solo por la DevKitC)
+    ("GPIO46", W, ["J24.14", "A1.14"]), ("DIST_SUELO", W, ["J24.13", "A1.13"]),
 ] + [(n, W, [f"A1.{22 + k}", f"J25.{k}"]) for k, n in enumerate(HILERA_DER, start=1)] + [
-    # --- J26 (1-2 3V3, 3-4 GND, 5-6 5V): 3V3 baja del riel de J20.9; GND por el relleno de abajo;
-    #     5V_MCU sale de J20.13 hacia el oeste
-    ("3V3_MCU", W, [(38.10, 62.23), "J26.1", "J26.2"]),
-    ("5V_MCU", 1.2, ["J26.5", "J26.6", (52.07, 67.31), "J20.13"]),
-    # --- v0.3: 5V_MCU baja a la franja inferior y va al oeste hasta A9 y al este hasta J27
-    ("5V_MCU", 1.2, [(52.07, 67.31), (52.07, 88.00), (28.00, 88.00), "A9.1"]),
-    ("5V_MCU", 1.2, [(52.07, 88.00), "J27.3"]),
-    # A9 -> 3V3_MCU: sube a la esquina de la pista de 3V3 de J20.9 (W1 la une con A1.1)
-    ("3V3_MCU", 1.2, ["A9.3", (26.00, 64.17), (27.94, 62.23)]),
-    # v0.4 (ELE-044): Sharp. OUT (J27.2) -> R41 -> nodo del divisor (R42 a GND) -> GPIO3 (A1.13), que baja por
-    # debajo de la DevKitC, al este de su hilera izquierda
-    ("SHARP_OUT", W, ["J27.2", "R41.1"]),
-    ("DIST_SUELO", W, ["R41.2", (80.16, 85.46), "R42.1"]),
-    ("DIST_SUELO", W, ["A1.13", (72.00, 46.99), (72.00, 72.00), (80.16, 72.00), "R42.1"]),
+    # --- Bornes y paro del borde superior: cada uno baja hasta la fila de su pin de A1
+    ("ENC_IZQ_A", W, ["J7.2", (P - 9.73, yA(4)), "J24.4", "A1.4"]),
+    ("ENC_IZQ_B", W, ["J7.3", (P - 13.23, yA(5)), "J24.5", "A1.5"]),
+    ("PARO_CONT", W, ["J4.2", (37.13, yA(6)), "J24.6", "A1.6"]),
+    ("ENC_DER_A", W, ["J8.2", (24.94, yA(7)), "J24.7", "A1.7"]),
+    ("ENC_DER_B", W, ["J8.3", (21.44, yA(8)), "J24.8", "A1.8"]),
+    # --- I2C, INT, ALERT y DIST. Al pasar entre los pads de R41/R42 van a 1,7 mm de paso
+    ("I2C_SCL", W, ["J20.7", "A2.3", (XC - 4.2, yA(14) + 7.62), (XC - 4.2, YRO + 2.2), (XJ - 7.48, YRO + 2.2),
+                    (XJ - 4.96, yA(9)), "J24.9", "A1.9"]),
+    ("I2C_SDA", W, ["J20.5", "A2.4", (XC - 2.5, yA(14) + 5.08), (XC - 2.5, YRO + 3.9), (XJ - 5.14, YRO + 3.9),
+                    (XJ - 3.46, yA(10)), "J24.10", "A1.10"]),
+    ("IMU_INT", W, ["A2.8", (XC, YRO + 5.6), (XJ - 2.98, YRO + 5.6), (XJ - 2.14, yA(11)), "J24.11", "A1.11"]),
+    ("INA_ALERT", W, ["J20.3", (XAL, yA(15)), (XAL, yA(12)), "J24.12", "A1.12"]),
+    # --- Divisor del Sharp (ELE-044): GPIO3 (A1.13) -> R42 a GND y R41 a SHARP_OUT (J27.2); J27.1 sin conexión
+    ("DIST_SUELO", W, ["J24.13", (XR42 + 1.4, yA(13)), "R42.1", "R41.2"]),
+    ("SHARP_OUT", W, ["R41.1", (P - 33.92, YRO), "J27.2"]),
+    # --- 3V3_MCU: riel superior de J8.4 a A1.1 y J7.1; bajada por X3V3 a J26, A9.OUT+ y el corredor bajo A2
+    ("3V3_MCU", W, ["J8.4", (17.94, 3.0), (XJ, 3.0), "J24.1"]),
+    ("3V3_MCU", W, ["J7.1", (P - 6.23, 3.0)]),
+    ("3V3_MCU", W, ["J8.4", (X3V3, 8.0), (X3V3, 51.6), (XC, 51.6), "A2.1"]),
+    ("3V3_MCU", W, [(X3V3, 12.0), "J26.1", "J26.2"]),
+    ("3V3_MCU", W, ["A9.3", (X3V3, 31.2)]),
+    ("3V3_MCU", W, ["J20.9", (P - 12.6, yA(18)), (P - 12.6, yA(19)), "A2.1"]),
+    # --- 5V_MCU: J20.13 -> corredor bajo A2 -> A9.IN+ -> borde oeste -> J26; el puente W3 lo lleva a J27
+    ("5V_MCU", W5, ["J20.13", (XC + 1.83, yA(20)), (XC + 1.83, 53.6), (16.0, 53.6), (14.1, Y5V), (7.5, Y5V), (5.6, 51.2), (X5V, 51.2),
+                    (X5V, 24.7), "J26.6", "J26.5"]),
+    ("5V_MCU", W5, [(14.1, Y5V), "A9.1"]),
+    ("5V_MCU", W5, [(X5V, W5_O[1]), W5_O]),
+    ("5V_MCU", W5, [W5_Q, "J27.3"]),
+    # --- GND: cortos desde los pads hasta su relleno o su puente
+    ("GND", W, ["J8.1", "J4.1", WG_J8]), ("GND", W, ["J7.4", WG_J7]), ("GND", W, ["R42.2", WG_N]),
+    ("GND", W, [(XC - 5.27, yA(19) - 2.54), "A2.2", WG_A2]), ("GND", W5, ["J20.15", WG_J20]),
+    ("GND", W, ["J27.4", (18.5, 28.0), (18.5, 37.0), (20.5, 38.0)]),
+    ("GND", W, [WG_Q, (19.1, 24.0), "J27.4"]),     # el puente W1 llega a GND por J27.4 (no por la masa interna de A9)
+    ("GND", W, ["J26.3", "J26.4", (9.5, 19.62)]), ("GND", W, ["A9.2", WG_A9]), ("GND", W, ["A9.4", (7.6, 27.4)]),
 ]
-# Puentes de alambre del lado de componentes (pads de 2,2 mm, taladro 0,9)
 PUENTES = [
-    ("3V3_MCU", [(22.86, 12.70), (22.86, 30.48)]),     # riel superior <-> 3V3 de J20.9
-    ("GND", [(33.02, 58.42), (33.02, 66.04)]),         # cara bajo el MPU <-> relleno general
-    ("GND", [(49.50, 72.00), (55.00, 77.00)]),         # v0.3: oeste <-> este sobre el 5V que baja a la franja inferior
-    ("GND", [(60.00, 84.00), (60.00, 91.00)]),         # v0.3: centro <-> franja sur (J27, R42) sobre el 5V horizontal
-    ("GND", [(23.50, 68.00), (29.00, 68.00)]),         # v0.4: oeste (A9, encoders) <-> centro sobre la salida 3V3 de A9
+    ("GND", [WG_N, WG_J7, WG_J8, WG_Q, WG_O]),     # sectores entre las bajadas del borde superior y J26
+    ("GND", [WG_A2, WG_J20]),                      # A2.2 y su lado del corredor <-> J20.15 sobre 3V3 y 5V
+    ("5V_MCU", [W5_O, W5_Q]),                      # J26 -> J27 sobre la bajada de 3V3
+    ("GND", [WG_A9, WG_S]),                        # A9.IN- <-> franja sur sobre el 5V
 ]
 # Sin relleno alrededor de la antena (además de la zona prohibida de la huella)
-SIN_RELLENO = [[(70.0, 0.5), (99.5, 0.5), (99.5, 28.0), (70.0, 28.0)]]
+SIN_RELLENO = [[(P + 1.4, 0.5), (ANCHO - 0.5, 0.5), (ANCHO - 0.5, Y1 + 11.5), (P + 1.4, Y1 + 11.5)]]
 RUTEAR = False
 ZONAS = [("GND", "placa", 0)]
 
-# Rótulos en B.Cu y escala de control de 50 mm (reglas_fabricacion_casera.md §6), en el relleno inferior
-# v0.4: el título se acortó; «SEGWAY LOGICA» tocaba el pad OUT+ de A9 en su nueva posición
-ROTULOS = [("LOGICA v0.5", (40.00, 77.00), 2.0), ("LADO COBRE", (40.00, 80.80), 2.0),
-    # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py
-    # Los de las franjas GND del borde oeste (V de J7 y J8, ENC DER) y del pasillo bajo J26 (5V) partían el relleno:
-    # se sacaron; esos pines quedan rotulados en la guía de montaje
-    ("ENC IZQ", (14.62, 6.59), 2.0, 0), ("G", (11.62, 36.83), 2.0, 0),
-    ("1", (52.92, 52.07), 2.0, 0),
-    # v0.3: ultrasonido y buck de 3,3 V
-    # v0.4: "5V" y "CABLE" de J27 partían el GND (franja sur y paso entre J20 y la DevKitC); J27 va en la guía
-    ("IN", (21.75, 91.50), 2.0, 90), ("OUT", (21.75, 77.20), 2.0, 90),     # entre los dos pads de cada borde; el cuadrado es IN+     # A9 (v0.4)     # J27 y A9 (v0.3); la "G" de J27.4 partía el GND
-]
-ESCALA = None     # v0.3: sus marcas cortaban la franja sur de GND; se mide el contorno (100 x 96 mm)
+# Rótulos en B.Cu: título en la franja libre al este de J25; IN/OUT de A9 entre los pads de cada borde
+ROTULOS = [("LOGICA v0.6", (P + 31.0, 31.0), 2.0, 90), ("LADO COBRE", (P + 33.9, 31.0), 2.0, 90),
+           ("IN", (9.85, 45.5), 2.0, 90), ("OUT", (9.85, 31.2), 2.0, 90)]
+ESCALA = None
 
 # Los pads de GND de las tiras de expansión ya llegan por pista a su vecino de A1: alcanza con un rayo
 ENMIENDAS = """
@@ -137,11 +149,3 @@ ENMIENDAS = """
 	(condition "A.Type == 'Pad' && A.memberOfFootprint('J26')")
 	(constraint zone_connection solid))
 """
-
-# Rótulos de cobre pedidos (SUP-14): ubicar_rotulos.py busca el lugar y el resultado va a ROTULOS.
-ROTULOS_PEDIDOS = [
-    ("ENC IZQ", "J7", 2.0, 12), ("G", "J8.1", 2.0, 5), ("1", "J20.1", 2.0, 5),
-    # v0.3
-    # v0.4: los rótulos de J27 partían el GND; su orden de pines va en la guía de montaje
-    ("IN", "A9.1", 2.0, 7), ("OUT", "A9.3", 2.0, 7),
-]

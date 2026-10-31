@@ -25,7 +25,7 @@ import pcbnew
 
 RAIZ = Path(__file__).resolve().parents[2]
 CAD = RAIZ / "electronica" / "cad"
-SALIDA = CAD / "auditoria_electrica_v0.5.md"
+SALIDA = CAD / "auditoria_electrica_v0.6.md"
 OX = OY = 25.4
 
 ESPERADO = {
@@ -37,8 +37,9 @@ ESPERADO = {
         # v0.4: pin 5 = SDA y pin 6 = SCL en el módulo comprado (foto del 31/10/2026)
         "A7": {"1": "VM_LOG_F", "2": "VM_LOG", "3": "VM_LOG", "4": "INA_ALERT", "5": "I2C_SDA", "6": "I2C_SCL", "7": "GND", "8": "3V3_MCU"},
         "A8": {"1": "VM_LOG", "2": "GND", "3": "5V_MCU", "4": "GND"},
-        "Q1": {"1": "Q_POL_G", "2": "VBAT_SW", "3": "VM_BUS"},
-        "D1": {"1": "VM_BUS", "2": "GND"}, "D3": {"1": "VM_BUS", "2": "Q_POL_G"},
+        # v0.6: sin protección contra polaridad invertida (Q1, R29, D3); J3.2 alimenta directo VM_BUS
+        "J3": {"1": "VBAT_F", "2": "VM_BUS"},
+        "D1": {"1": "VM_BUS", "2": "GND"},
         "J18": {"1": "GND", "2": "VM_LOG_F"},
         "C1": {"1": "VM_BUS", "2": "GND"},
         "C8": {"1": "V_SERVO", "2": "GND"},
@@ -239,7 +240,7 @@ def main():
         "fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08")
 
     # Informe
-    lineas = ["# Control eléctrico de las placas v0.5 (lógica + potencia)", "",
+    lineas = ["# Control eléctrico de las placas v0.6 (lógica + potencia)", "",
               f"Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resultado: **{fallas} fallas, {avisos} avisos**. "
               "Complementa al ERC, el DRC y la comparación de netlist, que no detectan estos casos. No reemplaza a los ensayos de banco.", "",
               "| Estado | Control | Detalle |", "|---|---|---|"]

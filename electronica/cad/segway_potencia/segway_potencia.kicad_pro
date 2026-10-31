@@ -411,14 +411,6 @@
       },
       {
         "netclass": "BATERIA_BUS",
-        "pattern": "/VBAT_SW"
-      },
-      {
-        "netclass": "BATERIA_BUS",
-        "pattern": "VBAT_SW"
-      },
-      {
-        "netclass": "BATERIA_BUS",
         "pattern": "/VM_BUS"
       },
       {
@@ -552,6 +544,110 @@
       {
         "netclass": "LOGICA",
         "pattern": "3V3_MCU"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/t"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "t"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/o"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "o"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/d"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "d"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/a"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "a"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/s"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "s"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/ "
+      },
+      {
+        "netclass": "Default",
+        "pattern": " "
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/l"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "l"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/e"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "e"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/m"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "m"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/á"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "á"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/("
+      },
+      {
+        "netclass": "Default",
+        "pattern": "("
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/ñ"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "ñ"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "/)"
+      },
+      {
+        "netclass": "Default",
+        "pattern": ")"
       }
     ]
   },

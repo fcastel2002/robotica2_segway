@@ -176,13 +176,16 @@ def placa(nombre, refs):
 #   Pololu): R41 10k / R42 15k lo bajan a 2,2 V (5 V en el peor caso -> 3,0 V) y van a GPIO3, el ADC1 libre fuera de la
 #   zona de la antena. Sale R43 (ya no hay TRIG); GPIO47 y GPIO21 quedan libres en la expansión.
 QUITAR_V04 = {"potencia": {"C4", "C5", "R1", "R2", "R3", "R4", "R35", "R36", "R37", "R38", "R7", "R8", "C9", "R22", "R23", "C14",
-                           "D4", "R28"},
+                           "D4", "R28", "Q1", "R29", "D3"},
               "logica": {"R13", "R14", "R15", "R16", "R24", "C30", "R43"}}
 SHARP = {"value": "Sharp GP2Y0A60SZLF (Pololu 2474) 1=EN 2=OUT 3=VCC 4=GND",
          "source": "Matías, 31/10/2026 [M]: Pololu #2474 en lugar del HC-SR04, mirando al suelo para detectar escalones; orden de pines de la foto del carrier",
          "status": "v0.4 [M]: EN sin conexión (pull-up de 10 kΩ en el carrier); OUT por el divisor R41/R42 a GPIO3 (SUP-82)"}
 DIVISOR = "Divisor de la salida del Sharp: 3,6 V x 15k / 25k = 2,2 V en GPIO3; 5 V en el peor caso -> 3,0 V (SUP-82)"
-UNIR_V04 = {"potencia": {"IN1_IZQ": "IN1_IZQ_MCU", "IN2_IZQ": "IN2_IZQ_MCU", "IN1_DER": "IN1_DER_MCU", "IN2_DER": "IN2_DER_MCU"},
+# - v0.6 (Matías, 31/10/2026): la batería se conecta con un conector polarizado en un cable corto a J1; sale la
+#   protección contra polaridad invertida (Q1, R29, D3) y el interruptor J3 alimenta directo VM_BUS.
+UNIR_V04 = {"potencia": {"IN1_IZQ": "IN1_IZQ_MCU", "IN2_IZQ": "IN2_IZQ_MCU", "IN1_DER": "IN1_DER_MCU", "IN2_DER": "IN2_DER_MCU",
+                         "VBAT_SW": "VM_BUS"},
             "logica": {}}
 
 
@@ -222,6 +225,18 @@ def cambios_v04(s, nombre):
                 g["justification"] = (g.get("justification", "") + "; v0.4: pull-up interna de la ESP32").lstrip("; ")
     if nombre == "logica":
         sharp_v04(s)
+    if nombre == "potencia":
+        # v0.6: sin Q1, la barra VM_BUS nace en J3.2; J1 recibe el cable con conector polarizado
+        s["fuentes_power"].pop("VBAT_SW", None)
+        s["fuentes_power"]["VM_BUS"] = "J3.2"
+        for nc in s["pcb"]["netclasses"]:
+            nc["nets"] = [n for n in nc["nets"] if n != "VBAT_SW"]
+            if nc["name"] == "BATERIA_BUS":
+                nc["nota"] = "Barra VM_BUS y entrada J1 → F1 → J3 de ≥4,5 mm efectivos (F1 = 15 A, SUP-46). v0.6: sin Q1."
+        for c in s["components"]:
+            if c["ref"] == "J1":
+                c["status"] = ("v0.6 [M]: bornera de 5,08 mm; la batería llega por un cable corto con conector polarizado (SUP-44). "
+                               "Sin protección electrónica: medir una vez que el + llegue al pin 2")
     s["revision_pcb_v04"] = ("INA226 con SDA/SCL corregidos, huella del mini buck corregida (estaba espejada) y sin los "
                              "componentes que los módulos ya resuelven (fotos y pedido del equipo del 31/10/2026)")
 

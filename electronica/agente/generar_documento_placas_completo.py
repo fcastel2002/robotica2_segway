@@ -1,4 +1,4 @@
-"""Documento consolidado de las placas v0.5 para el equipo (PDF).
+"""Documento completo de las placas (PDF de memoria; el resumen para el equipo es generar_documento_placas_consolidado.py).
 
 Junta en un solo PDF las vistas de las dos placas, sus medidas, los componentes que no son módulos y para qué
 están, la alimentación de cada módulo, la lista de compras, los datos para el modelo 3D y un listado de
@@ -7,7 +7,7 @@ la lista de compras (una sola fuente); las conexiones salen de las especificacio
 del .kicad_pcb.
 
 Uso (con el Python de KiCad, por pcbnew):
-    "C:/Program Files/KiCad/10.0/bin/python.exe" -I generar_documento_placas.py
+    "C:/Program Files/KiCad/10.0/bin/python.exe" -I generar_documento_placas_completo.py
 """
 import html
 import json
@@ -17,12 +17,12 @@ from pathlib import Path
 
 import pcbnew
 
-REV = "0.5"
+REV = "0.6"
 FECHA = "31/10/2026"
 RAIZ = Path(__file__).resolve().parents[1]
 CAD = RAIZ / "cad"
 DOC = CAD / f"documento_placas_v{REV}"
-SALIDA_PDF = CAD / f"placas_v{REV}.pdf"
+SALIDA_PDF = CAD / f"placas_v{REV}_completo.pdf"
 KICAD_CLI = Path("C:/Program Files/KiCad/10.0/bin/kicad-cli.exe")
 NAVEGADORES = [Path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"),
                Path("C:/Program Files/Google/Chrome/Application/chrome.exe")]
@@ -32,7 +32,7 @@ PLACAS = {"potencia": {"titulo": "Placa de potencia", "medidas": (148, 96)},
 # Tensión de cada net (para el listado de conexiones)
 TENSION = {
     "GND": "0 V (masa común)", "VBAT_P": "batería, 11,1–12,6 V", "VBAT_F": "batería, 11,1–12,6 V", "VBAT_SW": "batería, 11,1–12,6 V",
-    "VM_BUS": "11,1–12,6 V", "Q_POL_G": "gate de Q1 (≈0 V; −12 V respecto del source)", "VM_IZQ_F": "11,1–12,6 V",
+    "VM_BUS": "11,1–12,6 V", "VM_IZQ_F": "11,1–12,6 V",
     "VM_IZQ": "11,1–12,6 V", "VM_DER_F": "11,1–12,6 V", "VM_DER": "11,1–12,6 V", "MOT_IZQ_1": "salida PWM al motor (0–12,6 V)",
     "MOT_IZQ_2": "salida PWM al motor (0–12,6 V)", "MOT_DER_1": "salida PWM al motor (0–12,6 V)", "MOT_DER_2": "salida PWM al motor (0–12,6 V)",
     "VM_UBEC": "11,1–12,6 V", "V_SERVO": "6,0 V", "VM_LOG_F": "11,1–12,6 V", "VM_LOG": "11,1–12,6 V", "5V_MCU": "5,0 V",
@@ -42,8 +42,8 @@ SENAL_3V3 = "señal de 3,3 V"
 
 # Nombres de pines de las piezas que no son módulos (los módulos los toman de su símbolo)
 PINES = {
-    "potencia": {"J1": {"1": "−", "2": "+"}, "J3": {"1": "lado F1", "2": "lado Q1"}, "Q1": {"1": "G", "2": "D", "3": "S"},
-                 "D1": {"1": "K, banda", "2": "A"}, "D3": {"1": "K, banda", "2": "A"}, "C1": {"1": "+", "2": "−"},
+    "potencia": {"J1": {"1": "−", "2": "+"}, "J3": {"1": "lado F1", "2": "lado VM_BUS"},
+                 "D1": {"1": "K, banda", "2": "A"}, "C1": {"1": "+", "2": "−"},
                  "C8": {"1": "+", "2": "−"}, "J11": {"1": "M+", "2": "M−"}, "J12": {"1": "M+", "2": "M−"},
                  "J15": {"1": "−", "2": "+"}, "J16": {"1": "GND", "2": "V+"}, "J13": {"1": "GND", "2": "V", "3": "señal"},
                  "J14": {"1": "GND", "2": "V", "3": "señal"}, "J18": {"1": "GND", "2": "V"}},
@@ -81,7 +81,7 @@ CONECTORES_LOGICA = [
     ("J20", "Cable plano a la placa de potencia, pin n con pin n (pines 1 y 11 sin conexión)", "Plano de 16 hilos, corto"),
     ("J24 / J25", "Expansión: cada pin repite el de la ESP32 que tiene al lado", "Dupont"),
     ("J26", "Alimentación de sensores: 1-2 3,3 V, 3-4 GND, 5-6 5 V", "Dupont"),
-    ("J27", "Sharp GP2Y0A60SZLF: 1 EN (sin conexión), 2 OUT, 3 VCC 5 V, 4 GND. Pin 1 arriba", "Dupont de 4 hilos, pin n con pin n"),
+    ("J27", "Sharp GP2Y0A60SZLF: 1 EN (sin conexión), 2 OUT, 3 VCC 5 V, 4 GND. Pin 1 del lado de la ESP32", "Dupont de 4 hilos, pin n con pin n"),
 ]
 
 ALTURAS = [
@@ -92,7 +92,6 @@ ALTURAS = [
     ("Mini bucks A8, A9", "Las dos", "≈ 8 mm", "Espaciador de 2,5 mm + módulo con inductor"),
     ("DRV8871 en zócalo", "Potencia", "≈ 20 mm", "Zócalo de 8,5 mm + módulo con su electrolítico de 47 µF"),
     ("INA219, INA226 soldados", "Potencia", "≈ 6 mm", "Espaciador de 2,5 mm + módulo"),
-    ("Q1 IRF4905 con disipador", "Potencia", "≈ 25–30 mm", "Depende del disipador; la aleta tiene tensión de batería"),
     ("C1 470 µF 35 V (Ø10 mm)", "Potencia", "≈ 16–20 mm", ""),
     ("C8 470 µF 16 V (Ø8 mm)", "Potencia", "≈ 12–16 mm", ""),
     ("Portafusible ATO (F1) con fusible", "Potencia", "≈ 20 mm", ""),
@@ -229,7 +228,7 @@ def posiciones(placa):
         p = f.GetPosition()
         filas.append((f.GetReference(), f.GetValue()[:70], f"{pcbnew.ToMM(p.x) - ox:.1f}", f"{pcbnew.ToMM(p.y) - oy:.1f}",
                       f"{f.GetOrientationDegrees():.0f}°"))
-    return filas, (round(pcbnew.ToMM(bb.GetWidth()) - linea, 1), round(pcbnew.ToMM(bb.GetHeight()) - linea, 1))
+    return filas, (round(pcbnew.ToMM(bb.GetWidth()) - linea, 2), round(pcbnew.ToMM(bb.GetHeight()) - linea, 2))
 
 
 def render_3d(placa):
@@ -343,8 +342,8 @@ def main():
 <div class='sub'>Placa de potencia y placa de lógica: documento para revisar entre todo el equipo</div>
 <p><b>Fecha:</b> {FECHA}. <b>Versión:</b> v{REV}, la final. Reemplaza a todas las anteriores: <b>descartar cualquier impresión de la v0.4</b>.</p>
 <p>Dos placas caseras de una sola cara (cobre abajo, componentes arriba), unidas por un cable plano de 16 hilos (J20). Casi todo lo que
-llevan son <b>módulos comprados</b>; la placa es la interfaz entre ellos. Fuera de los módulos solo hay conectores, fusibles, la protección
-de entrada, tres capacitores y cinco resistencias, y cada uno tiene su razón (sección 3).</p>
+llevan son <b>módulos comprados</b>; la placa es la interfaz entre ellos. Fuera de los módulos solo hay conectores, fusibles, un TVS,
+tres capacitores y cuatro resistencias, y cada uno tiene su razón (sección 3).</p>
 <p><b>Cómo usar este documento:</b> cada uno revisa una parte y marca las casillas ☐ de la sección 8 (conexiones) con sus iniciales. Lo que no
 cierre, se anota y se lo pasa al responsable de electrónica antes de fabricar.</p>
 <ol><li>Resumen y alimentación</li><li>Las dos placas: vistas, medidas y conectores</li><li>Componentes que no son módulos, y para qué están</li>
@@ -353,7 +352,7 @@ cierre, se anota y se lo pasa al responsable de electrónica antes de fabricar.<
 
     # 1. Resumen y alimentación
     h.append("<h2>1. Resumen y alimentación</h2>")
-    h.append("<figure><img src='alimentacion_v0.5.png' style='max-height:150mm'><figcaption>De dónde sale la energía de cada parte. "
+    h.append(f"<figure><img src='alimentacion_v{REV}.png' style='max-height:150mm'><figcaption>De dónde sale la energía de cada parte. "
              "Los fusibles están en la placa de potencia; el cable J20 lleva 5 V, 3,3 V, masa y las señales a la lógica.</figcaption></figure>")
     h.append("<h3>Cómo se alimenta cada módulo</h3>")
     h.append(tabla(["Módulo", "Placa", "Toma la energía de", "Tensión", "Notas"], ALIMENTACION))
@@ -371,9 +370,10 @@ cierre, se anota y se lo pasa al responsable de electrónica antes de fabricar.<
         else:
             h.append(f"<h3>{datos['titulo']}</h3>")
         h.append(tabla(["Dato", "Valor"], [
-            ("Medidas", f"**{ancho:.0f} × {alto:.0f} mm** (entra en una placa virgen de 10 × 15 cm), esquinas redondeadas de 3 mm"),
+            ("Medidas", f"**{ancho:g} × {alto:g} mm**".replace(".", ",") + ", esquinas redondeadas de 3 mm"
+                        + ("; la ESP32 sobresale unos 5 mm del borde superior (antena) y del inferior (USB-C)" if placa == "logica" else "")),
             ("Fijación", "4 agujeros M3 (3,2 mm) con centro a 4 mm de cada borde; separadores de 10 mm"
-                         + ("; además, 2 agujeros de 3,2 mm para atornillar la MPU (A2), en (34,5; 32,7) y (49,5; 32,7) mm"
+                         + ("; además, 2 agujeros de 3,2 mm para atornillar la MPU (A2), en (23,0; 32,4) y (23,0; 47,4) mm"
                             if placa == "logica" else "")),
             ("Espesor", "Placa virgen común de una cara (≈ 1,6 mm)"),
             ("Piezas", f"{len(s['components'])} del esquema: {len(mods)} módulos ({', '.join(mods)}) y {len(otros)} conectores y componentes; "
@@ -419,7 +419,7 @@ vista desde los componentes (x hacia la derecha, y hacia abajo).</p>""")
     h.append(tabla(["Pieza", "Placa", "Altura sobre la placa", "Detalle"], ALTURAS))
     for placa, datos in PLACAS.items():
         pos, (ancho, alto) = posiciones(placa)
-        h.append(f"<h3>{datos['titulo']} ({ancho:.0f} × {alto:.0f} mm): posición de cada pieza</h3>")
+        h.append(f"<h3>{datos['titulo']} ({ancho:g} × {alto:g} mm): posición de cada pieza</h3>".replace(".", ","))
         h.append("<p class='tenue'>Para un módulo o conector, la posición es la de su pin 1; para los agujeros (H), su centro.</p>")
         h.append(tabla(["Ref.", "Pieza", "x (mm)", "y (mm)", "Giro"], pos))
 
@@ -441,7 +441,7 @@ toca otra net. Los puentes de alambre W y el relleno de masa cuentan como unión
              "5 V es la del Sharp, y pasa por el divisor R41/R42).</li>"
              "<li>Una sola masa: la de la potencia y la de la lógica se unen por J20.15 y J20.16.</li>"
              "<li>IN+ y OUT+ de cada buck (A8, A9) no están unidos entre sí.</li>"
-             "<li>La batería pasa en serie por F1, J3 (interruptor y paro) y Q1 antes de llegar a VM_BUS; cada rama tiene su fusible.</li>"
+             "<li>La batería entra por un conector polarizado y pasa en serie por F1 y J3 (interruptor y paro) antes de llegar a VM_BUS; cada rama tiene su fusible.</li>"
              "<li>I2C (SDA, SCL) es de 3,3 V: une la ESP32, la MPU, los dos INA219 y el INA226.</li>"
              "<li>Las pistas de batería, motores y servos son anchas y se estañan (potencia).</li></ul>")
     for placa, datos in PLACAS.items():
@@ -481,7 +481,7 @@ toca otra net. Los puentes de alambre W y el relleno de masa cuentan como unión
     ]))
     h.append("</body></html>")
 
-    destino = DOC / f"placas_v{REV}.html"
+    destino = DOC / f"placas_v{REV}_completo.html"
     destino.write_text("\n".join(h), encoding="utf-8")
     nav = next(n for n in NAVEGADORES if n.exists())
     subprocess.run([str(nav), "--headless", "--disable-gpu", "--no-pdf-header-footer", f"--print-to-pdf={SALIDA_PDF}",

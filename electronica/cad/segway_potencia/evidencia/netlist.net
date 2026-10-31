@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
-		(date "2026-10-31T15:33:09")
+		(date "2026-10-31T18:04:08")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "222b2571-d906-43e0-b0ba-05d47a9f5ec1")
+			(tstamps "ea34b93c-ba7a-47c5-9f1e-d767b05e3f6f")
 			(units
 				(unit
 					(name "A")
@@ -173,7 +173,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7962d0c9-de44-444e-b7db-5c344ca78555")
+			(tstamps "9ef03a5d-701d-402e-bd32-9985efd8c29c")
 			(units
 				(unit
 					(name "A")
@@ -249,7 +249,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e73b0df8-3b90-4921-b21e-1e64288c8fb6")
+			(tstamps "32d76581-7798-4205-8005-a56de43de11d")
 			(units
 				(unit
 					(name "A")
@@ -325,7 +325,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2145c0ef-0cbe-441e-9df5-9f591e0f4b92")
+			(tstamps "e689a334-62d9-4b9d-96dd-454f83a9eb5f")
 			(units
 				(unit
 					(name "A")
@@ -401,7 +401,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2fbf2b3a-ab4c-4373-b8ee-a9810598696a")
+			(tstamps "2e627026-3ef1-4803-b1ac-7de61e1bb582")
 			(units
 				(unit
 					(name "A")
@@ -477,7 +477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f313508e-3f4c-4ef8-be35-c749882b55f9")
+			(tstamps "b83f2bc9-97d8-4684-a257-81ed1c34fade")
 			(units
 				(unit
 					(name "A")
@@ -549,7 +549,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "bcd87adb-756b-4cdb-bcfd-bf2bb7c9c844")
+			(tstamps "a6b0f54a-5f19-4557-a02b-cafc5420d1d3")
 			(units
 				(unit
 					(name "A")
@@ -615,7 +615,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2b246491-c3ba-499e-9aca-64e437b54dc9")
+			(tstamps "654d2d0e-e61a-4118-8ae4-474c7ed4873c")
 			(units
 				(unit
 					(name "A")
@@ -681,7 +681,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b87f5c00-9e45-449e-a514-e7877007ba39")
+			(tstamps "12629158-1cef-4ca7-bdf3-9eea4af76a46")
 			(units
 				(unit
 					(name "A")
@@ -747,73 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ab589ae8-2ab3-4326-9079-3095ebae4828")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "D3")
-			(value "BZX79-C12")
-			(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
-			(description "Zener diode")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (montado con Q1; limita VGS a 12 V)")
-				(field
-					(name "Fuente") "Infineon IRF4905 p.1 (VGS ±20 V); Device.kicad_sym D_Zener 1=K 2=A")
-				(field
-					(name "Footprint") "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Zener diode")
-			)
-			(libsource
-				(lib "Device")
-				(part "D_Zener")
-				(description "Zener diode")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (montado con Q1; limita VGS a 12 V)")
-			)
-			(property
-				(name "Fuente")
-				(value "Infineon IRF4905 p.1 (VGS ±20 V); Device.kicad_sym D_Zener 1=K 2=A")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "diode")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "TO-???* *_Diode_* *SingleDiode* D_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "06a0f6ee-282b-4d42-926c-6dfe4501025a")
+			(tstamps "c5296249-04a1-47ca-9f47-04ea7837ebfd")
 			(units
 				(unit
 					(name "A")
@@ -879,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f53940de-6253-4d32-ba22-5555c8c6acd1")
+			(tstamps "cc235aab-8bc8-46cf-b5c7-7233dd134ede")
 			(units
 				(unit
 					(name "A")
@@ -945,7 +879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8c0ad62f-0d9a-4fe8-8a1d-ab73d2402827")
+			(tstamps "f9e1884a-3697-4699-afff-fdaa73e040e6")
 			(units
 				(unit
 					(name "A")
@@ -1011,7 +945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f324b5ec-cb4e-4d5f-99c0-465e5272f07c")
+			(tstamps "43c835e0-8bca-4cb9-a33c-ae2b2233ef0e")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "faf44e28-aefc-4892-a337-3a569f1ae352")
+			(tstamps "124df2eb-fa82-47ad-9fd5-0e3c8f634013")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a8916859-3cf8-45d0-8c42-6952c97baf66")
+			(tstamps "bbdf2e2a-89f7-4e89-8f25-adcae9209093")
 			(units
 				(unit
 					(name "A")
@@ -1165,7 +1099,7 @@
 			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (reemplaza al XT60PW-M; no polarizada: exige Q1 montado o un XT60 en latiguillo del lado del cable, decisión de Matías; cable AWG 14; serigrafía 'BAT − +' y separación física de J3)")
+					(name "Estado") "v0.6 [M]: bornera de 5,08 mm; la batería llega por un cable corto con conector polarizado (SUP-44). Sin protección electrónica: medir una vez que el + llegue al pin 2")
 				(field
 					(name "Fuente") "DEC-13 [M] (preferir borneras en potencia); [PHX-MKDS3] (24 A IEC con 2,5 mm², UL 10-15 A, AWG 24-12); TerminalBlock_Phoenix_MKDS-3-2-5.08 .kicad_mod (pads 1-2); pico del robot ≈20 A [H]")
 				(field
@@ -1183,7 +1117,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (reemplaza al XT60PW-M; no polarizada: exige Q1 montado o un XT60 en latiguillo del lado del cable, decisión de Matías; cable AWG 14; serigrafía 'BAT − +' y separación física de J3)")
+				(value "v0.6 [M]: bornera de 5,08 mm; la batería llega por un cable corto con conector polarizado (SUP-44). Sin protección electrónica: medir una vez que el + llegue al pin 2")
 			)
 			(property
 				(name "Fuente")
@@ -1209,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dfa87799-373e-42be-827d-c305e55183db")
+			(tstamps "4f5ca20e-330f-4db2-839b-18a3ba373906")
 			(units
 				(unit
 					(name "A")
@@ -1275,7 +1209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1ef63428-9e4b-4fa3-b742-fa4fdb113bb2")
+			(tstamps "e8a16087-1538-4183-865b-4cf2698df9b1")
 			(units
 				(unit
 					(name "A")
@@ -1341,7 +1275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "901dcb94-58f5-4e99-8b11-281f674c518f")
+			(tstamps "c977626d-697b-4b64-bd0d-ba53dc1be6b1")
 			(units
 				(unit
 					(name "A")
@@ -1407,7 +1341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ef51fe98-4579-40ad-b6a3-839efd7b42f7")
+			(tstamps "81252f42-b0d8-4e27-b634-706be2f38838")
 			(units
 				(unit
 					(name "A")
@@ -1473,7 +1407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "19f4c6e5-4c31-48f8-8e3c-939cf1816dd5")
+			(tstamps "794aa90e-b18a-45a2-bb15-238ca689330c")
 			(units
 				(unit
 					(name "A")
@@ -1542,7 +1476,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b464d333-b87d-4fa4-becc-a6985bd80325")
+			(tstamps "9a0029da-7cd3-48d7-81fc-45574716736b")
 			(units
 				(unit
 					(name "A")
@@ -1611,7 +1545,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dd5cbf80-ce6b-4701-9015-66b1f88820bc")
+			(tstamps "00e69681-c0f1-4992-9f80-6de05330ce77")
 			(units
 				(unit
 					(name "A")
@@ -1677,7 +1611,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a5f30f63-f0ef-4f59-b843-22b19f2675ae")
+			(tstamps "8bc8d9a4-99ca-4e8d-b71b-8ff1e2675113")
 			(units
 				(unit
 					(name "A")
@@ -1743,7 +1677,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e5b67696-6acf-466e-ba71-344b85603137")
+			(tstamps "38d83996-1654-4c97-bf49-424e950d4a59")
 			(units
 				(unit
 					(name "A")
@@ -1809,7 +1743,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "53ebf39b-a742-4ea9-9a63-ef6c4d943008")
+			(tstamps "c77522a6-521a-4ee2-acec-49cfeec927dd")
 			(units
 				(unit
 					(name "A")
@@ -1867,75 +1801,6 @@
 			)
 		)
 		(comp
-			(ref "Q1")
-			(value "IRF4905")
-			(footprint "Package_TO_SOT_THT:TO-220-3_Vertical")
-			(datasheet "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
-			(description "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (montado por defecto: con J1 en bornera es la única protección de polaridad; disipador obligatorio, 4,5-6,8 W a 15 A y ≈0,5 W a 5 A; decisiones 3 y 9 de [ENERGIA] §10 pendientes de Matías) | v0.4: JP1 eliminado (SUP-63)")
-				(field
-					(name "Fuente") "[DS-IRF4905] p.1-2 (RDS(on) 20 mΩ a VGS −10 V; RθJA 62 °C/W); Transistor_FET.kicad_sym (1=G, 2=D, 3=S); [ENERGIA] §2.4(c)")
-				(field
-					(name "Footprint") "Package_TO_SOT_THT:TO-220-3_Vertical")
-				(field
-					(name "Datasheet") "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
-				(field
-					(name "Description") "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
-			)
-			(libsource
-				(lib "Transistor_FET")
-				(part "IRF4905")
-				(description "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (montado por defecto: con J1 en bornera es la única protección de polaridad; disipador obligatorio, 4,5-6,8 W a 15 A y ≈0,5 W a 5 A; decisiones 3 y 9 de [ENERGIA] §10 pendientes de Matías) | v0.4: JP1 eliminado (SUP-63)")
-			)
-			(property
-				(name "Fuente")
-				(value "[DS-IRF4905] p.1-2 (RDS(on) 20 mΩ a VGS −10 V; RθJA 62 °C/W); Transistor_FET.kicad_sym (1=G, 2=D, 3=S); [ENERGIA] §2.4(c)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "Single P-Channel HEXFET Power MOSFET")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "TO?220*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "fa864cf3-d47c-424c-aaef-dc65681257fd")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-						(pin
-							(num "3")
-						)
-					)
-				)
-			)
-		)
-		(comp
 			(ref "R5")
 			(value "1k 1%")
 			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
@@ -1986,7 +1851,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f3fd8302-3038-4599-81e3-aa0f2f7b6beb")
+			(tstamps "8264831d-a576-4cb4-b54c-13d61f89367e")
 			(units
 				(unit
 					(name "A")
@@ -2052,73 +1917,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0137a63a-f875-466f-b341-8bdc256da0d1")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R29")
-			(value "10k")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (montada con Q1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-				(field
-					(name "Fuente") "[ENERGIA] §2.4(c); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (montada con Q1) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §2.4(c); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "fc2af9d5-7fd6-48a2-9389-3164744b4a76")
+			(tstamps "a2384f1b-2f42-4807-843d-89caf44e4e18")
 			(units
 				(unit
 					(name "A")
@@ -2418,43 +2217,6 @@
 		)
 		(libpart
 			(lib "Device")
-			(part "D_Zener")
-			(description "Zener diode")
-			(footprints
-				(fp "TO-???*")
-				(fp "*_Diode_*")
-				(fp "*SingleDiode*")
-				(fp "D_*")
-			)
-			(fields
-				(field
-					(name "Reference") "D")
-				(field
-					(name "Value") "D_Zener")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Zener diode")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "K")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "A")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Device")
 			(part "Fuse")
 			(description "Fuse")
 			(footprints
@@ -2550,44 +2312,6 @@
 				(pin
 					(num "2")
 					(name "A2")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Transistor_FET")
-			(part "IRF4905")
-			(description "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
-			(docs "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
-			(footprints
-				(fp "TO?220*")
-			)
-			(fields
-				(field
-					(name "Reference") "Q")
-				(field
-					(name "Value") "IRF4905")
-				(field
-					(name "Footprint") "Package_TO_SOT_THT:TO-220-3_Vertical")
-				(field
-					(name "Datasheet") "http://www.infineon.com/dgdl/irf4905.pdf?fileId=5546d462533600a4015355e32165197c")
-				(field
-					(name "Description") "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "G")
-					(type "input")
-				)
-				(pin
-					(num "2")
-					(name "D")
-					(type "passive")
-				)
-				(pin
-					(num "3")
-					(name "S")
 					(type "passive")
 				)
 			)
@@ -2835,10 +2559,6 @@
 			(uri "${KICAD10_SYMBOL_DIR}/Diode.kicad_sym")
 		)
 		(library
-			(logical "Transistor_FET")
-			(uri "${KICAD10_SYMBOL_DIR}/Transistor_FET.kicad_sym")
-		)
-		(library
 			(logical "segway_modulos")
 			(uri "${KIPRJMOD}/../bibliotecas/segway_modulos.kicad_sym")
 		)
@@ -3021,11 +2741,6 @@
 				(ref "J20")
 				(pin "16")
 				(pinfunction "Pin_16_16")
-				(pintype "passive")
-			)
-			(node
-				(ref "R29")
-				(pin "2")
 				(pintype "passive")
 			)
 		)
@@ -3242,28 +2957,6 @@
 		)
 		(net
 			(code "15")
-			(name "/Q_POL_G")
-			(class "Default")
-			(node
-				(ref "D3")
-				(pin "2")
-				(pinfunction "A_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "Q1")
-				(pin "1")
-				(pinfunction "G_1")
-				(pintype "input")
-			)
-			(node
-				(ref "R29")
-				(pin "1")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "16")
 			(name "/SERVO_DER_MCU")
 			(class "Default")
 			(node
@@ -3279,7 +2972,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "16")
 			(name "/SERVO_DER_SIG")
 			(class "Default")
 			(node
@@ -3295,7 +2988,7 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "17")
 			(name "/SERVO_IZQ_MCU")
 			(class "Default")
 			(node
@@ -3311,7 +3004,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "18")
 			(name "/SERVO_IZQ_SIG")
 			(class "Default")
 			(node
@@ -3327,7 +3020,7 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "19")
 			(name "/VBAT_F")
 			(class "Default")
 			(node
@@ -3343,7 +3036,7 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "20")
 			(name "/VBAT_P")
 			(class "Default")
 			(node
@@ -3359,24 +3052,7 @@
 			)
 		)
 		(net
-			(code "22")
-			(name "/VBAT_SW")
-			(class "Default")
-			(node
-				(ref "J3")
-				(pin "2")
-				(pinfunction "Pin_2_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "Q1")
-				(pin "2")
-				(pinfunction "D_2")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "23")
+			(code "21")
 			(name "/VM_BUS")
 			(class "Default")
 			(node
@@ -3393,12 +3069,6 @@
 				(ref "D1")
 				(pin "1")
 				(pinfunction "A1_1")
-				(pintype "passive")
-			)
-			(node
-				(ref "D3")
-				(pin "1")
-				(pinfunction "K_1")
 				(pintype "passive")
 			)
 			(node
@@ -3422,14 +3092,14 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "Q1")
-				(pin "3")
-				(pinfunction "S_3")
+				(ref "J3")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "24")
+			(code "22")
 			(name "/VM_DER")
 			(class "Default")
 			(node
@@ -3458,7 +3128,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "23")
 			(name "/VM_DER_F")
 			(class "Default")
 			(node
@@ -3480,7 +3150,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "24")
 			(name "/VM_IZQ")
 			(class "Default")
 			(node
@@ -3509,7 +3179,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "25")
 			(name "/VM_IZQ_F")
 			(class "Default")
 			(node
@@ -3531,7 +3201,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "26")
 			(name "/VM_LOG")
 			(class "Default")
 			(node
@@ -3554,7 +3224,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "27")
 			(name "/VM_LOG_F")
 			(class "Default")
 			(node
@@ -3576,7 +3246,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "28")
 			(name "/VM_UBEC")
 			(class "Default")
 			(node
@@ -3592,7 +3262,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "29")
 			(name "/V_SERVO")
 			(class "Default")
 			(node
@@ -3620,7 +3290,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "30")
 			(name "unconnected-(J20-Pin_1-Pad1)")
 			(class "Default")
 			(node
@@ -3631,7 +3301,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "31")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

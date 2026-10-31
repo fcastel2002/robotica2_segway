@@ -1,5 +1,7 @@
 # Lista de compras y materiales: placas v0.5
 
+> **Reemplazado por [lista_compras_v0.6.md](lista_compras_v0.6.md) el 31/10/2026** (v0.6: placas compactadas y sin Q1).
+
 > **v0.5 (31/10/2026):** es la v0.4 final con otro nombre, para que no se confunda con los PDF de la v0.4 que circularon antes. Incluye la huella del mini buck medida con calibre (14,3 × 8,5 mm) y, en la lógica, el sensor Sharp en J27. **Descartar cualquier impresión de la v0.4.** Documento para el equipo: [placas_v0.5.pdf](placas_v0.5.pdf).
 
 Fecha: 31/10/2026 (v0.4: menos componentes, ver la nota; v0.3: buck de 3,3 V A9, conector del ultrasonido J27, sin D2, voltímetro con pads, placas de 10 × 15 cm). Sale de las especificaciones de [potencia](segway_potencia/especificacion_v0.6.json) y [lógica](segway_logica/especificacion_v0.6.json) y de las decisiones de montaje ([DEC-20](../planificacion/2026-10-26-decisiones-del-equipo.md)). Todo es de agujero pasante. Las cantidades son las de un juego de placas; la columna "Repuesto" sugiere qué conviene comprar de más.

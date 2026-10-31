@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 21,
+ "revision_lista": 22,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -395,10 +395,10 @@
   {
    "grupo": "B",
    "tema": "Tamaño de las placas",
-   "supuesto": "Dos placas que entran en placa virgen de 10 x 15 cm con margen para el corte: potencia de 148 x 96 mm y lógica de 100 x 96 mm (esta se apoya con su lado de 100 mm a lo largo de los 150 mm de la placa virgen). Esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina.",
-   "base": "Matías, 31/10/2026 [M]: las placas vírgenes son de 10 x 15 cm como máximo. Ruteo v0.3 de las dos placas.",
-   "impacto_si_cambia": "Otro tamaño obliga a reubicar y rehacer el ruteo de esa placa; el esquema no cambia.",
-   "como_se_confirma": "Mecánica confirma dónde van las dos placas y el largo del cable.",
+   "supuesto": "v0.6 compactada: potencia de 124 × 74 mm y lógica de 95,25 × 59,6 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. Las dos entran juntas en una placa virgen de 10 × 15 cm. En la lógica, la DevKitC sobresale unos 5 mm por el borde superior (antena, sin cobre debajo) y por el inferior (USB-C).",
+   "base": "Pedido de Matías del 31/10/2026 [M]: placas lo más compactas posible. Contorno en TABLERO de placas/potencia.py y placas/logica.py.",
+   "impacto_si_cambia": "Si mecánica pide otra forma, se rehace la ubicación. Nada puede quedar pegado a los bordes por donde sobresale la DevKitC.",
+   "como_se_confirma": "Medir con calibre el contorno impreso antes de transferir; probar en seco la DevKitC en su zócalo y el cable USB-C.",
    "estado": "CAMBIADO",
    "fecha": "31/10/2026",
    "refs": [],
@@ -444,6 +444,17 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Dos placas que entran en placa virgen de 10 x 15 cm con margen para el corte: potencia de 148 x 96 mm y lógica de 100 x 96 mm (esta se apoya con su lado de 100 mm a lo largo de los 150 mm de la placa virgen). Esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina.",
+      "base": "Matías, 31/10/2026 [M]: las placas vírgenes son de 10 x 15 cm como máximo. Ruteo v0.3 de las dos placas.",
+      "impacto_si_cambia": "Otro tamaño obliga a reubicar y rehacer el ruteo de esa placa; el esquema no cambia.",
+      "como_se_confirma": "Mecánica confirma dónde van las dos placas y el largo del cable.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: 'quiero lo más compactado posible' (con J24/J25 y aceptando puentes extra) y 'mejor directamente contemplar que vamos a conectar un conector polarizado, que de hecho los tenemos'"
     }
    ]
   },
@@ -801,7 +812,7 @@
   {
    "grupo": "B",
    "tema": "Puentes de alambre",
-   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 5 (W1 y W2 de 5V; W3, W4 y W5 de GND). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A.",
+   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.6: 4 (W1 de 5V; W2, W3 y W4 de GND; W2 bajo A7 y W4 en parte bajo A8, pegados antes de soldar los módulos). Lógica v0.6: 4 (W1 de GND, 43 mm en 4 tramos; W2 y W4 de GND; W3 de 5V). Por un puente solo pasan señales o lógica de hasta 1 A.",
    "base": "DEC-14 [M]; resultado del ruteo v0.1 [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error.",
    "como_se_confirma": "Montaje de las placas.",
@@ -866,6 +877,14 @@
       "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 7 (W1 y W2 de 5V; W3, W4 y W5 de GND; W6 y W7, señal de cada servo sobre el bus de masa de los servos). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A."
      },
      "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 5 (W1 y W2 de 5V; W3, W4 y W5 de GND). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: 'quiero lo más compactado posible' (con J24/J25 y aceptando puentes extra) y 'mejor directamente contemplar que vamos a conectar un conector polarizado, que de hecho los tenemos'"
     }
    ]
   },
@@ -1015,12 +1034,12 @@
   {
    "grupo": "B",
    "tema": "Disipador de Q1",
-   "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W. La aleta del TO-220 es el drenador (VBAT_SW): el disipador queda con tensión de batería, así que no puede tocar el chasis ni otro disipador, o se monta con mica y buje aislante.",
+   "supuesto": "No aplica desde la v0.6: Q1 se quitó (la polaridad la garantiza el conector de la batería, SUP-44).",
    "base": "§8 de diseno_v0.3.md: 0,5 W a 5 A y 4,5-6,8 W a 15 A ([DS-IRF4905] p.1-2). Corriente continua según SUP-43.",
    "impacto_si_cambia": "Si la corriente continua es mayor, hace falta un disipador más grande o un MOSFET de menor RDS(on) (open_point 5).",
    "como_se_confirma": "E-04/E-06: temperatura de Q1 con termómetro IR en marcha.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "Q1"
    ],
@@ -1044,6 +1063,14 @@
       "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W."
      },
      "fuente": "ELE-039: revisión independiente del conexionado y control eléctrico (auditoria_electrica_v0.1.md)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Q1 (IRF4905, TO-220 vertical) lleva un disipador de aleta de 15 °C/W o menos. Se reserva junto a Q1 un espacio libre de 25 × 20 mm y 25 mm de alto, lejos de los electrolíticos. Con 10 A continuos y RDS(on) de 20 mΩ, disipa unos 2 W. La aleta del TO-220 es el drenador (VBAT_SW): el disipador queda con tensión de batería, así que no puede tocar el chasis ni otro disipador, o se monta con mica y buje aislante.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: 'quiero lo más compactado posible' (con J24/J25 y aceptando puentes extra) y 'mejor directamente contemplar que vamos a conectar un conector polarizado, que de hecho los tenemos'"
     }
    ]
   },
@@ -2064,12 +2091,12 @@
   {
    "grupo": "E",
    "tema": "Protección de polaridad",
-   "supuesto": "J1 es una bornera de 5,08 mm (1 = P−, 2 = P+). Q1 IRF4905 va montado con R29 de 10 kΩ y D3 BZX79-C12, sin diodo en serie y sin el puente JP1 (propuesta 4).",
-   "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. La bornera de 5,08 mm ya está en la placa y Q1 protege aunque el cable se arme al revés; un XT60 no protege si el cable está mal soldado.",
-   "impacto_si_cambia": "Si se elige XT60 en latiguillo, Q1 sale y vuelve el puente JP1 (SUP-63).",
-   "como_se_confirma": "Confirmado.",
-   "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "supuesto": "J1 es una bornera de 5,08 mm (1 = P−, 2 = P+). La batería llega por un cable corto con un conector polarizado (XT60 o similar, ya disponible) atornillado a J1. Sin protección electrónica contra polaridad invertida: salen Q1, R29 y D3, y J3 alimenta directo VM_BUS.",
+   "base": "Decisión de Matías del 31/10/2026 [M]: el conector polarizado evita el error y ahorra componentes y lugar.",
+   "impacto_si_cambia": "Si el cable del conector se arma al revés, la batería invertida quema los DRV8871, los INA y los bucks: es la única protección.",
+   "como_se_confirma": "Al armar el cable, medir una vez que el + de la batería llegue al pin 2 de J1.",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "J1",
     "Q1",
@@ -2091,6 +2118,17 @@
       "como_se_confirma": "Matías confirma la bornera y Q1."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "J1 es una bornera de 5,08 mm (1 = P−, 2 = P+). Q1 IRF4905 va montado con R29 de 10 kΩ y D3 BZX79-C12, sin diodo en serie y sin el puente JP1 (propuesta 4).",
+      "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. La bornera de 5,08 mm ya está en la placa y Q1 protege aunque el cable se arme al revés; un XT60 no protege si el cable está mal soldado.",
+      "impacto_si_cambia": "Si se elige XT60 en latiguillo, Q1 sale y vuelve el puente JP1 (SUP-63).",
+      "como_se_confirma": "Confirmado.",
+      "estado": "CONFIRMADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: 'quiero lo más compactado posible' (con J24/J25 y aceptando puentes extra) y 'mejor directamente contemplar que vamos a conectar un conector polarizado, que de hecho los tenemos'"
     }
    ]
   },
@@ -2682,11 +2720,11 @@
   {
    "grupo": "G",
    "tema": "Posición de la IMU",
-   "supuesto": "La MPU6050 (A2) va sobre la placa base, a más de 6 mm de conectores y tornillos, lejos de los DRV, los bucks, el UBEC y las pistas de potencia, y sin pistas debajo.",
+   "supuesto": "La MPU6050 (A2) va sobre la placa de lógica, en el centro-oeste, girada 90°. En la v0.6 compactada queda a unos 5 mm del buck A9 (antes más de 20 mm) y con pistas de I2C, INT y masa bajo su cuerpo. Se acepta: la MPU6050 no tiene magnetómetro y el buck es de baja corriente.",
    "base": "§10 de diseno_v0.3.md; [DS-MPU] p.43; ratificación heredada (11) del open_point 20. Confirmado por Matías el 31/10/2026 (mecánica: posición de la IMU) [M].",
-   "impacto_si_cambia": "Si mecánica pide la IMU en otro lugar (por ejemplo, sobre el eje), A2 pasa a un conector con cable.",
-   "como_se_confirma": "Francisco y modelado confirman dónde va la IMU y cómo se orienta respecto de los ejes del robot.",
-   "estado": "CONFIRMADO",
+   "impacto_si_cambia": "Si aparece ruido o deriva térmica en la IMU, se separa A9 o se monta la IMU con cable.",
+   "como_se_confirma": "E-02: leer la IMU quieta con los motores andando y comparar con la placa apagada.",
+   "estado": "CAMBIADO",
    "fecha": "31/10/2026",
    "refs": [
     "A2"
@@ -2704,6 +2742,16 @@
       "estado": "ASUMIDO"
      },
      "fuente": "Matías, 31/10/2026: 'sup batería, confirmo. sup36, tmb. supuestos mecánicos, todo ok' [M]"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "La MPU6050 (A2) va sobre la placa base, a más de 6 mm de conectores y tornillos, lejos de los DRV, los bucks, el UBEC y las pistas de potencia, y sin pistas debajo.",
+      "impacto_si_cambia": "Si mecánica pide la IMU en otro lugar (por ejemplo, sobre el eje), A2 pasa a un conector con cable.",
+      "como_se_confirma": "Francisco y modelado confirman dónde va la IMU y cómo se orienta respecto de los ejes del robot.",
+      "estado": "CONFIRMADO"
+     },
+     "fuente": "Matías, 31/10/2026 [M]: 'quiero lo más compactado posible' (con J24/J25 y aceptando puentes extra) y 'mejor directamente contemplar que vamos a conectar un conector polarizado, que de hecho los tenemos'"
     }
    ]
   },
@@ -3291,12 +3339,12 @@
   {
    "grupo": "I",
    "tema": "Cobre alrededor de la antena",
-   "supuesto": "Sin relleno de cobre en la zona de la antena de la ESP32-S3 y a su alrededor (x ≥ 70 mm, y ≤ 28 mm en la lógica), además de la zona prohibida de la huella. Las pistas no pasan por ahí.",
+   "supuesto": "Sin relleno de cobre ni pistas en la zona de la antena de la ESP32-S3; en la v0.6 la antena sobresale unos 5 mm del borde superior de la lógica (lo que recomienda Espressif). El pin GND A1.23/J25.1 cae dentro de esa zona y se une a masa a través de la propia DevKitC.",
    "base": "Guía de diseño del ESP32-S3-WROOM-1 (zona libre de antena) [D].",
    "impacto_si_cambia": "Cobre cerca de la antena reduce el alcance de Wi-Fi y Bluetooth.",
    "como_se_confirma": "Prueba de alcance Wi-Fi con la placa montada.",
    "estado": "ASUMIDO",
-   "fecha": "20/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "especificacion",
@@ -3305,7 +3353,15 @@
    "alias": [],
    "id": "SUP-74",
    "valor": {},
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Sin relleno de cobre en la zona de la antena de la ESP32-S3 y a su alrededor (x ≥ 70 mm, y ≤ 28 mm en la lógica), además de la zona prohibida de la huella. Las pistas no pasan por ahí."
+     },
+     "fuente": "Matías, 31/10/2026 [M]: 'quiero lo más compactado posible' (con J24/J25 y aceptando puentes extra) y 'mejor directamente contemplar que vamos a conectar un conector polarizado, que de hecho los tenemos'"
+    }
+   ]
   },
   {
    "grupo": "I",
