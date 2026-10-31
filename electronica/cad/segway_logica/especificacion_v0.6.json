@@ -1,6 +1,6 @@
 {
  "revision": "v0.6",
- "fecha": "2026-10-26",
+ "fecha": "2026-10-31",
  "base": "v0.5 dividida en dos placas (DEC-17): placa de logica",
  "resumen": "Placa base de interconexión simplificada para fabricación casera (DEC-14, DEC-15): 60 piezas (9 módulos enchufables + 51 componentes de agujero pasante), una sola capa de cobre B.Cu. Todo valor no medido es un supuesto de supuestos.md (SUP-xx).",
  "supuestos": "supuestos.md / supuestos.json",
@@ -59,6 +59,38 @@
      "name": "INT",
      "type": "output",
      "side": "left"
+    }
+   ]
+  },
+  {
+   "name": "ROB-005-006_MiniBuck_modulo_4p",
+   "reference_prefix": "A",
+   "value": "Mini buck fijo (5 V ROB-006 / 3,3 V ROB-005)",
+   "description": "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).",
+   "pins": [
+    {
+     "number": "1",
+     "name": "IN+",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "2",
+     "name": "IN-",
+     "type": "power_in",
+     "side": "left"
+    },
+    {
+     "number": "3",
+     "name": "OUT+",
+     "type": "passive",
+     "side": "right"
+    },
+    {
+     "number": "4",
+     "name": "OUT-",
+     "type": "power_in",
+     "side": "right"
     }
    ]
   },
@@ -533,6 +565,87 @@
    "supuestos": [
     "SUP-79"
    ]
+  },
+  {
+   "ref": "A9",
+   "lib_id": "segway_modulos:ROB-005-006_MiniBuck_modulo_4p",
+   "value": "Mini buck 3,3V ROB-005",
+   "footprint": "segway_modulos:ROB-005-006_MiniBuck_modulo_4p",
+   "block": "logica",
+   "dnp": false,
+   "source": "Pedido del equipo del 31/10/2026 [M]: ESP32 e IMU alimentadas con 3,3 V; ROB-005 ya comprado [V]",
+   "status": "provisorio [H]: soldado (entra girado y quemaría, SUP-80); 5V_MCU -> 3V3_MCU a los pines 3V3 de la ESP32 (SUP-26, SUP-31)",
+   "supuestos": [
+    "SUP-26",
+    "SUP-31",
+    "SUP-37",
+    "SUP-80"
+   ]
+  },
+  {
+   "ref": "J27",
+   "lib_id": "Connector_Generic:Conn_01x04",
+   "value": "HC-SR04 1=VCC 2=TRIG 3=ECHO 4=GND",
+   "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical",
+   "block": "conectores",
+   "dnp": false,
+   "source": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V",
+   "status": "provisorio [H]: orden de pines del HC-SR04 (SUP-82)",
+   "supuestos": [
+    "SUP-82"
+   ]
+  },
+  {
+   "ref": "R41",
+   "lib_id": "Device:R",
+   "value": "2k2 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)",
+   "status": "provisorio [H]",
+   "supuestos": [
+    "SUP-82"
+   ]
+  },
+  {
+   "ref": "R42",
+   "lib_id": "Device:R",
+   "value": "3k3 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)",
+   "status": "provisorio [H]",
+   "supuestos": [
+    "SUP-82"
+   ]
+  },
+  {
+   "ref": "R43",
+   "lib_id": "Device:R",
+   "value": "1k 1%",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "block": "conectores",
+   "dnp": false,
+   "source": "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)",
+   "status": "provisorio [H]",
+   "supuestos": [
+    "SUP-82"
+   ]
+  },
+  {
+   "ref": "C30",
+   "lib_id": "Device:C_Polarized",
+   "value": "47µ/16V",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "block": "logica",
+   "dnp": false,
+   "source": "Revisión independiente v0.3: capacidad local en la entrada de A9 (5V_MCU por cable)",
+   "status": "provisorio [H]",
+   "supuestos": [
+    "SUP-26"
+   ]
   }
  ],
  "nets": [
@@ -555,7 +668,12 @@
     "J25.21",
     "J25.22",
     "J26.3",
-    "J26.4"
+    "J26.4",
+    "A9.2",
+    "A9.4",
+    "J27.4",
+    "R42.2",
+    "C30.2"
    ]
   },
   {
@@ -625,12 +743,13 @@
    "name": "5V_MCU",
    "kind": "power",
    "pins": [
-    "A1.21",
     "J20.13",
     "J20.14",
-    "J24.21",
     "J26.5",
-    "J26.6"
+    "J26.6",
+    "A9.1",
+    "J27.1",
+    "C30.1"
    ]
   },
   {
@@ -651,7 +770,8 @@
     "J24.1",
     "J24.2",
     "J26.1",
-    "J26.2"
+    "J26.2",
+    "A9.3"
    ],
    "note": "3,3 V del regulador de la DevKitC (SUP-E03) para el módulo y los periféricos"
   },
@@ -880,19 +1000,22 @@
    ]
   },
   {
-   "name": "GPIO47",
+   "name": "US_TRIG",
    "kind": "signal",
    "pins": [
     "A1.39",
-    "J25.17"
+    "J25.17",
+    "R43.1"
    ]
   },
   {
-   "name": "GPIO21",
+   "name": "US_ECHO",
    "kind": "signal",
    "pins": [
     "A1.40",
-    "J25.18"
+    "J25.18",
+    "R41.2",
+    "R42.1"
    ]
   },
   {
@@ -910,6 +1033,30 @@
     "A1.42",
     "J25.20"
    ]
+  },
+  {
+   "name": "5V_USB",
+   "kind": "power",
+   "pins": [
+    "A1.21",
+    "J24.21"
+   ]
+  },
+  {
+   "name": "US_TRIG_S",
+   "kind": "signal",
+   "pins": [
+    "R43.2",
+    "J27.2"
+   ]
+  },
+  {
+   "name": "US_ECHO_5V",
+   "kind": "signal",
+   "pins": [
+    "J27.3",
+    "R41.1"
+   ]
   }
  ],
  "no_connect": [
@@ -919,23 +1066,10 @@
   "J20.11"
  ],
  "fuentes_power": {
-  "VBAT_P": "J1.2",
-  "VBAT_F": "F1.2",
-  "VBAT_SW": "J3.2",
-  "VM_BUS": "Q1.3",
-  "VM_IZQ_F": "F2.2",
-  "VM_IZQ": "A5.5",
-  "VM_DER_F": "F3.2",
-  "VM_DER": "A6.5",
-  "VM_UBEC": "F4.2",
-  "V_SERVO": "J16.2",
-  "VM_LOG_F": "F5.2",
-  "VM_LOG": "A7.2",
-  "5V": "A8.3",
-  "5V_MCU": "D2.1",
-  "3V3_MCU": "A1.20",
-  "3V3_PER": "A9.3",
-  "GND": "J1.1"
+  "5V_MCU": "J20.13",
+  "3V3_MCU": "A9.3",
+  "5V_USB": "A1.21",
+  "GND": "J20.15"
  },
  "cambios_v03_v04": {
   "fusiones_de_nets": {
@@ -1128,10 +1262,10 @@
    "justification": "MCPWM/LEDC; pin asignado por geometría (DEC-17)"
   },
   {
-   "function": "5V_MCU",
+   "function": "5V de la DevKitC (solo USB): sin conexión a 5V_MCU",
    "gpio": "5V",
    "board_pin": "21",
-   "net": "5V_MCU",
+   "net": "5V_USB",
    "expansion": "J24.21",
    "justification": ""
   },
@@ -1272,18 +1406,18 @@
    "justification": ""
   },
   {
-   "function": "libre: expansión",
+   "function": "TRIG del ultrasonido (J27.2)",
    "gpio": "GPIO47",
    "board_pin": "39",
-   "net": "GPIO47",
+   "net": "US_TRIG",
    "expansion": "J25.17",
    "justification": ""
   },
   {
-   "function": "libre: expansión",
+   "function": "ECHO del ultrasonido (J27.3, divisor R41/R42)",
    "gpio": "GPIO21",
    "board_pin": "40",
-   "net": "GPIO21",
+   "net": "US_ECHO",
    "expansion": "J25.18",
    "justification": ""
   },
@@ -1325,7 +1459,7 @@
   "coordenadas": "mm; origen en la esquina superior izquierda del contorno; x hacia la derecha, y hacia abajo; vista desde la cara de componentes (F), como la muestra KiCad",
   "board": {
    "width_mm": 100,
-   "height_mm": 82,
+   "height_mm": 96,
    "corner_radius": 3.0,
    "mounting_holes": [
     [
@@ -1338,11 +1472,11 @@
     ],
     [
      4,
-     78
+     92
     ],
     [
      96,
-     78
+     92
     ]
    ],
    "copper_layers": [
@@ -1432,5 +1566,6 @@
   "15": "GND",
   "16": "GND"
  },
- "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)"
+ "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)",
+ "revision_pcb_v03": "Lógica: A9 3,3 V a los pines 3V3 de la ESP32, J27 HC-SR04 con divisor; potencia: sin D2, voltímetro con pads; placas para virgen de 10 x 15 cm (pedidos del 31/10/2026)"
 }

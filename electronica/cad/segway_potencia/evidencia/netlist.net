@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
-		(date "2026-10-26T14:40:55")
+		(date "2026-10-31T10:55:36")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5688ea04-b7c6-406b-9af0-893db8b808aa")
+			(tstamps "04efccf2-793e-4bec-be4b-5f7d8f9cc391")
 			(units
 				(unit
 					(name "A")
@@ -173,7 +173,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "76cd5f7f-a118-4f45-909d-f15897dbdbed")
+			(tstamps "ee0300c9-1333-4a78-b262-8fdb3e4b40fc")
 			(units
 				(unit
 					(name "A")
@@ -249,7 +249,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "927a1585-1b86-473b-a97f-5911a1d182fd")
+			(tstamps "690c44ee-3745-42f0-ae09-56856652fb5c")
 			(units
 				(unit
 					(name "A")
@@ -325,7 +325,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6690d4b5-dc7d-4f01-bcf9-3616fff63f7b")
+			(tstamps "1db358cd-6f4d-4288-af8f-c1c9ccd808cc")
 			(units
 				(unit
 					(name "A")
@@ -401,7 +401,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9f79782f-6858-4e20-8b83-eb30d5dcefbe")
+			(tstamps "ecc2fa89-efe3-4d00-bb0f-361a24373dba")
 			(units
 				(unit
 					(name "A")
@@ -477,7 +477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "bb0c0f65-0c53-44ed-8909-29b145ab27cb")
+			(tstamps "439ba190-1d05-49a0-b734-440d91fd0882")
 			(units
 				(unit
 					(name "A")
@@ -549,7 +549,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ae99c067-0cb9-4b10-b9a1-3dc32f46edf3")
+			(tstamps "04189f66-244f-4689-92cb-f2b02f719585")
 			(units
 				(unit
 					(name "A")
@@ -615,7 +615,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "46e855a1-4321-4e91-8a1c-2e69d33c6d0a")
+			(tstamps "b6e7d0f2-89ed-496b-b16b-7c6a39796d1e")
 			(units
 				(unit
 					(name "A")
@@ -681,7 +681,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0afc08b5-c1b8-4dc4-a13a-7497af220784")
+			(tstamps "c38aa969-af7d-4570-b02f-583ab8954aea")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "036781b9-c600-42a6-887f-3e9c529fe831")
+			(tstamps "41cb41bc-ac21-4925-bc52-7cc59632966f")
 			(units
 				(unit
 					(name "A")
@@ -813,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fe68a5a8-7aec-4b77-9875-6adaf47ebc77")
+			(tstamps "f21c8d31-f1bd-4c54-8721-e74ce4ff7e11")
 			(units
 				(unit
 					(name "A")
@@ -879,7 +879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1d68325c-7394-46b9-8013-7572e7b2d8e1")
+			(tstamps "4210ce9a-d222-4a2d-804c-2fb66fe035d1")
 			(units
 				(unit
 					(name "A")
@@ -945,7 +945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "241f8414-a8b5-4f4e-bdf4-a3c7f83c4c36")
+			(tstamps "6545c61d-d970-44c7-99ab-376f348d3605")
 			(units
 				(unit
 					(name "A")
@@ -1011,73 +1011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e806b615-8269-4e6e-a9ce-0f2f2e2ea7ea")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "D2")
-			(value "1N5819")
-			(footprint "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal")
-			(datasheet "http://www.vishay.com/docs/88525/1n5817.pdf")
-			(description "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			(fields
-				(field
-					(name "Estado") "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02")
-				(field
-					(name "Fuente") "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-				(field
-					(name "Footprint") "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet") "http://www.vishay.com/docs/88525/1n5817.pdf")
-				(field
-					(name "Description") "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			)
-			(libsource
-				(lib "Diode")
-				(part "1N5819")
-				(description "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02")
-			)
-			(property
-				(name "Fuente")
-				(value "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_potencia")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_potencia.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "diode Schottky")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "D*DO?41*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "ceac1c42-973d-44e0-be17-5eb6abfb6441")
+			(tstamps "c0170aaf-a355-4cee-bbfe-002beadeade7")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a2271e51-9e17-4278-a9fc-866b3e610495")
+			(tstamps "73c8d617-756d-4d98-92ee-b774182ebe01")
 			(units
 				(unit
 					(name "A")
@@ -1209,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1de9adf6-cd60-41de-9e33-7d56286dc3a2")
+			(tstamps "d20810ba-1acd-48a7-9a5e-2fadd16dfd35")
 			(units
 				(unit
 					(name "A")
@@ -1275,7 +1209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a4b89901-5c90-4ddf-b997-a8f84f161b5f")
+			(tstamps "c6956f9b-df8e-4f52-adf0-4b363ef96df8")
 			(units
 				(unit
 					(name "A")
@@ -1341,7 +1275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "849e9aa1-c1bd-40c7-b715-8d29927ae299")
+			(tstamps "80e1ff7c-a5de-4bf7-a760-6d6e75c71fe9")
 			(units
 				(unit
 					(name "A")
@@ -1407,7 +1341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "37d6ca95-fd90-4d6d-82ef-3edb92a2538f")
+			(tstamps "8befbc0d-58a6-4528-96e1-218197ed6249")
 			(units
 				(unit
 					(name "A")
@@ -1473,7 +1407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fb45442b-1c2d-4ac4-8bc2-0ac8296d0fed")
+			(tstamps "037dc018-74f6-4c84-b3ac-3c538d34f7c0")
 			(units
 				(unit
 					(name "A")
@@ -1539,7 +1473,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ef75975a-dcf2-4584-89e0-737fc7da4d40")
+			(tstamps "eeffac34-5767-401c-9d70-5be1a5b1128f")
 			(units
 				(unit
 					(name "A")
@@ -1605,7 +1539,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0a408c1a-378b-4015-a202-e00e1c4cfcbb")
+			(tstamps "c91d1fb5-31c8-48d2-9c88-7bb0240d2449")
 			(units
 				(unit
 					(name "A")
@@ -1671,7 +1605,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d09ffc32-546f-46dd-80e0-c9bacd5f3e0b")
+			(tstamps "a3fb165d-75ce-403c-ba39-9b3787d98e65")
 			(units
 				(unit
 					(name "A")
@@ -1737,7 +1671,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "30651cf0-4a42-4c42-bc74-66763f06486c")
+			(tstamps "d34dd924-83d7-4661-a153-f22c1de92508")
 			(units
 				(unit
 					(name "A")
@@ -1803,7 +1737,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "76735cbd-8ff7-487a-9ae2-1d05276c73f6")
+			(tstamps "7ddcaa1e-e0fa-4ee7-942e-00a3aae7b0f0")
 			(units
 				(unit
 					(name "A")
@@ -1869,7 +1803,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c06ed397-7e7d-45ff-a631-cc9a31367214")
+			(tstamps "e760311b-2426-4b6c-a777-472c04e2f641")
 			(units
 				(unit
 					(name "A")
@@ -1938,7 +1872,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "51bc15bf-8fc2-4547-ab4e-40ec4b1604fb")
+			(tstamps "d6e4e345-0b2e-4e50-aff5-188dcb8a0158")
 			(units
 				(unit
 					(name "A")
@@ -2007,7 +1941,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fb3dc5b2-6d06-4aa7-a801-de17539716aa")
+			(tstamps "01e0d505-b9dd-4aba-8beb-6a7e0b8fb913")
 			(units
 				(unit
 					(name "A")
@@ -2073,7 +2007,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f7e144b8-fc42-4d53-b7a4-f010d8e33d94")
+			(tstamps "cc3b4546-a615-47e0-8813-9891eb9e97e7")
 			(units
 				(unit
 					(name "A")
@@ -2090,30 +2024,30 @@
 		)
 		(comp
 			(ref "J18")
-			(value "Voltímetro ROB-004")
-			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal")
-			(description "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(value "Voltímetro 1=GND 2=V (rojo y amarillo), cable soldado")
+			(footprint "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "pendiente de medida (colores por convención [H]; ubicación en VM_LOG = propuesta [H] que se desvía de [ENERGIA] §2 y [CONTRATO] §2.10 (bus VM), pendiente de Matías, decisión 12)")
+					(name "Estado") "v0.3 [H]: pads para soldar los cables del voltímetro, en VM_LOG_F; rojo y amarillo juntos en el 2 (SUP-39)")
 				(field
 					(name "Fuente") "[CAP]/ROB-004_Voltimetro/referencia_compra.png; ficha_comercial_DIYMORE_REFERENCIA.html [V]")
 				(field
-					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal")
+					(name "Footprint") "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Screw_Terminal_01x03")
-				(description "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
+				(lib "Connector_Generic")
+				(part "Conn_01x02")
+				(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(property
 				(name "Estado")
-				(value "pendiente de medida (colores por convención [H]; ubicación en VM_LOG = propuesta [H] que se desvía de [ENERGIA] §2 y [CONTRATO] §2.10 (bus VM), pendiente de Matías, decisión 12)")
+				(value "v0.3 [H]: pads para soldar los cables del voltímetro, en VM_LOG_F; rojo y amarillo juntos en el 2 (SUP-39)")
 			)
 			(property
 				(name "Fuente")
@@ -2129,17 +2063,17 @@
 			)
 			(property
 				(name "ki_keywords")
-				(value "screw terminal")
+				(value "connector")
 			)
 			(property
 				(name "ki_fp_filters")
-				(value "TerminalBlock*:*")
+				(value "Connector*:*_1x??_*")
 			)
 			(sheetpath
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c5052d0a-7b48-4884-8cad-9f7e3424d956")
+			(tstamps "4c561b63-e538-41ba-8a2f-e5da2aa40a7b")
 			(units
 				(unit
 					(name "A")
@@ -2149,9 +2083,6 @@
 						)
 						(pin
 							(num "2")
-						)
-						(pin
-							(num "3")
 						)
 					)
 				)
@@ -2208,7 +2139,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5c9c7bc9-c73a-40ca-a407-e11f0eda8ced")
+			(tstamps "fef6b882-441f-4be1-a9b4-e4075b04e88a")
 			(units
 				(unit
 					(name "A")
@@ -2316,7 +2247,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "303ca246-48fe-4233-b339-a11c42a55701")
+			(tstamps "aa02a4e9-7bdf-474f-8093-2e0beaed7840")
 			(units
 				(unit
 					(name "A")
@@ -2385,7 +2316,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "72fe8271-344e-4384-b434-fbe37dc91f67")
+			(tstamps "06db817e-540a-4014-96e7-e7a9cd8af9ab")
 			(units
 				(unit
 					(name "A")
@@ -2451,7 +2382,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fdc3cacf-4643-4a2c-8aef-2efefb06c55c")
+			(tstamps "f2690d67-4218-40b1-a4e1-19f563d40d51")
 			(units
 				(unit
 					(name "A")
@@ -2517,7 +2448,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b6c16d4a-a0fd-49ae-ac5f-66e22b8723b9")
+			(tstamps "4287f8c6-56fc-4eac-8606-4942cbe2c3d8")
 			(units
 				(unit
 					(name "A")
@@ -2583,7 +2514,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "96cf1852-718f-44dc-aaf4-69fe2869002c")
+			(tstamps "5f026162-002f-4f45-981e-b9280adb6aa9")
 			(units
 				(unit
 					(name "A")
@@ -2649,7 +2580,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3f675045-78ae-4de0-89fb-bdfd62abafcd")
+			(tstamps "ea0dcef9-ef49-4d4d-b273-fa766326f9e6")
 			(units
 				(unit
 					(name "A")
@@ -2715,7 +2646,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "19562433-abde-4eda-87d2-bcd70615038a")
+			(tstamps "ee18efd4-3a93-4182-b50a-255d0bbb07cd")
 			(units
 				(unit
 					(name "A")
@@ -2733,7 +2664,7 @@
 		(comp
 			(ref "R7")
 			(value "10k")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal")
 			(description "Resistor")
 			(fields
 				(field
@@ -2741,7 +2672,7 @@
 				(field
 					(name "Fuente") "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
 				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal")
 				(field
 					(name "Datasheet")
 				)
@@ -2781,7 +2712,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "353cd785-327e-403a-90e9-bbda4c8fc650")
+			(tstamps "e9c12a8d-e2db-4a67-a0fd-4eeee8ab422c")
 			(units
 				(unit
 					(name "A")
@@ -2847,7 +2778,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "12e6ef84-e9c5-4af0-b550-4dce08885a62")
+			(tstamps "798805a9-c23e-4a73-ad62-4ad2ac1723e5")
 			(units
 				(unit
 					(name "A")
@@ -2913,7 +2844,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e01080f3-fed2-4c60-8402-bba8255570a9")
+			(tstamps "1b923786-cf72-4201-b49a-0965920c7aa4")
 			(units
 				(unit
 					(name "A")
@@ -2979,7 +2910,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "14ab7328-d3d1-4012-9f0f-161a2ad05131")
+			(tstamps "dc72f89e-d053-4348-81a4-7c7f52f9d017")
 			(units
 				(unit
 					(name "A")
@@ -3045,7 +2976,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e3450c36-305b-44e7-96eb-de09b5ab2cc2")
+			(tstamps "44aafab4-2cae-47d5-8bc8-a89601f42bb5")
 			(units
 				(unit
 					(name "A")
@@ -3111,7 +3042,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b43f84ea-839a-46f6-bf0e-852aaf6771d9")
+			(tstamps "279347a7-4335-4ac0-b827-f1f0e101351f")
 			(units
 				(unit
 					(name "A")
@@ -3177,7 +3108,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "58a30597-0e14-4d5c-8837-b6a839ddd02a")
+			(tstamps "880ccad2-b2cf-474a-a28a-3dcc8ae140f9")
 			(units
 				(unit
 					(name "A")
@@ -3243,7 +3174,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ba34f634-e8d7-45be-9934-b6d453e38dc3")
+			(tstamps "03813b35-cf76-43c3-8793-7fd7c6dcfd8a")
 			(units
 				(unit
 					(name "A")
@@ -3309,7 +3240,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a65796df-1b7c-45f8-b4d6-f748d8c3f9dc")
+			(tstamps "161b94a5-800d-440b-9665-72d4c064880b")
 			(units
 				(unit
 					(name "A")
@@ -3375,7 +3306,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "48b89c89-8c0d-4bc1-a623-df91bd4d4f2f")
+			(tstamps "caf89855-7ad2-4da5-ab7f-33ceac9979e3")
 			(units
 				(unit
 					(name "A")
@@ -3424,45 +3355,6 @@
 				(pin
 					(num "2")
 					(name "Pin_2")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Connector")
-			(part "Screw_Terminal_01x03")
-			(description "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			(footprints
-				(fp "TerminalBlock*:*")
-			)
-			(fields
-				(field
-					(name "Reference") "J")
-				(field
-					(name "Value") "Screw_Terminal_01x03")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "Pin_1")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "Pin_2")
-					(type "passive")
-				)
-				(pin
-					(num "3")
-					(name "Pin_3")
 					(type "passive")
 				)
 			)
@@ -3889,39 +3781,6 @@
 			)
 		)
 		(libpart
-			(lib "Diode")
-			(part "1N5819")
-			(description "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			(docs "http://www.vishay.com/docs/88525/1n5817.pdf")
-			(footprints
-				(fp "D*DO?41*")
-			)
-			(fields
-				(field
-					(name "Reference") "D")
-				(field
-					(name "Value") "1N5819")
-				(field
-					(name "Footprint") "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet") "http://www.vishay.com/docs/88525/1n5817.pdf")
-				(field
-					(name "Description") "40V 1A Schottky Barrier Rectifier Diode, DO-41")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "K")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "A")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
 			(lib "Transistor_FET")
 			(part "IRF4905")
 			(description "-74A Id, -55V Vds, Single P-Channel HEXFET Power MOSFET, 20mOhm Ron, TO-220AB")
@@ -4242,29 +4101,12 @@
 		)
 		(net
 			(code "2")
-			(name "/5V")
+			(name "/5V_MCU")
 			(class "Default")
 			(node
 				(ref "A8")
 				(pin "3")
 				(pinfunction "OUT+_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "D2")
-				(pin "2")
-				(pinfunction "A_2")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "3")
-			(name "/5V_MCU")
-			(class "Default")
-			(node
-				(ref "D2")
-				(pin "1")
-				(pinfunction "K_1")
 				(pintype "passive")
 			)
 			(node
@@ -4281,7 +4123,7 @@
 			)
 		)
 		(net
-			(code "4")
+			(code "3")
 			(name "/GND")
 			(class "Default")
 			(node
@@ -4475,7 +4317,7 @@
 			)
 		)
 		(net
-			(code "5")
+			(code "4")
 			(name "/I2C_SCL")
 			(class "Default")
 			(node
@@ -4504,7 +4346,7 @@
 			)
 		)
 		(net
-			(code "6")
+			(code "5")
 			(name "/I2C_SDA")
 			(class "Default")
 			(node
@@ -4533,7 +4375,7 @@
 			)
 		)
 		(net
-			(code "7")
+			(code "6")
 			(name "/IN1_DER")
 			(class "Default")
 			(node
@@ -4549,7 +4391,7 @@
 			)
 		)
 		(net
-			(code "8")
+			(code "7")
 			(name "/IN1_DER_MCU")
 			(class "Default")
 			(node
@@ -4570,7 +4412,7 @@
 			)
 		)
 		(net
-			(code "9")
+			(code "8")
 			(name "/IN1_IZQ")
 			(class "Default")
 			(node
@@ -4586,7 +4428,7 @@
 			)
 		)
 		(net
-			(code "10")
+			(code "9")
 			(name "/IN1_IZQ_MCU")
 			(class "Default")
 			(node
@@ -4607,7 +4449,7 @@
 			)
 		)
 		(net
-			(code "11")
+			(code "10")
 			(name "/IN2_DER")
 			(class "Default")
 			(node
@@ -4623,7 +4465,7 @@
 			)
 		)
 		(net
-			(code "12")
+			(code "11")
 			(name "/IN2_DER_MCU")
 			(class "Default")
 			(node
@@ -4644,7 +4486,7 @@
 			)
 		)
 		(net
-			(code "13")
+			(code "12")
 			(name "/IN2_IZQ")
 			(class "Default")
 			(node
@@ -4660,7 +4502,7 @@
 			)
 		)
 		(net
-			(code "14")
+			(code "13")
 			(name "/IN2_IZQ_MCU")
 			(class "Default")
 			(node
@@ -4681,7 +4523,7 @@
 			)
 		)
 		(net
-			(code "15")
+			(code "14")
 			(name "/INA_ALERT")
 			(class "Default")
 			(node
@@ -4698,7 +4540,7 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "15")
 			(name "/LED_VM_A")
 			(class "Default")
 			(node
@@ -4714,7 +4556,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "16")
 			(name "/MOT_DER_1")
 			(class "Default")
 			(node
@@ -4731,7 +4573,7 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "17")
 			(name "/MOT_DER_2")
 			(class "Default")
 			(node
@@ -4748,7 +4590,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "18")
 			(name "/MOT_IZQ_1")
 			(class "Default")
 			(node
@@ -4765,7 +4607,7 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "19")
 			(name "/MOT_IZQ_2")
 			(class "Default")
 			(node
@@ -4782,7 +4624,7 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "20")
 			(name "/Q_POL_G")
 			(class "Default")
 			(node
@@ -4804,7 +4646,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "21")
 			(name "/SERVO_DER_MCU")
 			(class "Default")
 			(node
@@ -4825,7 +4667,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "22")
 			(name "/SERVO_DER_SIG")
 			(class "Default")
 			(node
@@ -4841,7 +4683,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "23")
 			(name "/SERVO_IZQ_MCU")
 			(class "Default")
 			(node
@@ -4862,7 +4704,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "24")
 			(name "/SERVO_IZQ_SIG")
 			(class "Default")
 			(node
@@ -4878,7 +4720,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "25")
 			(name "/VBAT_ADC")
 			(class "Default")
 			(node
@@ -4904,7 +4746,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "26")
 			(name "/VBAT_F")
 			(class "Default")
 			(node
@@ -4920,7 +4762,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "27")
 			(name "/VBAT_P")
 			(class "Default")
 			(node
@@ -4936,7 +4778,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "28")
 			(name "/VBAT_SW")
 			(class "Default")
 			(node
@@ -4953,7 +4795,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "29")
 			(name "/VM_BUS")
 			(class "Default")
 			(node
@@ -5016,7 +4858,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "30")
 			(name "/VM_DER")
 			(class "Default")
 			(node
@@ -5050,7 +4892,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "31")
 			(name "/VM_DER_F")
 			(class "Default")
 			(node
@@ -5072,7 +4914,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "32")
 			(name "/VM_IZQ")
 			(class "Default")
 			(node
@@ -5106,7 +4948,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "33")
 			(name "/VM_IZQ_F")
 			(class "Default")
 			(node
@@ -5128,7 +4970,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "34")
 			(name "/VM_LOG")
 			(class "Default")
 			(node
@@ -5149,21 +4991,9 @@
 				(pinfunction "IN+_1")
 				(pintype "power_in")
 			)
-			(node
-				(ref "J18")
-				(pin "2")
-				(pinfunction "Pin_2_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "J18")
-				(pin "3")
-				(pinfunction "Pin_3_3")
-				(pintype "passive")
-			)
 		)
 		(net
-			(code "36")
+			(code "35")
 			(name "/VM_LOG_F")
 			(class "Default")
 			(node
@@ -5177,9 +5007,15 @@
 				(pin "2")
 				(pintype "passive")
 			)
+			(node
+				(ref "J18")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
 		)
 		(net
-			(code "37")
+			(code "36")
 			(name "/VM_UBEC")
 			(class "Default")
 			(node
@@ -5195,7 +5031,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "37")
 			(name "/V_SERVO")
 			(class "Default")
 			(node
@@ -5228,7 +5064,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "38")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

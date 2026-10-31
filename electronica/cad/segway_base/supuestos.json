@@ -1,8 +1,8 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 8,
- "fecha": "26/10/2026",
+ "revision_lista": 9,
+ "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
   "especificacion_destino": "especificacion_v0.4.json",
@@ -354,12 +354,12 @@
   {
    "grupo": "B",
    "tema": "Tamaño de las placas",
-   "supuesto": "Dos placas: potencia de 150 × 110 mm y lógica de 100 × 82 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. La potencia creció de 95 a 110 mm de alto para que la banda lógica (J20, INA226, buck, voltímetro) entre en una cara.",
-   "base": "DEC-17; ruteo v0.1 de ambas placas [H].",
+   "supuesto": "Dos placas que entran en placa virgen de 10 x 15 cm con margen para el corte: potencia de 148 x 96 mm y lógica de 100 x 96 mm (esta se apoya con su lado de 100 mm a lo largo de los 150 mm de la placa virgen). Esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina.",
+   "base": "Matías, 31/10/2026 [M]: las placas vírgenes son de 10 x 15 cm como máximo. Ruteo v0.3 de las dos placas.",
    "impacto_si_cambia": "Otro tamaño obliga a reubicar y rehacer el ruteo de esa placa; el esquema no cambia.",
    "como_se_confirma": "Mecánica confirma dónde van las dos placas y el largo del cable.",
    "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "pcb"
@@ -394,6 +394,15 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Ruteo de la placa de potencia v0.1 (agente/placas/potencia.py); DEC-17 [M]"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Dos placas: potencia de 150 × 110 mm y lógica de 100 × 82 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. La potencia creció de 95 a 110 mm de alto para que la banda lógica (J20, INA226, buck, voltímetro) entre en una cara.",
+      "base": "DEC-17; ruteo v0.1 de ambas placas [H].",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
     }
    ]
   },
@@ -423,12 +432,12 @@
   {
    "grupo": "B",
    "tema": "Impresión para la transferencia",
-   "supuesto": "Impresora láser monocroma a escala 1:1, sin 'ajustar a página', con máxima densidad de tóner, en papel ilustración o couché brillante de 90-150 g o en papel de transferencia. El PDF de la lógica trae una escala de control de 50 mm; el de la potencia no tiene lugar libre, así que se mide su contorno de 150 × 110 mm.",
+   "supuesto": "Impresora láser monocroma a escala 1:1, sin 'ajustar a página', con máxima densidad de tóner, en papel ilustración o couché brillante de 90-150 g o en papel de transferencia. Ninguna de las dos placas v0.3 tiene escala de control: se mide el contorno impreso (148 x 96 mm y 100 x 96 mm).",
    "base": "Práctica habitual del método de la plancha [H].",
    "impacto_si_cambia": "Con una escala distinta de 1:1, los módulos no entran en los zócalos. Con impresora de chorro de tinta, el método no funciona.",
    "como_se_confirma": "Imprimir una prueba y medir con calibre la escala de 50 mm, el contorno de la potencia y la separación de hileras de la ESP32-S3 (25,40 mm).",
    "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "fabricacion"
@@ -447,6 +456,13 @@
       "como_se_confirma": "Imprimir una prueba y medir con calibre la regla de 100 mm y la separación de hileras de la Blue Pill (15,24 mm)."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Impresora láser monocroma a escala 1:1, sin 'ajustar a página', con máxima densidad de tóner, en papel ilustración o couché brillante de 90-150 g o en papel de transferencia. El PDF de la lógica trae una escala de control de 50 mm; el de la potencia no tiene lugar libre, así que se mide su contorno de 150 × 110 mm."
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
     }
    ]
   },
@@ -761,12 +777,12 @@
   {
    "grupo": "B",
    "tema": "Equivalentes THT de los semiconductores SMD",
-   "supuesto": "D1 (TVS SMAJ15A, SMA) se reemplaza por SA15A (DO-15, 500 W), que tiene la misma tabla de tensiones: VWM de 15 V y VC de 24,4 V. Alternativa: P6KE18A (VWM de 15,3 V, VC de 25,2 V). NO sirve P6KE15A: su VWM de 12,8 V queda por debajo de los 13,6 V de carga del bus. D2 (SS34) se reemplaza por 1N5819 (DO-41, 1 A, 40 V), porque 5V_MCU consume menos de 0,1 A; alternativa: 1N5822 (DO-201AD, 3 A). C3 (10 µF/50 V X7R en 1206) pasa a multicapa radial de 10 µF/50 V.",
+   "supuesto": "D1 (TVS SMAJ15A, SMA) se reemplaza por SA15A (DO-15, 500 W), con VWM de 15 V y VC de 24,4 V; alternativa P6KE18A. NO sirve P6KE15A: su VWM de 12,8 V queda por debajo de los 13,6 V de carga del bus. C3 es multicapa radial de 10 µF/50 V. D2 (1N5819) se eliminó en la v0.3: el pin 5V de la ESP32 ya no está en 5V_MCU, así que el USB no puede retroalimentar el buck.",
    "base": "Datos de la §8 de diseno_v0.3.md: VWM mayor de 13,6 V y VC menor de 26 V del INA219 ([DS-219] p.4). Hojas de datos de Littelfuse (series SA y P6KE) y de onsemi/Vishay (1N5819/1N5822), no archivadas: descargarlas y verificar la tabla antes de comprar [D pendiente].",
    "impacto_si_cambia": "Con un TVS de VWM menor que el bus, D1 conduce con la batería llena y se calienta. Con VC mayor de 26 V, el INA219 queda sin margen.",
    "como_se_confirma": "Bajar y archivar en componentes_comprados/ las hojas de SA15A, P6KE18A y 1N5819, comprobar VWM, VC y Vf, y comprar el que se consiga.",
    "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "D1",
     "D2",
@@ -783,7 +799,15 @@
     "C3": "MLCC radial 10uF/50V"
    },
    "id": "SUP-17",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "D1 (TVS SMAJ15A, SMA) se reemplaza por SA15A (DO-15, 500 W), que tiene la misma tabla de tensiones: VWM de 15 V y VC de 24,4 V. Alternativa: P6KE18A (VWM de 15,3 V, VC de 25,2 V). NO sirve P6KE15A: su VWM de 12,8 V queda por debajo de los 13,6 V de carga del bus. D2 (SS34) se reemplaza por 1N5819 (DO-41, 1 A, 40 V), porque 5V_MCU consume menos de 0,1 A; alternativa: 1N5822 (DO-201AD, 3 A). C3 (10 µF/50 V X7R en 1206) pasa a multicapa radial de 10 µF/50 V."
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -1039,12 +1063,12 @@
   {
    "grupo": "C",
    "tema": "Chip y regulador de la ESP32-S3",
-   "supuesto": "Módulo ESP32-S3-WROOM-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal) y regulador SOT-223 de clase 1 A (tipo AMS1117-3.3) que alimenta el módulo y los periféricos de 3,3 V. Pines NO tolerantes a 5 V.",
+   "supuesto": "Módulo ESP32-S3-WROOM-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal) y regulador SOT-223 de clase 1 A (tipo AMS1117-3.3) en la DevKitC. Desde la v0.3 ese regulador solo trabaja con el USB enchufado: con batería, la ESP32 toma 3,3 V de A9 por sus pines 3V3. Pines NO tolerantes a 5 V.",
    "base": "Manual del vendedor (módulo, CH343P) [V]; encapsulado SOT-223 visible en las fotos; el marcado del regulador no se leyó [H].",
-   "impacto_si_cambia": "Si el regulador es de 500 mA o menos, vuelve el mini buck de 3,3 V para los periféricos.",
+   "impacto_si_cambia": "Con el USB y la batería a la vez, el regulador de la DevKitC y A9 quedan en paralelo sobre 3V3 (SUP-26).",
    "como_se_confirma": "E-01: leer el marcado del regulador; E-02: medir 3V3 con Wi-Fi activo y todos los periféricos.",
    "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A1"
    ],
@@ -1062,6 +1086,14 @@
       "estado": "ASUMIDO"
      },
      "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Módulo ESP32-S3-WROOM-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal) y regulador SOT-223 de clase 1 A (tipo AMS1117-3.3) que alimenta el módulo y los periféricos de 3,3 V. Pines NO tolerantes a 5 V.",
+      "impacto_si_cambia": "Si el regulador es de 500 mA o menos, vuelve el mini buck de 3,3 V para los periféricos."
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
     }
    ],
    "valor": {
@@ -1072,12 +1104,12 @@
   {
    "grupo": "C",
    "tema": "Pines de alimentación de la ESP32-S3",
-   "supuesto": "Se alimenta por el pin 5V (21) con 5V_MCU, que llega por el cable J20 (pines 13 y 14) desde el buck de 5 V A8 a través de D2. D2 pasa a la placa de potencia. Los pines 3V3 (1 y 2) entregan 3,3 V a la lógica y, por J20.9, a los INA de la potencia. GND en los pines 22, 23, 43 y 44.",
-   "base": "Pinout del vendedor [V]; DEC-17.",
-   "impacto_si_cambia": "Sin D2, conectar el USB con la batería encendida realimenta el buck.",
-   "como_se_confirma": "E-02: medir 5V_MCU y 3V3 con y sin USB conectado.",
+   "supuesto": "La ESP32-S3 se alimenta por sus pines 3V3 (1 y 2) desde A9, el mini buck de 3,3 V de la placa de lógica, que toma 5V_MCU del cable (pines 13 y 14) y alimenta también la IMU, los encoders y, por J20.9, los INA de la potencia. El pin 5V de la DevKitC (21) queda fuera de 5V_MCU: solo lo alimenta el USB (net 5V_USB, repetida en J24.21). Con USB y batería a la vez, el regulador de la DevKitC y A9 quedan en paralelo sobre 3V3; los dos son de 3,3 V nominales.",
+   "base": "Pedido del equipo del 31/10/2026 [M]; pinout del vendedor [V]. Elimina el margen de ~0,25 V que dejaba el regulador de la DevKitC con 5V_MCU después de D2.",
+   "impacto_si_cambia": "Si A9 tiene ripple o sobretensión, llega directo a la ESP32 sin el regulador de la DevKitC en el medio.",
+   "como_se_confirma": "E-02: medir 3V3_MCU con batería, con USB y con los dos; temperatura de A9 con Wi-Fi activo. Hasta identificar el chip de A9 (SUP-37), no enchufar el USB con la batería conectada: si A9 es síncrono puede absorber corriente del regulador de la DevKitC. Con solo USB, el 3V3 llega al revés a A9 y deja unos 2,7 V en 5V_MCU y unos 2 V en la potencia (lecturas falsas, sin daño esperado).",
    "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A1"
    ],
@@ -1104,6 +1136,24 @@
       "estado": "CAMBIADO"
      },
      "fuente": "DEC-17 [M]: Matías eligió dos placas de una cara (potencia y lógica) unidas por cable plano ('vamos con la opción 1')"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Se alimenta por el pin 5V (21) con 5V_MCU, que llega por el cable J20 (pines 13 y 14) desde el buck de 5 V A8 a través de D2. D2 pasa a la placa de potencia. Los pines 3V3 (1 y 2) entregan 3,3 V a la lógica y, por J20.9, a los INA de la potencia. GND en los pines 22, 23, 43 y 44.",
+      "base": "Pinout del vendedor [V]; DEC-17.",
+      "impacto_si_cambia": "Sin D2, conectar el USB con la batería encendida realimenta el buck.",
+      "como_se_confirma": "E-02: medir 5V_MCU y 3V3 con y sin USB conectado.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "como_se_confirma": "E-02: medir 3V3_MCU con batería, con USB y con los dos; temperatura de A9 con Wi-Fi activo."
+     },
+     "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
     }
    ],
    "valor": {}
@@ -1269,12 +1319,12 @@
   {
    "grupo": "C",
    "tema": "Rieles de 3,3 V",
-   "supuesto": "Un solo riel 3V3_MCU desde el regulador de la DevKitC (SUP-25) para el módulo, la MPU, los INA y los encoders. Se elimina el mini buck de 3,3 V A9. Presupuesto: unos 350 mA de pico del ESP32-S3 con Wi-Fi más unos 65 mA de periféricos.",
-   "base": "Simplificación por la placa ESP32-S3 (DEC-16); consumo del ESP32-S3 según su datasheet [D]; periféricos según §7 de diseno_v0.3.md [H].",
-   "impacto_si_cambia": "Si el regulador no alcanza, vuelve A9 (mini buck ROB-005) solo para periféricos.",
-   "como_se_confirma": "E-02: medir 3V3 y la temperatura del regulador con Wi-Fi activo.",
+   "supuesto": "Un solo riel 3V3_MCU desde A9 (mini buck ROB-005, recuperado en la v0.3) para la ESP32-S3, la MPU, los INA, los encoders y la expansión. Presupuesto: unos 350 mA de pico de la ESP32-S3 con Wi-Fi más unos 65 mA de periféricos y lo que se conecte en J26.",
+   "base": "Pedido del equipo del 31/10/2026 [M]; consumo del ESP32-S3 según su datasheet [D].",
+   "impacto_si_cambia": "Si A9 no alcanza o calienta, hay que volver a alimentar la ESP32 por su pin 5V.",
+   "como_se_confirma": "E-02: medir 3V3_MCU y la temperatura de A9 con Wi-Fi activo y los sensores conectados.",
    "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A9",
     "A1"
@@ -1293,6 +1343,17 @@
       "estado": "ASUMIDO"
      },
      "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Un solo riel 3V3_MCU desde el regulador de la DevKitC (SUP-25) para el módulo, la MPU, los INA y los encoders. Se elimina el mini buck de 3,3 V A9. Presupuesto: unos 350 mA de pico del ESP32-S3 con Wi-Fi más unos 65 mA de periféricos.",
+      "base": "Simplificación por la placa ESP32-S3 (DEC-16); consumo del ESP32-S3 según su datasheet [D]; periféricos según §7 de diseno_v0.3.md [H].",
+      "impacto_si_cambia": "Si el regulador no alcanza, vuelve A9 (mini buck ROB-005) solo para periféricos.",
+      "como_se_confirma": "E-02: medir 3V3 y la temperatura del regulador con Wi-Fi activo.",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
     }
    ],
    "valor": {
@@ -1490,12 +1551,12 @@
   {
    "grupo": "D",
    "tema": "Mini bucks de 5 V y 3,3 V (A8/A9)",
-   "supuesto": "ROB-006 (5 V, A8): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, cada uno sobre un zócalo 1×01. Contorno de unos 22 × 17 mm, el que adoptó la tarea de huellas (tipo MP1584). IN− y OUT− son la misma masa. Admite 24,4 V o más de entrada (MP1584: 28 V). El mini buck de 3,3 V (ROB-005, A9) ya no se usa: el 3V3 sale de la DevKitC (SUP-31).",
+   "supuesto": "ROB-006 (5 V, A8, en la potencia) y ROB-005 (3,3 V, A9, en la lógica): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, contorno de unos 22 × 17 mm (tipo MP1584). IN− y OUT− son la misma masa. A8 admite 24,4 V o más de entrada (MP1584: 28 V). A9 recibe 5 V y entrega 3,3 V.",
    "base": "Captura de componentes_comprados/datasheets/ROB-005_Mini_3V3/referencia_compra.png [V]; inventario: chip no identificado y MP1584 solo como candidato [H].",
    "impacto_si_cambia": "Si el chip admite menos de 24,4 V (por ejemplo, 20 V), un transitorio en el clamp del TVS puede dañarlo: hace falta otro módulo o un limitador. Con otro contorno o posición de pads, se rehace la huella.",
-   "como_se_confirma": "E-01: calibre, fotos y marcado del chip. E-02: rizado y temperatura.",
+   "como_se_confirma": "E-01, antes de soldar: con el multímetro, identificar en cada mini buck cuál esquina es IN+, IN−, OUT+ y OUT− (si los + no están del mismo lado, la huella está mal y A9 pondría 3V3 en corto). Leer el marcado del chip. E-02: rizado y temperatura.",
    "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A8",
     "A9"
@@ -1520,6 +1581,20 @@
       "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, cada uno sobre un zócalo 1×01. Contorno de unos 22 × 17 mm, el que adoptó la tarea de huellas (tipo MP1584). IN− y OUT− son la misma masa. Admiten 24,4 V o más de entrada (MP1584: 28 V). La captura muestra una placa negra con inductor 4R7 y cuatro agujeros en las esquinas, sin medidas."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "ROB-006 (5 V, A8): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, cada uno sobre un zócalo 1×01. Contorno de unos 22 × 17 mm, el que adoptó la tarea de huellas (tipo MP1584). IN− y OUT− son la misma masa. Admite 24,4 V o más de entrada (MP1584: 28 V). El mini buck de 3,3 V (ROB-005, A9) ya no se usa: el 3V3 sale de la DevKitC (SUP-31)."
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "como_se_confirma": "E-01: calibre, fotos y marcado del chip. E-02: rizado y temperatura."
+     },
+     "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
     }
    ]
   },
@@ -1556,12 +1631,12 @@
   {
    "grupo": "D",
    "tema": "Voltímetro (ROB-004)",
-   "supuesto": "No se monta sobre la placa. Se conecta en J18, bornera de 3,5 mm y 3 polos (GND, medida y alimentación), y mide VM_LOG. Admite 4,5-30 V de alimentación.",
+   "supuesto": "El voltímetro (ROB-004) no se monta sobre la placa: sus cables se sueldan en J18, dos pads junto a F5: 1 = GND (negro), 2 = VM_LOG_F (rojo y amarillo juntos). Mide la batería después de F5. Admite 4,5-30 V de alimentación.",
    "base": "Ficha comercial DIYMORE de referencia [V]; §3 de diseno_v0.3.md.",
    "impacto_si_cambia": "Si consume más de 20 mA o no admite 13,6 V, cambia F5 o pasa a otra rama.",
    "como_se_confirma": "E-01: colores y función de los 3 cables del voltímetro comprado.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "J18"
    ],
@@ -1570,7 +1645,16 @@
    ],
    "alias": [],
    "id": "SUP-39",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "No se monta sobre la placa. Se conecta en J18, bornera de 3,5 mm y 3 polos (GND, medida y alimentación), y mide VM_LOG. Admite 4,5-30 V de alimentación.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
+    }
+   ]
   },
   {
    "grupo": "D",
@@ -2830,12 +2914,12 @@
   {
    "grupo": "I",
    "tema": "Puentes bajo módulos en zócalo",
-   "supuesto": "Bajo los módulos soldados pasan W1 (SDA, bajo A7) y W7 (GND, bajo A8), y el pad de W4 queda en el borde de A8; W2 queda al costado de A7. Los módulos van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa, enfundados en termocontraíble y se montan antes de soldar A7 y A8: después ya no se pueden reparar. El DRC lo marca como aviso (pth_inside_courtyard).",
+   "supuesto": "Bajo los módulos soldados de la potencia pasan W1 (SDA, bajo A7) y W6 (GND, bajo A8), y el pad de W4 queda en el borde de A8. Los módulos van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa, enfundados en termocontraíble y se montan antes de soldar A7 y A8. En la lógica ningún puente pasa bajo A9. El DRC lo marca como aviso (pth_inside_courtyard).",
    "base": "Altura del zócalo hembra estándar (8,5 mm) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Sin funda, un puente que se levante puede tocar un pad de la cara inferior del módulo.",
    "como_se_confirma": "Montar los cuatro puentes, enfundados, antes de soldar A7 y A8.",
    "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "pcb"
@@ -2867,18 +2951,25 @@
       "supuesto": "Los puentes W1, W2, W4 y W7 de la potencia pasan bajo el INA226 (A7) y el buck (A8), que van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa y enfundados en termocontraíble para que no toquen las soldaduras de abajo del módulo. El DRC lo marca como aviso (pth_inside_courtyard)."
      },
      "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Bajo los módulos soldados pasan W1 (SDA, bajo A7) y W7 (GND, bajo A8), y el pad de W4 queda en el borde de A8; W2 queda al costado de A7. Los módulos van soldados sobre sus pines con el espaciador de plástico (~2,5 mm). Los puentes van pegados a la placa, enfundados en termocontraíble y se montan antes de soldar A7 y A8: después ya no se pueden reparar. El DRC lo marca como aviso (pth_inside_courtyard)."
+     },
+     "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
     }
    ]
   },
   {
    "grupo": "I",
    "tema": "Masa de la lógica en la placa de potencia",
-   "supuesto": "El relleno GND de la banda lógica se une al bus de retorno de los servos (que va al lomo por J15) y al lomo por D4. Los retornos de los motores tienen ramas propias por el borde superior. El retorno de la lógica usa J20.15 y J20.16; J20.11 queda sin conexión en las dos placas.",
+   "supuesto": "En la potencia v0.3 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja por A8.2 a un bus inferior hasta J15 y el lomo: el relleno queda unido al lomo por esa ruta y por la rama de D4.1. El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.11 queda sin conexión en las dos placas.",
    "base": "Criterio de masa en estrella (§10 de diseno_v0.3.md) adaptado al ruteo de una cara [H].",
-   "impacto_si_cambia": "La corriente de los servos comparte unos 20 mm de cobre con la masa de la lógica.",
+   "impacto_si_cambia": "Unos mV de caída en el relleno pueden mover la lectura de VBAT_ADC unos 0,1 V (R23 y C14 están en esa zona). El firmware usa el INA226 como medida principal de la batería.",
    "como_se_confirma": "E-03: medir la diferencia de GND entre J20.15 y C1− con los servos en carga.",
    "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "pcb"
@@ -2895,6 +2986,14 @@
       "estado": "ASUMIDO"
      },
      "fuente": "Pedido del equipo del 26/10/2026 [M]: pines hembra en paralelo a la controladora (ELE-037)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "El relleno GND de la banda lógica se une al bus de retorno de los servos (que va al lomo por J15) y al lomo por D4. Los retornos de los motores tienen ramas propias por el borde superior. El retorno de la lógica usa J20.15 y J20.16; J20.11 queda sin conexión en las dos placas.",
+      "impacto_si_cambia": "La corriente de los servos comparte unos 20 mm de cobre con la masa de la lógica."
+     },
+     "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
     }
    ]
   },
@@ -2941,12 +3040,12 @@
   {
    "grupo": "I",
    "tema": "Alimentación de la expansión (J26)",
-   "supuesto": "J26, tira hembra de 1 × 6: 1-2 3V3_MCU, 3-4 GND y 5-6 5V_MCU. GND va en el medio para que un sensor de 3,3 V enchufado un pin corrido no quede en 5 V. Presupuesto para todos los sensores: unos 300 mA en 5V y 150 mA en 3V3. El 5V viene del buck A8 por D2 (1N5819, 1 A) y los pines 13-14 del cable, y llega con unos 4,6-4,7 V. El 3V3 sale del regulador de la DevKitC (SUP-25), que ya alimenta la ESP32-S3, la MPU, los INA y los encoders.",
-   "base": "D2 de 1 A (SUP-17), F5 de 1 A en VM_LOG (SUP-49), regulador SOT-223 de clase 1 A (SUP-25) y consumo de unos 350 mA de pico de la ESP32-S3 (SUP-31) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
+   "supuesto": "J26, tira hembra de 1 × 6: 1-2 3V3_MCU, 3-4 GND y 5-6 5V_MCU. Presupuesto para todos los sensores: unos 300 mA en 5V y 200 mA en 3V3. El 5V viene directo del buck A8 por los pines 13-14 del cable (5,0 V, sin D2). El 3V3 sale de A9.",
+   "base": "D2 de 1 A (SUP-17), F5 de 1 A en VM_LOG (SUP-49), regulador SOT-223 de clase 1 A (SUP-25) y consumo de unos 350 mA de pico de la ESP32-S3 (SUP-31) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado'). v0.3 (31/10/2026): contenido ampliado por el agente (A9, codificación de A1, 5V sin D2); reconfirmar.",
    "impacto_si_cambia": "Con más consumo en 3V3, el regulador de la DevKitC calienta y puede reiniciar la ESP32. Con más consumo en 5V, D2 y F5 quedan al límite.",
    "como_se_confirma": "E-02: medir 5V_MCU y 3V3 en J26 con los sensores conectados y Wi-Fi activo, y la temperatura del regulador de la DevKitC.",
-   "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "pcb",
@@ -2973,18 +3072,25 @@
       "base": "D2 de 1 A (SUP-17), F5 de 1 A en VM_LOG (SUP-49), regulador SOT-223 de clase 1 A (SUP-25) y consumo de unos 350 mA de pico de la ESP32-S3 (SUP-31) [H]."
      },
      "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "J26, tira hembra de 1 × 6: 1-2 3V3_MCU, 3-4 GND y 5-6 5V_MCU. GND va en el medio para que un sensor de 3,3 V enchufado un pin corrido no quede en 5 V. Presupuesto para todos los sensores: unos 300 mA en 5V y 150 mA en 3V3. El 5V viene del buck A8 por D2 (1N5819, 1 A) y los pines 13-14 del cable, y llega con unos 4,6-4,7 V. El 3V3 sale del regulador de la DevKitC (SUP-25), que ya alimenta la ESP32-S3, la MPU, los INA y los encoders."
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
     }
    ]
   },
   {
    "grupo": "I",
    "tema": "Módulos que entran invertidos (A7, A8, A1)",
-   "supuesto": "Montaje de los módulos. **En zócalo:** A1 (ESP32-S3), A2 (MPU6050) y A3/A4 (DRV8871). **Soldados directo** sobre sus pines macho, con el espaciador de plástico de la tira (~2,5 mm): A5/A6 (INA219), A7 (INA226) y A8 (buck). A7 y A8 se sueldan porque en zócalo entran girados y queman la ESP32 o el INA. A1 queda en zócalo porque es el más caro y se puede sacar para programarlo, pero **codificado**: se corta el pin 24 del módulo (GPIO43, TX del USB-serie, que el robot no usa por fuera) y se tapa la posición 24 del zócalo. Sin eso entra girada (5 V a GPIO43 y su 3V3 en corto) o corrida una posición (5 V a GPIO14 o corto del 5V); la antena a la vista no alcanza para evitarlo. A2 está codificado con la posición 5 tapada. A3/A4 son los que más probablemente se quemen y hay repuestos. A5/A6 no entran girados, pero van en el camino de la corriente del motor: soldados son 4 contactos menos.",
-   "base": "Matías, 26/10/2026 [M]: 'SUP-80: soldados' y 'confío en tu criterio' para el resto de la lista. Control 4 de auditoria_electrica_v0.1.md.",
+   "supuesto": "Montaje de los módulos. **En zócalo:** A1 (ESP32-S3, codificada con el pin 24 cortado y esa posición tapada), A2 (MPU6050, pin 5) y A3/A4 (DRV8871). **Soldados directo** sobre sus pines macho, con el espaciador de plástico de la tira (~2,5 mm): A5/A6 (INA219), A7 (INA226), A8 (buck de 5 V) y A9 (buck de 3,3 V, nuevo en la v0.3). A7, A8 y A9 se sueldan porque en zócalo entran girados y queman.",
+   "base": "Matías, 26/10/2026 [M]: 'SUP-80: soldados' y 'confío en tu criterio' para el resto de la lista. Control 4 de auditoria_electrica_v0.1.md. v0.3 (31/10/2026): contenido ampliado por el agente (A9, codificación de A1, 5V sin D2); reconfirmar.",
    "impacto_si_cambia": "Un módulo soldado se cambia desoldando. Se desvía de DEC-13 (todo enchufable) para A5-A8.",
    "como_se_confirma": "Confirmado. En el montaje: soldar A7 con VCC del lado de su rótulo y A8 con IN+ del lado del suyo, y medir J20.13 y J20.9 antes de conectar la lógica.",
-   "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "pcb",
@@ -3017,6 +3123,13 @@
       "supuesto": "Montaje de los módulos. **En zócalo:** A1 (ESP32-S3), A2 (MPU6050) y A3/A4 (DRV8871). **Soldados directo** sobre sus pines macho, con el espaciador de plástico de la tira (~2,5 mm): A5/A6 (INA219), A7 (INA226) y A8 (buck). A7 y A8 se sueldan porque en zócalo entran girados y queman la ESP32 o el INA. A1 queda en zócalo: es el más caro, se puede sacar para programarlo y una inversión se ve (antena y USB fuera de lugar). A2 está codificado con la posición 5 tapada. A3/A4 son los que más probablemente se quemen y hay repuestos. A5/A6 no entran girados, pero van en el camino de la corriente del motor: soldados son 4 contactos menos."
      },
      "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Montaje de los módulos. **En zócalo:** A1 (ESP32-S3), A2 (MPU6050) y A3/A4 (DRV8871). **Soldados directo** sobre sus pines macho, con el espaciador de plástico de la tira (~2,5 mm): A5/A6 (INA219), A7 (INA226) y A8 (buck). A7 y A8 se sueldan porque en zócalo entran girados y queman la ESP32 o el INA. A1 queda en zócalo porque es el más caro y se puede sacar para programarlo, pero **codificado**: se corta el pin 24 del módulo (GPIO43, TX del USB-serie, que el robot no usa por fuera) y se tapa la posición 24 del zócalo. Sin eso entra girada (5 V a GPIO43 y su 3V3 en corto) o corrida una posición (5 V a GPIO14 o corto del 5V); la antena a la vista no alcanza para evitarlo. A2 está codificado con la posición 5 tapada. A3/A4 son los que más probablemente se quemen y hay repuestos. A5/A6 no entran girados, pero van en el camino de la corriente del motor: soldados son 4 contactos menos."
+     },
+     "fuente": "Pedidos del equipo del 31/10/2026 [M]: ESP32 e IMU a 3,3 V, ultrasonido a 5 V, placa virgen de 10 x 15 cm (PCB v0.3)"
     }
    ]
   },
@@ -3045,6 +3158,37 @@
       "base": "Revisión independiente del 26/10/2026 [H]."
      },
      "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    }
+   ]
+  },
+  {
+   "grupo": "I",
+   "tema": "Conector del ultrasonido (J27)",
+   "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG, 3 ECHO, 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C. TRIG sale de GPIO47 por R43 de 1 kΩ en serie. ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. Conviene conectarlo con un cable Dupont de 4 hilos de colores: enchufado directo entra girado y su alimentación queda invertida (el sensor se quema; la ESP32 queda protegida por R43 y R41).",
+   "base": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V. Orden de pines del HC-SR04 (VCC, Trig, Echo, GND) [V].",
+   "impacto_si_cambia": "Con el sensor girado se invierte su alimentación; con R43 y R41 la corriente hacia los GPIO queda por debajo de 2 mA.",
+   "como_se_confirma": "Medir 3,0 V en GPIO21 con ECHO en alto y comprobar la lectura de distancia con un objeto a 20 cm.",
+   "estado": "ASUMIDO",
+   "fecha": "31/10/2026",
+   "refs": [],
+   "afecta": [
+    "pcb",
+    "firmware"
+   ],
+   "alias": [],
+   "id": "SUP-82",
+   "valor": {
+    "TRIG": "GPIO47",
+    "ECHO": "GPIO21"
+   },
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "J27, tira hembra de 1 × 4 en el orden del HC-SR04: 1 VCC (5V_MCU), 2 TRIG (GPIO47), 3 ECHO, 4 GND. ECHO (5 V) baja a 3,0 V con R41 de 2,2 kΩ en serie y R42 de 3,3 kΩ a GND antes de GPIO21. TRIG sale directo de la ESP32 con 3,3 V. El sensor se conecta con un cable Dupont de 4 hilos o se enchufa directo.",
+      "impacto_si_cambia": "Si el módulo es la versión de 3,3 V (HC-SR04P o RCWL-1601), igual funciona con 5 V; si tiene otro orden de pines, se cruza el cable."
+     },
+     "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
     }
    ]
   }

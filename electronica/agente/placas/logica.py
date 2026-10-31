@@ -1,4 +1,4 @@
-"""Placa de lógica v0.2 (DEC-17): ubicación y ruteo completo a mano, una cara (B.Cu), GND por relleno.
+"""Placa de lógica v0.3 (DEC-17): ubicación y ruteo completo a mano, una cara (B.Cu), GND por relleno.
 
 Coordenadas en mm desde la esquina superior izquierda del contorno, vista desde la cara de componentes;
 (x, y) = pad 1, rotación en grados.
@@ -16,7 +16,7 @@ Topología (el mapa de pines de dividir_v06_dos_placas.py está elegido para est
 """
 
 PROYECTO = "segway_logica"
-REVISION = "0.2"
+REVISION = "0.3"
 SPEC = "especificacion_v0.6.json"
 
 UBICACION = {
@@ -32,13 +32,19 @@ UBICACION = {
     # Expansión (ELE-037): tiras hembra pegadas a cada hilera de A1 y alimentación para sensores
     "J24": (66.04, 16.51, 0), "J25": (96.52, 16.51, 0),
     "J26": (38.10, 66.04, 90),
+    # v0.3 (franja inferior nueva, y 72-94): A9 buck de 3,3 V vertical al oeste (IN+ abajo, OUT+ arriba, GND al este),
+    # J27 del ultrasonido y su divisor al este, bajo la DevKitC
+    "A9": (12.00, 91.50, 90), "C30": (6.00, 84.75, 90),
+    # J27 vertical al oeste de la DevKitC, fuera del paso de sus USB-C (revisión v0.3); pin 1 (5V) abajo.
+    # La pista de TRIG pasa por debajo del cuerpo de R41.
+    "J27": (63.50, 87.50, 180), "R41": (67.00, 82.42, 0), "R42": (93.50, 76.00, 270), "R43": (80.16, 78.00, 180),
 }
 FIJAS = set(UBICACION) | {"H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J7", "J8", "J4"}
 
 # Nets de la hilera derecha de A1 (pines 23-44), que solo van a la tira de expansión J25
 HILERA_DER = ["GND", "GPIO43", "GPIO44", "GPIO1", "GPIO2", "GPIO42", "GPIO41", "GPIO40", "GPIO39", "GPIO38", "GPIO37",
-              "GPIO36", "GPIO35", "GPIO0", "GPIO45", "GPIO48", "GPIO47", "GPIO21", "GPIO20", "GPIO19", "GND", "GND"]
+              "GPIO36", "GPIO35", "GPIO0", "GPIO45", "GPIO48", "US_TRIG", "US_ECHO", "GPIO20", "GPIO19", "GND", "GND"]
 W = 1.0          # señales y 3V3 (LOGICA mínimo 1,0)
 ESQUELETO = [
     # --- 3V3 de A1.1 por el borde superior
@@ -75,7 +81,8 @@ ESQUELETO = [
     ("IN1_DER_MCU", W, ["J20.8", "J24.18", "A1.18"]),
     ("IN2_IZQ_MCU", W, ["J20.10", "J24.19", "A1.19"]),
     ("IN1_IZQ_MCU", W, ["J20.12", "J24.20", "A1.20"]),
-    ("5V_MCU", 1.2, ["J20.13", "J20.14", "J24.21", "A1.21"]),
+    ("5V_MCU", 1.2, ["J20.13", "J20.14"]),
+    ("5V_USB", 1.0, ["J24.21", "A1.21"]),          # v0.3: el pin 5V de la DevKitC ya no se alimenta desde el cable
     ("GND", 1.2, ["J20.15", "J20.16", "J24.22", "A1.22"]),
     # --- Expansión: pines de A1 sin pista propia, unidos a su tira
     ("3V3_MCU", W, ["J24.2", "A1.2"]),
@@ -86,11 +93,25 @@ ESQUELETO = [
     #     5V_MCU sale de J20.13 hacia el oeste
     ("3V3_MCU", W, [(38.10, 62.23), "J26.1", "J26.2"]),
     ("5V_MCU", 1.2, ["J26.5", "J26.6", (52.07, 67.31), "J20.13"]),
+    # --- v0.3: 5V_MCU baja a la franja inferior y va al oeste hasta A9 y al este hasta J27
+    ("5V_MCU", 1.2, [(52.07, 67.31), (52.07, 88.00), (14.00, 88.00), "A9.1"]),
+    ("5V_MCU", 1.2, [(52.07, 88.00), (63.50, 88.00), "J27.1"]),
+    ("5V_MCU", 1.2, ["C30.1", (9.50, 84.75), (9.50, 89.00), "A9.1"]),
+    # A9 -> 3V3_MCU: sube por el borde oeste hasta la pista de 3V3 de J8.4 (mitad de J20.9; W1 la une con A1.1)
+    ("3V3_MCU", 1.2, ["A9.3", (12.00, 47.33)]),
+    # Ultrasonido: TRIG (A1.39) y ECHO (A1.40) bajan por debajo de la DevKitC
+    ("US_TRIG", W, ["A1.39", (85.50, 57.15), (85.50, 78.00), "R43.1"]),
+    ("US_TRIG_S", W, ["R43.2", (70.00, 78.00), (70.00, 84.96), "J27.2"]),
+    ("US_ECHO", W, ["A1.40", (90.60, 59.69), (90.60, 76.00), "R42.1"]),
+    ("US_ECHO", W, [(90.60, 76.00), (90.60, 82.42), "R41.2"]),
+    ("US_ECHO_5V", W, ["R41.1", "J27.3"]),
 ]
 # Puentes de alambre del lado de componentes (pads de 2,2 mm, taladro 0,9)
 PUENTES = [
     ("3V3_MCU", [(22.86, 12.70), (22.86, 30.48)]),     # riel superior <-> 3V3 de J20.9
     ("GND", [(33.02, 58.42), (33.02, 66.04)]),         # cara bajo el MPU <-> relleno general
+    ("GND", [(49.50, 72.00), (55.00, 77.00)]),         # v0.3: oeste <-> este sobre el 5V que baja a la franja inferior
+    ("GND", [(60.00, 84.00), (60.00, 91.00)]),         # v0.3: centro <-> franja sur (J27, R42) sobre el 5V horizontal
 ]
 # Sin relleno alrededor de la antena (además de la zona prohibida de la huella)
 SIN_RELLENO = [[(70.0, 0.5), (99.5, 0.5), (99.5, 28.0), (70.0, 28.0)]]
@@ -98,14 +119,17 @@ RUTEAR = False
 ZONAS = [("GND", "placa", 0)]
 
 # Rótulos en B.Cu y escala de control de 50 mm (reglas_fabricacion_casera.md §6), en el relleno inferior
-ROTULOS = [("SEGWAY LOGICA v0.2", (24.13, 72.00), 2.0), ("LADO COBRE", (24.13, 75.15), 2.0),
+ROTULOS = [("SEGWAY LOGICA", (38.00, 77.00), 2.0), ("LADO COBRE", (38.00, 80.80), 2.0), ("v0.3", (38.00, 84.60), 2.0),
     # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py
     # Los de las franjas GND del borde oeste (V de J7 y J8, ENC DER) y del pasillo bajo J26 (5V) partían el relleno:
     # se sacaron; esos pines quedan rotulados en la guía de montaje
     ("ENC IZQ", (14.62, 6.59), 2.0, 0), ("G", (11.62, 36.83), 2.0, 0),
     ("1", (52.92, 52.07), 2.0, 0),
+    # v0.3: ultrasonido y buck de 3,3 V
+    ("5V", (64.50, 91.50), 2.0, 0), ("IN+", (18.50, 92.00), 2.0, 0), ("CABLE", (66.50, 73.69), 2.0, 0),     # J27 y A9 (v0.3); la "G" de J27.4 partía el GND
+    ("3V3", (7.50, 72.50), 2.0, 90),
 ]
-ESCALA = (8.89, 78.74)
+ESCALA = None     # v0.3: sus marcas cortaban la franja sur de GND; se mide el contorno (100 x 96 mm)
 
 # Los pads de GND de las tiras de expansión ya llegan por pista a su vecino de A1: alcanza con un rayo
 ENMIENDAS = """
@@ -120,9 +144,9 @@ ENMIENDAS = """
 
 # Rótulos de cobre pedidos (SUP-14): ubicar_rotulos.py busca el lugar y el resultado va a ROTULOS.
 ROTULOS_PEDIDOS = [
-    ("V", "J7.1", 2.0, 7), ("G", "J7.4", 2.0, 7), ("ENC IZQ", "J7", 2.0, 16),
-    ("G", "J8.1", 2.0, 7), ("V", "J8.4", 2.0, 7), ("ENC DER", "J8", 2.0, 16),
-    ("PARO", "J4", 2.0, 16),
-    ("1", "J20.1", 2.0, 7),
-    ("3V3", "J26.1", 2.0, 7), ("G", "J26.3", 2.0, 7), ("5V", "J26.5", 2.0, 7),
+    ("ENC IZQ", "J7", 2.0, 12), ("G", "J8.1", 2.0, 5), ("1", "J20.1", 2.0, 5),
+    # v0.3
+    ("5V", "J27.1", 2.0, 6), ("G", "J27.4", 2.0, 6), ("SR04", "J27", 2.0, 12),
+    ("IN+", "A9.1", 2.0, 7), ("3V3", "A9.3", 2.0, 7),
+    ("CABLE", "J27", 2.0, 12), ("+", "C30.1", 2.0, 5),
 ]

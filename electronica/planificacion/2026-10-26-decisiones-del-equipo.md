@@ -12,9 +12,10 @@ Fecha: 26/10/2026. Origen: grupo 2 de la [revisión de supuestos](2026-10-26-rev
 | A5, A6 INA219 | **Soldados**, con pines macho en lugar de su bornera | No entran girados, pero por ellos pasa la corriente del motor. Soldados son 4 contactos menos en ese camino. Antes de soldar: puente A0 en A5 y A1 en A6 |
 | A7 INA226 | **Soldado** | En zócalo entra girado y le llegan 12 V (SUP-80) |
 | A8 buck de 5 V | **Soldado** | En zócalo entra girado y manda 12 V a la ESP32 (SUP-80) |
+| A9 buck de 3,3 V (v0.3, lógica) | **Soldado** | Mismo módulo que A8: en zócalo entraría girado |
 
 Cómo se sueldan A5–A8: sobre sus pines macho, con el espaciador de plástico de la tira (unos 2,5 mm sobre la placa).
-- Debajo de A7 y A8 pasan cuatro puentes de alambre (W1, W2, W4 y W7). Van pegados a la placa y **enfundados en termocontraíble**, y se montan antes.
+- Debajo de A7 y A8 pasan puentes de alambre (en la v0.3: W1 bajo A7, W6 bajo A8 y el pad de W4 en su borde). Van pegados a la placa y **enfundados en termocontraíble**, y se montan antes.
 - A7 se suelda con el pin VCC del lado del rótulo VCC. A8, con IN+ del lado del rótulo IN+.
 
 Lo demás va como estaba:

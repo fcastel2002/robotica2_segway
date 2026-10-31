@@ -1,6 +1,6 @@
 {
  "revision": "v0.6",
- "fecha": "2026-10-26",
+ "fecha": "2026-10-31",
  "base": "v0.5 dividida en dos placas (DEC-17): placa de potencia",
  "resumen": "Placa base de interconexión simplificada para fabricación casera (DEC-14, DEC-15): 60 piezas (9 módulos enchufables + 51 componentes de agujero pasante), una sola capa de cobre B.Cu. Todo valor no medido es un supuesto de supuestos.md (SUP-xx).",
  "supuestos": "supuestos.md / supuestos.json",
@@ -743,7 +743,7 @@
    "ref": "R7",
    "lib_id": "Device:R",
    "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",
    "block": "servos",
    "dnp": false,
    "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
@@ -850,29 +850,16 @@
   },
   {
    "ref": "J18",
-   "lib_id": "Connector:Screw_Terminal_01x03",
-   "value": "Voltímetro ROB-004",
-   "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-3-3.5-H_1x03_P3.50mm_Horizontal",
+   "lib_id": "Connector_Generic:Conn_01x02",
+   "value": "Voltímetro 1=GND 2=V (rojo y amarillo), cable soldado",
+   "footprint": "Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm",
    "block": "logica",
    "dnp": false,
    "source": "[CAP]/ROB-004_Voltimetro/referencia_compra.png; ficha_comercial_DIYMORE_REFERENCIA.html [V]",
-   "status": "pendiente de medida (colores por convención [H]; ubicación en VM_LOG = propuesta [H] que se desvía de [ENERGIA] §2 y [CONTRATO] §2.10 (bus VM), pendiente de Matías, decisión 12)",
+   "status": "v0.3 [H]: pads para soldar los cables del voltímetro, en VM_LOG_F; rojo y amarillo juntos en el 2 (SUP-39)",
    "supuestos": [
     "SUP-39",
     "SUP-18"
-   ]
-  },
-  {
-   "ref": "D2",
-   "lib_id": "Diode:1N5819",
-   "value": "1N5819",
-   "footprint": "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal",
-   "block": "logica",
-   "dnp": false,
-   "source": "[SCH-BP] (VBUS del micro-USB unido directo al pin 5V); [STM32-BASE] Warnings; [CONTRATO] §2.11(b); Diode.kicad_sym 1N5819 (1 = K, 2 = A); hoja onsemi/Vishay no archivada (SUP-17); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H]: obligatoria, nunca 0 Ω: impide que el USB alimente la salida de A8 y VM_LOG; 1N5819 en DO-41 (SUP-17); entrada del LDO ≈4,7 V con 65 mA; medir en el cátodo (pin 5V de A1) en E-02",
-   "supuestos": [
-    "SUP-17"
    ]
   },
   {
@@ -1193,7 +1180,8 @@
    "kind": "power",
    "pins": [
     "F5.2",
-    "A7.1"
+    "A7.1",
+    "J18.2"
    ]
   },
   {
@@ -1202,26 +1190,16 @@
    "pins": [
     "A7.2",
     "A7.3",
-    "A8.1",
-    "J18.2",
-    "J18.3"
-   ]
-  },
-  {
-   "name": "5V",
-   "kind": "power",
-   "pins": [
-    "A8.3",
-    "D2.2"
+    "A8.1"
    ]
   },
   {
    "name": "5V_MCU",
    "kind": "power",
    "pins": [
-    "D2.1",
     "J20.13",
-    "J20.14"
+    "J20.14",
+    "A8.3"
    ]
   },
   {
@@ -1280,10 +1258,8 @@
   "V_SERVO": "J16.2",
   "VM_LOG_F": "F5.2",
   "VM_LOG": "A7.2",
-  "5V": "A8.3",
-  "5V_MCU": "D2.1",
-  "3V3_MCU": "A1.20",
-  "3V3_PER": "A9.3",
+  "5V_MCU": "A8.3",
+  "3V3_MCU": "J20.9",
   "GND": "J1.1"
  },
  "cambios_v03_v04": {
@@ -1319,8 +1295,8 @@
   "revision_pcb": "v0.1",
   "coordenadas": "mm; origen en la esquina superior izquierda del contorno; x hacia la derecha, y hacia abajo; vista desde la cara de componentes (F), como la muestra KiCad",
   "board": {
-   "width_mm": 150,
-   "height_mm": 110,
+   "width_mm": 148,
+   "height_mm": 96,
    "corner_radius": 3.0,
    "mounting_holes": [
     [
@@ -1328,16 +1304,16 @@
      4
     ],
     [
-     146,
+     144,
      4
     ],
     [
      4,
-     106
+     92
     ],
     [
-     146,
-     106
+     144,
+     92
     ]
    ],
    "copper_layers": [
@@ -1473,5 +1449,6 @@
   "15": "GND",
   "16": "GND"
  },
- "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)"
+ "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)",
+ "revision_pcb_v03": "Lógica: A9 3,3 V a los pines 3V3 de la ESP32, J27 HC-SR04 con divisor; potencia: sin D2, voltímetro con pads; placas para virgen de 10 x 15 cm (pedidos del 31/10/2026)"
 }

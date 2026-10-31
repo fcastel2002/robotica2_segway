@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-26T14:40:18")
+		(date "2026-10-31T11:17:38")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6386a4fd-6a0e-42f2-9d4e-e4b380814424")
+			(tstamps "17ba6c56-8771-488d-9c94-18dbfb48e309")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d5971209-baff-422e-8b14-5317054c23e7")
+			(tstamps "097abdf7-9d8a-4366-bc06-965ffb63dbb9")
 			(units
 				(unit
 					(name "A")
@@ -309,6 +309,136 @@
 						)
 						(pin
 							(num "8")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "A9")
+			(value "Mini buck 3,3V ROB-005")
+			(footprint "segway_modulos:ROB-005-006_MiniBuck_modulo_4p")
+			(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: soldado (entra girado y quemaría, SUP-80); 5V_MCU -> 3V3_MCU a los pines 3V3 de la ESP32 (SUP-26, SUP-31)")
+				(field
+					(name "Fuente") "Pedido del equipo del 31/10/2026 [M]: ESP32 e IMU alimentadas con 3,3 V; ROB-005 ya comprado [V]")
+				(field
+					(name "Footprint") "segway_modulos:ROB-005-006_MiniBuck_modulo_4p")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			)
+			(libsource
+				(lib "segway_modulos")
+				(part "ROB-005-006_MiniBuck_modulo_4p")
+				(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: soldado (entra girado y quemaría, SUP-80); 5V_MCU -> 3V3_MCU a los pines 3V3 de la ESP32 (SUP-26, SUP-31)")
+			)
+			(property
+				(name "Fuente")
+				(value "Pedido del equipo del 31/10/2026 [M]: ESP32 e IMU alimentadas con 3,3 V; ROB-005 ya comprado [V]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_logica")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_logica.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "673bc3a7-5696-47fe-a847-a214a85b2b65")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C30")
+			(value "47µ/16V")
+			(footprint "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
+			(description "Polarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]")
+				(field
+					(name "Fuente") "Revisión independiente v0.3: capacidad local en la entrada de A9 (5V_MCU por cable)")
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C_Polarized")
+				(description "Polarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]")
+			)
+			(property
+				(name "Fuente")
+				(value "Revisión independiente v0.3: capacidad local en la entrada de A9 (5V_MCU por cable)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_logica")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_logica.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "cb79274a-4b9d-485d-bd16-3d1a79866d42")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
 						)
 					)
 				)
@@ -365,7 +495,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dec6311b-df10-466f-9b14-4585de154463")
+			(tstamps "f058c36e-e1d4-4d8f-8ca5-0141a172f325")
 			(units
 				(unit
 					(name "A")
@@ -431,7 +561,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f53b4918-c605-4e7c-9488-780e61601617")
+			(tstamps "0abced8d-106d-4bf9-8457-40aa866b429f")
 			(units
 				(unit
 					(name "A")
@@ -503,7 +633,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cb52b42e-e7b3-4a12-ad66-c6773dbe72b8")
+			(tstamps "3df99c50-3242-4b25-b5df-8b8f605dea15")
 			(units
 				(unit
 					(name "A")
@@ -575,7 +705,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0603fb96-8d7e-4069-845f-23e74c71e7b7")
+			(tstamps "557594ad-7e51-454f-a421-3f3291e573a4")
 			(units
 				(unit
 					(name "A")
@@ -683,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1f222064-9244-4c52-98ab-8bcf2c336aef")
+			(tstamps "9d7a26fe-e343-4761-9d02-dfa04cf94f2b")
 			(units
 				(unit
 					(name "A")
@@ -809,7 +939,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e4f1f87b-7c4d-407a-9608-b1062c04c5d7")
+			(tstamps "c0abd95e-e059-48ff-a294-c99e4f8498d9")
 			(units
 				(unit
 					(name "A")
@@ -935,7 +1065,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "54b10f41-9839-46b3-a93e-7b64e19793f7")
+			(tstamps "5ec412e4-a0a2-4d30-bc83-a3310a9f1d73")
 			(units
 				(unit
 					(name "A")
@@ -957,6 +1087,78 @@
 						)
 						(pin
 							(num "6")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J27")
+			(value "HC-SR04 1=VCC 2=TRIG 3=ECHO 4=GND")
+			(footprint "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical")
+			(description "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]: orden de pines del HC-SR04 (SUP-82)")
+				(field
+					(name "Fuente") "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V")
+				(field
+					(name "Footprint") "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector_Generic")
+				(part "Conn_01x04")
+				(description "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]: orden de pines del HC-SR04 (SUP-82)")
+			)
+			(property
+				(name "Fuente")
+				(value "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_logica")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_logica.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "9590de7b-d6a4-4e57-9756-8c64f027b1ea")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
 						)
 					)
 				)
@@ -1013,7 +1215,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "60e99fc7-c199-4426-8012-ff0a1770bf3a")
+			(tstamps "62eeb4e9-44b4-45ae-90a1-27d31570c7a6")
 			(units
 				(unit
 					(name "A")
@@ -1079,7 +1281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7dad71d5-6bbe-486f-a432-2fa31a77ce40")
+			(tstamps "d58b610d-1eab-4fdd-b42b-e287bf7365b4")
 			(units
 				(unit
 					(name "A")
@@ -1145,7 +1347,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c56b923b-972b-4ad5-baf5-5a5eb75ed8a4")
+			(tstamps "c1b83aa3-b81f-41d2-a6f5-94300599f78c")
 			(units
 				(unit
 					(name "A")
@@ -1211,7 +1413,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1ee2276b-a127-4114-a26b-30f8c3d64310")
+			(tstamps "199ac17d-b8fd-43cf-be25-7d3c9b6258ee")
 			(units
 				(unit
 					(name "A")
@@ -1277,7 +1479,205 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "220fbdba-034d-4f2a-9619-98ecc326527e")
+			(tstamps "ea8a3c89-dede-457d-834c-0f21366d1c83")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R41")
+			(value "2k2 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]")
+				(field
+					(name "Fuente") "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]")
+			)
+			(property
+				(name "Fuente")
+				(value "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_logica")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_logica.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "fb3df1c3-d870-4326-b17b-e4858d25fe99")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R42")
+			(value "3k3 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]")
+				(field
+					(name "Fuente") "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]")
+			)
+			(property
+				(name "Fuente")
+				(value "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_logica")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_logica.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "475e81f0-2b18-469d-96b5-bb00a82d4f3b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R43")
+			(value "1k 1%")
+			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H]")
+				(field
+					(name "Fuente") "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)")
+				(field
+					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H]")
+			)
+			(property
+				(name "Fuente")
+				(value "Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_logica")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_logica.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "b95ee7aa-d8ea-4718-aafe-9df6660e5ae2")
 			(units
 				(unit
 					(name "A")
@@ -1370,6 +1770,50 @@
 				(pin
 					(num "2")
 					(name "Pin_2")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x04")
+			(description "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x04")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "Pin_4")
 					(type "passive")
 				)
 			)
@@ -1668,6 +2112,40 @@
 		)
 		(libpart
 			(lib "Device")
+			(part "C_Polarized")
+			(description "Polarized capacitor")
+			(footprints
+				(fp "CP_*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "C_Polarized")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
 			(part "R")
 			(description "Resistor")
 			(footprints
@@ -1697,6 +2175,47 @@
 					(num "2")
 					(name "")
 					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "segway_modulos")
+			(part "ROB-005-006_MiniBuck_modulo_4p")
+			(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			(fields
+				(field
+					(name "Reference") "A")
+				(field
+					(name "Value") "Mini buck fijo (5 V ROB-006 / 3,3 V ROB-005)")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "IN+")
+					(type "power_in")
+				)
+				(pin
+					(num "2")
+					(name "IN-")
+					(type "power_in")
+				)
+				(pin
+					(num "3")
+					(name "OUT+")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "OUT-")
+					(type "power_in")
 				)
 			)
 		)
@@ -2045,6 +2564,12 @@
 				(pintype "power_in")
 			)
 			(node
+				(ref "A9")
+				(pin "3")
+				(pinfunction "OUT+_3")
+				(pintype "passive")
+			)
+			(node
 				(ref "J20")
 				(pin "9")
 				(pinfunction "Pin_9_9")
@@ -2117,10 +2642,15 @@
 			(name "/5V_MCU")
 			(class "Default")
 			(node
-				(ref "A1")
-				(pin "21")
-				(pinfunction "5V_21")
+				(ref "A9")
+				(pin "1")
+				(pinfunction "IN+_1")
 				(pintype "power_in")
+			)
+			(node
+				(ref "C30")
+				(pin "1")
+				(pintype "passive")
 			)
 			(node
 				(ref "J20")
@@ -2135,12 +2665,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J24")
-				(pin "21")
-				(pinfunction "Pin_21_21")
-				(pintype "passive")
-			)
-			(node
 				(ref "J26")
 				(pin "5")
 				(pinfunction "Pin_5_5")
@@ -2152,9 +2676,32 @@
 				(pinfunction "Pin_6_6")
 				(pintype "passive")
 			)
+			(node
+				(ref "J27")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
 		)
 		(net
 			(code "3")
+			(name "/5V_USB")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "21")
+				(pinfunction "5V_21")
+				(pintype "power_in")
+			)
+			(node
+				(ref "J24")
+				(pin "21")
+				(pinfunction "Pin_21_21")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
 			(name "/ENC_DER_A")
 			(class "Default")
 			(node
@@ -2182,7 +2729,7 @@
 			)
 		)
 		(net
-			(code "4")
+			(code "5")
 			(name "/ENC_DER_B")
 			(class "Default")
 			(node
@@ -2210,7 +2757,7 @@
 			)
 		)
 		(net
-			(code "5")
+			(code "6")
 			(name "/ENC_IZQ_A")
 			(class "Default")
 			(node
@@ -2238,7 +2785,7 @@
 			)
 		)
 		(net
-			(code "6")
+			(code "7")
 			(name "/ENC_IZQ_B")
 			(class "Default")
 			(node
@@ -2266,7 +2813,7 @@
 			)
 		)
 		(net
-			(code "7")
+			(code "8")
 			(name "/GND")
 			(class "Default")
 			(node
@@ -2298,6 +2845,23 @@
 				(pin "2")
 				(pinfunction "GND_2")
 				(pintype "power_in")
+			)
+			(node
+				(ref "A9")
+				(pin "2")
+				(pinfunction "IN-_2")
+				(pintype "power_in")
+			)
+			(node
+				(ref "A9")
+				(pin "4")
+				(pinfunction "OUT-_4")
+				(pintype "power_in")
+			)
+			(node
+				(ref "C30")
+				(pin "2")
+				(pintype "passive")
 			)
 			(node
 				(ref "J20")
@@ -2348,6 +2912,12 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "J27")
+				(pin "4")
+				(pinfunction "Pin_4_4")
+				(pintype "passive")
+			)
+			(node
 				(ref "J4")
 				(pin "1")
 				(pinfunction "Pin_1_1")
@@ -2365,9 +2935,14 @@
 				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
+			(node
+				(ref "R42")
+				(pin "2")
+				(pintype "passive")
+			)
 		)
 		(net
-			(code "8")
+			(code "9")
 			(name "/GPIO0")
 			(class "Default")
 			(node
@@ -2384,7 +2959,7 @@
 			)
 		)
 		(net
-			(code "9")
+			(code "10")
 			(name "/GPIO1")
 			(class "Default")
 			(node
@@ -2401,7 +2976,7 @@
 			)
 		)
 		(net
-			(code "10")
+			(code "11")
 			(name "/GPIO2")
 			(class "Default")
 			(node
@@ -2418,7 +2993,7 @@
 			)
 		)
 		(net
-			(code "11")
+			(code "12")
 			(name "/GPIO19")
 			(class "Default")
 			(node
@@ -2435,7 +3010,7 @@
 			)
 		)
 		(net
-			(code "12")
+			(code "13")
 			(name "/GPIO20")
 			(class "Default")
 			(node
@@ -2448,23 +3023,6 @@
 				(ref "J25")
 				(pin "19")
 				(pinfunction "Pin_19_19")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "13")
-			(name "/GPIO21")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "40")
-				(pinfunction "GPIO21_40")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J25")
-				(pin "18")
-				(pinfunction "Pin_18_18")
 				(pintype "passive")
 			)
 		)
@@ -2674,23 +3232,6 @@
 		)
 		(net
 			(code "26")
-			(name "/GPIO47")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "39")
-				(pinfunction "GPIO47_39")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J25")
-				(pin "17")
-				(pinfunction "Pin_17_17")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "27")
 			(name "/GPIO48")
 			(class "Default")
 			(node
@@ -2707,7 +3248,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "27")
 			(name "/I2C_SCL")
 			(class "Default")
 			(node
@@ -2736,7 +3277,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "28")
 			(name "/I2C_SDA")
 			(class "Default")
 			(node
@@ -2765,7 +3306,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "29")
 			(name "/IMU_INT")
 			(class "Default")
 			(node
@@ -2788,7 +3329,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "30")
 			(name "/IN1_DER_MCU")
 			(class "Default")
 			(node
@@ -2811,7 +3352,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "31")
 			(name "/IN1_IZQ_MCU")
 			(class "Default")
 			(node
@@ -2834,7 +3375,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "32")
 			(name "/IN2_DER_MCU")
 			(class "Default")
 			(node
@@ -2857,7 +3398,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "33")
 			(name "/IN2_IZQ_MCU")
 			(class "Default")
 			(node
@@ -2880,7 +3421,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "34")
 			(name "/INA_ALERT")
 			(class "Default")
 			(node
@@ -2903,7 +3444,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "35")
 			(name "/PARO_CONT")
 			(class "Default")
 			(node
@@ -2931,7 +3472,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "36")
 			(name "/RST")
 			(class "Default")
 			(node
@@ -2948,7 +3489,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "37")
 			(name "/SERVO_DER_MCU")
 			(class "Default")
 			(node
@@ -2971,7 +3512,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "38")
 			(name "/SERVO_IZQ_MCU")
 			(class "Default")
 			(node
@@ -2994,7 +3535,88 @@
 			)
 		)
 		(net
+			(code "39")
+			(name "/US_ECHO")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "40")
+				(pinfunction "GPIO21_40")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "J25")
+				(pin "18")
+				(pinfunction "Pin_18_18")
+				(pintype "passive")
+			)
+			(node
+				(ref "R41")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R42")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
 			(code "40")
+			(name "/US_ECHO_5V")
+			(class "Default")
+			(node
+				(ref "J27")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R41")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "41")
+			(name "/US_TRIG")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "39")
+				(pinfunction "GPIO47_39")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "J25")
+				(pin "17")
+				(pinfunction "Pin_17_17")
+				(pintype "passive")
+			)
+			(node
+				(ref "R43")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "42")
+			(name "/US_TRIG_S")
+			(class "Default")
+			(node
+				(ref "J27")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R43")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "43")
 			(name "/VBAT_ADC")
 			(class "Default")
 			(node
@@ -3017,7 +3639,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "44")
 			(name "unconnected-(A2-AD0-Pad7)")
 			(class "Default")
 			(node
@@ -3028,7 +3650,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "45")
 			(name "unconnected-(A2-XCL-Pad6)")
 			(class "Default")
 			(node
@@ -3039,7 +3661,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "46")
 			(name "unconnected-(A2-XDA-Pad5)")
 			(class "Default")
 			(node
@@ -3050,7 +3672,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "47")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

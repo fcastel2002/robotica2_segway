@@ -1,8 +1,8 @@
 # Estado de electrónica
 
-Fecha de corte: 2026-10-26. Responsable humano: Matías. Entorno: Windows 11, Claude Code desde la raíz del repositorio.
+Fecha de corte: 2026-10-31. Responsable humano: Matías. Entorno: Windows 11, Claude Code desde la raíz del repositorio.
 
-## Al 26/10/2026 (lo más reciente)
+## Al 31/10/2026 (lo más reciente)
 
 - Controladora: Heemol ESP32-S3-DevKitC-1-N16R8 (DEC-16). El diseño se dividió en dos placas de una cara unidas por cable IDC 2×8 (DEC-17): `cad/segway_potencia/` (49 componentes) y `cad/segway_logica/` (11). Las especificaciones v0.6 se generan con `agente/dividir_v06_dos_placas.py` desde la v0.5; los esquemas, con `generar_esquema.py`. Ambos dan ERC 0 y netlist coincidente.
 - **Placa de lógica v0.1 terminada:** [pcb_v0.1.md](../../cad/segway_logica/pcb_v0.1.md). DRC 0/0/0, 2 puentes, PDF de transferencia y taladros. Ruteo a mano en [`agente/placas/logica.py`](../placas/logica.py) (TEC-04).
@@ -14,7 +14,8 @@ Fecha de corte: 2026-10-26. Responsable humano: Matías. Entorno: Windows 11, Cl
 - **26/10/2026: rótulos de cobre y control eléctrico (ELE-039).** [auditoria_electrica.py](../auditoria_electrica.py) es el control repetible del sistema (correrlo después de cada cambio); [informe](../../cad/auditoria_electrica_v0.1.md). Riesgo abierto principal: A7 y A8 entran girados (SUP-80).
 - **26/10/2026: decisiones del grupo 2 resueltas (DEC-20).** Montaje: A1-A4 en zócalo, A5-A8 soldados. Abiertos: batería (SUP-42), paro (SUP-45), mecánica (SUP-04, 05, 60, 72) y medidas.
 - **26/10/2026: PCB v0.2 lista (ELE-040).** [Potencia](../../cad/segway_potencia/pcb_v0.2.md), [lógica](../../cad/segway_logica/pcb_v0.2.md), [lista de compras](../../cad/lista_compras_v0.2.md), fabricación en `fabricacion/rev-0.2/`. Constructor: `construir_pcb.py --placa <p>` toma REVISION de `placas/<p>.py`.
-- **Siguiente:** cuando lleguen batería (SUP-42), mecánica (SUP-04, 05, 60, 72) y medidas (grupo 3), corregir huellas o contorno, auditar (DEC-18) y regenerar la fabricación. Sin cambios, la v0.2 es la que se fabrica.
+- **31/10/2026: PCB v0.3 (ELE-041).** Potencia 148 x 96 y lógica 100 x 96 (placa virgen de 10 x 15 cm); ESP32 por 3V3 desde A9; J27 HC-SR04; sin D2. [Potencia](../../cad/segway_potencia/pcb_v0.3.md), [lógica](../../cad/segway_logica/pcb_v0.3.md), [compras](../../cad/lista_compras_v0.3.md).
+- **Siguiente:** cuando lleguen batería (SUP-42), mecánica (SUP-05, 60, 72) y medidas (grupo 3), corregir huellas, auditar (DEC-18) y regenerar la fabricación. Sin cambios, la v0.3 es la que se fabrica.
 
 ## Historia anterior (hasta el 18/10/2026)
 

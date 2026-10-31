@@ -25,7 +25,7 @@ import pcbnew
 
 RAIZ = Path(__file__).resolve().parents[2]
 CAD = RAIZ / "electronica" / "cad"
-SALIDA = CAD / "auditoria_electrica_v0.2.md"
+SALIDA = CAD / "auditoria_electrica_v0.3.md"
 OX = OY = 25.4
 
 ESPERADO = {
@@ -35,9 +35,10 @@ ESPERADO = {
         "A5": {"1": "3V3_MCU", "2": "GND", "3": "I2C_SCL", "4": "I2C_SDA", "5": "VM_IZQ", "6": "VM_IZQ_F", "7": "VM_IZQ", "8": "VM_IZQ_F"},
         "A6": {"1": "3V3_MCU", "2": "GND", "3": "I2C_SCL", "4": "I2C_SDA", "5": "VM_DER", "6": "VM_DER_F", "7": "VM_DER", "8": "VM_DER_F"},
         "A7": {"1": "VM_LOG_F", "2": "VM_LOG", "3": "VM_LOG", "4": "INA_ALERT", "5": "I2C_SCL", "6": "I2C_SDA", "7": "GND", "8": "3V3_MCU"},
-        "A8": {"1": "VM_LOG", "2": "GND", "3": "5V", "4": "GND"},
+        "A8": {"1": "VM_LOG", "2": "GND", "3": "5V_MCU", "4": "GND"},
         "Q1": {"1": "Q_POL_G", "2": "VBAT_SW", "3": "VM_BUS"},
-        "D1": {"1": "VM_BUS", "2": "GND"}, "D2": {"1": "5V_MCU", "2": "5V"}, "D3": {"1": "VM_BUS", "2": "Q_POL_G"},
+        "D1": {"1": "VM_BUS", "2": "GND"}, "D3": {"1": "VM_BUS", "2": "Q_POL_G"},
+        "J18": {"1": "GND", "2": "VM_LOG_F"},
         "D4": {"1": "GND", "2": "LED_VM_A"},
         "C1": {"1": "VM_BUS", "2": "GND"}, "C4": {"1": "VM_IZQ", "2": "GND"}, "C5": {"1": "VM_DER", "2": "GND"},
         "C8": {"1": "V_SERVO", "2": "GND"}, "C9": {"1": "V_SERVO", "2": "GND"},
@@ -45,30 +46,35 @@ ESPERADO = {
         "J13": {"1": "GND", "2": "V_SERVO", "3": "SERVO_IZQ_SIG"}, "J14": {"1": "GND", "2": "V_SERVO", "3": "SERVO_DER_SIG"},
     },
     "logica": {
-        "A1": {"1": "3V3_MCU", "2": "3V3_MCU", "21": "5V_MCU", "22": "GND", "23": "GND", "43": "GND", "44": "GND"},
+        # v0.3: la ESP32 se alimenta por sus pines 3V3 desde A9; su pin 5V queda solo con el USB
+        "A1": {"1": "3V3_MCU", "2": "3V3_MCU", "21": "5V_USB", "22": "GND", "23": "GND", "43": "GND", "44": "GND"},
+        "A9": {"1": "5V_MCU", "2": "GND", "3": "3V3_MCU", "4": "GND"},
+        "J27": {"1": "5V_MCU", "2": "US_TRIG_S", "3": "US_ECHO_5V", "4": "GND"},
+        "R41": {"1": "US_ECHO_5V", "2": "US_ECHO"}, "R42": {"1": "US_ECHO", "2": "GND"},
+        "R43": {"1": "US_TRIG", "2": "US_TRIG_S"}, "C30": {"1": "5V_MCU", "2": "GND"},
         "A2": {"1": "3V3_MCU", "2": "GND", "3": "I2C_SCL", "4": "I2C_SDA", "8": "IMU_INT"},
         "J7": {"1": "3V3_MCU", "4": "GND"}, "J8": {"1": "GND", "4": "3V3_MCU"},
         "J26": {"1": "3V3_MCU", "2": "3V3_MCU", "3": "GND", "4": "GND", "5": "5V_MCU", "6": "5V_MCU"},
     },
 }
 # Nets que no pueden llegar a un pin de señal de la ESP32-S3
-PROHIBIDAS = {"5V", "5V_MCU", "VBAT_P", "VBAT_F", "VBAT_SW", "VM_BUS", "VM_IZQ", "VM_IZQ_F", "VM_DER", "VM_DER_F",
+PROHIBIDAS = {"5V", "5V_MCU", "5V_USB", "US_ECHO_5V", "US_TRIG_S", "VBAT_P", "VBAT_F", "VBAT_SW", "VM_BUS", "VM_IZQ", "VM_IZQ_F", "VM_DER", "VM_DER_F",
               "VM_LOG", "VM_LOG_F", "VM_UBEC", "V_SERVO", "MOT_IZQ_1", "MOT_IZQ_2", "MOT_DER_1", "MOT_DER_2", "Q_POL_G"}
-ALIMENTACION_ESP32 = {"1", "2", "21", "22", "23", "43", "44"}
+ALIMENTACION_ESP32 = {"1", "2", "21", "22", "23", "43", "44"}     # el 21 es 5V_USB (pin 5V de la DevKitC)
 # Tensión de cada net (V), para juzgar un módulo girado
-TENSION = {"GND": 0, "3V3_MCU": 3.3, "5V": 5, "5V_MCU": 4.65, "VM_LOG": 12.6, "VM_LOG_F": 12.6, "VM_BUS": 12.6,
+TENSION = {"GND": 0, "3V3_MCU": 3.3, "5V_MCU": 5.0, "5V_USB": 5.0, "US_ECHO_5V": 5.0, "VM_LOG": 12.6, "VM_LOG_F": 12.6, "VM_BUS": 12.6,
            "VM_IZQ": 12.6, "VM_IZQ_F": 12.6, "VM_DER": 12.6, "VM_DER_F": 12.6, "V_SERVO": 6.0, "VM_UBEC": 12.6}
 # Módulos codificados mecánicamente: pin quitado del módulo y esa posición del zócalo tapada
 # A2: pin 5 (XDA, sin uso). A1: pin 24 (GPIO43, TX del USB-serie; el robot no lo usa por fuera). Revisión v0.2.
 CODIFICADOS = {("logica", "A2"): {"5"}, ("logica", "A1"): {"24"}}
 # Módulos soldados (DEC-20): no se pueden enchufar mal después del montaje
-SOLDADOS = {"potencia": {"A5", "A6", "A7", "A8"}}
+SOLDADOS = {"potencia": {"A5", "A6", "A7", "A8"}, "logica": {"A9"}}
 # Corriente de diseño por net (A) para el control de cuellos (SUP-10, SUP-43, SUP-47, SUP-48)
 CORRIENTE = {"VBAT_P": 10, "VBAT_F": 10, "VBAT_SW": 10, "VM_BUS": 10, "VM_IZQ_F": 2.3, "VM_IZQ": 2.3, "VM_DER_F": 2.3,
              "VM_DER": 2.3, "MOT_IZQ_1": 2.3, "MOT_IZQ_2": 2.3, "MOT_DER_1": 2.3, "MOT_DER_2": 2.3, "VM_UBEC": 3.8,
              # V_SERVO: el bus de 3,5 mm lleva los 6 A de los dos servos; el cuello más angosto (1,2 mm, entrada a J13/J14)
              # lleva uno solo, hasta ~3 A bloqueado (SUP-56)
-             "V_SERVO": 3.0, "VM_LOG_F": 0.3, "VM_LOG": 0.3, "5V": 0.8, "5V_MCU": 0.8, "3V3_MCU": 0.5}
+             "V_SERVO": 3.0, "VM_LOG_F": 0.3, "VM_LOG": 0.3, "5V_MCU": 0.8, "3V3_MCU": 0.5}
 
 
 def ipc_dt(i, ancho_mm, espesor_um=35):
@@ -225,19 +231,16 @@ def main():
     v_in = 3.3 * 100 / (100 + 4.7)
     i_rev = (12.6 - 3.3 - 0.3) / 4.7
     reg("OK", "Entradas de los DRV8871", f"En alto el DRV ve {v_in:.2f} V (VIH 1,5 V). Si VM llegara a un IN (DRV dañado o mal enchufado) entran {i_rev:.1f} mA al GPIO por 4,7 kΩ")
-    v5 = 5.0 - 0.35
-    margen = v5 - 1.1 - 3.3
-    reg("AVISO", "Margen del regulador de 3,3 V de la DevKitC",
-        f"5V_MCU ≈ {v5:.2f} V después de D2; con un LDO tipo AMS1117 (caída ≈ 1,1 V a 0,5 A) quedan ≈ {margen:.2f} V de margen. "
-        "Medir en E-02 (SUP-25, SUP-79)")
-    reg("OK", "Rango de los INA219 de motor", "Shunt de 0,1 Ω con PGA ±320 mV: mide hasta 3,2 A; el DRV8871 regula en 2,0-2,3 A (RILIM 30 kΩ, SUP-32), "
-        "así que la corriente de trabajo entra en el rango. Un cortocircuito (hasta el IOCP de 3,7 A) satura la lectura, pero lo corta el propio DRV")
+    reg("OK", "Alimentación de la ESP32-S3 y la IMU", "3V3_MCU sale de A9 (buck de 3,3 V) con 5 V de entrada: sin la caída del regulador "
+        "de la DevKitC. El pin 5V de la DevKitC queda solo con el USB (5V_USB)")
+    k_echo = 3.3 / (2.2 + 3.3)
+    reg("OK", "ECHO del ultrasonido", f"5 V × 3k3/(2k2+3k3) = {5 * k_echo:.2f} V en GPIO21 (VIH 2,48 V, máximo 3,6 V)")
     reg("AVISO", "Cable J20: I2C junto a líneas de PWM",
         "SDA (5) y SCL (7) van entre IN2_DER (6) e IN1_DER (8), sin GND intercalado. Mitigación: cable corto, I2C a 100 kHz, "
         "fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08")
 
     # Informe
-    lineas = ["# Control eléctrico de las placas v0.2 (lógica + potencia)", "",
+    lineas = ["# Control eléctrico de las placas v0.3 (lógica + potencia)", "",
               f"Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resultado: **{fallas} fallas, {avisos} avisos**. "
               "Complementa al ERC, el DRC y la comparación de netlist, que no detectan estos casos. No reemplaza a los ensayos de banco.", "",
               "| Estado | Control | Detalle |", "|---|---|---|"]

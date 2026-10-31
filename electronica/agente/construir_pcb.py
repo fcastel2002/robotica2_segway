@@ -165,6 +165,7 @@ PADS_CASEROS = {
     "Zocalo_expansion_izq_1x22_P2.54mm": (1.0, 1.8, 1.8),
     "Zocalo_expansion_der_1x22_P2.54mm": (1.0, 1.8, 1.8),
     "PinSocket_1x06_P2.54mm_Vertical": (1.0, 1.8, 2.6),
+    "PinSocket_1x04_P2.54mm_Vertical": (1.0, 1.8, 2.6),
     # Pads para cable soldado del interruptor y del paro (v0.2): 1,5 mm² con mecha de 1,8 y 0,5 mm² con mecha de 1,0
     "SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm": (1.8, 3.4, 3.4),
     "SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm": (1.0, 2.2, 2.2),

@@ -1,6 +1,6 @@
 # Pinout de la ESP32-S3 en las placas v0.1: guía para el firmware
 
-Fecha: 26/10/2026. Placas: lógica y potencia v0.1 (casera, una cara). Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
+Fecha: 31/10/2026. Placas: lógica y potencia v0.3 (casera, una cara). La ESP32 se alimenta por sus pines 3V3 desde el buck A9 de la placa de lógica; su pin 5V queda solo para el USB. Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
 
 Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). Todos los pines son de **3,3 V y no toleran 5 V**.
 
@@ -24,10 +24,14 @@ Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). To
 | 13 | IN2_IZQ | salida | MCPWM o LEDC | DRV8871 IZQ (A3), por el cable (J20.10) | |
 | 12 | IN1_DER | salida | MCPWM o LEDC | DRV8871 DER (A4), por el cable (J20.8) | Motor DER en J12 |
 | 11 | IN2_DER | salida | MCPWM o LEDC | DRV8871 DER (A4), por el cable (J20.6) | |
+| 47 | US_TRIG | salida | GPIO / RMT | J27.2 por R43 de 1 kΩ (lógica) | HC-SR04, pulso de 10 µs |
+| 21 | US_ECHO | entrada | GPIO con captura / MCPWM capture | J27.3 por R41/R42 | Ya llega a 3,0 V |
 | 48 | LED RGB | salida | RMT (WS2812) | En la DevKitC | Indicador de estado |
 | 0 | BOOT | entrada | GPIO | Botón de la DevKitC | Se puede leer como botón después del arranque |
 
-Pines libres para sensores nuevos: **1, 2, 21, 38, 39, 40, 41, 42 y 47**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.1.md#expansión-para-sensores-ele-037)). GPIO1 y GPIO2 tienen ADC1.
+Ultrasonido HC-SR04 en J27 (v0.3): **TRIG = GPIO47** (salida) y **ECHO = GPIO21** (entrada, ya bajada a 3,0 V por el divisor R41/R42 de la placa).
+
+Pines libres para sensores nuevos: **1, 2, 38, 39, 40, 41 y 42**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.3.md#expansión-para-sensores-ele-037)). GPIO1 y GPIO2 tienen ADC1.
 
 No usar: 35, 36 y 37 (PSRAM), 19 y 20 (USB nativo), 43 y 44 (UART0 del USB-serie; el pin 24 del módulo, GPIO43, se corta para codificar el zócalo), 45 y 46 (strapping). No grabar el eFuse `STRAP_JTAG_SEL`, porque GPIO3 es la entrada de batería (SUP-24).
 
@@ -92,7 +96,7 @@ Cada motor tiene solo dos entradas, IN1 e IN2. **No hay EN**: en el código va `
 Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se quiere conservar el del prototipo en protoboard.
 
 ```c
-// Placas v0.1 (lógica + potencia), ver electronica/interfaces/pinout_firmware_placas_v0.1.md
+// Placas v0.3 (lógica + potencia), ver electronica/interfaces/pinout_firmware_placas_v0.1.md
 #define PIN_I2C_SDA         17
 #define PIN_I2C_SCL         16
 #define PIN_IMU_INT         18
@@ -113,6 +117,8 @@ Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se
 #define PIN_BATT_ADC        3       // ADC1_CH2, Vbat = Vadc * 9.333
 #define PIN_ARM_BUTTON      0       // botón BOOT
 #define PIN_LED_RGB         48
+#define PIN_US_TRIG         47      // HC-SR04 en J27 (v0.3)
+#define PIN_US_ECHO         21      // por divisor 2k2/3k3: 3,0 V
 #define I2C_ADDR_MPU6050    0x68
 #define I2C_ADDR_INA219_L   0x41
 #define I2C_ADDR_INA219_R   0x44

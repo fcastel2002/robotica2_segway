@@ -75,9 +75,10 @@ J20 = {"ref": "J20", "lib_id": "Connector_Generic:Conn_02x08_Odd_Even", "value":
 
 # Tamaño de cada placa (SUP-04 revisado por DEC-17): una cara, cobre 35 µm, agujeros M3 en las esquinas
 TABLERO = {
-    "potencia": {"width_mm": 150, "height_mm": 110, "corner_radius": 3.0, "mounting_holes": [[4, 4], [146, 4], [4, 106], [146, 106]],
+    # v0.3: las dos entran en placa virgen de 10 x 15 cm con margen para el corte (pedido del 31/10/2026)
+    "potencia": {"width_mm": 148, "height_mm": 96, "corner_radius": 3.0, "mounting_holes": [[4, 4], [144, 4], [4, 92], [144, 92]],
                  "copper_layers": ["B.Cu"], "vias": False, "edge_clearance_mm": 2.0},
-    "logica": {"width_mm": 100, "height_mm": 82, "corner_radius": 3.0, "mounting_holes": [[4, 4], [96, 4], [4, 78], [96, 78]],
+    "logica": {"width_mm": 100, "height_mm": 96, "corner_radius": 3.0, "mounting_holes": [[4, 4], [96, 4], [4, 92], [96, 92]],
                "copper_layers": ["B.Cu"], "vias": False, "edge_clearance_mm": 2.0},
 }
 
@@ -154,7 +155,84 @@ def placa(nombre, refs):
         c.update(CAMBIOS_PCB_V02.get(c["ref"], {}))
     s["fecha"] = "2026-10-26"
     s["revision_pcb_v02"] = "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)"
+    cambios_v03(s, nombre)
     return s
+
+
+# PCB v0.3 (31/10/2026), pedidos del equipo: ESP32 e IMU alimentadas con 3,3 V, ultrasonido a 5 V y placas que
+# entren en placa virgen de 10 x 15 cm.
+# - Lógica: A9 (mini buck de 3,3 V ROB-005, ya comprado) toma 5V_MCU del cable y alimenta 3V3_MCU, que entra a la
+#   ESP32 por sus pines 3V3. El pin 5V de la DevKitC queda fuera de 5V_MCU (net 5V_USB, solo con J24.21).
+# - Lógica: J27 para el HC-SR04 (1 VCC 5V, 2 TRIG, 3 ECHO, 4 GND); ECHO de 5 V baja a 3,0 V con R41 2k2 / R42 3k3.
+# - Potencia: sin D2 (el USB ya no llega a 5V_MCU); J18 del voltímetro pasa a 2 pads para soldar (GND, VM_LOG).
+A9 = {"ref": "A9", "lib_id": "segway_modulos:ROB-005-006_MiniBuck_modulo_4p", "value": "Mini buck 3,3V ROB-005",
+      "footprint": "segway_modulos:ROB-005-006_MiniBuck_modulo_4p", "block": "logica", "dnp": False,
+      "source": "Pedido del equipo del 31/10/2026 [M]: ESP32 e IMU alimentadas con 3,3 V; ROB-005 ya comprado [V]",
+      "status": "provisorio [H]: soldado (entra girado y quemaría, SUP-80); 5V_MCU -> 3V3_MCU a los pines 3V3 de la ESP32 (SUP-26, SUP-31)",
+      "supuestos": ["SUP-26", "SUP-31", "SUP-37", "SUP-80"]}
+J27 = {"ref": "J27", "lib_id": "Connector_Generic:Conn_01x04", "value": "HC-SR04 1=VCC 2=TRIG 3=ECHO 4=GND",
+       "footprint": "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical", "block": "conectores", "dnp": False,
+       "source": "Pedido del equipo del 31/10/2026 [M]: ultrasonido a 5 V", "status": "provisorio [H]: orden de pines del HC-SR04 (SUP-82)",
+       "supuestos": ["SUP-82"]}
+R41 = {"ref": "R41", "lib_id": "Device:R", "value": "2k2 1%", "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
+       "block": "conectores", "dnp": False, "source": "Divisor de ECHO: 5 V x 3k3 / 5k5 = 3,0 V (SUP-82)", "status": "provisorio [H]", "supuestos": ["SUP-82"]}
+R42 = dict(R41, ref="R42", value="3k3 1%")
+# Revisión independiente de la v0.3: 1 kΩ en serie en TRIG (el HC-SR04 enchufado girado pone su ECHO en ese pin)
+# y 47 µF en la entrada de A9, que llega por el cable plano
+R43 = dict(R41, ref="R43", value="1k 1%", source="Protección de GPIO47 si el HC-SR04 se enchufa girado (SUP-82)")
+C30 = {"ref": "C30", "lib_id": "Device:C_Polarized", "value": "47µ/16V", "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+       "block": "logica", "dnp": False, "source": "Revisión independiente v0.3: capacidad local en la entrada de A9 (5V_MCU por cable)",
+       "status": "provisorio [H]", "supuestos": ["SUP-26"]}
+
+
+def cambios_v03(s, nombre):
+    nets = {n["name"]: n for n in s["nets"]}
+    if nombre == "logica":
+        s["components"] += [dict(A9), dict(J27), dict(R41), dict(R42), dict(R43), dict(C30)]
+        nets["5V_MCU"]["pins"] = [p for p in nets["5V_MCU"]["pins"] if p not in ("A1.21", "J24.21")] + ["A9.1", "J27.1", "C30.1"]
+        s["nets"].append({"name": "5V_USB", "kind": "power", "pins": ["A1.21", "J24.21"]})
+        nets["3V3_MCU"]["pins"].append("A9.3")
+        nets["GND"]["pins"] += ["A9.2", "A9.4", "J27.4", "R42.2", "C30.2"]
+        # TRIG en GPIO47 (A1.39) y ECHO en GPIO21 (A1.40): así sus pistas bajan por debajo de la DevKitC sin cruzarse
+        nets["GPIO47"].update(name="US_TRIG")
+        nets["GPIO47"]["pins"].append("R43.1")
+        s["nets"].append({"name": "US_TRIG_S", "kind": "signal", "pins": ["R43.2", "J27.2"]})
+        nets["GPIO21"].update(name="US_ECHO")
+        nets["GPIO21"]["pins"] += ["R41.2", "R42.1"]
+        s["nets"].append({"name": "US_ECHO_5V", "kind": "signal", "pins": ["J27.3", "R41.1"]})
+        for g in s["gpio_table"]:
+            if g["gpio"] == "GPIO47":
+                g.update(function="TRIG del ultrasonido (J27.2)", net="US_TRIG")
+            elif g["gpio"] == "GPIO21":
+                g.update(function="ECHO del ultrasonido (J27.3, divisor R41/R42)", net="US_ECHO")
+            elif g["board_pin"] == "21":
+                g.update(function="5V de la DevKitC (solo USB): sin conexión a 5V_MCU", net="5V_USB")
+    else:
+        s["components"] = [c for c in s["components"] if c["ref"] != "D2"]
+        cinco = nets.pop("5V")
+        nets["5V_MCU"]["pins"] = [p for p in nets["5V_MCU"]["pins"] + cinco["pins"] if not p.startswith("D2.")]
+        s["nets"] = [n for n in s["nets"] if n["name"] != "5V"]
+        # El voltímetro mide VM_LOG_F (después de F5, antes del shunt de A7): queda junto a F5 y libera la franja inferior
+        nets["VM_LOG"]["pins"] = [p for p in nets["VM_LOG"]["pins"] if p not in ("J18.2", "J18.3")]
+        nets["VM_LOG_F"]["pins"].append("J18.2")
+        for c in s["components"]:
+            if c["ref"] == "R7":
+                # v0.3: paso de 7,62 mm para que entre entre R5, la línea del servo DER y J20
+                c["footprint"] = "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+            if c["ref"] == "J18":
+                c.update(lib_id="Connector_Generic:Conn_01x02", value="Voltímetro 1=GND 2=V (rojo y amarillo), cable soldado",
+                         footprint="Connector_Wire:SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm",
+                         status="v0.3 [H]: pads para soldar los cables del voltímetro, en VM_LOG_F; rojo y amarillo juntos en el 2 (SUP-39)")
+    if nombre == "logica":
+        s["fuentes_power"] = {"5V_MCU": "J20.13", "3V3_MCU": "A9.3", "5V_USB": "A1.21", "GND": "J20.15"}
+    else:
+        s["fuentes_power"] = {k: v for k, v in s["fuentes_power"].items() if k not in ("5V", "3V3_PER")}
+        s["fuentes_power"].update({"5V_MCU": "A8.3", "3V3_MCU": "J20.9"})
+    usados = {c["lib_id"].split(":", 1)[1] for c in s["components"] if c["lib_id"].startswith("segway_modulos:")}
+    s["custom_symbols"] = [x for x in v5["custom_symbols"] if x["name"] in usados]
+    s["fecha"] = "2026-10-31"
+    s["revision_pcb_v03"] = ("Lógica: A9 3,3 V a los pines 3V3 de la ESP32, J27 HC-SR04 con divisor; potencia: sin D2, "
+                             "voltímetro con pads; placas para virgen de 10 x 15 cm (pedidos del 31/10/2026)")
 
 
 # PCB v0.2 (26/10/2026): Matías pidió pines para soldar con cable el interruptor de emergencia, sin depender del modelo.
@@ -250,7 +328,7 @@ def main():
         print(f"{nombre}: {len(s['components'])} componentes, {len(s['nets'])} nets")
     tabla = {"cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
              "conector": J20["footprint"], "pines": dict(CABLE, **{"11": "sin conexión"}),
-             "corriente": "5V_MCU en 2 hilos (ESP32-S3 con Wi-Fi y la expansión J26, ≤1 A por D2); GND en 2 hilos (15 y 16); pin 11 sin conexión en ambas placas; resto señales",
+             "corriente": "5V_MCU en 2 hilos (5,0 V del buck A8 para A9, que alimenta la ESP32-S3, y los sensores de J26/J27; menos de 1 A); GND en 2 hilos (15 y 16); pin 11 sin conexión en ambas placas; resto señales",
              "pines_A1": {k: {"pin": v[0], "gpio": v[1]} for k, v in PINES_A1.items()}}
     (CAD / "interconexion_v0.6.json").write_text(json.dumps(tabla, ensure_ascii=False, indent=1), encoding="utf-8")
     ambos = {n["name"] for n in pot["nets"]} & {n["name"] for n in log["nets"]}
