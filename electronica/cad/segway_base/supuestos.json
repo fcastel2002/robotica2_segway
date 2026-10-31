@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 20,
+ "revision_lista": 21,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -2393,11 +2393,11 @@
    "grupo": "F",
    "tema": "Alimentación de los encoders",
    "supuesto": "Los encoders del GA25-370 funcionan con 3,3 V. V_ENC es la misma net que 3V3_MCU, sin R30, y cada encoder consume 20 mA o menos.",
-   "base": "El vendedor dice '3,3-5 V' en una línea y '3,5-5 V' en otra, una contradicción [V]; open_point 12; §7 de diseno_v0.3.md.",
+   "base": "El vendedor dice '3,3-5 V' en una línea y '3,5-5 V' en otra, una contradicción [V]; open_point 12; §7 de diseno_v0.3.md. Matías, 31/10/2026: acepta seguir con 3,3 V hasta probarlo con un motor [M].",
    "impacto_si_cambia": "Si necesitan 5 V, V_ENC pasa a 5V_MCU. Con salida push-pull de 5 V hace falta un divisor en GPIO4, 5, 7 y 15, porque la ESP32-S3 no tolera 5 V: vuelven R9-R12 y se suman resistencias a GND.",
-   "como_se_confirma": "E-04: alimentar el encoder con 3,3 V y ver los pulsos con osciloscopio o analizador lógico.",
+   "como_se_confirma": "Antes de montar, con un motor suelto: azul a 3,3 V y negro a GND, girar la rueda a mano y medir que amarillo y verde salten entre 0 y 3,3 V. Si no hay pulsos con 3,3 V, probar con 5 V: si las señales llegan a 5 V hace falta un divisor por señal. E-04: pulsos con osciloscopio a la velocidad máxima.",
    "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "J7",
     "J8",
@@ -2420,6 +2420,14 @@
       "impacto_si_cambia": "Si necesitan 5 V, V_ENC pasa a la net 5V. Con salida push-pull de 5 V hace falta un divisor en PA0/PA1, que no son FT: vuelven R9/R10 y se suman 2 kΩ a GND."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "El vendedor dice '3,3-5 V' en una línea y '3,5-5 V' en otra, una contradicción [V]; open_point 12; §7 de diseno_v0.3.md.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "Matías, 31/10/2026: 'supongamos que funcionan bien a 3,3 V' (los motores no están a mano) [M]"
     }
    ]
   },

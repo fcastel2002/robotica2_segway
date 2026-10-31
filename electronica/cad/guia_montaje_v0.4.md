@@ -59,6 +59,17 @@ Pololu #2474 (Sharp GP2Y0A60SZLF, versión de 5 V), mirando al piso para detecta
 - **Cable girado o corrido un pin:** la ESP32 queda protegida por el divisor (como máximo 3,0 V en GPIO3). El sensor sí puede dañarse en dos casos: **cable girado** (su salida queda en 5 V con su GND suelto) y **corrido hacia el pin 4** (su VCC en GND y su salida en 5 V). Marcar el pin 1 en las dos puntas del cable. **Ojo:** en el carrier el pad cuadrado es GND (su pin 4), y en J27 el pad cuadrado es el pin 1 (EN): unir «cuadrado con cuadrado» lo deja girado.
 - **Sin sensor o con el cable suelto,** GPIO3 lee unos 0 V, lo mismo que «muy lejos»: el firmware lo interpreta como escalón y frena, que es la falla segura.
 
+### Encoders de los motores (J7 y J8, placa de lógica)
+
+Se alimentan con **3,3 V** desde la placa (el vendedor indica 3,3–5 V; sin hoja de datos, SUP-53). Colores según el vendedor: azul = + del encoder, negro = GND, amarillo y verde = señales A y B (rojo y blanco son del motor y van a J11/J12 de la potencia).
+
+| Bornera | 1 | 2 | 3 | 4 |
+|---|---|---|---|---|
+| J7 (izquierdo) | azul (V) | amarillo (A) | verde (B) | negro (GND) |
+| J8 (derecho) | negro (GND) | amarillo (A) | verde (B) | azul (V) |
+
+**Prueba antes de conectarlos**, con un motor suelto: azul a 3,3 V y negro a GND, girar la rueda despacio a mano y medir que amarillo y verde salten entre unos 0 V y unos 3,3 V. Si no hay pulsos, probar con 5 V y avisar al responsable de electrónica: si las señales llegan a 5 V, no se pueden conectar directo a la ESP32. Si un motor cuenta al revés, se corrige en el firmware intercambiando A y B.
+
 ## 3. Puentes de alambre
 
 Alambre de cobre estañado de 0,6 mm, del lado de los componentes, pegado a la placa y **antes que todo lo demás**. Las posiciones están en la guía impresa (`*_montaje_cara_superior.pdf`).
