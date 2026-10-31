@@ -157,5 +157,5 @@
 	(constraint min_resolved_spokes 1))
 
 (rule "alimentacion_expansion_solida"
-	(condition "A.Type == 'Pad' && A.memberOfFootprint('J26')")
+	(condition "A.Type == 'Pad' && (A.memberOfFootprint('J26') || A.memberOfFootprint('C30'))")
 	(constraint zone_connection solid))

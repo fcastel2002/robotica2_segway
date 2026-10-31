@@ -1,6 +1,6 @@
 # Pinout de la ESP32-S3 en las placas v0.1: guía para el firmware
 
-Fecha: 31/10/2026. Placas: lógica y potencia v0.3 (casera, una cara). La ESP32 se alimenta por sus pines 3V3 desde el buck A9 de la placa de lógica; su pin 5V queda solo para el USB. Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
+Fecha: 31/10/2026. Placas: lógica y potencia v0.4 (casera, una cara). La ESP32 se alimenta por sus pines 3V3 desde el buck A9 de la placa de lógica; su pin 5V queda solo para el USB. Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
 
 Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). Todos los pines son de **3,3 V y no toleran 5 V**.
 
@@ -8,16 +8,15 @@ Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). To
 
 | GPIO | Señal | Dir. | Periférico sugerido | Dónde se conecta | Notas |
 |---|---|---|---|---|---|
-| 4 | ENC_IZQ_A | entrada | PCNT | J7.2 (lógica) | Pull-up externa de 10 kΩ |
-| 5 | ENC_IZQ_B | entrada | PCNT | J7.3 (lógica) | Pull-up externa de 10 kΩ |
-| 7 | ENC_DER_A | entrada | PCNT | J8.2 (lógica) | Pull-up externa de 10 kΩ |
-| 15 | ENC_DER_B | entrada | PCNT | J8.3 (lógica) | Pull-up externa de 10 kΩ |
-| 6 | PARO_CONT | entrada | GPIO con interrupción | J4.2 (lógica) | **Alto = paro.** Pull-up externa de 10 kΩ |
+| 4 | ENC_IZQ_A | entrada | PCNT | J7.2 (lógica) | **Activar la pull-up interna** (sin resistencia en la placa desde la v0.4) |
+| 5 | ENC_IZQ_B | entrada | PCNT | J7.3 (lógica) | **Activar la pull-up interna** (sin resistencia en la placa desde la v0.4) |
+| 7 | ENC_DER_A | entrada | PCNT | J8.2 (lógica) | **Activar la pull-up interna** (sin resistencia en la placa desde la v0.4) |
+| 15 | ENC_DER_B | entrada | PCNT | J8.3 (lógica) | **Activar la pull-up interna** (sin resistencia en la placa desde la v0.4) |
+| 6 | PARO_CONT | entrada | GPIO con interrupción | J4.2 (lógica) | **Alto = paro.** **Activar la pull-up interna** |
 | 17 | I2C_SDA | E/S | I2C0 | MPU en la lógica; INA por el cable | Sin pull-ups en las placas: las traen los módulos |
 | 16 | I2C_SCL | salida | I2C0 | ídem | Empezar a 100 kHz |
 | 18 | IMU_INT | entrada | GPIO con interrupción | MPU6050 (A2, pin INT) | Para sincronizar el lazo con la IMU |
 | 8 | INA_ALERT | entrada | GPIO con interrupción | INA226 por el cable (J20.3) | Colector abierto, activo bajo: **activar la pull-up interna** |
-| 3 | VBAT_ADC | analógica | ADC1_CH2 | Divisor en la potencia, por el cable (J20.1) | `Vbat = Vadc × 9,333`. Atenuación de 12 dB |
 | 9 | SERVO_IZQ | salida | LEDC 50 Hz | J13 (potencia), por el cable (J20.2) | Pulso de 3,3 V, 1 kΩ en serie |
 | 10 | SERVO_DER | salida | LEDC 50 Hz | J14 (potencia), por el cable (J20.4) | ídem |
 | 14 | IN1_IZQ | salida | MCPWM o LEDC | DRV8871 IZQ (A3), por el cable (J20.12) | Motor IZQ en J11 |
@@ -31,7 +30,7 @@ Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). To
 
 Ultrasonido HC-SR04 en J27 (v0.3): **TRIG = GPIO47** (salida) y **ECHO = GPIO21** (entrada, ya bajada a 3,0 V por el divisor R41/R42 de la placa).
 
-Pines libres para sensores nuevos: **1, 2, 38, 39, 40, 41 y 42**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.3.md#expansión-para-sensores-ele-037)). GPIO1 y GPIO2 tienen ADC1.
+Pines libres para sensores nuevos: **1, 2, 3, 38, 39, 40, 41 y 42**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.3.md#expansión-para-sensores-ele-037)). GPIO1 y GPIO2 tienen ADC1.
 
 No usar: 35, 36 y 37 (PSRAM), 19 y 20 (USB nativo), 43 y 44 (UART0 del USB-serie; el pin 24 del módulo, GPIO43, se corta para codificar el zócalo), 45 y 46 (strapping). No grabar el eFuse `STRAP_JTAG_SEL`, porque GPIO3 es la entrada de batería (SUP-24).
 
@@ -48,7 +47,7 @@ Cada motor tiene solo dos entradas, IN1 e IN2. **No hay EN**: en el código va `
 | 0 | PWM | Gira en el otro sentido |
 | 1 | 1 | Frenado |
 
-- Cada IN tiene 4,7 kΩ en serie y 2,2 kΩ a GND en la placa. Con la ESP32 en reset o sin firmware, los motores quedan libres.
+- Los IN van directo de la ESP32 al DRV8871 (v0.4). El DRV tiene pull-down interno: con la ESP32 en reset o sin firmware, los motores quedan libres.
 - Frecuencia de PWM sugerida: 20 kHz, que no se escucha.
 - El driver limita la corriente a unos 2 A por su RILIM (SUP-32).
 - **Sentido de giro:** OUT1 va a J11.1 y J12.1 (rotulados M+). Los dos motores están montados en espejo, así que el mismo comando hace girar las ruedas en sentidos opuestos. Hay que definir un signo por rueda en el firmware (convenio del modelo: positivo hacia adelante). Se ajusta con las ruedas en el aire, sin tocar el cableado.
@@ -62,7 +61,7 @@ Cada motor tiene solo dos entradas, IN1 e IN2. **No hay EN**: en el código va `
 
 ### Parada de emergencia
 
-- GPIO6 tiene una pull-up de 10 kΩ y el contacto NC del hongo va a GND.
+- GPIO6 usa su **pull-up interna** (actívenla en el código) y el contacto NC del hongo va a GND.
   - Funcionamiento normal: el contacto está cerrado y el pin lee **bajo**.
   - Paro apretado o cable cortado: el pin lee **alto**, y el firmware corta los motores.
 - El antirrebote va por firmware (SUP-58).
@@ -82,21 +81,14 @@ Cada motor tiene solo dos entradas, IN1 e IN2. **No hay EN**: en el código va `
 
 ### Batería
 
-- GPIO3 lee la tensión de batería a través de un divisor de 100 kΩ y 12 kΩ al 1 %: `Vbat = Vadc × (112 / 12) = Vadc × 9,333`. Con la batería llena (12,6 V) entran unos 1,35 V.
-- Usar la calibración del ADC de ESP-IDF (`adc_cali`) y la atenuación de 12 dB.
-- El INA226 (0x40) también mide la tensión de batería, con más precisión. El ADC queda como respaldo.
-
-### Servos
-
-- Pulso de 50 Hz por LEDC. La resistencia de 10 kΩ a GND evita movimientos mientras la ESP32 arranca.
-- Se alimentan con el UBEC a 6,0 V (SUP-40). El firmware limita el tiempo que un servo puede quedar bloqueado (SUP-56).
+- Desde la v0.4 no hay divisor: la tensión de la batería la da el INA226 (0x40), registro de tensión de bus (VBS, después de F5). GPIO3 quedó libre (ADC1_CH2) en J24.13.
 
 ## Bloque listo para `board_pins.h`
 
 Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se quiere conservar el del prototipo en protoboard.
 
 ```c
-// Placas v0.3 (lógica + potencia), ver electronica/interfaces/pinout_firmware_placas_v0.1.md
+// Placas v0.4 (lógica + potencia), ver electronica/interfaces/pinout_firmware_placas_v0.1.md
 #define PIN_I2C_SDA         17
 #define PIN_I2C_SCL         16
 #define PIN_IMU_INT         18
@@ -114,7 +106,7 @@ Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se
 #define PIN_ENC_L_B         5
 #define PIN_ENC_R_A         7
 #define PIN_ENC_R_B         15
-#define PIN_BATT_ADC        3       // ADC1_CH2, Vbat = Vadc * 9.333
+// v0.4: sin divisor de batería; la tensión la mide el INA226 (I2C_ADDR_INA226)
 #define PIN_ARM_BUTTON      0       // botón BOOT
 #define PIN_LED_RGB         48
 #define PIN_US_TRIG         47      // HC-SR04 en J27 (v0.3)
@@ -131,7 +123,7 @@ Este cable no cambia nada en el código, pero sirve para medir con el tester. El
 
 | Pin | Señal | Pin | Señal |
 |---|---|---|---|
-| 1 | VBAT_ADC (GPIO3) | 2 | SERVO_IZQ (GPIO9) |
+| 1 | sin conexión | 2 | SERVO_IZQ (GPIO9) |
 | 3 | INA_ALERT (GPIO8) | 4 | SERVO_DER (GPIO10) |
 | 5 | SDA (GPIO17) | 6 | IN2_DER (GPIO11) |
 | 7 | SCL (GPIO16) | 8 | IN1_DER (GPIO12) |

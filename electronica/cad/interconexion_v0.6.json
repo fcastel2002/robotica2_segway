@@ -2,7 +2,7 @@
  "cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
  "conector": "Connector_IDC:IDC-Header_2x08_P2.54mm_Vertical",
  "pines": {
-  "1": "VBAT_ADC",
+  "1": "sin conexión",
   "2": "SERVO_IZQ_MCU",
   "3": "INA_ALERT",
   "4": "SERVO_DER_MCU",

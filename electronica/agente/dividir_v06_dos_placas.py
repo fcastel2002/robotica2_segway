@@ -67,6 +67,8 @@ CABLE = {
     "9": "3V3_MCU", "10": "IN2_IZQ_MCU", "11": "GND", "12": "IN1_IZQ_MCU",
     "13": "5V_MCU", "14": "5V_MCU", "15": "GND", "16": "GND",
 }
+# Pines del cable sin conexión en las dos placas: 11 desde la v0.1, 1 desde la v0.4 (sin divisor de batería)
+SIN_CONEXION = ("1", "11")
 J20 = {"ref": "J20", "lib_id": "Connector_Generic:Conn_02x08_Odd_Even", "value": "Cable lógica-potencia 2x8",
        "footprint": "Connector_IDC:IDC-Header_2x08_P2.54mm_Vertical", "block": "conectores", "dnp": False,
        "source": "DEC-17 [M]: dos placas de una cara unidas por cable plano IDC",
@@ -147,7 +149,7 @@ def placa(nombre, refs):
         if n["name"] == "GND":
             n["pins"] = [p for p in n["pins"] if p != "J20.11"]
     s["no_connect"].append("J20.11")
-    s["cable_J20"] = dict(CABLE, **{"11": "sin conexión"})
+    s["cable_J20"] = dict(CABLE, **{k: "sin conexión" for k in SIN_CONEXION})
     if nombre == "logica":
         expansion(s)
     textos_esp32(s)
@@ -156,7 +158,57 @@ def placa(nombre, refs):
     s["fecha"] = "2026-10-26"
     s["revision_pcb_v02"] = "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)"
     cambios_v03(s, nombre)
+    cambios_v04(s, nombre)
     return s
+
+
+# PCB v0.4 (31/10/2026). Fotos de los módulos comprados y pedido del equipo de usar solo lo que piden los módulos:
+# - INA226: la tira real es IN+, IN-, VBS, ALE, SDA, SCL, GND, VCC (pin 5 = SDA, pin 6 = SCL).
+# - Fuera lo que los módulos ya resuelven: C4/C5 (el DRV trae 47 µF/50 V), R1-R4 y R35-R38 (el DRV8871 tiene
+#   pull-down interno y no entra girado), R7/R8 (pull-down de servos), C9 (queda C8), R22/R23/C14 (la batería la mide
+#   el INA226), R13-R16 y R24 (pull-ups internas de la ESP32). J20.1 queda sin conexión en las dos placas.
+QUITAR_V04 = {"potencia": {"C4", "C5", "R1", "R2", "R3", "R4", "R35", "R36", "R37", "R38", "R7", "R8", "C9", "R22", "R23", "C14"},
+              "logica": {"R13", "R14", "R15", "R16", "R24"}}
+UNIR_V04 = {"IN1_IZQ": "IN1_IZQ_MCU", "IN2_IZQ": "IN2_IZQ_MCU", "IN1_DER": "IN1_DER_MCU", "IN2_DER": "IN2_DER_MCU"}
+
+
+def cambios_v04(s, nombre):
+    quitar = QUITAR_V04[nombre]
+    s["components"] = [c for c in s["components"] if c["ref"] not in quitar]
+    for n in s["nets"]:
+        n["pins"] = [p for p in n["pins"] if p.split(".")[0] not in quitar]
+        if n["name"] == "I2C_SCL":
+            n["pins"] = ["A7.6" if p == "A7.5" else p for p in n["pins"]]
+        elif n["name"] == "I2C_SDA":
+            n["pins"] = ["A7.5" if p == "A7.6" else p for p in n["pins"]]
+    if nombre == "potencia":
+        nets = {n["name"]: n for n in s["nets"]}
+        for viejo, nuevo in UNIR_V04.items():
+            if viejo in nets and nuevo in nets:
+                nets[nuevo]["pins"] += nets.pop(viejo)["pins"]
+        s["nets"] = list(nets.values())
+    for n in s["nets"]:
+        if n["name"] == "VBAT_ADC":
+            n["pins"] = [p for p in n["pins"] if p != "J20.1"]
+            if nombre == "logica":
+                n["name"] = "GPIO3"
+    s["no_connect"].append("J20.1")
+    s["nets"] = [n for n in s["nets"] if len(n["pins"]) >= 2]
+    for cs in s["custom_symbols"]:
+        if cs["name"] == "ROB-009_INA226_modulo_8p":
+            for pin in cs["pins"]:
+                if pin["number"] == "5":
+                    pin["name"] = "SDA"
+                elif pin["number"] == "6":
+                    pin["name"] = "SCL"
+    if nombre == "logica":
+        for g in s["gpio_table"]:
+            if g["gpio"] == "GPIO3":
+                g.update(function="libre: expansión (ADC1_CH2)", net="GPIO3", justification="v0.4: la batería la mide el INA226")
+            if g["net"] in ("ENC_IZQ_A", "ENC_IZQ_B", "ENC_DER_A", "ENC_DER_B", "PARO_CONT"):
+                g["justification"] = (g.get("justification", "") + "; v0.4: pull-up interna de la ESP32").lstrip("; ")
+    s["revision_pcb_v04"] = ("INA226 con SDA/SCL corregidos, huella del mini buck corregida (estaba espejada) y sin los "
+                             "componentes que los módulos ya resuelven (fotos y pedido del equipo del 31/10/2026)")
 
 
 # PCB v0.3 (31/10/2026), pedidos del equipo: ESP32 e IMU alimentadas con 3,3 V, ultrasonido a 5 V y placas que
@@ -327,12 +379,13 @@ def main():
         (d / "especificacion_v0.6.json").write_text(json.dumps(s, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"{nombre}: {len(s['components'])} componentes, {len(s['nets'])} nets")
     tabla = {"cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
-             "conector": J20["footprint"], "pines": dict(CABLE, **{"11": "sin conexión"}),
+             "conector": J20["footprint"], "pines": dict(CABLE, **{k: "sin conexión" for k in SIN_CONEXION}),
              "corriente": "5V_MCU en 2 hilos (5,0 V del buck A8 para A9, que alimenta la ESP32-S3, y los sensores de J26/J27; menos de 1 A); GND en 2 hilos (15 y 16); pin 11 sin conexión en ambas placas; resto señales",
              "pines_A1": {k: {"pin": v[0], "gpio": v[1]} for k, v in PINES_A1.items()}}
     (CAD / "interconexion_v0.6.json").write_text(json.dumps(tabla, ensure_ascii=False, indent=1), encoding="utf-8")
     ambos = {n["name"] for n in pot["nets"]} & {n["name"] for n in log["nets"]}
-    assert set(CABLE.values()) <= ambos, set(CABLE.values()) - ambos
+    usadas = {v for k, v in CABLE.items() if k not in SIN_CONEXION}
+    assert usadas <= ambos, usadas - ambos
     print("nets del cable presentes en ambas placas:", sorted(set(CABLE.values())))
 
 

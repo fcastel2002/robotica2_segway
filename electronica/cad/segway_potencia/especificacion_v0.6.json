@@ -150,13 +150,13 @@
     },
     {
      "number": "5",
-     "name": "SCL",
+     "name": "SDA",
      "type": "input",
      "side": "right"
     },
     {
      "number": "6",
-     "name": "SDA",
+     "name": "SCL",
      "type": "bidirectional",
      "side": "right"
     },
@@ -432,48 +432,6 @@
    ]
   },
   {
-   "ref": "R22",
-   "lib_id": "Device:R",
-   "value": "100k 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "entrada_potencia",
-   "dnp": false,
-   "source": "[DS-STM32] p.74 Tabla 47 (rango 0 a VREF+ = VDDA en LQFP48), p.75 Tabla 48 (RAIN ≤ 25,2 kΩ con 28,5 ciclos); [DS-SMAJ] p.2; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] (química del pack pendiente; muestrear con ≥ 28,5 ciclos) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-51",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R23",
-   "lib_id": "Device:R",
-   "value": "12k 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "entrada_potencia",
-   "dnp": false,
-   "source": "Igual que R22 (k = 0,1071; 13,6 V → 1,46 V; 24,4 V → 2,61 V < VDDA; Rth 10,7 kΩ); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-51",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "C14",
-   "lib_id": "Device:C",
-   "value": "100n/50V cerámico de disco (104)",
-   "footprint": "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm",
-   "block": "entrada_potencia",
-   "dnp": false,
-   "source": "[DS-STM32] p.75 Ecuación 1 (carga del capacitor de muestreo de 8 pF); τ = 1,07 ms; huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] | v0.4: THT: disco P5,00 en lugar de 0805",
-   "supuestos": [
-    "SUP-51",
-    "SUP-16"
-   ]
-  },
-  {
    "ref": "F2",
    "lib_id": "Device:Fuse",
    "value": "ATM 4A",
@@ -485,75 +443,6 @@
    "supuestos": [
     "SUP-47",
     "SUP-19"
-   ]
-  },
-  {
-   "ref": "C4",
-   "lib_id": "Device:C_Polarized",
-   "value": "47µ/35V low-ESR",
-   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
-   "block": "motores",
-   "dnp": false,
-   "source": "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar",
-   "status": "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C6 eliminado: el módulo trae 0,1 µF + 22 µF (SUP-69)",
-   "supuestos": [
-    "SUP-50"
-   ]
-  },
-  {
-   "ref": "R1",
-   "lib_id": "Device:R",
-   "value": "2k2 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "[DS-STM32] p.61 Tabla 36 (RPU 30-50 kΩ, fuga ±1 µA); [RM0008] §7.1.1 (Rev 6) p.99 (entrada flotante al reset); [DS-DRV] p.5 (RPD 100 kΩ, VIL 0,5 V); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] (lado MCU de R35; 2,2 kΩ cubre un pull-up interno de 30 kΩ: 0,22 V < VIL; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R2",
-   "lib_id": "Device:R",
-   "value": "2k2 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (lado MCU de R36; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R35",
-   "lib_id": "Device:R",
-   "value": "4k7 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "[DS-STM32] p.37 Tablas 6-7 (pin no FT: VIN abs. 4 V, inyección ±5 mA); [DS-DRV] p.4-5 (VIH 1,5 V, RPD 100 kΩ, pulso ≥ 800 ns); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] (nueva, a ratificar: protege GPIO14 si un DRV8871 se enchufa girado y VM cae sobre IN1: 1,9 mA a 12,6 V y 4,4 mA a 24,4 V; en marcha el DRV ve 3,15 V) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R36",
-   "lib_id": "Device:R",
-   "value": "4k7 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (nueva; protege GPIO13) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
    ]
   },
   {
@@ -583,75 +472,6 @@
    "supuestos": [
     "SUP-47",
     "SUP-19"
-   ]
-  },
-  {
-   "ref": "C5",
-   "lib_id": "Device:C_Polarized",
-   "value": "47µ/35V low-ESR",
-   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
-   "block": "motores",
-   "dnp": false,
-   "source": "Criterio de chip [DS-DRV] p.11 Fig.7, p.14, p.15 §10.1; electrolítico del módulo sin identificar",
-   "status": "provisorio [H] (dato del chip, no del módulo; electrolítico propio del módulo pendiente E-01; valor final tras E-04) | v0.4: C7 eliminado (SUP-69)",
-   "supuestos": [
-    "SUP-50"
-   ]
-  },
-  {
-   "ref": "R3",
-   "lib_id": "Device:R",
-   "value": "2k2 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (lado MCU de R37; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R4",
-   "lib_id": "Device:R",
-   "value": "2k2 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "Igual que R1; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (lado MCU de R38; decisión 14 de [ENERGIA] §10 pendiente) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R37",
-   "lib_id": "Device:R",
-   "value": "4k7 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (nueva; protege GPIO12) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R38",
-   "lib_id": "Device:R",
-   "value": "4k7 1%",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "motores",
-   "dnp": false,
-   "source": "Igual que R35; huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (nueva; protege GPIO11) | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-57",
-    "SUP-16"
    ]
   },
   {
@@ -740,20 +560,6 @@
    ]
   },
   {
-   "ref": "R7",
-   "lib_id": "Device:R",
-   "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",
-   "block": "servos",
-   "dnp": false,
-   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PA8 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-56",
-    "SUP-16"
-   ]
-  },
-  {
    "ref": "C8",
    "lib_id": "Device:C_Polarized",
    "value": "470µ/16V low-ESR",
@@ -791,33 +597,6 @@
    "supuestos": [
     "SUP-56",
     "SUP-16"
-   ]
-  },
-  {
-   "ref": "R8",
-   "lib_id": "Device:R",
-   "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "servos",
-   "dnp": false,
-   "source": "[RM0008] §7.1.1 (Rev 6) p.99 (PB15 flotante al reset); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] | v0.4: THT: axial 1/4 W P10,16 en lugar de 0805",
-   "supuestos": [
-    "SUP-56",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "C9",
-   "lib_id": "Device:C_Polarized",
-   "value": "470µ/16V low-ESR",
-   "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
-   "block": "servos",
-   "dnp": false,
-   "source": "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]",
-   "status": "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C8 (SUP-50)",
-   "supuestos": [
-    "SUP-50"
    ]
   },
   {
@@ -883,15 +662,7 @@
     "C3.2",
     "D1.2",
     "R29.2",
-    "R23.2",
-    "C14.2",
     "D4.1",
-    "C4.2",
-    "C5.2",
-    "R1.2",
-    "R2.2",
-    "R3.2",
-    "R4.2",
     "A3.1",
     "A3.6",
     "A4.1",
@@ -900,10 +671,7 @@
     "J16.1",
     "J13.1",
     "J14.1",
-    "R7.2",
-    "R8.2",
     "C8.2",
-    "C9.2",
     "J18.1",
     "A8.2",
     "A8.4",
@@ -948,7 +716,6 @@
     "C3.1",
     "D1.1",
     "R28.1",
-    "R22.1",
     "F2.1",
     "F3.1",
     "F4.1",
@@ -973,16 +740,6 @@
    ]
   },
   {
-   "name": "VBAT_ADC",
-   "kind": "signal",
-   "pins": [
-    "R22.2",
-    "R23.1",
-    "C14.1",
-    "J20.1"
-   ]
-  },
-  {
    "name": "VM_IZQ_F",
    "kind": "power",
    "pins": [
@@ -995,7 +752,6 @@
    "name": "VM_IZQ",
    "kind": "power",
    "pins": [
-    "C4.1",
     "A5.5",
     "A5.7",
     "A3.2",
@@ -1015,7 +771,6 @@
    "name": "VM_DER",
    "kind": "power",
    "pins": [
-    "C5.1",
     "A6.5",
     "A6.7",
     "A4.2",
@@ -1026,16 +781,7 @@
    "name": "IN1_IZQ_MCU",
    "kind": "signal",
    "pins": [
-    "R1.1",
-    "R35.1",
-    "J20.12"
-   ]
-  },
-  {
-   "name": "IN1_IZQ",
-   "kind": "signal",
-   "pins": [
-    "R35.2",
+    "J20.12",
     "A3.3"
    ]
   },
@@ -1043,16 +789,7 @@
    "name": "IN2_IZQ_MCU",
    "kind": "signal",
    "pins": [
-    "R2.1",
-    "R36.1",
-    "J20.10"
-   ]
-  },
-  {
-   "name": "IN2_IZQ",
-   "kind": "signal",
-   "pins": [
-    "R36.2",
+    "J20.10",
     "A3.4"
    ]
   },
@@ -1060,16 +797,7 @@
    "name": "IN1_DER_MCU",
    "kind": "signal",
    "pins": [
-    "R3.1",
-    "R37.1",
-    "J20.8"
-   ]
-  },
-  {
-   "name": "IN1_DER",
-   "kind": "signal",
-   "pins": [
-    "R37.2",
+    "J20.8",
     "A4.3"
    ]
   },
@@ -1077,16 +805,7 @@
    "name": "IN2_DER_MCU",
    "kind": "signal",
    "pins": [
-    "R4.1",
-    "R38.1",
-    "J20.6"
-   ]
-  },
-  {
-   "name": "IN2_DER",
-   "kind": "signal",
-   "pins": [
-    "R38.2",
+    "J20.6",
     "A4.4"
    ]
   },
@@ -1137,8 +856,7 @@
     "J16.2",
     "J13.2",
     "J14.2",
-    "C8.1",
-    "C9.1"
+    "C8.1"
    ]
   },
   {
@@ -1146,7 +864,6 @@
    "kind": "signal",
    "pins": [
     "R5.1",
-    "R7.1",
     "J20.2"
    ]
   },
@@ -1163,7 +880,6 @@
    "kind": "signal",
    "pins": [
     "R6.1",
-    "R8.1",
     "J20.4"
    ]
   },
@@ -1219,7 +935,7 @@
    "pins": [
     "A5.4",
     "A6.4",
-    "A7.6",
+    "A7.5",
     "J20.5"
    ]
   },
@@ -1229,7 +945,7 @@
    "pins": [
     "A5.3",
     "A6.3",
-    "A7.5",
+    "A7.6",
     "J20.7"
    ]
   },
@@ -1243,7 +959,8 @@
   }
  ],
  "no_connect": [
-  "J20.11"
+  "J20.11",
+  "J20.1"
  ],
  "fuentes_power": {
   "VBAT_P": "J1.2",
@@ -1432,7 +1149,7 @@
   "Pines reasignados por geometría para la placa de una cara: IN de los drivers en GPIO4-7, encoders en GPIO15-18"
  ],
  "cable_J20": {
-  "1": "VBAT_ADC",
+  "1": "sin conexión",
   "2": "SERVO_IZQ_MCU",
   "3": "INA_ALERT",
   "4": "SERVO_DER_MCU",
@@ -1450,5 +1167,6 @@
   "16": "GND"
  },
  "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)",
- "revision_pcb_v03": "Lógica: A9 3,3 V a los pines 3V3 de la ESP32, J27 HC-SR04 con divisor; potencia: sin D2, voltímetro con pads; placas para virgen de 10 x 15 cm (pedidos del 31/10/2026)"
+ "revision_pcb_v03": "Lógica: A9 3,3 V a los pines 3V3 de la ESP32, J27 HC-SR04 con divisor; potencia: sin D2, voltímetro con pads; placas para virgen de 10 x 15 cm (pedidos del 31/10/2026)",
+ "revision_pcb_v04": "INA226 con SDA/SCL corregidos, huella del mini buck corregida (estaba espejada) y sin los componentes que los módulos ya resuelven (fotos y pedido del equipo del 31/10/2026)"
 }

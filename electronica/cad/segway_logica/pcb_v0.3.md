@@ -1,5 +1,7 @@
 # Placa de lógica v0.3: PCB casera de una cara
 
+> Reemplazada por la [v0.4](pcb_v0.4.md) el 31/10/2026: la huella del buck A9 estaba espejada.
+
 Fecha: 31/10/2026. Reemplaza a la [v0.2](pcb_v0.2.md). Montaje: [DEC-20](../../planificacion/2026-10-26-decisiones-del-equipo.md). Reglas: [fabricación casera](../segway_base/reglas_fabricacion_casera.md). Supuestos: [lista](../segway_base/supuestos.md). Control eléctrico: [auditoria_electrica_v0.3.md](../auditoria_electrica_v0.3.md). Compras: [lista_compras_v0.3.md](../lista_compras_v0.3.md). Pines para el firmware: [pinout](../../interfaces/pinout_firmware_placas_v0.1.md).
 
 ![Placa de lógica v0.3, cobre visto desde la cara de componentes](evidencia/pcb_logica_v0.3.png)

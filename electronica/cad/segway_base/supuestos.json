@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 9,
+ "revision_lista": 10,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -299,12 +299,12 @@
   {
    "grupo": "A",
    "tema": "Cantidad de piezas de la v0.4",
-   "supuesto": "La v0.6 tiene 63 piezas en dos placas: 49 en la potencia y 14 en la lógica (11 más la expansión J24, J25 y J26), con J20 en cada una. Se eliminaron 93 de las 153 de la v0.3: 41 puntos de prueba, 22 DNP y 30 redundantes o de respaldo (grupo H). Los 9 puentes de alambre (7 + 2, SUP-15) se cuentan aparte.",
-   "base": "Objeción de Matías del 17/10/2026 a los 153 componentes de la v0.3 ('cómo que 150 componentes???'). El objetivo de 50-60 piezas con los mismos módulos es la interpretación del agente [H].",
+   "supuesto": "La v0.4 tiene 47 piezas en dos placas: 32 en la potencia y 15 en la lógica, con J20 en cada una, más 10 puentes de alambre (5 y 5). La placa es una interfaz entre módulos: solo lleva conectores, fusibles, las protecciones de entrada y lo que los módulos no traen.",
+   "base": "Pedido del equipo del 31/10/2026 [M]: los módulos ya traen su electrónica; agregar solo lo que pida un datasheet o haga falta.",
    "impacto_si_cambia": "Cada elemento que el equipo quiera recuperar se reincorpora desde su fila del grupo H. La especificación v0.3 conserva valores, nets y fuentes de todos.",
    "como_se_confirma": "Matías confirma que 60 piezas está bien o dice qué más quitar o recuperar.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "especificacion",
@@ -325,6 +325,15 @@
       "supuesto": "La v0.4 queda en 60 piezas: 9 módulos enchufables (A1-A9) y 51 componentes (borneras, fusibles, pasivos, Q1, diodos, LED y headers). Se eliminan 93 de las 153 de la v0.3: 41 puntos de prueba, 22 DNP y 30 redundantes o de respaldo (grupo H). Los puentes de alambre de SUP-15 se cuentan aparte. La lista definitiva la fija la especificación v0.4 y debe coincidir con el campo conteo_v04 de supuestos.json."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "La v0.6 tiene 63 piezas en dos placas: 49 en la potencia y 14 en la lógica (11 más la expansión J24, J25 y J26), con J20 en cada una. Se eliminaron 93 de las 153 de la v0.3: 41 puntos de prueba, 22 DNP y 30 redundantes o de respaldo (grupo H). Los 9 puentes de alambre (7 + 2, SUP-15) se cuentan aparte.",
+      "base": "Objeción de Matías del 17/10/2026 a los 153 componentes de la v0.3 ('cómo que 150 componentes???'). El objetivo de 50-60 piezas con los mismos módulos es la interpretación del agente [H].",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
@@ -709,12 +718,12 @@
   {
    "grupo": "B",
    "tema": "Puentes de alambre",
-   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm (AWG 22) en la cara de componentes, rectos, con pads de 2,2 mm y taladro de 0,9 mm. Son huellas de placa W1… (sin símbolo), listadas en evidencia/puentes_pcb_v0.1.json de cada placa. Lógica: 2 (17,8 y 7,6 mm). Potencia: 7, de 5,1 a 15,5 mm (SDA ×2, 5V ×2, VM_LOG, GND ×2). Por un puente solo pasan señales o lógica de hasta 1 A.",
+   "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm en la cara de componentes. Potencia v0.4: 5 (W1 y W2 de 5V, W3, W4 y W5 de GND). Lógica v0.4: 5 (W1 de 3V3 y W2-W5 de GND). Por un puente solo pasan señales o lógica de hasta 1 A.",
    "base": "DEC-14 [M]; resultado del ruteo v0.1 [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
    "impacto_si_cambia": "Más puentes significan más montaje y más riesgo de error.",
    "como_se_confirma": "Montaje de las placas.",
-   "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "especificacion",
@@ -752,6 +761,14 @@
       "base": "DEC-14 [M]; resultado del ruteo v0.1 [H]."
      },
      "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Los cruces que no se resuelven en una capa van con puentes de alambre de cobre estañado de 0,6 mm (AWG 22) en la cara de componentes, rectos, con pads de 2,2 mm y taladro de 0,9 mm. Son huellas de placa W1… (sin símbolo), listadas en evidencia/puentes_pcb_v0.1.json de cada placa. Lógica: 2 (17,8 y 7,6 mm). Potencia: 7, de 5,1 a 15,5 mm (SDA ×2, 5V ×2, VM_LOG, GND ×2). Por un puente solo pasan señales o lógica de hasta 1 A.",
+      "estado": "CONFIRMADO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
@@ -1364,11 +1381,11 @@
    "grupo": "D",
    "tema": "DRV8871 enchufado entero (A3/A4)",
    "supuesto": "Opción B: se desoldan las borneras POWER y MOTOR del módulo y se sueldan pines macho en esos agujeros. VM y GND llegan por 2 contactos y OUT1/OUT2 por uno. Los motores se atornillan en J11/J12 de la placa base. Geometría del Adafruit 3190 (drv.brd): placa de 20,32 × 24,13 mm, header 1×04 y borneras de paso 3,5 mm. Con RILIM de 30 kΩ, ITRIP = 1,97-2,30 A.",
-   "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. Opción B: el DRV se enchufa en un zócalo (SUP-80) y los motores se atornillan en J11/J12; con varios módulos de repuesto, cambiar uno quemado es enchufar otro. Geometría de Adafruit 3190 (drv.brd) [D].",
+   "base": "Opción B por criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: el módulo comprado trae un electrolítico de 47 µF/50 V, tira IN2, IN1, VM, GND y agujeros de bornera MOTOR 2/1 y POWER +/−, en el mismo orden que la huella. Faltan las medidas con calibre.",
    "impacto_si_cambia": "Con la opción A (módulo con sus borneras y cable), vuelven J5/J6 y J11/J12 quedan sin uso. Si el clon tiene otra geometría, se rehace la huella.",
    "como_se_confirma": "Confirmado el criterio. Falta E-01: calibre del módulo comprado (paso de bornera, posición de los agujeros y RILIM).",
    "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A3",
     "A4"
@@ -1400,6 +1417,13 @@
       "como_se_confirma": "E-01: fotos y calibre del módulo comprado (paso de bornera, posición de los agujeros y valor de RILIM)."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. Opción B: el DRV se enchufa en un zócalo (SUP-80) y los motores se atornillan en J11/J12; con varios módulos de repuesto, cambiar uno quemado es enchufar otro. Geometría de Adafruit 3190 (drv.brd) [D]."
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
@@ -1438,11 +1462,11 @@
    "grupo": "D",
    "tema": "INA219 MCU-219 (A5/A6)",
    "supuesto": "Pines macho en los agujeros de la bornera suelta, con 2 contactos por net (propuesta 3). Tira 1×06 en el orden Vcc, Gnd, Scl, Sda, Vin−, Vin+. Bornera de paso 3,5 mm en la posición medida sobre la captura y contorno de 25 × 22 mm. Shunt R100 = 0,1 Ω. Direcciones 0x41 en IZQ (puente A0) y 0x44 en DER (puente A1).",
-   "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. Pines macho en los agujeros de la bornera y el módulo soldado (SUP-80). Huella ROB-002_INA219_MCU-219_8p [V].",
+   "base": "Criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: CJMCU-219 con tira Vcc, Gnd, Scl, Sda, Vin−, Vin+ (igual que la huella), shunt R100 y 'Max Current 3.2A'. Faltan las medidas con calibre.",
    "impacto_si_cambia": "Si la bornera queda soldada y va cable a la placa, se recuperan J21/J22. Con otro paso o posición, se rehace la huella.",
    "como_se_confirma": "Confirmado el criterio. Falta E-01: medir el módulo con calibre, leer el shunt y soldar los puentes A0 (A5) y A1 (A6) antes de montarlo.",
    "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [
     "A5",
     "A6"
@@ -1471,18 +1495,25 @@
       "como_se_confirma": "E-01: medir el módulo con calibre, leer el shunt y soldar los puentes A0/A1."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. Pines macho en los agujeros de la bornera y el módulo soldado (SUP-80). Huella ROB-002_INA219_MCU-219_8p [V]."
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
   {
    "grupo": "D",
    "tema": "INA226 (A7)",
-   "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SCL, SDA, GND, VCC, con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT (a GPIO8 por J20.3) usa la pull-up interna de la ESP32-S3 (unos 45 kΩ) en lugar de R21. El agujero de tope de la huella se quitó (SUP-75).",
-   "base": "Captura de ROB-009 (componentes_comprados/datasheets/ROB-009_INA226/referencia_compra.png) [V]; [DS-226] p.5, p.18 y p.30; propuesta 16.",
+   "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SDA, SCL, GND, VCC (pin 5 = SDA, pin 6 = SCL), con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT usa la pull-up interna de GPIO8. Va soldado (SUP-80). También mide la tensión de la batería (VBS) desde la v0.4.",
+   "base": "Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: la serigrafía del módulo dice SDA, SCL; la captura del vendedor decía SCL, SDA y la huella estaba al revés hasta la v0.3.",
    "impacto_si_cambia": "Si el orden de pines es otro, se rehace la huella. Si ALERT necesita un flanco rápido, se recupera R21.",
    "como_se_confirma": "E-01: foto del módulo con la serigrafía legible y medida del contorno.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "A7"
    ],
@@ -1513,6 +1544,15 @@
       "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SCL, SDA, GND, VCC, con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT usa la pull-up interna de PB13 (30-50 kΩ) en lugar de R21. Un tope mecánico de la huella impide enchufarlo invertido."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Tira 1×08 en el orden IN+, IN−, VBS, ALE, SCL, SDA, GND, VCC, con shunt R100 (rango de 0,82 A) y dirección 0x40. ALERT (a GPIO8 por J20.3) usa la pull-up interna de la ESP32-S3 (unos 45 kΩ) en lugar de R21. El agujero de tope de la huella se quitó (SUP-75).",
+      "base": "Captura de ROB-009 (componentes_comprados/datasheets/ROB-009_INA226/referencia_compra.png) [V]; [DS-226] p.5, p.18 y p.30; propuesta 16.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
@@ -1551,11 +1591,11 @@
   {
    "grupo": "D",
    "tema": "Mini bucks de 5 V y 3,3 V (A8/A9)",
-   "supuesto": "ROB-006 (5 V, A8, en la potencia) y ROB-005 (3,3 V, A9, en la lógica): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, contorno de unos 22 × 17 mm (tipo MP1584). IN− y OUT− son la misma masa. A8 admite 24,4 V o más de entrada (MP1584: 28 V). A9 recibe 5 V y entrega 3,3 V.",
-   "base": "Captura de componentes_comprados/datasheets/ROB-005_Mini_3V3/referencia_compra.png [V]; inventario: chip no identificado y MP1584 solo como candidato [H].",
+   "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): cuatro pads en las esquinas. Vistos desde la cara de componentes con IN+ en (0, 0): IN− en (0, −14), OUT+ en (19, 0) y OUT− en (19, −14). IN y OUT en bordes opuestos, los dos + del mismo lado. IN− y OUT− son la misma masa. Inductor 4R7.",
+   "base": "Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: serigrafía IN+/IN−/OUT+/OUT− en la cara de abajo. La huella hasta la v0.3 estaba espejada (IN− y OUT+ intercambiados) y se corrigió en la v0.4.",
    "impacto_si_cambia": "Si el chip admite menos de 24,4 V (por ejemplo, 20 V), un transitorio en el clamp del TVS puede dañarlo: hace falta otro módulo o un limitador. Con otro contorno o posición de pads, se rehace la huella.",
-   "como_se_confirma": "E-01, antes de soldar: con el multímetro, identificar en cada mini buck cuál esquina es IN+, IN−, OUT+ y OUT− (si los + no están del mismo lado, la huella está mal y A9 pondría 3V3 en corto). Leer el marcado del chip. E-02: rizado y temperatura.",
-   "estado": "ASUMIDO",
+   "como_se_confirma": "Antes de soldar: medir con calibre la distancia entre pads (14 y 19 mm supuestos) y con el multímetro la continuidad IN−/OUT−. Leer el marcado del chip (SUP-26).",
+   "estado": "CAMBIADO",
    "fecha": "31/10/2026",
    "refs": [
     "A8",
@@ -1595,6 +1635,16 @@
       "como_se_confirma": "E-01: calibre, fotos y marcado del chip. E-02: rizado y temperatura."
      },
      "fuente": "Revisión independiente de la v0.3 (31/10/2026)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "ROB-006 (5 V, A8, en la potencia) y ROB-005 (3,3 V, A9, en la lógica): cuatro pads en las esquinas (IN+, IN−, OUT+, OUT−) con pines macho soldados, contorno de unos 22 × 17 mm (tipo MP1584). IN− y OUT− son la misma masa. A8 admite 24,4 V o más de entrada (MP1584: 28 V). A9 recibe 5 V y entrega 3,3 V.",
+      "base": "Captura de componentes_comprados/datasheets/ROB-005_Mini_3V3/referencia_compra.png [V]; inventario: chip no identificado y MP1584 solo como candidato [H].",
+      "como_se_confirma": "E-01, antes de soldar: con el multímetro, identificar en cada mini buck cuál esquina es IN+, IN−, OUT+ y OUT− (si los + no están del mismo lado, la huella está mal y A9 pondría 3V3 en corto). Leer el marcado del chip. E-02: rizado y temperatura.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
@@ -1957,12 +2007,12 @@
   {
    "grupo": "E",
    "tema": "Electrolíticos y condensador del BMS",
-   "supuesto": "C1: 470 µF/35 V low-ESR (D10, P5), junto a J1/Q1. C4/C5: 47 µF/35 V (D6.3, P2.5), junto a cada DRV, porque el módulo solo trae 22 µF/63 V. C8/C9: 470 µF/16 V (D8, P3.5), junto a cada header de servo. C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Son valores [H] hasta E-04/E-08.",
-   "base": "§8 de diseno_v0.3.md; drv.sch de Adafruit (el módulo trae C1 de 0,1 µF/50 V y C2 de 22 µF/63 V) [D]; nota 3 de la ficha del BMS, p.2 [V].",
+   "supuesto": "C1: 470 µF/35 V low-ESR junto a J1/Q1. C8: 470 µF/16 V en el bus de servos (uno solo desde la v0.4). C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). C30: 47 µF/16 V en la entrada de A9. C4/C5 se quitaron en la v0.4: cada DRV8871 trae 47 µF/50 V.",
+   "base": "§8 de diseno_v0.3.md; Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]; nota 3 de la ficha del BMS, p.2 [V].",
    "impacto_si_cambia": "Si E-04 muestra sobretensión al frenar, se suma C2 (SUP-63) o más bulk.",
    "como_se_confirma": "E-04/E-08: osciloscopio sobre VM_BUS durante el frenado.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "C1",
     "C3",
@@ -1976,17 +2026,27 @@
    ],
    "alias": [],
    "id": "SUP-50",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "C1: 470 µF/35 V low-ESR (D10, P5), junto a J1/Q1. C4/C5: 47 µF/35 V (D6.3, P2.5), junto a cada DRV, porque el módulo solo trae 22 µF/63 V. C8/C9: 470 µF/16 V (D8, P3.5), junto a cada header de servo. C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Son valores [H] hasta E-04/E-08.",
+      "base": "§8 de diseno_v0.3.md; drv.sch de Adafruit (el módulo trae C1 de 0,1 µF/50 V y C2 de 22 µF/63 V) [D]; nota 3 de la ficha del BMS, p.2 [V].",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
+    }
+   ]
   },
   {
    "grupo": "E",
    "tema": "Divisor de batería y LED de alimentación",
-   "supuesto": "R22 de 100 kΩ, R23 de 12 kΩ y C14 de 100 nF en la potencia, hacia GPIO3 (ADC1_CH2) por J20.1: 13,6 V → 1,46 V; 24,4 V → 2,61 V, dentro del rango del ADC con atenuación de 12 dB. LED rojo D4 de 3 mm con R28 de 5,1 kΩ en VM_BUS (2,1 mA).",
-   "base": "§8 de diseno_v0.3.md; ADC de la ESP32-S3 (datasheet, ADC1 con atenuación) [D]; [ENERGIA] §8.",
-   "impacto_si_cambia": "Con otra batería se recalcula el divisor.",
+   "supuesto": "Sin divisor de batería desde la v0.4: la tensión de la batería la mide el INA226 (VBS, después de F5). J20.1 queda sin conexión en las dos placas y GPIO3 queda libre. LED rojo D4 con R28 de 5,1 kΩ en VM_BUS (2,1 mA).",
+   "base": "Pedido del equipo del 31/10/2026 [M]: solo lo necesario; el INA226 ya mide la tensión del bus [D].",
+   "impacto_si_cambia": "Si el bus I2C falla, el firmware se queda sin medida de batería.",
    "como_se_confirma": "E-02: comparar la lectura del ADC con el multímetro.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "R22",
     "R23",
@@ -2008,6 +2068,16 @@
       "base": "§8 de diseno_v0.3.md; [DS-STM32] pp.74-75; [ENERGIA] §8."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "R22 de 100 kΩ, R23 de 12 kΩ y C14 de 100 nF en la potencia, hacia GPIO3 (ADC1_CH2) por J20.1: 13,6 V → 1,46 V; 24,4 V → 2,61 V, dentro del rango del ADC con atenuación de 12 dB. LED rojo D4 de 3 mm con R28 de 5,1 kΩ en VM_BUS (2,1 mA).",
+      "base": "§8 de diseno_v0.3.md; ADC de la ESP32-S3 (datasheet, ADC1 con atenuación) [D]; [ENERGIA] §8.",
+      "impacto_si_cambia": "Con otra batería se recalcula el divisor.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
@@ -2082,12 +2152,12 @@
   {
    "grupo": "F",
    "tema": "Salida y pull-ups de los encoders",
-   "supuesto": "Salida de colector abierto o push-pull de 3,3 V. Pull-ups R13-R16 de 10 kΩ a 3V3_MCU, sin resistencia en serie ni filtro RC: los glitches los filtra el filtro de pulsos del PCNT de la ESP32-S3.",
-   "base": "§8 de diseno_v0.3.md; ESP32-S3 Technical Reference Manual, PCNT (filtro de glitches) [D]; criterio de simplificación (se conservan las pull-ups) [H].",
-   "impacto_si_cambia": "Con ruido en el cable se recuperan R9-R12 en serie (SUP-68).",
+   "supuesto": "Salida de colector abierto o push-pull de 3,3 V. Sin resistencias en la placa desde la v0.4: se usan las pull-ups internas de la ESP32-S3 (unos 45 kΩ) en GPIO4, 5, 7 y 15, y el filtro de pulsos del PCNT.",
+   "base": "Pedido del equipo del 31/10/2026 [M]; ESP32-S3 TRM (pull-ups internas, PCNT) [D].",
+   "impacto_si_cambia": "Si el encoder es de colector abierto y el cable es largo, 45 kΩ pueden quedar justos: se agrega una resistencia de 10 kΩ entre V y la señal en la bornera J7/J8.",
    "como_se_confirma": "E-04: pulsos limpios a la máxima velocidad del motor.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "R13",
     "R14",
@@ -2108,6 +2178,16 @@
       "impacto_si_cambia": "Con ruido en el cable, o con 3V3_PER encendido y el MCU apagado, PA0/PA1 (no FT) quedan menos protegidos: se recuperan R9-R12."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Salida de colector abierto o push-pull de 3,3 V. Pull-ups R13-R16 de 10 kΩ a 3V3_MCU, sin resistencia en serie ni filtro RC: los glitches los filtra el filtro de pulsos del PCNT de la ESP32-S3.",
+      "base": "§8 de diseno_v0.3.md; ESP32-S3 Technical Reference Manual, PCNT (filtro de glitches) [D]; criterio de simplificación (se conservan las pull-ups) [H].",
+      "impacto_si_cambia": "Con ruido en el cable se recuperan R9-R12 en serie (SUP-68).",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
@@ -2137,12 +2217,12 @@
   {
    "grupo": "F",
    "tema": "Servos",
-   "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie, R7/R8 de 10 kΩ a GND del lado de la ESP32-S3 (evitan pulsos espurios mientras arranca) y un header macho 1×03 de 2,54 mm para su JR. El tiempo de bloqueo se limita por firmware.",
-   "base": "Propuesta 19; open_point 13; [DS-SERVO] p.3; salida de 3,3 V de la ESP32-S3 [D].",
-   "impacto_si_cambia": "Si no responden a 3,3 V, hace falta salida open-drain con pull-up a 5 V, lo que es otra decisión. Si el contacto JR calienta, se cambia el conector.",
+   "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie: protegen el GPIO si el conector JR se enchufa al revés (el GND del servo quedaría sobre la señal). Sin pull-down desde la v0.4 (R7/R8 quitadas): el firmware configura los pines apenas arranca.",
+   "base": "Pedido del equipo del 31/10/2026 [M]; [DS-SERVO] p.3.",
+   "impacto_si_cambia": "Durante el arranque de la ESP32 los servos pueden moverse un instante.",
    "como_se_confirma": "E-05: probar el pulso y medir la temperatura de J13/J14 con el servo bloqueado.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "R5",
     "R6",
@@ -2165,18 +2245,28 @@
       "base": "Propuesta 19; open_point 13; [DS-SERVO] p.3; [DS-STM32] Tabla 37 p.64."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "Los DS3240 responden a un pulso de 3,3 V. Cada uno lleva R5/R6 de 1 kΩ en serie, R7/R8 de 10 kΩ a GND del lado de la ESP32-S3 (evitan pulsos espurios mientras arranca) y un header macho 1×03 de 2,54 mm para su JR. El tiempo de bloqueo se limita por firmware.",
+      "base": "Propuesta 19; open_point 13; [DS-SERVO] p.3; salida de 3,3 V de la ESP32-S3 [D].",
+      "impacto_si_cambia": "Si no responden a 3,3 V, hace falta salida open-drain con pull-up a 5 V, lo que es otra decisión. Si el contacto JR calienta, se cambia el conector.",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
   {
    "grupo": "F",
    "tema": "Entradas de los drivers",
-   "supuesto": "R1-R4 de 2,2 kΩ a GND del lado de la ESP32-S3 y R35-R38 de 4,7 kΩ en serie hacia IN1/IN2 (propuesta 6). Protegen a la ESP32-S3 si un DRV se enchufa girado. Con la ESP32-S3 en reset, las pull-down dejan el driver en reposo.",
-   "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. Los DRV van en zócalo (SUP-80), así que la protección contra uno enchufado girado sigue haciendo falta. Propuesta 6 de diseno_v0.3.md; [DS-DRV] p.4-5.",
-   "impacto_si_cambia": "Sin ellas, un DRV girado lleva VM a GPIO11-14.",
+   "supuesto": "Sin resistencias en las entradas de los DRV desde la v0.4: GPIO11-14 van directo a IN1/IN2. El DRV8871 tiene pull-down interno en IN1/IN2, así que con la ESP32 en reset el motor queda libre, y el módulo no entra girado en su zócalo.",
+   "base": "Pedido del equipo del 31/10/2026 [M]; [DS-DRV] p.4-5 (pull-down interno).",
+   "impacto_si_cambia": "Sin la serie de 4,7 kΩ, una falla dentro del DRV que lleve VM a IN llega directo a la ESP32.",
    "como_se_confirma": "Confirmado.",
-   "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "R1",
     "R2",
@@ -2210,18 +2300,28 @@
       "como_se_confirma": "No hace falta confirmarlo, salvo que el equipo quiera quitarlas."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "R1-R4 de 2,2 kΩ a GND del lado de la ESP32-S3 y R35-R38 de 4,7 kΩ en serie hacia IN1/IN2 (propuesta 6). Protegen a la ESP32-S3 si un DRV se enchufa girado. Con la ESP32-S3 en reset, las pull-down dejan el driver en reposo.",
+      "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. Los DRV van en zócalo (SUP-80), así que la protección contra uno enchufado girado sigue haciendo falta. Propuesta 6 de diseno_v0.3.md; [DS-DRV] p.4-5.",
+      "impacto_si_cambia": "Sin ellas, un DRV girado lleva VM a GPIO11-14.",
+      "estado": "CONFIRMADO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },
   {
    "grupo": "F",
    "tema": "Entrada de paro",
-   "supuesto": "R24 de 10 kΩ a 3V3_MCU y entrada directa a GPIO6, sin R25 ni C15: el antirrebote se hace por firmware. Con el contacto abierto (paro), GPIO6 sube y el firmware corta los motores. J3 corta la potencia de todos modos.",
-   "base": "§8 de diseno_v0.3.md; [CONTRATO] §2.12; simplificación del 17/10/2026 [H].",
+   "supuesto": "Sin resistencia en la placa desde la v0.4: GPIO6 usa su pull-up interna. Con el contacto NC cerrado lee bajo; con el paro apretado o el cable cortado, alto. Antirrebote por firmware. J3 corta la potencia de todos modos.",
+   "base": "Pedido del equipo del 31/10/2026 [M].",
    "impacto_si_cambia": "Si hay disparos falsos por ruido en el cable, se recuperan R25 y C15.",
    "como_se_confirma": "E-08: ensayo de paro con los motores en marcha.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CAMBIADO",
+   "fecha": "31/10/2026",
    "refs": [
     "R24",
     "J4"
@@ -2239,6 +2339,15 @@
       "supuesto": "R24 de 10 kΩ a 3V3_MCU y entrada directa a PB12 (FT), sin R25 ni C15: el antirrebote se hace por firmware. Con el contacto abierto (paro), PB12 sube y el firmware corta los motores. J3 corta la potencia de todos modos."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "R24 de 10 kΩ a 3V3_MCU y entrada directa a GPIO6, sin R25 ni C15: el antirrebote se hace por firmware. Con el contacto abierto (paro), GPIO6 sube y el firmware corta los motores. J3 corta la potencia de todos modos.",
+      "base": "§8 de diseno_v0.3.md; [CONTRATO] §2.12; simplificación del 17/10/2026 [H].",
+      "estado": "ASUMIDO"
+     },
+     "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
     }
    ]
   },

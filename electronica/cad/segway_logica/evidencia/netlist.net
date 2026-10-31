@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-31T11:17:38")
+		(date "2026-10-31T11:46:01")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "17ba6c56-8771-488d-9c94-18dbfb48e309")
+			(tstamps "dea0606c-0eac-4f50-9653-fc189c5a0615")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "097abdf7-9d8a-4366-bc06-965ffb63dbb9")
+			(tstamps "50dd4887-012d-4dab-911f-a6b0fe6df3c5")
 			(units
 				(unit
 					(name "A")
@@ -357,7 +357,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "673bc3a7-5696-47fe-a847-a214a85b2b65")
+			(tstamps "33dfe5aa-beef-4d9f-a217-275a77e9381a")
 			(units
 				(unit
 					(name "A")
@@ -429,7 +429,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cb79274a-4b9d-485d-bd16-3d1a79866d42")
+			(tstamps "b80517b4-6ca3-41e5-b4c3-1731e5c8501a")
 			(units
 				(unit
 					(name "A")
@@ -495,7 +495,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f058c36e-e1d4-4d8f-8ca5-0141a172f325")
+			(tstamps "1c324dee-f7e4-4011-9cde-cfdd971d4522")
 			(units
 				(unit
 					(name "A")
@@ -561,7 +561,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0abced8d-106d-4bf9-8457-40aa866b429f")
+			(tstamps "a81cd94d-acbe-4f87-b5b0-a08d425c348c")
 			(units
 				(unit
 					(name "A")
@@ -633,7 +633,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3df99c50-3242-4b25-b5df-8b8f605dea15")
+			(tstamps "14517e2e-ab4d-4667-8aa7-9120b30d8735")
 			(units
 				(unit
 					(name "A")
@@ -705,7 +705,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "557594ad-7e51-454f-a421-3f3291e573a4")
+			(tstamps "9d55e9ac-da38-4e71-ad98-10d0fdd85799")
 			(units
 				(unit
 					(name "A")
@@ -813,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9d7a26fe-e343-4761-9d02-dfa04cf94f2b")
+			(tstamps "f4fb8f47-725e-43cc-adb6-8c9476913517")
 			(units
 				(unit
 					(name "A")
@@ -939,7 +939,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c0abd95e-e059-48ff-a294-c99e4f8498d9")
+			(tstamps "3a9c69bf-aecf-4f2d-9c06-b745e23d8236")
 			(units
 				(unit
 					(name "A")
@@ -1065,7 +1065,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5ec412e4-a0a2-4d30-bc83-a3310a9f1d73")
+			(tstamps "ea26c179-c970-441f-ba8e-d5ec7ff0aeb0")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9590de7b-d6a4-4e57-9756-8c64f027b1ea")
+			(tstamps "5d9baade-b79f-4e97-a93b-bac624d5a27c")
 			(units
 				(unit
 					(name "A")
@@ -1159,336 +1159,6 @@
 						)
 						(pin
 							(num "4")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R13")
-			(value "10k")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "62eeb4e9-44b4-45ae-90a1-27d31570c7a6")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R14")
-			(value "10k")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "d58b610d-1eab-4fdd-b42b-e287bf7365b4")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R15")
-			(value "10k")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "c1b83aa3-b81f-41d2-a6f5-94300599f78c")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R16")
-			(value "10k")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-				(field
-					(name "Fuente") "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)")
-			)
-			(property
-				(name "Fuente")
-				(value "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "199ac17d-b8fd-43cf-be25-7d3c9b6258ee")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R24")
-			(value "10k")
-			(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-			(description "Resistor")
-			(fields
-				(field
-					(name "Estado") "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_MCU el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a GPIO6 (R25 y C15 eliminados, SUP-58, SUP-71)")
-				(field
-					(name "Fuente") "[CONTRATO] §2.12 (nivel definido por pull externo); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-				(field
-					(name "Footprint") "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Resistor")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Estado")
-				(value "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_MCU el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a GPIO6 (R25 y C15 eliminados, SUP-58, SUP-71)")
-			)
-			(property
-				(name "Fuente")
-				(value "[CONTRATO] §2.12 (nivel definido por pull externo); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)")
-			)
-			(property
-				(name "Sheetname")
-				(value "segway_logica")
-			)
-			(property
-				(name "Sheetfile")
-				(value "segway_logica.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "ea8a3c89-dede-457d-834c-0f21366d1c83")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
 						)
 					)
 				)
@@ -1545,7 +1215,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fb3df1c3-d870-4326-b17b-e4858d25fe99")
+			(tstamps "44632965-5b10-4159-89e4-0d457281b8d2")
 			(units
 				(unit
 					(name "A")
@@ -1611,7 +1281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "475e81f0-2b18-469d-96b5-bb00a82d4f3b")
+			(tstamps "06df4563-b57b-459b-8e99-9da25ba7e382")
 			(units
 				(unit
 					(name "A")
@@ -1677,7 +1347,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b95ee7aa-d8ea-4718-aafe-9df6660e5ae2")
+			(tstamps "faa793bb-502e-4219-8e1c-ba54670d608d")
 			(units
 				(unit
 					(name "A")
@@ -2611,31 +2281,6 @@
 				(pinfunction "Pin_4_4")
 				(pintype "passive")
 			)
-			(node
-				(ref "R13")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R14")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R15")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R16")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R24")
-				(pin "1")
-				(pintype "passive")
-			)
 		)
 		(net
 			(code "2")
@@ -2722,11 +2367,6 @@
 				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
-			(node
-				(ref "R15")
-				(pin "2")
-				(pintype "passive")
-			)
 		)
 		(net
 			(code "5")
@@ -2748,11 +2388,6 @@
 				(ref "J8")
 				(pin "3")
 				(pinfunction "Pin_3_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "R16")
-				(pin "2")
 				(pintype "passive")
 			)
 		)
@@ -2778,11 +2413,6 @@
 				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
-			(node
-				(ref "R13")
-				(pin "2")
-				(pintype "passive")
-			)
 		)
 		(net
 			(code "7")
@@ -2804,11 +2434,6 @@
 				(ref "J7")
 				(pin "3")
 				(pinfunction "Pin_3_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "R14")
-				(pin "2")
 				(pintype "passive")
 			)
 		)
@@ -2994,6 +2619,23 @@
 		)
 		(net
 			(code "12")
+			(name "/GPIO3")
+			(class "Default")
+			(node
+				(ref "A1")
+				(pin "13")
+				(pinfunction "GPIO3_13")
+				(pintype "bidirectional")
+			)
+			(node
+				(ref "J24")
+				(pin "13")
+				(pinfunction "Pin_13_13")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "13")
 			(name "/GPIO19")
 			(class "Default")
 			(node
@@ -3010,7 +2652,7 @@
 			)
 		)
 		(net
-			(code "13")
+			(code "14")
 			(name "/GPIO20")
 			(class "Default")
 			(node
@@ -3027,7 +2669,7 @@
 			)
 		)
 		(net
-			(code "14")
+			(code "15")
 			(name "/GPIO35")
 			(class "Default")
 			(node
@@ -3044,7 +2686,7 @@
 			)
 		)
 		(net
-			(code "15")
+			(code "16")
 			(name "/GPIO36")
 			(class "Default")
 			(node
@@ -3061,7 +2703,7 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "17")
 			(name "/GPIO37")
 			(class "Default")
 			(node
@@ -3078,7 +2720,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "18")
 			(name "/GPIO38")
 			(class "Default")
 			(node
@@ -3095,7 +2737,7 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "19")
 			(name "/GPIO39")
 			(class "Default")
 			(node
@@ -3112,7 +2754,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "20")
 			(name "/GPIO40")
 			(class "Default")
 			(node
@@ -3129,7 +2771,7 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "21")
 			(name "/GPIO41")
 			(class "Default")
 			(node
@@ -3146,7 +2788,7 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "22")
 			(name "/GPIO42")
 			(class "Default")
 			(node
@@ -3163,7 +2805,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "23")
 			(name "/GPIO43")
 			(class "Default")
 			(node
@@ -3180,7 +2822,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "24")
 			(name "/GPIO44")
 			(class "Default")
 			(node
@@ -3197,7 +2839,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "25")
 			(name "/GPIO45")
 			(class "Default")
 			(node
@@ -3214,7 +2856,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "26")
 			(name "/GPIO46")
 			(class "Default")
 			(node
@@ -3231,7 +2873,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "27")
 			(name "/GPIO48")
 			(class "Default")
 			(node
@@ -3248,7 +2890,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "28")
 			(name "/I2C_SCL")
 			(class "Default")
 			(node
@@ -3277,7 +2919,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "/I2C_SDA")
 			(class "Default")
 			(node
@@ -3306,7 +2948,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "/IMU_INT")
 			(class "Default")
 			(node
@@ -3329,7 +2971,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "/IN1_DER_MCU")
 			(class "Default")
 			(node
@@ -3352,7 +2994,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "/IN1_IZQ_MCU")
 			(class "Default")
 			(node
@@ -3375,7 +3017,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "/IN2_DER_MCU")
 			(class "Default")
 			(node
@@ -3398,7 +3040,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "/IN2_IZQ_MCU")
 			(class "Default")
 			(node
@@ -3421,7 +3063,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "/INA_ALERT")
 			(class "Default")
 			(node
@@ -3444,7 +3086,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "36")
 			(name "/PARO_CONT")
 			(class "Default")
 			(node
@@ -3465,14 +3107,9 @@
 				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
-			(node
-				(ref "R24")
-				(pin "2")
-				(pintype "passive")
-			)
 		)
 		(net
-			(code "36")
+			(code "37")
 			(name "/RST")
 			(class "Default")
 			(node
@@ -3489,7 +3126,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "38")
 			(name "/SERVO_DER_MCU")
 			(class "Default")
 			(node
@@ -3512,7 +3149,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "39")
 			(name "/SERVO_IZQ_MCU")
 			(class "Default")
 			(node
@@ -3535,7 +3172,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "40")
 			(name "/US_ECHO")
 			(class "Default")
 			(node
@@ -3562,7 +3199,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "41")
 			(name "/US_ECHO_5V")
 			(class "Default")
 			(node
@@ -3578,7 +3215,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "42")
 			(name "/US_TRIG")
 			(class "Default")
 			(node
@@ -3600,7 +3237,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "43")
 			(name "/US_TRIG_S")
 			(class "Default")
 			(node
@@ -3612,29 +3249,6 @@
 			(node
 				(ref "R43")
 				(pin "2")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "43")
-			(name "/VBAT_ADC")
-			(class "Default")
-			(node
-				(ref "A1")
-				(pin "13")
-				(pinfunction "GPIO3_13")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "J20")
-				(pin "1")
-				(pinfunction "Pin_1_1")
-				(pintype "passive")
-			)
-			(node
-				(ref "J24")
-				(pin "13")
-				(pinfunction "Pin_13_13")
 				(pintype "passive")
 			)
 		)
@@ -3673,6 +3287,17 @@
 		)
 		(net
 			(code "47")
+			(name "unconnected-(J20-Pin_1-Pad1)")
+			(class "Default")
+			(node
+				(ref "J20")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "48")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

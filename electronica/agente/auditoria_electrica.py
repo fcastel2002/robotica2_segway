@@ -25,23 +25,24 @@ import pcbnew
 
 RAIZ = Path(__file__).resolve().parents[2]
 CAD = RAIZ / "electronica" / "cad"
-SALIDA = CAD / "auditoria_electrica_v0.3.md"
+SALIDA = CAD / "auditoria_electrica_v0.4.md"
 OX = OY = 25.4
 
 ESPERADO = {
     "potencia": {
-        "A3": {"1": "GND", "2": "VM_IZQ", "3": "IN1_IZQ", "4": "IN2_IZQ", "5": "VM_IZQ", "6": "GND", "7": "MOT_IZQ_1", "8": "MOT_IZQ_2"},
-        "A4": {"1": "GND", "2": "VM_DER", "3": "IN1_DER", "4": "IN2_DER", "5": "VM_DER", "6": "GND", "7": "MOT_DER_1", "8": "MOT_DER_2"},
+        "A3": {"1": "GND", "2": "VM_IZQ", "3": "IN1_IZQ_MCU", "4": "IN2_IZQ_MCU", "5": "VM_IZQ", "6": "GND", "7": "MOT_IZQ_1", "8": "MOT_IZQ_2"},
+        "A4": {"1": "GND", "2": "VM_DER", "3": "IN1_DER_MCU", "4": "IN2_DER_MCU", "5": "VM_DER", "6": "GND", "7": "MOT_DER_1", "8": "MOT_DER_2"},
         "A5": {"1": "3V3_MCU", "2": "GND", "3": "I2C_SCL", "4": "I2C_SDA", "5": "VM_IZQ", "6": "VM_IZQ_F", "7": "VM_IZQ", "8": "VM_IZQ_F"},
         "A6": {"1": "3V3_MCU", "2": "GND", "3": "I2C_SCL", "4": "I2C_SDA", "5": "VM_DER", "6": "VM_DER_F", "7": "VM_DER", "8": "VM_DER_F"},
-        "A7": {"1": "VM_LOG_F", "2": "VM_LOG", "3": "VM_LOG", "4": "INA_ALERT", "5": "I2C_SCL", "6": "I2C_SDA", "7": "GND", "8": "3V3_MCU"},
+        # v0.4: pin 5 = SDA y pin 6 = SCL en el módulo comprado (foto del 31/10/2026)
+        "A7": {"1": "VM_LOG_F", "2": "VM_LOG", "3": "VM_LOG", "4": "INA_ALERT", "5": "I2C_SDA", "6": "I2C_SCL", "7": "GND", "8": "3V3_MCU"},
         "A8": {"1": "VM_LOG", "2": "GND", "3": "5V_MCU", "4": "GND"},
         "Q1": {"1": "Q_POL_G", "2": "VBAT_SW", "3": "VM_BUS"},
         "D1": {"1": "VM_BUS", "2": "GND"}, "D3": {"1": "VM_BUS", "2": "Q_POL_G"},
         "J18": {"1": "GND", "2": "VM_LOG_F"},
         "D4": {"1": "GND", "2": "LED_VM_A"},
-        "C1": {"1": "VM_BUS", "2": "GND"}, "C4": {"1": "VM_IZQ", "2": "GND"}, "C5": {"1": "VM_DER", "2": "GND"},
-        "C8": {"1": "V_SERVO", "2": "GND"}, "C9": {"1": "V_SERVO", "2": "GND"},
+        "C1": {"1": "VM_BUS", "2": "GND"},
+        "C8": {"1": "V_SERVO", "2": "GND"},
         "J1": {"1": "GND", "2": "VBAT_P"}, "J15": {"1": "GND", "2": "VM_UBEC"}, "J16": {"1": "GND", "2": "V_SERVO"},
         "J13": {"1": "GND", "2": "V_SERVO", "3": "SERVO_IZQ_SIG"}, "J14": {"1": "GND", "2": "V_SERVO", "3": "SERVO_DER_SIG"},
     },
@@ -225,12 +226,9 @@ def main():
         f"{len(peores)} nets superan 20 °C en su tramo más angosto (tabla abajo)" if peores else "Todas las nets bajo 20 °C")
 
     # 7. Niveles y presupuestos
-    k = 12 / 112
-    reg("OK", "Divisor de batería a GPIO3", f"12,6 V → {12.6 * k:.2f} V; 13,6 V → {13.6 * k:.2f} V; 24,4 V (clamp del TVS) → {24.4 * k:.2f} V; "
-        "rango del ADC con 12 dB ≈ 3,1 V")
-    v_in = 3.3 * 100 / (100 + 4.7)
-    i_rev = (12.6 - 3.3 - 0.3) / 4.7
-    reg("OK", "Entradas de los DRV8871", f"En alto el DRV ve {v_in:.2f} V (VIH 1,5 V). Si VM llegara a un IN (DRV dañado o mal enchufado) entran {i_rev:.1f} mA al GPIO por 4,7 kΩ")
+    reg("OK", "Medición de batería", "La mide el INA226 (VBS, en VM_LOG); el divisor R22/R23 se quitó en la v0.4. J20.1 sin conexión en las dos placas")
+    reg("OK", "Entradas de los DRV8871", "Directas desde GPIO11-14 (3,3 V > VIH 1,5 V). El DRV8871 tiene pull-down interno: con la ESP32 en reset "
+        "los motores quedan libres. El módulo no entra girado (control 4)")
     reg("OK", "Alimentación de la ESP32-S3 y la IMU", "3V3_MCU sale de A9 (buck de 3,3 V) con 5 V de entrada: sin la caída del regulador "
         "de la DevKitC. El pin 5V de la DevKitC queda solo con el USB (5V_USB)")
     k_echo = 3.3 / (2.2 + 3.3)
@@ -240,7 +238,7 @@ def main():
         "fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08")
 
     # Informe
-    lineas = ["# Control eléctrico de las placas v0.3 (lógica + potencia)", "",
+    lineas = ["# Control eléctrico de las placas v0.4 (lógica + potencia)", "",
               f"Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resultado: **{fallas} fallas, {avisos} avisos**. "
               "Complementa al ERC, el DRC y la comparación de netlist, que no detectan estos casos. No reemplaza a los ensayos de banco.", "",
               "| Estado | Control | Detalle |", "|---|---|---|"]

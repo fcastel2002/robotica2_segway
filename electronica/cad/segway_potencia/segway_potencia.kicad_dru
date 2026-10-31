@@ -163,7 +163,3 @@
 (rule "rayos_minimos_relleno"
 	(condition "A.Type == 'Pad'")
 	(constraint min_resolved_spokes 1))
-
-(rule "electroliticos_drv_paso_2_5"
-	(condition "A.intersectsCourtyard('C4') || A.intersectsCourtyard('C5')")
-	(constraint clearance (min 0.6mm)))

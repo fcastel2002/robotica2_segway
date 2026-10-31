@@ -433,62 +433,6 @@
    ]
   },
   {
-   "ref": "R13",
-   "lib_id": "Device:R",
-   "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "conectores",
-   "dnp": false,
-   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
-   "supuestos": [
-    "SUP-54",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R14",
-   "lib_id": "Device:R",
-   "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "conectores",
-   "dnp": false,
-   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
-   "supuestos": [
-    "SUP-54",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R15",
-   "lib_id": "Device:R",
-   "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "conectores",
-   "dnp": false,
-   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
-   "supuestos": [
-    "SUP-54",
-    "SUP-16"
-   ]
-  },
-  {
-   "ref": "R16",
-   "lib_id": "Device:R",
-   "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "conectores",
-   "dnp": false,
-   "source": "[ENERGIA] §6.5; [RM0008] §7.1.1 (Rev 6) (entrada flotante al reset); pull-up a 3V3_MCU: con V_ENC = 5 V y salida de colector abierto, una pull-up a V_ENC con el divisor 1k/2k dejaba 5 · 2k/13k = 0,77 V en el pin, por debajo de VIH = 2,145 V ([DS-STM32] Tabla 36 p.61); huella THT de KiCad 10.0.7 (DEC-14, SUP-16) | v0.6: las referencias al STM32 ([DS-STM32], [RM0008]) son de la v0.3; la controladora es la ESP32-S3 (DEC-16)",
-   "status": "provisorio [H] (montada; a 3V3_MCU: sirve para colector abierto alimentado a 3,3 o 5 V sin divisor; con push-pull de 5 V retroalimenta 0,17 mA por línea a 3V3_MCU, despreciable) | v0.4: THT; sin R serie ni RC (R9-R12 y C10-C13 eliminados, SUP-68)",
-   "supuestos": [
-    "SUP-54",
-    "SUP-16"
-   ]
-  },
-  {
    "ref": "J4",
    "lib_id": "Connector_Generic:Conn_01x02",
    "value": "Paro NC 1=GND 2=PARO, cable soldado",
@@ -501,20 +445,6 @@
     "SUP-45",
     "SUP-58",
     "SUP-18"
-   ]
-  },
-  {
-   "ref": "R24",
-   "lib_id": "Device:R",
-   "value": "10k",
-   "footprint": "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal",
-   "block": "conectores",
-   "dnp": false,
-   "source": "[CONTRATO] §2.12 (nivel definido por pull externo); huella THT de KiCad 10.0.7 (DEC-14, SUP-16)",
-   "status": "provisorio [H] (pull-up desde 3V3_MCU: si cae 3V3_MCU el paro sigue siendo de falla segura) | v0.4: THT; PARO_CONT llega directo a GPIO6 (R25 y C15 eliminados, SUP-58, SUP-71)",
-   "supuestos": [
-    "SUP-58",
-    "SUP-16"
    ]
   },
   {
@@ -677,11 +607,10 @@
    ]
   },
   {
-   "name": "VBAT_ADC",
+   "name": "GPIO3",
    "kind": "signal",
    "pins": [
     "A1.13",
-    "J20.1",
     "J24.13"
    ]
   },
@@ -756,12 +685,7 @@
    "name": "3V3_MCU",
    "kind": "power",
    "pins": [
-    "R24.1",
     "A2.1",
-    "R13.1",
-    "R14.1",
-    "R15.1",
-    "R16.1",
     "J7.1",
     "J8.4",
     "A1.1",
@@ -780,7 +704,6 @@
    "kind": "signal",
    "pins": [
     "J7.2",
-    "R13.2",
     "A1.4",
     "J24.4"
    ]
@@ -790,7 +713,6 @@
    "kind": "signal",
    "pins": [
     "J7.3",
-    "R14.2",
     "A1.5",
     "J24.5"
    ]
@@ -800,7 +722,6 @@
    "kind": "signal",
    "pins": [
     "J8.2",
-    "R15.2",
     "A1.7",
     "J24.7"
    ]
@@ -810,7 +731,6 @@
    "kind": "signal",
    "pins": [
     "J8.3",
-    "R16.2",
     "A1.8",
     "J24.8"
    ]
@@ -858,7 +778,6 @@
    "kind": "signal",
    "pins": [
     "J4.2",
-    "R24.2",
     "A1.6",
     "J24.6"
    ]
@@ -1063,7 +982,8 @@
   "A2.5",
   "A2.6",
   "A2.7",
-  "J20.11"
+  "J20.11",
+  "J20.1"
  ],
  "fuentes_power": {
   "5V_MCU": "J20.13",
@@ -1131,7 +1051,7 @@
    "board_pin": "4",
    "net": "ENC_IZQ_A",
    "expansion": "J24.4",
-   "justification": "PCNT; pin asignado por geometría (DEC-17)"
+   "justification": "PCNT; pin asignado por geometría (DEC-17); v0.4: pull-up interna de la ESP32"
   },
   {
    "function": "ENC_IZQ_B",
@@ -1139,7 +1059,7 @@
    "board_pin": "5",
    "net": "ENC_IZQ_B",
    "expansion": "J24.5",
-   "justification": "PCNT; pin asignado por geometría (DEC-17)"
+   "justification": "PCNT; pin asignado por geometría (DEC-17); v0.4: pull-up interna de la ESP32"
   },
   {
    "function": "PARO_CONT",
@@ -1147,7 +1067,7 @@
    "board_pin": "6",
    "net": "PARO_CONT",
    "expansion": "J24.6",
-   "justification": "entrada con interrupción; pull-up R24; pin asignado por geometría (DEC-17)"
+   "justification": "entrada con interrupción; pull-up R24; pin asignado por geometría (DEC-17); v0.4: pull-up interna de la ESP32"
   },
   {
    "function": "ENC_DER_A",
@@ -1155,7 +1075,7 @@
    "board_pin": "7",
    "net": "ENC_DER_A",
    "expansion": "J24.7",
-   "justification": "PCNT; pin asignado por geometría (DEC-17)"
+   "justification": "PCNT; pin asignado por geometría (DEC-17); v0.4: pull-up interna de la ESP32"
   },
   {
    "function": "ENC_DER_B",
@@ -1163,7 +1083,7 @@
    "board_pin": "8",
    "net": "ENC_DER_B",
    "expansion": "J24.8",
-   "justification": "PCNT; pin asignado por geometría (DEC-17)"
+   "justification": "PCNT; pin asignado por geometría (DEC-17); v0.4: pull-up interna de la ESP32"
   },
   {
    "function": "I2C_SCL",
@@ -1198,12 +1118,12 @@
    "justification": "entrada; pull-up del INA226; pin asignado por geometría (DEC-17)"
   },
   {
-   "function": "VBAT_ADC",
+   "function": "libre: expansión (ADC1_CH2)",
    "gpio": "GPIO3",
    "board_pin": "13",
-   "net": "VBAT_ADC",
+   "net": "GPIO3",
    "expansion": "J24.13",
-   "justification": "ADC1_CH2; GPIO3 sin efecto de strapping con eFuses de fábrica; pin asignado por geometría (DEC-17)"
+   "justification": "v0.4: la batería la mide el INA226"
   },
   {
    "function": "strapping: no forzar en el arranque",
@@ -1549,7 +1469,7 @@
   "Pines reasignados por geometría para la placa de una cara: IN de los drivers en GPIO4-7, encoders en GPIO15-18"
  ],
  "cable_J20": {
-  "1": "VBAT_ADC",
+  "1": "sin conexión",
   "2": "SERVO_IZQ_MCU",
   "3": "INA_ALERT",
   "4": "SERVO_DER_MCU",
@@ -1567,5 +1487,6 @@
   "16": "GND"
  },
  "revision_pcb_v02": "J3 y J4 pasan a pads para soldar el cable del interruptor y del paro (pedido de Matías del 26/10/2026)",
- "revision_pcb_v03": "Lógica: A9 3,3 V a los pines 3V3 de la ESP32, J27 HC-SR04 con divisor; potencia: sin D2, voltímetro con pads; placas para virgen de 10 x 15 cm (pedidos del 31/10/2026)"
+ "revision_pcb_v03": "Lógica: A9 3,3 V a los pines 3V3 de la ESP32, J27 HC-SR04 con divisor; potencia: sin D2, voltímetro con pads; placas para virgen de 10 x 15 cm (pedidos del 31/10/2026)",
+ "revision_pcb_v04": "INA226 con SDA/SCL corregidos, huella del mini buck corregida (estaba espejada) y sin los componentes que los módulos ya resuelven (fotos y pedido del equipo del 31/10/2026)"
 }

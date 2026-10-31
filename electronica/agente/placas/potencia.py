@@ -1,4 +1,4 @@
-"""Placa de potencia v0.3 (DEC-17): ubicación y esqueleto de potencia a mano, una cara (B.Cu).
+"""Placa de potencia v0.4 (DEC-17): ubicación y esqueleto de potencia a mano, una cara (B.Cu).
 
 Coordenadas en mm desde la esquina superior izquierda del contorno (148 x 96; v0.3, placa virgen de 10 x 15 cm), vista desde la cara de
 componentes; (x, y) = pad 1, rotación en grados.
@@ -7,21 +7,21 @@ Topología:
 - Entrada en la columna derecha: J1 (batería) -> F1 -> J3 (lazo interruptor/paro) -> Q1 (polaridad) ->
   barra VM_BUS vertical de 8,5 mm (x 117,5-126,5). C1 junto a J1: su terminal - es el punto estrella.
 - Lomo GND de 5 mm al oeste de la barra (x 111-116), unido a la estrella por debajo del extremo sur de la
-  barra. Pasa entre los pads de los portafusibles F2, F3, F5 y de R22/R28: cada fusible "salta" el lomo,
+  barra. Pasa entre los pads de los portafusibles F2, F3, F5 y de R28: cada fusible "salta" el lomo,
   así las salidas de VM y las ramas de GND se intercalan sin cruzarse. F4 salta el tramo sur del lomo.
 - Canales de motor arriba (de oeste a este): A4 DRV DER, A6 INA DER, A3 DRV IZQ, A5 INA IZQ. Fila de
   potencia a y = 17,78: el GND de cada DRV llega por arriba (rama propia desde el lomo; la del canal DER
   pasa bajo el cuerpo de J11), el VM del INA al DRV va por el corredor bajo los módulos, y el VM del canal
   DER (F3) cruza por ese corredor. Borneras de motor arriba de las salidas, entrada de cable al norte.
 - Franja inferior de servos (v0.3): bus GND (y 80,5) y bus V_SERVO (y 91,5) con los headers entre ambos; las
-  resistencias serie R5/R6 pasan por encima del bus GND hacia el lado de señales. El retorno baja por A8.2 a un
+  resistencias serie R5/R6 pasan por encima del bus GND hacia el lado de señales. El retorno baja en x 76,5 a un
   bus inferior (y 91,5) hasta J15.1 y el lomo.
 - Banda lógica en el medio (J20, INA226, buck 5 V, divisor, resistencias de entrada de los DRV) con relleno GND
   propio. Ese relleno toca el bus de servos, así que se une al lomo por la rama de D4.1 y por J15 (SUP-77).
 """
 
 PROYECTO = "segway_potencia"
-REVISION = "0.3"
+REVISION = "0.4"
 SPEC = "especificacion_v0.6.json"
 
 UBICACION = {
@@ -30,30 +30,27 @@ UBICACION = {
     "Q1": (132.62, 29.21, 180), "D3": (126.27, 34.29, 270), "R29": (131.35, 34.29, 270),
     "C3": (126.27, 46.99, 270), "D1": (124.50, 59.69, 0), "C1": (127.50, 68.58, 0),
     # --- Fusibles y resistencias sobre la barra (pad 1 en la barra, pad 2 al oeste del lomo)
-    "F2": (118.50, 17.78, 180), "F3": (118.50, 28.33, 180), "R22": (118.50, 64.77, 180),
+    "F2": (118.50, 17.78, 180), "F3": (118.50, 28.33, 180),
     "F5": (118.50, 46.99, 180), "R28": (118.50, 52.07, 180), "F4": (122.00, 70.00, 270),
     # --- Canales de motor
     "A4": (22.00, 35.56, 180), "A6": (36.00, 33.50, 0), "A3": (70.00, 35.56, 180), "A5": (84.00, 33.50, 0),
     "J12": (16.77, 7.62, 180), "J11": (64.77, 7.62, 180),
-    "C5": (22.10, 9.50, 0), "C4": (70.10, 9.50, 0),
+    # v0.4: sin C4/C5 (cada DRV trae 47 µF/50 V)
     # --- Servos (franja inferior, al oeste): las líneas de J20.2/J20.4 bajan derecho a R5/R6
     # v0.3: franja de servos 13 mm más arriba (bus GND y 80,5, headers y 86, bus V_SERVO y 91,5)
     "J16": (22.86, 91.50, 0), "J14": (33.56, 86.00, 90), "R6": (42.50, 75.84, 270), "R5": (50.50, 75.84, 270),
-    "J13": (59.42, 86.00, 270), "C9": (65.50, 87.50, 90), "C8": (74.00, 87.50, 90), "J15": (113.80, 91.50, 0),
-    "R7": (46.50, 72.60, 270), "R8": (31.00, 70.34, 270),
+    "J13": (59.42, 86.00, 270), "C8": (65.50, 87.50, 90), "J15": (113.80, 91.50, 0),
     # --- Banda lógica
     # J20 con la columna impar (bus I2C, ALERT, VBAT, 5V) mirando a A7; A7 girado 180° (VCC arriba)
     "J20": (58.42, 72.39, 180), "A7": (80.01, 66.04, 180),
-    # v0.3: sin D2; J18 (voltímetro, pads para soldar) sobre VM_LOG_F junto al lomo
-    "A8": (81.50, 71.50, 0), "J18": (110.10, 61.00, 180),
-    "D4": (108.34, 57.66, 90), "R23": (104.14, 74.93, 270), "C14": (107.95, 74.93, 270),
-    # Entradas de los DRV (serie y pull-down); Freerouting completa
-    "R37": (16.92, 50.80, 90), "R38": (12.00, 53.34, 90), "R3": (22.00, 55.88, 90), "R4": (25.40, 58.42, 90),
-    "R35": (50.60, 52.07, 90), "R36": (46.99, 53.34, 90), "R1": (50.60, 57.15, 180), "R2": (46.99, 60.50, 180),
+    # v0.3: sin D2; J18 (voltímetro, pads para soldar) sobre VM_LOG_F junto al lomo.
+    # v0.4: huella del mini buck corregida: IN+ (81,5; 85,5) y OUT+ (100,5; 85,5) abajo, GND arriba
+    "A8": (81.50, 85.50, 0), "J18": (110.10, 61.00, 180),
+    "D4": (108.34, 57.66, 90),
 }
-FIJAS = {"J1", "F1", "J3", "Q1", "D3", "R29", "C3", "D1", "C1", "F2", "F3", "R22", "F5", "R28", "F4",
-         "A4", "A6", "A3", "A5", "J12", "J11", "C5", "C4", "J16", "C9", "J14", "R6", "C8", "J13", "R5", "J15",
-         "A7", "A8", "J18", "J20", "R23", "C14", "R7", "R8", "R35", "R36", "R1", "R2",
+FIJAS = {"J1", "F1", "J3", "Q1", "D3", "R29", "C3", "D1", "C1", "F2", "F3", "F5", "R28", "F4",
+         "A4", "A6", "A3", "A5", "J12", "J11", "J16", "J14", "R6", "C8", "J13", "R5", "J15",
+         "A7", "A8", "J18", "J20",
          "H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J1", "J3", "J11", "J12", "J15", "J16"}
 
@@ -83,60 +80,48 @@ ESQUELETO = [
     ("GND", 1.2, [(113.54, 57.66), "D4.1"]),          # única unión del relleno lógico con el lomo
     # Ramas de los DRV por arriba (la del canal DER bajo el cuerpo de J11)
     ("GND", MOT, [(113.54, 6.00), (110.00, 4.00), (26.00, 4.00), (26.00, 9.50)]),
-    ("GND", 1.5, [(26.00, 9.50), "C5.2"]),
-    ("GND", 1.5, [(26.00, 9.50), (26.00, 12.00)]),
+    ("GND", MOT, [(26.00, 9.50), (26.00, 12.00)]),
     ("GND", MOT, [(26.00, 12.00), (24.21, 14.50), "A4.6"]),
     ("GND", MOT, [(113.54, 9.50), (74.00, 9.50)]),
-    ("GND", 1.5, [(74.00, 9.50), "C4.2"]),
-    ("GND", 1.5, [(74.00, 9.50), (74.00, 12.00)]),
+    ("GND", MOT, [(74.00, 9.50), (74.00, 12.00)]),
     ("GND", MOT, [(74.00, 12.00), (72.21, 14.50), "A3.6"]),
     # --- Canal IZQ (este): F2 -> A5 (shunt) -> A3
     ("VM_IZQ_F", MOT, ["F2.2", "A5.8"]),
     # Corredor bajo A3/A5 a 1,5 mm para dejar lugar al bus I2C (y 25,7-30,8)
     ("VM_IZQ", 1.5, ["A5.7", (88.30, 20.93), (68.71, 20.93), "A3.5"]),
-    ("VM_IZQ", 1.5, ["C4.1", (68.71, 12.00), "A3.5"]),
     ("MOT_IZQ_1", MOT, ["A3.7", (64.77, 12.50), "J11.1"]),
     ("MOT_IZQ_2", MOT, ["A3.8", (59.69, 12.50), "J11.2"]),
     # --- Canal DER (oeste): F3 -> corredor -> A6 (shunt) -> A4
     ("VM_DER_F", 1.5, ["F3.2", (106.00, 23.43), (43.80, 23.43), "A6.8"]),
     ("VM_DER", MOT, ["A6.7", (40.30, 21.43), (20.71, 21.43), "A4.5"]),
-    ("VM_DER", 1.5, ["C5.1", (20.71, 12.00), "A4.5"]),
     ("MOT_DER_1", MOT, ["A4.7", (16.77, 12.50), "J12.1"]),
     ("MOT_DER_2", MOT, ["A4.8", (11.69, 12.50), "J12.2"]),
     # --- Servos
     ("VM_UBEC", SRV, ["F4.2", "J15.2"]),
-    # v0.3: el retorno de los servos baja por A8.2 a un bus inferior (y 91,5) hasta J15 y el lomo
+    # v0.4: el retorno de los servos baja en x 76,5 a un bus inferior (y 91,5), pasa bajo A8 y llega a J15 y al lomo
     ("GND", SRV, ["J15.1", (113.80, 78.00), (113.54, 74.90)]),
-    ("GND", SRV, ["A8.2", (81.50, 91.50), "J15.1"]),
-    ("GND", 2.0, ["A8.4", (100.50, 91.50)]),
-    ("GND", SRV, [(22.86, 80.50), (76.50, 80.50), "A8.2"]),
+    ("GND", SRV, [(22.86, 80.50), (76.50, 80.50), (76.50, 91.50), "J15.1"]),
     ("GND", 2.0, [(22.86, 80.50), (22.86, 86.00)]),
     ("GND", 2.0, [(22.86, 86.00), "J16.1"]),
     ("GND", 2.0, [(33.56, 80.50), (33.56, 83.00)]),
     ("GND", 1.2, [(33.56, 83.00), "J14.1"]),
     ("GND", 2.0, [(59.42, 80.50), (59.42, 83.00)]),
     ("GND", 1.2, [(59.42, 83.00), "J13.1"]),
-    ("GND", 2.0, [(65.50, 80.50), "C9.2"]),
-    ("GND", 2.0, [(74.00, 80.50), "C8.2"]),
+    ("GND", 2.0, [(65.50, 80.50), "C8.2"]),
     ("V_SERVO", 2.0, ["J16.2", (29.00, 91.50)]),
-    ("V_SERVO", SRV, [(29.00, 91.50), (74.00, 91.50)]),
+    ("V_SERVO", SRV, [(29.00, 91.50), (65.50, 91.50)]),
     ("V_SERVO", 2.0, [(36.10, 91.50), (36.10, 89.00)]),
     ("V_SERVO", 1.2, [(36.10, 89.00), "J14.2"]),
     ("V_SERVO", 2.0, [(56.88, 91.50), (56.88, 89.00)]),
     ("V_SERVO", 1.2, [(56.88, 89.00), "J13.2"]),
-    ("V_SERVO", 2.0, [(65.50, 91.50), "C9.1"]),
-    ("V_SERVO", 2.0, [(74.00, 91.50), "C8.1"]),
+    ("V_SERVO", 2.0, [(65.50, 91.50), "C8.1"]),
     # Señales: pull-downs R7/R8 verticales con el pin de GND sobre el bus; series R5/R6 saltan el bus
     # v0.3: entradas del DRV DER a mano. IN1 sube por x 28 y va al oeste por y 50,8 (pasa bajo los cuerpos de
     # R4 y R3); IN2 va al oeste por y 67,31 hasta R38 con una rama a R4
-    ("IN1_DER_MCU", 1.0, ["J20.8", (28.00, 64.77), (28.00, 50.80), "R37.1"]),
-    ("IN1_DER_MCU", 1.0, [(22.00, 50.80), "R3.1"]),
-    ("IN2_DER_MCU", 1.0, ["J20.6", (12.00, 67.31), "R38.1"]),
-    ("IN2_DER_MCU", 1.0, [(25.40, 67.31), "R4.1"]),
+    ("IN1_DER_MCU", 1.0, ["J20.8", (16.92, 64.77), "A4.3"]),     # v0.4: directo, sin resistencias
+    ("IN2_DER_MCU", 1.0, ["J20.6", (14.38, 67.31), "A4.4"]),
     ("SERVO_IZQ_MCU", 1.0, ["J20.2", (50.50, 72.39), "R5.1"]),
-    ("SERVO_IZQ_MCU", 1.0, [(50.50, 72.39), "R7.1"]),
     ("SERVO_DER_MCU", 1.0, ["J20.4", (42.50, 69.85), "R6.1"]),
-    ("SERVO_DER_MCU", 1.0, [(42.50, 69.85), (31.50, 69.85), "R8.1"]),
     ("SERVO_IZQ_SIG", 1.0, ["R5.2", "J13.3"]),
     ("SERVO_DER_SIG", 1.0, ["R6.2", "J14.3"]),
     # J20: 5V_MCU y GND unidos entre columnas; 5V_MCU sube a D2 por el lado de A7
@@ -145,34 +130,30 @@ ESQUELETO = [
     # v0.3: sin D2. 5V de A8 a J20.13: salta el bus A7->A5 (W3) y VM_LOG_F (W4)
     ("5V_MCU", 1.2, ["J20.13", (63.50, 57.15), (63.50, 44.00), (79.00, 44.00), (81.50, 41.50)]),
     ("5V_MCU", 1.2, [(97.03, 41.50), (97.03, 62.48)]),
-    ("5V_MCU", 1.2, [(97.03, 70.10), "A8.3"]),
+    ("5V_MCU", 1.2, [(97.03, 70.10), (97.03, 83.00), "A8.3"]),
     # Entradas del DRV IZQ: R35/R36 verticales (el relleno pasa bajo sus cuerpos), pull-downs R1/R2
-    ("IN1_IZQ_MCU", 1.0, ["J20.12", (50.60, 59.69), "R1.1", "R35.1"]),
-    ("IN2_IZQ_MCU", 1.0, ["J20.10", (46.99, 62.23), "R2.1", "R36.1"]),
-    ("IN1_IZQ", 1.0, ["R35.2", (50.60, 39.60), (64.92, 39.60), "A3.3"]),
-    ("IN2_IZQ", 1.0, ["R36.2", (46.99, 37.70), (62.38, 37.70), "A3.4"]),
+    ("IN1_IZQ_MCU", 1.0, ["J20.12", (50.60, 59.69), (50.60, 39.60), (64.92, 39.60), "A3.3"]),     # v0.4: directo
+    ("IN2_IZQ_MCU", 1.0, ["J20.10", (46.99, 62.23), (46.99, 37.70), (62.38, 37.70), "A3.4"]),
     # VBAT: bajo el buck y entre los pads de W5, hasta el divisor R22/R23/C14
-    ("VBAT_ADC", 1.0, ["J20.1", (60.96, 74.93), (63.50, 76.20), (102.00, 76.20), "R23.1", "C14.1", (108.34, 72.00), "R22.2"]),
     # GND de los INA: de W6 baja entre los pads de W2 hasta W7
-    ("GND", 1.0, [(91.62, 45.00), (91.62, 60.00), (90.17, 63.50)]),
+    ("GND", 1.0, [(94.00, 45.00), (94.00, 63.00)]),     # v0.4: GND de los INA, de W5 a W6
     # VM_LOG de A7 al buck y, saltando VBAT (W5), al voltímetro
-    ("VM_LOG", 1.2, ["A7.3", (77.35, 60.96), (77.35, 70.20), "A8.1"]),
+    ("VM_LOG", 1.2, ["A7.3", (77.35, 60.96), (77.35, 68.50), (87.00, 68.50), (87.00, 85.50), "A8.1"]),
     ("VM_LOG", 1.0, ["A7.2", (77.35, 63.50)]),
     # --- Lógica de potencia: F5 -> A7 (shunt) -> buck y voltímetro
     # v0.3: el voltímetro (J18) se suelda sobre VM_LOG_F; su GND cae en el lomo
     ("VM_LOG_F", 1.2, ["F5.2", (105.50, 46.00), "J18.2", (105.50, 66.04), "A7.1"]),
     # --- Bus I2C. J20 -> A7 (oeste de A7; SDA cruza SCL con el puente W1)
     ("3V3_MCU", 1.0, ["J20.9", (67.80, 62.23), (67.80, 48.26), "A7.8"]),
-    ("I2C_SCL", 1.0, ["J20.7", (73.66, 64.77), (73.66, 55.88), "A7.5"]),
-    ("I2C_SDA", 1.0, ["J20.5", (70.50, 67.31)]),
-    ("I2C_SDA", 1.0, [(70.50, 59.69), (70.50, 53.34), "A7.6"]),
+    # v0.4: INA226 con pin 5 = SDA y pin 6 = SCL (módulo real): SDA y SCL ya no se cruzan
+    ("I2C_SCL", 1.0, ["J20.7", (70.50, 64.77), (70.50, 53.34), "A7.6"]),
+    ("I2C_SDA", 1.0, ["J20.5", (73.66, 67.31), (73.66, 55.88), "A7.5"]),
     ("INA_ALERT", 1.0, ["J20.3", (75.50, 69.85), (75.50, 58.42), "A7.4"]),
     # A7 -> A5 (este de A7; SDA cruza SCL con el puente W2)
     ("3V3_MCU", 1.0, ["A7.8", (84.00, 48.26), "A5.1"]),
     ("GND", 1.0, ["A7.7", (86.54, 50.80), "A5.2"]),
-    ("I2C_SCL", 1.0, ["A7.5", (89.08, 55.88), "A5.3"]),
-    ("I2C_SDA", 1.0, ["A7.6", (86.36, 53.34)]),
-    ("I2C_SDA", 1.0, [(93.98, 53.34), (93.98, 37.00), (91.62, 37.00), "A5.4"]),
+    ("I2C_SCL", 1.0, ["A7.6", (89.08, 53.34), "A5.3"]),
+    ("I2C_SDA", 1.0, ["A7.5", (91.62, 55.88), "A5.4"]),
     # A5 -> corredor bajo los módulos -> rodeo por el oeste de A6 -> A6 desde el sur
     ("I2C_SDA", 0.8, ["A5.4", (91.62, 25.58), (28.80, 25.58), (28.80, 42.60), (43.62, 42.60), "A6.4"]),
     ("I2C_SCL", 0.8, ["A5.3", (89.08, 27.08), (30.50, 27.08), (30.50, 40.90), (41.08, 40.90), "A6.3"]),
@@ -195,25 +176,23 @@ ZONAS = [
 IGNORAR = ("BATERIA_BUS", "MOTOR", "SERVO")
 # GND de los headers de los DRV: el módulo lo une por dentro con el pad de potencia, que ya va al lomo.
 # Conectarlo además al relleno lógico cerraría un lazo de masa a través del módulo.
-SIN_RUTEO = ["A3-1", "A4-1", "J18-1", "R1-2", "R2-2", "R3-2", "R4-2"]     # GND del voltímetro y de los pull-downs de los DRV: van al relleno
+SIN_RUTEO = ["A3-1", "A4-1", "J18-1"]     # GND del voltímetro: va al lomo
 SIN_RELLENO = [[(67.50, 32.5), (72.50, 32.5), (72.50, 38.6), (67.50, 38.6)],
                [(19.50, 32.5), (24.50, 32.5), (24.50, 38.6), (19.50, 38.6)]]
 ANCHOS_RUTEO = {"GND": 1200, "LOGICA": 1200, "kicad_default": 1000, "MOTOR": 2000, "SERVO": 3500}
 RUTEAR = True
 
-ROTULOS = [("POTENCIA", (133.50, 80.60), 2.0), ("v0.3", (133.50, 84.00), 2.0), ("LADO COBRE", (133.50, 87.40), 2.0),
+ROTULOS = [("POTENCIA", (133.50, 80.60), 2.0), ("v0.4", (133.50, 84.00), 2.0), ("LADO COBRE", (133.50, 87.40), 2.0),
     # Rótulos de conectores (SUP-14), ubicados con ubicar_rotulos.py sobre la v0.3
     ("-", (143.00, 73.58), 2.0, 0), ("BAT", (138.50, 74.54), 2.0, 90), ("SW", (143.00, 15.48), 2.0, 0),
     ("M IZQ", (54.73, 11.12), 2.0, 90), ("M DER", (6.73, 13.12), 2.0, 90),
     ("+", (124.88, 92.00), 2.0, 90), ("-", (109.30, 86.50), 2.0, 0),
     ("+", (26.86, 87.00), 2.0, 90), ("-", (18.86, 91.50), 2.0, 0), ("UBEC 6V", (14.61, 87.00), 2.0, 90),
     ("SERVO DER", (31.60, 75.50), 2.0, 0), ("VOLT", (101.30, 60.50), 2.0, 90),
-    ("IN+", (86.00, 71.50), 2.0, 90), ("15A", (143.33, 46.46), 2.0, 90),
+    ("15A", (143.33, 46.46), 2.0, 90),
 ]
 ESCALA = None
 
-# Electrolíticos de los DRV (paso 2,5 mm): las pistas que salen de un pad quedan a 0,6 mm del otro, igual
-# que la regla pad_a_pad. Solo dentro del courtyard de C4 y C5.
 ENMIENDAS = """
 (rule "cuello_headers_servo"
 	(condition "A.hasNetclass('SERVO') && (A.intersectsCourtyard('J13') || A.intersectsCourtyard('J14'))")
@@ -226,21 +205,16 @@ ENMIENDAS = """
 (rule "rayos_minimos_relleno"
 	(condition "A.Type == 'Pad'")
 	(constraint min_resolved_spokes 1))
-
-(rule "electroliticos_drv_paso_2_5"
-	(condition "A.intersectsCourtyard('C4') || A.intersectsCourtyard('C5')")
-	(constraint clearance (min 0.6mm)))
 """
 PUENTES_FR = True
 
 # Puentes fijos del bus I2C (el resto los agrega Freerouting)
 PUENTES = [
-    ("I2C_SDA", [(70.50, 67.31), (70.50, 59.69)]),     # J20 -> A7: SDA sobre SCL
-    ("I2C_SDA", [(86.36, 53.34), (93.98, 53.34)]),     # A7 -> A5: SDA sobre SCL
     ("5V_MCU", [(81.50, 41.50), (97.03, 41.50)]),      # 5V sobre el bus A7 -> A5
     ("5V_MCU", [(97.03, 62.48), (97.03, 70.10)]),      # 5V sobre VM_LOG_F
-    ("GND", [(86.54, 45.00), (91.62, 45.00)]),         # GND de los INA sobre SCL
-    ("GND", [(90.17, 63.50), (90.17, 79.00)]),         # ... y sobre VM_LOG_F y VBAT hasta el relleno general
+    ("GND", [(86.54, 45.00), (94.00, 45.00)]),         # GND de los INA sobre SCL y SDA
+    ("GND", [(94.00, 63.00), (94.00, 70.00)]),         # ... y sobre VM_LOG_F hasta el relleno bajo A8
+    ("GND", [(53.00, 56.00), (53.00, 77.50)]),         # v0.4: GND del cable (J20.15/16) sobre las líneas IN y de servo
 ]
 # El agujero de tope del INA226 (separador M3 opcional) cae sobre el bus: se quita (SUP-75)
 QUITAR_NPTH = ["ROB-009_INA226_modulo_8p"]
@@ -253,7 +227,7 @@ SEVERIDADES = {"pth_inside_courtyard": "warning"}
 # Nets que el esqueleto ya completa (con los puentes fijos): fuera de Freerouting
 NETS_FIJAS = ["IN1_DER_MCU", "IN2_DER_MCU", "5V_MCU", "VM_LOG", "VM_LOG_F", "I2C_SDA", "I2C_SCL", "3V3_MCU", "INA_ALERT",
               "SERVO_IZQ_MCU", "SERVO_DER_MCU", "SERVO_IZQ_SIG", "SERVO_DER_SIG",
-              "IN1_IZQ_MCU", "IN2_IZQ_MCU", "IN1_IZQ", "IN2_IZQ", "VBAT_ADC"]
+              "IN1_IZQ_MCU", "IN2_IZQ_MCU"]
 
 # Rótulos de cobre pedidos (SUP-14): ubicar_rotulos.py busca el lugar y el resultado va a ROTULOS.
 # (texto, ancla, alto, radio de búsqueda): con "REF.PAD" el rótulo marca ese pin.
