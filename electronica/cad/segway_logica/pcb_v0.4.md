@@ -6,7 +6,7 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 
 ## Qué cambió desde la v0.3
 
-- **Buck de 3,3 V (A9) corregido:** la huella estaba **espejada**, según la serigrafía del módulo comprado, y era de otro tamaño: el módulo es tipo **Mini-360** (17 × 11 mm, pads a 14,3 × 8,9 mm, medidos en las fotos por la [revisión independiente](../../agente/revision_independiente.md)). Ahora IN+ y OUT+ quedan al este (x 26) y GND al oeste (x 17,1). La salida de 3,3 V sube directo a la pista de 3V3 de J20.9.
+- **Buck de 3,3 V (A9) corregido:** la huella estaba **espejada**, según la serigrafía del módulo comprado, y era de otro tamaño: el módulo es tipo **Mini-360** (17 × 11 mm, pads a 14,3 × 8,5 mm, medidos con calibre por Matías el 31/10/2026; en las fotos se habían estimado 8,9). Ahora IN+ y OUT+ quedan al este (x 26) y GND al oeste (x 17,5). La salida de 3,3 V sube directo a la pista de 3V3 de J20.9.
 - **Fuera las resistencias de pull-up** R13–R16 (encoders) y R24 (paro): se usan las pull-ups internas de la ESP32, que **hay que activar en el firmware**. Si un encoder de colector abierto necesita más, se agrega una de 10 kΩ en su bornera, entre V y la señal.
 - **GPIO3 libre:** la batería la mide el INA226 de la potencia. J20.1 queda sin conexión.
 - **Puentes:** 5. W5 une el relleno del oeste con el centro, por encima de la salida de 3,3 V de A9.
@@ -106,7 +106,7 @@ Quedan **7 GPIO libres**: 1, 2, 38, 39, 40, 41 y 42 (GPIO47 y GPIO21 son del ult
 - **USB y batería:** hasta identificar el chip de A9, **no enchufar el USB con la batería conectada**. Programar con la batería desconectada, o con la batería y sin USB (por Wi-Fi).
   - **Con los dos a la vez:** quedan en paralelo el regulador de la DevKitC y A9. Si A9 es un buck síncrono, puede absorber corriente.
   - **Con solo USB:** el 3V3 de la DevKitC llega al revés a A9 y deja unos 2,7 V en 5V_MCU y unos 2 V en la potencia. No se espera daño, pero las lecturas de los INA y del voltímetro son falsas (SUP-26).
-- **Antes de soldar A9**, comparar la serigrafía del módulo con la de la placa: IN+ y OUT+ del mismo lado (este), IN− y OUT− del otro. Medir con calibre la distancia entre pads (14,3 y 8,9 mm, medidos en fotos). La huella de la v0.3 estaba espejada y habría puesto la salida en corto (SUP-37).
+- **Antes de soldar A9**, comparar la serigrafía del módulo con la de la placa: IN+ y OUT+ del mismo lado (este), IN− y OUT− del otro. Los pads están a 14,3 × 8,5 mm (medidos con calibre). La huella de la v0.3 estaba espejada y habría puesto la salida en corto (SUP-37).
 - **J24.21** es el 5V del USB de la DevKitC: no unirlo con el 5V de J26 o J27.
 
 ## Archivos de fabricación (`fabricacion/rev-0.4/`)
@@ -143,5 +143,5 @@ Medir continuidad entre los dos conectores del cable armado: pin 1 con pin 1 y p
 
 ## Pendiente
 
-- Medir con calibre los pads del buck A9 (SUP-37), la separación de hileras de la DevKitC (SUP-22, 25,40 mm), su ancho (SUP-78) y el MPU (SUP-HA-MPU) antes de taladrar.
+- Medir con calibre la separación de hileras de la DevKitC (SUP-22, 25,40 mm) y su ancho (SUP-78) antes de taladrar. Los pads del buck A9 ya se midieron (14,3 × 8,5 mm, SUP-37); el MPU quedó confirmado por Matías (SUP-36).
 - Confirmar con mecánica la posición de la placa y el largo del cable J20.

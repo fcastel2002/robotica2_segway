@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_logica\\segway_logica.kicad_sch")
-		(date "2026-10-31T13:11:01")
+		(date "2026-10-31T14:46:45")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9e0fac5e-df99-417f-a98c-9f61aa62c0c7")
+			(tstamps "54221ad7-6afe-4c00-b4fa-98ecc3202c8d")
 			(units
 				(unit
 					(name "A")
@@ -281,7 +281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1d5d05d3-0758-47ac-b65a-7d9e21f6d44a")
+			(tstamps "b23e6341-2e88-449d-96b3-6f14915502a8")
 			(units
 				(unit
 					(name "A")
@@ -357,7 +357,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f745808c-ef39-468b-9b75-7c1a4cf67d1c")
+			(tstamps "8230f605-b559-407a-90b6-f8f446ef74f7")
 			(units
 				(unit
 					(name "A")
@@ -429,7 +429,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8fc5c96c-0588-4a5d-86f0-5b3892d55153")
+			(tstamps "02cf7f82-e3c7-4e2a-926d-e94e1abe4beb")
 			(units
 				(unit
 					(name "A")
@@ -495,7 +495,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fb47ed85-1a54-425f-aa00-729ea9cce2b5")
+			(tstamps "bf0f0d42-8a2a-4977-8ddb-4eb50f1b234d")
 			(units
 				(unit
 					(name "A")
@@ -567,7 +567,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c24cd924-3139-43bb-9b98-4c357cc7720a")
+			(tstamps "dbdb9884-c097-4070-af1b-b5b114f8e365")
 			(units
 				(unit
 					(name "A")
@@ -639,7 +639,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "394ae14e-e420-4c27-851d-bbd053da532b")
+			(tstamps "1a16fdf6-c0a6-460d-982a-599a27b1d2c5")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6f6cee98-9ef2-4a78-aac2-f7009c25afea")
+			(tstamps "c2ec258f-3cb3-4ce2-b89f-d8411a59550d")
 			(units
 				(unit
 					(name "A")
@@ -873,7 +873,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a39bd191-539c-45c3-9402-6bd7a6d8cc39")
+			(tstamps "507a926e-52b4-4b31-ab16-63120dcd0367")
 			(units
 				(unit
 					(name "A")
@@ -999,7 +999,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e2bdfbef-9ced-4aef-8869-a7297271cb87")
+			(tstamps "57ad82cb-f960-4286-8084-63fab1d8a8d8")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f8c75b31-4d86-4581-b6b9-0b03c61a8d73")
+			(tstamps "1e06bf12-5f2c-47a2-b0a8-1b102c889d39")
 			(units
 				(unit
 					(name "A")
@@ -1149,7 +1149,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "433fd3ad-6d6d-43c4-a8a0-10bf9041f256")
+			(tstamps "53dd88d4-1cb9-4656-94ca-f0c7a2f74d28")
 			(units
 				(unit
 					(name "A")
@@ -1215,7 +1215,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "60a7fd31-cfa3-4af6-8f68-28f411456923")
+			(tstamps "a2ad4ae3-6047-4f72-9546-c6d9029c84db")
 			(units
 				(unit
 					(name "A")
@@ -1281,7 +1281,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "32cc3476-52e8-4edf-825a-ce3ac90698d0")
+			(tstamps "5c1a6c97-4e29-4212-8569-0c96c85d2f03")
 			(units
 				(unit
 					(name "A")

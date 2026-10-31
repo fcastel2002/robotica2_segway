@@ -211,7 +211,8 @@ def main():
             n = t.GetNetname().lstrip("/")
             w = pcbnew.ToMM(t.GetWidth())
             largo = pcbnew.ToMM(t.GetLength())
-            if n in CORRIENTE and (n not in minimo or w < minimo[n][0]):
+            # Empate de ancho: el tramo más largo, para que el resultado no dependa del orden del archivo
+            if n in CORRIENTE and (n not in minimo or (w, -largo) < (minimo[n][0], -minimo[n][1])):
                 minimo[n] = (w, largo)
         for z in b.Zones():
             if not z.GetIsRuleArea():

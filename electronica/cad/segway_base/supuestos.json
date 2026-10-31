@@ -1,7 +1,7 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 15,
+ "revision_lista": 17,
  "fecha": "31/10/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
@@ -878,11 +878,11 @@
    "grupo": "B",
    "tema": "Borneras",
    "supuesto": "Borneras genéricas equivalentes a las Phoenix de la v0.3. KF301 de 5,08 mm y 2 polos: J1, J3, J11, J12 y J15. KF350 de 3,5 mm: J16 (2 polos), J18 (3 polos) y J7/J8 (4 polos). KF128 o MPT de 2,54 mm: J4. Se usan las huellas Phoenix de KiCad del mismo paso, con taladro de 1,3 mm. Una bornera vendida como de 5,0 mm también entra en 2 polos.",
-   "base": "§9 de diseno_v0.3.md (equivalentes locales KF301-5.0/5.08, KF350-3.5, KF128-2.54) [V]. Corrientes Phoenix: [PHX-MKDS3], [PHX-MKDS15] y [PHX-PT15].",
+   "base": "§9 de diseno_v0.3.md (equivalentes locales KF301-5.0/5.08, KF350-3.5, KF128-2.54) [V]. Corrientes Phoenix: [PHX-MKDS3], [PHX-MKDS15] y [PHX-PT15]. Confirmado con calibre por Matías el 31/10/2026 [M].",
    "impacto_si_cambia": "Con otro paso o con bornera de 3 tornillos cambia la huella. Una bornera genérica sin corriente verificada obliga a medir su temperatura en E-04.",
    "como_se_confirma": "Foto o medida con calibre de las borneras compradas: paso, diámetro del pin y altura.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [
     "J1",
     "J3",
@@ -919,17 +919,26 @@
     ]
    },
    "id": "SUP-18",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "§9 de diseno_v0.3.md (equivalentes locales KF301-5.0/5.08, KF350-3.5, KF128-2.54) [V]. Corrientes Phoenix: [PHX-MKDS3], [PHX-MKDS15] y [PHX-PT15]."
+     },
+     "fuente": "Medidas con calibre de Matías, 31/10/2026 [M]: mini bucks 14,3 mm de IN a OUT y 8,5 mm de + a −; DRV 'todo perfecto'; INA219 '15,72 mm es correcto'; 'tira hembra, borneras y portafusible todo ok'"
+    }
+   ]
   },
   {
    "grupo": "B",
    "tema": "Portafusibles",
    "supuesto": "F1: portafusible ATO de PCB de 2 pines (huella Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin). F2-F5: portafusible mini (ATM) de PCB Keystone 3568 o equivalente. Se supone que cada portafusible soporta la corriente de su fusible: 15 A en F1 y 7,5 A en F4.",
-   "base": "Huellas de la v0.3. Open_point 15: verificar la corriente del Keystone 3568 [H].",
+   "base": "Huellas de la v0.3. Open_point 15: verificar la corriente del Keystone 3568 [H]. Confirmado con calibre por Matías el 31/10/2026 [M].",
    "impacto_si_cambia": "Si el portafusible mini no soporta 7,5 A, F4 pasa a ATO. Si no se consiguen portafusibles de PCB, se usan fusibles en línea con cable y la placa lleva borneras o pads.",
    "como_se_confirma": "Hoja de datos del portafusible comprado (corriente nominal) o compra local confirmada por Matías.",
-   "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [
     "F1",
     "F2",
@@ -943,7 +952,16 @@
    ],
    "alias": [],
    "id": "SUP-19",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "Huellas de la v0.3. Open_point 15: verificar la corriente del Keystone 3568 [H]."
+     },
+     "fuente": "Medidas con calibre de Matías, 31/10/2026 [M]: mini bucks 14,3 mm de IN a OUT y 8,5 mm de + a −; DRV 'todo perfecto'; INA219 '15,72 mm es correcto'; 'tira hembra, borneras y portafusible todo ok'"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -984,11 +1002,11 @@
    "grupo": "B",
    "tema": "Zócalos y tiras de 2,54 mm",
    "supuesto": "Tira hembra genérica de 2,54 mm, de unos 8,5 mm de alto, con cola de 0,6 × 0,6 mm (diagonal de 0,85 mm, entra en el taladro de 1,0 mm), para los zócalos de los módulos y para J24, J25 y J26. Tira macho genérica para los módulos y para J13 y J14. Los tapones de codificación son pines macho cortados al ras y pegados en la posición que se tapa.",
-   "base": "§9 y §10 de diseno_v0.3.md (altura de ≈8,5 mm, compras) [V].",
+   "base": "§9 y §10 de diseno_v0.3.md (altura de ≈8,5 mm, compras) [V]. Confirmado con calibre por Matías el 31/10/2026 [M].",
    "impacto_si_cambia": "Con colas más gruesas, los zócalos necesitan la mecha de 1,3 mm y el anillo se achica.",
    "como_se_confirma": "Medir con calibre la tira comprada.",
-   "estado": "ASUMIDO",
-   "fecha": "26/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "huellas",
@@ -1003,6 +1021,14 @@
       "supuesto": "Tira hembra genérica de 2,54 mm, de unos 8,5 mm de alto, con cola de 0,6 × 0,6 mm (diagonal de 0,85 mm, entra en el taladro de 1,0 mm). Tira macho genérica para los módulos y para J13, J14 y J23. Los tapones de codificación son pines macho cortados al ras y pegados en la posición que se tapa."
      },
      "fuente": "ELE-038: texto actualizado de la Blue Pill a la ESP32-S3 y a las dos placas v0.1, sin cambiar lo asumido"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "estado": "ASUMIDO",
+      "base": "§9 y §10 de diseno_v0.3.md (altura de ≈8,5 mm, compras) [V]."
+     },
+     "fuente": "Medidas con calibre de Matías, 31/10/2026 [M]: mini bucks 14,3 mm de IN a OUT y 8,5 mm de + a −; DRV 'todo perfecto'; INA219 '15,72 mm es correcto'; 'tira hembra, borneras y portafusible todo ok'"
     }
    ]
   },
@@ -1010,11 +1036,11 @@
    "grupo": "C",
    "tema": "Separación de hileras de la ESP32-S3-DevKitC-1",
    "supuesto": "Dos hileras de 22 pines separadas 25,40 mm, paso 2,54 mm. Pines 1-22 en la hilera izquierda desde la antena (3V3, 3V3, RST, 4, 5, 6, 7, 15, 16, 17, 18, 8, 3, 46, 9, 10, 11, 12, 13, 14, 5V, GND) y 23-44 en la derecha (GND, 43, 44, 1, 2, 42, 41, 40, 39, 38, 37, 36, 35, 0, 45, 48, 47, 21, 20, 19, GND, GND).",
-   "base": "Pinout y manual del vendedor (ROB-012_ESP32-S3_DevKitC-1_N16R8/), orden igual a Espressif ESP32-S3-DevKitC-1 J1/J3 [V]. Ancho de placa 28 mm según el vendedor; la separación de 25,40 mm es [H].",
+   "base": "Pinout y manual del vendedor (ROB-012_ESP32-S3_DevKitC-1_N16R8/), orden igual a Espressif ESP32-S3-DevKitC-1 J1/J3 [V]. Ancho de placa 28 mm según el vendedor; la separación de 25,40 mm es [H]. Confirmado por Matías el 31/10/2026 (medidas de la ESP32-S3 DevKitC) [M].",
    "impacto_si_cambia": "Con otra separación la placa no entra en el zócalo: se rehace la huella con huella_esp32s3.py y se reubica.",
    "como_se_confirma": "E-01: medir con calibre la distancia entre centros de las dos hileras.",
-   "estado": "CAMBIADO",
-   "fecha": "20/10/2026",
+   "estado": "CONFIRMADO",
+   "fecha": "31/10/2026",
    "refs": [
     "A1"
    ],
@@ -1038,6 +1064,14 @@
       "estado": "ASUMIDO"
      },
      "fuente": "DEC-16 [M]: Matías definió con el equipo la Heemol ESP32-S3-DevKitC-1-N16R8 (ASIN B0FKFXC6F8)"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "Pinout y manual del vendedor (ROB-012_ESP32-S3_DevKitC-1_N16R8/), orden igual a Espressif ESP32-S3-DevKitC-1 J1/J3 [V]. Ancho de placa 28 mm según el vendedor; la separación de 25,40 mm es [H].",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Matías, 31/10/2026: 'las medidas dadas del esp32 están perfectas' [M]"
     }
    ]
   },
@@ -1437,10 +1471,10 @@
    "grupo": "D",
    "tema": "DRV8871 enchufado entero (A3/A4)",
    "supuesto": "Opción B: se desoldan las borneras POWER y MOTOR del módulo y se sueldan pines macho en esos agujeros. VM y GND llegan por 2 contactos y OUT1/OUT2 por uno. Los motores se atornillan en J11/J12 de la placa base. El clon comprado NO copia la Adafruit 3190 en las borneras: son de paso 5,0 mm e igualmente espaciadas. Desde el pin GND de la tira: POWER− −3,5 mm, POWER+ +1,5, OUT1 +6,5 y OUT2 +11,5, a 17,78 mm de la tira. Placa de unos 20,3 × 24,1 mm. Trae un electrolítico de 47 µF/50 V.",
-   "base": "Opción B por criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/), medidas con el paso de 2,54 mm de las tiras como escala [M]: en las dos fotos los agujeros de bornera quedan a 4,7-5,1 mm entre sí; posición medida −3,0/−3,6, +1,5/+1,9, +6,5/+6,6 y +10,9/+11,3 mm.",
+   "base": "Opción B por criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/), medidas con el paso de 2,54 mm de las tiras como escala [M]: en las dos fotos los agujeros de bornera quedan a 4,7-5,1 mm entre sí; posición medida −3,0/−3,6, +1,5/+1,9, +6,5/+6,6 y +10,9/+11,3 mm. Confirmado con calibre por Matías el 31/10/2026 [M].",
    "impacto_si_cambia": "Con 0,3-0,5 mm de error, los pines no entran en los zócalos 1x01: se corrige la huella antes de taladrar.",
-   "como_se_confirma": "Antes de taladrar: medir con calibre la distancia entre agujeros de bornera y su distancia a la tira (E-01). Leer RILIM.",
-   "estado": "CAMBIADO",
+   "como_se_confirma": "Medidas confirmadas. Leer RILIM antes de montar (E-01).",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [
     "A3",
@@ -1491,6 +1525,15 @@
       "estado": "CONFIRMADO"
      },
      "fuente": "Revisión independiente de la PCB v0.4 (DEC-18): tamaño del mini buck, paso de las borneras del DRV8871 y aire entre A7 y J20"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "como_se_confirma": "Antes de taladrar: medir con calibre la distancia entre agujeros de bornera y su distancia a la tira (E-01). Leer RILIM.",
+      "estado": "CAMBIADO",
+      "base": "Opción B por criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/), medidas con el paso de 2,54 mm de las tiras como escala [M]: en las dos fotos los agujeros de bornera quedan a 4,7-5,1 mm entre sí; posición medida −3,0/−3,6, +1,5/+1,9, +6,5/+6,6 y +10,9/+11,3 mm."
+     },
+     "fuente": "Medidas con calibre de Matías, 31/10/2026 [M]: mini bucks 14,3 mm de IN a OUT y 8,5 mm de + a −; DRV 'todo perfecto'; INA219 '15,72 mm es correcto'; 'tira hembra, borneras y portafusible todo ok'"
     }
    ]
   },
@@ -1529,9 +1572,9 @@
    "grupo": "D",
    "tema": "INA219 MCU-219 (A5/A6)",
    "supuesto": "Pines macho en los agujeros de la bornera suelta, con 2 contactos por net (propuesta 3). Tira 1×06 en el orden Vcc, Gnd, Scl, Sda, Vin−, Vin+. Bornera de paso 3,5 mm en la posición medida sobre la captura y contorno de 25 × 22 mm. Shunt R100 = 0,1 Ω. Direcciones 0x41 en IZQ (puente A0) y 0x44 en DER (puente A1).",
-   "base": "Criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: CJMCU-219 con tira Vcc, Gnd, Scl, Sda, Vin−, Vin+ (igual que la huella), shunt R100 y 'Max Current 3.2A'. Faltan las medidas con calibre.",
+   "base": "Criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: CJMCU-219 con tira Vcc, Gnd, Scl, Sda, Vin−, Vin+ (igual que la huella), shunt R100 y 'Max Current 3.2A'. Faltan las medidas con calibre. Confirmado con calibre por Matías el 31/10/2026 [M].",
    "impacto_si_cambia": "Si la bornera queda soldada y va cable a la placa, se recuperan J21/J22. Con otro paso o posición, se rehace la huella.",
-   "como_se_confirma": "Confirmado el criterio. Falta E-01: medir el módulo con calibre, leer el shunt y soldar los puentes A0 (A5) y A1 (A6) antes de montarlo.",
+   "como_se_confirma": "Medidas confirmadas (bornera a 15,72 mm de la tira). Leer el shunt y soldar los puentes A0 (A5) y A1 (A6) antes de montarlo.",
    "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [
@@ -1569,6 +1612,14 @@
       "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. Pines macho en los agujeros de la bornera y el módulo soldado (SUP-80). Huella ROB-002_INA219_MCU-219_8p [V]."
      },
      "fuente": "PCB v0.4: fotos de los módulos y pedido del equipo de dejar solo lo que piden los módulos"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "como_se_confirma": "Confirmado el criterio. Falta E-01: medir el módulo con calibre, leer el shunt y soldar los puentes A0 (A5) y A1 (A6) antes de montarlo.",
+      "base": "Criterio del agente (DEC-20). Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]: CJMCU-219 con tira Vcc, Gnd, Scl, Sda, Vin−, Vin+ (igual que la huella), shunt R100 y 'Max Current 3.2A'. Faltan las medidas con calibre."
+     },
+     "fuente": "Medidas con calibre de Matías, 31/10/2026 [M]: mini bucks 14,3 mm de IN a OUT y 8,5 mm de + a −; DRV 'todo perfecto'; INA219 '15,72 mm es correcto'; 'tira hembra, borneras y portafusible todo ok'"
     }
    ]
   },
@@ -1674,11 +1725,11 @@
   {
    "grupo": "D",
    "tema": "Mini bucks de 5 V y 3,3 V (A8/A9)",
-   "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): módulo tipo Mini-360 (placa de unos 17 × 11 mm, inductor 4R7, marca EY9), no un MP1584 de 22 × 17. Cuatro pads en las esquinas. Vistos desde la cara de componentes con IN+ en (0, 0): IN− en (0, −8,9), OUT+ en (14,3, 0) y OUT− en (14,3, −8,9). IN y OUT en bordes opuestos, los dos + del mismo lado. IN− y OUT− son la misma masa. Los Mini-360 suelen admitir 4,75-23 V de entrada y 1,8 A de salida: alcanza para 12,6 V de batería y para la ESP32.",
-   "base": "Fotos de los módulos comprados (componentes_comprados/fotos/), medidas con el paso de 2,54 mm de las tiras como escala [M]: serigrafía IN+/IN−/OUT+/OUT− en la cara de abajo; centros de pad a 14,1-14,6 mm (IN a OUT) y 8,7-9,2 mm (+ a −) en las dos fotos. Hasta la v0.3 la huella estaba espejada y era de 19 × 14 mm.",
+   "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): módulo tipo Mini-360 (placa de unos 17 × 11 mm, inductor 4R7, marca EY9), no un MP1584 de 22 × 17. Cuatro pads en las esquinas. Vistos desde la cara de componentes con IN+ en (0, 0): IN− en (0, −8,5), OUT+ en (14,3, 0) y OUT− en (14,3, −8,5). IN y OUT en bordes opuestos, los dos + del mismo lado. IN− y OUT− son la misma masa. Los Mini-360 suelen admitir 4,75-23 V de entrada y 1,8 A de salida: alcanza para 12,6 V de batería y para la ESP32.",
+   "base": "Medidas con calibre de Matías del 31/10/2026 [M]: 14,3 mm de IN a OUT (igual que en las fotos) y 8,5 mm de + a − (en las fotos se había estimado 8,9). Serigrafía IN+/IN−/OUT+/OUT− en la cara de abajo, según las fotos. Hasta la v0.3 la huella estaba espejada y era de 19 × 14 mm.",
    "impacto_si_cambia": "Montado girado o dado vuelta, el módulo pone en corto su entrada con su salida (VM_LOG con 5V_MCU en A8, 5V_MCU con 3V3_MCU en A9), porque IN− y OUT− están unidos.",
-   "como_se_confirma": "Antes de taladrar: medir con calibre la distancia entre pads. Después de soldar y antes de alimentar: el multímetro no tiene que marcar continuidad entre los pads IN+ y OUT+ de cada buck. Leer el marcado del chip (SUP-26).",
-   "estado": "CAMBIADO",
+   "como_se_confirma": "Después de soldar y antes de alimentar: el multímetro no tiene que marcar continuidad entre los pads IN+ y OUT+ de cada buck. Leer el marcado del chip (SUP-26).",
+   "estado": "CONFIRMADO",
    "fecha": "31/10/2026",
    "refs": [
     "A8",
@@ -1739,6 +1790,16 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Revisión independiente de la PCB v0.4 (DEC-18): tamaño del mini buck, paso de las borneras del DRV8871 y aire entre A7 y J20"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "supuesto": "ROB-006 (5 V, A8) y ROB-005 (3,3 V, A9): módulo tipo Mini-360 (placa de unos 17 × 11 mm, inductor 4R7, marca EY9), no un MP1584 de 22 × 17. Cuatro pads en las esquinas. Vistos desde la cara de componentes con IN+ en (0, 0): IN− en (0, −8,9), OUT+ en (14,3, 0) y OUT− en (14,3, −8,9). IN y OUT en bordes opuestos, los dos + del mismo lado. IN− y OUT− son la misma masa. Los Mini-360 suelen admitir 4,75-23 V de entrada y 1,8 A de salida: alcanza para 12,6 V de batería y para la ESP32.",
+      "base": "Fotos de los módulos comprados (componentes_comprados/fotos/), medidas con el paso de 2,54 mm de las tiras como escala [M]: serigrafía IN+/IN−/OUT+/OUT− en la cara de abajo; centros de pad a 14,1-14,6 mm (IN a OUT) y 8,7-9,2 mm (+ a −) en las dos fotos. Hasta la v0.3 la huella estaba espejada y era de 19 × 14 mm.",
+      "como_se_confirma": "Antes de taladrar: medir con calibre la distancia entre pads. Después de soldar y antes de alimentar: el multímetro no tiene que marcar continuidad entre los pads IN+ y OUT+ de cada buck. Leer el marcado del chip (SUP-26).",
+      "estado": "CAMBIADO"
+     },
+     "fuente": "Medidas con calibre de Matías, 31/10/2026 [M]: mini bucks 14,3 mm de IN a OUT y 8,5 mm de + a −; DRV 'todo perfecto'; INA219 '15,72 mm es correcto'; 'tira hembra, borneras y portafusible todo ok'"
     }
    ]
   },
@@ -3289,11 +3350,11 @@
    "grupo": "I",
    "tema": "Tiras de expansión junto a la ESP32-S3 (J24, J25)",
    "supuesto": "Dos tiras hembra de 1 × 22 a 2,54 mm pegadas por fuera a las hileras de A1, pin a pin: J24.n = A1.n y J25.n = A1.(22 + n). Los pines sin uso de A1 tienen net propia con su nombre (GPIO1, RST…). Libres para sensores: GPIO1, 2, 21, 38-42 y 47. La DevKitC mide 28 mm de ancho con hileras a 25,4 mm: su borde queda a 1,3 mm de cada hilera y el Dupont enchufado en la tira, a 1,27 mm. Los courtyards de J24/J25 se recortaron de ese lado para no chocar con el de A1.",
-   "base": "Pedido del equipo del 26/10/2026 [M]; ancho de 28 mm del vendedor (dimensiones_vendedor.jpg) [V]; separación de 25,40 mm (SUP-22) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
+   "base": "Pedido del equipo del 26/10/2026 [M]; ancho de 28 mm del vendedor (dimensiones_vendedor.jpg) [V]; separación de 25,40 mm (SUP-22) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado'). Confirmado por Matías el 31/10/2026 (medidas de la ESP32-S3 DevKitC) [M].",
    "impacto_si_cambia": "Si la DevKitC es más ancha, los Dupont de J24/J25 no entran con la ESP32 enchufada: hay que usar cables con el plástico recortado o soldar a los pads.",
    "como_se_confirma": "E-01: medir el ancho de la DevKitC y probar en seco un Dupont en la tira con la ESP32 enchufada.",
    "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "fecha": "31/10/2026",
    "refs": [],
    "afecta": [
     "pcb",
@@ -3322,6 +3383,14 @@
       "base": "Pedido del equipo del 26/10/2026 [M]; ancho de 28 mm del vendedor (dimensiones_vendedor.jpg) [V]; separación de 25,40 mm (SUP-22) [H]."
      },
      "fuente": "Matías, 26/10/2026: 'grupo C: aceptado'"
+    },
+    {
+     "fecha": "31/10/2026",
+     "antes": {
+      "base": "Pedido del equipo del 26/10/2026 [M]; ancho de 28 mm del vendedor (dimensiones_vendedor.jpg) [V]; separación de 25,40 mm (SUP-22) [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
+      "estado": "CONFIRMADO"
+     },
+     "fuente": "Matías, 31/10/2026: 'las medidas dadas del esp32 están perfectas' [M]"
     }
    ]
   },

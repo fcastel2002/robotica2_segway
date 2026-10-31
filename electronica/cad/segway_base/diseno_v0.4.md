@@ -122,7 +122,7 @@ Ya eran THT y siguen igual: Q1 (TO-220), D3 (DO-35), D4 (LED de 3 mm), C1, C4, C
 | A3, A4 | `ROB-008_DRV8871_modulo_8p` | drv.brd de Adafruit 3190 girado 180°: header 1×4 + borneras de paso 3,5 mm a 17,78 mm | SUP-32 |
 | A5, A6 | `ROB-002_INA219_MCU-219_8p` | 1×6 + bornera de paso 3,5 mm (3,47 mm medidos en la captura) a 15,72 mm | SUP-34 |
 | A7 | `ROB-009_INA226_modulo_8p` | 1×8 + tope NPTH de 3,2 mm (M3×16) contra la inserción invertida | SUP-35, SUP-38 |
-| A8, A9 | `ROB-005-006_MiniBuck_modulo_4p` | 4 pads de 3,0 mm en un rectángulo de 19,0 × 14,0 mm | SUP-37, SUP-38 |
+| A8, A9 | `ROB-005-006_MiniBuck_modulo_4p` | 4 pads de 3,0 mm en un rectángulo de 19,0 × 14,0 mm (supuesto de entonces; desde el 31/10/2026, 14,3 × 8,5 mm medidos con calibre) | SUP-37, SUP-38 |
 
 La huella `ROB-001_LM2596_modulo_4p` y su símbolo quedan en la biblioteca sin uso (A10 eliminado, SUP-63).
 

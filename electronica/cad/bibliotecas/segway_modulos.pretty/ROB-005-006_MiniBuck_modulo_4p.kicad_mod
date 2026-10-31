@@ -2,7 +2,7 @@
 	(version 20260206)
 	(generator "segway_huellas_c")
 	(layer "F.Cu")
-	(descr "Corregida el 31/10/2026 con las fotos de los modulos comprados. (1) Orientacion: la version de la v0.3 estaba espejada (IN- y OUT+ intercambiados). (2) Tamano (revision independiente v0.4): el modulo comprado es del tipo Mini-360 (placa de unos 17 x 11 mm, inductor 4R7, marca EY9), no un MP1584 de 22 x 17. Centros de pad medidos en las fotos con la tira del INA226 como escala: 14.3 mm de IN a OUT y 8.9 mm de + a - (confirmar con calibre antes de taladrar, SUP-37). Vista desde la cara de componentes: IN+ (0,0), IN- (0,-8.9), OUT+ (14.3,0), OUT- (14.3,-8.9). Pads 1 IN+, 2 IN-, 3 OUT+, 4 OUT- = pines del simbolo. IN- y OUT- son la misma masa dentro del modulo. Se suelda sobre 4 pines macho con el espaciador de la tira (DEC-20). Montado girado o dado vuelta pone en corto la entrada con la salida (VM_LOG con 5V_MCU en A8, 5V_MCU con 3V3_MCU en A9): antes de alimentar, medir que no haya continuidad entre el pad IN+ y el pad OUT+. Fabricacion casera: una capa B.Cu, pad 3,0 mm / taladro 1,5 mm (absorbe +-0,3 mm de error de medida: el lado corto se midio entre 8,4 y 9,2 mm en las fotos), pad 1 cuadrado.")
+	(descr "Corregida el 31/10/2026 con las fotos de los modulos comprados. (1) Orientacion: la version de la v0.3 estaba espejada (IN- y OUT+ intercambiados). (2) Tamano (revision independiente v0.4): el modulo comprado es del tipo Mini-360 (placa de unos 17 x 11 mm, inductor 4R7, marca EY9), no un MP1584 de 22 x 17. Centros de pad medidos con calibre por Matias el 31/10/2026: 14.3 mm de IN a OUT y 8.5 mm de + a - (SUP-37). Vista desde la cara de componentes: IN+ (0,0), IN- (0,-8.5), OUT+ (14.3,0), OUT- (14.3,-8.5). Pads 1 IN+, 2 IN-, 3 OUT+, 4 OUT- = pines del simbolo. IN- y OUT- son la misma masa dentro del modulo. Se suelda sobre 4 pines macho con el espaciador de la tira (DEC-20). Montado girado o dado vuelta pone en corto la entrada con la salida (VM_LOG con 5V_MCU en A8, 5V_MCU con 3V3_MCU en A9): antes de alimentar, medir que no haya continuidad entre el pad IN+ y el pad OUT+. Fabricacion casera: una capa B.Cu, pad 3,0 mm / taladro 1,5 mm, pad 1 cuadrado.")
 	(tags "Mini-360 mini buck modulo soldado THT casero")
 	(property "Reference" "REF**"
 		(at 7.15 2.6 0)
@@ -15,7 +15,7 @@
 		)
 	)
 	(property "Value" "ROB-005-006_MiniBuck_modulo_4p"
-		(at 7.15 -11.50 0)
+		(at 7.15 -11.10 0)
 		(layer "F.Fab")
 		(effects
 			(font
@@ -37,7 +37,7 @@
 	)
 	(fp_line
 		(start 15.65 1.15)
-		(end 15.65 -10.05)
+		(end 15.65 -9.65)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -45,8 +45,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 15.65 -10.05)
-		(end -1.35 -10.05)
+		(start 15.65 -9.65)
+		(end -1.35 -9.65)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -54,7 +54,7 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start -1.35 -10.05)
+		(start -1.35 -9.65)
 		(end -1.35 1.15)
 		(stroke
 			(width 0.1)
@@ -73,7 +73,7 @@
 	)
 	(fp_line
 		(start 15.76 1.26)
-		(end 15.76 -10.16)
+		(end 15.76 -9.76)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -81,8 +81,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 15.76 -10.16)
-		(end -1.46 -10.16)
+		(start 15.76 -9.76)
+		(end -1.46 -9.76)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -90,7 +90,7 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start -1.46 -10.16)
+		(start -1.46 -9.76)
 		(end -1.46 1.26)
 		(stroke
 			(width 0.12)
@@ -118,7 +118,7 @@
 	)
 	(fp_line
 		(start 16.05 1.75)
-		(end 16.05 -10.65)
+		(end 16.05 -10.25)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -126,8 +126,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 16.05 -10.65)
-		(end -3.05 -10.65)
+		(start 16.05 -10.25)
+		(end -3.05 -10.25)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -135,7 +135,7 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -3.05 -10.65)
+		(start -3.05 -10.25)
 		(end -3.05 1.75)
 		(stroke
 			(width 0.05)
@@ -154,7 +154,7 @@
 		)
 	)
 	(fp_text user "IN-"
-		(at 2.90 -8.90 0)
+		(at 2.90 -8.50 0)
 		(layer "F.SilkS")
 		(effects
 			(font
@@ -174,7 +174,7 @@
 		)
 	)
 	(fp_text user "OUT-"
-		(at 11.10 -8.90 0)
+		(at 11.10 -8.50 0)
 		(layer "F.SilkS")
 		(effects
 			(font
@@ -184,7 +184,7 @@
 		)
 	)
 	(fp_text user "IN > OUT"
-		(at 7.15 -4.45 0)
+		(at 7.15 -4.25 0)
 		(layer "F.SilkS")
 		(effects
 			(font
@@ -194,7 +194,7 @@
 		)
 	)
 	(fp_text user "${REFERENCE}"
-		(at 7.15 -6.05 0)
+		(at 7.15 -5.85 0)
 		(layer "F.Fab")
 		(effects
 			(font
@@ -211,7 +211,7 @@
 		(remove_unused_layers no)
 	)
 	(pad "2" thru_hole circle
-		(at 0.00 -8.90)
+		(at 0.00 -8.50)
 		(size 3.0 3.0)
 		(drill 1.5)
 		(layers "*.Cu" "*.Mask")
@@ -225,7 +225,7 @@
 		(remove_unused_layers no)
 	)
 	(pad "4" thru_hole circle
-		(at 14.30 -8.90)
+		(at 14.30 -8.50)
 		(size 3.0 3.0)
 		(drill 1.5)
 		(layers "*.Cu" "*.Mask")

@@ -9,7 +9,7 @@ Fecha: 31/10/2026. Reemplaza a la [v0.3](pcb_v0.3.md). Montaje: [DEC-20](../../p
 Con las fotos de los módulos comprados y el pedido del equipo de dejar en la placa solo lo que los módulos no traen:
 
 - **INA226 (A7) corregido:** su tira es IN+, IN−, VBS, ALE, **SDA, SCL**, GND, VCC. En la v0.3 SDA y SCL estaban invertidos y el I2C del INA226 no hubiera andado. Con el orden real ya no se cruzan, y se fueron dos puentes.
-- **Buck de 5 V (A8) corregido:** la huella estaba **espejada**: el IN− del módulo caía en la salida de 5 V y la ponía en corto. Además era de otro tamaño: el módulo comprado es tipo **Mini-360** (17 × 11 mm, pads a 14,3 × 8,9 mm), no un MP1584 de 22 × 17. Ahora IN+ y OUT+ quedan abajo y GND arriba. VM_LOG le llega por debajo del módulo, y el 5V rodea por el este el pad OUT−.
+- **Buck de 5 V (A8) corregido:** la huella estaba **espejada**: el IN− del módulo caía en la salida de 5 V y la ponía en corto. Además era de otro tamaño: el módulo comprado es tipo **Mini-360** (17 × 11 mm, pads a 14,3 × 8,5 mm, medidos con calibre), no un MP1584 de 22 × 17. Ahora IN+ y OUT+ quedan abajo y GND arriba. VM_LOG le llega por debajo del módulo, y el 5V rodea por el este el pad OUT−.
 - **Fuera lo que los módulos ya resuelven** (de 48 a 30 componentes, contando la segunda pasada de abajo):
   - C4 y C5: el DRV8871 comprado ya trae 47 µF/50 V.
   - R1–R4 y R35–R38: las entradas de los DRV van directo; el DRV tiene pull-down interno y no entra girado.
@@ -92,6 +92,6 @@ Los módulos soldados quedan unos 2,5 mm sobre la placa (espaciador de la tira).
 
 ## Pendiente y riesgos
 
-- **Medidas con calibre antes de taladrar** (las de las fotos tienen ±0,5 mm): pads del buck (14,3 × 8,9 mm), agujeros de bornera del DRV8871 (paso 5,0 mm y 17,78 mm a la tira), INA219 (la revisión midió 16,5 mm de la tira a la bornera; la huella usa 15,72) y borde del INA226 frente a J20 (grupo 3 de la [revisión](../../planificacion/2026-10-26-revision-supuestos-version-final.md)).
+- **Medidas con calibre (Matías, 31/10/2026):** pads del buck a 14,3 × 8,5 mm (la huella pasó de 8,9 a 8,5), borneras del DRV8871 a paso 5,0 mm y 17,78 mm de la tira, e INA219 con la bornera a 15,72 mm de la tira: confirmados. Falta el borde del INA226 frente a J20 (SUP-35).
 - **Mecánica:** fijación y largo del cable (SUP-05 y SUP-72). **Batería** sin confirmar (SUP-42).
 - **Corriente:** las pistas de batería (3,5–4,5 mm) quedan por debajo de los 5 mm de SUP-10 para 10 A continuos. Se estañan, y en el primer ensayo de carga se mide su temperatura.

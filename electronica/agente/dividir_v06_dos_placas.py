@@ -307,7 +307,9 @@ CAMBIOS_PCB_V02 = {
 # marca como histórica la justificación basada en el datasheet del STM32. Las nets y los valores no cambian.
 REEMPLAZOS = [("3V3_PER", "3V3_MCU"), ("PB12", "GPIO6"), ("pull-up interna de PB13", "pull-up interna de GPIO8"),
               ("entradas de A8/A9", "entrada de A8"), ("protege PA6", "protege GPIO14"), ("protege PA7", "protege GPIO13"),
-              ("protege PB0", "protege GPIO12"), ("protege PB1", "protege GPIO11")]
+              ("protege PB0", "protege GPIO12"), ("protege PB1", "protege GPIO11"),
+              # v0.4: medida con calibre del 31/10/2026 (SUP-37)
+              ("con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02", "tipo Mini-360 con pads a 14,3 × 8,5 mm, medidos con calibre")]
 ESTADO_V06 = {
     "A7": " | v0.6: sin el tope NPTH (caía sobre el bus I2C, SUP-75): se puede enchufar invertido. Rótulo VCC en el cobre "
           "junto al pin 8; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)",

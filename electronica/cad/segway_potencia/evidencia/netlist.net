@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
-		(date "2026-10-31T13:10:49")
+		(date "2026-10-31T14:46:34")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "db6819c4-d2b3-4960-916c-63384201272e")
+			(tstamps "d19117ba-d1e0-4134-8363-bee6eade4030")
 			(units
 				(unit
 					(name "A")
@@ -173,7 +173,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f8da8cf2-ac1d-4d65-9fc9-3ef0c93e7bf5")
+			(tstamps "56025143-8f52-4028-a360-2f070bb3ea7c")
 			(units
 				(unit
 					(name "A")
@@ -249,7 +249,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8cefdb88-6afd-4d74-ae5d-934a71a744f0")
+			(tstamps "6d9ac328-ee71-4527-8a55-12399762afce")
 			(units
 				(unit
 					(name "A")
@@ -325,7 +325,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1cd37bfd-7659-469c-8f1d-c5a083349444")
+			(tstamps "f4d685a5-beeb-4a16-9c63-83acde151b4e")
 			(units
 				(unit
 					(name "A")
@@ -401,7 +401,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c1f0f43b-ae38-4f6b-a3a2-c11ac01f451a")
+			(tstamps "55a43429-a492-418f-9da2-c3f5f26decec")
 			(units
 				(unit
 					(name "A")
@@ -441,7 +441,7 @@
 			(description "ROB-005/ROB-006. Mini buck de salida fija, 4 pads de esquina IN+, IN-, OUT+, OUT- segun la miniatura de pinout de la publicacion [V]. Chip no identificado (MP1584 solo candidato). Se enchufa con un pin macho por esquina en 4 PinSocket_1x01 (DEC-13); huella v0.4 segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads en un rectangulo de 19,0 x 14,0 mm supuesto (SUP-37). OUT+ passive para el ERC. ROB-005 (3,3 V) y ROB-006 (5 V) son iguales a simple vista: serigrafia y medida antes de insertar. Cuatro contactos en rectangulo: admite insercion girada 180 grados, que une VM_LOG con la salida por la masa del modulo e invierte su entrada. Codificacion en la v0.1: A8 girado 90 grados respecto de A9 y rotulos 5V/3V3 en el cobre; el tope definitivo se agrega tras E-01 (SUP-38).")
 			(fields
 				(field
-					(name "Estado") "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
+					(name "Estado") "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p tipo Mini-360 con pads a 14,3 × 8,5 mm, medidos con calibre; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
 				(field
 					(name "Fuente") "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)")
 				(field
@@ -459,7 +459,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
+				(value "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p tipo Mini-360 con pads a 14,3 × 8,5 mm, medidos con calibre; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)")
 			)
 			(property
 				(name "Fuente")
@@ -477,7 +477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "238ecdda-f8a2-49c3-bba8-1575add94350")
+			(tstamps "7c79265e-5763-41f3-8d45-9bd059b536c3")
 			(units
 				(unit
 					(name "A")
@@ -549,7 +549,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c1302068-bc98-489f-960d-65105549c7d1")
+			(tstamps "7f8255d1-0935-4b9b-ba9b-488a9be63d03")
 			(units
 				(unit
 					(name "A")
@@ -615,7 +615,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8de7ac21-854d-4476-adfc-c49fe2326b30")
+			(tstamps "5179aff3-b434-4cfc-b87d-f4a9e98304e2")
 			(units
 				(unit
 					(name "A")
@@ -681,7 +681,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6b8c7b8d-17bf-4a5d-9b04-ba6407074c65")
+			(tstamps "4d76a7f6-a932-4106-a072-6656410147a9")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +747,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1cd89167-7e32-4e93-85b7-fced6b77b841")
+			(tstamps "6d4d827f-85e7-4c21-93f3-c0d72c698429")
 			(units
 				(unit
 					(name "A")
@@ -813,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6aebb0a9-3e6c-4d24-bf10-fe71603b8f0f")
+			(tstamps "0bd9affd-a618-4bca-bd00-b93ff99ef7bb")
 			(units
 				(unit
 					(name "A")
@@ -879,7 +879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e832ec69-1760-473b-a714-d97ee2ab9423")
+			(tstamps "400f7dc8-a7ae-4d46-9c3d-394697812607")
 			(units
 				(unit
 					(name "A")
@@ -945,7 +945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "20fdfcc9-2cb0-4f2f-99f9-ac42581c0033")
+			(tstamps "1949831a-adb1-4753-8f79-40f6340fb946")
 			(units
 				(unit
 					(name "A")
@@ -1011,7 +1011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "53b9e599-fdff-442f-a27b-47b17692aae7")
+			(tstamps "3299b8b5-ea20-4db3-8db3-fcdb7ab3f5fb")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "29feaef9-5f1e-49d7-b0d9-a81b445321ef")
+			(tstamps "573c1637-b499-482e-9e4e-49df78fc8fad")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a66f51ec-bec1-46d5-a586-0ab00f06c9cb")
+			(tstamps "eb32978a-1ab4-4832-adda-054a553ab250")
 			(units
 				(unit
 					(name "A")
@@ -1209,7 +1209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "fa02fb86-34d0-488f-b60d-b1842d480303")
+			(tstamps "196ae7cc-0fd9-4ca3-a961-90ee640ee7da")
 			(units
 				(unit
 					(name "A")
@@ -1275,7 +1275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dded5eb4-3fdc-4749-af4c-5f3e3820afa3")
+			(tstamps "9477b20c-5574-4a5f-8150-61f3e3df2762")
 			(units
 				(unit
 					(name "A")
@@ -1341,7 +1341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "79766c53-25b9-4eb4-97f5-9ddb087a6443")
+			(tstamps "b5219ca4-1a4f-4d69-8b3a-19d82a966fdf")
 			(units
 				(unit
 					(name "A")
@@ -1407,7 +1407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d6a39905-af39-4236-b201-ff4efcc90091")
+			(tstamps "735e116f-98a4-497f-912d-981fb4d275af")
 			(units
 				(unit
 					(name "A")
@@ -1473,7 +1473,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "86aa5c9b-9a8b-4595-b82f-080bf3ccf51b")
+			(tstamps "3efc0f52-4fd1-499d-8c06-38d240ed6227")
 			(units
 				(unit
 					(name "A")
@@ -1542,7 +1542,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ebac09e4-8c39-48ba-b7f5-c2388d372ebf")
+			(tstamps "47353bbd-f4b3-4980-8615-581618d7860c")
 			(units
 				(unit
 					(name "A")
@@ -1611,7 +1611,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ad4e0308-453a-4a15-ba32-1ef046d65a96")
+			(tstamps "11952b12-8c34-498c-b9a7-127b4609504d")
 			(units
 				(unit
 					(name "A")
@@ -1677,7 +1677,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "1227818b-d1d0-445b-b3c2-7d1d8110018a")
+			(tstamps "b8464f35-9b0d-4ff9-9f5e-3fcad408aac2")
 			(units
 				(unit
 					(name "A")
@@ -1743,7 +1743,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "727502e2-9872-479e-91ef-e59d3b8f2907")
+			(tstamps "2e973bf5-c933-4502-a5c2-318d57562f0b")
 			(units
 				(unit
 					(name "A")
@@ -1809,7 +1809,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5f3f4a80-ab10-4fa8-92c0-a0b215f37c6e")
+			(tstamps "3632cc19-fd7a-4c42-a3e3-20267a9967c1")
 			(units
 				(unit
 					(name "A")
@@ -1917,7 +1917,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "df0e7024-5bba-43ae-85ae-3f171e8f9e44")
+			(tstamps "ff2a6ed1-744a-4933-a578-d33ff4dc7516")
 			(units
 				(unit
 					(name "A")
@@ -1986,7 +1986,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ab5c967a-b8fe-4b50-83c0-a05fe8ae51b3")
+			(tstamps "97cf8d63-96fc-4aa2-9c00-1f4fc3e25144")
 			(units
 				(unit
 					(name "A")
@@ -2052,7 +2052,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a701637b-9409-4559-8aaa-a2930e3f81ff")
+			(tstamps "d8a9dcdd-db25-4319-bc3e-a1fe49375a75")
 			(units
 				(unit
 					(name "A")
@@ -2118,7 +2118,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5ef357e8-5648-417a-81f0-d0c83cd04468")
+			(tstamps "2ba274e6-a54d-43c1-a865-34a61732287d")
 			(units
 				(unit
 					(name "A")

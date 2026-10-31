@@ -594,7 +594,7 @@
    "block": "logica",
    "dnp": false,
    "source": "[CAP]/ROB-006_Mini_5V/referencia_compra.png (miniatura IN+/IN-/OUT+/OUT-) [V]; [ENERGIA] §4.1 opción (a)",
-   "status": "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p con pads supuestos en un rectángulo de 19,0 × 14,0 mm; validar en E-02; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)",
+   "status": "pendiente de medida [H]: mini buck de 5 V, chip no identificado (SUP-37); huella segway_modulos:ROB-005-006_MiniBuck_modulo_4p tipo Mini-360 con pads a 14,3 × 8,5 mm, medidos con calibre; girado 180° une VM_LOG con 5V por la masa del módulo, así que en la v0.1 va girado 90° respecto de A9 y con rótulo 5V en cobre (SUP-38); A10 (LM2596 de respaldo) eliminado (SUP-63); C23 y C24 eliminados (SUP-69) | v0.6: A9 eliminado, la codificación por giro ya no aplica. Rótulo IN+ en el cobre junto al pin 1; si el equipo lo aprueba, se suelda directo en lugar de ir en zócalo (ELE-039)",
    "supuestos": [
     "SUP-37",
     "SUP-38"
