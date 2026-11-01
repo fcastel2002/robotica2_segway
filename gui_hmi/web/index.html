@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Segway · telemetría</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <nav class="menu" aria-label="Secciones">
+    <h1>Segway <span class="tenue">telemetría</span></h1>
+    <button data-vista="banco">Banco de pruebas</button>
+    <button data-vista="vista-graficos">Gráficos</button>
+    <button data-vista="configuracion">Configuración</button>
+  </nav>
+
+  <div class="principal">
+    <header>
+      <select id="fuente" title="De dónde vienen los datos">
+        <option value="puente">Puente (WiFi o simulado)</option>
+        <option value="usb">USB directo</option>
+      </select>
+      <select id="baudios" title="Velocidad del puerto USB: igual que Serial.begin() del ESP32" hidden>
+        <option>115200</option>
+        <option>230400</option>
+        <option>460800</option>
+        <option>921600</option>
+      </select>
+      <button id="conectar">Conectar</button>
+      <span id="estado" class="estado">desconectado</span>
+      <span class="relleno"></span>
+      <button id="grabar" title="Guarda todo lo que llega en un CSV">Grabar CSV</button>
+      <!-- Comandos de texto de firmware/segway_v01 (main/comms_task.c): visibles desde cualquier sección -->
+      <span id="comandos" class="comandos" hidden>
+        <span id="estado-robot" class="estado-robot" title="Estado del supervisor del robot" hidden></span>
+        <button data-comando="arm" title="Solo desde DISARMED y a menos de 5° de la referencia">Armar</button>
+        <button data-comando="motor stop">Parar motores</button>
+        <button data-comando="disarm" class="peligro" title="También con la tecla Esc">Desarmar (Esc)</button>
+      </span>
+    </header>
+
+    <p id="aviso-datos" class="aviso">Sin datos del robot: conectar por USB, o correr <code>puente.py --simular</code> para probar.</p>
+
+    <!-- Banco de pruebas: sensores y actuadores uno por uno, sin el lazo de control (banco.js) -->
+    <section id="banco" class="vista banco">
+      <div class="tablero">
+
+        <div class="grupo">
+          <h2 class="titulo-grupo">Sensores</h2>
+          <article class="tarjeta">
+            <h2>IMU <span id="imu-estado" class="etiqueta"></span></h2>
+            <div class="inclinacion">
+              <svg viewBox="-50 -62 100 72" aria-hidden="true">
+                <line class="piso" x1="-48" y1="8" x2="48" y2="8"/>
+                <line class="vertical" x1="0" y1="0" x2="0" y2="-58"/>
+                <g id="robot-dibujo">
+                  <line class="cuerpo" x1="0" y1="0" x2="0" y2="-46"/>
+                  <circle class="cuerpo" cx="0" cy="-50" r="5"/>
+                  <circle class="rueda" cx="0" cy="0" r="8"/>
+                </g>
+              </svg>
+              <div>
+                <div class="grande"><output data-col="theta_rel" data-dec="1">—</output>°</div>
+                <div class="tenue">respecto del equilibrio (θ − ref, + adelante) <span id="armable" class="etiqueta"></span></div>
+                <div><output data-col="theta_dot_dps" data-dec="1">—</output> °/s</div>
+                <div class="tenue">total <output data-col="theta_deg" data-dec="1">—</output>° · ref <output id="ref-actual" title="Ángulo de equilibrio que usa la placa (get)">—</output></div>
+              </div>
+            </div>
+            <h3>Acelerómetro <span class="tenue">m/s², ejes del sensor</span></h3>
+            <div class="medidor" data-col="ax_ms2" data-min="-19.6" data-max="19.6" data-dec="2">x</div>
+            <div class="medidor" data-col="ay_ms2" data-min="-19.6" data-max="19.6" data-dec="2">y</div>
+            <div class="medidor" data-col="az_ms2" data-min="-19.6" data-max="19.6" data-dec="2">z</div>
+            <div class="medidor" data-col="a_ms2" data-min="0" data-max="19.6" data-dec="2" title="Quieto tiene que dar 9,81">|a|</div>
+            <h3>Giróscopo <span class="tenue">°/s, con sesgo</span></h3>
+            <div class="medidor" data-col="gx_dps" data-min="-250" data-max="250" data-dec="1">x</div>
+            <div class="medidor" data-col="gy_dps" data-min="-250" data-max="250" data-dec="1">y</div>
+            <div class="medidor" data-col="gz_dps" data-min="-250" data-max="250" data-dec="1">z</div>
+            <p class="tenue">Valores crudos, sin calibrar. La calibración está en <button class="enlace" data-ir="configuracion">Configuración</button>.</p>
+          </article>
+
+          <article class="tarjeta">
+            <h2>Encoders</h2>
+            <table class="ruedas">
+              <thead><tr><th></th><th>izq</th><th>der</th></tr></thead>
+              <tbody>
+                <tr><th>cuentas</th><td><output data-col="enc_l" data-dec="0">—</output></td><td><output data-col="enc_r" data-dec="0">—</output></td></tr>
+                <tr><th>vueltas</th><td><output data-col="vueltas_l" data-dec="2">—</output></td><td><output data-col="vueltas_r" data-dec="2">—</output></td></tr>
+                <tr><th>RPM</th><td><output data-col="rpm_l" data-dec="0">—</output></td><td><output data-col="rpm_r" data-dec="0">—</output></td></tr>
+                <tr><th>distancia (mm)</th><td><output data-col="dist_l_mm" data-dec="0">—</output></td><td><output data-col="dist_r_mm" data-dec="0">—</output></td></tr>
+              </tbody>
+            </table>
+            <div class="acciones">
+              <label title="Cuentas x4 por vuelta de rueda: 4 · pulsos · reducción">cuentas/vuelta <input id="cpr" type="number" min="1" step="1" value="880"></label>
+              <label>radio (mm) <input id="radio" type="number" min="1" step="any" value="40"></label>
+            </div>
+            <div class="acciones">
+              <button data-comando="enc reset" data-requiere-conexion>Encoders a cero</button>
+              <span class="tenue">avanzar tiene que sumar en las dos</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="grupo">
+          <h2 class="titulo-grupo">Actuadores</h2>
+          <article class="tarjeta">
+            <h2>Motores</h2>
+            <fieldset data-requiere-conexion class="contenedor">
+              <!-- "motor l|r <-100..100>": el firmware lo acepta solo en DISARMED o FAULT (app.js) -->
+              <fieldset id="motores" class="motores" title="% de PWM con signo (+ adelante), limitado por umax">
+                <label>izq <input id="motor-l" type="range" min="-100" max="100" step="1" value="0"><output id="valor-l">0 %</output></label>
+                <label>der <input id="motor-r" type="range" min="-100" max="100" step="1" value="0"><output id="valor-r">0 %</output></label>
+                <div class="acciones">
+                  <label title="Mover un deslizador mueve los dos"><input id="motores-juntos" type="checkbox" checked> juntos</label>
+                  <label title="Sin tildar, el motor frena al soltar el deslizador"><input id="motores-mantener" type="checkbox"> mantener al soltar</label>
+                  <span id="motores-aviso" class="tenue"></span>
+                </div>
+                <h3>Aplicado <span class="tenue">lo que sale al puente H</span></h3>
+                <div class="medidor" data-col="m_l" data-min="-1" data-max="1" data-factor="100" data-dec="0" data-unidad=" %">izq</div>
+                <div class="medidor" data-col="m_r" data-min="-1" data-max="1" data-factor="100" data-dec="0" data-unidad=" %">der</div>
+                <h3>Escalón <span class="tenue">mide las RPM en la segunda mitad</span></h3>
+                <form id="escalon" class="acciones">
+                  <select id="escalon-rueda" title="Rueda">
+                    <option value="ambas">ambas</option>
+                    <option value="l">izq</option>
+                    <option value="r">der</option>
+                  </select>
+                  <label><input id="escalon-pct" type="number" min="-100" max="100" step="1" value="30"> %</label>
+                  <label><input id="escalon-s" type="number" min="0.2" max="10" step="0.1" value="2"> s</label>
+                  <button id="escalon-boton">Probar</button>
+                </form>
+                <p id="escalon-resultado" class="tenue"></p>
+              </fieldset>
+              <form id="limite" class="acciones" title="set umax: el firmware limita todo comando de motor a este valor">
+                <label>umax <input data-param="umax" name="umax" type="number" min="0" max="1" step="0.05" value="1"></label>
+                <button>Limitar</button>
+              </form>
+            </fieldset>
+          </article>
+
+          <article class="tarjeta">
+            <h2>Servos de las patas</h2>
+            <fieldset data-requiere-conexion class="contenedor servos">
+              <!-- "servo [l|r] <grados|off>": límites y velocidad los pone el firmware (board_config.h).
+                   Un servo suelto no tiene posición conocida: el primer ángulo se escribe (Ir a). -->
+              <div class="servo" data-lado="l">
+                <label>izq <input id="servo-l" type="range" min="0" max="180" step="1" value="90"><output id="objetivo-l">—</output></label>
+                <span class="tenue">actual <output data-col="servo_l_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output> · límites <output id="lim-l" title="SERVO_L_MIN_DEG / MAX_DEG de board_config.h, leídos de la placa">—</output></span>
+                <span class="pasos"><button data-paso="l -5" disabled>−5</button><button data-paso="l -1" disabled>−1</button><button data-paso="l 1" disabled>+1</button><button data-paso="l 5" disabled>+5</button></span>
+                <form class="ir-a" title="Primer ángulo de un servo suelto: va directo, a la velocidad del servo">
+                  <input type="number" min="0" max="180" step="1" placeholder="°" required><button>Ir a</button>
+                </form>
+                <button data-servo="l off" title="Sin pulsos: el servo queda sin fuerza y la posición deja de conocerse">Soltar</button>
+              </div>
+              <div class="servo" data-lado="r">
+                <label>der <input id="servo-r" type="range" min="0" max="180" step="1" value="90"><output id="objetivo-r">—</output></label>
+                <span class="tenue">actual <output data-col="servo_r_deg" data-dec="1" data-unidad="°" data-nan="suelto">—</output> · límites <output id="lim-r" title="SERVO_R_MIN_DEG / MAX_DEG de board_config.h, leídos de la placa">—</output></span>
+                <span class="pasos"><button data-paso="r -5" disabled>−5</button><button data-paso="r -1" disabled>−1</button><button data-paso="r 1" disabled>+1</button><button data-paso="r 5" disabled>+5</button></span>
+                <form class="ir-a" title="Primer ángulo de un servo suelto: va directo, a la velocidad del servo">
+                  <input type="number" min="0" max="180" step="1" placeholder="°" required><button>Ir a</button>
+                </form>
+                <button data-servo="r off" title="Sin pulsos: el servo queda sin fuerza y la posición deja de conocerse">Soltar</button>
+              </div>
+              <div class="acciones">
+                <button data-servo="off">Soltar los dos</button>
+              </div>
+              <p class="tenue">Ángulo del servo, dentro de los límites de <code>board_config.h</code>. Sueltos al encender: el primer ángulo (deslizador al soltarlo, o <b>Ir a</b>) va directo; después se mueven a 90 °/s como máximo.</p>
+            </fieldset>
+          </article>
+        </div>
+
+        <div class="grupo">
+          <h2 class="titulo-grupo">Control y sistema</h2>
+          <article class="tarjeta">
+            <h2>Control</h2>
+            <!-- "set <param> <valor>"; la respuesta de "get" llena las casillas (app.js) -->
+            <form id="ganancias" class="parametros" title="Se mandan como set &lt;param&gt; &lt;valor&gt;; se pierden al reiniciar">
+              <fieldset data-requiere-conexion class="contenedor">
+                <label class="fila-entera">controlador
+                  <select name="lqr" title="Vale desde el próximo arm, nunca en pleno equilibrio">
+                    <option value="0">PID</option>
+                    <option value="1">LQR</option>
+                  </select>
+                </label>
+                <h3>PID</h3>
+                <label>kp <input name="kp" type="number" step="any"></label>
+                <label>ki <input name="ki" type="number" step="any"></label>
+                <label>kd <input name="kd" type="number" step="any"></label>
+                <h3>LQR</h3>
+                <label>kx <input name="kx" type="number" step="any"></label>
+                <label>kv <input name="kv" type="number" step="any"></label>
+                <label>kphi <input name="kphi" type="number" step="any"></label>
+                <label>kw <input name="kw" type="number" step="any"></label>
+                <h3>Comunes</h3>
+                <label title="Ángulo de equilibrio, en grados">ref° <input name="ref" type="number" step="any"></label>
+                <label title="Zona muerta del comando">deadband <input name="deadband" type="number" step="any"></label>
+                <label title="Rechaza banda del comando, en Hz">notch Hz <input name="notch" type="number" step="any"></label>
+                <div class="acciones fila-entera">
+                  <button>Cargar</button>
+                  <button type="button" data-comando="get">Leer parámetros</button>
+                  <span class="tenue">se pierden al reiniciar</span>
+                </div>
+              </fieldset>
+            </form>
+          </article>
+
+          <article class="tarjeta">
+            <h2>Sistema</h2>
+            <table class="ruedas">
+              <tbody>
+                <tr><th>estado</th><td><output data-col="estado">—</output></td></tr>
+                <tr><th>encendido hace</th><td><output id="encendido">—</output></td></tr>
+                <tr><th>datos</th><td><output id="tasa">—</output></td></tr>
+                <tr><th>ciclos excedidos</th><td><output data-col="overruns" data-dec="0">—</output></td></tr>
+              </tbody>
+            </table>
+            <h3>Peor ciclo de control <span class="tenue">µs, de 5000 disponibles</span></h3>
+            <div class="medidor" data-col="loop_us_max" data-min="0" data-max="5000" data-dec="0">ciclo</div>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+    <main id="vista-graficos" class="vista">
+      <aside>
+        <div class="barra-graficos">
+          <label>Ventana
+            <select id="ventana">
+              <option value="5">5 s</option>
+              <option value="10" selected>10 s</option>
+              <option value="30">30 s</option>
+              <option value="60">60 s</option>
+            </select>
+          </label>
+          <button id="pausa" title="Congela los gráficos; los datos y la grabación siguen">Pausar</button>
+        </div>
+        <table id="variables">
+          <thead><tr><th></th><th>Variable</th><th>Valor</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <p id="sin-datos" class="tenue">Esperando datos…</p>
+      </aside>
+      <section id="graficos"></section>
+    </main>
+
+    <!-- Configuración: lo que se ajusta una vez (configuracion.js). La aplicación puente del joystick
+         y guardar la calibración en la placa todavía no existen: la página queda preparada. -->
+    <section id="configuracion" class="vista configuracion">
+      <div class="tablero">
+
+        <article class="tarjeta">
+          <h2>Joystick <span id="joy-estado" class="etiqueta"></span></h2>
+          <p class="tenue">El joystick de PS4 se conecta por Bluetooth a la laptop; una aplicación puente en la laptop lo lee y manda los comandos de movimiento al robot por WiFi. Acá se comprueba que esa aplicación esté andando.</p>
+          <form id="joy-form" class="acciones">
+            <label>aplicación puente <input id="joy-direccion" type="url" value="http://localhost:8001" spellcheck="false" required></label>
+            <button>Comprobar</button>
+          </form>
+          <p id="joy-aviso" class="nota" hidden></p>
+          <table class="ruedas datos">
+            <tbody>
+              <tr><th>aplicación</th><td><output id="joy-app">—</output></td></tr>
+              <tr><th>joystick PS4</th><td><output id="joy-mando">—</output></td></tr>
+              <tr><th>envío al robot</th><td><output id="joy-robot">—</output></td></tr>
+              <tr><th>última respuesta</th><td><output id="joy-edad">—</output></td></tr>
+            </tbody>
+          </table>
+          <h3>Prueba <span class="tenue">mover la palanca: lo que la aplicación manda</span></h3>
+          <div class="medidor" data-app="avance" data-min="-1" data-max="1" data-dec="2">avance</div>
+          <div class="medidor" data-app="giro" data-min="-1" data-max="1" data-dec="2">giro</div>
+          <p class="tenue">La aplicación puente todavía no existe. Mientras esta sección está abierta, la página le pide <code>GET /estado</code> cada 2 s, o cada 10 s si no responde (formato en el README).</p>
+        </article>
+
+        <article class="tarjeta">
+          <h2>Calibración de la IMU <span id="cal-quieto" class="etiqueta"></span></h2>
+          <p class="tenue">Se hace una vez. Mide desde la telemetría cruda (ejes del sensor); el resultado queda en este navegador hasta poder guardarlo en la placa.</p>
+          <fieldset data-requiere-conexion class="contenedor">
+            <ol class="pasos-cal">
+              <li>
+                <div class="paso-cabeza">
+                  <b>Sesgo del giróscopo</b>
+                  <button data-medir="giro">Medir 3 s</button>
+                </div>
+                <span class="tenue">Robot quieto, en cualquier posición.</span>
+                <output id="cal-giro" class="resultado">—</output>
+              </li>
+              <li>
+                <div class="paso-cabeza">
+                  <b>Acelerómetro, 6 posiciones</b>
+                  <button data-medir="cara">Medir posición</button>
+                </div>
+                <span class="tenue">Apoyarlo con cada eje del sensor hacia arriba y hacia abajo; la página detecta cuál.</span>
+                <div id="cal-caras" class="caras">
+                  <span data-cara="+x">+x</span><span data-cara="-x">−x</span>
+                  <span data-cara="+y">+y</span><span data-cara="-y">−y</span>
+                  <span data-cara="+z">+z</span><span data-cara="-z">−z</span>
+                </div>
+                <output id="cal-acel" class="resultado">—</output>
+              </li>
+              <li>
+                <div class="paso-cabeza">
+                  <b>Cero de inclinación</b>
+                  <button data-medir="cero">Medir 3 s</button>
+                </div>
+                <span class="tenue">Robot sostenido en su punto de equilibrio, con las patas en la posición de uso.</span>
+                <div class="resultado-con-accion">
+                  <output id="cal-cero" class="resultado">—</output>
+                  <button id="cal-usar-ref" disabled title="set ref: lo usa el control desde ya, pero se pierde al reiniciar">Usar como ref</button>
+                </div>
+              </li>
+            </ol>
+            <p id="cal-progreso" class="tenue" aria-live="polite"></p>
+          </fieldset>
+          <div class="acciones">
+            <button id="cal-guardar" disabled title="Falta el firmware que guarda la calibración en la memoria no volátil (NVS)">Guardar en la placa</button>
+            <button id="cal-copiar">Copiar</button>
+            <button id="cal-borrar">Borrar</button>
+            <span class="tenue">guardar en la placa: pendiente de firmware</span>
+          </div>
+          <h3>Sesgo de cabeceo en el firmware actual</h3>
+          <div class="acciones">
+            <button data-comando="cal" data-requiere-conexion title="Solo en DISARMED">Recalibrar (cal)</button>
+            <span class="tenue">hoy la placa lo mide sola al encender (2 s quieto) y lo pierde al reiniciar</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <footer id="mensajes" class="mensajes">
+      <div class="barra-mensajes">
+        <button id="ver-mensajes" class="desplegar" aria-expanded="false" aria-controls="consola">Mensajes del robot <span id="n-mensajes" class="tenue"></span></button>
+        <form id="linea-comando" class="linea-comando">
+          <fieldset data-requiere-conexion class="contenedor">
+            <input id="texto-comando" list="sugerencias" placeholder="comando: servo l 20 · motor l 30 · set umax 0.8 · help" autocomplete="off">
+            <datalist id="sugerencias">
+              <option value="help"></option>
+              <option value="servo 15"></option>
+              <option value="servo off"></option>
+              <option value="servo on"></option>
+              <option value="motor 20"></option>
+              <option value="set umax 0.8"></option>
+              <option value="set deadband 0.05"></option>
+              <option value="tlm on"></option>
+              <option value="tlm off"></option>
+            </datalist>
+            <button>Enviar</button>
+          </fieldset>
+        </form>
+      </div>
+      <pre id="consola" hidden></pre>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="banco.js"></script>
+  <script src="configuracion.js"></script>
+</body>
+</html>

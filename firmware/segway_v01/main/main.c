@@ -2,8 +2,8 @@
 // Arquitectura y orden de puesta en marcha: firmware/docs/arquitectura_v0_1.md
 //
 // app_main inicializa el hardware, crea las colas y lanza las dos tareas:
-//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos
-//   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por USB
+//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos; encoders
+//   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0 y, si hay red, por WiFi (UDP)
 // Si la IMU no responde, igual se lanzan las tareas: el supervisor pasa a FAULT y
 // la telemetría lo muestra.
 
@@ -16,10 +16,12 @@
 #include "board_pins.h"
 #include "comms_task.h"
 #include "control_task.h"
+#include "encoder.h"
 #include "imu_mpu6050.h"
 #include "messages.h"
 #include "motor.h"
 #include "servo.h"
+#include "wifi_link.h"
 
 static const char *TAG = "main";
 
@@ -33,12 +35,18 @@ void app_main(void)
     ESP_ERROR_CHECK(motor_init(motors, MOTOR_PWM_FREQ_HZ, MOTOR_SLOW_DECAY));
     motor_stop_all();
 
-    // Servos sin pulsos: la tarea de control los lleva a SERVO_INIT_DEG en su primer ciclo
+    // Servos sin pulsos: quedan sueltos hasta el primer comando "servo"
     const servo_pins_t servos[SERVO_COUNT] = {
         [SERVO_LEFT]  = { PIN_SERVO_L, SERVO_L_INVERT },
         [SERVO_RIGHT] = { PIN_SERVO_R, SERVO_R_INVERT },
     };
     ESP_ERROR_CHECK(servo_init(servos, SERVO_FREQ_HZ, SERVO_US_AT_0_DEG, SERVO_US_AT_180_DEG));
+
+    const enc_pins_t encoders[ENC_COUNT] = {
+        [ENC_LEFT]  = { PIN_ENC_L_A, PIN_ENC_L_B, ENC_L_INVERT },
+        [ENC_RIGHT] = { PIN_ENC_R_A, PIN_ENC_R_B, ENC_R_INVERT },
+    };
+    ESP_ERROR_CHECK(encoder_init(encoders, ENC_GLITCH_NS));
 
     // Bus I2C compartido. Los pull-ups internos son débiles: los módulos suelen traer los suyos.
     i2c_master_bus_config_t bus_cfg = {
@@ -61,4 +69,7 @@ void app_main(void)
 
     comms_task_start(telemetry_q, command_q);
     control_task_start(telemetry_q, command_q);
+
+    // Último: conectar a la red tarda y puede fallar; el robot ya anda por el cable
+    wifi_link_start();
 }

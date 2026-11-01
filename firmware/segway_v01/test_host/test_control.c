@@ -9,6 +9,7 @@
 #include "attitude.h"
 #include "balance.h"
 #include "board_config.h"
+#include "odometry.h"
 #include "pid.h"
 #include "supervisor.h"
 
@@ -90,6 +91,65 @@ static void test_balance_sign_and_deadband(void)
     CHECK(balance_step(&b, &p, 0.0f, 0.0f, 0.005f, 1.0f) == 0.0f);
 }
 
+static void test_lqr_signs_limits_and_reference(void)
+{
+    balance_params_t p = { .lqr = { 6.10f, 5.84f, 9.91f, 1.26f }, .use_lqr = true,
+                           .theta_ref = 2.0f * DEG, .u_max = 0.9f, .deadband = 0.0f };
+    balance_t bq;
+    balance_reset(&bq);
+    // Cada estado positivo (adelante) pide avanzar, solo y en la proporción de su ganancia
+    CHECK(fabsf(balance_lqr_step(&bq, &p, 0.01f, 0, p.theta_ref, 0, 0.005f, 1.0f) - 0.0610f) < 1e-6f);
+    CHECK(fabsf(balance_lqr_step(&bq, &p, 0, 0.01f, p.theta_ref, 0, 0.005f, 1.0f) - 0.0584f) < 1e-6f);
+    CHECK(fabsf(balance_lqr_step(&bq, &p, 0, 0, p.theta_ref + 0.01f, 0, 0.005f, 1.0f) - 0.0991f) < 1e-6f);
+    CHECK(fabsf(balance_lqr_step(&bq, &p, 0, 0, p.theta_ref, 0.01f, 0.005f, 1.0f) - 0.0126f) < 1e-6f);
+    // En la referencia y quieto en el lugar: nada
+    CHECK(balance_lqr_step(&bq, &p, 0, 0, p.theta_ref, 0, 0.005f, 1.0f) == 0.0f);
+    // Satura en u_max y en el límite de la rampa
+    CHECK(balance_lqr_step(&bq, &p, 0, 0, 1.0f, 0, 0.005f, 1.0f) <= 0.9f + 1e-6f);
+    CHECK(balance_lqr_step(&bq, &p, 0, 0, -1.0f, 0, 0.005f, 0.3f) >= -0.3f - 1e-6f);
+    // Zona muerta: una corrección chica arranca desde el deadband
+    p.deadband = 0.15f;
+    float u = balance_lqr_step(&bq, &p, 0, 0, p.theta_ref + 0.001f, 0, 0.005f, 1.0f);
+    CHECK(u > 0.15f && u < 0.16f);
+}
+
+static void test_odometry_rolling(void)
+{
+    // Rueda que rueda hacia adelante a velocidad constante, con el cuerpo derecho
+    const float cpr = 880.0f, r = 0.040f, dt = 0.005f, tau = 1.0f / (6.2831853f * 20.0f);
+    const float v_real = 0.2f;                      // m/s
+    odometry_t o;
+    odometry_reset(&o);
+    for (int i = 0; i <= 400; i++) {                // 2 s
+        float x = v_real * i * dt;
+        float cuentas = floorf(x / (6.2831853f * r) * cpr);     // el encoder cuenta enteros
+        odometry_update(&o, cuentas, 0.0f, cpr, r, dt, tau);
+    }
+    CHECK(fabsf(o.x - 0.4f) < 0.001f);              // una cuenta son 0,29 mm
+    CHECK(fabsf(o.v - v_real) < 0.02f);
+}
+
+static void test_odometry_pitch_is_not_motion(void)
+{
+    // El cuerpo cabecea 10° adelante con la rueda quieta en el piso: el encoder ve la rueda
+    // girar hacia atrás respecto del cuerpo, pero el robot no se movió.
+    const float cpr = 880.0f, r = 0.040f, dt = 0.005f, tau = 1.0f / (6.2831853f * 20.0f);
+    odometry_t o;
+    odometry_reset(&o);
+    for (int i = 0; i <= 100; i++) {
+        float theta = 10.0f * DEG * i / 100.0f;
+        float cuentas = -theta / 6.2831853f * cpr;
+        odometry_update(&o, cuentas, theta, cpr, r, dt, tau);
+        CHECK(fabsf(o.x) < 1e-5f);
+        CHECK(fabsf(o.v) < 1e-3f);
+    }
+    // El reset deja el lugar actual como x = 0
+    odometry_update(&o, 5000.0f, 0.0f, cpr, r, dt, tau);
+    odometry_reset(&o);
+    odometry_update(&o, 5000.0f, 0.0f, cpr, r, dt, tau);
+    CHECK(o.x == 0.0f && o.v == 0.0f);
+}
+
 static sup_state_t step(supervisor_t *s, bool imu_ok, bool cal, float tilt_deg, sup_cmd_t cmd)
 {
     sup_input_t in = { .imu_ok = imu_ok, .calibrated = cal, .overrun = false,
@@ -125,6 +185,26 @@ static void test_supervisor_recalibration(void)
     CHECK(step(&s, true, true, 0, SUP_CMD_NONE) == SUP_DISARMED);
 }
 
+static void test_supervisor_cuts_sustained_saturation(void)
+{
+    // 29/10: con la IMU muerta el LQR quedó 30 s en el tope sin que nada lo cortara
+    supervisor_t s;
+    supervisor_init(&s);
+    step(&s, true, true, 0, SUP_CMD_NONE);
+    step(&s, true, true, 0, SUP_CMD_NONE);
+    CHECK(step(&s, true, true, 0, SUP_CMD_ARM) == SUP_BALANCING);
+    sup_input_t sat = { .imu_ok = true, .calibrated = true, .saturated = true };
+    for (int i = 0; i < SATURATION_LIMIT_CYCLES - 1; i++) {
+        supervisor_step(&s, &sat, TILT_LIMIT_DEG * DEG, ARM_WINDOW_DEG * DEG);
+    }
+    CHECK(s.state == SUP_BALANCING);                    // un tope corto es una corrección normal
+    CHECK(step(&s, true, true, 0, SUP_CMD_NONE) == SUP_BALANCING);  // y se reinicia la cuenta
+    for (int i = 0; i < SATURATION_LIMIT_CYCLES; i++) {
+        supervisor_step(&s, &sat, TILT_LIMIT_DEG * DEG, ARM_WINDOW_DEG * DEG);
+    }
+    CHECK(s.state == SUP_FALLEN);
+}
+
 static void test_supervisor_faults(void)
 {
     supervisor_t s;
@@ -153,8 +233,12 @@ int main(void)
     test_attitude_rejects_gyro_bias();
     test_attitude_calibration_restarts_on_motion();
     test_balance_sign_and_deadband();
+    test_lqr_signs_limits_and_reference();
+    test_odometry_rolling();
+    test_odometry_pitch_is_not_motion();
     test_supervisor_happy_path_and_fall();
     test_supervisor_recalibration();
+    test_supervisor_cuts_sustained_saturation();
     test_supervisor_faults();
 
     if (failures == 0) {

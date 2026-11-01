@@ -30,3 +30,27 @@ fp-info-cache
 
 # Python
 __pycache__/
+*.pyc
+.venv/
+venv/
+
+# ESP-IDF: salida de compilación y componentes descargados
+firmware/**/build/
+managed_components/
+sdkconfig.old
+
+# Configuración local de cada PC (rutas de ESP-IDF, puertos COM, editor): no se versiona,
+# porque cambia entre máquinas. Cada uno la arma con la extensión de ESP-IDF
+# ("ESP-IDF: Select Current ESP-IDF Version"). Un archivo que ya estaba versionado no se
+# ignora solo: hay que sacarlo con `git rm --cached <archivo>`.
+.vscode/
+.idea/
+*.code-workspace
+**/.claude/worktrees/
+**/.claude/settings.local.json
+**/.claude/launch.json
+
+# Windows y macOS
+Thumbs.db
+desktop.ini
+.DS_Store

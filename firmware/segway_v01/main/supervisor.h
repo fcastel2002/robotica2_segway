@@ -25,6 +25,7 @@ typedef struct {
     bool      calibrated;   // terminó la calibración del giróscopo
     bool      overrun;      // el ciclo anterior se pasó del periodo
     float     tilt_err;     // theta - theta_ref, rad
+    bool      saturated;    // el comando del ciclo anterior estaba en el tope (u_max)
     sup_cmd_t cmd;
 } sup_input_t;
 
@@ -32,6 +33,7 @@ typedef struct {
     sup_state_t state;
     int imu_fails;          // lecturas fallidas seguidas
     int overruns;           // ciclos excedidos seguidos
+    int saturated;          // ciclos seguidos equilibrando con el comando en el tope
 } supervisor_t;
 
 void supervisor_init(supervisor_t *s);

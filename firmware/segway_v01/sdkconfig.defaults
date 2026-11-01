@@ -4,8 +4,9 @@ CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 CONFIG_SPIRAM=y
 CONFIG_SPIRAM_MODE_OCT=y
 CONFIG_SPIRAM_SPEED_80M=y
-# Consola por el puerto USB nativo
-CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+# Consola por UART0 (conector UART de la placa, chip CH343): flashear y monitorear por el mismo cable
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
 # Tick de 1 ms: con 100 Hz (10 ms) el lazo de 5 ms no puede temporizarse
 CONFIG_FREERTOS_HZ=1000
 # Si la tarea de control se cuelga 1 s, el chip se reinicia (y los motores quedan libres)

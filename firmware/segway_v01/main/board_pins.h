@@ -2,10 +2,10 @@
 // Valores por defecto: cambiarlos acá cuando se defina el cableado real.
 //
 // No usar:
-//   19, 20     USB nativo (programación y consola)
+//   19, 20     USB nativo (sin uso: consola y flasheo van por UART0)
 //   26-37      flash y PSRAM octal del módulo N16R8
 //   3, 45, 46  pines de arranque (el 0 solo como entrada de botón)
-//   43, 44     UART0, consola de respaldo
+//   43, 44     UART0: consola y comandos (conector UART de la placa)
 #pragma once
 
 // Bus I2C compartido: MPU-6050 ahora, INA226 más adelante
@@ -31,11 +31,16 @@
 #define PIN_SERVO_L         15
 #define PIN_SERVO_R         16
 
+// Encoders de cuadratura de las ruedas (hall del motor, alimentados a 3,3 V: las salidas
+// no pueden subir a 5 V, los GPIO del ESP32 no lo toleran)
+// 29/10: medido con los motores (el motor izquierdo movía las cuentas de 13/14 y el derecho las
+// de 11/12): el encoder izquierdo está cableado en 13/14 y el derecho en 11/12
+#define PIN_ENC_L_A         13
+#define PIN_ENC_L_B         14
+#define PIN_ENC_R_A         11
+#define PIN_ENC_R_B         12
+
 // Reservados para versiones posteriores (no se configuran en la v0.1)
-#define PIN_ENC_L_A         11
-#define PIN_ENC_L_B         12
-#define PIN_ENC_R_A         13
-#define PIN_ENC_R_B         14
 #define PIN_BATT_ADC        1       // debe ser ADC1 (GPIO1-10) para convivir con WiFi
 #define PIN_ARM_BUTTON      0       // botón BOOT de la placa
 #define PIN_LED_RGB         48      // 38 en la versión 1.1 de la DevKitC

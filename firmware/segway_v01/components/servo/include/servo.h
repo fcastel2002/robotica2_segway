@@ -22,3 +22,6 @@ esp_err_t servo_init(const servo_pins_t pins[SERVO_COUNT], unsigned freq_hz,
 
 // deg en [0, 180]; se satura a ese rango.
 void servo_set_deg(servo_side_t side, float deg);
+
+// Corta los pulsos: el servo queda suelto (sin fuerza). El próximo servo_set_deg lo agarra.
+void servo_release(servo_side_t side);
