@@ -4,38 +4,25 @@ CAD del robot (SolidWorks 2026). Responsable: Francisco.
 
 | Carpeta | Qué es |
 |---|---|
-| `segunda_iteracion/` | **El CAD vigente** (14/9/2026): cabina `cabeza_v31`, manivela `eslabon_AD_v2` + `eslabon_AD_tapa`, balancín `eslabon_BC` (interna y externa), acoplador `eslabon_CDP_v2`, servo y horn, tornillería. Ensambles `completo_v2` y `completo_v3`. En `completo/step/` están los STEP exportados de cada pieza y del ensamble, que es lo que puede leer quien no tiene SolidWorks |
-| `utilidades/` | Piezas compradas: servo y su horn, motor de rueda, rueda de 65 mm, tuercas, tornillos y arandelas. **Pendiente**: el CAD todavía tiene el servo DS3225MG y un motor que no es el comprado (GA25-370 1:20) |
-| `primera_iteracion/` | Solo `completo.STEP` y `mass_properties.md`. Es el CAD anterior (bancada 80 mm a 47,5°, barras a escala 100) y sigue siendo **la fuente de las masas e inercias** del modelo (`base_conocimiento/dimensiones_cad_primera_iteracion.md`) porque el ensamble nuevo no tiene rueda, motor ni tapa |
-| `soporte_mesa/` | Soporte de mesa con malacate de trinquete para sostener al robot con hilo durante las pruebas (26/10/2026). Modelo paramétrico en Python (build123d) con STEP, STL y vistas; versión 1 sin imprimir |
-| `medir_step/` | Dos scripts de Python para medir el CAD sin SolidWorks: `step_agujeros.py <pieza.STEP>` lista los ejes de los agujeros de una pieza y las distancias entre ellos; `step_cuatro_barras.py <ensamble.STEP>` reconstruye el cuatro barras tal como está armado (A, B, C, D, P, largos, ángulo de la bancada, δ, θ de la pose) |
+| `3er_iteracion/` | **El CAD vigente** de la pata: acoplador `eslabon_cdp` (v3 y v4, idea 1, con STEP), manivela `eslabon_AD_v2` + `eslabon_AD_tapa`, balancín `eslabon_BC` (interno y externo, v4), cabina `cabeza_v4` y abrazadera del motor JGA25 |
+| `chasis nuevo/` | Ensamble `chasis_cuasiFinal.SLDASM` con la cabina `cabeza_v4` / `cabeza_v4_v2`, el servo DS3225MG y `pcb_max_size` (el lugar disponible para la PCB) |
+| `utilidades/` | Piezas compradas y de terceros: servo DS3225MG y su horn, motores (JGB37-520, JGA25-370, N20 y su soporte), sensor HC-SR04, rueda, `grua`, tuercas, tornillos y arandelas |
 
-## Cotas de la segunda iteración, medidas sobre los STEP del 14/9
+## Lo que se borró el 1/11/2026
 
-| Cota | Valor | Nota |
-|---|---|---|
-| AD, BC, CD, DP | 112, 108, 40,8, 112 mm | familia 1,40 / 1,35 / 0,51 / 1,40 a escala 80 |
-| δ (D→C a D→P) | 164,0° | |
-| AB | **77,9 mm a 46,6°** | la intención es 80 mm a 45°: B está a la altura justa (56,6 mm sobre A) pero 3 mm corto en horizontal (53,5 en vez de 56,6). **Pendiente corregir en `cabeza_v31`** |
-| Pose armada | θ = 40,2° (pata estirada); P 148 mm por debajo de A | |
-| Las dos patas | idénticas | en la primera iteración estaban en poses distintas |
-| Cierre del mecanismo | 0,004 mm | los STEP son consistentes |
+Por pedido de Francisco quedaron solo esas tres carpetas. Se borraron `primera_iteracion/`,
+`segunda_iteracion/`, `soporte_mesa/`, `step_printing/`, `medir_step/`, `outputs/` y la pieza suelta
+`asml_eslabon_BC_externav4_local.SLDPRT` de la raíz. Todo sigue en git:
 
-El modelo (`modelado/`) usa 80 mm a 45° para la bancada, es decir la intención y no el error de 3 mm.
+```bash
+git checkout 2867761 -- "diseño_mecanico/segunda_iteracion"
+```
 
-## Pendientes para Francisco
+recupera una carpeta entera, y `git show 2867761:"diseño_mecanico/<ruta>"` un archivo suelto.
+Las cotas, masas e inercias que el modelo tomó de esas iteraciones siguen en
+`modelado/parametros/parametros_fisicos.m` y `base_conocimiento/dimensiones_cad_primera_iteracion.md`.
 
-1. Corregir los 3 mm de B en `cabeza_v31`.
-2. Agregar rueda, motor GA25-370 (cuerpo Ø25, caja 21 mm) y tapa al ensamble de la segunda iteración, y exportar el STEP del
-   conjunto, para poder cerrar la ficha de masas de esta iteración (CAD-201 del backlog).
-3. `segunda_iteracion/` y `segunda_iteracion/completo/` tienen las mismas 19 piezas dos veces (la segunda es
-   un Pack and Go con prefijo `asml_` y sufijo `v4`), y hay dos pares de ensambles (v2/v3). Dejar un solo
-   juego de piezas y un solo ensamble; SolidWorks referencia por ruta, así que esto lo tiene que hacer quien
-   tenga el CAD abierto.
-4. La tornillería está repetida en `utilidades/`, `segunda_iteracion/` y `segunda_iteracion/completo/`.
-   Dejar una biblioteca.
-5. Después de cada cambio en el CAD: exportar los STEP a `completo/step/` y correr
-   `python medir_step/step_cuatro_barras.py segunda_iteracion/completo/step/<ensamble>.STEP` para
-   confirmar que las cotas siguen siendo las del modelo.
+SolidWorks referencia las piezas por ruta: si al abrir `chasis_cuasiFinal.SLDASM` falta alguna, estaba
+en una de las carpetas borradas; recuperarla con el comando de arriba y copiarla a `3er_iteracion/`.
 
 Los archivos `~$*.SLDPRT` que crea SolidWorks al abrir una pieza están en el `.gitignore`; no subirlos.

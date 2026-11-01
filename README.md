@@ -81,7 +81,7 @@ en MATLAB está en [`simulacion/pendulo_invertido/`](simulacion/pendulo_invertid
 | Carpeta | Qué hay | Responsable |
 |---|---|---|
 | [`modelado/`](modelado/) | **El modelo del robot.** Una carpeta por tema: `geometria/` (figura con nombres y cotas), `cinematica/` (θ → posiciones, directa e inversa), `dcl/` (diagramas de cuerpo libre), `dinamica/` (Lagrange de la pata, tres casos, caída de escalón, fuerza en el eje del servo), `parametros/` (la fuente única de valores). Cada tema tiene su PDF con la deducción. Ver [`modelado/README.md`](modelado/README.md) | Joaquín (modelado), Matías (API y `parametros/`) |
-| [`diseño_mecanico/`](diseño_mecanico/) | `segunda_iteracion/`: el CAD vigente (SolidWorks + STEP). `utilidades/`: piezas compradas (servo, horn, motor, tornillería). `primera_iteracion/`: solo el STEP y las propiedades másicas, que siguen siendo la fuente de las masas. `medir_step/`: scripts para medir el CAD sin SolidWorks. Ver [`diseño_mecanico/README.md`](diseño_mecanico/README.md) | Francisco |
+| [`diseño_mecanico/`](diseño_mecanico/) | `3er_iteracion/`: el CAD vigente de la pata (SolidWorks + STEP). `chasis nuevo/`: ensamble del chasis con la cabina, el servo y el lugar de la PCB. `utilidades/`: piezas compradas (servo, horn, motores, sensor, rueda, tornillería). Las iteraciones anteriores se borraron el 1/11 y siguen en git. Ver [`diseño_mecanico/README.md`](diseño_mecanico/README.md) | Francisco |
 | [`simulacion/`](simulacion/) | `dinamica_pata_v1/`: primera iteración del banco Simulink de la pata (Matías, 14 y 15/9), punto de entrada `INICIAR_DINAMICA_PATA.m`. Ver [`simulacion/README.md`](simulacion/README.md) | Matías |
 | [`gui_hmi/`](gui_hmi/) | Interfaz web para ver las variables del robot en tiempo real (WiFi o USB) y grabarlas a CSV. `python gui_hmi/puente.py --simular` y abrir http://localhost:8000. Ver [`gui_hmi/README.md`](gui_hmi/README.md) | |
 | [`docs/gestion/`](docs/gestion/) | Plan, guía de QA y traspaso del banco Simulink; auditoría de limpieza del 19/9 | Matías, Joaquín |
@@ -116,7 +116,8 @@ Detalle y estado en [`BACKLOG.md`](BACKLOG.md).
   `runtests('simulacion/dinamica_pata_v1/tests')`.
 - Banco Simulink: `simulacion/dinamica_pata_v1/INICIAR_DINAMICA_PATA.m` (ver su README).
 - PDF: cada `*.tex` se compila con `pdflatex` dos veces desde su carpeta.
-- Medir el CAD sin SolidWorks: `python diseño_mecanico/medir_step/step_cuatro_barras.py <ensamble.STEP>`.
+- Medir el CAD sin SolidWorks: los scripts de `diseño_mecanico/medir_step/` se borraron el 1/11; se recuperan con
+  `git checkout 2867761 -- "diseño_mecanico/medir_step"`.
 
 ## 7. Historia: lo que hubo antes y dónde encontrarlo
 
@@ -133,6 +134,7 @@ Todo sigue en git: `git show eca3ed4:<ruta>` recupera cualquier archivo tal como
 | Primer boceto del cuatro barras y síntesis en MotionGen | `diseño_mecanico/4_bar_mechanism/`, `4 barras.motiongen` | reemplazado por `primera_iteracion` |
 | GUI y barrido de proporciones de las barras (Francisco, 28/8) | `simulacion/simular_pata_segway.m`, `optimizar_barrido_local.m` | cumplieron su función; las proporciones quedaron en `parametros_fisicos.m` |
 | CAD primera iteración (bancada 80 a 47,5°, barras 100) | `diseño_mecanico/primera_iteracion/*.SLDPRT` | reemplazado por la segunda; queda el STEP y las masas |
+| CAD primera y segunda iteración, soporte de mesa, STEP para imprimir y scripts `medir_step` (borrados el 1/11/2026) | `diseño_mecanico/primera_iteracion/`, `segunda_iteracion/`, `soporte_mesa/`, `step_printing/`, `medir_step/`, `outputs/` | Francisco dejó solo `3er_iteracion/`, `chasis nuevo/` y `utilidades/`; se recuperan con `git checkout 2867761 -- "diseño_mecanico/<carpeta>"` |
 | Plantas Simulink `modelo_base`, `planta_v1` (borradas el 13/9) y `planta_v2` (19/9), con su manual y sus specs | `simulacion/`, `docs/informe_planta_v1/`, `docs/superpowers/` | el equipo rehace la planta a mano; queda el banco de Matías |
 | Toolbox de Peter Corke copiado entero (120 MB) | `modelado/cinematica/rtb`, `smtb`, `common` | librería de terceros; `verificar_cinematica_4barras.m` sigue andando sin ella |
 
