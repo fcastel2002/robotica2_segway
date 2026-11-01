@@ -1,4 +1,5 @@
-"""Puente de telemetría del Segway: recibe líneas del ESP32 por UDP y las reenvía al navegador.
+"""Puente de telemetría del Segway: recibe líneas del ESP32 por UDP y las reenvía al navegador;
+los comandos de la página van al robot por UDP.
 
 Solo usa la biblioteca estándar de Python (no hace falta `pip install`).
 
@@ -34,6 +35,9 @@ simulando = False
 
 clientes: set[queue.Queue] = set()  # una cola por pestaña del navegador abierta
 comandos: queue.Queue = queue.Queue()  # lo que la página manda al robot simulado
+sock_udp: socket.socket | None = None  # el mismo socket recibe la telemetría y manda los comandos
+robot: str | None = None  # IP del robot: la de --robot o la de quien manda la telemetría
+PUERTO_COMANDOS = 4211  # WIFI_CMD_PORT de firmware/segway_v01 (board_config.h)
 
 
 def difundir(linea: str) -> None:
@@ -44,15 +48,33 @@ def difundir(linea: str) -> None:
             pass
 
 
-def escuchar_udp(puerto: int) -> None:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(("", puerto))
+def anunciarse() -> None:
+    """Cada 1 s le dice "hola" al robot: así le manda la telemetría a esta PC y no por broadcast.
+
+    Hasta conocer su IP, el "hola" va por broadcast a toda la red. Si la red no deja pasar el
+    broadcast, arrancar con --robot <ip> (el robot la imprime al conectarse: "# wifi: ... ip=...").
+    """
+    while True:
+        destino = robot or "255.255.255.255"
+        try:
+            sock_udp.sendto(b"hola\n", (destino, PUERTO_COMANDOS))
+        except OSError:
+            pass  # sin red todavía: se reintenta
+        time.sleep(1)
+
+
+def escuchar_udp() -> None:
+    global robot
     origenes = set()
     while True:
-        datos, origen = sock.recvfrom(4096)
+        try:
+            datos, origen = sock_udp.recvfrom(4096)
+        except ConnectionResetError:
+            continue  # Windows avisa así de un "hola" que no llegó a nadie
         if origen[0] not in origenes:
             origenes.add(origen[0])
             print(f"Recibiendo datos de {origen[0]}")
+        robot = robot or origen[0]
         for linea in datos.decode("utf-8", errors="replace").splitlines():
             if linea.strip():
                 difundir(linea.strip())
@@ -60,7 +82,8 @@ def escuchar_udp(puerto: int) -> None:
 
 # Columnas de firmware/segway_v01 (CSV_HEADER en main/comms_task.c)
 ENCABEZADO = ("t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,"
-              "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms")
+              "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,"
+              "vref_mms,giro")
 RADIO_MM = 40.0
 SERVO_LIM, SERVO_DPS = (0.0, 30.0), 90.0  # board_config.h: 0-30° estricto (cuatro barras) y velocidad
 
@@ -200,7 +223,7 @@ def simular(frecuencia_hz: float) -> None:
         v_mms = (aplicado[0] + aplicado[1]) / 2 * cuentas_por_s / 880 * 2 * math.pi * RADIO_MM
         difundir(f"{int(t * 1000)},{estado},{theta + random.gauss(0, 0.05):.2f},{dtheta:.1f},{u:.3f},"
                  f"{random.randint(180, 260)},0,{round(enc[0])},{round(enc[1])},"
-                 f"{aplicado[0]:.2f},{aplicado[1]:.2f},{servos},{imu},{x_mm:.1f},{v_mms:.0f}")
+                 f"{aplicado[0]:.2f},{aplicado[1]:.2f},{servos},{imu},{x_mm:.1f},{v_mms:.0f},0,0.000")
         n += 1
         time.sleep(max(0.0, t0 + n * dt - time.monotonic()))
 
@@ -234,16 +257,21 @@ class Manejador(SimpleHTTPRequestHandler):
             clientes.discard(cola)
 
     def do_POST(self):
-        """Comando de texto de la página (POST /comando). Solo lo entiende el robot simulado."""
+        """Comando de texto de la página (POST /comando): al robot por UDP, o al simulado."""
         if self.path != "/comando":
             self.send_error(404)
             return
         texto = self.rfile.read(int(self.headers.get("Content-Length", 0))).decode("utf-8", "replace").strip()
         if simulando:
             comandos.put(texto)
+        elif robot:
+            try:
+                sock_udp.sendto((texto + "\n").encode(), (robot, PUERTO_COMANDOS))
+            except OSError as err:
+                difundir(f"[puente] no se mandó «{texto}» a {robot}: {err}")
         else:
-            difundir(f"[puente] no se mandó «{texto}»: el firmware todavía no recibe comandos por WiFi, "
-                     "usar USB directo")
+            difundir(f"[puente] no se mandó «{texto}»: todavía no llegó nada del robot por WiFi "
+                     "(¿está en la misma red? ¿WIFI_SSID en main/wifi_secrets.h?). Probar --robot <ip>")
         self.send_response(204)
         self.end_headers()
 
@@ -291,12 +319,14 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--http", type=int, default=8000, help="puerto de la página web (8000)")
     p.add_argument("--udp", type=int, default=4210, help="puerto UDP donde el ESP32 manda datos (4210)")
+    p.add_argument("--robot", help="IP del robot, si la red no deja pasar el broadcast")
     p.add_argument("--simular", action="store_true", help="generar datos falsos en lugar de escuchar al robot")
     p.add_argument("--hz", type=float, default=100, help="frecuencia de los datos simulados (100)")
     p.add_argument("--sin-navegador", action="store_true", help="no abrir la página al arrancar")
     args = p.parse_args()
-    global simulando
+    global simulando, sock_udp, robot
     simulando = args.simular
+    robot = args.robot
     # Sin --simular la página arranca en USB directo: el firmware todavía no tiene WiFi
     url = f"http://localhost:{args.http}/?fuente={'puente' if args.simular else 'usb'}"
 
@@ -310,8 +340,13 @@ def main() -> None:
         threading.Thread(target=simular, args=(args.hz,), daemon=True).start()
         print(f"Modo simulado: {args.hz:g} Hz de datos falsos")
     else:
-        threading.Thread(target=escuchar_udp, args=(args.udp,), daemon=True).start()
-        print(f"Esperando datos del robot por UDP en el puerto {args.udp}")
+        sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock_udp.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock_udp.bind(("", args.udp))
+        threading.Thread(target=escuchar_udp, daemon=True).start()
+        threading.Thread(target=anunciarse, daemon=True).start()
+        print(f"Esperando datos del robot por UDP en el puerto {args.udp}"
+              + (f" (robot en {robot})" if robot else ""))
 
     # 0.0.0.0: también se puede abrir desde otra compu o un celular de la misma red.
     servidor = ThreadingHTTPServer(("0.0.0.0", args.http), partial(Manejador, directory=str(WEB)))

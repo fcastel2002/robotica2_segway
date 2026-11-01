@@ -10,7 +10,8 @@ La arquitectura, la máquina de estados y el orden de puesta en marcha están en
 | Qué | Archivo |
 |---|---|
 | Pines (encoders en 11-14) | [`main/board_pins.h`](main/board_pins.h) |
-| Ganancias iniciales, límites, frecuencias, montaje de la IMU, sentido de motores, encoders y servos, rango de los servos | [`main/board_config.h`](main/board_config.h) |
+| Ganancias iniciales, límites, frecuencias, montaje de la IMU, sentido de motores, encoders y servos, rango de los servos, puertos UDP y velocidades de `mov` | [`main/board_config.h`](main/board_config.h) |
+| Red WiFi (nombre y clave; no se versiona) | `main/wifi_secrets.h`, copiado de [`main/wifi_secrets.h.ejemplo`](main/wifi_secrets.h.ejemplo) en la primera compilación |
 
 ## Compilar, grabar y monitorear
 
@@ -24,9 +25,10 @@ idf.py -B C:\esp\build\segway_v01 -p COM4 build flash monitor
 ## Consola
 
 Al arrancar imprime una línea CSV cada 20 ms. Las líneas que empiezan con `#` son mensajes.
+Todo sale por el cable y, si hay red, también [por WiFi](#wifi).
 
 ```text
-t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms
+t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,vref_mms,giro
 ```
 
 | Columnas | Qué son |
@@ -39,8 +41,9 @@ t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,s
 | `servo_l_deg`, `servo_r_deg` | Ángulo actual de cada servo; `nan` si está suelto |
 | `ax_ms2` … `gz_dps` | IMU cruda: acelerómetro (m/s²) y giróscopo (°/s, con sesgo) **en los ejes del sensor**, sin la rotación de `board_config.h`; `nan` si la lectura falló |
 | `x_mm`, `v_mms` | Avance y velocidad de las ruedas respecto del piso (odometría del LQR): x = 0 donde se armó |
+| `vref_mms`, `giro` | Lo que el control está aplicando de `mov`: referencia de velocidad (mm/s) y PWM sumado a la izquierda y restado a la derecha |
 
-Son unos 135 caracteres por línea a 50 Hz, la mitad de lo que entra a 115200 baudios. Para verlas
+Son unos 145 caracteres por línea a 50 Hz, la mitad de lo que entra a 115200 baudios. Para verlas
 graficadas, probar cada sensor y actuador y mandar comandos con botones, usar la
 [interfaz web](../../gui_hmi/README.md) por USB (pestaña **Banco de pruebas**).
 Prueba de los encoders a mano: [`../docs/prueba_encoders.md`](../docs/prueba_encoders.md).
@@ -57,12 +60,58 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `servo off` / `servo l on` | Soltar (posición desconocida desde ahí) o agarrar donde está; `on` no hace nada si la posición es desconocida |
 | `servo lim l 5 25` | Achicar los límites de un servo en vivo, siempre dentro de **0-30°**: más allá se rompe el cuatro barras, y el firmware no deja salir de ahí (`SERVO_HARD_*`) |
 | `cal` | Recalibrar el giróscopo sin reiniciar (solo en DISARMED; dejar quieto 2 s) |
-| `get` | Ver los parámetros vigentes, la posición y los límites de los servos (contesta 40 ms después, con los `set` ya aplicados) |
+| `get` | Ver los parámetros vigentes, la posición y los límites de los servos y el estado del WiFi (contesta 40 ms después, con los `set` ya aplicados) |
+| `mov 0.5 -0.2` | Avance y giro, de −1 a 1 (ver [Movimiento](#movimiento)). Sin respuesta, para que el joystick pueda mandarlo seguido |
 | `tlm on` / `tlm off` | Activar o pausar la telemetría (`tlm on` reimprime el encabezado) |
 | `enc reset` | Poner en cero las cuentas de los dos encoders |
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
 Las ganancias del PID arrancan en cero, así que `arm` no mueve nada hasta cargarlas o pasar al LQR.
+
+## WiFi
+
+El robot se conecta a una **red existente** (2,4 GHz). Nombre y clave van en `main/wifi_secrets.h`,
+que no se versiona: la primera compilación lo copia de la plantilla con la red vacía (sin WiFi, todo
+sigue por el cable). Completarlo y volver a compilar. Al conectarse informa por la consola:
+
+```text
+# wifi: red=MiRed ip=192.168.0.57 rssi=-48 telemetria=broadcast
+```
+
+Si no encuentra la red: `# wifi: buscando la red MiRed (último motivo de desconexión: N)`, y sigue
+reintentando sola. `get` también muestra esa línea.
+
+- **Telemetría y mensajes**: las mismas líneas que por el cable, por UDP al puerto **4210** de la PC que
+  se anunció con `hola` en los últimos 5 s; si ninguna, por broadcast a toda la red.
+  [`puente.py`](../../gui_hmi/puente.py) dice `hola` cada 1 s, así que recibe todo y la
+  [interfaz web](../../gui_hmi/README.md) lo muestra eligiendo **Puente**. A una PC nueva se le repite
+  el encabezado del CSV.
+- **Comandos**: los mismos de la tabla de arriba, uno por línea, por UDP al puerto **4211** del robot.
+  El puente reenvía ahí lo que manda la página. Se aceptan a la vez por el cable y por WiFi.
+- El WiFi arranca después de los motores y del control, y si falla el robot sigue por el cable. Va
+  sin ahorro de energía (con él, lo que llega al robot puede demorar ~100 ms).
+- **UDP no garantiza la entrega**: un `disarm` por WiFi puede perderse. El corte confiable sigue
+  siendo el de la alimentación de los motores. Los motores a mano (`motor`) **no tienen tiempo de
+  espera**: si se corta la red con una rueda girando, sigue girando.
+- Puertos y tiempo de espera en [`board_config.h`](main/board_config.h) (`WIFI_*`).
+
+## Movimiento
+
+`mov <avance> <giro>`, los dos de −1 a 1, solo tiene efecto **armado y con el LQR**. Lo va a mandar la
+aplicación puente del joystick, de 20 a 50 veces por segundo:
+
+- **Avance**: la referencia de velocidad del LQR pasa a `avance · MOV_V_MAX_MS` (0,20 m/s), con una
+  aceleración de 0,4 m/s² como mucho. La referencia de posición es su integral, así el LQR la sigue
+  en lugar de volver a donde se armó: `u = kx·(x − x_ref) + kv·(v − v_ref) + kphi·(θ − ref) + kw·ω`.
+- **Giro**: `giro · MOV_GIRO_MAX` (0,15 de PWM) se suma a la rueda izquierda y se resta a la derecha
+  (positivo gira a la derecha), con rampa de 0,6 por segundo. Las dos quedan dentro del `umax` de ese
+  momento.
+- **Tiempo de espera**: sin un `mov` nuevo en **300 ms**, los dos vuelven a cero con sus rampas: el
+  robot frena y se queda equilibrando donde esté.
+- Al armar y fuera de BALANCING todo vuelve a cero. Con el PID se ignora.
+
+Todo esto está escrito pero **sin probar en el robot**. Empezar colgado del malacate y con `umax`
+bajo, y verificar en Gráficos que `vref_mms` y `giro` siguen a lo que se manda.
 
 ## LQR
 

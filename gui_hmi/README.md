@@ -54,13 +54,16 @@ robot. Con el robot de verdad:
 python gui_hmi/puente.py
 ```
 
-Abre la página en **USB directo**. Para WiFi, la compu tiene que estar en la misma red que el ESP32
-y hay que elegir **Puente** en el selector. La primera vez Windows pregunta si deja
-pasar a Python por el firewall: aceptar **también en redes públicas**, porque la red que arma el ESP32
-suele quedar clasificada como pública.
+Abre la página en **USB directo**. Para **WiFi**, la compu tiene que estar en la misma red que el robot
+([red y puertos del firmware](../firmware/segway_v01/README.md#wifi)) y hay que elegir **Puente** en el
+selector. El puente le dice `hola` al robot cada 1 s (por broadcast hasta conocer su IP), recibe la
+telemetría en el puerto UDP 4210 y le reenvía los comandos de la página al 4211. La primera vez Windows
+pregunta si deja pasar a Python por el firewall: aceptar, y **también en redes públicas** si la red quedó
+clasificada así.
 
 Opciones: `--http 8000` (puerto de la página), `--udp 4210` (puerto donde llegan los datos),
-`--hz 100` (frecuencia de los datos simulados).
+`--robot 192.168.0.57` (IP del robot, si la red no deja pasar el broadcast; el robot la imprime por el
+cable al conectarse), `--hz 100` (frecuencia de los datos simulados).
 
 ### Por USB, sin puente
 
@@ -69,8 +72,8 @@ Con el ESP32 enchufado por USB, la página puede leer el puerto serie directamen
 Chrome o Edge (Firefox y Safari no tienen Web Serial). Sirve para el banco; con el robot equilibrando, el
 cable estorba y conviene WiFi. El puente igual tiene que estar corriendo, porque es el que sirve la página.
 
-**Hoy es el único camino con el robot real**: `firmware/segway_v01` todavía no tiene WiFi. Hay que cerrar
-`idf.py monitor` antes, porque ocupa el puerto.
+Hay que cerrar `idf.py monitor` antes, porque ocupa el puerto. Cable y WiFi andan a la vez: el robot
+manda todo por los dos y acepta comandos de los dos.
 
 ### Comandos
 
@@ -81,13 +84,14 @@ de **Mensajes del robot**, hay una línea para cualquier otro comando; lo enviad
 precedido de `>`. Los parámetros del control están en la tarjeta **Control** del
 [banco de pruebas](#banco-de-pruebas), y recalibrar el giróscopo (`cal`), en [Configuración](#configuración).
 
-Por USB los comandos van al puerto serie. Con el puente solo los entiende el robot simulado de
+Por USB los comandos van al puerto serie; con el puente, al robot por UDP (o al robot simulado de
 `--simular`, que imita la consola de `segway_v01` (CSV con las mismas columnas, estados, `arm`, `disarm`,
 `get`, `enc reset`, `set` de cualquier parámetro, que `get` devuelve; `motor`: a 100 % las ruedas
 simuladas giran a 370 RPM con 880 cuentas por vuelta; `servo`: arrancan sueltos y se mueven a 90 °/s; la
 IMU cruda sale del ángulo simulado). Armado, el ángulo oscila y recibe empujones; desarmado se aquieta,
-como el robot apoyado, y así se puede probar la calibración de la IMU.
-Esc no es una parada de emergencia: depende de que el cable y la página respondan.
+como el robot apoyado, y así se puede probar la calibración de la IMU).
+Esc no es una parada de emergencia: depende de que el cable (o la red) y la página respondan. Por WiFi,
+UDP puede perder un `disarm`.
 
 ## Banco de pruebas
 
@@ -285,7 +289,8 @@ variable, con las variables en el orden en que aparecieron. Se abre con `readtab
 
 ## Qué falta
 
-- WiFi en el firmware, y que el puente reenvíe los comandos por UDP.
+- Probar el WiFi con la placa (firmware y puente verificados solo por separado: el puente contra un
+  robot falso por UDP, el firmware compilado).
 - La aplicación puente del joystick (PS4 por Bluetooth a la laptop, comandos al robot por WiFi), con
   `GET /estado` como en [Configuración](#joystick-aplicación-puente).
 - Guardar la calibración de la IMU en la NVS de la placa y aplicarla (sesgo, offset y escala del

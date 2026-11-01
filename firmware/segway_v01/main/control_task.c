@@ -94,6 +94,8 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
     case CMD_ENC_RESET:
         encoder_reset();
         break;
+    case CMD_MOVE:      // lo atiende control_task antes de llamar acá
+        break;
     case CMD_SET:
         switch (c->param) {
         case PARAM_KP:       p->gains.kp = c->value; break;
@@ -164,6 +166,10 @@ static void control_task(void *arg)
         [SERVO_RIGHT] = { SERVO_R_MIN_DEG, SERVO_R_MAX_DEG },
     };
     float motor_manual[MOTOR_COUNT] = { 0.0f };     // comando a mano, solo en DISARMED
+    // "mov": último pedido y cuándo llegó; lo que se aplica sigue a eso con rampas
+    float mov_fwd = 0.0f, mov_turn = 0.0f;
+    int64_t mov_us = INT64_MIN / 2;
+    float v_ref = 0.0f, x_ref = 0.0f, giro = 0.0f;
     for (int i = 0; i < SERVO_COUNT; i++) {
         servo_pos[i] = servo_target[i] = NAN;   // desconocida hasta el primer ángulo pedido
         servo_free[i] = true;
@@ -186,6 +192,12 @@ static void control_task(void *arg)
         sup_cmd_t cmd = SUP_CMD_NONE;
         command_t c;
         while (xQueueReceive(ctx->command_q, &c, 0) == pdTRUE) {
+            if (c.type == CMD_MOVE) {
+                mov_fwd = c.value;
+                mov_turn = c.value2;
+                mov_us = t0;
+                continue;
+            }
             sup_cmd_t r = apply_command(&c, &params, servo_pos, servo_target, servo_free,
                                         servo_lim, motor_manual);
             if (r != SUP_CMD_NONE) cmd = r;
@@ -238,16 +250,32 @@ static void control_task(void *arg)
                 balance_reset(&bal);
                 ramp = 0.0f;
                 lqr_activo = params.use_lqr;
+                v_ref = x_ref = giro = 0.0f;
             }
             ramp = fminf(ramp + dt / ARM_RAMP_S, 1.0f);
+            float u_limit = ramp * params.u_max;
+
+            // "mov" (solo con el LQR, que es el que conoce x y v): el avance es una referencia
+            // de velocidad y su integral la de posición, así el LQR la sigue en lugar de volver a
+            // x = 0; el giro suma y resta PWM entre las ruedas. Un pedido vencido vale cero: frena
+            // con la rampa y se queda parado donde esté.
+            bool mov_ok = lqr_activo && t0 - mov_us < (int64_t)MOV_TIMEOUT_MS * 1000;
+            float v_target = mov_ok ? mov_fwd * MOV_V_MAX_MS : 0.0f;
+            float g_target = mov_ok ? mov_turn * MOV_GIRO_MAX : 0.0f;
+            v_ref += fminf(fmaxf(v_target - v_ref, -MOV_ACCEL_MS2 * dt), MOV_ACCEL_MS2 * dt);
+            giro  += fminf(fmaxf(g_target - giro, -MOV_GIRO_RATE * dt), MOV_GIRO_RATE * dt);
+            x_ref += v_ref * dt;
+
             if (imu_ok) {   // con una lectura fallida aislada se mantiene el último comando
                 u = lqr_activo
-                    ? balance_lqr_step(&bal, &params, odo.x, odo.v, att.theta, att.rate, dt, ramp * params.u_max)
-                    : balance_step(&bal, &params, att.theta, att.rate, dt, ramp * params.u_max);
+                    ? balance_lqr_step(&bal, &params, odo.x - x_ref, odo.v - v_ref, att.theta, att.rate,
+                                       dt, u_limit)
+                    : balance_step(&bal, &params, att.theta, att.rate, dt, u_limit);
             }
-            motor_set(MOTOR_LEFT, u);
-            motor_set(MOTOR_RIGHT, u);
-            applied[MOTOR_LEFT] = applied[MOTOR_RIGHT] = u;
+            applied[MOTOR_LEFT]  = fminf(fmaxf(u + giro, -u_limit), u_limit);
+            applied[MOTOR_RIGHT] = fminf(fmaxf(u - giro, -u_limit), u_limit);
+            motor_set(MOTOR_LEFT, applied[MOTOR_LEFT]);
+            motor_set(MOTOR_RIGHT, applied[MOTOR_RIGHT]);
         } else if (st == SUP_DISARMED || st == SUP_FAULT) {
             // Desarmado, o en falla (p. ej. sin IMU, para probar en banco): motores a mano
             // con "motor ...". El lazo de equilibrio no participa.
@@ -265,6 +293,7 @@ static void control_task(void *arg)
             motor_manual[MOTOR_LEFT] = motor_manual[MOTOR_RIGHT] = 0.0f;
             motor_stop_all();
         }
+        if (st != SUP_BALANCING) v_ref = x_ref = giro = 0.0f;
         // Los servos no dependen del estado: todavía no participan del equilibrio
         update_servos(servo_pos, servo_target, servo_free, dt);
 
@@ -296,6 +325,8 @@ static void control_task(void *arg)
             .motor_cmd   = { applied[MOTOR_LEFT], applied[MOTOR_RIGHT] },
             .x           = odo.x,
             .v           = odo.v,
+            .v_ref       = v_ref,
+            .giro        = giro,
         };
         for (int i = 0; i < 3; i++) {
             t.accel[i] = imu_ok ? s.accel[i] : NAN;

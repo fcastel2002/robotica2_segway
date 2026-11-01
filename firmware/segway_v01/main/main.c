@@ -3,7 +3,7 @@
 //
 // app_main inicializa el hardware, crea las colas y lanza las dos tareas:
 //   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos; encoders
-//   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0
+//   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0 y, si hay red, por WiFi (UDP)
 // Si la IMU no responde, igual se lanzan las tareas: el supervisor pasa a FAULT y
 // la telemetría lo muestra.
 
@@ -21,6 +21,7 @@
 #include "messages.h"
 #include "motor.h"
 #include "servo.h"
+#include "wifi_link.h"
 
 static const char *TAG = "main";
 
@@ -68,4 +69,7 @@ void app_main(void)
 
     comms_task_start(telemetry_q, command_q);
     control_task_start(telemetry_q, command_q);
+
+    // Último: conectar a la red tarda y puede fallar; el robot ya anda por el cable
+    wifi_link_start();
 }

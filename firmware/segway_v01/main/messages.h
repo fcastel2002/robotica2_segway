@@ -38,6 +38,7 @@ typedef enum {
     CMD_MOTOR,          // motor a mano: solo en DISARMED o FAULT
     CMD_MOTOR_STOP,
     CMD_ENC_RESET,      // cuentas de los encoders a cero
+    CMD_MOVE,           // "mov": value = avance, value2 = giro, de -1 a 1 (vencen a MOV_TIMEOUT_MS)
 } command_type_t;
 
 #define SERVO_BOTH  (-1)
@@ -72,4 +73,6 @@ typedef struct {
     float            gyro[3];       // rad/s
     float            x;             // m, avance de las ruedas desde que se armó (odometría)
     float            v;             // m/s, filtrada
+    float            v_ref;         // m/s, referencia de velocidad que sale de "mov"
+    float            giro;          // fracción de PWM sumada a la izquierda y restada a la derecha
 } telemetry_t;

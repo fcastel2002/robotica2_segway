@@ -7,7 +7,7 @@
 #define CONTROL_PERIOD_MS       5           // 200 Hz
 #define COMMS_PERIOD_MS         20          // 50 Hz
 #define CONTROL_STACK           4096
-#define COMMS_STACK             6144        // printf con float usa bastante pila
+#define COMMS_STACK             8192        // printf con float y los paquetes UDP usan bastante pila
 
 // --- IMU ---
 #define I2C_FREQ_HZ             100000      // 29/10: 400 -> 100 kHz, más tolerante al ruido de los motores
@@ -95,6 +95,23 @@
 #define DEFAULT_LQR_KPHI        4.14f       // [1/rad]
 #define DEFAULT_LQR_KW          0.478f      // [1/(rad/s)]
 #define DEFAULT_NOTCH_HZ        7.5f        // rechaza banda del comando ("set notch"); 0 = sin filtro
+
+// --- WiFi (red existente; nombre y clave en main/wifi_secrets.h, que no se versiona) ---
+// La telemetría va por UDP a la PC que se anunció con "hola" (el puente lo manda cada 1 s);
+// si ninguna se anunció en WIFI_CLIENT_TIMEOUT_S, va por broadcast a toda la red.
+#define WIFI_TLM_PORT           4210        // donde escucha puente.py
+#define WIFI_CMD_PORT           4211        // donde el robot recibe comandos y "hola"
+#define WIFI_CLIENT_TIMEOUT_S   5
+
+// --- Movimiento ("mov <avance> <giro>", de -1 a 1; solo con el LQR armado) ---
+// El avance mueve la referencia de velocidad del LQR (y la de posición, su integral); el giro
+// suma y resta PWM entre las ruedas. Sin un "mov" nuevo en MOV_TIMEOUT_MS, los dos vuelven a
+// cero: el robot frena y se queda parado donde esté (por WiFi los cortes son normales).
+#define MOV_TIMEOUT_MS          300
+#define MOV_V_MAX_MS            0.20f       // m/s con avance = 1
+#define MOV_ACCEL_MS2           0.40f       // la referencia de velocidad cambia como mucho esto
+#define MOV_GIRO_MAX            0.15f       // fracción de PWM sumada y restada con giro = 1
+#define MOV_GIRO_RATE           0.60f       // fracción de PWM por segundo
 
 // --- Seguridad ---
 #define TILT_LIMIT_DEG          30.0f       // corte por caída
