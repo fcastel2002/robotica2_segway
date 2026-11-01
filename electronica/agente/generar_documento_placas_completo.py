@@ -17,8 +17,10 @@ from pathlib import Path
 
 import pcbnew
 
-REV = "0.6"
-FECHA = "31/10/2026"
+REV = "0.7"
+FECHA = "01/11/2026"
+# v0.7: solo cambió la potencia (un UBEC por servo); la lógica sigue en la v0.6
+VERSION = {"potencia": "0.7", "logica": "0.6"}
 RAIZ = Path(__file__).resolve().parents[1]
 CAD = RAIZ / "cad"
 DOC = CAD / f"documento_placas_v{REV}"
@@ -26,8 +28,8 @@ SALIDA_PDF = CAD / f"placas_v{REV}_completo.pdf"
 KICAD_CLI = Path("C:/Program Files/KiCad/10.0/bin/kicad-cli.exe")
 NAVEGADORES = [Path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"),
                Path("C:/Program Files/Google/Chrome/Application/chrome.exe")]
-PLACAS = {"potencia": {"titulo": "Placa de potencia", "medidas": (148, 96)},
-          "logica": {"titulo": "Placa de lógica", "medidas": (100, 96)}}
+PLACAS = {"potencia": {"titulo": "Placa de potencia (v0.7)"},
+          "logica": {"titulo": "Placa de lógica (v0.6, sin cambios)"}}
 
 # Tensión de cada net (para el listado de conexiones)
 TENSION = {
@@ -35,7 +37,7 @@ TENSION = {
     "VM_BUS": "11,1–12,6 V", "VM_IZQ_F": "11,1–12,6 V",
     "VM_IZQ": "11,1–12,6 V", "VM_DER_F": "11,1–12,6 V", "VM_DER": "11,1–12,6 V", "MOT_IZQ_1": "salida PWM al motor (0–12,6 V)",
     "MOT_IZQ_2": "salida PWM al motor (0–12,6 V)", "MOT_DER_1": "salida PWM al motor (0–12,6 V)", "MOT_DER_2": "salida PWM al motor (0–12,6 V)",
-    "VM_UBEC": "11,1–12,6 V", "V_SERVO": "6,0 V", "VM_LOG_F": "11,1–12,6 V", "VM_LOG": "11,1–12,6 V", "5V_MCU": "5,0 V",
+    "VM_UBEC": "11,1–12,6 V", "V_SERVO_DER": "6,0 V (UBEC DER)", "V_SERVO_IZQ": "6,0 V (UBEC IZQ)", "VM_LOG_F": "11,1–12,6 V", "VM_LOG": "11,1–12,6 V", "5V_MCU": "5,0 V",
     "3V3_MCU": "3,3 V", "5V_USB": "5 V solo con USB", "SHARP_OUT": "analógica 0,6–3,6 V", "DIST_SUELO": "analógica 0,36–2,2 V",
 }
 SENAL_3V3 = "señal de 3,3 V"
@@ -44,8 +46,8 @@ SENAL_3V3 = "señal de 3,3 V"
 PINES = {
     "potencia": {"J1": {"1": "−", "2": "+"}, "J3": {"1": "lado F1", "2": "lado VM_BUS"},
                  "D1": {"1": "K, banda", "2": "A"}, "C1": {"1": "+", "2": "−"},
-                 "C8": {"1": "+", "2": "−"}, "J11": {"1": "M+", "2": "M−"}, "J12": {"1": "M+", "2": "M−"},
-                 "J15": {"1": "−", "2": "+"}, "J16": {"1": "GND", "2": "V+"}, "J13": {"1": "GND", "2": "V", "3": "señal"},
+                 "C8": {"1": "+", "2": "−"}, "C9": {"1": "+", "2": "−"}, "J11": {"1": "M+", "2": "M−"}, "J12": {"1": "M+", "2": "M−"},
+                 "J15": {"1": "−", "2": "−", "3": "+", "4": "+"}, "J16": {"1": "GND", "2": "V+"}, "J19": {"1": "GND", "2": "V+"}, "J13": {"1": "GND", "2": "V", "3": "señal"},
                  "J14": {"1": "GND", "2": "V", "3": "señal"}, "J18": {"1": "GND", "2": "V"}},
     "logica": {"J4": {"1": "GND", "2": "PARO"}, "J7": {"1": "V", "2": "A", "3": "B", "4": "GND"},
                "J8": {"1": "GND", "2": "A", "3": "B", "4": "V"}, "J26": {"1": "3V3", "2": "3V3", "3": "GND", "4": "GND", "5": "5V", "6": "5V"},
@@ -54,7 +56,7 @@ PINES = {
 NOMBRE_CORTO = {
     "potencia": {"A3": "DRV8871 IZQ", "A4": "DRV8871 DER", "A5": "INA219 IZQ", "A6": "INA219 DER", "A7": "INA226", "A8": "buck 5 V",
                  "J1": "batería", "J3": "interruptor y paro", "J11": "motor IZQ", "J12": "motor DER", "J13": "servo IZQ", "J14": "servo DER",
-                 "J15": "UBEC entrada", "J16": "UBEC salida", "J18": "voltímetro", "J20": "cable"},
+                 "J15": "entrada de los UBEC", "J16": "UBEC DER salida", "J19": "UBEC IZQ salida", "J18": "voltímetro", "J20": "cable"},
     "logica": {"A1": "ESP32-S3", "A2": "MPU6050", "A9": "buck 3,3 V", "J4": "paro", "J7": "encoder IZQ", "J8": "encoder DER",
                "J20": "cable", "J24": "expansión IZQ", "J25": "expansión DER", "J26": "alim. sensores", "J27": "Sharp"},
 }
@@ -65,7 +67,7 @@ ALIMENTACION = [
     ("A5, A6 INA219", "Potencia", "3V3_MCU por J20.9 (desde A9)", "3,3 V", "Miden la corriente de cada motor (shunt de 0,1 Ω en la línea del motor)"),
     ("A7 INA226", "Potencia", "3V3_MCU por J20.9 (desde A9)", "3,3 V", "Mide corriente y tensión de la rama lógica (VM_LOG): es la medición de batería"),
     ("A8 buck 5 V", "Potencia", "VM_LOG (después de F5 y del shunt de A7)", "entra 11,1–12,6 V, sale 5,0 V", "Alimenta todo lo de 5 V: A9, J26 y el Sharp, por J20.13/14"),
-    ("UBEC 6 V", "Potencia (afuera)", "VM_BUS por F4, en J15", "entra 11,1–12,6 V, sale 6,0 V", "Sale por J16 a los servos J13/J14 (V_SERVO, con C8)"),
+    ("2 UBEC 6 V, uno por servo", "Potencia (afuera)", "VM_BUS por F4, los dos en J15", "entra 11,1–12,6 V, sale 6,0 V", "UBEC DER por J16 al servo DER (J14, con C8); UBEC IZQ por J19 al servo IZQ (J13, con C9). Los dos buses de 6 V no se unen"),
     ("Voltímetro", "Potencia (afuera)", "VM_LOG_F en J18", "11,1–12,6 V", "Muestra la tensión de la batería"),
     ("A9 buck 3,3 V", "Lógica", "5V_MCU por J20.13/14", "entra 5,0 V, sale 3,3 V", "Alimenta la ESP32 por sus pines 3V3, la MPU, los encoders, J26 y los INA"),
     ("A1 ESP32-S3", "Lógica", "3V3_MCU en sus pines 1 y 2 (3V3)", "3,3 V", "Su pin 5V queda solo para el USB. No enchufar USB con la batería conectada"),
@@ -93,10 +95,10 @@ ALTURAS = [
     ("DRV8871 en zócalo", "Potencia", "≈ 20 mm", "Zócalo de 8,5 mm + módulo con su electrolítico de 47 µF"),
     ("INA219, INA226 soldados", "Potencia", "≈ 6 mm", "Espaciador de 2,5 mm + módulo"),
     ("C1 470 µF 35 V (Ø10 mm)", "Potencia", "≈ 16–20 mm", ""),
-    ("C8 470 µF 16 V (Ø8 mm)", "Potencia", "≈ 12–16 mm", ""),
+    ("C8, C9 470 µF 16 V (Ø8 mm)", "Potencia", "≈ 12–16 mm", ""),
     ("Portafusible ATO (F1) con fusible", "Potencia", "≈ 20 mm", ""),
     ("Portafusibles mini (F2–F5) con fusible", "Potencia", "≈ 15 mm", ""),
-    ("Borneras de 5,08 mm (J1, J11, J12, J15)", "Potencia", "≈ 10 mm", "Más el cable"),
+    ("Borneras de 5,08 mm (J1, J11, J12, J15 de 4 bornes) y de 3,5 mm (J16, J19)", "Potencia", "≈ 10 mm", "Más el cable"),
     ("Conector IDC J20 con el cable enchufado", "Las dos", "≈ 18 mm", "≈ 9 mm sin el cable"),
     ("Debajo de la placa (lado cobre)", "Las dos", "≈ 2 mm", "Soldaduras y puntas de pines; van separadores de 10 mm"),
 ]
@@ -199,7 +201,7 @@ def tabla(cab, filas, clase=""):
 
 # --- Datos de las placas ---
 def cargar(placa):
-    s = json.loads((CAD / f"segway_{placa}" / "especificacion_v0.6.json").read_text(encoding="utf-8"))
+    s = json.loads((CAD / f"segway_{placa}" / f"especificacion_v{VERSION[placa]}.json").read_text(encoding="utf-8"))
     simbolos = {cs["name"]: {p["number"]: p["name"] for p in cs["pins"]} for cs in s["custom_symbols"]}
     pines = {}
     for c in s["components"]:
@@ -331,19 +333,19 @@ def main():
     DOC.mkdir(exist_ok=True)
     guia = (CAD / f"guia_montaje_v{REV}.md").read_text(encoding="utf-8")
     compras = (CAD / f"lista_compras_v{REV}.md").read_text(encoding="utf-8")
-    pot_md = (CAD / "segway_potencia" / f"pcb_v{REV}.md").read_text(encoding="utf-8")
+    pot_md = (CAD / "segway_potencia" / f"pcb_v{VERSION['potencia']}.md").read_text(encoding="utf-8")
     specs = {p: cargar(p) for p in PLACAS}
     auditoria = (CAD / f"auditoria_electrica_v{REV}.md").read_text(encoding="utf-8")
-    drc = {p: json.loads((CAD / f"segway_{p}" / "evidencia" / f"drc_pcb_v{REV}.json").read_text(encoding="utf-8")) for p in PLACAS}
-    puentes = {p: json.loads((CAD / f"segway_{p}" / "evidencia" / f"puentes_pcb_v{REV}.json").read_text(encoding="utf-8")) for p in PLACAS}
+    drc = {p: json.loads((CAD / f"segway_{p}" / "evidencia" / f"drc_pcb_v{VERSION[p]}.json").read_text(encoding="utf-8")) for p in PLACAS}
+    puentes = {p: json.loads((CAD / f"segway_{p}" / "evidencia" / f"puentes_pcb_v{VERSION[p]}.json").read_text(encoding="utf-8")) for p in PLACAS}
 
     h = [f"<!doctype html><html lang='es'><head><meta charset='utf-8'><title>Placas del Segway v{REV}</title><style>{CSS}</style></head><body>"]
     h.append(f"""<div class='portada'><h1>Placas del Segway v{REV}</h1>
 <div class='sub'>Placa de potencia y placa de lógica: documento para revisar entre todo el equipo</div>
-<p><b>Fecha:</b> {FECHA}. <b>Versión:</b> v{REV}, la final. Reemplaza a todas las anteriores: <b>descartar cualquier impresión de la v0.4</b>.</p>
+<p><b>Fecha:</b> {FECHA}. <b>Versión:</b> v{REV}, la final: placa de potencia v0.7 (un UBEC por servo) y placa de lógica v0.6, sin cambios. Reemplaza a todas las anteriores: <b>descartar cualquier impresión anterior</b>.</p>
 <p>Dos placas caseras de una sola cara (cobre abajo, componentes arriba), unidas por un cable plano de 16 hilos (J20). Casi todo lo que
 llevan son <b>módulos comprados</b>; la placa es la interfaz entre ellos. Fuera de los módulos solo hay conectores, fusibles, un TVS,
-tres capacitores y cuatro resistencias, y cada uno tiene su razón (sección 3).</p>
+cuatro capacitores y cuatro resistencias, y cada uno tiene su razón (sección 3).</p>
 <p><b>Cómo usar este documento:</b> cada uno revisa una parte y marca las casillas ☐ de la sección 8 (conexiones) con sus iniciales. Lo que no
 cierre, se anota y se lo pasa al responsable de electrónica antes de fabricar.</p>
 <ol><li>Resumen y alimentación</li><li>Las dos placas: vistas, medidas y conectores</li><li>Componentes que no son módulos, y para qué están</li>
@@ -379,7 +381,7 @@ cierre, se anota y se lo pasa al responsable de electrónica antes de fabricar.<
             ("Piezas", f"{len(s['components'])} del esquema: {len(mods)} módulos ({', '.join(mods)}) y {len(otros)} conectores y componentes; "
                        f"{len(puentes[placa])} puentes de alambre"),
         ]))
-        h.append(f"<figure><img src='../segway_{placa}/evidencia/pcb_{placa}_v{REV}.png' style='max-height:118mm'>"
+        h.append(f"<figure><img src='../segway_{placa}/evidencia/pcb_{placa}_v{VERSION[placa]}.png' style='max-height:118mm'>"
                  f"<figcaption>{datos['titulo']} vista desde la cara de componentes: azul = cobre (que está abajo), amarillo = "
                  f"contornos y puentes, gris = textos de la guía impresa.</figcaption></figure>")
         h.append(f"<figure><img src='{render}' style='max-height:105mm'><figcaption>Vista 3D de KiCad. Los módulos aparecen solo "
@@ -412,7 +414,7 @@ cierre, se anota y se lo pasa al responsable de electrónica antes de fabricar.<
     # 6. Modelo 3D
     h.append("<h2>6. Datos para el modelo 3D</h2>")
     h.append(f"""<p>Archivos STEP de cada placa (contorno, agujeros y los componentes estándar con su modelo 3D):
-<code>segway_potencia/fabricacion/rev-{REV}/segway_potencia_3d.step</code> y <code>segway_logica/fabricacion/rev-{REV}/segway_logica_3d.step</code>.
+<code>segway_potencia/fabricacion/rev-{VERSION['potencia']}/segway_potencia_3d.step</code> y <code>segway_logica/fabricacion/rev-{VERSION['logica']}/segway_logica_3d.step</code>.
 Los módulos no tienen modelo: ocupar su lugar con un bloque de la altura de la tabla. Coordenadas en mm desde la esquina superior izquierda,
 vista desde los componentes (x hacia la derecha, y hacia abajo).</p>""")
     h.append("<div class='nota'>Las alturas son aproximadas, de las piezas típicas. Conviene medirlas con las piezas reales antes de cerrar el gabinete.</div>")
@@ -472,6 +474,7 @@ toca otra net. Los puentes de alambre W y el relleno de masa cuentan como unión
     h.append("<h2>10. Pendientes</h2>")
     h.append("<p>Ninguno frena la fabricación. Pueden llegar cuando tengan los componentes:</p>")
     h.append(tabla(["Qué", "Por qué"], [
+        ("Segundo UBEC YSIDO 6 A", "El inventario registra uno solo: confirmar que hay dos (uno por servo) o comprar el segundo"),
         ("Qué TVS compraron, SA15A o P6KE18A", "Los dos entran en la placa; solo se anota"),
         ("Color y función de los 3 cables del voltímetro", "Se supuso rojo y amarillo juntos al positivo y negro a masa"),
         ("Prueba de los encoders con 3,3 V (sección 4)", "Si necesitan 5 V y sus señales salen de 5 V, hay que agregar un divisor por señal"),

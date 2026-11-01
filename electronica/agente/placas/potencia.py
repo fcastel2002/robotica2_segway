@@ -1,4 +1,4 @@
-"""Placa de potencia v0.6 (DEC-17): ubicación y esqueleto de potencia a mano, una cara (B.Cu).
+"""Placa de potencia v0.7 (DEC-17): ubicación y esqueleto de potencia a mano, una cara (B.Cu).
 
 Coordenadas en mm desde la esquina superior izquierda del contorno (TABLERO), vista desde la cara de
 componentes; (x, y) = pad 1, rotación en grados.
@@ -18,16 +18,21 @@ Topología:
 - Lomo: arriba se abre en el riel GND de y 4 hacia el DRV DER (pasa sobre J11) y en la rama de y 9,5 al DRV IZQ.
 - Banda lógica bajo la franja: J20 (cable) y A7 (INA226) con la escalera de I2C de la v0.5; A5 baja derecho a
   A7; A8 (buck 5 V) al este de la aleta de A7; J18 (voltímetro) entre VM_LOG_F y el lomo.
-- Servos al oeste de J20: R5/R6 en fila sobre los headers J13/J14, bus V_SERVO al borde sur desde J16; el
-  relleno GND del oeste baja por debajo de J20 y A7 hasta J15.1 y el retorno del lomo.
+- Servos al oeste de J20 (v0.7, un UBEC por servo): dos celdas iguales en columna, de sur a norte bornera de salida
+  del UBEC, header del servo y capacitor: celda DER (J16, J14, C8) en el oeste y celda IZQ (J19, J13, C9) a su lado.
+  Cada celda tiene su - a la izquierda y su + a la derecha; un bus GND por el borde sur une los - de J16 y J19 con
+  el relleno. La señal DER sube por el oeste de la celda IZQ y pasa por R6, arriba de las dos celdas; la IZQ va
+  directo de R5 a J20.2.
+- v0.7: J15 de 4 bornes (1-2 GND, 3-4 VM_UBEC) recibe la entrada de los dos UBEC; los + quedan del lado de F4.
+  La placa crece 3 mm hacia el sur (74 -> 77 mm) para J15 y la fila de borneras de los UBEC.
 """
 
 PROYECTO = "segway_potencia"
-REVISION = "0.6"
-SPEC = "especificacion_v0.6.json"
+REVISION = "0.7"
+SPEC = "especificacion_v0.7.json"
 
-# v0.6: contorno compactado (antes 148 x 96); agujeros M3 a 4 mm de cada esquina
-ANCHO_PLACA, ALTO_PLACA = 124.0, 74.0
+# v0.6: contorno compactado (antes 148 x 96); agujeros M3 a 4 mm de cada esquina. v0.7: 77 mm de alto (antes 74)
+ANCHO_PLACA, ALTO_PLACA = 124.0, 77.0
 TABLERO = {"width_mm": ANCHO_PLACA, "height_mm": ALTO_PLACA, "corner_radius": 3.0,
            "mounting_holes": [[4, 4], [ANCHO_PLACA - 4, 4], [4, ALTO_PLACA - 4], [ANCHO_PLACA - 4, ALTO_PLACA - 4]]}
 
@@ -46,21 +51,22 @@ UBICACION = {
     "J20": (51.52, 63.78, 180), "A7": (74.55, 63.78, 180),
     # A8 girado 90°: IN abajo (IN+ = pad cuadrado a la derecha), OUT arriba
     "A8": (97.61, 57.00, 90), "J18": (105.10, 61.80, 180),
-    "J15": (96.00, 70.00, 0),
-    # --- Servos (oeste)
-    "J16": (11.50, 69.60, 0), "C8": (15.00, 63.30, 90),
-    "J14": (24.76, 65.95, 90), "J13": (38.92, 65.95, 270),
-    "R6": (38.50, 59.24, 180), "R5": (43.50, 62.50, 180),
+    # v0.7: J15 de 4 bornes, entrada de los dos UBEC (1-2 GND al oeste, 3-4 VM_UBEC hacia F4)
+    "J15": (88.90, 73.30, 0),
+    # --- Servos (oeste), v0.7: celda DER (J16, J14, C8) y celda IZQ (J19, J13, C9), 9,95 mm a la derecha
+    "J16": (11.50, 70.30, 0), "J14": (11.50, 64.55, 90), "C8": (14.04, 60.05, 90),
+    "J19": (21.45, 70.30, 0), "J13": (21.45, 64.55, 90), "C9": (23.99, 60.05, 90),
+    "R6": (36.00, 51.00, 180), "R5": (40.16, 64.55, 180),
 }
 FIJAS = {"J1", "F1", "J3", "D1", "F2", "F3", "F5", "C3", "C1", "F4",
          "A4", "A6", "A3", "A5", "J12", "J11", "J20", "A7", "A8", "J18", "J15",
-         "J16", "C8", "J14", "J13", "R6", "R5",
+         "J16", "C8", "J14", "J13", "R6", "R5", "J19", "C9",
          "H1", "H2", "H3", "H4"}
 SOBRESALEN = {"J1", "J11", "J12", "J15", "J16"}
 
 BAT = 4.5        # VBAT_P y VBAT_F en pista (la barra VM_BUS es zona)
 MOT = 2.0        # MOTOR: 2,0 mm para pasar entre pads de 2,8 mm a 3,5 mm con 1,0 mm de separación
-SRV = 3.5        # SERVO
+SRV = 2.5        # SERVO (v0.7: un servo por UBEC, hasta 3,9 A por bus; VM_UBEC hasta 5 A)
 LOM = 4.0        # lomo GND
 
 ESQUELETO = [
@@ -112,16 +118,20 @@ ESQUELETO = [
     ("IN1_DER_MCU", 1.0, ["J20.8", (43.10, 56.16), (43.10, 44.30), (10.02, 44.30), "A4.3"]),
     ("IN2_DER_MCU", 1.0, ["J20.6", (47.30, 57.90), (41.40, 57.90), (41.40, 46.00), (7.48, 46.00), "A4.4"]),
     # --- Servos: R5/R6 (1 kΩ) protegen GPIO9/10 con el conector JR girado o corrido
-    ("SERVO_DER_MCU", 1.0, ["J20.4", (45.60, 61.24), (44.40, 60.00), (39.50, 60.00), "R6.1"]),
+    ("SERVO_DER_MCU", 1.0, ["J20.4", (45.60, 61.24), (44.40, 60.00), (39.70, 60.00), (39.70, 51.00), "R6.1"]),
+    ("SERVO_DER_SIG", 1.0, ["R6.2", (16.70, 51.00), (16.70, 63.00), "J14.3"]),
     ("SERVO_IZQ_MCU", 1.0, ["J20.2", "R5.1"]),
-    ("SERVO_DER_SIG", 1.0, ["R6.2", (29.84, 60.50), "J14.3"]),
-    ("SERVO_IZQ_SIG", 1.0, ["R5.2", (33.84, 63.00), "J13.3"]),
-    ("V_SERVO", 2.0, ["C8.1", "J16.2"]),
-    ("V_SERVO", SRV, [(16.30, 70.00), (36.38, 70.00)]),
-    ("V_SERVO", 2.0, ["J16.2", (16.30, 70.00)]),
-    ("V_SERVO", 1.2, [(27.30, 70.00), "J14.2"]),
-    ("V_SERVO", 1.2, [(36.38, 70.00), "J13.2"]),
-    ("VM_UBEC", SRV, ["F4.2", (109.20, 70.00), "J15.2"]),
+    ("SERVO_IZQ_SIG", 1.0, ["R5.2", "J13.3"]),
+    # v0.7: cada UBEC alimenta su servo. + de la bornera -> pin central del header (1,2 mm entre los pines de 2,54) -> C
+    # (el pin 1 de borneras y headers es cuadrado: los tramos de 2 mm se alejan de sus esquinas)
+    ("V_SERVO_DER", 2.0, ["J16.2", (15.00, 68.00), (14.04, 67.20)]),
+    ("V_SERVO_DER", 1.2, [(14.04, 67.20), "J14.2", (14.04, 61.60)]),
+    ("V_SERVO_DER", 2.0, [(14.04, 61.60), "C8.1"]),
+    ("V_SERVO_IZQ", 2.0, ["J19.2", (24.95, 68.00), (23.99, 67.20)]),
+    ("V_SERVO_IZQ", 1.2, [(23.99, 67.20), "J13.2", (23.99, 61.60)]),
+    ("V_SERVO_IZQ", 2.0, [(23.99, 61.60), "C9.1"]),
+    # Entrada de los dos UBEC: F4.2 -> J15.4 y J15.3
+    ("VM_UBEC", SRV, ["F4.2", (106.80, 73.30), "J15.4", "J15.3"]),
     # --- J20: 5V_MCU y GND unidos entre columnas
     ("5V_MCU", 1.0, ["J20.13", "J20.14"]),
     ("GND", 1.0, ["J20.15", "J20.16"]),
@@ -138,11 +148,19 @@ ESQUELETO = [
     ("GND", 1.0, [(87.10, 45.50), "A8.4"]),
     ("GND", 1.0, [(91.00, 58.80), "A8.2"]),
     ("GND", 2.0, [(91.00, 66.30), (96.00, 65.90)]),
-    ("GND", 2.6, ["J15.1", (96.00, 65.90), (103.50, 65.90)]),     # retorno del UBEC (J15.1) al lomo
-    # Retorno de los servos (revisión v0.6): J16.1 -> C8.2 -> J14.1 en 2 mm; J13.1 al relleno sur, que llega a J15.1
-    ("GND", 2.0, ["J16.1", (11.50, 62.50), (12.60, 59.80), "C8.2"]),
-    ("GND", 2.0, ["C8.2", (21.50, 59.80), (24.20, 62.50), (24.20, 65.00)]),
-    ("GND", 2.0, [(39.80, 66.40), (41.00, 67.60), (41.00, 70.80)]),
+    # Retorno de los dos UBEC (J15.1 y J15.2) al lomo
+    ("GND", 3.0, ["J15.1", (88.90, 69.50), (93.98, 69.50), "J15.2"]),
+    ("GND", 2.6, [(93.98, 69.50), (96.00, 65.90), (103.50, 65.90)]),
+    # Retorno de cada servo directo a la bornera de su UBEC (header -> bornera), C8/C9 por el oeste de la celda y
+    # bus GND por el borde sur que une J16.1 y J19.1 con el relleno sur
+    ("GND", 2.0, ["J16.1", (11.50, 69.30)]),
+    ("GND", 1.0, [(11.50, 69.30), "J14.1", (11.50, 62.20), (10.40, 61.10)]),
+    ("GND", 2.0, [(10.40, 61.10), (10.40, 56.55), "C8.2"]),
+    ("GND", 2.0, ["J19.1", (21.45, 69.30)]),
+    ("GND", 1.0, [(21.45, 69.30), "J13.1", (21.45, 62.20), (20.35, 61.10)]),
+    ("GND", 2.0, [(20.35, 61.10), (20.35, 56.55), "C9.2"]),
+    ("GND", 2.0, ["J16.1", (11.50, 73.90), (44.00, 73.90)]),
+    ("GND", 2.0, ["J19.1", (21.45, 73.90)]),
 ]
 
 # Zonas de cobre: lomo GND con su retorno y la bajada de J1, barra VM_BUS (con la toma de J3.2) y relleno GND
@@ -152,7 +170,7 @@ ZONAS = [
              (122.00, 66.90), (102.00, 66.90)], 1, False),
     ("VM_BUS", [(108.60, 8.00), (122.00, 8.00), (122.00, 12.60), (116.00, 12.60), (116.00, 61.60),
                 (108.60, 61.60)], 2, False),
-    ("GND", [(1.00, 36.50), (102.00, 36.50), (102.00, 73.00), (1.00, 73.00)], 0),
+    ("GND", [(1.00, 36.50), (102.00, 36.50), (102.00, 76.00), (1.00, 76.00)], 0),
 ]
 IGNORAR = ("BATERIA_BUS", "MOTOR", "SERVO")
 # GND de los headers de los DRV: el módulo lo une por dentro con el pad de potencia, que ya va al lomo.
@@ -160,18 +178,20 @@ IGNORAR = ("BATERIA_BUS", "MOTOR", "SERVO")
 SIN_RUTEO = ["A3-1", "A4-1", "J18-1"]     # GND del voltímetro: va al lomo
 SIN_RELLENO = [[(60.60, 32.5), (65.60, 32.5), (65.60, 38.6), (60.60, 38.6)],
                [(12.60, 32.5), (17.60, 32.5), (17.60, 38.6), (12.60, 38.6)]]
-ANCHOS_RUTEO = {"GND": 1200, "LOGICA": 1200, "kicad_default": 1000, "MOTOR": 2000, "SERVO": 3500}
+ANCHOS_RUTEO = {"GND": 1200, "LOGICA": 1200, "kicad_default": 1000, "MOTOR": 2000, "SERVO": 2500}
 RUTEAR = True
 
-ROTULOS = [("POTENCIA", (34.50, 7.20), 2.0), ("v0.6", (34.50, 10.20), 2.0), ("LADO COBRE", (34.50, 13.20), 2.0),
+ROTULOS = [("POTENCIA", (34.50, 7.20), 2.0), ("v0.7", (34.50, 10.20), 2.0), ("LADO COBRE", (34.50, 13.20), 2.0),
     # Rótulos de conectores (SUP-14): ubicar_rotulos.py sobre la v0.6 y ajustes a mano
     ("SW", (113.50, 5.20), 2.0, 0), ("+", (62.37, 8.12), 2.0, 0), ("M IZQ", (46.83, 11.12), 2.0, 90),
     ("M DER", (22.80, 10.50), 2.0, 90),
-    ("+", (19.00, 65.60), 2.0, 90), ("-", (8.00, 64.10), 2.0, 0), ("UBEC 6V", (4.00, 58.00), 2.0, 90),
-    ("SERVO DER", (14.50, 48.60), 2.0, 0), ("SERVO IZQ", (32.20, 48.60), 2.0, 0),
     ("+", (114.30, 44.00), 2.0, 0),     # J1.2 (batería +): única referencia para armar el cable polarizado
-    ("UBEC IN", (77.50, 70.30), 2.0, 0),
-    ("-", (92.60, 70.50), 2.0, 0), ("-", (44.42, 66.95), 2.0, 0), ("-", (21.20, 64.60), 2.0, 0),
+    # v0.7: ubicar_rotulos.py y ajustes a mano. J15: - del lado del 1, + sobre los bornes 3 y 4 (sobre el 2 caería
+    # encima de la pista GND). Cada columna de servo se rotula DER o IZQ (bornera del UBEC y header del servo).
+    ("-", (84.40, 72.80), 2.0, 0), ("UBEC IN", (79.52, 68.30), 2.0, 0),
+    ("+", (99.06, 69.40), 2.0, 0), ("+", (104.14, 69.40), 2.0, 0),
+    ("-", (7.50, 67.30), 2.0, 0), ("DER", (6.25, 56.80), 2.0, 90),
+    ("+", (28.95, 69.80), 2.0, 0), ("IZQ", (31.50, 57.50), 2.0, 90),
     ("1", (53.50, 66.30), 2.0, 0),
     # Borde de entrada de A8, entre IN+ (pad cuadrado) e IN-
     ("IN", (93.40, 55.50), 2.0, 0),
@@ -188,7 +208,7 @@ ENMIENDAS = """
 	(constraint zone_connection solid))
 
 (rule "retornos_gnd_solidos"
-	(condition "A.Type == 'Pad' && A.NetName == '/GND' && (A.intersectsCourtyard('J1') || A.intersectsCourtyard('C1') || A.intersectsCourtyard('J15') || A.intersectsCourtyard('J16') || A.intersectsCourtyard('J13') || A.intersectsCourtyard('J14') || A.intersectsCourtyard('C8'))")
+	(condition "A.Type == 'Pad' && A.NetName == '/GND' && (A.intersectsCourtyard('J1') || A.intersectsCourtyard('C1') || A.intersectsCourtyard('J15') || A.intersectsCourtyard('J16') || A.intersectsCourtyard('J19') || A.intersectsCourtyard('J13') || A.intersectsCourtyard('J14') || A.intersectsCourtyard('C8') || A.intersectsCourtyard('C9'))")
 	(constraint zone_connection solid))
 
 (rule "rayos_minimos_relleno"
@@ -196,6 +216,16 @@ ENMIENDAS = """
 	(constraint min_resolved_spokes 1))
 """
 PUENTES_FR = True
+# Las celdas de servo están pegadas: los valores de borneras, headers y capacitores se pisarían en la guía impresa (quedan las
+# referencias y los rótulos DER e IZQ)
+OCULTAR_VALOR = ("J16", "J19", "J13", "J14", "C8", "C9")
+# Textos de la guía impresa (F.SilkS): columna de cada servo y polaridad de las borneras de los UBEC (revisión v0.7)
+TEXTOS_GUIA = [
+    ("DER", (14.04, 53.20), 1.2), ("IZQ", (23.99, 53.20), 1.2),
+    ("DER: J16 -> J14", (37.00, 55.30), 1.0), ("IZQ: J19 -> J13", (37.00, 57.10), 1.0), ("J16/J19: 1- 2+", (37.00, 58.90), 1.0),
+    ("C8/C9: 470u 16V", (37.00, 60.70), 1.0),
+    ("J15 UBEC IN", (77.50, 68.60), 1.2), ("1-2 -   3-4 +", (77.50, 70.80), 1.2),
+]
 
 # Puentes fijos (el resto, si hace falta, los agrega Freerouting)
 PUENTES = [
@@ -223,9 +253,10 @@ ROTULOS_PEDIDOS = [
     ("SW", "J3", 2.0, 16),
     ("+", "J11.1", 2.0, 7), ("M IZQ", "J11", 2.0, 16),
     ("M DER", "J12", 2.0, 16),
-    ("+", "J15.2", 2.0, 7), ("-", "J15.1", 2.0, 7), ("UBEC IN", "J15", 2.0, 16),
-    ("+", "J16.2", 2.0, 7), ("-", "J16.1", 2.0, 7), ("UBEC 6V", "J16", 2.0, 16),
-    ("SERVO IZQ", "J13", 2.0, 16), ("SERVO DER", "J14", 2.0, 16),
+    ("-", "J15.1", 2.0, 7), ("-", "J15.2", 2.0, 10), ("+", "J15.3", 2.0, 10), ("+", "J15.4", 2.0, 10), ("UBEC IN", "J15", 2.0, 18),
+    ("+", "J16.2", 2.0, 10), ("-", "J16.1", 2.0, 7), ("UBEC DER", "J16", 2.0, 16),
+    ("+", "J19.2", 2.0, 7), ("-", "J19.1", 2.0, 10), ("UBEC IZQ", "J19", 2.0, 16),
+    ("SERVO IZQ", "J13", 2.0, 22), ("SERVO DER", "J14", 2.0, 22),
     ("-", "J13.1", 2.0, 7), ("-", "J14.1", 2.0, 7),
     ("-", "J18.1", 2.0, 7), ("VOLT", "J18", 2.0, 16),
     ("1", "J20.1", 2.0, 7),

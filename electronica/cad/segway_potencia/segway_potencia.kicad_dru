@@ -161,7 +161,7 @@
 	(constraint zone_connection solid))
 
 (rule "retornos_gnd_solidos"
-	(condition "A.Type == 'Pad' && A.NetName == '/GND' && (A.intersectsCourtyard('J1') || A.intersectsCourtyard('C1') || A.intersectsCourtyard('J15') || A.intersectsCourtyard('J16') || A.intersectsCourtyard('J13') || A.intersectsCourtyard('J14') || A.intersectsCourtyard('C8'))")
+	(condition "A.Type == 'Pad' && A.NetName == '/GND' && (A.intersectsCourtyard('J1') || A.intersectsCourtyard('C1') || A.intersectsCourtyard('J15') || A.intersectsCourtyard('J16') || A.intersectsCourtyard('J19') || A.intersectsCourtyard('J13') || A.intersectsCourtyard('J14') || A.intersectsCourtyard('C8') || A.intersectsCourtyard('C9'))")
 	(constraint zone_connection solid))
 
 (rule "rayos_minimos_relleno"

@@ -50,6 +50,8 @@ JAVA = Path(r"D:\Usuario\Matias\Herramientas\java\jdk-25.0.4.1+1-jre\bin\java.ex
 OX, OY = 25.4, 25.4          # desplazamiento de la placa en la hoja (múltiplo de 2,54)
 ANCHO, ALTO, RADIO = 160.0, 100.0, 3.0
 AGUJEROS = None
+OCULTAR_VALOR = set()
+TEXTOS_GUIA = []
 
 
 def p(*a):
@@ -306,6 +308,8 @@ def ubicar(board, comps, nets, origen, libtmp):
         fp.SetFPID(pcbnew.LIB_ID(lib, nombre))
         fp.SetReference(ref)
         fp.SetValue(c["value"])
+        if ref in OCULTAR_VALOR:
+            fp.Value().SetVisible(False)
         fp.SetPath(pcbnew.KIID_PATH(f"/{c['tstamp']}"))
         fp.SetSheetname("/")
         fp.SetSheetfile(f"{NOMBRE}.kicad_sch")
@@ -928,6 +932,11 @@ def cargar_placa(nombre):
     QUITAR_NPTH = list(getattr(cfg, "QUITAR_NPTH", []))
     SEVERIDADES = dict(getattr(cfg, "SEVERIDADES", {}))
     NETS_FIJAS = list(getattr(cfg, "NETS_FIJAS", []))
+    # v0.7: valores que en la guía impresa se pisan con el de la huella vecina
+    global OCULTAR_VALOR
+    OCULTAR_VALOR = set(getattr(cfg, "OCULTAR_VALOR", ()))
+    global TEXTOS_GUIA
+    TEXTOS_GUIA = list(getattr(cfg, "TEXTOS_GUIA", []))
 
 
 def rotulos_cobre(board):
@@ -957,6 +966,16 @@ def rotulos_cobre(board):
             s.SetLayer(pcbnew.B_Cu)
             s.SetWidth(mm(0.5))
             board.Add(s)
+    # v0.7: textos de la guía impresa (F.SilkS, cara de componentes), donde la serigrafía de las huellas no alcanza
+    for texto, (x, y), alto in TEXTOS_GUIA:
+        tx = pcbnew.PCB_TEXT(board)
+        tx.SetText(texto)
+        tx.SetLayer(pcbnew.F_SilkS)
+        tx.SetPosition(V(x, y))
+        tx.SetTextSize(pcbnew.VECTOR2I(mm(alto), mm(alto)))
+        tx.SetTextThickness(mm(max(0.15, alto * 0.15)))
+        tx.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_CENTER)
+        board.Add(tx)
     return len(ROTULOS) + (1 if ESCALA else 0)
 
 

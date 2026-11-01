@@ -3,7 +3,8 @@
 Uso (Python de KiCad, desde la raíz del repositorio):
     "C:/Program Files/KiCad/10.0/bin/python.exe" -I electronica/agente/auditoria_electrica.py
 
-Lee las especificaciones v0.6 y las PCB de las dos placas y escribe electronica/cad/auditoria_electrica_v0.1.md.
+Lee las especificaciones (potencia v0.7, lógica v0.6) y las PCB de las dos placas y escribe
+electronica/cad/auditoria_electrica_v0.7.md.
 Sale con código 1 si algún control da FALLA. Controles:
  1. Cable J20: cada pin lleva la misma net en las dos placas.
  2. Pines críticos de cada módulo en la net esperada. La tabla ESPERADO quedó fija después de la revisión
@@ -25,7 +26,9 @@ import pcbnew
 
 RAIZ = Path(__file__).resolve().parents[2]
 CAD = RAIZ / "electronica" / "cad"
-SALIDA = CAD / "auditoria_electrica_v0.6.md"
+SALIDA = CAD / "auditoria_electrica_v0.7.md"
+# v0.7: solo cambió la potencia (un UBEC por servo)
+VERSION = {"potencia": "0.7", "logica": "0.6"}
 OX = OY = 25.4
 
 ESPERADO = {
@@ -42,9 +45,11 @@ ESPERADO = {
         "D1": {"1": "VM_BUS", "2": "GND"},
         "J18": {"1": "GND", "2": "VM_LOG_F"},
         "C1": {"1": "VM_BUS", "2": "GND"},
-        "C8": {"1": "V_SERVO", "2": "GND"},
-        "J1": {"1": "GND", "2": "VBAT_P"}, "J15": {"1": "GND", "2": "VM_UBEC"}, "J16": {"1": "GND", "2": "V_SERVO"},
-        "J13": {"1": "GND", "2": "V_SERVO", "3": "SERVO_IZQ_SIG"}, "J14": {"1": "GND", "2": "V_SERVO", "3": "SERVO_DER_SIG"},
+        # v0.7: un UBEC por servo. J16 (UBEC DER) -> J14 y C8; J19 (UBEC IZQ) -> J13 y C9; J15 recibe los dos
+        "C8": {"1": "V_SERVO_DER", "2": "GND"}, "C9": {"1": "V_SERVO_IZQ", "2": "GND"},
+        "J1": {"1": "GND", "2": "VBAT_P"}, "J15": {"1": "GND", "2": "GND", "3": "VM_UBEC", "4": "VM_UBEC"},
+        "J16": {"1": "GND", "2": "V_SERVO_DER"}, "J19": {"1": "GND", "2": "V_SERVO_IZQ"},
+        "J13": {"1": "GND", "2": "V_SERVO_IZQ", "3": "SERVO_IZQ_SIG"}, "J14": {"1": "GND", "2": "V_SERVO_DER", "3": "SERVO_DER_SIG"},
     },
     "logica": {
         # v0.3: la ESP32 se alimenta por sus pines 3V3 desde A9; su pin 5V queda solo con el USB
@@ -60,11 +65,11 @@ ESPERADO = {
 }
 # Nets que no pueden llegar a un pin de señal de la ESP32-S3
 PROHIBIDAS = {"5V", "5V_MCU", "5V_USB", "SHARP_OUT", "VBAT_P", "VBAT_F", "VBAT_SW", "VM_BUS", "VM_IZQ", "VM_IZQ_F", "VM_DER", "VM_DER_F",
-              "VM_LOG", "VM_LOG_F", "VM_UBEC", "V_SERVO", "MOT_IZQ_1", "MOT_IZQ_2", "MOT_DER_1", "MOT_DER_2", "Q_POL_G"}
+              "VM_LOG", "VM_LOG_F", "VM_UBEC", "V_SERVO_DER", "V_SERVO_IZQ", "MOT_IZQ_1", "MOT_IZQ_2", "MOT_DER_1", "MOT_DER_2", "Q_POL_G"}
 ALIMENTACION_ESP32 = {"1", "2", "21", "22", "23", "43", "44"}     # el 21 es 5V_USB (pin 5V de la DevKitC)
 # Tensión de cada net (V), para juzgar un módulo girado
 TENSION = {"GND": 0, "3V3_MCU": 3.3, "5V_MCU": 5.0, "5V_USB": 5.0, "SHARP_OUT": 5.0, "VM_LOG": 12.6, "VM_LOG_F": 12.6, "VM_BUS": 12.6,
-           "VM_IZQ": 12.6, "VM_IZQ_F": 12.6, "VM_DER": 12.6, "VM_DER_F": 12.6, "V_SERVO": 6.0, "VM_UBEC": 12.6}
+           "VM_IZQ": 12.6, "VM_IZQ_F": 12.6, "VM_DER": 12.6, "VM_DER_F": 12.6, "V_SERVO_DER": 6.0, "V_SERVO_IZQ": 6.0, "VM_UBEC": 12.6}
 # Módulos codificados mecánicamente: pin quitado del módulo y esa posición del zócalo tapada
 # A2: pin 5 (XDA, sin uso). A1: pin 24 (GPIO43, TX del USB-serie; el robot no lo usa por fuera). Revisión v0.2.
 CODIFICADOS = {("logica", "A2"): {"5"}, ("logica", "A1"): {"24"}}
@@ -72,10 +77,10 @@ CODIFICADOS = {("logica", "A2"): {"5"}, ("logica", "A1"): {"24"}}
 SOLDADOS = {"potencia": {"A5", "A6", "A7", "A8"}, "logica": {"A9"}}
 # Corriente de diseño por net (A) para el control de cuellos (SUP-10, SUP-43, SUP-47, SUP-48)
 CORRIENTE = {"VBAT_P": 10, "VBAT_F": 10, "VBAT_SW": 10, "VM_BUS": 10, "VM_IZQ_F": 2.3, "VM_IZQ": 2.3, "VM_DER_F": 2.3,
-             "VM_DER": 2.3, "MOT_IZQ_1": 2.3, "MOT_IZQ_2": 2.3, "MOT_DER_1": 2.3, "MOT_DER_2": 2.3, "VM_UBEC": 3.8,
-             # V_SERVO: el bus de 3,5 mm lleva los 6 A de los dos servos; el cuello más angosto (1,2 mm, entrada a J13/J14)
-             # lleva uno solo, hasta ~3 A bloqueado (SUP-56)
-             "V_SERVO": 3.0, "VM_LOG_F": 0.3, "VM_LOG": 0.3, "5V_MCU": 0.8, "3V3_MCU": 0.5}
+             "VM_DER": 2.3, "MOT_IZQ_1": 2.3, "MOT_IZQ_2": 2.3, "MOT_DER_1": 2.3, "MOT_DER_2": 2.3,
+             # v0.7: VM_UBEC alimenta los dos UBEC (≈2,5 A de entrada cada uno con su servo bloqueado). Cada V_SERVO lleva un
+             # solo servo; su cuello más angosto (1,2 mm, entrada a J13/J14) se juzga con ~3 A (SUP-56)
+             "VM_UBEC": 5.0, "V_SERVO_DER": 3.0, "V_SERVO_IZQ": 3.0, "VM_LOG_F": 0.3, "VM_LOG": 0.3, "5V_MCU": 0.8, "3V3_MCU": 0.5}
 
 
 def ipc_dt(i, ancho_mm, espesor_um=35):
@@ -85,7 +90,7 @@ def ipc_dt(i, ancho_mm, espesor_um=35):
 
 
 def cargar(placa):
-    s = json.loads((CAD / f"segway_{placa}" / "especificacion_v0.6.json").read_text(encoding="utf-8"))
+    s = json.loads((CAD / f"segway_{placa}" / f"especificacion_v{VERSION[placa]}.json").read_text(encoding="utf-8"))
     red = {p: n["name"] for n in s["nets"] for p in n["pins"]}
     return s, red
 
@@ -235,12 +240,24 @@ def main():
     k_div = 15 / (10 + 15)
     reg("OK", "Salida del Sharp", f"3,6 V a 10 cm × 15k/(10k+15k) = {3.6 * k_div:.2f} V en GPIO3 (ADC1, rango de 0 a 3,1 V con 12 dB); "
         f"con 5 V en J27.2 (cable girado o corrido) llegan {5 * k_div:.2f} V, debajo del máximo de 3,6 V")
+    # v0.7: cada servo con su UBEC (revisión del equipo del 01/11/2026)
+    red_p = specs["potencia"][1]
+    buses = {}
+    for pin, n in red_p.items():
+        if n.startswith("V_SERVO"):
+            buses.setdefault(n, []).append(pin.split(".")[0])
+    ok_ubec = (sorted(buses) == ["V_SERVO_DER", "V_SERVO_IZQ"] and sorted(buses["V_SERVO_DER"]) == ["C8", "J14", "J16"]
+               and sorted(buses["V_SERVO_IZQ"]) == ["C9", "J13", "J19"])
+    reg("OK" if ok_ubec else "FALLA", "Un UBEC por servo",
+        "V_SERVO_DER: J16 (UBEC DER) -> J14 y C8; V_SERVO_IZQ: J19 (UBEC IZQ) -> J13 y C9; sin unión entre los dos buses. "
+        "Cada UBEC (6 A) alimenta un solo DS3240 (bloqueo ≈3,5 A a 6 V). Entrada común por J15 y F4 (7,5 A, ≈5 A con los dos bloqueados)"
+        if ok_ubec else f"Buses de servo: {buses}")
     reg("AVISO", "Cable J20: I2C junto a líneas de PWM",
         "SDA (5) y SCL (7) van entre IN2_DER (6) e IN1_DER (8), sin GND intercalado. Mitigación: cable corto, I2C a 100 kHz, "
         "fuerza de salida mínima en GPIO11-14 y filtro de glitches del I2C. Probar en E-08")
 
     # Informe
-    lineas = ["# Control eléctrico de las placas v0.6 (lógica + potencia)", "",
+    lineas = ["# Control eléctrico de las placas v0.7 (potencia v0.7 + lógica v0.6)", "",
               f"Generado por [`auditoria_electrica.py`](../agente/auditoria_electrica.py). Resultado: **{fallas} fallas, {avisos} avisos**. "
               "Complementa al ERC, el DRC y la comparación de netlist, que no detectan estos casos. No reemplaza a los ensayos de banco.", "",
               "| Estado | Control | Detalle |", "|---|---|---|"]

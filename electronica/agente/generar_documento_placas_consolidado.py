@@ -15,8 +15,10 @@ from pathlib import Path
 
 import pcbnew
 
-REV = "0.6"
-FECHA = "31/10/2026"
+REV = "0.7"
+FECHA = "01/11/2026"
+# v0.7: solo cambió la potencia (un UBEC por servo); la lógica sigue en la v0.6
+VERSION = {"potencia": "0.7", "logica": "0.6"}
 RAIZ = Path(__file__).resolve().parents[1]
 CAD = RAIZ / "cad"
 DOC = CAD / f"documento_placas_v{REV}"
@@ -29,8 +31,9 @@ CONECTORES = {
         ("J1", "Batería, por un cable corto con conector polarizado: 1 −, 2 +"),
         ("J3", "Interruptor general y botón de emergencia en serie (pads para soldar)"),
         ("J11, J12", "Motor IZQ, DER: 1 M+, 2 M−"),
-        ("J15, J16", "UBEC entrada / salida 6 V: 1 −, 2 +"),
-        ("J13, J14", "Servo IZQ, DER: 1 GND, 2 V, 3 señal"),
+        ("J15", "Entrada de los dos UBEC: 1 y 2 −, 3 y 4 +"),
+        ("J16, J19", "Salida 6 V del UBEC DER, IZQ: 1 −, 2 +"),
+        ("J14, J13", "Servo DER (de J16), IZQ (de J19): 1 GND, 2 V, 3 señal"),
         ("J18", "Voltímetro: 1 GND, 2 + (pads para soldar)"),
         ("J20", "Cable plano a la lógica, pin n con pin n"),
     ],
@@ -47,22 +50,23 @@ ALTURA = {"potencia": "unos 20 mm (DRV8871 en zócalo y portafusible F1)",
           "logica": "unos 15 mm (ESP32 en zócalo); la ESP32 sobresale unos 5 mm del borde superior (antena) y del inferior (USB-C)"}
 
 COMPONENTES = [
-    ("F1–F5", "Fusibles: 15 A lento, 4 A, 4 A, 7,5 A y 1 A", "Uno general y uno por rama: motor IZQ, motor DER, servos y lógica", ""),
+    ("F1–F5", "Fusibles: 15 A lento, 4 A, 4 A, 7,5 A y 1 A", "Uno general y uno por rama: motor IZQ, motor DER, los dos UBEC y lógica", ""),
     ("D1", "TVS SA15A (o P6KE18A)", "Absorbe los picos de tensión de los motores", "Banda hacia VM_BUS"),
     ("C1", "470 µF 35 V low-ESR", "Reserva de energía para los motores (lo pide el DRV8871)", "Electrolítico"),
     ("C3", "10 µF 50 V cerámico", "Lo pide la ficha del BMS", ""),
-    ("C8", "470 µF 16 V low-ESR", "Reserva de energía para los servos", "Electrolítico"),
+    ("C8, C9", "470 µF 16 V low-ESR", "Reserva de energía de cada servo (C8 el DER, C9 el IZQ)", "Electrolítico"),
     ("R5, R6", "1 kΩ", "Protegen la ESP32 si un servo se enchufa corrido", ""),
     ("R41, R42", "10 kΩ y 15 kΩ, 1 % (lógica)", "Bajan la salida del Sharp (hasta 3,6 V) a lo que acepta la ESP32", ""),
 ]
 
 COMPRAS = [
+    ("Módulos", "Un segundo UBEC YSIDO 6 A (uno por servo): el inventario registra uno solo"),
     ("Resistencias", "1 kΩ ×2, 10 kΩ 1 % ×1, 15 kΩ 1 % ×1"),
-    ("Capacitores", "470 µF 35 V low-ESR (Ø10), 470 µF 16 V low-ESR (Ø8), 10 µF 50 V cerámico"),
+    ("Capacitores", "470 µF 35 V low-ESR (Ø10), 470 µF 16 V low-ESR (Ø8) ×2, 10 µF 50 V cerámico"),
     ("TVS", "SA15A (o P6KE18A)"),
     ("Fusibles", "Portafusible ATO + fusible 15 A lento; 4 portafusibles mini + fusibles de 4 A ×2, 7,5 A y 1 A; "
                  "portafusible en línea + fusible de 20 A"),
-    ("Conectores", "Borneras de 2 polos a 5,08 mm ×4 y a 3,5 mm ×1; de 4 polos a 3,5 mm ×2; IDC macho 2×8 con caja ×2; "
+    ("Conectores", "Borneras de 2 polos a 5,08 mm ×5 (J15 son dos juntas) y a 3,5 mm ×2; de 4 polos a 3,5 mm ×2; IDC macho 2×8 con caja ×2; "
                    "tira hembra 1×40 ×5; tira macho 1×40 ×1; conector polarizado para la batería (ya lo tienen)"),
     ("Cables", "Plano de 16 hilos + 2 IDC hembra 2×8; 1,5 mm² rojo y negro; Dupont de 4 hilos para el Sharp"),
     ("Mando", "Interruptor general y botón de emergencia con traba, los dos de 15 A o más en continua"),
@@ -73,7 +77,8 @@ CONEXIONES = {
     "potencia": [
         "Batería → conector polarizado → J1 → F1 → J3 (interruptor y paro) → VM_BUS. D1, C1 y C3 entre VM_BUS y GND.",
         "VM_BUS → F2 → INA219 IZQ (A5) → DRV8871 IZQ (A3) → motor IZQ (J11). Lo mismo del lado DER: F3 → A6 → A4 → J12.",
-        "VM_BUS → F4 → UBEC (J15). Su salida de 6 V (J16) → servos J13 y J14, con C8.",
+        "VM_BUS → F4 → J15 → los dos UBEC. UBEC DER → J16 → servo DER (J14), con C8; UBEC IZQ → J19 → servo IZQ (J13), con C9. "
+        "Los dos buses de 6 V no se unen.",
         "VM_BUS → F5 → voltímetro (J18) y INA226 (A7) → buck de 5 V (A8) → J20.13/14.",
         "Señales de los DRV directo desde J20: IZQ IN1/IN2 = J20.12/10; DER IN1/IN2 = J20.8/6.",
         "Servos: J20.2 → R5 → J13.3 y J20.4 → R6 → J14.3.",
@@ -99,11 +104,12 @@ ANTES_DE_ALIMENTAR = [
     "Sin nada enchufado: sin corto entre VM_BUS, 5 V o 3,3 V y GND; sin continuidad entre IN+ y OUT+ de cada buck.",
     "Cable J20 armado: pin 1 con pin 1 y pin 13 con pin 13 (un conector al revés manda 5 V a la ESP32).",
     "Primera vez con fuente limitada a 0,5 A, sin módulos enchufados ni cable J20: J20.13 tiene que dar 5 V.",
-    "UBEC sin los servos: 6,0 V en J16 (nunca 7,4 V).",
+    "Cada UBEC sin su servo: 6,0 V en J16 y en J19 (nunca 7,4 V).",
     "Cortar la alimentación antes de enchufar cualquier módulo o el cable. No enchufar el USB de la ESP32 con la batería conectada.",
 ]
 
 PENDIENTES = [
+    "Confirmar que hay dos UBEC (el inventario registra uno).",
     "Probar los encoders con 3,3 V antes de conectarlos (si piden 5 V y sus señales salen de 5 V, hay que agregar un divisor).",
     "Montar el Sharp a más de 12 cm del piso en cualquier inclinación.",
     "Anotar qué TVS se compró y los colores de los cables del voltímetro.",
@@ -133,8 +139,8 @@ def datos_placa(placa):
     b = pcbnew.LoadBoard(str(CAD / f"segway_{placa}" / f"segway_{placa}.kicad_pcb"))
     bb = b.GetBoardEdgesBoundingBox()
     linea = next(pcbnew.ToMM(d.GetWidth()) for d in b.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts)
-    s = json.loads((CAD / f"segway_{placa}" / "especificacion_v0.6.json").read_text(encoding="utf-8"))
-    puentes = json.loads((CAD / f"segway_{placa}" / "evidencia" / f"puentes_pcb_v{REV}.json").read_text(encoding="utf-8"))
+    s = json.loads((CAD / f"segway_{placa}" / f"especificacion_v{VERSION[placa]}.json").read_text(encoding="utf-8"))
+    puentes = json.loads((CAD / f"segway_{placa}" / "evidencia" / f"puentes_pcb_v{VERSION[placa]}.json").read_text(encoding="utf-8"))
     modulos = sum(c["ref"].startswith("A") for c in s["components"])
     return (medida(pcbnew.ToMM(bb.GetWidth()) - linea), medida(pcbnew.ToMM(bb.GetHeight()) - linea),
             len(s["components"]), modulos, len(puentes))
@@ -164,19 +170,19 @@ def main():
     DOC.mkdir(exist_ok=True)
     datos = {p: datos_placa(p) for p in ("potencia", "logica")}
     h = [f"<!doctype html><html lang='es'><head><meta charset='utf-8'><title>Placas del Segway v{REV}</title><style>{CSS}</style></head><body>"]
-    h.append(f"<h1>Placas del Segway v{REV}</h1><div class='sub'>{FECHA} · versión final · descartar las impresiones anteriores</div>")
+    h.append(f"<h1>Placas del Segway v{REV}</h1><div class='sub'>{FECHA} · versión final: potencia v0.7 (un UBEC por servo), lógica v0.6 sin cambios · descartar las impresiones anteriores</div>")
     h.append("<p>Dos placas caseras de una cara (cobre abajo, componentes arriba) unidas por un cable plano de 16 hilos (J20). "
              "Casi todo son módulos comprados; la placa los interconecta y protege. El detalle completo está en "
-             f"<b>placas_v{REV}_completo.pdf</b> y en la guía de montaje; los modelos 3D, en <b>fabricacion/rev-{REV}/*_3d.step</b>.</p>")
+             f"<b>placas_v{REV}_completo.pdf</b> y en la guía de montaje; los modelos 3D, en <b>fabricacion/rev-*/*_3d.step</b>.</p>")
     h.append("<h2>Alimentación</h2>")
     h.append(f"<figure><img src='alimentacion_v{REV}.png' style='max-height:165mm'></figure>")
 
-    for placa, titulo in (("potencia", "Placa de potencia"), ("logica", "Placa de lógica")):
+    for placa, titulo in (("potencia", "Placa de potencia v0.7"), ("logica", "Placa de lógica v0.6 (sin cambios)")):
         ancho, alto, piezas, modulos, puentes = datos[placa]
         h.append(f"<h2 class='salto'>{titulo}</h2>")
         h.append(f"<p><b>{ancho} × {alto} mm</b> · 4 agujeros M3 a 4 mm de los bordes, sobre separadores de 10 mm · "
                  f"altura máxima {ALTURA[placa]} · {piezas} piezas ({modulos} módulos) y {puentes} puentes de alambre.</p>")
-        h.append(f"<figure><img src='../segway_{placa}/evidencia/pcb_{placa}_v{REV}.png' style='max-height:150mm'></figure>")
+        h.append(f"<figure><img src='../segway_{placa}/evidencia/pcb_{placa}_v{VERSION[placa]}.png' style='max-height:150mm'></figure>")
         h.append(tabla(["Conector", "Qué va"], CONECTORES[placa]))
 
     h.append("<h2 class='salto'>Componentes que no son módulos</h2>")

@@ -1,5 +1,7 @@
 # Placa de potencia v0.6: PCB casera de una cara
 
+> **Reemplazada por la [v0.7](pcb_v0.7.md) el 01/11/2026** (un UBEC por servo).
+
 Fecha: 31/10/2026. Reemplaza a la [v0.5](pcb_v0.5.md). Guía de montaje: [guia_montaje_v0.6.md](../guia_montaje_v0.6.md). Compras: [lista_compras_v0.6.md](../lista_compras_v0.6.md). Control eléctrico: [auditoria_electrica_v0.6.md](../auditoria_electrica_v0.6.md). Documentos para el equipo: [consolidado](../placas_v0.6_consolidado.pdf) y [completo](../placas_v0.6_completo.pdf).
 
 ![Placa de potencia v0.6, cobre visto desde la cara de componentes](evidencia/pcb_potencia_v0.6.png)

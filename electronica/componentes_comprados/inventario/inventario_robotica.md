@@ -102,6 +102,7 @@ Suma de los siete precios de las capturas iniciales: **ARS 59.254**. Es una refe
 - Se observan cables de entrada/salida, conectores, un anillo de ferrita y un selector o jumper azul.
 - Cantidad visible: 1.
 - Pendiente: tensión de salida actualmente configurada, corriente continua frente a pico y método de selección.
+- **01/11/2026 (DEC-21):** el diseño usa **dos UBEC, uno por servo** (placa de potencia v0.7). Este inventario registra una sola unidad: confirmar si ya está la segunda o comprarla.
 
 ### ROB-008 — DRV8871
 

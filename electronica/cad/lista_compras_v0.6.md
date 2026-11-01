@@ -1,5 +1,7 @@
 # Lista de compras y materiales: placas v0.6
 
+> **Reemplazada por la [v0.7](lista_compras_v0.7.md) el 01/11/2026** (un UBEC por servo).
+
 > **v0.6 (31/10/2026):** placas compactadas y sin la protección electrónica contra batería invertida (Q1, R29, D3): la batería se conecta con un **conector polarizado** en un cable corto a J1. Descartar las impresiones de versiones anteriores. Resumen para el equipo: [placas_v0.6_consolidado.pdf](placas_v0.6_consolidado.pdf); detalle: [placas_v0.6_completo.pdf](placas_v0.6_completo.pdf).
 
 Fecha: 31/10/2026 (v0.4: menos componentes, ver la nota; v0.3: buck de 3,3 V A9, conector del ultrasonido J27, sin D2, voltímetro con pads, placas de 10 × 15 cm). Sale de las especificaciones de [potencia](segway_potencia/especificacion_v0.6.json) y [lógica](segway_logica/especificacion_v0.6.json) y de las decisiones de montaje ([DEC-20](../planificacion/2026-10-26-decisiones-del-equipo.md)). Todo es de agujero pasante. Las cantidades son las de un juego de placas; la columna "Repuesto" sugiere qué conviene comprar de más.

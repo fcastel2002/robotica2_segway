@@ -1,0 +1,5486 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-01T11:01:12",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.7",
+    "schematic_parity": [],
+    "source": "segway_potencia.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "Pad PTH 1 [/GND] de W4",
+                    "pos": {
+                        "x": 116.4,
+                        "y": 84.2
+                    },
+                    "uuid": "3c345841-af48-4368-8aa9-fd0350b6dd76"
+                },
+                {
+                    "description": "Huella A8",
+                    "pos": {
+                        "x": 123.01,
+                        "y": 82.4
+                    },
+                    "uuid": "e7e1df65-9617-4cf3-af2d-ba74b3f77b17"
+                }
+            ],
+            "severity": "warning",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "Pad PTH 1 [/GND] de W2",
+                    "pos": {
+                        "x": 82.2,
+                        "y": 70.9
+                    },
+                    "uuid": "97f6c92c-ad0c-4f0f-a14e-5e7732422c20"
+                },
+                {
+                    "description": "Huella A7",
+                    "pos": {
+                        "x": 99.95,
+                        "y": 89.18
+                    },
+                    "uuid": "b7449375-e926-4089-bc57-0e71f9641f42"
+                }
+            ],
+            "severity": "warning",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "Pad PTH 1 [/GND] de W2",
+                    "pos": {
+                        "x": 89.900001,
+                        "y": 73.94
+                    },
+                    "uuid": "84b30d63-da6c-4a34-b296-770e9b7f0e1d"
+                },
+                {
+                    "description": "Huella A7",
+                    "pos": {
+                        "x": 99.95,
+                        "y": 89.18
+                    },
+                    "uuid": "b7449375-e926-4089-bc57-0e71f9641f42"
+                }
+            ],
+            "severity": "warning",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "Pad PTH 1 [/GND] de W3",
+                    "pos": {
+                        "x": 112.500001,
+                        "y": 70.9
+                    },
+                    "uuid": "fd1c472f-8f22-42a4-ad7a-b917b2a215cd"
+                },
+                {
+                    "description": "Huella A8",
+                    "pos": {
+                        "x": 123.01,
+                        "y": 82.4
+                    },
+                    "uuid": "e7e1df65-9617-4cf3-af2d-ba74b3f77b17"
+                }
+            ],
+            "severity": "warning",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segmento en Edge.Cuts",
+                    "pos": {
+                        "x": 149.4,
+                        "y": 28.4
+                    },
+                    "uuid": "442c7005-4a87-4b47-aab8-617e98205706"
+                },
+                {
+                    "description": "Segmento de J1 en F.Silkscreen",
+                    "pos": {
+                        "x": 138.88,
+                        "y": 66.73
+                    },
+                    "uuid": "310c6ddc-10c6-4018-b1fe-f0170eba5542"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segmento en Edge.Cuts",
+                    "pos": {
+                        "x": 149.4,
+                        "y": 28.4
+                    },
+                    "uuid": "442c7005-4a87-4b47-aab8-617e98205706"
+                },
+                {
+                    "description": "Segmento de J1 en F.Silkscreen",
+                    "pos": {
+                        "x": 150.32,
+                        "y": 77.13
+                    },
+                    "uuid": "98012325-c78d-4d5a-9b91-e43b0b170061"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segmento en Edge.Cuts",
+                    "pos": {
+                        "x": 146.4,
+                        "y": 102.4
+                    },
+                    "uuid": "576386c5-c2b2-4e3a-b158-2e2fdd17e7e9"
+                },
+                {
+                    "description": "Segmento de J15 en F.Silkscreen",
+                    "pos": {
+                        "x": 111.64,
+                        "y": 103.42
+                    },
+                    "uuid": "fbe42cde-d157-4b18-9c6b-7159970d8597"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segmento en Edge.Cuts",
+                    "pos": {
+                        "x": 146.4,
+                        "y": 102.4
+                    },
+                    "uuid": "576386c5-c2b2-4e3a-b158-2e2fdd17e7e9"
+                },
+                {
+                    "description": "Segmento de J15 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.2,
+                        "y": 93.38
+                    },
+                    "uuid": "5d24f365-44a6-43c5-9f17-0f956a4b522e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "La huella 'CP_Radial_D10.0mm_P5.00mm' no coincide con la copia en la biblioteca 'Capacitor_THT'",
+            "items": [
+                {
+                    "description": "Huella C1",
+                    "pos": {
+                        "x": 135.2,
+                        "y": 76.4
+                    },
+                    "uuid": "0961cd41-2c0f-45ea-907d-aba3f912a268"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J19",
+                    "pos": {
+                        "x": 46.85,
+                        "y": 95.7
+                    },
+                    "uuid": "0d49e367-5735-45d2-9e1f-ebc8985ae1cf"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'SolderWire-1.5sqmm_1x02_P6mm_D1.7mm_OD3mm' no coincide con la copia en la biblioteca 'Connector_Wire'",
+            "items": [
+                {
+                    "description": "Huella J3",
+                    "pos": {
+                        "x": 144.9,
+                        "y": 41.6
+                    },
+                    "uuid": "12f537f5-4b37-4c9f-985e-78080efe0ab5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'ROB-008_DRV8871_modulo_8p' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella A3",
+                    "pos": {
+                        "x": 88.5,
+                        "y": 60.96
+                    },
+                    "uuid": "1aee8f35-ac6e-4d4a-9ead-0728c10082b5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'PinHeader_1x03_P2.54mm_Vertical' no coincide con la copia en la biblioteca 'Connector_PinHeader_2.54mm'",
+            "items": [
+                {
+                    "description": "Huella J13",
+                    "pos": {
+                        "x": 46.85,
+                        "y": 89.95
+                    },
+                    "uuid": "1af96de8-f87b-44ef-b14b-8e967441ee91"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J16",
+                    "pos": {
+                        "x": 36.9,
+                        "y": 95.7
+                    },
+                    "uuid": "29322805-5a13-4005-a614-a5c25ca4eda1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'D_DO-15_P10.16mm_Horizontal' no coincide con la copia en la biblioteca 'Diode_THT'",
+            "items": [
+                {
+                    "description": "Huella D1",
+                    "pos": {
+                        "x": 135.4,
+                        "y": 53.5
+                    },
+                    "uuid": "29a59a5b-c471-45d7-a0ee-87fb62d0a841"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'C_Disc_D7.5mm_W5.0mm_P5.00mm' no coincide con la copia en la biblioteca 'Capacitor_THT'",
+            "items": [
+                {
+                    "description": "Huella C3",
+                    "pos": {
+                        "x": 135.2,
+                        "y": 68.2
+                    },
+                    "uuid": "2e75cebf-02e5-43ca-9c86-42c6b093e597"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'Fuseholder_Blade_Mini_Keystone_3568' no coincide con la copia en la biblioteca 'Fuse'",
+            "items": [
+                {
+                    "description": "Huella F2",
+                    "pos": {
+                        "x": 135.0,
+                        "y": 42.0
+                    },
+                    "uuid": "2fbfa699-8517-4ec0-89c6-68c1d71da739"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'Fuseholder_Blade_Mini_Keystone_3568' no coincide con la copia en la biblioteca 'Fuse'",
+            "items": [
+                {
+                    "description": "Huella F3",
+                    "pos": {
+                        "x": 135.0,
+                        "y": 49.4
+                    },
+                    "uuid": "39f206e7-b67a-4d53-ace9-bcb35152b2d9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'Fuseholder_Blade_Mini_Keystone_3568' no coincide con la copia en la biblioteca 'Fuse'",
+            "items": [
+                {
+                    "description": "Huella F5",
+                    "pos": {
+                        "x": 135.0,
+                        "y": 63.4
+                    },
+                    "uuid": "40355e4a-bb88-4935-980d-7243416e1d34"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'Fuseholder_Blade_ATO_Littelfuse_Pudenz_2_Pin' no coincide con la copia en la biblioteca 'Fuse'",
+            "items": [
+                {
+                    "description": "Huella F1",
+                    "pos": {
+                        "x": 144.9,
+                        "y": 58.9
+                    },
+                    "uuid": "55eb53e4-a861-441c-a4fa-c847bff84075"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'CP_Radial_D8.0mm_P3.50mm' no coincide con la copia en la biblioteca 'Capacitor_THT'",
+            "items": [
+                {
+                    "description": "Huella C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 85.45
+                    },
+                    "uuid": "63cf4077-5be9-4859-945d-18f1893b7127"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'CP_Radial_D8.0mm_P3.50mm' no coincide con la copia en la biblioteca 'Capacitor_THT'",
+            "items": [
+                {
+                    "description": "Huella C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 85.45
+                    },
+                    "uuid": "697cfce8-2caa-4e93-847d-571b02d0839d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W4",
+                    "pos": {
+                        "x": 116.4,
+                        "y": 84.2
+                    },
+                    "uuid": "6cddbd93-2346-4460-9b34-80a1cc1ef9c9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La huella 'ROB-008_DRV8871_modulo_8p' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella A4",
+                    "pos": {
+                        "x": 40.5,
+                        "y": 60.96
+                    },
+                    "uuid": "726d6700-db21-4ec4-89a7-118b4c79c2eb"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal' no coincide con la copia en la biblioteca 'Resistor_THT'",
+            "items": [
+                {
+                    "description": "Huella R5",
+                    "pos": {
+                        "x": 65.56,
+                        "y": 89.95
+                    },
+                    "uuid": "741e23f5-ade1-4a77-aea4-e7b9a542f2b3"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J1",
+                    "pos": {
+                        "x": 144.9,
+                        "y": 74.47
+                    },
+                    "uuid": "76c4561b-7946-4735-87b6-e3d148328e9d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'PinHeader_1x03_P2.54mm_Vertical' no coincide con la copia en la biblioteca 'Connector_PinHeader_2.54mm'",
+            "items": [
+                {
+                    "description": "Huella J14",
+                    "pos": {
+                        "x": 36.9,
+                        "y": 89.95
+                    },
+                    "uuid": "8620c383-b3b1-4769-b4ce-7a7c032ca886"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'SolderWire-0.5sqmm_1x02_P4.6mm_D0.9mm_OD2.1mm' no coincide con la copia en la biblioteca 'Connector_Wire'",
+            "items": [
+                {
+                    "description": "Huella J18",
+                    "pos": {
+                        "x": 130.5,
+                        "y": 87.2
+                    },
+                    "uuid": "9724a4a8-95f4-49f5-bc54-f591d48a0e13"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'ROB-002_INA219_MCU-219_8p' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella A6",
+                    "pos": {
+                        "x": 54.5,
+                        "y": 58.9
+                    },
+                    "uuid": "97b1cb44-1375-428c-bf4f-2605cc7095f2"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_MKDS-1,5-4-5.08_1x04_P5.08mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J15",
+                    "pos": {
+                        "x": 114.3,
+                        "y": 98.7
+                    },
+                    "uuid": "a30d2b54-81cb-4208-8c6a-4df240c42195"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J11",
+                    "pos": {
+                        "x": 83.27,
+                        "y": 33.02
+                    },
+                    "uuid": "ab789ec9-3f59-4760-9531-ffc3013acaf1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'ROB-009_INA226_modulo_8p' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella A7",
+                    "pos": {
+                        "x": 99.95,
+                        "y": 89.18
+                    },
+                    "uuid": "b7449375-e926-4089-bc57-0e71f9641f42"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'IDC-Header_2x08_P2.54mm_Vertical' no coincide con la copia en la biblioteca 'Connector_IDC'",
+            "items": [
+                {
+                    "description": "Huella J20",
+                    "pos": {
+                        "x": 76.92,
+                        "y": 89.18
+                    },
+                    "uuid": "ba92def8-cb73-4954-8dca-77178dd858e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'Fuseholder_Blade_Mini_Keystone_3568' no coincide con la copia en la biblioteca 'Fuse'",
+            "items": [
+                {
+                    "description": "Huella F4",
+                    "pos": {
+                        "x": 138.0,
+                        "y": 85.1
+                    },
+                    "uuid": "baa91fb8-5090-4a82-95e3-ee137346d37f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal' no coincide con la copia en la biblioteca 'TerminalBlock_Phoenix'",
+            "items": [
+                {
+                    "description": "Huella J12",
+                    "pos": {
+                        "x": 41.3,
+                        "y": 33.02
+                    },
+                    "uuid": "c1116aad-2f50-4d18-8b19-2a4f1f31137f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W1",
+                    "pos": {
+                        "x": 112.6,
+                        "y": 65.0
+                    },
+                    "uuid": "c75132d8-beb0-4a9c-8c48-da8d73e7f3bc"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W2",
+                    "pos": {
+                        "x": 82.2,
+                        "y": 70.9
+                    },
+                    "uuid": "d430aa2b-9b40-4e82-a2b0-922f93172199"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La configuración actual no incluye la biblioteca de huellas 'segway_puentes'",
+            "items": [
+                {
+                    "description": "Huella W3",
+                    "pos": {
+                        "x": 105.04,
+                        "y": 70.9
+                    },
+                    "uuid": "db777911-3a4a-4684-880b-3f54294d268c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "La huella 'ROB-002_INA219_MCU-219_8p' no coincide con la copia en la biblioteca 'segway_modulos'",
+            "items": [
+                {
+                    "description": "Huella A5",
+                    "pos": {
+                        "x": 102.5,
+                        "y": 58.9
+                    },
+                    "uuid": "dc6a7204-6e14-470a-8851-cc74a8aba949"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "La huella 'R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal' no coincide con la copia en la biblioteca 'Resistor_THT'",
+            "items": [
+                {
+                    "description": "Huella R6",
+                    "pos": {
+                        "x": 61.4,
+                        "y": 76.4
+                    },
+                    "uuid": "ed80ab55-8d23-4e47-942b-9e03760c5188"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A7 en F.Silkscreen",
+                    "pos": {
+                        "x": 81.14,
+                        "y": 90.8
+                    },
+                    "uuid": "460429d4-329e-4b3f-8acf-579c1055ce3a"
+                },
+                {
+                    "description": "Segmento de J20 en F.Silkscreen",
+                    "pos": {
+                        "x": 80.6,
+                        "y": 89.18
+                    },
+                    "uuid": "7859e92f-390a-483d-80e6-ea36e5428281"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A7 en F.Silkscreen",
+                    "pos": {
+                        "x": 81.14,
+                        "y": 90.8
+                    },
+                    "uuid": "460429d4-329e-4b3f-8acf-579c1055ce3a"
+                },
+                {
+                    "description": "Segmento de J20 en F.Silkscreen",
+                    "pos": {
+                        "x": 81.6,
+                        "y": 88.68
+                    },
+                    "uuid": "eb8f3799-98f1-4c6f-ad50-329998988073"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 131.78,
+                        "y": 81.397
+                    },
+                    "uuid": "20450eba-eb81-41aa-81e6-f52e7e9fa8f0"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 131.82,
+                        "y": 81.404
+                    },
+                    "uuid": "05fece8c-0bc1-4842-b9b3-58107da31a72"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 131.86,
+                        "y": 81.411
+                    },
+                    "uuid": "d7d3201d-fad0-4c6b-98b6-00a0d9214617"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 131.9,
+                        "y": 81.417
+                    },
+                    "uuid": "8e2a1b90-f972-432c-bf91-2c065a2f405e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 131.94,
+                        "y": 81.423
+                    },
+                    "uuid": "10678be6-c380-45d0-b012-c93bf1ca3250"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 131.98,
+                        "y": 81.429
+                    },
+                    "uuid": "30b07176-9822-4120-8f44-11cd523e8cfe"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.02,
+                        "y": 81.435
+                    },
+                    "uuid": "fd389580-d04e-4481-a5c1-7ccdf25a0033"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.06,
+                        "y": 81.44
+                    },
+                    "uuid": "f8fe1aea-40bf-49b0-89cc-0e11081edfb6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.1,
+                        "y": 81.445
+                    },
+                    "uuid": "c1664cbb-5a59-4141-af5e-c1e9b9df6aa8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.14,
+                        "y": 81.449
+                    },
+                    "uuid": "09008416-819c-4871-9811-787739e1c16e"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.18,
+                        "y": 81.454
+                    },
+                    "uuid": "158a38ec-bd77-4080-8362-711baa8412b6"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.22,
+                        "y": 81.457
+                    },
+                    "uuid": "b5ea0fac-523a-453d-ae85-c913443c991f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.26,
+                        "y": 81.461
+                    },
+                    "uuid": "5ec3dc85-95ff-4185-a2c8-f02fe6291d4f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.3,
+                        "y": 81.464
+                    },
+                    "uuid": "52a27c61-bdd9-49d5-89a3-55fb42b0c304"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.34,
+                        "y": 81.467
+                    },
+                    "uuid": "171479bd-05b7-4a30-8307-42715959cc96"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.38,
+                        "y": 81.47
+                    },
+                    "uuid": "07934a20-c1c9-49a1-90c5-d824e54814fe"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.42,
+                        "y": 81.472
+                    },
+                    "uuid": "476ca382-595e-4dee-ab7e-ea3780b9f59c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.46,
+                        "y": 81.474
+                    },
+                    "uuid": "3ccd0db9-1f4c-4c58-95d4-39a1fb751271"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.54,
+                        "y": 81.477
+                    },
+                    "uuid": "0b9cbd9f-96d6-4748-bb15-e6b22cf5073a"
+                },
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.58,
+                        "y": 81.479
+                    },
+                    "uuid": "8b996c4f-4ff0-4ec9-9769-011543f89a27"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.62,
+                        "y": 81.479
+                    },
+                    "uuid": "746ac532-078c-45d9-9867-f0e62a265277"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.66,
+                        "y": 81.48
+                    },
+                    "uuid": "7575bcb5-204a-4932-a69f-109ccfeec471"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.5,
+                        "y": 81.476
+                    },
+                    "uuid": "b4cbd79d-7739-47e5-9f61-30f353cd6edf"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C3",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 71.95
+                    },
+                    "uuid": "4216add1-0964-4938-ae68-6dcf36f0dcdf"
+                },
+                {
+                    "description": "Círculo de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 76.4
+                    },
+                    "uuid": "8ba0beaa-0993-4990-867b-ef7832624131"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C3 en F.Silkscreen",
+                    "pos": {
+                        "x": 128.83,
+                        "y": 65.58
+                    },
+                    "uuid": "2e0c623d-c11d-4022-95aa-013f2a13e50c"
+                },
+                {
+                    "description": "Campo de referencia de F5",
+                    "pos": {
+                        "x": 130.04,
+                        "y": 66.07
+                    },
+                    "uuid": "d9f84d13-d059-464a-8ddd-e672054ff4c5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A3 en F.Silkscreen",
+                    "pos": {
+                        "x": 74.42,
+                        "y": 39.26
+                    },
+                    "uuid": "b8e30497-8ccc-44a5-8a7d-94f3b4efcd87"
+                },
+                {
+                    "description": "Campo de referencia de J11",
+                    "pos": {
+                        "x": 80.73,
+                        "y": 39.34
+                    },
+                    "uuid": "e3d5eb0a-8732-430d-8991-9f23a33d7dc5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de W2",
+                    "pos": {
+                        "x": 87.65,
+                        "y": 72.42
+                    },
+                    "uuid": "3c7965ac-0ef9-4762-b21d-98887f92765b"
+                },
+                {
+                    "description": "Segmento de W2 en F.Silkscreen",
+                    "pos": {
+                        "x": 82.2,
+                        "y": 70.9
+                    },
+                    "uuid": "b87fa0fd-af8e-4a99-b8de-6e49edff4fa8"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de W1",
+                    "pos": {
+                        "x": 107.95,
+                        "y": 65.95
+                    },
+                    "uuid": "1c9f5bc0-2dbb-446c-a8e8-718eb00d4c8a"
+                },
+                {
+                    "description": "Segmento de W1 en F.Silkscreen",
+                    "pos": {
+                        "x": 112.6,
+                        "y": 65.0
+                    },
+                    "uuid": "48170086-856f-4180-be2c-e0843158078e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de W3 en F.Silkscreen",
+                    "pos": {
+                        "x": 105.04,
+                        "y": 70.9
+                    },
+                    "uuid": "87134a18-2671-443a-9bbd-253ef2a84f0d"
+                },
+                {
+                    "description": "Campo de referencia de W3",
+                    "pos": {
+                        "x": 110.37,
+                        "y": 70.9
+                    },
+                    "uuid": "ac37d667-87d9-4aa3-af42-dce538198e69"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de F3 en F.Silkscreen",
+                    "pos": {
+                        "x": 138.14,
+                        "y": 44.23
+                    },
+                    "uuid": "8ddacf53-cb4f-45ec-bf4f-fa23cb4c8ffe"
+                },
+                {
+                    "description": "Campo de referencia de F2",
+                    "pos": {
+                        "x": 130.04,
+                        "y": 44.67
+                    },
+                    "uuid": "9ed8f681-d921-4c75-a0ab-a56dc00e935a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de F3",
+                    "pos": {
+                        "x": 130.04,
+                        "y": 52.07
+                    },
+                    "uuid": "0049cfce-70c2-43e4-911f-826881dd1c8a"
+                },
+                {
+                    "description": "Segmento de D1 en F.Silkscreen",
+                    "pos": {
+                        "x": 134.24,
+                        "y": 51.58
+                    },
+                    "uuid": "e08d90fc-0b7d-47ee-bda4-afeaf7ae8973"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C1",
+                    "pos": {
+                        "x": 132.7,
+                        "y": 82.65
+                    },
+                    "uuid": "a1829f47-8796-4b66-88cf-df78a1b951f5"
+                },
+                {
+                    "description": "Segmento de F4 en F.Silkscreen",
+                    "pos": {
+                        "x": 132.83,
+                        "y": 81.96
+                    },
+                    "uuid": "ceb9b7c2-da09-46d4-9624-48b6159f5ef4"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Círculo de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 83.7
+                    },
+                    "uuid": "b04fcb94-ab90-4d58-aa6f-b5cf0b6069c0"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de J16",
+                    "pos": {
+                        "x": 38.65,
+                        "y": 91.48
+                    },
+                    "uuid": "19ad9857-cbb8-4eaa-a410-ac684012180f"
+                },
+                {
+                    "description": "Segmento de J14 en F.Silkscreen",
+                    "pos": {
+                        "x": 38.17,
+                        "y": 91.33
+                    },
+                    "uuid": "343163cf-f6c3-40fd-a80c-0e5b42124695"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.37,
+                        "y": 83.42
+                    },
+                    "uuid": "40958c07-4449-4153-9fb7-f4eba47bc5b6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.372,
+                        "y": 83.38
+                    },
+                    "uuid": "f13ac791-4c2c-43ba-b8d4-ccc51aa87e9e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.376,
+                        "y": 83.34
+                    },
+                    "uuid": "ab237879-2f54-4c4c-af45-0564fa5e2cc1"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.379,
+                        "y": 83.3
+                    },
+                    "uuid": "2e8f1cee-7217-458f-91ac-388fdc750238"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.384,
+                        "y": 83.26
+                    },
+                    "uuid": "e8958d0e-bc51-49be-b70c-f6f7bc6da7a5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.388,
+                        "y": 83.22
+                    },
+                    "uuid": "3b05540e-738a-4ab7-82f6-5e04b4b0d486"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.393,
+                        "y": 83.18
+                    },
+                    "uuid": "046bd9f8-6c34-406a-aa34-aab8aabbb0d4"
+                },
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.398,
+                        "y": 83.14
+                    },
+                    "uuid": "dcab9f70-31ba-4f22-af6e-1b3887964349"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.404,
+                        "y": 83.1
+                    },
+                    "uuid": "c84f238a-ff0a-4124-904b-1f436edf07ea"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de C9",
+                    "pos": {
+                        "x": 44.14,
+                        "y": 83.7
+                    },
+                    "uuid": "16d563e5-e723-4fba-814f-ae8fc4a3cd10"
+                },
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.41,
+                        "y": 83.06
+                    },
+                    "uuid": "1c604598-0833-4d79-94fb-aa1d137ff56c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Campo de referencia de J16",
+                    "pos": {
+                        "x": 38.65,
+                        "y": 91.48
+                    },
+                    "uuid": "19ad9857-cbb8-4eaa-a410-ac684012180f"
+                },
+                {
+                    "description": "Segmento de J14 en F.Silkscreen",
+                    "pos": {
+                        "x": 38.17,
+                        "y": 91.33
+                    },
+                    "uuid": "d1b15f1c-d466-499b-a64c-9a8d48ebb6bd"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de J13 en F.Silkscreen",
+                    "pos": {
+                        "x": 48.12,
+                        "y": 91.33
+                    },
+                    "uuid": "14fc13c6-cd2c-4324-b112-f7633dfe93b8"
+                },
+                {
+                    "description": "Campo de referencia de J19",
+                    "pos": {
+                        "x": 48.6,
+                        "y": 91.48
+                    },
+                    "uuid": "ac47e135-f36b-438a-9a09-e6a820bef743"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de J13 en F.Silkscreen",
+                    "pos": {
+                        "x": 48.12,
+                        "y": 91.33
+                    },
+                    "uuid": "5e594361-644f-4f19-9644-0c5e03a4a285"
+                },
+                {
+                    "description": "Campo de referencia de J19",
+                    "pos": {
+                        "x": 48.6,
+                        "y": 91.48
+                    },
+                    "uuid": "ac47e135-f36b-438a-9a09-e6a820bef743"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segmento de A4 en F.Silkscreen",
+                    "pos": {
+                        "x": 26.42,
+                        "y": 39.26
+                    },
+                    "uuid": "5af635a1-de0a-4293-b86d-faa99ee826b3"
+                },
+                {
+                    "description": "Campo de referencia de J12",
+                    "pos": {
+                        "x": 38.76,
+                        "y": 39.34
+                    },
+                    "uuid": "9b7ecf18-678a-4922-b833-f7fabadc77e3"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R5 en F.Silkscreen",
+                    "pos": {
+                        "x": 56.44,
+                        "y": 89.95
+                    },
+                    "uuid": "fcd8ca79-e716-49ad-a986-a870b19ab1a4"
+                },
+                {
+                    "description": "Pad PTH 2 [/SERVO_IZQ_SIG] de R5",
+                    "pos": {
+                        "x": 55.4,
+                        "y": 89.95
+                    },
+                    "uuid": "c965f1c3-9b18-42e1-98d4-9f5f653fbf52"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R5 en F.Silkscreen",
+                    "pos": {
+                        "x": 64.52,
+                        "y": 89.95
+                    },
+                    "uuid": "2899960c-eed9-4713-b0a9-0a646a9ecdfe"
+                },
+                {
+                    "description": "Pad PTH 1 [/SERVO_IZQ_MCU] de R5",
+                    "pos": {
+                        "x": 65.56,
+                        "y": 89.95
+                    },
+                    "uuid": "0998cf31-29d2-442b-a4a2-39e640bd1af7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.34,
+                        "y": 80.904
+                    },
+                    "uuid": "534da573-814a-4234-ad6a-8b54306e2f4d"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.38,
+                        "y": 80.924
+                    },
+                    "uuid": "5bbd6bf3-b51c-4ddc-b86b-28e1ff03537e"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.42,
+                        "y": 80.944
+                    },
+                    "uuid": "a55e16a5-9ea9-459a-a11b-ffa4aa4861dc"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 129.98,
+                        "y": 80.698
+                    },
+                    "uuid": "dde080b0-d1fa-428b-8cba-5029949dc09b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.02,
+                        "y": 80.723
+                    },
+                    "uuid": "40363259-b798-49d7-b3e6-ca3c37079d54"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.06,
+                        "y": 80.747
+                    },
+                    "uuid": "67492798-25c1-4dfa-bb85-5977ab250283"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.1,
+                        "y": 80.771
+                    },
+                    "uuid": "b59eaeea-caba-4639-9930-bed19ea827a0"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.14,
+                        "y": 80.794
+                    },
+                    "uuid": "b49de2f5-2b9c-43b2-9bea-de2e250c7dbd"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.18,
+                        "y": 80.817
+                    },
+                    "uuid": "ddb67436-b479-46e1-8bb9-73dcd08fd6f2"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.22,
+                        "y": 80.839
+                    },
+                    "uuid": "d72cb127-beb9-455c-9c0b-3978fdcbeef3"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.26,
+                        "y": 80.861
+                    },
+                    "uuid": "909cfdf9-940e-4b8f-a1d8-353e6e90db56"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.3,
+                        "y": 80.883
+                    },
+                    "uuid": "036b1ab4-2993-4c7f-b2bd-b6511769591b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 124.27,
+                        "y": 83.86
+                    },
+                    "uuid": "2f5f8110-c3f4-4f69-ade9-9c224e43702f"
+                },
+                {
+                    "description": "Pad PTH 1 [/VM_LOG] de A8",
+                    "pos": {
+                        "x": 123.01,
+                        "y": 82.4
+                    },
+                    "uuid": "f3db6628-1181-4040-a078-f155d27efd9e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 124.27,
+                        "y": 83.86
+                    },
+                    "uuid": "2f5f8110-c3f4-4f69-ade9-9c224e43702f"
+                },
+                {
+                    "description": "Pad PTH 3 [/5V_MCU] de A8",
+                    "pos": {
+                        "x": 123.01,
+                        "y": 68.1
+                    },
+                    "uuid": "ca498269-9deb-43a4-b913-33c5e7d96970"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 129.98,
+                        "y": 75.16
+                    },
+                    "uuid": "b770b9a8-b991-453f-ad60-ef33fac9b0a4"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.02,
+                        "y": 75.16
+                    },
+                    "uuid": "f868e75d-28fc-49ab-899e-97b03fd5b0d0"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.06,
+                        "y": 75.16
+                    },
+                    "uuid": "9e8fd796-2694-48e4-8aaa-cdc5be965ddd"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.1,
+                        "y": 75.16
+                    },
+                    "uuid": "534e0259-cc2d-4229-a696-e031de22aa75"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.14,
+                        "y": 75.16
+                    },
+                    "uuid": "a52939cf-9b64-41e7-afbd-f67ede4da99a"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.18,
+                        "y": 75.16
+                    },
+                    "uuid": "c0b596e2-fc38-4b31-80dc-eb1f4c4f47dc"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.22,
+                        "y": 75.16
+                    },
+                    "uuid": "c922e2d5-3bdf-4fde-b04c-9e8fc3fbb0f9"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.26,
+                        "y": 75.16
+                    },
+                    "uuid": "2fbf6236-295e-43d9-9758-e190a51b0e61"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.3,
+                        "y": 75.16
+                    },
+                    "uuid": "431bd0f7-dd0d-4486-8d89-2902534bdb41"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.34,
+                        "y": 75.16
+                    },
+                    "uuid": "2f100324-66bf-462d-8122-8c62e165b83f"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.38,
+                        "y": 75.16
+                    },
+                    "uuid": "f80661ba-e7dd-410c-b9d0-28052c239dae"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C1 en F.Silkscreen",
+                    "pos": {
+                        "x": 130.42,
+                        "y": 75.16
+                    },
+                    "uuid": "f787faf7-77c6-4b18-b279-ad3371a39116"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C1",
+                    "pos": {
+                        "x": 130.2,
+                        "y": 76.4
+                    },
+                    "uuid": "cc9da92b-1ea5-4a41-9531-e45fa4fe61e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 113.25,
+                        "y": 66.64
+                    },
+                    "uuid": "bce676cc-cc73-4b61-8be9-5563064d909e"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de A8",
+                    "pos": {
+                        "x": 114.51,
+                        "y": 82.4
+                    },
+                    "uuid": "793dc8ec-0704-414d-80a3-d1de3112a9bd"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 113.25,
+                        "y": 66.64
+                    },
+                    "uuid": "bce676cc-cc73-4b61-8be9-5563064d909e"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de A8",
+                    "pos": {
+                        "x": 114.51,
+                        "y": 68.1
+                    },
+                    "uuid": "959924d7-2532-452e-b187-f75b08b96dd9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 124.27,
+                        "y": 66.64
+                    },
+                    "uuid": "2add9b1f-21d2-49ea-9a28-3c8d77221c97"
+                },
+                {
+                    "description": "Pad PTH 3 [/5V_MCU] de A8",
+                    "pos": {
+                        "x": 123.01,
+                        "y": 68.1
+                    },
+                    "uuid": "ca498269-9deb-43a4-b913-33c5e7d96970"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 124.27,
+                        "y": 66.64
+                    },
+                    "uuid": "2add9b1f-21d2-49ea-9a28-3c8d77221c97"
+                },
+                {
+                    "description": "Pad PTH 4 [/GND] de A8",
+                    "pos": {
+                        "x": 114.51,
+                        "y": 68.1
+                    },
+                    "uuid": "959924d7-2532-452e-b187-f75b08b96dd9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de D1 en F.Silkscreen",
+                    "pos": {
+                        "x": 134.24,
+                        "y": 52.06
+                    },
+                    "uuid": "13fad1b6-5e15-4714-aafb-cbb20bea7f4e"
+                },
+                {
+                    "description": "Pad PTH 1 [/VM_BUS] de D1",
+                    "pos": {
+                        "x": 135.4,
+                        "y": 53.5
+                    },
+                    "uuid": "47be7009-e706-4cad-ab17-c2921bc758b5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de D1 en F.Silkscreen",
+                    "pos": {
+                        "x": 134.24,
+                        "y": 54.94
+                    },
+                    "uuid": "1788a4b1-a408-45d6-a9ee-3a3b90fb8313"
+                },
+                {
+                    "description": "Pad PTH 1 [/VM_BUS] de D1",
+                    "pos": {
+                        "x": 135.4,
+                        "y": 53.5
+                    },
+                    "uuid": "47be7009-e706-4cad-ab17-c2921bc758b5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 113.25,
+                        "y": 83.86
+                    },
+                    "uuid": "a16ab0bf-4235-4474-9a63-a8271800e18a"
+                },
+                {
+                    "description": "Pad PTH 1 [/VM_LOG] de A8",
+                    "pos": {
+                        "x": 123.01,
+                        "y": 82.4
+                    },
+                    "uuid": "f3db6628-1181-4040-a078-f155d27efd9e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de A8 en F.Silkscreen",
+                    "pos": {
+                        "x": 113.25,
+                        "y": 83.86
+                    },
+                    "uuid": "a16ab0bf-4235-4474-9a63-a8271800e18a"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de A8",
+                    "pos": {
+                        "x": 114.51,
+                        "y": 82.4
+                    },
+                    "uuid": "793dc8ec-0704-414d-80a3-d1de3112a9bd"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R6 en F.Silkscreen",
+                    "pos": {
+                        "x": 60.36,
+                        "y": 76.4
+                    },
+                    "uuid": "9ba4d03b-1b8d-4888-9953-ca0ce15fef6b"
+                },
+                {
+                    "description": "Pad PTH 1 [/SERVO_DER_MCU] de R6",
+                    "pos": {
+                        "x": 61.4,
+                        "y": 76.4
+                    },
+                    "uuid": "35a3938c-9404-4bce-bf52-5d434be240be"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.501,
+                        "y": 82.46
+                    },
+                    "uuid": "c0af9c0b-6b20-46a7-aa0a-319dc8fd6631"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.514,
+                        "y": 82.42
+                    },
+                    "uuid": "ab802c3f-4c17-47e8-9310-c2f321751cc3"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.527,
+                        "y": 82.38
+                    },
+                    "uuid": "84580411-6683-4fcc-9905-35bad3e9f82b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.541,
+                        "y": 82.34
+                    },
+                    "uuid": "1eda3eaa-70cc-426c-b2f7-18e9f8089ee9"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.555,
+                        "y": 82.3
+                    },
+                    "uuid": "c7aa0d79-73d1-4fbf-9d41-7245bd31cb5f"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.57,
+                        "y": 82.26
+                    },
+                    "uuid": "7519047f-dc47-4557-ba1d-278928876ae1"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.585,
+                        "y": 82.22
+                    },
+                    "uuid": "3fe088e6-5449-4c70-b8fe-4f67ecb0133b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.601,
+                        "y": 82.18
+                    },
+                    "uuid": "7836e968-aaee-411b-b48b-9a378cf63520"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.617,
+                        "y": 82.14
+                    },
+                    "uuid": "ab6de765-9921-4b2a-a3ec-14dd978ce51f"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.633,
+                        "y": 82.1
+                    },
+                    "uuid": "90a02cd9-0a57-43a1-95b5-151be5d62ad4"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.65,
+                        "y": 82.06
+                    },
+                    "uuid": "80b6e3f1-f338-4018-86f4-dfbfb73593bd"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.668,
+                        "y": 82.02
+                    },
+                    "uuid": "46cfa0a6-6b6b-42e0-9b7c-c99196dc4e18"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.686,
+                        "y": 81.98
+                    },
+                    "uuid": "45fd76bf-703d-421f-abf0-346632f77b7e"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.705,
+                        "y": 81.94
+                    },
+                    "uuid": "dae2601d-e16d-460e-aea6-5820fcf4c8e7"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.724,
+                        "y": 81.9
+                    },
+                    "uuid": "4147b293-0242-4aea-8b4a-3a9d9c2f3842"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.744,
+                        "y": 81.86
+                    },
+                    "uuid": "7852ad80-bc5a-4475-bd20-bb25951bc6fc"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.764,
+                        "y": 81.82
+                    },
+                    "uuid": "99d68cb6-2319-431a-9255-94f65ed220f9"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.785,
+                        "y": 81.78
+                    },
+                    "uuid": "b2eb6c31-17bf-43cb-9dab-39c4531e6d0d"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.806,
+                        "y": 81.74
+                    },
+                    "uuid": "c2ce517c-3d2c-4370-9384-8a58a595fdac"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.828,
+                        "y": 81.7
+                    },
+                    "uuid": "c252a887-71e8-4575-a027-9986113860b7"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.851,
+                        "y": 81.66
+                    },
+                    "uuid": "8bb5ada8-f57b-465e-ba49-50dd54667b0b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.874,
+                        "y": 81.62
+                    },
+                    "uuid": "c5bed022-0848-4f5a-bf76-2b0c42307ae9"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.897,
+                        "y": 81.58
+                    },
+                    "uuid": "a96111a0-3e96-455c-b7c9-065841583a55"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.922,
+                        "y": 81.54
+                    },
+                    "uuid": "2b2852eb-89bb-408f-b154-4b65bede72bb"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.947,
+                        "y": 81.5
+                    },
+                    "uuid": "6f1b4152-35f8-4e33-990b-0f9ef67ac5d3"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.972,
+                        "y": 81.46
+                    },
+                    "uuid": "214d7099-4a89-48c7-a281-649a7663e07f"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.354,
+                        "y": 83.1
+                    },
+                    "uuid": "af9a9106-ab01-4635-a5b4-4484dbbdcef2"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.36,
+                        "y": 83.06
+                    },
+                    "uuid": "9a4ad954-2603-4da4-9382-ee3d0f8658d5"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 45.367,
+                        "y": 83.02
+                    },
+                    "uuid": "3e2eea30-6381-4932-94a9-337cbe002d34"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 46.408,
+                        "y": 80.9
+                    },
+                    "uuid": "ed963937-c4b1-4492-9dc8-11c8bd99560b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 46.445,
+                        "y": 80.86
+                    },
+                    "uuid": "c467b947-26fe-4d04-8c46-ed07f2e552aa"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 46.484,
+                        "y": 80.82
+                    },
+                    "uuid": "6389f190-80bc-451d-b87f-dfeaaf2f88b1"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.26
+                    },
+                    "uuid": "4a4aab65-6e89-49db-a433-fa52c16d28d8"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.3
+                    },
+                    "uuid": "31d35758-18dc-427d-aa90-90a12b661140"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.34
+                    },
+                    "uuid": "0222d396-dadc-4343-9a58-dc171ca38252"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.38
+                    },
+                    "uuid": "6d04e5a9-479f-4a12-98a4-9644d42ea234"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.42
+                    },
+                    "uuid": "9357d5e1-eb96-45a3-80d2-c3b63c15474b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.46
+                    },
+                    "uuid": "f7ce25ca-bdd8-402d-87dc-ab1c3aa46d35"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.46
+                    },
+                    "uuid": "98fb4ad0-b993-449b-9cf8-c3a6f3469c00"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.5
+                    },
+                    "uuid": "ada7b855-bc83-4bec-9900-377e6424b3b1"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.54
+                    },
+                    "uuid": "971556ea-3b56-4327-8a5f-f1765f97bd6f"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.58
+                    },
+                    "uuid": "cb173f58-1ce0-4410-8415-81f810c17b13"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de R6 en F.Silkscreen",
+                    "pos": {
+                        "x": 52.28,
+                        "y": 76.4
+                    },
+                    "uuid": "2d59cab1-7d20-45aa-b186-ffa81dee3659"
+                },
+                {
+                    "description": "Pad PTH 2 [/SERVO_DER_SIG] de R6",
+                    "pos": {
+                        "x": 51.24,
+                        "y": 76.4
+                    },
+                    "uuid": "76075583-41c3-4d6d-8fa7-bb8f2289e923"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.62
+                    },
+                    "uuid": "2525b0d1-0f16-417e-86bf-8ae709a44bd3"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.66
+                    },
+                    "uuid": "b22b9287-6655-46d1-83e3-5d76a12b462b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.7
+                    },
+                    "uuid": "e3239eb2-c143-40a7-99ca-1b072b8fc082"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.74
+                    },
+                    "uuid": "b3f67162-d32d-4b92-88e8-b3e2e33cef1f"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.78
+                    },
+                    "uuid": "51c4205a-7430-4064-b5ae-86356e1c7289"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.82
+                    },
+                    "uuid": "9ec17d28-8d4d-4931-891b-bfe1042fe89a"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.86
+                    },
+                    "uuid": "7bfb1e0e-de96-43af-8b83-9c71f8d2e7ad"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.9
+                    },
+                    "uuid": "e753f7b2-1ea0-4e00-9ea5-ddad0ee06752"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.94
+                    },
+                    "uuid": "2aeaff05-d4e4-40dd-b530-69a307e8ad68"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 81.98
+                    },
+                    "uuid": "ee1e645c-af08-44ea-8849-3160efd15c20"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.02
+                    },
+                    "uuid": "cbf90016-34b3-4576-951d-6c0137c2fa32"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.06
+                    },
+                    "uuid": "d2839beb-05a8-483d-9cb6-6ea473152eac"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.1
+                    },
+                    "uuid": "dc7a9f2f-c424-488f-9e1f-2fe925f02921"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.14
+                    },
+                    "uuid": "1a40de44-c3a0-4edd-971e-23b6823ef217"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.18
+                    },
+                    "uuid": "4dd592fe-b564-4347-acf6-b94f2cb877b6"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C9 en F.Silkscreen",
+                    "pos": {
+                        "x": 50.43,
+                        "y": 82.22
+                    },
+                    "uuid": "c0b069d2-c521-445f-b4b7-5451ad2a5a32"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C9",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 81.95
+                    },
+                    "uuid": "6dd4e712-8750-4fd8-b27e-024570dc1739"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.814,
+                        "y": 81.82
+                    },
+                    "uuid": "c48f8035-6c1a-4274-8463-0b844d5efa58"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.835,
+                        "y": 81.78
+                    },
+                    "uuid": "7a8fe2b0-84d8-4357-a986-3e8d2b81ab31"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.856,
+                        "y": 81.74
+                    },
+                    "uuid": "834bb54b-e8e4-4107-81a2-3803d74c287a"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.878,
+                        "y": 81.7
+                    },
+                    "uuid": "fd8f4155-8bf5-4bcf-814d-2e6c0119e803"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.901,
+                        "y": 81.66
+                    },
+                    "uuid": "0df0ed88-b66d-4123-a710-13032fc6a0d9"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.924,
+                        "y": 81.62
+                    },
+                    "uuid": "64bc69ff-3807-463a-a6ac-8af0a57c12d8"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.947,
+                        "y": 81.58
+                    },
+                    "uuid": "aeceb41c-c69d-4ce2-9974-0efff6cb607d"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.972,
+                        "y": 81.54
+                    },
+                    "uuid": "a6008b6c-ca59-4a3c-b6b8-99ebdbf5bccf"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.997,
+                        "y": 81.5
+                    },
+                    "uuid": "071aa954-2644-41b2-8ae6-8f563d2d321d"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 36.022,
+                        "y": 81.46
+                    },
+                    "uuid": "f7b23d9a-1172-41aa-ad99-b3fc03db57f3"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.551,
+                        "y": 82.46
+                    },
+                    "uuid": "2943d21c-45a6-4095-97a6-3d02c23daf2f"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.564,
+                        "y": 82.42
+                    },
+                    "uuid": "5b1195f1-fc95-4521-8afc-9fe7cfd3f701"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.577,
+                        "y": 82.38
+                    },
+                    "uuid": "b87c4deb-8be0-4df8-bf28-46f30f280d5b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.591,
+                        "y": 82.34
+                    },
+                    "uuid": "c8d6a29d-69ed-4c65-87be-52ea402d1e71"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.605,
+                        "y": 82.3
+                    },
+                    "uuid": "968e5845-6faa-4a04-ab81-1ab023fecf59"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.62,
+                        "y": 82.26
+                    },
+                    "uuid": "d68b6a6b-250e-4b3e-9935-39261f259668"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.635,
+                        "y": 82.22
+                    },
+                    "uuid": "a9a0c122-b221-4e7e-930c-45ccef56a209"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.651,
+                        "y": 82.18
+                    },
+                    "uuid": "c3370681-bc28-45f4-bd01-88eda1502ead"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.667,
+                        "y": 82.14
+                    },
+                    "uuid": "8d08fc46-5d52-4258-aa08-2a67c6cd4954"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.683,
+                        "y": 82.1
+                    },
+                    "uuid": "1080a7bc-97fd-4b9a-b780-b97897e8a5de"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.7,
+                        "y": 82.06
+                    },
+                    "uuid": "306c2d3a-fb43-413e-a2cb-5cabc74ce071"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.718,
+                        "y": 82.02
+                    },
+                    "uuid": "bed2b751-7622-425c-b9c3-2e4a831c6e80"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.736,
+                        "y": 81.98
+                    },
+                    "uuid": "46572222-85fa-412f-b265-e2ada8cc79af"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.755,
+                        "y": 81.94
+                    },
+                    "uuid": "54dd6bbc-e8e1-4418-83f3-d8eb36babe0a"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.774,
+                        "y": 81.9
+                    },
+                    "uuid": "fe963da7-1dfe-4daf-b2bd-fe4af016f2e7"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.794,
+                        "y": 81.86
+                    },
+                    "uuid": "53caf2fe-4790-4b04-975a-43bbeba44ec7"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 36.458,
+                        "y": 80.9
+                    },
+                    "uuid": "a8093f83-ed73-41a8-9de0-7a8a3a03bb45"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 36.495,
+                        "y": 80.86
+                    },
+                    "uuid": "3ade8ab6-2ce1-415b-bfe0-5f380d49bbb2"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 36.534,
+                        "y": 80.82
+                    },
+                    "uuid": "06298cee-a377-4fa5-99a1-a6854ab714c5"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.46
+                    },
+                    "uuid": "08f74e97-e4ec-45ab-a31d-c7233fa96530"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.5
+                    },
+                    "uuid": "4950b915-60e2-442a-b573-90e6fa9aa0f5"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.54
+                    },
+                    "uuid": "3d602192-b7c3-4137-bcf8-d7f6b354d0ad"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.58
+                    },
+                    "uuid": "f71cbd7f-2a69-4699-a3aa-f3b34c9a0fe1"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.62
+                    },
+                    "uuid": "27c69e16-7177-4b71-884c-e8bb609f4aff"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.66
+                    },
+                    "uuid": "0466dcca-7f87-43e1-94d5-fdc6185dd842"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.7
+                    },
+                    "uuid": "1cf0c395-7eda-466e-ba16-90c60bd14cd4"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.74
+                    },
+                    "uuid": "b9649fb0-70ba-44a7-9b21-af3278085d31"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.78
+                    },
+                    "uuid": "17bf5400-5a2a-4ce5-8fea-971bf861f9b7"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.82
+                    },
+                    "uuid": "68b17888-88f3-45a1-ba98-da695a08561c"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.86
+                    },
+                    "uuid": "0ccb296c-b085-4b8f-8be3-cdc3673b7315"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.9
+                    },
+                    "uuid": "539a1491-2aae-4063-aaac-f42affbfd0a5"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.94
+                    },
+                    "uuid": "fac7ae27-02b6-48b3-ad55-3d3ad42d67e5"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 81.98
+                    },
+                    "uuid": "530d0ffc-5418-4946-8031-3fbd57799a61"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.02
+                    },
+                    "uuid": "7c213664-5da2-44f9-82d0-416817b9f398"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.06
+                    },
+                    "uuid": "4abe3ced-5992-458d-a322-a54e02468d95"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.1
+                    },
+                    "uuid": "c13caa92-c6ec-4f3b-8df2-3ca9df0c8304"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.14
+                    },
+                    "uuid": "69be79cb-08e9-4f2c-8b44-299c75a78f2b"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.18
+                    },
+                    "uuid": "d202580e-26c8-4f27-9c7b-3d34d6512eff"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.22
+                    },
+                    "uuid": "1f16d960-d6c2-4311-b8de-aa3f08f82f13"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.26
+                    },
+                    "uuid": "d9537e1a-a356-414a-9911-b07ddc29a6cd"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.3
+                    },
+                    "uuid": "27415a3d-4115-4c0a-a9a9-ecd2696c194d"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.34
+                    },
+                    "uuid": "22d71926-d5d7-4901-aa39-7417ba20d051"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.38
+                    },
+                    "uuid": "2c4bfe8f-6463-40b5-ac82-79dc49edb3b7"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.42
+                    },
+                    "uuid": "82d18920-fb7e-4680-bcfc-d0434825f631"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 40.48,
+                        "y": 82.46
+                    },
+                    "uuid": "5702257d-cd64-4d47-8d89-76c819dca804"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Campo de referencia de J16",
+                    "pos": {
+                        "x": 38.65,
+                        "y": 91.48
+                    },
+                    "uuid": "19ad9857-cbb8-4eaa-a410-ac684012180f"
+                },
+                {
+                    "description": "Pad PTH 1 [/GND] de J14",
+                    "pos": {
+                        "x": 36.9,
+                        "y": 89.95
+                    },
+                    "uuid": "4e5cc66b-7751-49e2-a4e7-74e3da2f721f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.404,
+                        "y": 83.1
+                    },
+                    "uuid": "c84f238a-ff0a-4124-904b-1f436edf07ea"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.41,
+                        "y": 83.06
+                    },
+                    "uuid": "1c604598-0833-4d79-94fb-aa1d137ff56c"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segmento de C8 en F.Silkscreen",
+                    "pos": {
+                        "x": 35.417,
+                        "y": 83.02
+                    },
+                    "uuid": "182ed73b-2507-444c-97c8-18794f608bed"
+                },
+                {
+                    "description": "Pad PTH 2 [/GND] de C8",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 81.95
+                    },
+                    "uuid": "49c26042-c1d3-4d0b-a916-56ac5d6fca0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Campo de referencia de J16",
+                    "pos": {
+                        "x": 38.65,
+                        "y": 91.48
+                    },
+                    "uuid": "19ad9857-cbb8-4eaa-a410-ac684012180f"
+                },
+                {
+                    "description": "Pad PTH 2 [/V_SERVO_DER] de J14",
+                    "pos": {
+                        "x": 39.44,
+                        "y": 89.95
+                    },
+                    "uuid": "e6a9bdd7-58eb-4150-bfb0-fc2ab7159d96"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Campo de referencia de J19",
+                    "pos": {
+                        "x": 48.6,
+                        "y": 91.48
+                    },
+                    "uuid": "ac47e135-f36b-438a-9a09-e6a820bef743"
+                },
+                {
+                    "description": "Pad PTH 2 [/V_SERVO_IZQ] de J13",
+                    "pos": {
+                        "x": 49.39,
+                        "y": 89.95
+                    },
+                    "uuid": "29eaa30c-7993-4464-8ac4-908f7ecec132"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Campo de referencia de J19",
+                    "pos": {
+                        "x": 48.6,
+                        "y": 91.48
+                    },
+                    "uuid": "ac47e135-f36b-438a-9a09-e6a820bef743"
+                },
+                {
+                    "description": "Pad PTH 1 [/GND] de J13",
+                    "pos": {
+                        "x": 46.85,
+                        "y": 89.95
+                    },
+                    "uuid": "3c6ed092-0d29-4da0-ae0d-371ff2bfac72"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        }
+    ]
+}

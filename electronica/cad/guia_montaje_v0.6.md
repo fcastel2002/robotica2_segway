@@ -1,5 +1,7 @@
 # Guía de montaje de las placas v0.6
 
+> **Reemplazada por la [v0.7](guia_montaje_v0.7.md) el 01/11/2026** (un UBEC por servo).
+
 > **v0.6 (31/10/2026):** placas compactadas y sin la protección electrónica contra batería invertida (Q1, R29, D3): la batería se conecta con un **conector polarizado** en un cable corto a J1. Descartar las impresiones de versiones anteriores. Resumen para el equipo: [placas_v0.6_consolidado.pdf](placas_v0.6_consolidado.pdf); detalle: [placas_v0.6_completo.pdf](placas_v0.6_completo.pdf).
 
 Fecha: 31/10/2026. Para el equipo que arma las placas. Detalle técnico de cada placa: [potencia](segway_potencia/pcb_v0.6.md) y [lógica](segway_logica/pcb_v0.6.md). Qué comprar: [lista de compras](lista_compras_v0.6.md). Pines para el firmware: [pinout](../interfaces/pinout_firmware_placas_v0.1.md).

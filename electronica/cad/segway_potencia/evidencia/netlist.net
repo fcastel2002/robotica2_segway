@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "D:\\Usuario\\Matias\\Proyectos\\robotica2_segway\\electronica\\cad\\segway_potencia\\segway_potencia.kicad_sch")
-		(date "2026-10-31T18:04:08")
+		(date "2026-11-01T10:45:04")
 		(tool "Eeschema 10.0.7")
 		(sheet
 			(number "1")
@@ -97,7 +97,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ea34b93c-ba7a-47c5-9f1e-d767b05e3f6f")
+			(tstamps "300f9ac4-03b4-45a9-9afd-aa4d963505f5")
 			(units
 				(unit
 					(name "A")
@@ -173,7 +173,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9ef03a5d-701d-402e-bd32-9985efd8c29c")
+			(tstamps "ec247dce-8b61-4fe9-9117-7721bc4ec71c")
 			(units
 				(unit
 					(name "A")
@@ -249,7 +249,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "32d76581-7798-4205-8005-a56de43de11d")
+			(tstamps "8386e659-e7ec-4e36-82bb-4b41e39fde02")
 			(units
 				(unit
 					(name "A")
@@ -325,7 +325,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e689a334-62d9-4b9d-96dd-454f83a9eb5f")
+			(tstamps "9ba1ff83-4ab0-4398-9b8f-8bb1e9437ef9")
 			(units
 				(unit
 					(name "A")
@@ -401,7 +401,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2e627026-3ef1-4803-b1ac-7de61e1bb582")
+			(tstamps "e26452c2-4b80-456d-a985-67713a799dab")
 			(units
 				(unit
 					(name "A")
@@ -477,7 +477,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b83f2bc9-97d8-4684-a257-81ed1c34fade")
+			(tstamps "ebb4087c-b24c-48f1-939f-a74f0c2355e9")
 			(units
 				(unit
 					(name "A")
@@ -549,7 +549,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a6b0f54a-5f19-4557-a02b-cafc5420d1d3")
+			(tstamps "518d3710-fe99-449c-a0bf-f48364dac763")
 			(units
 				(unit
 					(name "A")
@@ -615,7 +615,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "654d2d0e-e61a-4118-8ae4-474c7ed4873c")
+			(tstamps "75af9e79-9321-47c4-8b26-f382c45b250d")
 			(units
 				(unit
 					(name "A")
@@ -637,7 +637,7 @@
 			(description "Polarized capacitor")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C9, uno por header de servo (SUP-50); C22 eliminado (SUP-69)")
+					(name "Estado") "provisorio [H] (valor tras E-05/E-06) | v0.7: en el bus del servo DER (J16 -> J14); C9 en el del IZQ (SUP-50)")
 				(field
 					(name "Fuente") "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header, sin valor); valor 470 µF/16 V [H]")
 				(field
@@ -655,7 +655,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (valor tras E-05/E-06) | v0.4: se conserva separado de C9, uno por header de servo (SUP-50); C22 eliminado (SUP-69)")
+				(value "provisorio [H] (valor tras E-05/E-06) | v0.7: en el bus del servo DER (J16 -> J14); C9 en el del IZQ (SUP-50)")
 			)
 			(property
 				(name "Fuente")
@@ -681,7 +681,73 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "12629158-1cef-4ca7-bdf3-9eea4af76a46")
+			(tstamps "a03ff6fb-2e80-4647-8bfc-872afd89a32b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C9")
+			(value "470µ/16V low-ESR")
+			(footprint "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm")
+			(description "Polarized capacitor")
+			(fields
+				(field
+					(name "Estado") "provisorio [H] (valor tras E-05/E-06) | v0.7: vuelve, en el bus del servo IZQ (J19 -> J13) (SUP-50)")
+				(field
+					(name "Fuente") "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header); igual que C8, uno por bus de servo")
+				(field
+					(name "Footprint") "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Polarized capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C_Polarized")
+				(description "Polarized capacitor")
+			)
+			(property
+				(name "Estado")
+				(value "provisorio [H] (valor tras E-05/E-06) | v0.7: vuelve, en el bus del servo IZQ (J19 -> J13) (SUP-50)")
+			)
+			(property
+				(name "Fuente")
+				(value "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header); igual que C8, uno por bus de servo")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "f4db6987-cc87-4eb9-9d10-bdefa53927f6")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +813,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c5296249-04a1-47ca-9f47-04ea7837ebfd")
+			(tstamps "e96a8003-63b3-4fa9-8b4c-97c9d45190b6")
 			(units
 				(unit
 					(name "A")
@@ -813,7 +879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cc235aab-8bc8-46cf-b5c7-7233dd134ede")
+			(tstamps "5cefa3e7-4d9c-4bcc-a43a-76a2e4056d42")
 			(units
 				(unit
 					(name "A")
@@ -879,7 +945,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f9e1884a-3697-4699-afff-fdaa73e040e6")
+			(tstamps "4a6448e6-fc8f-4966-b739-f8eff642c43d")
 			(units
 				(unit
 					(name "A")
@@ -945,7 +1011,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "43c835e0-8bca-4cb9-a33c-ae2b2233ef0e")
+			(tstamps "6ae4f8e5-4bb6-44da-9903-f1e10a435c71")
 			(units
 				(unit
 					(name "A")
@@ -1011,7 +1077,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "124df2eb-fa82-47ad-9fd5-0e3c8f634013")
+			(tstamps "63947258-eb22-4624-a1ee-534e2c23357a")
 			(units
 				(unit
 					(name "A")
@@ -1077,7 +1143,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "bbdf2e2a-89f7-4e89-8f25-adcae9209093")
+			(tstamps "32fd6dee-4867-40d3-b764-8a53f598d56f")
 			(units
 				(unit
 					(name "A")
@@ -1143,7 +1209,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4f5ca20e-330f-4db2-839b-18a3ba373906")
+			(tstamps "d19312e5-e495-4c12-91af-058b4481d413")
 			(units
 				(unit
 					(name "A")
@@ -1209,7 +1275,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e8a16087-1538-4183-865b-4cf2698df9b1")
+			(tstamps "941dc2c3-396f-418b-b18a-eb88573f6670")
 			(units
 				(unit
 					(name "A")
@@ -1275,7 +1341,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c977626d-697b-4b64-bd0d-ba53dc1be6b1")
+			(tstamps "f7223cf9-deb0-436d-95c6-737b8402e81a")
 			(units
 				(unit
 					(name "A")
@@ -1341,7 +1407,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "81252f42-b0d8-4e27-b634-706be2f38838")
+			(tstamps "124257d8-1051-4974-b533-345378917c42")
 			(units
 				(unit
 					(name "A")
@@ -1407,7 +1473,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "794aa90e-b18a-45a2-bb15-238ca689330c")
+			(tstamps "75abfdf1-6dfd-4021-8658-9f8254b28383")
 			(units
 				(unit
 					(name "A")
@@ -1476,7 +1542,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9a0029da-7cd3-48d7-81fc-45574716736b")
+			(tstamps "471c0e7a-b350-40ed-9005-3cf85a217f4e")
 			(units
 				(unit
 					(name "A")
@@ -1496,30 +1562,30 @@
 		)
 		(comp
 			(ref "J15")
-			(value "UBEC entrada")
-			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
-			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(value "Entrada de los dos UBEC 1-2=GND 3-4=+")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-4-5.08_1x04_P5.08mm_Horizontal")
+			(description "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H] (montada; se corta el enchufe rojo de 2 pines del UBEC y los hilos se atornillan; ≈3,9 A [H] de entrada frente a 10 A UL)")
+					(name "Estado") "v0.7 [M]: un UBEC por servo; 4 bornes de 5,08 mm (dos KF301 de 2 polos juntas): el - de cada UBEC en 1 o 2 y el + en 3 o 4. Se corta el enchufe rojo de cada UBEC; ≈2,5 A de entrada por UBEC frente a 10 A UL")
 				(field
 					(name "Fuente") "[CAP]/ROB-007_YSIDO_UBEC_6A/referencia_compra.png [V]; DEC-13 [M]; [PHX-MKDS15] (10 A UL)")
 				(field
-					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal")
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-4-5.08_1x04_P5.08mm_Horizontal")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+					(name "Description") "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Screw_Terminal_01x02")
-				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+				(lib "Connector_Generic")
+				(part "Conn_01x04")
+				(description "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H] (montada; se corta el enchufe rojo de 2 pines del UBEC y los hilos se atornillan; ≈3,9 A [H] de entrada frente a 10 A UL)")
+				(value "v0.7 [M]: un UBEC por servo; 4 bornes de 5,08 mm (dos KF301 de 2 polos juntas): el - de cada UBEC en 1 o 2 y el + en 3 o 4. Se corta el enchufe rojo de cada UBEC; ≈2,5 A de entrada por UBEC frente a 10 A UL")
 			)
 			(property
 				(name "Fuente")
@@ -1535,17 +1601,17 @@
 			)
 			(property
 				(name "ki_keywords")
-				(value "screw terminal")
+				(value "connector")
 			)
 			(property
 				(name "ki_fp_filters")
-				(value "TerminalBlock*:*")
+				(value "Connector*:*_1x??_*")
 			)
 			(sheetpath
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "00e69681-c0f1-4992-9f80-6de05330ce77")
+			(tstamps "2da80bcf-9b76-48a0-a33e-297266a4f941")
 			(units
 				(unit
 					(name "A")
@@ -1556,18 +1622,24 @@
 						(pin
 							(num "2")
 						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
 					)
 				)
 			)
 		)
 		(comp
 			(ref "J16")
-			(value "UBEC salida 6V PT1,5 1=GND 2=V+")
+			(value "UBEC DER salida 6V PT1,5 1=GND 2=V+")
 			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal")
 			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			(fields
 				(field
-					(name "Estado") "provisorio [H]: se corta el JR de salida del UBEC (SUP-40); paso 3,5 mm para no confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar servos (7,4 V prohibido)")
+					(name "Estado") "v0.7 [M]: salida del UBEC del servo DER (J14). Se corta el JR de salida (SUP-40); paso 3,5 mm para no confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar el servo (7,4 V prohibido)")
 				(field
 					(name "Fuente") "DEC-13 [M]; [DS-SERVO] p.3 tabla 3-4 (bloqueo 3,9 A por servo); [FLUJO] l.72; [PHX-PT15] (10 A UL, AWG 26-16)")
 				(field
@@ -1585,7 +1657,7 @@
 			)
 			(property
 				(name "Estado")
-				(value "provisorio [H]: se corta el JR de salida del UBEC (SUP-40); paso 3,5 mm para no confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar servos (7,4 V prohibido)")
+				(value "v0.7 [M]: salida del UBEC del servo DER (J14). Se corta el JR de salida (SUP-40); paso 3,5 mm para no confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar el servo (7,4 V prohibido)")
 			)
 			(property
 				(name "Fuente")
@@ -1611,7 +1683,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8bc8d9a4-99ca-4e8d-b71b-8ff1e2675113")
+			(tstamps "ce4b3435-4651-4b28-8c3a-382a7c2f8b38")
 			(units
 				(unit
 					(name "A")
@@ -1677,7 +1749,73 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "38d83996-1654-4c97-bf49-424e950d4a59")
+			(tstamps "94597db6-df34-4ef0-8349-4915294ad69f")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J19")
+			(value "UBEC IZQ salida 6V PT1,5 1=GND 2=V+")
+			(footprint "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal")
+			(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Estado") "v0.7 [M]: salida del UBEC del servo IZQ (J13). Se corta el JR de salida (SUP-40); medir 6,0 V entre J19.2 y J19.1 antes de conectar el servo (7,4 V prohibido)")
+				(field
+					(name "Fuente") "Revisión del equipo del 01/11/2026 [M]: un UBEC por servo; [DS-SERVO] p.3 tabla 3-4 (bloqueo 3,9 A por servo); [PHX-PT15]")
+				(field
+					(name "Footprint") "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Screw_Terminal_01x02")
+				(description "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Estado")
+				(value "v0.7 [M]: salida del UBEC del servo IZQ (J13). Se corta el JR de salida (SUP-40); medir 6,0 V entre J19.2 y J19.1 antes de conectar el servo (7,4 V prohibido)")
+			)
+			(property
+				(name "Fuente")
+				(value "Revisión del equipo del 01/11/2026 [M]: un UBEC por servo; [DS-SERVO] p.3 tabla 3-4 (bloqueo 3,9 A por servo); [PHX-PT15]")
+			)
+			(property
+				(name "Sheetname")
+				(value "segway_potencia")
+			)
+			(property
+				(name "Sheetfile")
+				(value "segway_potencia.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "screw terminal")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TerminalBlock*:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "58b266ca-d349-40c6-a2ec-7712faa590ad")
 			(units
 				(unit
 					(name "A")
@@ -1743,7 +1881,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c77522a6-521a-4ee2-acec-49cfeec927dd")
+			(tstamps "cad01c29-931e-4a35-baa6-0d76df8e9a02")
 			(units
 				(unit
 					(name "A")
@@ -1851,7 +1989,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8264831d-a576-4cb4-b54c-13d61f89367e")
+			(tstamps "9f46f71c-1c76-416b-83dd-90772facad04")
 			(units
 				(unit
 					(name "A")
@@ -1917,7 +2055,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a2384f1b-2f42-4807-843d-89caf44e4e18")
+			(tstamps "a8b56c07-a580-4627-bbf3-a11c9122ed84")
 			(units
 				(unit
 					(name "A")
@@ -2039,6 +2177,50 @@
 				(pin
 					(num "3")
 					(name "Pin_3")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x04")
+			(description "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x04")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "Pin_4")
 					(type "passive")
 				)
 			)
@@ -2690,6 +2872,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "C9")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
 				(ref "D1")
 				(pin "2")
 				(pinfunction "A2_2")
@@ -2720,6 +2907,12 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "J15")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
 				(ref "J16")
 				(pin "1")
 				(pinfunction "Pin_1_1")
@@ -2727,6 +2920,12 @@
 			)
 			(node
 				(ref "J18")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J19")
 				(pin "1")
 				(pinfunction "Pin_1_1")
 				(pintype "passive")
@@ -3256,24 +3455,24 @@
 			)
 			(node
 				(ref "J15")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "J15")
+				(pin "4")
+				(pinfunction "Pin_4_4")
 				(pintype "passive")
 			)
 		)
 		(net
 			(code "29")
-			(name "/V_SERVO")
+			(name "/V_SERVO_DER")
 			(class "Default")
 			(node
 				(ref "C8")
 				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "J13")
-				(pin "2")
-				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -3291,6 +3490,28 @@
 		)
 		(net
 			(code "30")
+			(name "/V_SERVO_IZQ")
+			(class "Default")
+			(node
+				(ref "C9")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J13")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J19")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "31")
 			(name "unconnected-(J20-Pin_1-Pad1)")
 			(class "Default")
 			(node
@@ -3301,7 +3522,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "unconnected-(J20-Pin_11-Pad11)")
 			(class "Default")
 			(node

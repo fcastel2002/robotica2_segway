@@ -239,6 +239,60 @@ def cambios_v04(s, nombre):
                                "Sin protección electrónica: medir una vez que el + llegue al pin 2")
     s["revision_pcb_v04"] = ("INA226 con SDA/SCL corregidos, huella del mini buck corregida (estaba espejada) y sin los "
                              "componentes que los módulos ya resuelven (fotos y pedido del equipo del 31/10/2026)")
+    if nombre == "potencia":
+        cambios_v07(s)
+
+
+# Potencia v0.7 (01/11/2026), revisión del equipo: "habíamos dimensionado un UBEC para cada servo". Dos servos bloqueados
+# (≈2 × 3,5 A a 6 V) superan los 6 A de un UBEC. Cada servo tiene ahora su UBEC: J16 (UBEC DER) -> J14 y C8;
+# J19 (UBEC IZQ) -> J13 y C9. Las dos entradas van a J15, de 4 bornes (1-2 GND, 3-4 VM_UBEC): así los + quedan
+# del lado de F4 y los - del lado del relleno, sin cruces en una cara. F4 (7,5 A) protege los dos: con un servo por
+# UBEC, cada uno toma ≈2,5 A de entrada como máximo (3,9 A × 6 V / 0,85 / 11,1 V).
+UBEC_V07 = {
+    "J15": {"lib_id": "Connector_Generic:Conn_01x04", "value": "Entrada de los dos UBEC 1-2=GND 3-4=+",
+            "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MKDS-1,5-4-5.08_1x04_P5.08mm_Horizontal",
+            "status": "v0.7 [M]: un UBEC por servo; 4 bornes de 5,08 mm (dos KF301 de 2 polos juntas): el - de cada UBEC en 1 o 2 "
+                      "y el + en 3 o 4. Se corta el enchufe rojo de cada UBEC; ≈2,5 A de entrada por UBEC frente a 10 A UL"},
+    "J16": {"value": "UBEC DER salida 6V PT1,5 1=GND 2=V+",
+            "status": "v0.7 [M]: salida del UBEC del servo DER (J14). Se corta el JR de salida (SUP-40); paso 3,5 mm para no "
+                      "confundirla con las borneras de 11 V; medir 6,0 V entre J16.2 y J16.1 antes de conectar el servo (7,4 V prohibido)"},
+    "C8": {"status": "provisorio [H] (valor tras E-05/E-06) | v0.7: en el bus del servo DER (J16 -> J14); C9 en el del IZQ (SUP-50)"},
+}
+J19 = {"ref": "J19", "lib_id": "Connector:Screw_Terminal_01x02", "value": "UBEC IZQ salida 6V PT1,5 1=GND 2=V+",
+       "footprint": "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal", "block": "servos", "dnp": False,
+       "source": "Revisión del equipo del 01/11/2026 [M]: un UBEC por servo; [DS-SERVO] p.3 tabla 3-4 (bloqueo 3,9 A por servo); [PHX-PT15]",
+       "status": "v0.7 [M]: salida del UBEC del servo IZQ (J13). Se corta el JR de salida (SUP-40); medir 6,0 V entre J19.2 y J19.1 "
+                 "antes de conectar el servo (7,4 V prohibido)",
+       "supuestos": ["SUP-40", "SUP-18"]}
+C9 = {"ref": "C9", "lib_id": "Device:C_Polarized", "value": "470µ/16V low-ESR", "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+      "block": "servos", "dnp": False,
+      "source": "Criterio [CONTRATO] §2.5 y [ENERGIA] §6.7 (bajo ESR junto al header); igual que C8, uno por bus de servo",
+      "status": "provisorio [H] (valor tras E-05/E-06) | v0.7: vuelve, en el bus del servo IZQ (J19 -> J13) (SUP-50)",
+      "supuestos": ["SUP-50"]}
+
+
+def cambios_v07(s):
+    for c in s["components"]:
+        c.update(UBEC_V07.get(c["ref"], {}))
+    s["components"] += [dict(J19), dict(C9)]
+    nets = {n["name"]: n for n in s["nets"]}
+    nets["VM_UBEC"]["pins"] = ["F4.2", "J15.3", "J15.4"]
+    nets["GND"]["pins"] = [p for p in nets["GND"]["pins"] if p != "J15.1"] + ["J15.1", "J15.2", "J19.1", "C9.2"]
+    servo = nets.pop("V_SERVO")
+    s["nets"] = [n for n in s["nets"] if n["name"] != "V_SERVO"]
+    s["nets"] += [{"name": "V_SERVO_DER", "kind": servo["kind"], "pins": ["J16.2", "J14.2", "C8.1"]},
+                  {"name": "V_SERVO_IZQ", "kind": servo["kind"], "pins": ["J19.2", "J13.2", "C9.1"]}]
+    s["fuentes_power"].pop("V_SERVO", None)
+    s["fuentes_power"].update({"V_SERVO_DER": "J16.2", "V_SERVO_IZQ": "J19.2"})
+    for nc in s["pcb"]["netclasses"]:
+        if nc["name"] == "SERVO":
+            nc.update(nets=["VM_UBEC", "V_SERVO_DER", "V_SERVO_IZQ"], track_mm=2.5, design_current_A=5,
+                      nota="v0.7: un UBEC por servo. VM_UBEC lleva ≈5 A con los dos servos bloqueados y cada V_SERVO ≈3,9 A: "
+                           "2,5 mm (2,0 mm como mínimo; 1,2 mm en el cuello de J13/J14). F4 queda en 7,5 A (SUP-48)")
+    s["revision"] = "v0.7"
+    s["fecha"] = "2026-11-01"
+    s["revision_pcb_v07"] = ("Un UBEC por servo (revisión del equipo del 01/11/2026): J16 -> J14 con C8, J19 -> J13 con C9, "
+                             "entrada de los dos UBEC en J15 de 4 bornes y F4 compartido")
 
 
 def sharp_v04(s):
@@ -429,10 +483,11 @@ def main():
         from collections import Counter
         c = Counter(p for n in s["nets"] for p in n["pins"]) + Counter(s["no_connect"])
         assert not [k for k, v in c.items() if v > 1]
-    for nombre, s in (("segway_potencia", pot), ("segway_logica", log)):
+    # v0.7: solo cambia la potencia (un UBEC por servo); la lógica sigue en v0.6
+    for nombre, s, rev in (("segway_potencia", pot, "0.7"), ("segway_logica", log, "0.6")):
         d = CAD / nombre
         d.mkdir(parents=True, exist_ok=True)
-        (d / "especificacion_v0.6.json").write_text(json.dumps(s, ensure_ascii=False, indent=1), encoding="utf-8")
+        (d / f"especificacion_v{rev}.json").write_text(json.dumps(s, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"{nombre}: {len(s['components'])} componentes, {len(s['nets'])} nets")
     tabla = {"cable": "IDC 2x8, cable plano de 16 hilos, recto (pin n a pin n), largo a definir con mecánica (SUP-72)",
              "conector": J20["footprint"], "pines": dict(CABLE, **{k: "sin conexión" for k in SIN_CONEXION}),

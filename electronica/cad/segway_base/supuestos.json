@@ -1,8 +1,8 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 22,
- "fecha": "31/10/2026",
+ "revision_lista": 23,
+ "fecha": "01/11/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
   "especificacion_destino": "especificacion_v0.4.json",
@@ -395,12 +395,12 @@
   {
    "grupo": "B",
    "tema": "Tamaño de las placas",
-   "supuesto": "v0.6 compactada: potencia de 124 × 74 mm y lógica de 95,25 × 59,6 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. Las dos entran juntas en una placa virgen de 10 × 15 cm. En la lógica, la DevKitC sobresale unos 5 mm por el borde superior (antena, sin cobre debajo) y por el inferior (USB-C).",
-   "base": "Pedido de Matías del 31/10/2026 [M]: placas lo más compactas posible. Contorno en TABLERO de placas/potencia.py y placas/logica.py.",
+   "supuesto": "Potencia v0.7: 124 × 77 mm (crece 3 mm hacia el sur para el segundo UBEC); lógica v0.6: 95,25 × 59,6 mm. Esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. Cada placa entra en una placa virgen de 10 × 15 cm. En la lógica, la DevKitC sobresale unos 5 mm por el borde superior (antena, sin cobre debajo) y por el inferior (USB-C).",
+   "base": "Pedido de Matías del 31/10/2026 [M]: placas lo más compactas posible; v0.7: J15 de 4 bornes y la fila de borneras de los dos UBEC necesitan 3 mm más. Contorno en TABLERO de placas/potencia.py y placas/logica.py.",
    "impacto_si_cambia": "Si mecánica pide otra forma, se rehace la ubicación. Nada puede quedar pegado a los bordes por donde sobresale la DevKitC.",
    "como_se_confirma": "Medir con calibre el contorno impreso antes de transferir; probar en seco la DevKitC en su zócalo y el cable USB-C.",
    "estado": "CAMBIADO",
-   "fecha": "31/10/2026",
+   "fecha": "01/11/2026",
    "refs": [],
    "afecta": [
     "pcb"
@@ -455,6 +455,14 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Matías, 31/10/2026 [M]: 'quiero lo más compactado posible' (con J24/J25 y aceptando puentes extra) y 'mejor directamente contemplar que vamos a conectar un conector polarizado, que de hecho los tenemos'"
+    },
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "v0.6 compactada: potencia de 124 × 74 mm y lógica de 95,25 × 59,6 mm, esquinas de 3 mm y agujeros M3 a 4 mm de cada esquina. Las dos entran juntas en una placa virgen de 10 × 15 cm. En la lógica, la DevKitC sobresale unos 5 mm por el borde superior (antena, sin cobre debajo) y por el inferior (USB-C).",
+      "base": "Pedido de Matías del 31/10/2026 [M]: placas lo más compactas posible. Contorno en TABLERO de placas/potencia.py y placas/logica.py."
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
     }
    ]
   },
@@ -626,12 +634,12 @@
   {
    "grupo": "B",
    "tema": "Anchos por corriente (IPC-2221, capa externa, 35 µm)",
-   "supuesto": "Tronco de batería (VBAT_*, VM_BUS y GND de potencia): 5,0 mm o más, para 10 A continuos (4,7 mm con ΔT de 20 °C), estañado o con un alambre de cobre de 1,5 mm² soldado encima. Ramas de motor (VM_IZQ*, VM_DER* y salidas al motor): 2,0 mm (4 A con ΔT de 10 °C). Servos (VM_UBEC, V_SERVO y su GND): 3,5 mm (6 A con ΔT de 10 °C; 7,5 A darían 3,2 mm con ΔT de 20 °C). Lógica (VM_LOG*, 5V, 5V_MCU, 3V3_*): 1,0 mm (≤1 A; el cálculo da 0,3 mm). Señal: 0,8 mm. Junto a los pads de 2,54 mm, la pista puede afinarse al ancho del pad en los últimos 3 mm.",
+   "supuesto": "Tronco de batería (VBAT_*, VM_BUS y GND de potencia): 5,0 mm o más, para 10 A continuos (4,7 mm con ΔT de 20 °C), estañado o con un alambre de cobre de 1,5 mm² soldado encima. Ramas de motor (VM_IZQ*, VM_DER* y salidas al motor): 2,0 mm (4 A con ΔT de 10 °C). Servos desde la v0.7 (un UBEC por servo): VM_UBEC 2,5 mm (≈5 A con los dos servos bloqueados), cada V_SERVO 2,0 mm (≈3,9 A) con cuello de 1,2 mm entre los pines del header, y su GND de 2,0 mm. Lógica (VM_LOG*, 5V, 5V_MCU, 3V3_*): 1,0 mm (≤1 A; el cálculo da 0,3 mm). Señal: 0,8 mm. Junto a los pads de 2,54 mm, la pista puede afinarse al ancho del pad en los últimos 3 mm.",
    "base": "IPC-2221: I = 0,048·ΔT^0,44·A^0,725, con A en mil² y cobre de 35 µm (SUP-03). Corriente continua del tronco según SUP-43. Resultados del cálculo: 4 A → 2,03 mm (ΔT 10 °C); 6 A → 3,56 mm (ΔT 10 °C); 10 A → 4,72 mm (ΔT 20 °C); 15 A → 8,26 mm (ΔT 20 °C).",
    "impacto_si_cambia": "Si la corriente continua real supera 10 A o el cobre es de 18 µm, el tronco se cablea por fuera con conductor de 2,5 mm² entre borneras.",
    "como_se_confirma": "E-04/E-06: medir la corriente con el robot en marcha y la temperatura de las pistas con termómetro IR.",
    "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "fecha": "01/11/2026",
    "refs": [],
    "afecta": [
     "reglas",
@@ -647,7 +655,15 @@
     "refuerzo_tronco": "estaño o alambre de 1,5 mm2"
    },
    "id": "SUP-10",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "Tronco de batería (VBAT_*, VM_BUS y GND de potencia): 5,0 mm o más, para 10 A continuos (4,7 mm con ΔT de 20 °C), estañado o con un alambre de cobre de 1,5 mm² soldado encima. Ramas de motor (VM_IZQ*, VM_DER* y salidas al motor): 2,0 mm (4 A con ΔT de 10 °C). Servos (VM_UBEC, V_SERVO y su GND): 3,5 mm (6 A con ΔT de 10 °C; 7,5 A darían 3,2 mm con ΔT de 20 °C). Lógica (VM_LOG*, 5V, 5V_MCU, 3V3_*): 1,0 mm (≤1 A; el cálculo da 0,3 mm). Señal: 0,8 mm. Junto a los pads de 2,54 mm, la pista puede afinarse al ancho del pad en los últimos 3 mm."
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
+    }
+   ]
   },
   {
    "grupo": "B",
@@ -762,12 +778,12 @@
   {
    "grupo": "B",
    "tema": "Rótulos sin serigrafía",
-   "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1 y F4 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas. Los valores de F2, F3 y F5 se sacaron del cobre (quedaban apilados entre dos fusibles y podían leerse como del otro) y el VCC de A7 también (quedaba más cerca de D2): A7 se orienta por su pad 1 cuadrado. Los servos J13 y J14 tienen la señal hacia el centro, entre los dos.",
+   "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia v0.7: SW, M IZQ, M DER, + de J1, UBEC IN con el − de J15.1 y los + de J15.3/J15.4, − de J16, + de J19, DER e IZQ junto a cada columna de servo (bornera del UBEC, header y capacitor), los valores de F1 y F4 e IN junto a A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. En la guía impresa (v0.7) van DER e IZQ sobre cada columna, la leyenda «DER: J16 -> J14 / IZQ: J19 -> J13 / J16/J19: 1- 2+ / C8/C9: 470u 16V» y el orden de J15 («1-2 −  3-4 +»); se ocultan los valores de J13, J14, J16, J19, C8 y C9, que se pisaban. Los dos headers de servo tienen el GND (pin 1, pad cuadrado) a la izquierda. Lo demás va solo en la guía. Después del ataque se estañan las pistas.",
    "base": "La §10 de diseno_v0.3.md pide serigrafía como mitigación (borneras sin polarizar, A8/A9 iguales). En una placa casera esos rótulos pasan al cobre [H]. Aceptado por Matías el 26/10/2026 [M] ('grupo C: aceptado').",
-   "impacto_si_cambia": "Lo que no está en el cobre depende de la guía impresa: riesgo de conectar un servo o un encoder al revés.",
+   "impacto_si_cambia": "Lo que no está en el cobre depende de la guía impresa: riesgo de conectar un servo, un UBEC o un encoder al revés.",
    "como_se_confirma": "Matías decide si hace la serigrafía por transferencia.",
    "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "fecha": "01/11/2026",
    "refs": [],
    "afecta": [
     "pcb",
@@ -806,6 +822,14 @@
       "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1-F5, VCC junto al pin 8 de A7 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas."
      },
      "fuente": "Revisión independiente de la v0.2 (26/10/2026)"
+    },
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "Sin máscara antisoldante ni serigrafía industrial. La guía de montaje de la cara de componentes (F.SilkS + F.Fab) se imprime en papel. En el cobre (B.Cu, 2 mm de alto) van el nombre de la placa, LADO COBRE y los rótulos de conectores que entran sin partir el relleno. Potencia: BAT con su −, SW, M IZQ, M DER, UBEC IN y UBEC 6V con + y −, SERVO DER, VOLT con su −, los valores de F1 y F4 e IN+ junto al pin 1 de A8. Lógica: ENC IZQ, G de J8 y el pin 1 de J20. Sin lugar en el cobre, solo en la guía: el + de J1 y de J11, J13/J14, PARO, las V de J7/J8 y J26. Después del ataque se estañan las pistas. Los valores de F2, F3 y F5 se sacaron del cobre (quedaban apilados entre dos fusibles y podían leerse como del otro) y el VCC de A7 también (quedaba más cerca de D2): A7 se orienta por su pad 1 cuadrado. Los servos J13 y J14 tienen la señal hacia el centro, entre los dos.",
+      "impacto_si_cambia": "Lo que no está en el cobre depende de la guía impresa: riesgo de conectar un servo o un encoder al revés."
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
     }
    ]
   },
@@ -1970,12 +1994,12 @@
   {
    "grupo": "D",
    "tema": "UBEC YSIDO 6 A",
-   "supuesto": "Configurado en 6,0 V. Se cortan sus enchufes: la entrada (conector rojo) va a J15 y la salida (JR) a J16 (propuesta 12). Entrega 6 A como máximo. Antes de conectar los servos se miden 6,0 V en J16; 7,4 V está prohibido.",
-   "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. 6,0 V queda dentro del rótulo de 4,8-6,8 V del DS3240 con margen; 7,4 V está prohibido.",
-   "impacto_si_cambia": "Con 5 V los servos dan menos par. 7,4 V no está autorizado.",
-   "como_se_confirma": "Confirmado el valor. Medir 6,0 V en J16 sin carga antes de conectar los servos.",
-   "estado": "CONFIRMADO",
-   "fecha": "26/10/2026",
+   "supuesto": "Dos UBEC YSIDO 6 A, uno por servo, configurados en 6,0 V. Se cortan sus enchufes: las entradas (conector rojo) van a J15 (− en 1 o 2, + en 3 o 4) y las salidas (JR) a J16 (UBEC del servo DER, J14) y J19 (UBEC del servo IZQ, J13). Cada uno entrega 6 A como máximo a un solo servo. Antes de conectar los servos se miden 6,0 V en J16 y en J19; 7,4 V está prohibido. El inventario registra un solo UBEC comprado (ROB-007): falta el segundo.",
+   "base": "Revisión del equipo del 01/11/2026 [M]: un UBEC por servo. Dos DS3240 bloqueados toman 6,2-7,8 A ([DS-SERVO] p.3), más que los 6 A de un UBEC. 6,0 V queda dentro del rótulo de 4,8-6,8 V del DS3240 con margen.",
+   "impacto_si_cambia": "Con un solo UBEC para los dos servos, un bloqueo doble lo lleva a su límite. Con 5 V los servos dan menos par. 7,4 V no está autorizado.",
+   "como_se_confirma": "Confirmar que hay dos UBEC (inventario: 1). Medir 6,0 V en J16 y en J19 sin carga antes de conectar los servos.",
+   "estado": "CAMBIADO",
+   "fecha": "01/11/2026",
    "refs": [
     "J15",
     "J16"
@@ -1997,6 +2021,17 @@
       "como_se_confirma": "Medir la salida del UBEC sin carga antes de montar y anotar cómo se elige la tensión."
      },
      "fuente": "Decisiones del 26/10/2026 (ELE-038)"
+    },
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "Configurado en 6,0 V. Se cortan sus enchufes: la entrada (conector rojo) va a J15 y la salida (JR) a J16 (propuesta 12). Entrega 6 A como máximo. Antes de conectar los servos se miden 6,0 V en J16; 7,4 V está prohibido.",
+      "base": "Criterio del agente, delegado por Matías el 26/10/2026 [M]. 6,0 V queda dentro del rótulo de 4,8-6,8 V del DS3240 con margen; 7,4 V está prohibido.",
+      "impacto_si_cambia": "Con 5 V los servos dan menos par. 7,4 V no está autorizado.",
+      "como_se_confirma": "Confirmado el valor. Medir 6,0 V en J16 sin carga antes de conectar los servos.",
+      "estado": "CONFIRMADO"
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
     }
    ]
   },
@@ -2069,12 +2104,12 @@
   {
    "grupo": "E",
    "tema": "Corriente continua del tronco",
-   "supuesto": "La corriente continua de diseño del tronco es de 10 A como máximo, con picos breves de unos 20 A. Suma: 2 motores con ITRIP ≤ 2,3 A, servos con hasta 6 A a la salida del UBEC (unos 3,8 A a la entrada) y la lógica, con unos 0,1 A. F1 (15 A) es la protección, no la corriente de trabajo.",
+   "supuesto": "La corriente continua de diseño del tronco es de 10 A como máximo, con picos breves de unos 20 A. Suma: 2 motores con ITRIP ≤ 2,3 A, servos con hasta ≈3,9 A cada uno a la salida de su UBEC (≈5 A de entrada entre los dos con los dos bloqueados) y la lógica, con unos 0,1 A. F1 (15 A) es la protección, no la corriente de trabajo.",
    "base": "§9 de diseno_v0.3.md (pico de ≈20 A [H]); [DS-DRV] p.9; [DS-SERVO] p.3 [H].",
-   "impacto_si_cambia": "Si la corriente continua supera 10 A, se ensancha o se cablea el tronco (SUP-10) y crece el disipador de Q1 (SUP-20).",
+   "impacto_si_cambia": "Si la corriente continua supera 10 A, se ensancha o se cablea el tronco (SUP-10).",
    "como_se_confirma": "E-04/E-06: corriente del bus en marcha, con pinza o shunt.",
    "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "fecha": "01/11/2026",
    "refs": [],
    "afecta": [
     "reglas",
@@ -2086,7 +2121,16 @@
     "I_pico_A": 20
    },
    "id": "SUP-43",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "La corriente continua de diseño del tronco es de 10 A como máximo, con picos breves de unos 20 A. Suma: 2 motores con ITRIP ≤ 2,3 A, servos con hasta 6 A a la salida del UBEC (unos 3,8 A a la entrada) y la lógica, con unos 0,1 A. F1 (15 A) es la protección, no la corriente de trabajo.",
+      "impacto_si_cambia": "Si la corriente continua supera 10 A, se ensancha o se cablea el tronco (SUP-10) y crece el disipador de Q1 (SUP-20)."
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
+    }
+   ]
   },
   {
    "grupo": "E",
@@ -2252,12 +2296,12 @@
   {
    "grupo": "E",
    "tema": "Fusible del UBEC F4",
-   "supuesto": "Mini ATM de 7,5 A. El UBEC toma unos 3,8 A de entrada (6 A × 6 V / 0,85 / 11,1 V); el resto es margen para la carga inicial y los picos.",
-   "base": "Cálculo con eficiencia del 85 % [H]; antecedente de 10 A en la v0.3.",
+   "supuesto": "Mini ATM de 7,5 A, compartido por los dos UBEC. Cada UBEC alimenta un solo servo: toma como máximo ≈2,5 A de entrada (3,9 A × 6 V / 0,85 / 11,1 V), ≈5 A entre los dos con los dos servos bloqueados. El resto es margen para la carga inicial de los dos UBEC y los picos.",
+   "base": "Cálculo con eficiencia del 85 % [H]; bloqueo del DS3240 de [DS-SERVO] p.3; v0.7: un UBEC por servo (revisión del equipo).",
    "impacto_si_cambia": "Si abre al encender o con los dos servos bloqueados, sube a 10 A y pasa a portafusible ATO (SUP-19).",
    "como_se_confirma": "E-05/E-06: corriente de entrada del UBEC con los servos bloqueados.",
    "estado": "ASUMIDO",
-   "fecha": "17/10/2026",
+   "fecha": "01/11/2026",
    "refs": [
     "F4"
    ],
@@ -2269,7 +2313,16 @@
     "A": 7.5
    },
    "id": "SUP-48",
-   "historial": []
+   "historial": [
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "Mini ATM de 7,5 A. El UBEC toma unos 3,8 A de entrada (6 A × 6 V / 0,85 / 11,1 V); el resto es margen para la carga inicial y los picos.",
+      "base": "Cálculo con eficiencia del 85 % [H]; antecedente de 10 A en la v0.3."
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
+    }
+   ]
   },
   {
    "grupo": "E",
@@ -2304,12 +2357,12 @@
   {
    "grupo": "E",
    "tema": "Electrolíticos y condensador del BMS",
-   "supuesto": "C1: 470 µF/35 V low-ESR junto a J1/Q1. C8: 470 µF/16 V en el bus de servos. C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Desde la v0.4 no van C4/C5 (cada DRV8871 trae 47 µF/50 V) ni C30 (el mini buck trae su capacitor de entrada).",
+   "supuesto": "C1: 470 µF/35 V low-ESR junto a J1. C8 y C9: 470 µF/16 V, uno en el bus de cada servo (C8 en el DER, de J16; C9 en el IZQ, de J19; C9 vuelve en la v0.7). C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Desde la v0.4 no van C4/C5 (cada DRV8871 trae 47 µF/50 V) ni C30 (el mini buck trae su capacitor de entrada).",
    "base": "§8 de diseno_v0.3.md; Fotos de los módulos comprados (componentes_comprados/fotos/, Matías, 31/10/2026) [M]; nota 3 de la ficha del BMS, p.2 [V].",
    "impacto_si_cambia": "Si E-04 muestra sobretensión al frenar, se suma C2 (SUP-63) o más bulk.",
    "como_se_confirma": "E-04/E-08: osciloscopio sobre VM_BUS durante el frenado.",
    "estado": "CAMBIADO",
-   "fecha": "31/10/2026",
+   "fecha": "01/11/2026",
    "refs": [
     "C1",
     "C3",
@@ -2340,6 +2393,13 @@
       "estado": "CAMBIADO"
      },
      "fuente": "Matías, 31/10/2026 [M]: quitar D4/R28, R5/R6, C30 y R43; mantener el resto de las protecciones"
+    },
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "C1: 470 µF/35 V low-ESR junto a J1/Q1. C8: 470 µF/16 V en el bus de servos. C3: 10 µF/50 V no polarizado en el bus (nota 3 del BMS). Desde la v0.4 no van C4/C5 (cada DRV8871 trae 47 µF/50 V) ni C30 (el mini buck trae su capacitor de entrada)."
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
     }
    ]
   },
@@ -3451,12 +3511,12 @@
   {
    "grupo": "I",
    "tema": "Masa de la lógica en la placa de potencia",
-   "supuesto": "En la potencia v0.4 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja en x 76,5 a un bus inferior (y 91,5) hasta J15.1 y el lomo: esa es su única unión con el lomo (la rama que iba a D4.1 nunca tocó el relleno lógico, según la revisión independiente). El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.1 y J20.11 quedan sin conexión en las dos placas.",
+   "supuesto": "En la potencia v0.7 el relleno GND de la banda lógica se une al lomo por el retorno de J15 (bornes 1 y 2, entrada de los dos UBEC): pista de 2,6-3,0 mm desde J15 y el extremo de W4 hasta el retorno del lomo. Cada servo devuelve su corriente directo a la bornera de su UBEC (J14.1 -> J16.1, J13.1 -> J19.1); un bus GND por el borde sur une J16.1 y J19.1 con el relleno sur. J20.1 y J20.11 quedan sin conexión en las dos placas.",
    "base": "Criterio de masa en estrella (§10 de diseno_v0.3.md) adaptado al ruteo de una cara [H].",
-   "impacto_si_cambia": "Unos mV de caída en el relleno pueden mover la lectura de VBAT_ADC unos 0,1 V (R23 y C14 están en esa zona). El firmware usa el INA226 como medida principal de la batería.",
+   "impacto_si_cambia": "Unos mV de caída en el relleno. El firmware usa el INA226 como medida de la batería.",
    "como_se_confirma": "E-03: medir la diferencia de GND entre J20.15 y C1− con los servos en carga.",
    "estado": "ASUMIDO",
-   "fecha": "31/10/2026",
+   "fecha": "01/11/2026",
    "refs": [],
    "afecta": [
     "pcb"
@@ -3495,6 +3555,15 @@
       "supuesto": "En la potencia v0.4 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja en x 76,5 a un bus inferior hasta J15 y el lomo; además se une al lomo por una rama en y 57,66 (la que antes iba a D4.1). El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.1 y J20.11 quedan sin conexión en las dos placas."
      },
      "fuente": "Revisión independiente de la segunda pasada (DEC-18): sin R5/R6 ni R43 un conector corrido o girado daña la ESP32"
+    },
+    {
+     "fecha": "01/11/2026",
+     "antes": {
+      "supuesto": "En la potencia v0.4 el relleno GND de la banda lógica toca el bus de retorno de los servos (y 80,5), que baja en x 76,5 a un bus inferior (y 91,5) hasta J15.1 y el lomo: esa es su única unión con el lomo (la rama que iba a D4.1 nunca tocó el relleno lógico, según la revisión independiente). El lazo principal de los servos cierra por J16.1, pero parte del retorno puede pasar por el relleno. J20.1 y J20.11 quedan sin conexión en las dos placas.",
+      "impacto_si_cambia": "Unos mV de caída en el relleno pueden mover la lectura de VBAT_ADC unos 0,1 V (R23 y C14 están en esa zona). El firmware usa el INA226 como medida principal de la batería.",
+      "como_se_confirma": "E-03: medir la diferencia de GND entre J20.15 y C1− con los servos en carga."
+     },
+     "fuente": "Revisión del equipo del 01/11/2026, por Matías [M]: 'habíamos dimensionado un UBEC para cada Servo, y en el diseño de la pcb hay uno solo para los dos'"
     }
    ]
   },

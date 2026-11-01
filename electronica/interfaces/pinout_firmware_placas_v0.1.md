@@ -1,6 +1,6 @@
 # Pinout de la ESP32-S3 en las placas v0.1: guía para el firmware
 
-Fecha: 31/10/2026. Placas: lógica y potencia v0.6 (casera, una cara). La ESP32 se alimenta por sus pines 3V3 desde el buck A9 de la placa de lógica; su pin 5V queda solo para el USB. Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
+Fecha: 31/10/2026. Placas: lógica v0.6 y potencia v0.7 (casera, una cara; la v0.7 solo cambió la alimentación de los servos, no los pines). La ESP32 se alimenta por sus pines 3V3 desde el buck A9 de la placa de lógica; su pin 5V queda solo para el USB. Fuente única: `gpio_table` de [especificacion_v0.6.json](../cad/segway_logica/especificacion_v0.6.json) (SUP-28, confirmado por Matías el 26/10/2026). Los pines se eligieron para que las placas se puedan rutear en una cara. **El firmware sigue esta tabla.** Si cambia la placa, el agente de electrónica actualiza este archivo.
 
 Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). Todos los pines son de **3,3 V y no toleran 5 V**.
 
@@ -87,7 +87,7 @@ Cada motor tiene solo dos entradas, IN1 e IN2. **No hay EN**: en el código va `
 Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se quiere conservar el del prototipo en protoboard.
 
 ```c
-// Placas v0.6 (lógica + potencia), ver electronica/interfaces/pinout_firmware_placas_v0.1.md
+// Placas: lógica v0.6 + potencia v0.7, ver electronica/interfaces/pinout_firmware_placas_v0.1.md
 #define PIN_I2C_SDA         17
 #define PIN_I2C_SCL         16
 #define PIN_IMU_INT         18
