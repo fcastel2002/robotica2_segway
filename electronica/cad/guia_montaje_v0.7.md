@@ -102,7 +102,7 @@ Alambre de cobre estañado de 0,6 mm, del lado de los componentes, pegado a la p
 
 ## 4. Orden de montaje
 
-1. **Imprimir** el PDF de cobre a tamaño real y medir el contorno con calibre: **124 × 77 mm** (potencia) y **95,25 × 59,6 mm** (lógica).
+1. **Imprimir** [imprimir_cobre_v0.7.pdf](imprimir_cobre_v0.7.pdf) (una hoja A4 con las dos placas, dos copias de cada una, sin espejar) en impresora láser, a tamaño real (100 %), y medir con calibre la regla de 50 mm y el contorno: **124 × 77 mm** (potencia) y **95,25 × 59,6 mm** (lógica).
 2. **Planchar, atacar y taladrar.** En la potencia, estañar la barra VM_BUS, el lomo de masa y las pistas de batería, de motores y de servos.
 3. **Puentes de alambre** (sección 3).
 4. **Resistencias y diodos**: R5, R6 y D1 en la potencia (R6 queda arriba de las dos columnas de servo y R5 a la derecha de J13); R41 y R42 en la lógica. Cuidado con la banda de D1.
