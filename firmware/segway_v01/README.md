@@ -72,8 +72,8 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
 Arranca con lo que mejor anduvo el 2/11: el LQR suave, `ref` de la tabla de patas (13,7° con las
-patas en 15°), `umax` 1,0, `deadband` 0 (3/11: con 0 anduvo mucho mejor que con 0,16) y `notch` 7,5 Hz,
-así que `arm` equilibra sin cargar nada.
+patas en 15°), `umax` 1,0, `deadband` 0,16 quieto y 0 andando (`dbmov`; 3/11: andando, 0 anduvo mucho
+mejor, pero quieto no sostenía la x) y `notch` 7,5 Hz, así que `arm` equilibra sin cargar nada.
 
 ## WiFi
 

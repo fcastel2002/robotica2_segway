@@ -31,6 +31,7 @@ static control_ctx_t s_ctx;
 
 // Aplica un comando recibido y devuelve lo que el supervisor tiene que saber de él.
 static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_params_t *mp,
+                               float *db_quieto,
                                float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
                                bool servo_free[SERVO_COUNT], float servo_lim[SERVO_COUNT][2],
                                float motor_manual[MOTOR_COUNT])
@@ -101,7 +102,8 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         switch (c->param) {
         case PARAM_REF:      p->theta_ref = c->value * DEG2RAD; break;
         case PARAM_UMAX:     p->u_max = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
-        case PARAM_DEADBAND: p->deadband = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
+        case PARAM_DEADBAND: *db_quieto = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
+        case PARAM_DBMOV:    mp->deadband_mov = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
         case PARAM_KX:       p->lqr.kx = c->value; break;
         case PARAM_KV:       p->lqr.kv = c->value; break;
         case PARAM_KPHI:     p->lqr.kphi = c->value; break;
@@ -192,10 +194,12 @@ static void control_task(void *arg)
         .x_libre = MOV_X_LIBRE, .x_atraso_max = MOV_X_ATRASO_MAX_M,
         .vel_pata_dps = SERVO_MAX_SPEED_DPS,
         .u_margen = MOV_U_MARGEN, .prio_theta = MOV_PRIO_DEG * DEG2RAD,
+        .deadband_mov = DEFAULT_DEADBAND_MOV, .avance_min = MOV_AVANCE_MIN,
         .prio_omega = MOV_PRIO_DPS * DEG2RAD, .prio_t = MOV_PRIO_T_S,
     };
     mov_t mov;
     mov_reset(&mov, 0.0f);
+    float db_quieto = DEFAULT_DEADBAND;     // zona muerta quieto; andando, mov_p.deadband_mov
     float giro = 0.0f;
     for (int i = 0; i < SERVO_COUNT; i++) {
         servo_pos[i] = servo_target[i] = NAN;   // desconocida hasta el primer ángulo pedido
@@ -230,8 +234,8 @@ static void control_task(void *arg)
                 mov_us = t0;
                 continue;
             }
-            sup_cmd_t r = apply_command(&c, &params, &mov_p, servo_pos, servo_target, servo_free,
-                                        servo_lim, motor_manual);
+            sup_cmd_t r = apply_command(&c, &params, &mov_p, &db_quieto, servo_pos, servo_target,
+                                        servo_free, servo_lim, motor_manual);
             if (r != SUP_CMD_NONE) cmd = r;
             if (c.type == CMD_SET && c.param == PARAM_REF) {
                 ref_correccion = ref_centro = params.theta_ref - ref_de_patas(servo_pos);
@@ -305,6 +309,9 @@ static void control_task(void *arg)
                 .tilt_err = att.theta - params.theta_ref, .rate = att.rate, .u = u,
             };
             params.u_ff = mov_paso(&mov, &mov_p, &me, dt);
+            // Quieto (posición fija) la zona muerta de siempre, que hace que las correcciones chicas
+            // venzan la fricción y sostiene la x; andando, la de andar
+            params.deadband = mov.x_fijada ? db_quieto : mov_p.deadband_mov;
             giro  += fminf(fmaxf(g_target - giro, -MOV_GIRO_RATE * dt), MOV_GIRO_RATE * dt);
 
             if (imu_ok) {   // con una lectura fallida aislada se mantiene el último comando
@@ -378,6 +385,7 @@ static void control_task(void *arg)
             .v           = odo.v,
             .v_ref       = mov.v_ref,
             .mov         = mov_p,
+            .deadband_quieto = db_quieto,
             .giro        = giro,
         };
         for (int i = 0; i < 3; i++) {

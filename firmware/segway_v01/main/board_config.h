@@ -97,8 +97,12 @@
                                             // 0,8 anduvo; a la noche, 1,0 para que el joystick a fondo
                                             // use el 100 % de los motores. Con el DRV8871 revisar
                                             // (LiPo llena a 12,6 V)
-#define DEFAULT_DEADBAND        0.0f        // 3/11: el equipo probó 0 y anduvo muchísimo mejor (antes
-                                            // 0,16). Fracción de PWM en la que el motor no arranca. 29/10,
+#define DEFAULT_DEADBAND        0.16f       // QUIETO (manteniendo la posición). Fracción de PWM en la
+                                            // que el motor no arranca. 3/11: con 0 el robot quieto no
+                                            // sostiene la x (las correcciones chicas no vencen la
+                                            // fricción: se va ±15 cm y vuelve tarde, y una vez se
+                                            // escapó a 1,1 m/s); andando, 0 anduvo mucho mejor: ver
+                                            // DEFAULT_DEADBAND_MOV. 29/10,
                                             // en el aire: girando, la velocidad se anula en 0,17 (der.)
                                             // y 0,19 (izq.); desde parado arrancan en 0,20-0,30.
                                             // 2/11, en el piso: con 0,18 los saltos de ±18 % en cada
@@ -169,6 +173,10 @@
 #define MOV_PRIO_DPS            70.0f
 #define MOV_PRIO_T_S            0.3f
 #define MOV_X_LIBRE             1           // 0: la consigna de posición es la integral (como antes)
+#define DEFAULT_DEADBAND_MOV    0.0f        // zona muerta ANDANDO (desde que se mueve el stick hasta que
+                                            // frenó y fijó la posición; en vivo: set dbmov). 3/11: con
+                                            // 0 anduvo muchísimo mejor (el equipo)
+#define MOV_AVANCE_MIN          0.05f       // |avance| menor = 0: que el stick suelto no suelte la x
 #define MOV_X_ATRASO_MAX_M      0.30f       // si el robot no llega a la consigna (motores al tope), la de
                                             // posición no se le adelanta más que esto: al soltar el
                                             // joystick no sale corriendo a alcanzarla

@@ -31,6 +31,7 @@ typedef enum {
     PARAM_VELPATA,      // velocidad de las patas hacia la posición pedida [°/s]
     PARAM_MARGEN,       // margen de motor: con el comando por encima, la velocidad pedida retrocede
     PARAM_PRIO,         // perturbación [grados] que suelta la velocidad pedida (0 = no)
+    PARAM_DBMOV,        // zona muerta andando (deadband es la de quieto)
     PARAM_COUNT,
 } param_id_t;
 
@@ -84,4 +85,5 @@ typedef struct {
     float            v_ref;         // m/s, referencia de velocidad que sale de "mov"
     float            giro;          // fracción de PWM sumada a la izquierda y restada a la derecha
     mov_params_t     mov;           // parámetros de manejo vigentes, para "get"
+    float            deadband_quieto;   // la zona muerta de quieto (params.deadband es la que se usa)
 } telemetry_t;

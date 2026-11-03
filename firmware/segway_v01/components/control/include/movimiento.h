@@ -36,6 +36,8 @@ typedef struct {
     float prio_t;           // [s] tiempo sin perturbación para volver a seguir el stick
     float u_margen;         // comando a los motores [0, 1] a partir del cual la velocidad pedida
                             // retrocede. 0 = no se usa
+    float deadband_mov;     // zona muerta del LQR mientras anda (la de quieto es la de siempre)
+    float avance_min;       // |avance| menor que esto cuenta como 0 (stick suelto con deriva)
 } mov_params_t;
 
 typedef struct {

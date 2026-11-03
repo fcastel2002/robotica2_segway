@@ -41,7 +41,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_KW] = "kw", [PARAM_NOTCH] = "notch", [PARAM_NOTCH2] = "notch2", [PARAM_LOWPASS] = "lp",
     [PARAM_REFAUTO] = "refauto", [PARAM_VMAX] = "vmax", [PARAM_ACEL] = "acel",
     [PARAM_FREN] = "fren", [PARAM_FF] = "ff", [PARAM_XLIBRE] = "xlibre", [PARAM_VELPATA] = "velpata",
-    [PARAM_MARGEN] = "margen", [PARAM_PRIO] = "prio",
+    [PARAM_MARGEN] = "margen", [PARAM_PRIO] = "prio", [PARAM_DBMOV] = "dbmov",
 };
 
 // Todo lo que dice la consola sale por el cable y, si hay red, por WiFi. Solo desde comms.
@@ -72,6 +72,7 @@ static void print_help(void)
         "#        velpata (grados/s con que las patas van a la posicion pedida)\n"
         "#        margen (0-1: con el motor por encima, la velocidad pedida retrocede; 0 = no)\n"
         "#        prio (grados: con una perturbacion mayor, suelta la velocidad pedida; 0 = no)\n"
+        "#        deadband es la de quieto; dbmov, la de andando (desde el stick hasta fijar la x)\n"
         "# servo: grados dentro de sus límites (get los muestra); sin l/r mueve los dos; off suelta, on agarra\n"
         "# servo lim: límites en vivo, entre %.0f y %.0f; se pierden al reiniciar (copiarlos a board_config.h)\n"
         "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n"
@@ -96,8 +97,8 @@ static void print_wifi(void)
 static void print_params(const telemetry_t *t)
 {
     const balance_params_t *p = &t->params;
-    out("# ref=%.2f umax=%.2f deadband=%.3f refauto=%d\n",
-        p->theta_ref * RAD2DEG, p->u_max, p->deadband, p->ref_auto ? 1 : 0);
+    out("# ref=%.2f umax=%.2f deadband=%.3f dbmov=%.3f refauto=%d\n",
+        p->theta_ref * RAD2DEG, p->u_max, t->deadband_quieto, t->mov.deadband_mov, p->ref_auto ? 1 : 0);
     out("# kx=%.3f kv=%.3f kphi=%.3f kw=%.3f notch=%.1f notch2=%.1f lp=%.1f\n",
         p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, p->notch_hz, p->notch2_hz, p->lowpass_hz);
     out("# vmax=%.2f acel=%.2f fren=%.2f ff=%.2f xlibre=%d velpata=%.0f margen=%.2f prio=%.1f\n",

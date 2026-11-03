@@ -36,7 +36,9 @@ float mov_paso(mov_t *m, const mov_params_t *p, const mov_entrada_t *e, float dt
         }
     }
 
-    float v_target = e->avance * p->v_max;
+    // Un stick suelto puede quedar un poco corrido del centro: eso no es un pedido (soltaría la x)
+    float avance = fabsf(e->avance) < p->avance_min ? 0.0f : e->avance;
+    float v_target = avance * p->v_max;
 
     // Margen de motor: con el comando en el sentido de la marcha cerca del tope, la velocidad
     // pedida no sube y baja con la rampa de frenado hasta que vuelve a haber margen
@@ -57,7 +59,7 @@ float mov_paso(mov_t *m, const mov_params_t *p, const mov_entrada_t *e, float dt
     m->v_ref += dv;
 
     if (p->x_libre) {
-        bool moviendo = e->avance != 0.0f || m->v_ref != 0.0f;
+        bool moviendo = avance != 0.0f || m->v_ref != 0.0f;
         if (moviendo) {
             m->x_fijada = false;
             m->t_parado = 0.0f;
