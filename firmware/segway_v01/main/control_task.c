@@ -12,6 +12,7 @@
 #include "imu_mpu6050.h"
 #include "messages.h"
 #include "motor.h"
+#include "movimiento.h"
 #include "odometry.h"
 #include "servo.h"
 #include "supervisor.h"
@@ -29,7 +30,7 @@ typedef struct {
 static control_ctx_t s_ctx;
 
 // Aplica un comando recibido y devuelve lo que el supervisor tiene que saber de él.
-static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
+static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_params_t *mp,
                                float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
                                bool servo_free[SERVO_COUNT], float servo_lim[SERVO_COUNT][2],
                                float motor_manual[MOTOR_COUNT])
@@ -98,18 +99,25 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
         break;
     case CMD_SET:
         switch (c->param) {
-        case PARAM_KP:       p->gains.kp = c->value; break;
-        case PARAM_KI:       p->gains.ki = c->value; break;
-        case PARAM_KD:       p->gains.kd = c->value; break;
         case PARAM_REF:      p->theta_ref = c->value * DEG2RAD; break;
         case PARAM_UMAX:     p->u_max = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
         case PARAM_DEADBAND: p->deadband = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
-        case PARAM_LQR:      p->use_lqr = c->value != 0.0f; break;     // vale desde el próximo arm
         case PARAM_KX:       p->lqr.kx = c->value; break;
         case PARAM_KV:       p->lqr.kv = c->value; break;
         case PARAM_KPHI:     p->lqr.kphi = c->value; break;
         case PARAM_KW:       p->lqr.kw = c->value; break;
         case PARAM_NOTCH:    p->notch_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
+        case PARAM_NOTCH2:   p->notch2_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
+        case PARAM_LOWPASS:  p->lowpass_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
+        case PARAM_REFAUTO:  p->ref_auto = c->value != 0.0f; break;
+        case PARAM_VMAX:     mp->v_max = fminf(fmaxf(c->value, 0.0f), 1.2f); break;
+        case PARAM_ACEL:     mp->acel = fminf(fmaxf(c->value, 0.05f), 5.0f); break;
+        case PARAM_FREN:     mp->fren = fminf(fmaxf(c->value, 0.05f), 5.0f); break;
+        case PARAM_FF:       mp->ff = fminf(fmaxf(c->value, 0.0f), 2.0f); break;
+        case PARAM_XLIBRE:   mp->x_libre = c->value != 0.0f; break;
+        case PARAM_VELPATA:  mp->vel_pata_dps = fminf(fmaxf(c->value, 1.0f), 300.0f); break;
+        case PARAM_MARGEN:   mp->u_margen = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
+        case PARAM_PRIO:     mp->prio_theta = fminf(fmaxf(c->value, 0.0f), 30.0f) * DEG2RAD; break;
         default: break;
         }
         break;
@@ -117,12 +125,12 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p,
     return SUP_CMD_NONE;
 }
 
-// Acerca los servos a su objetivo sin superar SERVO_MAX_SPEED_DPS: un salto brusco con
+// Acerca los servos a su objetivo sin superar vel_dps (set velpata): un salto brusco con
 // el peso del robot encima sacudiría la estructura.
 static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT],
-                          const bool free[SERVO_COUNT], float dt)
+                          const bool free[SERVO_COUNT], float vel_dps, float dt)
 {
-    float max_step = SERVO_MAX_SPEED_DPS * dt;
+    float max_step = vel_dps * dt;
     for (int i = 0; i < SERVO_COUNT; i++) {
         float diff = target[i] - pos[i];
         if (free[i] || isnan(diff) || diff == 0.0f) continue;
@@ -131,18 +139,29 @@ static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT
     }
 }
 
+// Ángulo de equilibrio para la altura de patas actual (tabla de board_config.h), en rad. Con una
+// pata suelta se usa la otra; con las dos sueltas, REF_PATA_SUELTA_DEG.
+static float ref_de_patas(const float pos[SERVO_COUNT])
+{
+    static const float patas[] = REF_TABLA_PATAS_DEG;
+    static const float refs[] = REF_TABLA_THETA_DEG;
+    float l = pos[SERVO_LEFT], r = pos[SERVO_RIGHT];
+    float pata = isnan(l) ? (isnan(r) ? REF_PATA_SUELTA_DEG : r) : (isnan(r) ? l : 0.5f * (l + r));
+    return balance_ref_tabla(pata, patas, refs, sizeof patas / sizeof patas[0]) * DEG2RAD;
+}
+
 static void control_task(void *arg)
 {
     const control_ctx_t *ctx = arg;
 
     balance_params_t params = {
-        .gains     = { DEFAULT_KP, DEFAULT_KI, DEFAULT_KD },
         .lqr       = { DEFAULT_LQR_KX, DEFAULT_LQR_KV, DEFAULT_LQR_KPHI, DEFAULT_LQR_KW },
-        .use_lqr   = DEFAULT_USE_LQR,
-        .theta_ref = DEFAULT_THETA_REF_DEG * DEG2RAD,
         .u_max     = DEFAULT_U_MAX,
         .deadband  = DEFAULT_DEADBAND,
         .notch_hz  = DEFAULT_NOTCH_HZ,
+        .notch2_hz = DEFAULT_NOTCH2_HZ,
+        .lowpass_hz = DEFAULT_LOWPASS_HZ,
+        .ref_auto  = DEFAULT_REF_AUTO,
     };
     supervisor_t sup;
     attitude_t att;
@@ -154,7 +173,6 @@ static void control_task(void *arg)
     odometry_reset(&odo);
 
     bool calibrated = false;
-    bool lqr_activo = false;        // la ley se fija al armar: no cambia en pleno equilibrio
     const float tau_vel = 1.0f / (6.2831853f * VEL_FILTER_HZ);    // [s]
     bool overrun = false;
     float ramp = 0.0f;              // 0..1 durante el armado
@@ -166,14 +184,28 @@ static void control_task(void *arg)
         [SERVO_RIGHT] = { SERVO_R_MIN_DEG, SERVO_R_MAX_DEG },
     };
     float motor_manual[MOTOR_COUNT] = { 0.0f };     // comando a mano, solo en DISARMED
-    // "mov": último pedido y cuándo llegó; lo que se aplica sigue a eso con rampas
+    // "mov": último pedido y cuándo llegó; las consignas siguen a eso con rampas (movimiento.c)
     float mov_fwd = 0.0f, mov_turn = 0.0f;
     int64_t mov_us = INT64_MIN / 2;
-    float v_ref = 0.0f, x_ref = 0.0f, giro = 0.0f;
+    mov_params_t mov_p = {
+        .v_max = MOV_V_MAX_MS, .acel = MOV_ACEL_MS2, .fren = MOV_FREN_MS2, .ff = MOV_FF,
+        .x_libre = MOV_X_LIBRE, .x_atraso_max = MOV_X_ATRASO_MAX_M,
+        .vel_pata_dps = SERVO_MAX_SPEED_DPS,
+        .u_margen = MOV_U_MARGEN, .prio_theta = MOV_PRIO_DEG * DEG2RAD,
+        .prio_omega = MOV_PRIO_DPS * DEG2RAD, .prio_t = MOV_PRIO_T_S,
+    };
+    mov_t mov;
+    mov_reset(&mov, 0.0f);
+    float giro = 0.0f;
     for (int i = 0; i < SERVO_COUNT; i++) {
         servo_pos[i] = servo_target[i] = NAN;   // desconocida hasta el primer ángulo pedido
         servo_free[i] = true;
     }
+    // Referencia = la de la tabla para las patas actuales + una corrección [rad]: "set ref" la fija
+    // para la pata actual y la referencia automática la ajusta alrededor de ref_centro (la
+    // corrección con que se armó o la de la última "set ref").
+    float ref_correccion = 0.0f, ref_centro = 0.0f;
+    params.theta_ref = ref_de_patas(servo_pos);
     uint32_t overruns_total = 0, exec_max = 0, window_max = 0;
     int window_n = 0;
 
@@ -198,10 +230,15 @@ static void control_task(void *arg)
                 mov_us = t0;
                 continue;
             }
-            sup_cmd_t r = apply_command(&c, &params, servo_pos, servo_target, servo_free,
+            sup_cmd_t r = apply_command(&c, &params, &mov_p, servo_pos, servo_target, servo_free,
                                         servo_lim, motor_manual);
             if (r != SUP_CMD_NONE) cmd = r;
+            if (c.type == CMD_SET && c.param == PARAM_REF) {
+                ref_correccion = ref_centro = params.theta_ref - ref_de_patas(servo_pos);
+            }
         }
+        // La referencia sigue a las patas mientras se mueven (update_servos las lleva a 90 °/s)
+        params.theta_ref = ref_de_patas(servo_pos) + ref_correccion;
 
         // 2. Sensores y estimación, en los ejes del robot
         imu_sample_t s;
@@ -231,7 +268,7 @@ static void control_task(void *arg)
         };
         sup_state_t st = supervisor_step(&sup, &in, TILT_LIMIT_DEG * DEG2RAD,
                                          ARM_WINDOW_DEG * DEG2RAD);
-        if (st == SUP_CALIBRATING && prev == SUP_DISARMED) {
+        if (st == SUP_CALIBRATING && (prev == SUP_DISARMED || prev == SUP_FAULT)) {
             // Recalibración pedida con "cal": se descarta el sesgo y el ángulo anteriores
             calibrated = false;
             attitude_reset(&att);
@@ -249,28 +286,39 @@ static void control_task(void *arg)
             if (prev != SUP_BALANCING) {
                 balance_reset(&bal);
                 ramp = 0.0f;
-                lqr_activo = params.use_lqr;
-                v_ref = x_ref = giro = 0.0f;
+                mov_reset(&mov, 0.0f);
+                giro = 0.0f;
+                ref_centro = ref_correccion;
             }
             ramp = fminf(ramp + dt / ARM_RAMP_S, 1.0f);
             float u_limit = ramp * params.u_max;
 
-            // "mov" (solo con el LQR, que es el que conoce x y v): el avance es una referencia
-            // de velocidad y su integral la de posición, así el LQR la sigue en lugar de volver a
-            // x = 0; el giro suma y resta PWM entre las ruedas. Un pedido vencido vale cero: frena
-            // con la rampa y se queda parado donde esté.
-            bool mov_ok = lqr_activo && t0 - mov_us < (int64_t)MOV_TIMEOUT_MS * 1000;
-            float v_target = mov_ok ? mov_fwd * MOV_V_MAX_MS : 0.0f;
+            // "mov": el avance pasa a una velocidad pedida con rampas de subida (acel) y de
+            // frenado (fren); con x libre, la posición se fija recién cuando terminó de frenar
+            // (movimiento.c). El giro suma y resta PWM entre las ruedas. Un pedido vencido vale
+            // cero: frena con la rampa y se queda parado donde termine.
+            bool mov_ok = t0 - mov_us < (int64_t)MOV_TIMEOUT_MS * 1000;
+            float avance = mov_ok ? mov_fwd : 0.0f;
             float g_target = mov_ok ? mov_turn * MOV_GIRO_MAX : 0.0f;
-            v_ref += fminf(fmaxf(v_target - v_ref, -MOV_ACCEL_MS2 * dt), MOV_ACCEL_MS2 * dt);
+            mov_entrada_t me = {
+                .avance = avance, .x = odo.x, .v = odo.v,
+                .tilt_err = att.theta - params.theta_ref, .rate = att.rate, .u = u,
+            };
+            params.u_ff = mov_paso(&mov, &mov_p, &me, dt);
             giro  += fminf(fmaxf(g_target - giro, -MOV_GIRO_RATE * dt), MOV_GIRO_RATE * dt);
-            x_ref += v_ref * dt;
 
             if (imu_ok) {   // con una lectura fallida aislada se mantiene el último comando
-                u = lqr_activo
-                    ? balance_lqr_step(&bal, &params, odo.x - x_ref, odo.v - v_ref, att.theta, att.rate,
-                                       dt, u_limit)
-                    : balance_step(&bal, &params, att.theta, att.rate, dt, u_limit);
+                u = balance_lqr_step(&bal, &params, odo.x - mov.x_ref, odo.v - mov.v_ref,
+                                     att.theta, att.rate, dt, u_limit);
+            }
+            // Referencia automática: si se queda corrido de su consigna, la referencia no es el
+            // equilibrio real y se corrige despacio (la corrección sobre la tabla). Solo parado
+            // (sin "mov", con la posición ya fija) y con la IMU bien.
+            if (params.ref_auto && imu_ok && avance == 0.0f && mov.v_ref == 0.0f && mov.x_fijada) {
+                ref_correccion = balance_ref_auto(ref_correccion, ref_centro,
+                                                  REF_AUTO_RANGE_DEG * DEG2RAD, odo.x - mov.x_ref,
+                                                  odo.v, REF_AUTO_V_MAX,
+                                                  fabsf(u) >= 0.95f * u_limit, REF_AUTO_GAIN, dt);
             }
             applied[MOTOR_LEFT]  = fminf(fmaxf(u + giro, -u_limit), u_limit);
             applied[MOTOR_RIGHT] = fminf(fmaxf(u - giro, -u_limit), u_limit);
@@ -293,9 +341,12 @@ static void control_task(void *arg)
             motor_manual[MOTOR_LEFT] = motor_manual[MOTOR_RIGHT] = 0.0f;
             motor_stop_all();
         }
-        if (st != SUP_BALANCING) v_ref = x_ref = giro = 0.0f;
+        if (st != SUP_BALANCING) {
+            mov_reset(&mov, 0.0f);
+            giro = 0.0f;
+        }
         // Los servos no dependen del estado: todavía no participan del equilibrio
-        update_servos(servo_pos, servo_target, servo_free, dt);
+        update_servos(servo_pos, servo_target, servo_free, mov_p.vel_pata_dps, dt);
 
         // 5. Telemetría y medición del ciclo
         uint32_t exec_us = (uint32_t)(esp_timer_get_time() - t0);
@@ -325,7 +376,8 @@ static void control_task(void *arg)
             .motor_cmd   = { applied[MOTOR_LEFT], applied[MOTOR_RIGHT] },
             .x           = odo.x,
             .v           = odo.v,
-            .v_ref       = v_ref,
+            .v_ref       = mov.v_ref,
+            .mov         = mov_p,
             .giro        = giro,
         };
         for (int i = 0; i < 3; i++) {

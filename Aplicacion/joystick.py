@@ -3,9 +3,10 @@ envía `mov <avance> <giro>` y comandos de botones por UDP al puerto 4211 del Se
 
 Controles configurados para el mando de PS4 (DualShock 4):
 - Botón OPTIONS: cambia entre Opción 1 (1 stick izquierdo + flechitas) y Opción 2 (2 sticks separados + flechitas).
-- Botón R1: sube los servos de las patas de a +10° por pulsación (tope estricto en 30°).
-- Botón L1: baja los servos de las patas de a -10° por pulsación (tope mínimo en 0°).
-- Botón ✕ (Equis): arma el robot (`set lqr 1` + `arm`).
+- Botón R1: sube las patas de a +2° por pulsación (tope en 30°: ver SERVO_MAX_DEG). El firmware
+  las lleva suave, a «velpata» grados por segundo (20 por defecto).
+- Botón L1: baja las patas de a -2° por pulsación (tope mínimo en 0°).
+- Botón ✕ (Equis): arma el robot (`arm`; el LQR es el único control del firmware).
 - Botón ◯ (Círculo): desarme de emergencia inmediato (`mov 0 0` + `disarm`).
 
 Expone `GET http://localhost:8001/estado`, `POST /mando` y `POST /accion` con `Access-Control-Allow-Origin: *`.
@@ -26,13 +27,16 @@ from typing import Callable
 PUERTO_HTTP = 8001
 PUERTO_COMANDOS = 4211   # WIFI_CMD_PORT en firmware/segway_v01/main/board_config.h
 ZONA_MUERTA = 0.08       # descarta deriva del stick en reposo
+FLECHAS_FRACCION = 0.5   # las flechitas mandan el 50 %; el stick, de 0 a 100 % según cuánto se mueva
 FRECUENCIA_HZ = 25.0     # cada 40 ms (< 300 ms de MOV_TIMEOUT_MS del firmware)
 SONY_VID = 0x054C        # DualShock 4 / DualSense
 
-# Límites físicos estrictos de los servos de las patas (mecanismo cuatro barras)
+# Límites de las patas (mecanismo cuatro barras). El servo nunca sale de 0-30°; desde el 2/11 el
+# firmware pide ángulos de PATA y le suma a cada servo su cero (la derecha tiene 5°). Desde el 3/11
+# las dos patas van de 0 a 30° (la derecha se corrió 5° en el brazo: su servo llega a 35°).
 SERVO_MIN_DEG = 0
 SERVO_MAX_DEG = 30
-SERVO_PASO_DEG = 10
+SERVO_PASO_DEG = 2       # 3/11: antes 10; el equipo los quiere de a poco
 
 MODOS_VALIDOS = ("opcion_1", "opcion_2")
 DESCRIPCION_MODOS = {
@@ -49,7 +53,7 @@ BOTONES_VACIOS = {
 
 
 def acotar_servo_estricto(grados: float | int) -> int:
-    """Garantiza bajo cualquier circunstancia que el comando de servo esté entre 0° y 30°."""
+    """Garantiza bajo cualquier circunstancia que el comando de servo esté entre 0° y SERVO_MAX_DEG."""
     return max(SERVO_MIN_DEG, min(SERVO_MAX_DEG, int(round(float(grados)))))
 
 
@@ -78,8 +82,8 @@ def calcular_mando(ejes: dict, modo: str, escala: float = 1.0) -> tuple[float, f
     lx = float(ejes.get("lx", 0.0))
     ly = float(ejes.get("ly", 0.0))
     rx = float(ejes.get("rx", 0.0))
-    dx = float(ejes.get("dpad_x", 0.0))
-    dy = float(ejes.get("dpad_y", 0.0))
+    dx = float(ejes.get("dpad_x", 0.0)) * FLECHAS_FRACCION
+    dy = float(ejes.get("dpad_y", 0.0)) * FLECHAS_FRACCION
 
     if modo == "opcion_2":
         avance_bruto = mayor_magnitud(ly, dy)
@@ -205,7 +209,187 @@ if sys.platform == "win32":
         giro = 1.0 if s > 0.3 else (-1.0 if s < -0.3 else 0.0)
         return avance, giro
 
+    _ultimo_refresco_joy = 0.0
+
+    # --- Mando de Sony por HID directo (DualShock 4) ---
+    # 3/11: con el navegador abierto el DS4 por Bluetooth pasa al modo extendido (reportes 0x11 de
+    # 547 bytes) y winmm deja de ver los cambios (lee todo en el centro): el mando andaba solo con
+    # la pestaña visible, que es la que manda /mando. Leyendo el HID directo, con acceso compartido,
+    # anda con la pestaña cerrada o en segundo plano. Entiende los dos formatos:
+    #   0x11 (Bluetooth extendido): datos desde el byte 3;  0x01 (USB o Bluetooth básico): desde el 1
+    #   ejes LX LY RX RY (0-255, centro 128), botones1 (cruceta abajo; cuadrado 0x10, cruz 0x20,
+    #   círculo 0x40, triángulo 0x80), botones2 (L1 0x01, R1 0x02, L2 0x04, R2 0x08, share 0x10,
+    #   options 0x20); batería en datos+29 (0-10, ×10 %)
+    import ctypes.wintypes as _wt
+    import threading as _threading
+
+    class _GUID(ctypes.Structure):
+        _fields_ = [("Data1", _wt.DWORD), ("Data2", _wt.WORD), ("Data3", _wt.WORD),
+                    ("Data4", ctypes.c_ubyte * 8)]
+
+    class _SP_DEVICE_INTERFACE_DATA(ctypes.Structure):
+        _fields_ = [("cbSize", _wt.DWORD), ("InterfaceClassGuid", _GUID), ("Flags", _wt.DWORD),
+                    ("Reserved", ctypes.c_void_p)]
+
+    class _HIDD_ATTRIBUTES(ctypes.Structure):
+        _fields_ = [("Size", _wt.ULONG), ("VendorID", _wt.USHORT), ("ProductID", _wt.USHORT),
+                    ("VersionNumber", _wt.USHORT)]
+
+    class _HIDP_CAPS(ctypes.Structure):
+        _fields_ = [("Usage", _wt.USHORT), ("UsagePage", _wt.USHORT),
+                    ("InputReportByteLength", _wt.USHORT), ("OutputReportByteLength", _wt.USHORT),
+                    ("FeatureReportByteLength", _wt.USHORT), ("Reserved", _wt.USHORT * 17),
+                    ("Resto", _wt.USHORT * 10)]
+
+    class LectorHidSony:
+        """Hilo que lee el mando de Sony por HID y guarda el último estado (formato de lectura)."""
+        DIGCF = 0x2 | 0x10                      # DIGCF_PRESENT | DIGCF_DEVICEINTERFACE
+        CRUCETA = {0: (1, 0), 1: (1, 1), 2: (0, 1), 3: (-1, 1), 4: (-1, 0), 5: (-1, -1),
+                   6: (0, -1), 7: (1, -1)}      # (avance, giro)
+
+        def __init__(self) -> None:
+            self._lock = _threading.Lock()
+            self._estado: dict | None = None
+            self._t = -1e9
+            try:
+                self._setupapi = ctypes.WinDLL("setupapi", use_last_error=True)
+                self._hid = ctypes.WinDLL("hid", use_last_error=True)
+                self._k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            except OSError:
+                return
+            s, h, k = self._setupapi, self._hid, self._k32
+            s.SetupDiGetClassDevsW.restype = ctypes.c_void_p
+            s.SetupDiGetClassDevsW.argtypes = [ctypes.POINTER(_GUID), _wt.LPCWSTR, _wt.HWND, _wt.DWORD]
+            s.SetupDiEnumDeviceInterfaces.argtypes = [ctypes.c_void_p, ctypes.c_void_p,
+                                                      ctypes.POINTER(_GUID), _wt.DWORD,
+                                                      ctypes.POINTER(_SP_DEVICE_INTERFACE_DATA)]
+            s.SetupDiGetDeviceInterfaceDetailW.argtypes = [ctypes.c_void_p,
+                                                           ctypes.POINTER(_SP_DEVICE_INTERFACE_DATA),
+                                                           ctypes.c_void_p, _wt.DWORD,
+                                                           ctypes.POINTER(_wt.DWORD), ctypes.c_void_p]
+            s.SetupDiDestroyDeviceInfoList.argtypes = [ctypes.c_void_p]
+            k.CreateFileW.restype = ctypes.c_void_p
+            k.CreateFileW.argtypes = [_wt.LPCWSTR, _wt.DWORD, _wt.DWORD, ctypes.c_void_p, _wt.DWORD,
+                                      _wt.DWORD, ctypes.c_void_p]
+            k.ReadFile.argtypes = [ctypes.c_void_p, ctypes.c_void_p, _wt.DWORD,
+                                   ctypes.POINTER(_wt.DWORD), ctypes.c_void_p]
+            k.CloseHandle.argtypes = [ctypes.c_void_p]
+            h.HidD_GetAttributes.argtypes = [ctypes.c_void_p, ctypes.POINTER(_HIDD_ATTRIBUTES)]
+            h.HidD_GetPreparsedData.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p)]
+            h.HidD_FreePreparsedData.argtypes = [ctypes.c_void_p]
+            h.HidP_GetCaps.argtypes = [ctypes.c_void_p, ctypes.POINTER(_HIDP_CAPS)]
+            _threading.Thread(target=self._ciclo, daemon=True, name="hid-sony").start()
+
+        def ultimo(self, edad_max: float = 0.3) -> dict | None:
+            with self._lock:
+                if self._estado is None or time.monotonic() - self._t > edad_max:
+                    return None
+                return self._estado
+
+        def _rutas(self):
+            guid = _GUID()
+            self._hid.HidD_GetHidGuid(ctypes.byref(guid))
+            lista = self._setupapi.SetupDiGetClassDevsW(ctypes.byref(guid), None, None, self.DIGCF)
+            i = 0
+            while True:
+                d = _SP_DEVICE_INTERFACE_DATA()
+                d.cbSize = ctypes.sizeof(d)
+                if not self._setupapi.SetupDiEnumDeviceInterfaces(lista, None, ctypes.byref(guid), i,
+                                                                  ctypes.byref(d)):
+                    break
+                req = _wt.DWORD()
+                self._setupapi.SetupDiGetDeviceInterfaceDetailW(lista, ctypes.byref(d), None, 0,
+                                                                ctypes.byref(req), None)
+                buf = ctypes.create_string_buffer(max(req.value, 8))
+                ctypes.cast(buf, ctypes.POINTER(_wt.DWORD))[0] = 8 if ctypes.sizeof(ctypes.c_void_p) == 8 else 6
+                if self._setupapi.SetupDiGetDeviceInterfaceDetailW(lista, ctypes.byref(d), buf, req,
+                                                                   None, None):
+                    yield ctypes.wstring_at(ctypes.addressof(buf) + 4)
+                i += 1
+            self._setupapi.SetupDiDestroyDeviceInfoList(lista)
+
+        def _abrir(self):
+            """Primer mando de Sony (gamepad o joystick): (handle, largo del reporte, nombre)."""
+            invalido = ctypes.c_void_p(-1).value
+            for ruta in self._rutas():
+                hd = self._k32.CreateFileW(ruta, 0x80000000, 0x1 | 0x2, None, 3, 0, None)  # leer, compartido
+                if hd in (None, invalido):
+                    continue
+                at = _HIDD_ATTRIBUTES()
+                at.Size = ctypes.sizeof(at)
+                caps = _HIDP_CAPS()
+                pp = ctypes.c_void_p()
+                ok = (self._hid.HidD_GetAttributes(hd, ctypes.byref(at)) and at.VendorID == SONY_VID
+                      and self._hid.HidD_GetPreparsedData(hd, ctypes.byref(pp)))
+                if ok:
+                    self._hid.HidP_GetCaps(pp, ctypes.byref(caps))
+                    self._hid.HidD_FreePreparsedData(pp)
+                    if caps.UsagePage == 1 and caps.Usage in (4, 5) and caps.InputReportByteLength >= 10:
+                        nombre = _nombre_oem(at.VendorID, at.ProductID, "Wireless Controller")
+                        return hd, caps.InputReportByteLength, nombre
+                self._k32.CloseHandle(hd)
+            return None, 0, ""
+
+        def _interpretar(self, b: bytes, nombre: str) -> dict | None:
+            if len(b) >= 12 and b[0] == 0x11:
+                o = 3
+            elif len(b) >= 10 and b[0] == 0x01:
+                o = 1
+            else:
+                return None
+            eje = lambda v: max(-1.0, min(1.0, (v - 127.5) / 127.5))
+            b1, b2 = b[o + 4], b[o + 5]
+            av, gi = self.CRUCETA.get(b1 & 0x0F, (0, 0))
+            bateria = None
+            if len(b) > o + 29:
+                bateria = min(100, (b[o + 29] & 0x0F) * 10)
+            return {
+                "conectado": True,
+                "nombre": nombre + " (HID)",
+                "bateria": bateria,
+                "crudo": {"lx": eje(b[o]), "ly": -eje(b[o + 1]), "rx": eje(b[o + 2]), "ry": -eje(b[o + 3]),
+                          "dpad_x": float(gi), "dpad_y": float(av)},
+                "botones": {
+                    "cuadrado": bool(b1 & 0x10), "x": bool(b1 & 0x20), "o": bool(b1 & 0x40),
+                    "triangulo": bool(b1 & 0x80),
+                    "l1": bool(b2 & 0x01), "r1": bool(b2 & 0x02), "l2": bool(b2 & 0x04),
+                    "r2": bool(b2 & 0x08), "share": bool(b2 & 0x10), "options": bool(b2 & 0x20),
+                    "up": av > 0, "down": av < 0, "left": gi < 0, "right": gi > 0,
+                },
+            }
+
+        def _ciclo(self) -> None:
+            while True:
+                hd, largo, nombre = self._abrir()
+                if not hd:
+                    time.sleep(2.0)
+                    continue
+                buf = ctypes.create_string_buffer(largo)
+                leido = _wt.DWORD()
+                while self._k32.ReadFile(hd, buf, largo, ctypes.byref(leido), None):
+                    estado = self._interpretar(buf.raw[:leido.value], nombre)
+                    if estado is not None:
+                        with self._lock:
+                            self._estado = estado
+                            self._t = time.monotonic()
+                self._k32.CloseHandle(hd)       # se desconectó: volver a buscarlo
+                time.sleep(1.0)
+
+    _lector_hid = LectorHidSony()
+
     def leer_mando_windows(zona_muerta: float = ZONA_MUERTA) -> dict | None:
+        # 0. Mando de Sony por HID directo (anda sin la pestaña del navegador)
+        hid_estado = _lector_hid.ultimo()
+        if hid_estado is not None:
+            crudo = hid_estado["crudo"]
+            ejes = {k: round(aplicar_zona_muerta(crudo[k], zona_muerta), 3) for k in ("lx", "ly", "rx", "ry")}
+            ejes["dpad_x"] = crudo["dpad_x"]
+            ejes["dpad_y"] = crudo["dpad_y"]
+            return {"conectado": True, "nombre": hid_estado["nombre"], "bateria": hid_estado["bateria"],
+                    "ejes": ejes, "botones": dict(hid_estado["botones"])}
+        return _leer_mando_windows_sin_hid(zona_muerta)
+
+    def _leer_mando_windows_sin_hid(zona_muerta: float = ZONA_MUERTA) -> dict | None:
         # 1. Intentar XInput primero (DS4Windows, Steam Input o mando Xbox)
         if _xinput is not None:
             st = XINPUT_STATE()
@@ -291,6 +475,15 @@ if sys.platform == "win32":
                              "dpad_x": dpad_x, "dpad_y": dpad_y},
                     "botones": botones,
                 }
+        # winmm arma la lista de mandos al arrancar el proceso: uno que se enchufa después no
+        # aparece hasta recargarla (2/11: el mando por USB no se veía hasta reiniciar el puente)
+        global _ultimo_refresco_joy
+        if time.monotonic() - _ultimo_refresco_joy > 2.0:
+            _ultimo_refresco_joy = time.monotonic()
+            try:
+                winmm.joyConfigChanged(0)
+            except (AttributeError, OSError):
+                pass
         return None
 else:
     def leer_mando_windows(zona_muerta: float = ZONA_MUERTA) -> dict | None:
@@ -318,7 +511,7 @@ class PuenteJoystick:
         self.zona_muerta = zona_muerta
         self.modo = "opcion_1"  # "opcion_1" (1 stick + flechitas) | "opcion_2" (2 sticks + flechitas)
         self.escala = 1.0
-        self.servo_deg = 0      # siempre acotado estrictamente entre 0 y 30 grados (pasos de 10°)
+        self.servo_deg = 0      # siempre acotado estrictamente entre 0 y 30 grados
         self.hz = hz
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -334,7 +527,7 @@ class PuenteJoystick:
         self._web_mando_t: float = -1e9
         self._ultimo_envio_ok: bool = False
         self._destino_texto: str | None = None
-        self._ultimo_evento: str = "Listo (OPTIONS: modo 1/2 · R1/L1: servos ±10° [0..30°] · ✕: armar · ◯: desarmar)"
+        self._ultimo_evento: str = "Listo (OPTIONS: modo 1/2 · R1/L1: servos ±2° [0..30°] · ✕: armar · ◯: desarmar)"
 
     def _resolver_destino(self) -> tuple[str | None, bool, str]:
         """Devuelve (ip_udp, es_simulado, texto_destino)."""
@@ -369,7 +562,7 @@ class PuenteJoystick:
 
     def ejecutar_accion(self, accion: str, valor: float | int | None = None) -> str:
         """Ejecuta una acción discreta (desde flanco de botón del PS4 o botón de la interfaz).
-        Garantiza que el ángulo de los servos jamás salga del rango [0°, 30°].
+        Garantiza que el ángulo de los servos jamás salga del rango [0°, SERVO_MAX_DEG].
         """
         comandos_a_enviar: list[str] = []
         with self._lock:
@@ -390,7 +583,7 @@ class PuenteJoystick:
                 if self.servo_deg == prev and self.servo_deg >= SERVO_MAX_DEG:
                     self._ultimo_evento = f"R1 → Servo en tope máximo permitido ({SERVO_MAX_DEG}°)"
                 else:
-                    self._ultimo_evento = f"R1 → Subir servos a {self.servo_deg}° (+10°, máx {SERVO_MAX_DEG}°)"
+                    self._ultimo_evento = f"R1 → Subir servos a {self.servo_deg}° (+{SERVO_PASO_DEG}°, máx {SERVO_MAX_DEG}°)"
             elif accion == "servo_bajar":
                 prev = self.servo_deg
                 self.servo_deg = acotar_servo_estricto(self.servo_deg - SERVO_PASO_DEG)
@@ -398,14 +591,14 @@ class PuenteJoystick:
                 if self.servo_deg == prev and self.servo_deg <= SERVO_MIN_DEG:
                     self._ultimo_evento = f"L1 → Servo en tope mínimo ({SERVO_MIN_DEG}°)"
                 else:
-                    self._ultimo_evento = f"L1 → Bajar servos a {self.servo_deg}° (-10°, mín {SERVO_MIN_DEG}°)"
+                    self._ultimo_evento = f"L1 → Bajar servos a {self.servo_deg}° (-{SERVO_PASO_DEG}°, mín {SERVO_MIN_DEG}°)"
             elif accion == "servo_set" and valor is not None:
                 self.servo_deg = acotar_servo_estricto(valor)
                 comandos_a_enviar.append(f"servo {self.servo_deg}")
-                self._ultimo_evento = f"Servos ajustados a {self.servo_deg}° (rango estricto 0°..30°)"
+                self._ultimo_evento = f"Servos ajustados a {self.servo_deg}° (rango 0°..{SERVO_MAX_DEG}°)"
             elif accion == "armar":
-                comandos_a_enviar.extend(["set lqr 1", "arm"])
-                self._ultimo_evento = "✕ → Armar robot (set lqr 1 + arm)"
+                comandos_a_enviar.append("arm")
+                self._ultimo_evento = "✕ → Armar robot (arm)"
             elif accion == "desarmar":
                 self._mando = {"avance": 0.0, "giro": 0.0}
                 comandos_a_enviar.extend(["mov 0.000 0.000", "disarm"])

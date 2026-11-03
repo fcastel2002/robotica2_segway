@@ -538,7 +538,8 @@ addEventListener('pagehide', () => frenarMotores());
 // La respuesta de "get" (# kp=0.8 ki=0 ... y # lqr=1 kx=6.1 ...) llena las casillas de la tarjeta
 // Control y las que tengan data-param (umax en Motores).
 function leerParametros(texto) {
-  if (!/^(kp|lqr)=/.test(texto)) return;
+  // firmware viejo (kp=, lqr=), desde el 2/11 (ref=, kx=) y desde el 3/11 (vmax=: manejo)
+  if (!/^(kp|lqr|ref|kx|vmax)=/.test(texto)) return;
   for (const [, nombre, valor] of texto.matchAll(/(\w+)=([-+\d.eE]+)/g)) {
     const casilla = $('ganancias').elements[nombre] ?? document.querySelector(`[data-param="${nombre}"]`);
     if (casilla && document.activeElement !== casilla) casilla.value = Number(valor);
@@ -555,6 +556,14 @@ for (const boton of document.querySelectorAll('[data-comando]')) {
     enviar(boton.dataset.comando);
   };
 }
+// Después de una caída (FALLEN) el firmware pide desarmar antes de volver a armar: los dos de
+// una. Arma solo si está a menos de 5° de la referencia, como "Armar".
+$('rearmar').onclick = async () => {
+  ponerDeslizadores(0);
+  enviado.l = enviado.r = 0;
+  await enviar('disarm');
+  setTimeout(() => enviar('arm'), 200);
+};
 $('linea-comando').onsubmit = (e) => {
   e.preventDefault();
   enviar($('texto-comando').value);

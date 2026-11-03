@@ -17,12 +17,15 @@
 // 29/10, medido en el robot (GY-521 de canto, pines abajo): parado, x marca +10,3 m/s²;
 // inclinado ~37° adelante, z pasa de −0,8 a +5,3. Así que arriba = +x, adelante = −z y el
 // cabeceo es alrededor de +y (confirmado con la integral del giróscopo).
+// 2/11, a la noche: el equipo dio vuelta la IMU (media vuelta alrededor del eje vertical). Medido
+// con las ruedas apoyadas: derecho, x +10,3 y z −0,2; inclinado ~25° adelante, z baja a −4,5 y el
+// giróscopo y marca −12 °/s al inclinarlo. Arriba sigue +x; adelante pasa a +z y el cabeceo a −y.
 #define IMU_AXIS_FWD            2
-#define IMU_SIGN_FWD            -1.0f
+#define IMU_SIGN_FWD            1.0f
 #define IMU_AXIS_UP             0
 #define IMU_SIGN_UP             1.0f
 #define IMU_AXIS_PITCH          1
-#define IMU_SIGN_PITCH          1.0f
+#define IMU_SIGN_PITCH          -1.0f
 
 // --- Estimación ---
 #define ATTITUDE_TAU_S          0.5f        // constante del filtro complementario
@@ -50,51 +53,84 @@
 #define VEL_FILTER_HZ           20.0f       // filtro de la velocidad de las ruedas (el del modelo)
 
 // --- Servos de las patas: todavía sin función en el control, solo posición a mano ---
-// Ángulo del servo (0-180°, 90° al centro), no de la pata. Los límites protegen el mecanismo,
-// uno por servo porque el brazo nunca queda calzado igual en las dos patas. Se miden con la
-// calibración del banco de pruebas (gui_hmi), que genera estas líneas; en vivo: "servo lim".
+// Los ángulos que se piden son de la pata: el del servo menos su cero (SERVO_*_ZERO_DEG), así
+// el mismo número deja las dos patas iguales. Los límites protegen el mecanismo, uno por servo
+// porque el brazo nunca queda calzado igual en las dos patas. Se miden con la calibración del
+// banco de pruebas (gui_hmi), que genera estas líneas; en vivo: "servo lim".
 #define SERVO_FREQ_HZ           50
 #define SERVO_US_AT_0_DEG       500         // ficha del DS3240: 500-2500 us para 180°
 #define SERVO_US_AT_180_DEG     2500
-// 29/10: el recorrido es 0-30°, ESTRICTO: fuera de ahí se rompe el cuatro barras. Los dos
-// servos usan todo ese rango, y "servo lim" solo puede achicarlo, nunca salir de 0-30.
-#define SERVO_L_MIN_DEG         0.0f
+// 2/11 (Joaquín y el equipo, a ojo con el robot en el aire): las dos patas quedan iguales con
+// la izquierda en 0° y la derecha en 5°. Ese 5 es el 0 de la derecha: los ángulos que se piden
+// ("servo", "servo lim", telemetría) son de la pata, y el driver le suma a cada servo su cero.
+#define SERVO_L_ZERO_DEG        0.0f
+#define SERVO_R_ZERO_DEG        5.0f
+// 29/10: el recorrido es 0-30°, ESTRICTO: fuera de ahí se rompe el cuatro barras. 3/11: la
+// pata derecha se corrió 5° en el brazo del servo, así que su 0-30 de pata es 5-35 del servo
+// (Joaquín: "con ambas a 30"). Los límites son de la PATA y valen igual para las dos;
+// "servo lim" solo puede achicarlos, nunca sacar la pata de 0-30.
+#define SERVO_L_MIN_DEG         0.0f        // de la pata
 #define SERVO_L_MAX_DEG         30.0f
 #define SERVO_R_MIN_DEG         0.0f
 #define SERVO_R_MAX_DEG         30.0f
-#define SERVO_HARD_MIN_DEG      0.0f        // "servo lim" no puede salir de acá
+#define SERVO_HARD_MIN_DEG      0.0f        // de la pata: "servo lim" no sale de acá
 #define SERVO_HARD_MAX_DEG      30.0f
-#define SERVO_MAX_SPEED_DPS     90.0f       // velocidad de movimiento hacia la posición pedida
+#define SERVO_MAX_SPEED_DPS     20.0f       // velocidad hacia la posición pedida (en vivo: set velpata).
+                                            // 3/11: 90 -> 20 °/s, el equipo pidió que se muevan suave
+                                            // (con el joystick cada clic mueve 2°)
 #define SERVO_L_INVERT          0           // 1 si el servo está montado en espejo
 #define SERVO_R_INVERT          1
 
 // --- Control de equilibrio: valores al arrancar, se ajustan en vivo con "set" ---
-// Arrancan en cero: el robot no hace nada hasta que se le cargan ganancias.
-#define DEFAULT_KP              0.0f        // [1/rad]
-#define DEFAULT_KI              0.0f        // [1/(rad·s)]
-#define DEFAULT_KD              0.0f        // [s/rad]
-#define DEFAULT_THETA_REF_DEG   1.0f        // ángulo de equilibrio real del centro de masa. 29/10, con
-                                            // las patas en 15°: el robot quedó equilibrado en ~1°
-                                            // (el modelo daba +1,5°). Los ~20° que se medían
-                                            // sosteniéndolo a mano eran la mano, no el equilibrio
-#define DEFAULT_U_MAX           1.0f        // el L298N cae ~2 V: el motor no supera los 12 V
-                                            // con el DRV8871 usar 0,9 (LiPo llena a 12,6 V)
-#define DEFAULT_DEADBAND        0.18f       // fracción de PWM en la que el motor no arranca. 29/10,
+// Ángulo de equilibrio según la altura de las patas: con el cuatro barras, al moverlas la rueda se
+// corre respecto del cuerpo. 2/11 a la noche, con la IMU dada vuelta, MEDIDO equilibrando (modo
+// calibrar_patas de sesion_placa.py: ángulo medio en régimen, 15-30 s por altura); la estimación
+// a ojo (0° → 11°, 15° → 7°, 25° → 2°) estaba 6-9° abajo. El control usa la tabla interpolada en
+// la pata actual más una corrección: "set ref" la fija para la pata actual y "refauto" la ajusta
+// sola. Con las patas sueltas (posición desconocida) se toma REF_PATA_SUELTA_DEG.
+#define REF_TABLA_PATAS_DEG     { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
+#define REF_TABLA_THETA_DEG     { 18.9f, 16.0f, 14.9f, 13.7f, 12.8f, 10.9f, 11.5f }
+// (30° no se midió: desde el 3/11 las patas llegan a 30 y es el modelo, 1,8°, más los 9,8° de la
+// IMU; simulacion/escalon. Medirlo con calibrar_patas)
+#define REF_PATA_SUELTA_DEG     15.0f
+#define DEFAULT_U_MAX           1.0f        // 2/11: con 0,6 se escapó al armar (poco margen); con
+                                            // 0,8 anduvo; a la noche, 1,0 para que el joystick a fondo
+                                            // use el 100 % de los motores. Con el DRV8871 revisar
+                                            // (LiPo llena a 12,6 V)
+#define DEFAULT_DEADBAND        0.16f       // fracción de PWM en la que el motor no arranca. 29/10,
                                             // en el aire: girando, la velocidad se anula en 0,17 (der.)
-                                            // y 0,19 (izq.); desde parado arrancan en 0,20-0,30
+                                            // y 0,19 (izq.); desde parado arrancan en 0,20-0,30.
+                                            // 2/11, en el piso: con 0,18 los saltos de ±18 % en cada
+                                            // cruce por cero disparaban la vibración de 16 Hz; 0,16
+                                            // es lo que mejor anduvo probando en vivo (el equipo)
 
-// LQR de cuatro estados ("set lqr 1"). Arranca apagado: se arma con el PID de arriba.
+// LQR de cuatro estados: el único control desde el 2/11 (el PID de la v0.1 nunca equilibró el
+// robot y el firmware arrancaba con él); "Armar" anda sin cargar nada.
 // 29/10, PRIMER EQUILIBRIO en el piso (40 s sin caerse, patas en 15°): LQR del modelo con
 // factor_R = 64 (el más suave; simulacion/pendulo_invertido/ganancias_para_el_firmware.m da
 // el de factor_R 4) más el rechaza banda en 7,5 Hz, que saca del comando la vibración propia
 // del robot (7-8 Hz, medida en todos los intentos) y que sin él el LQR excitaba a fondo.
 // Antes de activarlo: IMU, motores y encoders positivos hacia adelante (README, "LQR").
-#define DEFAULT_USE_LQR         0
 #define DEFAULT_LQR_KX          1.52f       // [1/m]
 #define DEFAULT_LQR_KV          2.73f       // [1/(m/s)]
 #define DEFAULT_LQR_KPHI        4.14f       // [1/rad]
 #define DEFAULT_LQR_KW          0.478f      // [1/(rad/s)]
 #define DEFAULT_NOTCH_HZ        7.5f        // rechaza banda del comando ("set notch"); 0 = sin filtro
+#define DEFAULT_NOTCH2_HZ       0.0f        // segundo rechaza banda, angosto ("set notch2"); 0 = sin
+                                            // filtro. 2/11: para la vibración de ~16 Hz (FW-015)
+// Referencia automática ("set refauto 1"): si el robot se queda corrido de su consigna, ref no es
+// el ángulo de equilibrio (x = kphi/kx · (ref - equilibrio)) y se corrige despacio:
+// d(ref)/dt = -REF_AUTO_GAIN · x. Con kphi/kx = 2,7 m/rad tarda ~10 s; solo con el robot casi
+// quieto, sin "mov" ni el motor al tope. Corrige la corrección sobre la tabla de patas, sin alejarla
+// más de REF_AUTO_RANGE_DEG de la que tenía al armar o en la última "set ref". "get" muestra la ref
+// que va encontrando (tabla + corrección).
+#define DEFAULT_REF_AUTO        0
+#define REF_AUTO_GAIN           0.035f      // rad por m y por s
+#define REF_AUTO_V_MAX          0.10f       // m/s
+#define REF_AUTO_RANGE_DEG      6.0f
+#define DEFAULT_LOWPASS_HZ      0.0f        // pasabajos del comando ("set lp"); 0 = sin filtro. 2/11:
+                                            // para la vibración de ~16 Hz del robot armado (FW-015);
+                                            // en el banco, con vibración inyectada, anduvo mejor 6 Hz
 
 // --- WiFi (red existente; nombre y clave en main/wifi_secrets.h, que no se versiona) ---
 // La telemetría va por UDP a la PC que se anunció con "hola" (el puente lo manda cada 1 s);
@@ -108,10 +144,59 @@
 // suma y resta PWM entre las ruedas. Sin un "mov" nuevo en MOV_TIMEOUT_MS, los dos vuelven a
 // cero: el robot frena y se queda parado donde esté (por WiFi los cortes son normales).
 #define MOV_TIMEOUT_MS          300
-#define MOV_V_MAX_MS            0.20f       // m/s con avance = 1
-#define MOV_ACCEL_MS2           0.40f       // la referencia de velocidad cambia como mucho esto
+#define MOV_V_MAX_MS            0.40f       // m/s con avance = 1 (las flechitas del joystick, la mitad).
+                                            // 2/11: 0,20 lento; 1,12 (el 100 % de los motores, MED-005)
+                                            // "muy, muy rápido"; el equipo eligió 0,40 el 3/11
+// Rampas de la velocidad pedida (components/control/movimiento.c; en vivo: set acel, set fren).
+// 3/11, pedido del equipo: al soltar el stick frena con su rampa y recién ahí fija la posición
+// (antes frenaba en seco donde se soltaba). Valores de partida; los ajusta el equipo.
+#define MOV_ACEL_MS2            0.50f       // subida (2/11: 0,4 -> 0,6; 3/11: 0,5)
+#define MOV_FREN_MS2            0.50f       // frenado
+#define MOV_FF                  1.20f       // comando por m/s pedido. Tiene que ser lo que el motor
+                                            // necesita por m/s; si es menos, el robot va más rápido
+                                            // que lo pedido y gasta el margen. 3/11: con 0,8 iba a
+                                            // 0,55 m/s pidiendo 0,40 (o sea ~1,3) y se cayó al
+                                            // perturbarlo; la simulación con la batería a media carga
+                                            // se cae con 0,8 y no con 1,2. Con la LiPo llena va un poco
+                                            // más lento que lo pedido
+// Prioridad al equilibrio (movimiento.h). margen: con el comando a los motores por encima, la
+// velocidad pedida retrocede (como un Segway al llegar a su tope). prio: con una perturbación
+// mayor que esto, la velocidad pedida pasa a ser la que lleva el robot; en la simulación no ayudó
+// (sin la realimentación de velocidad el equilibrio queda menos amortiguado): apagado
+#define MOV_U_MARGEN            0.85f
+#define MOV_PRIO_DEG            0.0f
+#define MOV_PRIO_DPS            70.0f
+#define MOV_PRIO_T_S            0.3f
+#define MOV_X_LIBRE             1           // 0: la consigna de posición es la integral (como antes)
+#define MOV_X_ATRASO_MAX_M      0.30f       // si el robot no llega a la consigna (motores al tope), la de
+                                            // posición no se le adelanta más que esto: al soltar el
+                                            // joystick no sale corriendo a alcanzarla
 #define MOV_GIRO_MAX            0.15f       // fracción de PWM sumada y restada con giro = 1
 #define MOV_GIRO_RATE           0.60f       // fracción de PWM por segundo
+
+// --- Sensor de distancia al piso y bajada de escalón (FW-016, "escalon" o △ del joystick) ---
+// Sharp GP2Y0A60SZLF (pin en board_pins.h): d = SHARP_K / (v_sensor - SHARP_V0), con v_sensor la
+// tensión antes del divisor. Valores de la ficha (3,6 V a 10 cm, 0,6 V a 150 cm): CALIBRAR contra
+// el piso real (sesion_placa.py calibrar_sensor). Debajo de 10 cm la curva se dobla: no vale.
+#define SHARP_DIVISOR           0.6f        // R42 / (R41 + R42) = 15k / 25k
+#define SHARP_K                 0.3214f     // [V m]
+#define SHARP_V0                0.386f      // [V]
+#define SHARP_D_MIN_M           0.10f
+#define SHARP_D_MAX_M           1.50f
+// Geometría para saber dónde pega el haz (docs/gestion/2026-11-03-plan-maniobra-escalon.md):
+// eje de la rueda respecto del eje del servo (A), en ejes del cuerpo (x adelante, z arriba), según
+// la pata. Del modelo de cuatro barras (la rueda baja casi en línea recta, 107 mm en 30°).
+#define PATA_TABLA_DEG          { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
+#define PATA_EJE_X_M            { 0.0003f, 0.0f, -0.0002f, -0.0001f, 0.0001f, 0.0002f, -0.0002f }
+#define PATA_EJE_Z_M            { -0.0372f, -0.0580f, -0.0770f, -0.0949f, -0.1119f, -0.1282f, -0.1442f }
+// Sensor respecto de A y ángulo del haz desde la vertical del cuerpo hacia atrás. PROPUESTA del
+// 3/11 (cara de atrás de la cabina, 2 cm arriba de A, 40°): MEDIRLO cuando se monte.
+#define SENSOR_PISO_X_M         -0.0525f
+#define SENSOR_PISO_Z_M         0.020f
+#define SENSOR_PISO_ANG_DEG     40.0f
+// La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo: la tabla de equilibrio
+// medida el 2/11 contra la del modelo da 9,8° (±0,7° entre patas).
+#define IMU_DELTA_DEG           9.8f
 
 // --- Seguridad ---
 #define TILT_LIMIT_DEG          30.0f       // corte por caída

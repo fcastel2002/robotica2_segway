@@ -13,6 +13,11 @@ Dos bancos de simulación separados por tema:
   entrada único: `INICIAR_DINAMICA_PATA.m`. Guía de uso y QA en `docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md`;
   traspaso en `docs/gestion/2026-09-15-handoff-dinamica-simulink.md`. 12 tests en `tests/`.
 
+- **[`escalon/`](escalon/README.md): bajada de un escalón hacia atrás** (3/11/2026, FW-016). Banco en C
+  que corre el código del firmware contra una planta plana con el cuatro barras, contacto con los
+  escalones, vuelo y aterrizaje. Parámetros de `parametros_fisicos.m` con
+  `exportar_planta_escalon.m`; figuras con `graficar_escalon.py`.
+
 Desde el 19/9 sus scripts usan la variante `segunda_iteracion` de `modelado/parametros/parametros_fisicos.m`
 (barras a escala 80, servo de 40 kg·cm, motor GA25-370 1:20). Los resultados guardados en `resultados/` del
 14/9 se hicieron con la variante `corregido` (escala 100) y quedan como registro de esa corrida; para

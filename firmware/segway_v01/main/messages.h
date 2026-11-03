@@ -9,20 +9,28 @@
 #include "balance.h"
 #include "servo.h"
 #include "motor.h"
+#include "movimiento.h"
 
 typedef enum {
-    PARAM_KP = 0,
-    PARAM_KI,
-    PARAM_KD,
-    PARAM_REF,          // en grados para el usuario, en radianes internamente
+    PARAM_REF = 0,      // en grados para el usuario, en radianes internamente
     PARAM_UMAX,
     PARAM_DEADBAND,
-    PARAM_LQR,          // 0: PID, 1: LQR
     PARAM_KX,           // ganancias del LQR, en fracción de PWM por unidad SI
     PARAM_KV,
     PARAM_KPHI,
     PARAM_KW,
     PARAM_NOTCH,        // Hz del rechaza banda del LQR (0 = sin filtro)
+    PARAM_NOTCH2,       // Hz del segundo rechaza banda, angosto (0 = sin filtro)
+    PARAM_LOWPASS,      // Hz del pasabajos del LQR (0 = sin filtro)
+    PARAM_REFAUTO,      // 1: theta_ref se corrige sola (balance_ref_auto)
+    PARAM_VMAX,         // manejo con "mov" (movimiento.h): velocidad con avance = 1 [m/s]
+    PARAM_ACEL,         // rampa de subida de la velocidad pedida [m/s2]
+    PARAM_FREN,         // rampa de frenado [m/s2]
+    PARAM_FF,           // comando anticipado por velocidad pedida [1/(m/s)]
+    PARAM_XLIBRE,       // 1: sin consigna de posición mientras se mueve; se fija al terminar de frenar
+    PARAM_VELPATA,      // velocidad de las patas hacia la posición pedida [°/s]
+    PARAM_MARGEN,       // margen de motor: con el comando por encima, la velocidad pedida retrocede
+    PARAM_PRIO,         // perturbación [grados] que suelta la velocidad pedida (0 = no)
     PARAM_COUNT,
 } param_id_t;
 
@@ -75,4 +83,5 @@ typedef struct {
     float            v;             // m/s, filtrada
     float            v_ref;         // m/s, referencia de velocidad que sale de "mov"
     float            giro;          // fracción de PWM sumada a la izquierda y restada a la derecha
+    mov_params_t     mov;           // parámetros de manejo vigentes, para "get"
 } telemetry_t;

@@ -37,8 +37,8 @@ void app_main(void)
 
     // Servos sin pulsos: quedan sueltos hasta el primer comando "servo"
     const servo_pins_t servos[SERVO_COUNT] = {
-        [SERVO_LEFT]  = { PIN_SERVO_L, SERVO_L_INVERT },
-        [SERVO_RIGHT] = { PIN_SERVO_R, SERVO_R_INVERT },
+        [SERVO_LEFT]  = { PIN_SERVO_L, SERVO_L_INVERT, SERVO_L_ZERO_DEG },
+        [SERVO_RIGHT] = { PIN_SERVO_R, SERVO_R_INVERT, SERVO_R_ZERO_DEG },
     };
     ESP_ERROR_CHECK(servo_init(servos, SERVO_FREQ_HZ, SERVO_US_AT_0_DEG, SERVO_US_AT_180_DEG));
 

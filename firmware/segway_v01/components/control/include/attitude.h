@@ -11,6 +11,7 @@ typedef struct {
     float rate;         // rad/s, ya sin sesgo
     float gyro_bias;    // rad/s
     bool  started;      // false hasta la primera muestra: arranca desde el acelerómetro
+    float g_fwd, g_up;  // m/s², reacción a la gravedad estimada en los ejes del robot
     // Calibración del sesgo
     float cal_sum;
     int   cal_n;
@@ -25,3 +26,7 @@ bool attitude_calibrate(attitude_t *a, float gyro_pitch, int n_required, float m
 // acc_fwd y acc_up en m/s², gyro_pitch en rad/s, todo ya en los ejes del robot.
 void attitude_update(attitude_t *a, float acc_fwd, float acc_up, float gyro_pitch,
                      float dt, float tau);
+
+// Solo el giróscopo: gira el vector estimado sin corregirlo con el acelerómetro. Para cuando
+// el acelerómetro no mide la gravedad: en el aire marca ~0 y en un golpe, varios g.
+void attitude_update_gyro(attitude_t *a, float gyro_pitch, float dt);

@@ -10,6 +10,7 @@
 
 static const char *TAG = "servo";
 static bool s_invert[SERVO_COUNT];
+static float s_zero[SERVO_COUNT];
 static float s_period_us, s_us0, s_us180;
 
 esp_err_t servo_init(const servo_pins_t pins[SERVO_COUNT], unsigned freq_hz,
@@ -35,6 +36,7 @@ esp_err_t servo_init(const servo_pins_t pins[SERVO_COUNT], unsigned freq_hz,
         };
         ESP_RETURN_ON_ERROR(ledc_channel_config(&ch), TAG, "canal %d", ch.channel);
         s_invert[s] = pins[s].invert;
+        s_zero[s] = pins[s].zero_deg;
     }
     s_period_us = 1e6f / freq_hz;
     s_us0 = us_at_0_deg;
@@ -44,6 +46,7 @@ esp_err_t servo_init(const servo_pins_t pins[SERVO_COUNT], unsigned freq_hz,
 
 void servo_set_deg(servo_side_t side, float deg)
 {
+    deg += s_zero[side];
     if (deg < 0.0f)   deg = 0.0f;
     if (deg > 180.0f) deg = 180.0f;
     if (s_invert[side]) deg = 180.0f - deg;

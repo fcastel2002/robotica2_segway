@@ -44,10 +44,19 @@ sup_state_t supervisor_step(supervisor_t *s, const sup_input_t *in,
         else if (in->cmd == SUP_CMD_DISARM)   s->state = SUP_DISARMED;
         break;
     case SUP_FALLEN:
-        // El rearmado es siempre manual: primero desarmar, después armar
-        if (in->cmd == SUP_CMD_DISARM) s->state = SUP_DISARMED;
+        // El rearmado es siempre manual, pero no hace falta desarmar antes (3/11: con el joystick,
+        // ✕ solo no lo sacaba de FALLEN y parecía que había que reiniciar la placa): "arm" con el
+        // robot cerca de la referencia vuelve a equilibrar; "disarm" lo deja desarmado
+        s->saturated = 0;
+        if (in->cmd == SUP_CMD_ARM && tilt < arm_window) s->state = SUP_BALANCING;
+        else if (in->cmd == SUP_CMD_DISARM)               s->state = SUP_DISARMED;
         break;
     case SUP_FAULT:
+        // Con la IMU leyendo bien otra vez (si no, se volvió arriba sin llegar acá), "cal" sale del
+        // FAULT recalibrando: 2/11, un cable flojo de la IMU obligaba a apagar el robot para seguir
+        if (in->cmd == SUP_CMD_CALIBRATE && s->imu_fails == 0 && s->overruns == 0) {
+            s->state = SUP_CALIBRATING;
+        }
         break;
     }
     return s->state;

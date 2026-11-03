@@ -108,6 +108,7 @@ typedef struct {
     double empujon_N;           // a los 5 s de soltarlo, durante 0,1 s
     bool   ruido;
     double notch_hz;            // rechaza banda del firmware (0 = sin filtro)
+    bool   ref_auto;            // referencia automática del firmware (balance_ref_auto)
 } escenario_t;
 
 typedef struct {
@@ -126,12 +127,13 @@ static resultado_t correr(const escenario_t *E, FILE *csv, int id)
 
     balance_params_t p = {
         .lqr = { DEFAULT_LQR_KX, DEFAULT_LQR_KV, DEFAULT_LQR_KPHI, DEFAULT_LQR_KW },
-        .use_lqr = true, .theta_ref = -PLANTA_DELTA_G + E->error_ref_deg / GRADOS,
+        .theta_ref = -PLANTA_DELTA_G + E->error_ref_deg / GRADOS,
         .u_max = DEFAULT_U_MAX, .deadband = E->deadband_firmware, .notch_hz = E->notch_hz,
     };
     attitude_t att;  attitude_reset(&att);
     odometry_t odo;  odometry_reset(&odo);
     balance_t bal;   balance_reset(&bal);
+    float ref_centro = p.theta_ref;
     const float tau_vel = 1.0f / (6.2831853f * VEL_FILTER_HZ);
     const int cal_n = (int)(GYRO_CAL_TIME_S * 1000 / CONTROL_PERIOD_MS);
     bool calibrado = false, armado = false;
@@ -180,7 +182,10 @@ static resultado_t correr(const escenario_t *E, FILE *csv, int id)
         }
         bool armar = !armado && !en_la_mano && calibrado
                      && fabsf(att.theta - p.theta_ref) < ARM_WINDOW_DEG / GRADOS;
-        if (armar) { armado = true; odometry_reset(&odo); balance_reset(&bal); rampa = 0; }
+        if (armar) {
+            armado = true;  odometry_reset(&odo);  balance_reset(&bal);  rampa = 0;
+            ref_centro = p.theta_ref;
+        }
         odometry_update(&odo, cuentas, att.theta, ENC_COUNTS_PER_REV, WHEEL_RADIUS_M,
                         (float)DT_CONTROL, tau_vel);
         if (armado) {
@@ -190,6 +195,12 @@ static resultado_t correr(const escenario_t *E, FILE *csv, int id)
             rampa = fmin(rampa + DT_CONTROL / ARM_RAMP_S, 1.0);
             u_nuevo = balance_lqr_step(&bal, &p, odo.x, odo.v, att.theta, att.rate,
                                        (float)DT_CONTROL, (float)(rampa * p.u_max));
+            if (E->ref_auto) {      // mismo uso que control_task.c
+                p.theta_ref = balance_ref_auto(p.theta_ref, ref_centro, REF_AUTO_RANGE_DEG / GRADOS,
+                                               odo.x, odo.v, REF_AUTO_V_MAX,
+                                               fabs(u_nuevo) >= 0.95 * rampa * p.u_max,
+                                               REF_AUTO_GAIN, (float)DT_CONTROL);
+            }
             n_lazo++;
             if (fabs(u_nuevo) >= p.u_max - 1e-6) n_sat++;
         }
@@ -252,23 +263,25 @@ int main(void)
     const double V = PLANTA_V_BAT - 2.0;    // L298N
     const escenario_t E[] = {
         //  nombre                               phi0  V_motor  zm_real deadband err_ref empujon ruido
-        { "nominal, suelto a 2 grados",           2.0, V,       0.00,   0.00,    0.0,    0.0,  true, 0.0 },
-        { "sin ruido (para comparar)",            2.0, V,       0.00,   0.00,    0.0,    0.0,  false, 0.0 },
-        { "empujon de 3 N durante 0,1 s",         2.0, V,       0.00,   0.00,    0.0,    3.0,  true, 0.0 },
-        { "zona muerta 20 %, sin compensar",      2.0, V,       0.20,   0.00,    0.0,    0.0,  true, 0.0 },
-        { "zona muerta 20 %, deadband 0,15",      2.0, V,       0.20,   0.15,    0.0,    0.0,  true, 0.0 },
-        { "zona muerta 20 %, deadband 0,20",      2.0, V,       0.20,   0.20,    0.0,    0.0,  true, 0.0 },
-        { "ref mal medida por 1 grado",           2.0, V,       0.00,   0.00,    1.0,    0.0,  true, 0.0 },
-        { "bateria baja (7,6 V al motor)",        2.0, 7.6,     0.00,   0.00,    0.0,    0.0,  true, 0.0 },
-        { "bateria llena (10,6 V al motor)",      2.0, 10.6,    0.00,   0.00,    0.0,    0.0,  true, 0.0 },
+        { "nominal, suelto a 2 grados",           2.0, V,       0.00,   0.00,    0.0,    0.0,  true, 0.0, false },
+        { "sin ruido (para comparar)",            2.0, V,       0.00,   0.00,    0.0,    0.0,  false, 0.0, false },
+        { "empujon de 3 N durante 0,1 s",         2.0, V,       0.00,   0.00,    0.0,    3.0,  true, 0.0, false },
+        { "zona muerta 20 %, sin compensar",      2.0, V,       0.20,   0.00,    0.0,    0.0,  true, 0.0, false },
+        { "zona muerta 20 %, deadband 0,15",      2.0, V,       0.20,   0.15,    0.0,    0.0,  true, 0.0, false },
+        { "zona muerta 20 %, deadband 0,20",      2.0, V,       0.20,   0.20,    0.0,    0.0,  true, 0.0, false },
+        { "ref mal medida por 1 grado",           2.0, V,       0.00,   0.00,    1.0,    0.0,  true, 0.0, false },
+        { "ref mal medida por 3 grados",          2.0, V,       0.18,   0.18,    3.0,    0.0,  true, 7.5, false },
+        { "ref mal por 3 grados, ref automatica", 2.0, V,       0.18,   0.18,    3.0,    0.0,  true, 7.5, true },
+        { "bateria baja (7,6 V al motor)",        2.0, 7.6,     0.00,   0.00,    0.0,    0.0,  true, 0.0, false },
+        { "bateria llena (10,6 V al motor)",      2.0, 10.6,    0.00,   0.00,    0.0,    0.0,  true, 0.0, false },
         // Ensayo del 29/10 en el aire: zona muerta de ~18 %, y la rueda gira más rápido por PWM
         // que lo que da el modelo; si es porque llega más tensión, el motor es hasta 1,37 veces
         // más fuerte que lo supuesto (si es porque el motor es más rápido, no cambia nada)
-        { "medido: zona muerta 18 %, deadband 0,18", 2.0, V,    0.18,   0.18,    0.0,    0.0,  true, 0.0 },
-        { "medido y motor 1,37 veces mas fuerte",  2.0, 1.37*V, 0.18,   0.18,    0.0,    0.0,  true, 0.0 },
+        { "medido: zona muerta 18 %, deadband 0,18", 2.0, V,    0.18,   0.18,    0.0,    0.0,  true, 0.0, false },
+        { "medido y motor 1,37 veces mas fuerte",  2.0, 1.37*V, 0.18,   0.18,    0.0,    0.0,  true, 0.0, false },
         // 29/10 en el piso el cuerpo vibraba a ~7 Hz: el rechaza banda no tiene que empeorar el lazo
-        { "medido, con rechaza banda en 7 Hz",    2.0, V,       0.18,   0.18,    0.0,    0.0,  true, 7.0 },
-        { "empujon, con rechaza banda en 7 Hz",   2.0, V,       0.18,   0.18,    0.0,    3.0,  true, 7.0 },
+        { "medido, con rechaza banda en 7 Hz",    2.0, V,       0.18,   0.18,    0.0,    0.0,  true, 7.0, false },
+        { "empujon, con rechaza banda en 7 Hz",   2.0, V,       0.18,   0.18,    0.0,    3.0,  true, 7.0, false },
     };
     const int n = (int)(sizeof E / sizeof E[0]);
     FILE *csv = fopen("test_host/banco_lqr.csv", "w");

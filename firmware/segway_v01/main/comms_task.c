@@ -36,10 +36,12 @@ typedef struct {
 static comms_ctx_t s_ctx;
 
 static const char *PARAM_NAMES[PARAM_COUNT] = {
-    [PARAM_KP] = "kp", [PARAM_KI] = "ki", [PARAM_KD] = "kd",
     [PARAM_REF] = "ref", [PARAM_UMAX] = "umax", [PARAM_DEADBAND] = "deadband",
-    [PARAM_LQR] = "lqr", [PARAM_KX] = "kx", [PARAM_KV] = "kv", [PARAM_KPHI] = "kphi",
-    [PARAM_KW] = "kw", [PARAM_NOTCH] = "notch",
+    [PARAM_KX] = "kx", [PARAM_KV] = "kv", [PARAM_KPHI] = "kphi",
+    [PARAM_KW] = "kw", [PARAM_NOTCH] = "notch", [PARAM_NOTCH2] = "notch2", [PARAM_LOWPASS] = "lp",
+    [PARAM_REFAUTO] = "refauto", [PARAM_VMAX] = "vmax", [PARAM_ACEL] = "acel",
+    [PARAM_FREN] = "fren", [PARAM_FF] = "ff", [PARAM_XLIBRE] = "xlibre", [PARAM_VELPATA] = "velpata",
+    [PARAM_MARGEN] = "margen", [PARAM_PRIO] = "prio",
 };
 
 // Todo lo que dice la consola sale por el cable y, si hay red, por WiFi. Solo desde comms.
@@ -61,11 +63,19 @@ static void print_help(void)
     out("# comandos: arm | disarm | set <param> <valor> | servo [l|r] <grados> | get\n"
         "#           cal | tlm on | tlm off | enc reset | help\n"
         "#           servo [l|r] off|on | servo lim l|r <min> <max> | motor [l|r] <-100..100> | motor stop\n"
-        "# param: kp ki kd ref(grados) umax deadband | lqr (0 PID, 1 LQR; vale al armar) kx kv kphi kw\n"
+        "# param: ref(grados) umax deadband | kx kv kphi kw (LQR, el único control)\n"
+        "#        notch notch2 lp (Hz de los rechaza banda, ancho y angosto, y del pasabajos del\n"
+        "#        comando; 0 = sin filtro)\n"
+        "#        refauto (1: ref se corrige sola si el robot se queda corrido; get la muestra)\n"
+        "#        vmax acel fren ff xlibre (manejo con mov: velocidad a fondo, rampas de subida y\n"
+        "#        de frenado, comando anticipado; xlibre 1 fija la posicion al terminar de frenar)\n"
+        "#        velpata (grados/s con que las patas van a la posicion pedida)\n"
+        "#        margen (0-1: con el motor por encima, la velocidad pedida retrocede; 0 = no)\n"
+        "#        prio (grados: con una perturbacion mayor, suelta la velocidad pedida; 0 = no)\n"
         "# servo: grados dentro de sus límites (get los muestra); sin l/r mueve los dos; off suelta, on agarra\n"
         "# servo lim: límites en vivo, entre %.0f y %.0f; se pierden al reiniciar (copiarlos a board_config.h)\n"
         "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n"
-        "# mov <avance> <giro>: de -1 a 1, solo con el LQR armado; sin otro en %d ms vuelven a 0; sin ok\n"
+        "# mov <avance> <giro>: de -1 a 1, solo armado; sin otro en %d ms vuelven a 0; sin ok\n"
         "# por WiFi (UDP %d) los mismos comandos; hola: la telemetria va a esa PC\n",
         SERVO_HARD_MIN_DEG, SERVO_HARD_MAX_DEG, MOV_TIMEOUT_MS, WIFI_CMD_PORT);
 }
@@ -86,11 +96,13 @@ static void print_wifi(void)
 static void print_params(const telemetry_t *t)
 {
     const balance_params_t *p = &t->params;
-    out("# kp=%.4f ki=%.4f kd=%.4f ref=%.2f umax=%.2f deadband=%.3f\n",
-        p->gains.kp, p->gains.ki, p->gains.kd, p->theta_ref * RAD2DEG,
-        p->u_max, p->deadband);
-    out("# lqr=%d kx=%.3f kv=%.3f kphi=%.3f kw=%.3f notch=%.1f\n", p->use_lqr ? 1 : 0,
-        p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, p->notch_hz);
+    out("# ref=%.2f umax=%.2f deadband=%.3f refauto=%d\n",
+        p->theta_ref * RAD2DEG, p->u_max, p->deadband, p->ref_auto ? 1 : 0);
+    out("# kx=%.3f kv=%.3f kphi=%.3f kw=%.3f notch=%.1f notch2=%.1f lp=%.1f\n",
+        p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, p->notch_hz, p->notch2_hz, p->lowpass_hz);
+    out("# vmax=%.2f acel=%.2f fren=%.2f ff=%.2f xlibre=%d velpata=%.0f margen=%.2f prio=%.1f\n",
+        t->mov.v_max, t->mov.acel, t->mov.fren, t->mov.ff, t->mov.x_libre ? 1 : 0,
+        t->mov.vel_pata_dps, t->mov.u_margen, t->mov.prio_theta * RAD2DEG);
     imu_stats_t e = imu_stats();
     out("# imu fallas: i2c=%lu cero=%lu baja=%lu\n", (unsigned long)e.i2c_errors,
         (unsigned long)e.zero_reads, (unsigned long)e.low_reads);
@@ -112,7 +124,7 @@ static bool parse_float(const char *str, float *out)
 // Interpreta una línea. Lo que afecta al control se envía como command_t; lo que es
 // solo de la consola (get, tlm, help) se resuelve acá.
 static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *last,
-                        int *get_wait, bool *tlm_on)
+                        int *get_wait, int *arm_wait, bool *tlm_on)
 {
     char *word = strtok(line, " \t");
     if (word == NULL) return;
@@ -120,10 +132,11 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
     command_t cmd;
     if (strcmp(word, "arm") == 0) {
         cmd = (command_t){ .type = CMD_ARM };
+        *arm_wait = 3;          // a las 3 telemetrías se mira si armó (si no, se dice por qué)
     } else if (strcmp(word, "disarm") == 0) {
         cmd = (command_t){ .type = CMD_DISARM };
     } else if (strcmp(word, "cal") == 0) {
-        cmd = (command_t){ .type = CMD_CALIBRATE };     // solo tiene efecto en DISARMED
+        cmd = (command_t){ .type = CMD_CALIBRATE };     // en DISARMED, o en FAULT si la IMU ya anda
     } else if (strcmp(word, "set") == 0) {
         char *name = strtok(NULL, " \t");
         char *val  = strtok(NULL, " \t");
@@ -145,10 +158,11 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             char *mx = strtok(NULL, " \t");
             int side = (b && strcmp(b, "l") == 0) ? SERVO_LEFT
                      : (b && strcmp(b, "r") == 0) ? SERVO_RIGHT : -2;
+            // Los límites son de la pata (el driver le suma a cada servo su cero)
             float lo, hi;
             if (side == -2 || !parse_float(mn, &lo) || !parse_float(mx, &hi) || lo >= hi
                 || lo < SERVO_HARD_MIN_DEG || hi > SERVO_HARD_MAX_DEG) {
-                out("# error: servo lim l|r <min> <max>, con %.0f <= min < max <= %.0f\n",
+                out("# error: servo lim l|r <min> <max>, con %.0f <= min < max <= %.0f (de la pata)\n",
                     SERVO_HARD_MIN_DEG, SERVO_HARD_MAX_DEG);
                 return;
             }
@@ -263,14 +277,28 @@ send:
 
 // Un paquete UDP puede traer varias líneas: cada una va a handle_line como si llegara por cable
 static void handle_packet(char *pkt, const comms_ctx_t *ctx, const telemetry_t *last,
-                          int *get_wait, bool *tlm_on)
+                          int *get_wait, int *arm_wait, bool *tlm_on)
 {
     char *save = NULL;
     for (char *l = strtok_r(pkt, "\r\n", &save); l != NULL; l = strtok_r(NULL, "\r\n", &save)) {
         char line[CMD_LINE_MAX];
         strncpy(line, l, sizeof line - 1);
         line[sizeof line - 1] = '\0';
-        handle_line(line, ctx, last, get_wait, tlm_on);
+        handle_line(line, ctx, last, get_wait, arm_wait, tlm_on);
+    }
+}
+
+// "arm" que no armó: el supervisor lo ignora sin avisar, así que se dice acá por qué
+static void explain_arm(const telemetry_t *t)
+{
+    if (t->state == SUP_BALANCING) return;
+    if (t->state == SUP_FAULT) {
+        out("# no se armó: está en FAULT (la IMU falló); con la IMU leyendo, mandar cal\n");
+    } else if (t->state == SUP_CALIBRATING || t->state == SUP_INIT) {
+        out("# no se armó: está calibrando el giróscopo, dejarlo quieto 2 s\n");
+    } else {
+        out("# no se armó: inclinación %.1f°, referencia %.1f°: tiene que estar a menos de %.0f°\n",
+            t->theta * RAD2DEG, t->params.theta_ref * RAD2DEG, ARM_WINDOW_DEG);
     }
 }
 
@@ -281,7 +309,7 @@ static void comms_task(void *arg)
     sup_state_t shown_state = SUP_INIT;
     wifi_state_t shown_wifi = WIFI_OFF;
     bool tlm_on = true;
-    int get_wait = 0;
+    int get_wait = 0, arm_wait = 0;
     char line[CMD_LINE_MAX];
     size_t len = 0;
     char pkt[256];
@@ -301,7 +329,7 @@ static void comms_task(void *arg)
             if (ch == '\r' || ch == '\n') {
                 if (len > 0) {
                     line[len] = '\0';
-                    handle_line(line, ctx, &last, &get_wait, &tlm_on);
+                    handle_line(line, ctx, &last, &get_wait, &arm_wait, &tlm_on);
                     len = 0;
                 }
             } else if (len < CMD_LINE_MAX - 1) {
@@ -320,7 +348,7 @@ static void comms_task(void *arg)
                 out("# " CSV_HEADER);
                 print_wifi();
             }
-            if (n > 0) handle_packet(pkt, ctx, &last, &get_wait, &tlm_on);
+            if (n > 0) handle_packet(pkt, ctx, &last, &get_wait, &arm_wait, &tlm_on);
         }
         // Cada cambio de la red se informa; "sin configurar", recién a los 2 s (el WiFi arranca
         // después de esta tarea, y antes diría que está apagado aunque no lo esté)
@@ -343,6 +371,7 @@ static void comms_task(void *arg)
         // "get" no contesta con la foto de esta vuelta, que puede ser anterior a un "set" de la
         // misma tanda, sino con la siguiente: para entonces el control (cada 5 ms) ya lo aplicó.
         if (get_wait > 0 && --get_wait == 0) print_params(&last);
+        if (arm_wait > 0 && --arm_wait == 0) explain_arm(&last);
         if (tlm_on) {
             // Servo suelto: "nan", porque sin pulsos no se sabe dónde está
             float servo_l = last.servo_free[SERVO_LEFT] ? NAN : last.servo_deg[SERVO_LEFT];

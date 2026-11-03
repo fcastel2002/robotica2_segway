@@ -4,7 +4,8 @@
 // No usar:
 //   19, 20     USB nativo (sin uso: consola y flasheo van por UART0)
 //   26-37      flash y PSRAM octal del módulo N16R8
-//   3, 45, 46  pines de arranque (el 0 solo como entrada de botón)
+//   45, 46     pines de arranque (el 0 solo como entrada de botón; el 3 también es de arranque,
+//              pero solo para JTAG si se graba el eFuse STRAP_JTAG_SEL: no grabarlo)
 //   43, 44     UART0: consola y comandos (conector UART de la placa)
 #pragma once
 
@@ -39,6 +40,10 @@
 #define PIN_ENC_L_B         14
 #define PIN_ENC_R_A         11
 #define PIN_ENC_R_B         12
+
+// Sensor de distancia al piso para el escalón (Sharp GP2Y0A60SZLF en J27, SUP-82): su salida
+// entra por un divisor 10k/15k (x 0,6). ADC1_CH2, convive con el WiFi.
+#define PIN_DIST_SUELO      3
 
 // Reservados para versiones posteriores (no se configuran en la v0.1)
 #define PIN_BATT_ADC        1       // debe ser ADC1 (GPIO1-10) para convivir con WiFi

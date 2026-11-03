@@ -133,6 +133,7 @@ setInterval(() => { // 10 veces por segundo, como la tabla de app.js
   if (!fuente) servoEnviado.l = servoEnviado.r = null;
   // Suelto: los pasos no tienen desde dónde contar. Agarrado y sin tocar (p. ej. al conectar),
   // el deslizador sigue al servo.
+  for (const b of document.querySelectorAll('[data-paso-ambas]')) b.disabled = !(agarrado('l') && agarrado('r'));
   for (const lado in LADOS) {
     const suelto = !agarrado(lado);
     for (const b of document.querySelectorAll(`[data-paso^="${lado} "]`)) b.disabled = suelto;
@@ -238,7 +239,27 @@ alMensaje.push((texto) => {
     $(`lim-${lado}`).textContent = `${min}–${max}°`;
     $(`objetivo-${lado}`).textContent = `${$(`servo-${lado}`).value}°`; // el navegador lo acotó
   }
+  const comun = limiteComun();
+  for (const el of [$('ir-a-ambas').elements[0]]) { el.min = comun[0]; el.max = comun[1]; }
+  $('lim-ambas').textContent = `${comun[0]}–${comun[1]}°`;
 });
+
+// Las dos patas juntas ("servo <grados>", sin lado). El rango es el que tienen en común.
+const limiteComun = () => (limites.l && limites.r
+  ? [Math.max(limites.l[0], limites.r[0]), Math.min(limites.l[1], limites.r[1])] : null);
+
+function mandarAmbas(v) {
+  const lim = limiteComun();
+  if (lim && (v < lim[0] || v > lim[1])) {
+    mensaje(`[servos] ${v}° fuera del rango común ${lim[0]}–${lim[1]}° de las dos patas: no se mandó`);
+    return;
+  }
+  for (const lado in LADOS) {
+    ponerServo(lado, v);
+    servoEnviado[lado] = v;
+  }
+  enviar(`servo ${v}`);
+}
 
 function ponerServo(lado, grados) {
   $(`servo-${lado}`).value = grados;
@@ -273,6 +294,22 @@ for (const b of document.querySelectorAll('[data-paso]')) {
     enviar(`servo ${lado} ${servoEnviado[lado]}`);
   };
 }
+
+for (const b of document.querySelectorAll('[data-paso-ambas]')) {
+  b.onclick = () => { // desde el promedio de los dos objetivos, para emparejarlas si quedaron distintas
+    if (!agarrado('l') || !agarrado('r')) return;
+    const actual = Math.round((Number($('servo-l').value) + Number($('servo-r').value)) / 2);
+    const lim = limiteComun();
+    let v = actual + Number(b.dataset.pasoAmbas);
+    if (lim) v = Math.min(Math.max(v, lim[0]), lim[1]);
+    mandarAmbas(v);
+  };
+}
+
+$('ir-a-ambas').onsubmit = (e) => {
+  e.preventDefault();
+  mandarAmbas(Number(e.target.elements[0].value));
+};
 
 for (const form of document.querySelectorAll('.servo .ir-a')) {
   const lado = form.closest('.servo').dataset.lado;

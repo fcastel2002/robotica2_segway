@@ -51,11 +51,15 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 
 | Comando | Efecto |
 |---|---|
-| `arm` / `disarm` | Armar (solo desde DISARMED y a menos de 5° de la referencia) o desarmar |
-| `set kp 0.8` | Cambiar `kp`, `ki`, `kd`, `ref` (grados), `umax` o `deadband` en vivo |
-| `set lqr 1` | Equilibrar con el LQR (`0`: con el PID). Vale desde el próximo `arm` |
-| `set kx 6.1` | Ganancias del LQR: `kx`, `kv`, `kphi`, `kw` |
-| `set notch 7.5` | Rechaza banda del comando del LQR, en Hz (`0` lo apaga) |
+| `arm` / `disarm` | Armar (desde DISARMED o FALLEN, a menos de 5° de la referencia; si no arma, dice por qué) o desarmar |
+| `set ref 8` | Cambiar `ref` (grados), `umax` o `deadband` en vivo |
+| `set kx 1.52` | Ganancias del LQR, el único control desde el 2/11 (el PID se sacó): `kx`, `kv`, `kphi`, `kw` |
+| `set notch 7.5` | Rechaza banda ancho del comando, en Hz (`0` lo apaga); `notch2`: otro angosto (Q = 2) |
+| `set lp 10` | Pasabajos del comando, en Hz (`0` lo apaga). Retrasa el lazo: con 9-11 Hz el robot se hamacaba |
+| `set refauto 1` | La referencia se corrige sola si el robot se queda corrido de su consigna (~10 s, ±6° como mucho) |
+| `set fren 0.3` | Manejo con el joystick: `vmax` (m/s a fondo), `acel` y `fren` (rampas, m/s²), `ff` (comando anticipado) y `xlibre` (1: fija la posición al terminar de frenar) |
+| `set margen 0.85` | Prioridad al equilibrio: con el comando a los motores por encima, la velocidad pedida retrocede (`0` lo apaga). `prio` (grados): con una perturbación mayor suelta la velocidad pedida (apagado: en la simulación no ayudó) |
+| `set velpata 20` | Velocidad con que las patas van a la posición pedida, en °/s |
 | `servo 20` / `servo l 20` / `servo r 10` | Mover los dos servos o uno (grados del servo y a 90°/s; fuera de sus límites se rechaza sin moverse). Suelto, la posición es desconocida: el primer ángulo va **directo**, sin rampa |
 | `servo off` / `servo l on` | Soltar (posición desconocida desde ahí) o agarrar donde está; `on` no hace nada si la posición es desconocida |
 | `servo lim l 5 25` | Achicar los límites de un servo en vivo, siempre dentro de **0-30°**: más allá se rompe el cuatro barras, y el firmware no deja salir de ahí (`SERVO_HARD_*`) |
@@ -66,7 +70,8 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `enc reset` | Poner en cero las cuentas de los dos encoders |
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
-Las ganancias del PID arrancan en cero, así que `arm` no mueve nada hasta cargarlas o pasar al LQR.
+Arranca con lo que mejor anduvo el 2/11: el LQR suave, `ref` de la tabla de patas (13,7° con las
+patas en 15°), `umax` 1,0, `deadband` 0,16 y `notch` 7,5 Hz, así que `arm` equilibra sin cargar nada.
 
 ## WiFi
 
@@ -97,21 +102,30 @@ reintentando sola. `get` también muestra esa línea.
 
 ## Movimiento
 
-`mov <avance> <giro>`, los dos de −1 a 1, solo tiene efecto **armado y con el LQR**. Lo va a mandar la
-aplicación puente del joystick, de 20 a 50 veces por segundo:
+`mov <avance> <giro>`, los dos de −1 a 1, solo tiene efecto **armado**. Lo manda la aplicación del
+joystick ([`Aplicacion/joystick.py`](../../Aplicacion/joystick.py)) 25 veces por segundo:
 
-- **Avance**: la referencia de velocidad del LQR pasa a `avance · MOV_V_MAX_MS` (0,20 m/s), con una
-  aceleración de 0,4 m/s² como mucho. La referencia de posición es su integral, así el LQR la sigue
-  en lugar de volver a donde se armó: `u = kx·(x − x_ref) + kv·(v − v_ref) + kphi·(θ − ref) + kw·ω`.
+- **Avance** ([`movimiento.c`](components/control/movimiento.c)): la velocidad pedida va hacia
+  `avance · vmax` (0,40 m/s con el stick a fondo; las flechitas, 0,20) con una **rampa de subida**
+  (`acel`, 0,5 m/s²) y una **de frenado** (`fren`, 0,5 m/s²). Con `xlibre 1` (desde el 3/11),
+  mientras hay velocidad pedida el LQR sigue solo la velocidad: la consigna de posición acompaña al
+  robot. Al soltar, la velocidad pedida baja por la rampa de frenado y, cuando llegó a cero y el
+  robot casi no se mueve, la posición queda fija ahí. `ff` (0,8) suma al comando lo que hace falta
+  para sostener la velocidad pedida; sin eso el robot va más rápido que lo pedido. Con `xlibre 0`
+  queda como antes: la consigna de posición es la integral de la velocidad pedida, el robot se le
+  adelanta 10-25 cm para moverse y al soltar frenaba en seco donde se soltó (por eso se cambió).
+  Los cinco se cambian en vivo (`set vmax 0.4`, `set acel 0.5`, `set fren 0.3`, `set ff 0.8`,
+  `set xlibre 1`) o desde la tarjeta Control de la interfaz, y `get` los muestra.
+  El 2/11 se probó a fondo con 1,12 m/s, el 100 % de los motores: muy rápido.
 - **Giro**: `giro · MOV_GIRO_MAX` (0,15 de PWM) se suma a la rueda izquierda y se resta a la derecha
   (positivo gira a la derecha), con rampa de 0,6 por segundo. Las dos quedan dentro del `umax` de ese
   momento.
 - **Tiempo de espera**: sin un `mov` nuevo en **300 ms**, los dos vuelven a cero con sus rampas: el
   robot frena y se queda equilibrando donde esté.
-- Al armar y fuera de BALANCING todo vuelve a cero. Con el PID se ignora.
+- Al armar y fuera de BALANCING todo vuelve a cero.
 
-Todo esto está escrito pero **sin probar en el robot**. Empezar colgado del malacate y con `umax`
-bajo, y verificar en Gráficos que `vref_mms` y `giro` siguen a lo que se manda.
+Probado el 2/11 con el joystick a 0,2 m/s: sigue la consigna y al soltar se queda donde quedó. A más
+velocidad, subir el stick de a poco y mirar en Gráficos que `v_mms` siga a `vref_mms`.
 
 ## LQR
 
@@ -128,7 +142,7 @@ tiene una vibración propia de 7-8 Hz y, sin el filtro, el LQR la realimentaba h
 tope. Con la referencia mal puesta el robot igual se para, pero se corre ~5 cm por cada grado de error.
 Procedimiento, protecciones y qué rehacer con el robot armado completo: [`../docs/prueba_equilibrio.md`](../docs/prueba_equilibrio.md).
 
-**Antes de `set lqr 1`**, con el robot colgado:
+**Antes de armar por primera vez** (o después de tocar la IMU, los motores o los encoders), con el robot colgado:
 
 1. IMU orientada: inclinar hacia adelante da `theta_deg` y `theta_dot_dps` positivos ([guía](../docs/prueba_imu.md)).
 2. Motor positivo hacia adelante en las dos ruedas (`MOTOR_*_INVERT`).

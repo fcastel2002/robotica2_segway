@@ -35,6 +35,7 @@
       <span id="comandos" class="comandos" hidden>
         <span id="estado-robot" class="estado-robot" title="Estado del supervisor del robot" hidden></span>
         <button data-comando="arm" title="Solo desde DISARMED y a menos de 5° de la referencia">Armar</button>
+        <button id="rearmar" title="Después de una caída: desarma y vuelve a armar. Sostenerlo derecho, cerca de la referencia (±5°), con las ruedas apoyadas">Rearmar</button>
         <button data-comando="motor stop">Parar motores</button>
         <button data-comando="disarm" class="peligro" title="También con la tecla Esc o Círculo (◯) del PS4">Desarmar (Esc)</button>
       </span>
@@ -67,14 +68,14 @@
               <!-- Touchpad central -->
               <rect class="ps4-touchpad" x="148" y="48" width="124" height="52" rx="6"/>
 
-              <!-- L1 (-10° servo) y R1 (+10° servo) -->
-              <g id="svg-btn-l1" class="ps4-btn ps4-clickable" title="L1: Bajar servos −10° (mín 0°)">
+              <!-- L1 (-2° servo) y R1 (+2° servo) -->
+              <g id="svg-btn-l1" class="ps4-btn ps4-clickable" title="L1: Bajar servos −2° (mín 0°)">
                 <rect x="64" y="18" width="68" height="22" rx="6"/>
-                <text x="98" y="33">L1 (−10°)</text>
+                <text x="98" y="33">L1 (−2°)</text>
               </g>
-              <g id="svg-btn-r1" class="ps4-btn ps4-clickable" title="R1: Subir servos +10° (máx 30°)">
+              <g id="svg-btn-r1" class="ps4-btn ps4-clickable" title="R1: Subir servos +2° (máx 30°)">
                 <rect x="288" y="18" width="68" height="22" rx="6"/>
-                <text x="322" y="33">R1 (+10°)</text>
+                <text x="322" y="33">R1 (+2°)</text>
               </g>
 
               <!-- SHARE y OPTIONS (cambio de modo 1/2) -->
@@ -138,7 +139,7 @@
           <div class="medidor" data-app="giro" data-min="-1" data-max="1" data-dec="2">giro</div>
 
           <div class="mando-evento" id="mando-evento" aria-live="polite">
-            Listo · OPTIONS cambia entre Opción 1 y 2 · R1/L1 mueve servos ±10° (0°..30°) · ✕ arma · ◯ desarma
+            Listo · OPTIONS cambia entre Opción 1 y 2 · R1/L1 mueve servos ±2° (0°..30°) · ✕ arma · ◯ desarma
           </div>
 
           <table class="ruedas datos mando-resumen">
@@ -152,8 +153,8 @@
 
         <div class="grupo">
           <article class="tarjeta">
-            <h2>Servos de las patas (L1 / R1) <span class="etiqueta activo">Tope estricto 0°–30°</span></h2>
-            <p class="tenue">Con <b>R1</b> suben de a <b>+10°</b> y con <b>L1</b> bajan de a <b>−10°</b>. Bloqueados por seguridad entre <b>0° y 30°</b> (cuatro barras).</p>
+            <h2>Servos de las patas (L1 / R1) <span class="etiqueta activo">Tope 0°–30°</span></h2>
+            <p class="tenue">Con <b>R1</b> suben de a <b>+2°</b> y con <b>L1</b> bajan de a <b>−2°</b>, suave (velocidad: «patas °/s» en Control). Bloqueados entre <b>0° y 30°</b> de pata (cuatro barras); la pata derecha tiene su cero en 5°, así que su servo llega a 35°.</p>
 
             <div class="servo-escalones" id="servo-escalones">
               <button type="button" data-servo-fijo="0" class="escalon-servo activo">0°</button>
@@ -163,8 +164,8 @@
             </div>
 
             <div class="acciones">
-              <button type="button" id="btn-servo-l1">L1 · Bajar −10°</button>
-              <button type="button" id="btn-servo-r1">R1 · Subir +10°</button>
+              <button type="button" id="btn-servo-l1">L1 · Bajar −2°</button>
+              <button type="button" id="btn-servo-r1">R1 · Subir +2°</button>
               <span class="tenue">Objetivo actual: <strong id="mando-servo-obj">0°</strong></span>
             </div>
 
@@ -176,7 +177,7 @@
           <article class="tarjeta">
             <h2>Estado y conducción del Segway <span id="mando-estado-robot" class="etiqueta"></span></h2>
             <div class="acciones">
-              <button type="button" id="btn-mando-armar" class="boton-armar" title="Equivale a pulsar ✕ en el mando PS4 (set lqr 1 + arm)">✕ Armar robot (LQR)</button>
+              <button type="button" id="btn-mando-armar" class="boton-armar" title="Equivale a pulsar ✕ en el mando PS4 (arm)">✕ Armar robot</button>
               <button type="button" id="btn-mando-desarmar" class="peligro" title="Equivale a pulsar ◯ en el mando PS4 o Esc (disarm inmediato)">◯ Desarmar emergencia</button>
             </div>
 
@@ -328,16 +329,6 @@
             <!-- "set <param> <valor>"; la respuesta de "get" llena las casillas (app.js) -->
             <form id="ganancias" class="parametros" title="Se mandan como set &lt;param&gt; &lt;valor&gt;; se pierden al reiniciar">
               <fieldset data-requiere-conexion class="contenedor">
-                <label class="fila-entera">controlador
-                  <select name="lqr" title="Vale desde el próximo arm, nunca en pleno equilibrio">
-                    <option value="0">PID</option>
-                    <option value="1">LQR</option>
-                  </select>
-                </label>
-                <h3>PID</h3>
-                <label>kp <input name="kp" type="number" step="any"></label>
-                <label>ki <input name="ki" type="number" step="any"></label>
-                <label>kd <input name="kd" type="number" step="any"></label>
                 <h3>LQR</h3>
                 <label>kx <input name="kx" type="number" step="any"></label>
                 <label>kv <input name="kv" type="number" step="any"></label>
@@ -347,6 +338,18 @@
                 <label title="Ángulo de equilibrio, en grados">ref° <input name="ref" type="number" step="any"></label>
                 <label title="Zona muerta del comando">deadband <input name="deadband" type="number" step="any"></label>
                 <label title="Rechaza banda del comando, en Hz">notch Hz <input name="notch" type="number" step="any"></label>
+                <label title="Segundo rechaza banda, angosto, en Hz (0 = sin filtro)">notch2 Hz <input name="notch2" type="number" step="any"></label>
+                <label title="Pasabajos del comando, en Hz (0 = sin filtro). Retrasa el lazo: con 9-11 Hz se hamacaba">lp Hz <input name="lp" type="number" step="any"></label>
+                <label title="1: la referencia se corrige sola si el robot se queda corrido">refauto <input name="refauto" type="number" min="0" max="1" step="1"></label>
+                <h3>Manejo con el joystick (rampas)</h3>
+                <label title="Velocidad con el stick a fondo, en m/s (las flechitas, la mitad)">vmax m/s <input name="vmax" type="number" min="0" max="1.2" step="0.05"></label>
+                <label title="Rampa de subida: cuánto aumenta la velocidad pedida por segundo, en m/s²">acel m/s² <input name="acel" type="number" min="0.05" max="5" step="0.05"></label>
+                <label title="Rampa de frenado al soltar el stick, en m/s². Más chica = frena más suave y más largo">fren m/s² <input name="fren" type="number" min="0.05" max="5" step="0.05"></label>
+                <label title="Comando anticipado por m/s pedido: sin esto va más rápido que lo pedido. 0 = sin">ff <input name="ff" type="number" min="0" max="2" step="0.05"></label>
+                <label title="1: mientras se mueve no tira a ninguna posición y la fija cuando terminó de frenar. 0: como antes">xlibre <input name="xlibre" type="number" min="0" max="1" step="1"></label>
+                <label title="Velocidad con que las patas van a la posición pedida, en grados por segundo">patas °/s <input name="velpata" type="number" min="1" max="300" step="5"></label>
+                <label title="Margen de motor (0-1): si el comando a los motores pasa de esto, la velocidad pedida retrocede para que quede con qué equilibrar. 0 = no">margen <input name="margen" type="number" min="0" max="1" step="0.05"></label>
+                <label title="Prioridad por perturbación, en grados: si se inclina más que esto, suelta la velocidad pedida. 0 = no (en la simulación no ayudó)">prio ° <input name="prio" type="number" min="0" max="30" step="1"></label>
                 <div class="acciones fila-entera">
                   <button>Cargar</button>
                   <button type="button" data-comando="get">Leer parámetros</button>
@@ -485,7 +488,7 @@
         <button id="ver-mensajes" class="desplegar" aria-expanded="false" aria-controls="consola">Mensajes del robot <span id="n-mensajes" class="tenue"></span></button>
         <form id="linea-comando" class="linea-comando">
           <fieldset data-requiere-conexion class="contenedor">
-            <input id="texto-comando" list="sugerencias" placeholder="comando: servo 10 · servo 20 · servo 30 · motor 20 · set lqr 1 · help" autocomplete="off">
+            <input id="texto-comando" list="sugerencias" placeholder="comando: servo 10 · servo 20 · servo 30 · motor 20 · set deadband 0.16 · help" autocomplete="off">
             <datalist id="sugerencias">
               <option value="help"></option>
               <option value="servo 0"></option>
@@ -495,7 +498,7 @@
               <option value="servo off"></option>
               <option value="servo on"></option>
               <option value="motor 20"></option>
-              <option value="set lqr 1"></option>
+              <option value="set deadband 0.16"></option>
               <option value="set umax 0.8"></option>
               <option value="set deadband 0.05"></option>
               <option value="tlm on"></option>

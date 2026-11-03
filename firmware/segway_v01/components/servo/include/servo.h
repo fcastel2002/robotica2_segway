@@ -12,15 +12,16 @@ typedef enum {
 } servo_side_t;
 
 typedef struct {
-    int  gpio;
-    bool invert;        // montado en espejo: 0° <-> 180°
+    int   gpio;
+    bool  invert;       // montado en espejo: 0° <-> 180°
+    float zero_deg;     // ángulo del servo que es el 0 de la pata (calibración de montaje)
 } servo_pins_t;
 
 // No genera pulsos hasta el primer servo_set_deg: el servo no se mueve al inicializar.
 esp_err_t servo_init(const servo_pins_t pins[SERVO_COUNT], unsigned freq_hz,
                      unsigned us_at_0_deg, unsigned us_at_180_deg);
 
-// deg en [0, 180]; se satura a ese rango.
+// deg de la pata: se le suma el cero del servo y el resultado se satura a [0, 180].
 void servo_set_deg(servo_side_t side, float deg);
 
 // Corta los pulsos: el servo queda suelto (sin fuerza). El próximo servo_set_deg lo agarra.

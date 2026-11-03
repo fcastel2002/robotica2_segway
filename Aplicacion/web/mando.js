@@ -1,6 +1,7 @@
 // Pestaña "Mando / Conducción": mapa interactivo en vivo del joystick PS4 (DualShock 4),
 // cambio entre Opción 1 (1 stick) y Opción 2 (2 sticks) con OPTIONS, control de servos
-// de las patas con R1 (+10°) y L1 (−10°) con tope estricto 0°..30°, y armado (✕) / desarme (◯).
+// de las patas con R1 (+2°) y L1 (−2°) con tope 0°..30° (las dos patas desde el 3/11), y
+// armado (✕) / desarme (◯).
 'use strict';
 
 (function iniciarVistaMando() {
@@ -15,8 +16,8 @@
     o: '◯ (Desarmar)',
     cuadrado: '□',
     triangulo: '△',
-    l1: 'L1 (−10°)',
-    r1: 'R1 (+10°)',
+    l1: 'L1 (−2°)',
+    r1: 'R1 (+2°)',
     l2: 'L2',
     r2: 'R2',
     share: 'SHARE',
@@ -29,7 +30,7 @@
 
   function acotarServoEstricto(grados) {
     const n = Math.round(Number(grados) || 0);
-    return Math.max(0, Math.min(30, n));
+    return Math.max(0, Math.min(30, n));   // rango de las patas (joystick.py, SERVO_MAX_DEG)
   }
 
   window.actualizarVistaMando = function actualizarVistaMando(joyData, viva, errorTexto) {
@@ -97,7 +98,7 @@
     if (bot.r2) activos.push('R2');
     $('mando-botones-activos').textContent = activos.length ? activos.join(' · ') : 'ninguno';
 
-    // Estado de los servos (0° a 30° estricto en pasos de 10°)
+    // Estado de los servos (0° a 30° en pasos de 2°)
     const gradosServo = acotarServoEstricto(joyData?.servo?.grados ?? 0);
     $('mando-servo-obj').textContent = `${gradosServo}° (tope 30°)`;
     for (const b of document.querySelectorAll('[data-servo-fijo]')) {
@@ -115,7 +116,7 @@
   $('btn-modo-2')?.addEventListener('click', () => window.enviarAccionJoy?.('opcion_2'));
   $('svg-btn-options')?.addEventListener('click', () => window.enviarAccionJoy?.('toggle_modo'));
 
-  // Botones de servos (L1 -10°, R1 +10° y escalones fijos 0°, 10°, 20°, 30°)
+  // Botones de servos (L1 -2°, R1 +2° y escalones fijos 0°, 10°, 20°, 30°)
   $('btn-servo-l1')?.addEventListener('click', () => window.enviarAccionJoy?.('servo_bajar'));
   $('btn-servo-r1')?.addEventListener('click', () => window.enviarAccionJoy?.('servo_subir'));
   $('svg-btn-l1')?.addEventListener('click', () => window.enviarAccionJoy?.('servo_bajar'));

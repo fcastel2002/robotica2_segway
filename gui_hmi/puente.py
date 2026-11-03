@@ -107,7 +107,7 @@ def simular(frecuencia_hz: float) -> None:
     pwm = [0.0, 0.0]  # -1..1, como motor_manual del firmware
     # Parámetros de "set": los mismos nombres que el firmware; "get" los devuelve
     par = dict(kp=0.0, ki=0.0, kd=0.0, ref=1.0, umax=1.0, deadband=0.18,
-               lqr=0.0, kx=6.10, kv=5.84, kphi=9.91, kw=1.26, notch=7.5)
+               lqr=0.0, kx=6.10, kv=5.84, kphi=9.91, kw=1.26, notch=7.5, notch2=0.0, lp=0.0, refauto=0.0)
     servo = [math.nan, math.nan]  # suelto al encender: posición desconocida
     servo_objetivo = [90.0, 90.0]
     servo_suelto = [True, True]
@@ -191,9 +191,9 @@ def simular(frecuencia_hz: float) -> None:
                 continue
             elif palabras[:1] == ["get"]:
                 difundir(f"# kp={par['kp']:.4f} ki={par['ki']:.4f} kd={par['kd']:.4f} ref={par['ref']:.2f} "
-                         f"umax={par['umax']:.2f} deadband={par['deadband']:.3f}")
+                         f"umax={par['umax']:.2f} deadband={par['deadband']:.3f} refauto={int(par['refauto'])}")
                 difundir(f"# lqr={int(par['lqr'] != 0)} kx={par['kx']:.3f} kv={par['kv']:.3f} "
-                         f"kphi={par['kphi']:.3f} kw={par['kw']:.3f} notch={par['notch']:.1f}")
+                         f"kphi={par['kphi']:.3f} kw={par['kw']:.3f} notch={par['notch']:.1f} notch2={par['notch2']:.1f} lp={par['lp']:.1f}")
                 difundir(f"# servo l={servo[0]:.1f} r={servo[1]:.1f} lim_l={lim[0][0]:.1f}..{lim[0][1]:.1f} "
                          f"lim_r={lim[1][0]:.1f}..{lim[1][1]:.1f}")
                 continue
