@@ -42,6 +42,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_REFAUTO] = "refauto", [PARAM_VMAX] = "vmax", [PARAM_ACEL] = "acel",
     [PARAM_FREN] = "fren", [PARAM_FF] = "ff", [PARAM_XLIBRE] = "xlibre", [PARAM_VELPATA] = "velpata",
     [PARAM_MARGEN] = "margen", [PARAM_PRIO] = "prio", [PARAM_DBMOV] = "dbmov",
+    [PARAM_LQRPATA] = "lqrpata",
 };
 
 // Todo lo que dice la consola sale por el cable y, si hay red, por WiFi. Solo desde comms.
@@ -64,6 +65,7 @@ static void print_help(void)
         "#           cal | tlm on | tlm off | enc reset | help\n"
         "#           servo [l|r] off|on | servo lim l|r <min> <max> | motor [l|r] <-100..100> | motor stop\n"
         "# param: ref(grados) umax deadband | kx kv kphi kw (LQR, el único control)\n"
+        "#        lqrpata (1: kx kv kphi kw salen de la tabla según la pata; 0: las fijas de set)\n"
         "#        notch notch2 lp (Hz de los rechaza banda, ancho y angosto, y del pasabajos del\n"
         "#        comando; 0 = sin filtro)\n"
         "#        refauto (1: ref se corrige sola si el robot se queda corrido; get la muestra)\n"
@@ -99,8 +101,9 @@ static void print_params(const telemetry_t *t)
     const balance_params_t *p = &t->params;
     out("# ref=%.2f umax=%.2f deadband=%.3f dbmov=%.3f refauto=%d\n",
         p->theta_ref * RAD2DEG, p->u_max, t->deadband_quieto, t->mov.deadband_mov, p->ref_auto ? 1 : 0);
-    out("# kx=%.3f kv=%.3f kphi=%.3f kw=%.3f notch=%.1f notch2=%.1f lp=%.1f\n",
-        p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, p->notch_hz, p->notch2_hz, p->lowpass_hz);
+    out("# kx=%.3f kv=%.3f kphi=%.3f kw=%.3f lqrpata=%d notch=%.1f notch2=%.1f lp=%.1f\n",
+        p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, p->lqr_por_pata ? 1 : 0, p->notch_hz,
+        p->notch2_hz, p->lowpass_hz);
     out("# vmax=%.2f acel=%.2f fren=%.2f ff=%.2f xlibre=%d velpata=%.0f margen=%.2f prio=%.1f\n",
         t->mov.v_max, t->mov.acel, t->mov.fren, t->mov.ff, t->mov.x_libre ? 1 : 0,
         t->mov.vel_pata_dps, t->mov.u_margen, t->mov.prio_theta * RAD2DEG);
@@ -151,6 +154,15 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             return;
         }
         cmd = (command_t){ .type = CMD_SET, .param = id, .value = v };
+        if (last->params.lqr_por_pata && id >= PARAM_KX && id <= PARAM_KW) {
+            // La página manda todas las casillas al aplicar: avisa solo si cambió una ganancia
+            const float uso[] = { last->params.lqr.kx, last->params.lqr.kv, last->params.lqr.kphi,
+                                  last->params.lqr.kw };
+            if (fabsf(v - uso[id - PARAM_KX]) > 1e-3f) {
+                out("# aviso: lqrpata=1, las ganancias salen de la tabla segun la pata; esta queda "
+                    "para cuando se ponga set lqrpata 0\n");
+            }
+        }
     } else if (strcmp(word, "servo") == 0) {
         char *a = strtok(NULL, " \t");
         char *b = strtok(NULL, " \t");

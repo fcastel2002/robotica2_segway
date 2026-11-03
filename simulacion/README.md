@@ -13,6 +13,12 @@ Dos bancos de simulación separados por tema:
   entrada único: `INICIAR_DINAMICA_PATA.m`. Guía de uso y QA en `docs/gestion/2026-09-15-guia-qa-dinamica-simulink.md`;
   traspaso en `docs/gestion/2026-09-15-handoff-dinamica-simulink.md`. 12 tests en `tests/`.
 
+- **[`segway_ajustado/`](segway_ajustado/README.md): el Simulink del Segway ajustado con el robot**
+  (3/11/2026, VAL-302). Copia aparte de `segway_completo/` (que queda como estaba) con la variante
+  `'ajustada'` de `parametros_fisicos.m` y el control como lo hace el firmware; repite la prueba del
+  3/11 y la compara con lo medido. Además el LQR recalculado por altura de pata. Qué se corrigió:
+  [`modelado/ajuste/`](../modelado/ajuste/ajuste_del_modelo.md).
+
 - **[`escalon/`](escalon/README.md): bajada de un escalón hacia atrás** (3/11/2026, FW-016). Banco en C
   que corre el código del firmware contra una planta plana con el cuatro barras, contacto con los
   escalones, vuelo y aterrizaje. Parámetros de `parametros_fisicos.m` con

@@ -4,3 +4,11 @@
 resultados/*
 !resultados/[A-E]_*.csv
 !resultados/resumen_estrategias.png
+# y la figura de los mismos cinco con el modelo ajustado (3/11), con las ganancias fijas y con el
+# LQR por altura (los CSV se regeneran con el banco: ver README.md)
+!resultados/ajustada/
+resultados/ajustada/*
+!resultados/ajustada/resumen_estrategias.png
+!resultados/ajustada_lqr/
+resultados/ajustada_lqr/*
+!resultados/ajustada_lqr/resumen_estrategias.png

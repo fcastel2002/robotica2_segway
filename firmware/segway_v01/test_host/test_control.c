@@ -185,6 +185,23 @@ static void test_ref_tabla_patas(void)
     CHECK(fabsf(balance_ref_tabla(30.0f, patas, refs, 3) - 2.0f) < 1e-5f);
 }
 
+static void test_lqr_tabla_patas(void)
+{
+    // La tabla de board_config.h: en las filas da las de la fila, entre filas interpola y fuera
+    // de 0-30 se queda con la punta; kphi y kw crecen con la pata
+    const float patas[] = LQR_TABLA_PATAS_DEG;
+    const float tabla[][4] = LQR_TABLA;
+    const int n = sizeof patas / sizeof patas[0];
+    lqr_gains_t k;
+    balance_lqr_tabla(0.0f, patas, tabla, n, &k);
+    CHECK(fabsf(k.kx - tabla[0][0]) < 1e-6f && fabsf(k.kw - tabla[0][3]) < 1e-6f);
+    balance_lqr_tabla(12.5f, patas, tabla, n, &k);
+    CHECK(fabsf(k.kphi - 0.5f * (tabla[2][2] + tabla[3][2])) < 1e-5f);
+    balance_lqr_tabla(40.0f, patas, tabla, n, &k);
+    CHECK(fabsf(k.kw - tabla[n - 1][3]) < 1e-6f);
+    for (int i = 1; i < n; i++) CHECK(tabla[i][2] > tabla[i - 1][2] && tabla[i][3] > tabla[i - 1][3]);
+}
+
 static void test_ref_auto_converges(void)
 {
     // Equilibrio real en 8° y ref cargada en 11°: en régimen el LQR lo deja corrido
@@ -431,6 +448,7 @@ int main(void)
     test_lqr_lowpass_cuts_vibration();
     test_lqr_notch2_is_narrow();
     test_ref_tabla_patas();
+    test_lqr_tabla_patas();
     test_ref_auto_converges();
     test_odometry_rolling();
     test_odometry_pitch_is_not_motion();

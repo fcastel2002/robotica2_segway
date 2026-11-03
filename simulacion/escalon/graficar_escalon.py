@@ -2,7 +2,8 @@
 las señales principales. Lee resultados/<caso>.csv que escribe banco_escalon.
 
 Uso (desde la raíz del repo):  python simulacion/escalon/graficar_escalon.py equipo [otro ...]
-Deja resultados/<caso>.png.
+Deja resultados/<caso>.png. Con --ajustada dibuja con la planta ajustada (planta_escalon_ajustada.h);
+"resumen [carpeta] [titulo]" arma el resumen de los cinco casos de resultados/<carpeta>/.
 """
 import csv
 import math
@@ -15,11 +16,12 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 AQUI = pathlib.Path(__file__).resolve().parent
+PLANTA = "planta_escalon.h"
 
 
 def leer_planta():
     """Valores de planta_escalon.h que hacen falta para dibujar."""
-    texto = (AQUI / "planta_escalon.h").read_text(encoding="utf-8")
+    texto = (AQUI / PLANTA).read_text(encoding="utf-8")
     v = {}
     for nombre in ("PE_A_X", "PE_A_Z", "PE_R_RUEDA", "PE_SENSOR_X", "PE_SENSOR_Z", "PE_SENSOR_ANG"):
         v[nombre] = float(re.search(rf"#define {nombre}\s+(\S+)", texto).group(1))
@@ -109,7 +111,7 @@ def graficar(caso):
     print("->", salida)
 
 
-def resumen(casos, salida, pisada_larga=()):
+def resumen(casos, salida, pisada_larga=(), titulo_general=None):
     """Un panel por caso con el robot dibujado cada 30 ms desde que larga: (archivo, título)."""
     P = leer_planta()
     fig, axes = plt.subplots(1, len(casos), figsize=(4.2 * len(casos), 4.6))
@@ -137,8 +139,9 @@ def resumen(casos, salida, pisada_larga=()):
         ax.set_ylim(-0.42, 0.32)
         ax.set_title(titulo, fontsize=9)
         ax.tick_params(labelsize=7)
-    fig.suptitle("Bajada de un escalón de 18 cm hacia atrás (simulación): el robot cada 30 ms "
-                 "desde que acelera; el color va de violeta (antes) a amarillo (después)", fontsize=10)
+    fig.suptitle(titulo_general or ("Bajada de un escalón de 18 cm hacia atrás (simulación): el robot cada 30 ms "
+                                    "desde que acelera; el color va de violeta (antes) a amarillo (después)"),
+                 fontsize=10)
     fig.tight_layout()
     fig.savefig(AQUI / "resultados" / salida, dpi=120)
     plt.close(fig)
@@ -146,14 +149,25 @@ def resumen(casos, salida, pisada_larga=()):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "resumen":
+    args = sys.argv[1:]
+    if "--ajustada" in args:
+        args.remove("--ajustada")
+        PLANTA = "planta_escalon_ajustada.h"
+    if args and args[0] == "resumen":
+        carpeta = (args[1] + "/") if len(args) > 1 else ""
+        titulos = {
+            "": None,
+            "ajustada/": "MODELO AJUSTADO (3/11), ganancias de hoy: el robot cada 30 ms desde que larga",
+            "ajustada_lqr/": "MODELO AJUSTADO (3/11), LQR recalculado por altura de pata: el robot cada 30 ms desde que larga",
+        }
         resumen([
-            ("A_equipo", "A. Agachado, 30° en el aire, 15° al tocar\n(0,25 m/s): la cabina pega en el borde"),
-            ("B_estirado_lento", "B. Patas en 30° a 0,35 m/s:\nla cabina igual pega en el borde"),
-            ("E_salto", "C. Salto (0° -> 30° en el borde) a 0,3 m/s:\nsube 10 cm pero baja sobre el borde"),
-            ("C_estirado_rapido", "D. Patas en 30° a 0,55 m/s: pasa limpio,\naterriza bien, no frena en 25 cm"),
-            ("D_pisada_larga", "E. Igual que D con pisada larga:\nqueda parado, pero recién a 30 cm"),
-        ], "resumen_estrategias.png", pisada_larga=("D_pisada_larga",))
+            (carpeta + "A_equipo", "A. Agachado, 30° en el aire, 15° al tocar" + ("\n(0,25 m/s): la cabina pega en el borde" if not carpeta else "")),
+            (carpeta + "B_estirado_lento", "B. Patas en 30° a 0,35 m/s" + (":\nla cabina igual pega en el borde" if not carpeta else "")),
+            (carpeta + "E_salto", "C. Salto (0° -> 30° en el borde) a 0,3 m/s" + (":\nsube 10 cm pero baja sobre el borde" if not carpeta else "")),
+            (carpeta + "C_estirado_rapido", "D. Patas en 30° a 0,55 m/s" + (": pasa limpio,\naterriza bien, no frena en 25 cm" if not carpeta else "")),
+            (carpeta + "D_pisada_larga", "E. Igual que D con pisada larga" + (":\nqueda parado, pero recién a 30 cm" if not carpeta else "")),
+        ], carpeta + "resumen_estrategias.png", pisada_larga=(carpeta + "D_pisada_larga",),
+            titulo_general=titulos.get(carpeta))
     else:
-        for c in sys.argv[1:]:
+        for c in args:
             graficar(c)

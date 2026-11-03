@@ -87,3 +87,35 @@ velocidad pedida ante una perturbación no ayuda. Es lo que se vio en el registr
 eje de los servos y a qué altura está su piso (se usó la cabina de la primera iteración,
 `cabeza_v31`: 89,5 mm adelante y 29 mm abajo del eje del servo), el borde del escalón (vivo o
 redondeado), la rigidez de la goma, el par y la velocidad reales de los servos.
+
+## Con el modelo ajustado con el robot (3/11, FW-017)
+
+El 3/11 se ajustó el modelo con mediciones del robot
+([`modelado/ajuste/ajuste_del_modelo.md`](../../modelado/ajuste/ajuste_del_modelo.md)): la pata real
+está ~10° más estirada que lo supuesto, la caja tiene el centro de masa 19 mm más atrás, la IMU
+está inclinada 4,2° (no 9,8°), el motor es el de 350 rpm y la LiPo da 11,9 V. La planta ajustada
+sale de `exportar_planta_ajustada.m` (variante `'ajustada'` de `parametros_fisicos.m`) en
+`planta_escalon_ajustada.h`; `planta_escalon.h` y los resultados de arriba quedan como estaban.
+Los bancos la usan compilados con `-DPLANTA_AJUSTADA` (`planta_elegida.h` elige el encabezado), y
+en ese caso la maniobra usa la IMU y la posición del eje del modelo ajustado. Desde el 3/11 los
+bancos usan las ganancias del firmware según la pata (`LQR_TABLA`, CTL-301); `GANANCIAS=fijas`
+vuelve a las fijas, con las que salieron los resultados de las estrategias de arriba.
+
+```text
+matlab: run simulacion/escalon/exportar_planta_ajustada.m       (escribe planta_escalon_ajustada.h)
+gcc ... -DPLANTA_AJUSTADA ... simulacion/escalon/banco_escalon.c ... -o banco_escalon_ajustada.exe
+GANANCIAS=fijas banco_escalon_ajustada.exe caso <igual que arriba> csv=ajustada/<nombre>
+banco_escalon_ajustada.exe caso ... csv=ajustada_lqr/<nombre>       (LQR por altura, como el firmware)
+python simulacion/escalon/graficar_escalon.py --ajustada resumen ajustada
+```
+
+`banco_identificacion.c` repite la prueba con que se ajustó (`sesion_placa.py identificar`: el robot
+quieto y una onda cuadrada de ±1,5° en la referencia) con el código del firmware; con la planta
+ajustada sigue lo medido a 0,7-1,2° rms de cabeceo y 11-16 mm rms de x (la original, 1,1-1,7° y
+14-34 mm).
+
+**Las cinco estrategias con el modelo ajustado no funcionan como antes**
+([ganancias de hoy](resultados/ajustada/resumen_estrategias.png),
+[LQR por altura](resultados/ajustada_lqr/resumen_estrategias.png)): A, B y C chocan igual; D y E,
+que antes pasaban, se caen (ganancias de hoy) o chocan (LQR por altura, se pasan al escalón
+siguiente). La maniobra hay que volver a ajustarla con este modelo.

@@ -25,6 +25,8 @@ typedef struct {
     float lowpass_hz;   // pasabajos de 2.º orden en el comando del LQR, después de los rechaza
                         // banda; 0 = sin filtro
     bool  ref_auto;     // theta_ref se corrige sola con el robot equilibrando (balance_ref_auto)
+    bool  lqr_por_pata; // lqr sale de una tabla según la altura de las patas (balance_lqr_tabla;
+                        // lo hace control_task); si no, las ganancias fijas de "set kx ..."
     float u_ff;         // se suma al comando del LQR (antes de los filtros): lo que hace falta
                         // para sostener la velocidad pedida. 0 = nada (el control normal)
 } balance_params_t;
@@ -64,6 +66,12 @@ float balance_compensar(const balance_params_t *p, float u, float u_limit);
 // grados de pata, de menor a mayor; refs en las mismas unidades que se quieran de salida),
 // constante fuera de sus extremos.
 float balance_ref_tabla(float pata_deg, const float *patas_deg, const float *refs, int n);
+
+// Ganancias del LQR según la altura de las patas (3/11, CTL-301): cada fila de la tabla es
+// {kx, kv, kphi, kw} para la pata de la misma fila de patas_deg; se interpola igual que la
+// referencia (lineal, constante fuera de los extremos).
+void balance_lqr_tabla(float pata_deg, const float *patas_deg, const float (*tabla)[4], int n,
+                       lqr_gains_t *k);
 
 // Referencia automática. Con el LQR, si theta_ref no es el ángulo de equilibrio real el robot
 // se queda corrido de su consigna: en régimen x = kphi/kx · (theta_ref - equilibrio). Entonces

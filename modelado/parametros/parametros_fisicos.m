@@ -16,6 +16,9 @@ function o = parametros_fisicos(variante)
 %     'corregido'         = baseline histórico a escala 100 (AD 140, BC 135, CD 51, DP 140, bancada 100 a 45),
 %                         servo DS3225MG y motor JGA25-371. Es lo que usan los resultados del 14/9 en
 %                         simulacion/dinamica_pata_v1/resultados. No corresponde a ningún CAD construido.
+%     'ajustada'          = 'segunda_iteracion' con lo que se ajustó con el robot el 3/11/2026 (FW-017): el
+%                         cero de la pata, el centro de masa de la caja, la IMU, el motor, la batería. Cada
+%                         cambio está al final, con el valor de antes; el detalle, en modelado/ajuste/.
 
   if nargin < 1 || isempty(variante), variante = 'segunda_iteracion'; end
 
@@ -30,8 +33,11 @@ function o = parametros_fisicos(variante)
   o.delta = 164;         % angulo de D->C a D->P en el acoplador [grados] (el plano acota 16, que es el suplementario)
   o.th = [320 350];      % recorrido del servo [grados]: 320 = pata estirada (de pie), 350 = plegada
   o.rama = +1;           % rama de armado del cuatro barras (+1 = como esta el CAD)
+  o.pata_cero = 10;      % postura del modelo (theta de AD bajo la horizontal) con la pata del firmware en 0:
+                         % theta = pata + pata_cero, servo del modelo = 360 - theta. SUPUESTO (3/11, banco de
+                         % escalon): el recorrido 0-30 del firmware es todo el del modelo, 10-40
   switch lower(variante)
-    case 'segunda_iteracion'
+    case {'segunda_iteracion', 'ajustada'}
       o.s_barras = 80;                  % escala de las barras [mm] -> AD 112, BC 108, CD 40.8, DP 112 (STEP del 14/9)
       o.AB = 80;   o.ang_AB = 45;       % bancada A-B [mm, grados]: la intencion del diseño. OJO: en el STEP B esta a 77.9 mm
                                         % y 46.6 grados de A (altura justa, 3 mm corto en horizontal). Corregir en cabeza_v31.
@@ -54,7 +60,7 @@ function o = parametros_fisicos(variante)
       o.w_nl_servo = 7.7;               % 0.13 s por 60 grados
       o.nombre_servo = 'DS3225MG';
     otherwise
-      error('parametros_fisicos: variante "%s" no definida (usar ''segunda_iteracion'' o ''corregido'')', variante);
+      error('parametros_fisicos: variante "%s" no definida (usar ''segunda_iteracion'', ''ajustada'' o ''corregido'')', variante);
   end
   e = o.s_barras/100;    % escala de las barras respecto de la primera iteracion, de donde salieron masas e inercias
 
@@ -86,6 +92,8 @@ function o = parametros_fisicos(variante)
   o.m_electronica = 48.8;  o.r_electronica = [-18.5 21.0];% ESP32 + driver + IMU + BEC + cables (estimada)
   o.m_tornilleria = 40.6;  o.r_tornilleria = [0 0];       % pernos, ejes, rodamientos (estimada)
   o.m_carga = 0;         o.r_carga = [-18.5 21.0];      % carga extra en la cabina (por defecto nada)
+  o.corr_caja = [0 0];   % corrimiento del centro de masa de la caja respecto del que da el reparto de
+                         % piezas [mm] (x hacia atras, y arriba): se suma a la posicion de cada pieza
   o.m_AD = 30;           o.f_AD = 0.428;                % MEDIDO 21/10 (se estimaba 23.2: -23 %). f = CoM, fraccion de A hacia D
   o.m_BC = 23;           o.f_BC = 0.5;                  % MEDIDO 21/10. Se estimaba 5.6 g: el modelo lo tenia CUATRO veces mas liviano
   o.m_CDP = 11;          o.f_CDP = 0.3145;              % MEDIDO 21/10 (se estimaba 15.6: +42 %). f desde D hacia P
@@ -144,9 +152,13 @@ function o = parametros_fisicos(variante)
                          % y el par se calcula: eta*N*Kt*(i - i_vacio) = 3.1 kg cm por motor al bloqueo,
                          % no los 5.6 que anuncia. MEDIR con un brazo y una balanza antes de confiar.
 
+  o.zona_muerta_motor = 0.17; % fraccion de PWM que no mueve la rueda girando (MED-005: 0.17 der., 0.19 izq.)
+
   % ===================================== 8. BATERIA =====================================
   o.V_bat = 11.1;        % tension [V] (LiPo 3S: 12.6 llena, 11.1 nominal, 9.6 baja)
   o.R_bat = 0.05;        % resistencia interna + cables [ohm]
+  o.caida_driver = 2.0;  % [V] caida del L298N (firmware/docs/arquitectura_v0_1.md, sec. 10): al motor llega
+                         % V_bat - caida_driver con PWM 1. Con el DRV8871 de la version final, ~0
 
   % ================================ 9. SERVO DE HOMBRO ================================
   % Masa, par maximo y velocidad en vacio estan en la seccion 1 (dependen de la variante).
@@ -156,6 +168,9 @@ function o = parametros_fisicos(variante)
   o.b_servo = 0;         % friccion viscosa equivalente del eje [N m s/rad]; pendiente de identificar
   o.k_tope_servo = 50;   % rigidez angular del tope [N m/rad]; parametro numerico provisional
   o.c_tope_servo = 1;    % amortiguamiento angular del tope [N m s/rad]; parametro numerico provisional
+  o.banda_servo_deg = 0.27; % banda muerta del servo [grados]: DS3240, 3 us con 500-2500 us para 180 grados.
+                         % Pedidos que cambian menos de esto cada 20 ms (menos de ~14 grados/s) lo hacen
+                         % avanzar a saltitos
 
   % ============================ 10. CUERPO: amortiguamientos y topes ============================
   o.b_pitch = 1e-3;      % amortiguamiento del cabeceo [N m s/rad] (aire, cables; supuesto chico)
@@ -177,4 +192,29 @@ function o = parametros_fisicos(variante)
   o.umbral_vuelo = 3;    % si | |f| - g | supera esto [m/s2], la IMU se considera en vuelo y no corrige el angulo
   o.semilla = 1;         % semilla del ruido (reproducibilidad)
   o.g = 9.81;            % gravedad [m/s2]
+  o.imu_delta_deg = 9.8; % la IMU marca esto de mas que el cabeceo del cuerpo [grados] (como esta pegada).
+                         % 9.8 = el modelo contra la tabla del 2/11 (simulacion/escalon)
+
+  % ================== AJUSTE CON EL ROBOT (3/11/2026, FW-017, modelado/ajuste/) ==================
+  % Con 48 mediciones del equilibrio (patas 0-30 de a 2.5 grados) y una onda cuadrada de +-1.5
+  % grados en la referencia a cuatro alturas, repetida en el simulador con el codigo del firmware.
+  % Cada linea: el valor nuevo, el de antes y de donde sale.
+  if strcmpi(variante, 'ajustada')
+    o.pata_cero = 20.4;     % antes 10 (supuesto). La curva de equilibrio solo cierra (0.10 grados rms
+                            % contra 1.17) con la pata real 10.4 grados mas estirada que la supuesta, y la
+                            % onda cuadrada lo confirma (sobre todo con las patas bajas). VERIFICAR con una
+                            % regla: altura del eje del servo con patas 0 = 119 mm (antes 77)
+    o.th = [309.5 339.7];  % antes [320 350]: el recorrido 0-30 del firmware cae en 20.4-50.4 del
+                            % modelo, cerca del punto muerto del cuatro barras (~57): por eso con 30 se
+                            % sacude y se cae
+    o.corr_caja = [19.3 0]; % antes [0 0]: el centro de masa de la caja 19 mm mas atras que el reparto
+                            % estimado de los 542 g (pesar la LiPo y ver donde va)
+    o.imu_delta_deg = 4.2;  % antes 9.8: con la pata y la caja corregidas, la IMU esta 4.2 grados inclinada
+    o.N = 899/(4*11);       % antes 20 (nominal): 20.43, medido con el encoder (FW-009)
+    o.w_nl_motor_rpm = 7000;% antes 6000: es la version de 350 rpm (STEP "DC12V350RPM"); MED-005 midio
+                            % 1.37 veces la velocidad por PWM del modelo
+    o.V_bat = 11.9;         % antes 11.1 (nominal): medido por el equipo el 3/11. Con la caida del L298N de
+                            % siempre (2.0 V) llegan 9.9 V al motor, lo que pide la onda cuadrada (9.8)
+    o.zona_muerta_motor = 0.14; % antes 0.17: ajustado con la onda cuadrada (MED-005 en el aire: 0.17-0.19)
+  end
 end

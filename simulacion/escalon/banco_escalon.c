@@ -24,7 +24,7 @@
 #include "maniobra.h"
 #include "movimiento.h"
 #include "odometry.h"
-#include "planta_escalon.h"
+#include "planta_elegida.h"
 #include "planta_plana.h"
 #include "sensor_piso.h"
 
@@ -38,6 +38,31 @@
 #define GRADOS          (180.0 / PI)
 #define T_SERVO         0.020                       // el servo ve un pulso nuevo cada 20 ms
 #define T_SHARP         0.0165                      // el Sharp renueva su salida cada 16,5 ms
+#ifdef PE_ZONA_MUERTA                               // la planta ajustada (3/11) la trae medida
+#define ZONA_MUERTA     PE_ZONA_MUERTA
+#else
+#define ZONA_MUERTA     0.17
+#endif
+// Lo que la maniobra sabe del robot (IMU y dónde queda el eje según la pata): con la planta
+// ajustada, el firmware tendría que usar los valores ajustados, no los de board_config.h
+#ifdef PLANTA_AJUSTADA
+#define IMU_DELTA_BANCO (PE_IMU_DELTA * GRADOS)
+#else
+#define IMU_DELTA_BANCO IMU_DELTA_DEG
+#endif
+
+// Las ganancias del LQR como el firmware: con DEFAULT_LQR_POR_PATA, de LQR_TABLA según la pata
+// (3/11, CTL-301); con GANANCIAS=fijas (variable de entorno), las fijas de siempre, como antes del
+// 3/11 (así salieron los resultados de las estrategias A-E del modelo original)
+static void ganancias_por_pata(float pata, lqr_gains_t *k)
+{
+    if (!DEFAULT_LQR_POR_PATA || (getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "fijas") == 0)) {
+        return;
+    }
+    static const float patas[] = LQR_TABLA_PATAS_DEG;
+    static const float tabla[][4] = LQR_TABLA;
+    balance_lqr_tabla(pata, patas, tabla, sizeof patas / sizeof patas[0], k);
+}
 
 // ---------------------------------------------------------------- parámetros de la planta
 static planta_t planta_base(void)
@@ -173,8 +198,17 @@ static resultado_t correr(const caso_t *C, FILE *csv)
     };
     static const float tabla_patas[] = REF_TABLA_PATAS_DEG, tabla_ref[] = REF_TABLA_THETA_DEG;
     const int n_tabla = sizeof tabla_patas / sizeof tabla_patas[0];
-    static const float eje_patas[] = PATA_TABLA_DEG, eje_x[] = PATA_EJE_X_M, eje_z[] = PATA_EJE_Z_M;
+    static const float eje_patas[] = PATA_TABLA_DEG;
+    float eje_x[] = PATA_EJE_X_M, eje_z[] = PATA_EJE_Z_M;
     const int n_eje = sizeof eje_patas / sizeof eje_patas[0];
+#ifdef PLANTA_AJUSTADA
+    for (int i = 0; i < n_eje; i++) {       // el eje respecto de A, de la cinemática ajustada
+        pata_t pe;
+        pata_cinematica(eje_patas[i] / GRADOS, &pe);
+        eje_x[i] = (float)(pe.px - PE_A_X);
+        eje_z[i] = (float)(pe.pz - PE_A_Z);
+    }
+#endif
     attitude_t att;  attitude_reset(&att);
     odometry_t odo;  odometry_reset(&odo);
     balance_t bal;   balance_reset(&bal);
@@ -270,7 +304,7 @@ static resultado_t correr(const caso_t *C, FILE *csv)
         // Dónde pega el haz del sensor de distancia
         haz_t haz = haz_para_pata(pata_pos, eje_patas, eje_x, eje_z, n_eje, SENSOR_PISO_X_M,
                                   SENSOR_PISO_Z_M, SENSOR_PISO_ANG_DEG / (float)GRADOS);
-        float th_cuerpo = att.theta - IMU_DELTA_DEG / (float)GRADOS;
+        float th_cuerpo = att.theta - (float)(IMU_DELTA_BANCO / GRADOS);
         man_entrada_t me = {
             .dt = (float)DT_CONTROL, .x = odo.x, .v = odo.v, .rate = att.rate,
             .acc = sqrtf(acc_fwd * acc_fwd + acc_up * acc_up), .pata_deg = pata_pos,
@@ -322,6 +356,7 @@ static resultado_t correr(const caso_t *C, FILE *csv)
             }
             rampa = fmin(rampa + DT_CONTROL / ARM_RAMP_S, 1.0);
             balance_params_t pm = p;
+            ganancias_por_pata(pata_pos, &pm.lqr);
             if (ms.activa) { pm.lqr.kx *= ms.kx_factor; pm.u_ff = ms.u_ff; }
             if (ms.activa && man.estado == MAN_ATERRIZAR && getenv("DURO")) {
                 // prueba: ganancias del LQR de factor_R 4 (las de antes del 29/10) al aterrizar
@@ -379,7 +414,7 @@ static manejo_t correr_manejo(const mov_params_t *mp, double avance, double t_st
     const double T_CAL = 2.5, T_QUIETO = 2.0, T_FIN = T_CAL + T_QUIETO + t_stick + 5.0;
     srand(1234);
     planta_t P = planta_base();
-    P.friccion_seca = P.beta_v * 0.17 * P.v_motor;
+    P.friccion_seca = P.beta_v * ZONA_MUERTA * P.v_motor;
     // Con lomo: el robot arranca abajo, 1,2 m antes de un escalón de g_lomo hacia arriba en X = 0
     piso_t piso = { g_lomo, 5.0, g_lomo > 0 ? 1 : 0 };
     if (g_v_motor > 0) P.v_motor = g_v_motor;
@@ -513,14 +548,14 @@ int main(int argc, char **argv)
     static const float tp[] = REF_TABLA_PATAS_DEG, tr[] = REF_TABLA_THETA_DEG;
     for (int i = 0; i < (int)(sizeof tp / sizeof tp[0]); i++) {
         printf("  pata %4.1f: %5.2f / %5.2f\n", tp[i], cabeceo_equilibrio(&P, tp[i] / GRADOS) * GRADOS,
-               tr[i] - IMU_DELTA_DEG);
+               tr[i] - IMU_DELTA_BANCO);
     }
 
     man_params_t base;
     maniobra_params_por_defecto(&base);
     caso_t C0 = {
         .nombre = "", .man = base, .alto = 0.18, .pisada = 0.25, .n_escalones = 4,
-        .x_contacto0 = 0.45, .factor_servo = 1.0, .zona_muerta = 0.17, .mu = PE_MU, .ruido = true,
+        .x_contacto0 = 0.45, .factor_servo = 1.0, .zona_muerta = ZONA_MUERTA, .mu = PE_MU, .ruido = true,
     };
 
     if (argc > 1 && strcmp(argv[1], "barrido") == 0) {

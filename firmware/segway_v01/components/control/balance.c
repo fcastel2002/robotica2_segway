@@ -124,6 +124,19 @@ float balance_ref_auto(float theta_ref, float centro, float rango, float x_err, 
     return fminf(fmaxf(r, centro - rango), centro + rango);
 }
 
+void balance_lqr_tabla(float pata_deg, const float *patas_deg, const float (*tabla)[4], int n,
+                       lqr_gains_t *k)
+{
+    // Entre qué filas cae (como balance_ref_tabla): i0 = i1 fuera de los extremos
+    int i1 = 0;
+    while (i1 < n - 1 && pata_deg > patas_deg[i1]) i1++;
+    int i0 = (i1 > 0 && pata_deg < patas_deg[i1]) ? i1 - 1 : i1;
+    float f = i1 == i0 ? 0.0f : (pata_deg - patas_deg[i0]) / (patas_deg[i1] - patas_deg[i0]);
+    float g[4];
+    for (int j = 0; j < 4; j++) g[j] = tabla[i0][j] + f * (tabla[i1][j] - tabla[i0][j]);
+    *k = (lqr_gains_t){ g[0], g[1], g[2], g[3] };
+}
+
 float balance_ref_tabla(float pata_deg, const float *patas_deg, const float *refs, int n)
 {
     if (pata_deg <= patas_deg[0]) {

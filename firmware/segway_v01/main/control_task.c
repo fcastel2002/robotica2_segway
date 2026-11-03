@@ -31,7 +31,7 @@ static control_ctx_t s_ctx;
 
 // Aplica un comando recibido y devuelve lo que el supervisor tiene que saber de él.
 static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_params_t *mp,
-                               float *db_quieto,
+                               float *db_quieto, lqr_gains_t *lqr_fijas,
                                float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
                                bool servo_free[SERVO_COUNT], float servo_lim[SERVO_COUNT][2],
                                float motor_manual[MOTOR_COUNT])
@@ -104,10 +104,11 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_UMAX:     p->u_max = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
         case PARAM_DEADBAND: *db_quieto = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
         case PARAM_DBMOV:    mp->deadband_mov = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
-        case PARAM_KX:       p->lqr.kx = c->value; break;
-        case PARAM_KV:       p->lqr.kv = c->value; break;
-        case PARAM_KPHI:     p->lqr.kphi = c->value; break;
-        case PARAM_KW:       p->lqr.kw = c->value; break;
+        case PARAM_KX:       lqr_fijas->kx = c->value; break;      // las fijas: con lqrpata 0
+        case PARAM_KV:       lqr_fijas->kv = c->value; break;
+        case PARAM_KPHI:     lqr_fijas->kphi = c->value; break;
+        case PARAM_KW:       lqr_fijas->kw = c->value; break;
+        case PARAM_LQRPATA:  p->lqr_por_pata = c->value != 0.0f; break;
         case PARAM_NOTCH:    p->notch_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
         case PARAM_NOTCH2:   p->notch2_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
         case PARAM_LOWPASS:  p->lowpass_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
@@ -141,15 +142,30 @@ static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT
     }
 }
 
-// Ángulo de equilibrio para la altura de patas actual (tabla de board_config.h), en rad. Con una
-// pata suelta se usa la otra; con las dos sueltas, REF_PATA_SUELTA_DEG.
+// Altura de las patas para las tablas: el promedio; con una pata suelta, la otra; con las dos
+// sueltas, REF_PATA_SUELTA_DEG.
+static float pata_actual(const float pos[SERVO_COUNT])
+{
+    float l = pos[SERVO_LEFT], r = pos[SERVO_RIGHT];
+    return isnan(l) ? (isnan(r) ? REF_PATA_SUELTA_DEG : r) : (isnan(r) ? l : 0.5f * (l + r));
+}
+
+// Ángulo de equilibrio para la altura de patas actual (tabla de board_config.h), en rad
 static float ref_de_patas(const float pos[SERVO_COUNT])
 {
     static const float patas[] = REF_TABLA_PATAS_DEG;
     static const float refs[] = REF_TABLA_THETA_DEG;
-    float l = pos[SERVO_LEFT], r = pos[SERVO_RIGHT];
-    float pata = isnan(l) ? (isnan(r) ? REF_PATA_SUELTA_DEG : r) : (isnan(r) ? l : 0.5f * (l + r));
-    return balance_ref_tabla(pata, patas, refs, sizeof patas / sizeof patas[0]) * DEG2RAD;
+    return balance_ref_tabla(pata_actual(pos), patas, refs, sizeof patas / sizeof patas[0]) * DEG2RAD;
+}
+
+// Ganancias del LQR para la altura de patas actual (LQR_TABLA de board_config.h)
+static void lqr_de_patas(const float pos[SERVO_COUNT], lqr_gains_t *k)
+{
+    static const float patas[] = LQR_TABLA_PATAS_DEG;
+    static const float tabla[][4] = LQR_TABLA;
+    _Static_assert(sizeof tabla / sizeof tabla[0] == sizeof patas / sizeof patas[0],
+                   "LQR_TABLA y LQR_TABLA_PATAS_DEG tienen que tener las mismas filas");
+    balance_lqr_tabla(pata_actual(pos), patas, tabla, sizeof patas / sizeof patas[0], k);
 }
 
 static void control_task(void *arg)
@@ -164,7 +180,10 @@ static void control_task(void *arg)
         .notch2_hz = DEFAULT_NOTCH2_HZ,
         .lowpass_hz = DEFAULT_LOWPASS_HZ,
         .ref_auto  = DEFAULT_REF_AUTO,
+        .lqr_por_pata = DEFAULT_LQR_POR_PATA,
     };
+    // Las fijas ("set kx ..."); con lqr_por_pata las ganancias salen de la tabla según la pata
+    lqr_gains_t lqr_fijas = params.lqr;
     supervisor_t sup;
     attitude_t att;
     balance_t bal;
@@ -234,8 +253,8 @@ static void control_task(void *arg)
                 mov_us = t0;
                 continue;
             }
-            sup_cmd_t r = apply_command(&c, &params, &mov_p, &db_quieto, servo_pos, servo_target,
-                                        servo_free, servo_lim, motor_manual);
+            sup_cmd_t r = apply_command(&c, &params, &mov_p, &db_quieto, &lqr_fijas, servo_pos,
+                                        servo_target, servo_free, servo_lim, motor_manual);
             if (r != SUP_CMD_NONE) cmd = r;
             if (c.type == CMD_SET && c.param == PARAM_REF) {
                 ref_correccion = ref_centro = params.theta_ref - ref_de_patas(servo_pos);
@@ -243,6 +262,9 @@ static void control_task(void *arg)
         }
         // La referencia sigue a las patas mientras se mueven (update_servos las lleva a 90 °/s)
         params.theta_ref = ref_de_patas(servo_pos) + ref_correccion;
+        // Y las ganancias, según la pata o las fijas (get muestra las que se están usando)
+        if (params.lqr_por_pata) lqr_de_patas(servo_pos, &params.lqr);
+        else params.lqr = lqr_fijas;
 
         // 2. Sensores y estimación, en los ejes del robot
         imu_sample_t s;

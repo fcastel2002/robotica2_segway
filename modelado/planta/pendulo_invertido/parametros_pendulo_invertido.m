@@ -48,6 +48,9 @@ function p = parametros_pendulo_invertido(fisicos, theta_pata_deg)
     posicion_A_mm = [fisicos.r_cabina; fisicos.r_tapa; fisicos.r_servo; ...
         fisicos.r_bateria; fisicos.r_electronica; fisicos.r_tornilleria; ...
         fisicos.r_carga; centro_AD; centro_BC; centro_CDP; K.P];
+    if isfield(fisicos, 'corr_caja')        % variante 'ajustada': la caja corrida (3/11)
+        posicion_A_mm(1:7, :) = posicion_A_mm(1:7, :) + fisicos.corr_caja;
+    end
     posicion_A_m = 1e-3 * posicion_A_mm;
     posicion_A_m(:, 1) = -posicion_A_m(:, 1);
 

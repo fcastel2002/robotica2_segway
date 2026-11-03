@@ -21,6 +21,21 @@ No usar a la vez que la interfaz web: el puerto lo puede abrir un solo programa.
         (15°) y la referencia automática prendida; en cada altura (de 'paso' en 'paso' grados, 5°,
         bajando hasta 0° y subiendo hasta 25°, moviéndolas de a 1° por segundo) espera 'espera_s'
         (25 s) a que la referencia se acomode y la anota. Al final imprime la tabla para board_config.h
+    python sesion_placa.py wifi medir_equilibrio [paso] [pasadas] [asentar_s] [medir_s]
+        espera a que el equipo lo arme y lo deje 10 s quieto equilibrando; lleva las patas a la
+        punta de 0-30° más cercana y las recorre 'pasadas' veces (4) de punta a punta, de a 'paso'
+        grados (2,5°): un pedido por altura, que el firmware cumple a velpata (3/11: de a 0,5°
+        cada 0,25 s eran sacudones). En cada altura espera 'asentar_s' (6 s) y promedia
+        'medir_s' (12 s) con el robot quieto: el ángulo medio es el de equilibrio, sea cual sea la
+        ref del control (quieto, el motor no hace fuerza en promedio). Después fija la ref en ese
+        valor para que no se corra. Con el stick en uso repite la ventana; si tocan las patas, arm
+        o disarm, o se cae, termina. Deja los resultados en equilibrio_<hora>.csv (figura y
+        tabla: graficar_equilibrio.py) y al final vuelve las patas adonde estaban, con su ref
+    python sesion_placa.py wifi identificar [patas ...]
+        datos para corregir el modelo, con el robot armado por el equipo: en cada altura (0 10
+        20 25) mide el equilibrio, fija ahí la ref y le aplica una onda cuadrada de ±1,5° (2 s por
+        nivel, 5 ciclos): el robot va y viene, y eso se compara con la simulación. Después mueve
+        las patas de 10° a 20° y de vuelta a velpata 4, 16 y 30 °/s. Marcas en identificar_<hora>.txt
     python sesion_placa.py COM7 piso_auto <espera_s> [kx kv kphi kw [umax]]
         toma como ref el ángulo en que lo sostienen quieto (ojo: la mano falsea el equilibrio)
 
@@ -76,7 +91,9 @@ class PuenteWifi:
 
 
 if PUERTO.lower() == 'wifi' or PUERTO.startswith('http'):
-    s = PuenteWifi('http://localhost:8000' if PUERTO.lower() == 'wifi' else PUERTO)
+    # 127.0.0.1 y no localhost: en Windows localhost prueba primero IPv6, el puente escucha solo
+    # en IPv4 y cada comando tardaba 2 s (medido el 3/11)
+    s = PuenteWifi('http://127.0.0.1:8000' if PUERTO.lower() == 'wifi' else PUERTO)
 else:
     import serial
     s = serial.Serial()
@@ -235,6 +252,90 @@ def nivelar_derecha(lim=(8.0, 22.0), tol=0.3, pasos=14):
             pos, rol, 'sensibilidad %.2f°/°' % sens if sens else 'aprendiendo el sentido'), flush=True)
     print('NIVEL FINAL: izquierda 15.0°, derecha %.1f°, rolido %+.2f°' % (pos, rol), flush=True)
     return ultimo.get('estado') == 'BALANCING'
+
+# --- Para los modos con el robot armado por el equipo (medir_equilibrio, identificar) ---
+ORDENES_JOYSTICK = ('servo', 'arm', 'cal')     # alguien quiere el robot (disarm incluido)
+
+
+def filas_tlm(i0):
+    """La telemetría desde la fila i0, en números (sin las filas con la IMU en falla)."""
+    out = []
+    for t in filas[i0:]:
+        if t.startswith('#') or not cols or t.count(',') != len(cols) - 1:
+            continue
+        d = dict(zip(cols, t.split(',')))
+        try:
+            r = {k: (v if k == 'estado' else float(v)) for k, v in d.items()}
+        except ValueError:
+            continue
+        if not any(math.isnan(r[k]) for k in ('theta_deg', 'ax_ms2', 'az_ms2')):
+            out.append(r)
+    return out
+
+
+def interferencia(i0):
+    for t in filas[i0:]:
+        if t.startswith('# [mando') and any(w in t for w in ORDENES_JOYSTICK):
+            return t
+    return None
+
+
+def mover_patas(destino, i0, limite_s=20.0):
+    """Las dos patas a 'destino' con UN pedido: el firmware las lleva a velpata, sin escalones.
+    3/11: de a 0,5° cada 0,25 s, cada escalón (a 16 °/s) era un sacudón. Devuelve por qué paró."""
+    enviar('servo %.2f' % destino)
+    t0 = time.time()
+    while time.time() - t0 < limite_s:
+        if ultimo.get('estado') != 'BALANCING':
+            return 'dejó de equilibrar (%s)' % ultimo.get('estado')
+        if interferencia(i0):
+            return 'joystick: ' + interferencia(i0)
+        if abs(f('servo_l_deg') - destino) < 0.06 and abs(f('servo_r_deg') - destino) < 0.06:
+            return None
+        time.sleep(0.05)
+    return 'las patas no llegaron a %.1f°' % destino
+
+
+def esperar_equilibrando(calma_s=10.0, limite_s=1800.0):
+    """Hasta que el equipo lo deja equilibrando calma_s seguidos sin usar el stick."""
+    t0, t_calma = time.time(), None
+    while time.time() - t0 < limite_s:
+        if ultimo.get('estado') == 'BALANCING' and f('vref_mms') == 0:
+            t_calma = t_calma or time.time()
+            if time.time() - t_calma > calma_s:
+                return
+        else:
+            t_calma = None
+        time.sleep(0.1)
+    raise SystemExit('no lo armaron en %.0f min' % (limite_s / 60))
+
+
+def resumen(rs):
+    n = len(rs)
+    media = lambda k: sum(r[k] for r in rs) / n
+    th = media('theta_deg')
+    sd = (sum((r['theta_deg'] - th) ** 2 for r in rs) / n) ** 0.5
+    w = [r['theta_dot_dps'] for r in rs]
+    # frecuencia del vaivén: cruces por cero de la velocidad de cabeceo
+    cruces = sum(1 for a, b in zip(w, w[1:]) if a * b < 0)
+    dur = (rs[-1]['t_ms'] - rs[0]['t_ms']) / 1e3
+    return {
+        'n': n, 'theta': th, 'sd_theta': sd,
+        'theta_acel': math.degrees(math.atan2(-media('az_ms2'), media('ax_ms2'))),
+        'rms_w': (sum(x * x for x in w) / n) ** 0.5, 'f_vaiven': cruces / 2 / dur,
+        'u_media': media('u'), 'rms_u': (sum(r['u'] ** 2 for r in rs) / n) ** 0.5,
+        'x_ini': rs[0]['x_mm'], 'x_fin': rs[-1]['x_mm'], 'v_media': media('v_mms'),
+        'ref': media('ref_deg'), 'pata_l': media('servo_l_deg'), 'pata_r': media('servo_r_deg'),
+    }
+
+
+def valor_get(clave, por_defecto):
+    """Pide get y devuelve el valor de 'clave=' (texto)."""
+    n0 = len(filas)
+    enviar('get')
+    time.sleep(1.0)
+    return next((t.split(clave + '=')[1].split()[0] for t in filas[n0:] if clave + '=' in t), por_defecto)
+
 
 try:
     enviar('tlm on')
@@ -413,6 +514,196 @@ try:
             print('MEDIDO (patas -> equilibrio): ' + ', '.join('%g° -> %.1f°' % t for t in tabla), flush=True)
             print('#define REF_TABLA_PATAS_DEG     { %s }' % ', '.join('%.1ff' % t[0] for t in tabla), flush=True)
             print('#define REF_TABLA_THETA_DEG     { %s }' % ', '.join('%.1ff' % t[1] for t in tabla), flush=True)
+    elif MODO == 'medir_equilibrio':
+        paso = float(ARGS[0]) if ARGS else 2.5
+        pasadas = int(ARGS[1]) if len(ARGS) > 1 else 4
+        asentar = float(ARGS[2]) if len(ARGS) > 2 else 6.0
+        medir = float(ARGS[3]) if len(ARGS) > 3 else 12.0
+        VEL_PATAS = 16.0                # °/s, para estimar el tiempo (las mueve el firmware a velpata)
+
+        print('MEDIR: esperando que lo armen y lo dejen quieto 10 s...', flush=True)
+        esperar_equilibrando()
+        n0 = len(filas)
+        enviar('get')
+        time.sleep(1.0)
+        refauto_antes = next((t.split('refauto=')[1].split()[0] for t in filas[n0:] if 'refauto=' in t), '0')
+        if refauto_antes != '0':
+            enviar('set refauto 0')     # la ref no se mueve sola mientras se mide
+        inicio = 0.5 * (f('servo_l_deg') + f('servo_r_deg'))
+        if math.isnan(inicio):
+            raise SystemExit('patas sin posición conocida: que las muevan una vez con el joystick')
+        n_alt = int(round(30.0 / paso))
+        grilla = [min(30.0, k * paso) for k in range(n_alt + 1)]
+        if inicio > 15.0:
+            grilla.reverse()
+        recorrido = list(grilla)
+        for p in range(1, pasadas):
+            recorrido += (grilla[::-1] if p % 2 else grilla)[1:]
+        print('MEDIR: %d alturas (patas de %.1f° a la punta más cercana, %d pasadas de a %g°), '
+              '%g s de asiento y %g s de medición en cada una: ~%.0f min' % (
+                  len(recorrido), inicio, pasadas, paso, asentar, medir,
+                  len(recorrido) * (asentar + medir + paso / VEL_PATAS + 0.6) / 60), flush=True)
+        i_ctrl = len(filas)
+        motivo = mover_patas(recorrido[0], i_ctrl)
+        pata, resultados = recorrido[0], []
+        salida_eq = 'equilibrio_%s.csv' % time.strftime('%H%M%S')
+        campos = ['pasada', 'patas', 'theta', 'theta_acel', 'sd_theta', 'ref', 'rms_w', 'f_vaiven',
+                  'u_media', 'rms_u', 'x_ini', 'x_fin', 'v_media', 'pata_l', 'pata_r', 'n', 'hora']
+        with open(salida_eq, 'w', encoding='utf-8') as feq:
+            feq.write(','.join(campos) + '\n')
+            pasada = 1
+            for i, objetivo in enumerate(recorrido):
+                if motivo:
+                    break
+                if i > 0:
+                    if (objetivo - recorrido[i - 1]) * (recorrido[i - 1] - recorrido[max(0, i - 2)]) < 0:
+                        pasada += 1
+                    motivo = mover_patas(objetivo, i_ctrl)
+                    pata = objetivo
+                    if motivo:
+                        break
+                res = None
+                for intento in range(4):
+                    time.sleep(asentar)
+                    i0 = len(filas)
+                    time.sleep(medir)
+                    rs = filas_tlm(i0)
+                    if interferencia(i_ctrl):
+                        motivo = 'joystick: ' + interferencia(i_ctrl)
+                        break
+                    if not rs or any(r['estado'] != 'BALANCING' for r in rs):
+                        motivo = 'dejó de equilibrar (%s)' % ultimo.get('estado')
+                        break
+                    if len(rs) < 0.6 * 50 * medir:
+                        print('  llegaron pocas muestras (%d): repito' % len(rs), flush=True)
+                        continue
+                    if any(r['vref_mms'] != 0 for r in rs):
+                        print('  usaron el stick: repito la ventana', flush=True)
+                        continue
+                    res = resumen(rs)
+                    break
+                if motivo or res is None:
+                    break
+                res.update(pasada=pasada, patas=objetivo, hora=time.strftime('%H:%M:%S'))
+                resultados.append(res)
+                feq.write(','.join(str(round(res[c], 4)) if isinstance(res[c], float) else str(res[c])
+                                   for c in campos) + '\n')
+                feq.flush()
+                print('EQ pasada %d patas %4.1f°: equilibrio %6.2f° (acel %6.2f) ref %6.2f (dif %+5.2f)  '
+                      'sd %.2f°  w %4.1f°/s %3.1f Hz  u %.3f (media %+.3f)  x %5.0f->%5.0f mm  n %d' % (
+                          pasada, objetivo, res['theta'], res['theta_acel'], res['ref'],
+                          res['theta'] - res['ref'], res['sd_theta'], res['rms_w'], res['f_vaiven'],
+                          res['rms_u'], res['u_media'], res['x_ini'], res['x_fin'], res['n']), flush=True)
+                # Con la ref en el equilibrio medido el robot vuelve a su lugar (sin eso, cada grado
+                # de error lo deja ~5 cm corrido)
+                if res['sd_theta'] < 1.5 and abs(res['theta'] - res['ref']) < 5.0:
+                    enviar('set ref %.2f' % res['theta'])
+        if motivo:
+            print('MEDIR: terminó antes: %s' % motivo, flush=True)
+        elif ultimo.get('estado') == 'BALANCING' and not mover_patas(inicio, i_ctrl):
+            # Las patas volvieron adonde estaban: la ref, la medida ahí (interpolada); si no, con la
+            # corrección de la última altura quedaría corrida (la tabla vieja tiene otra pendiente)
+            medidas = sorted(set(r['patas'] for r in resultados))
+            prom_alt = {a: sum(r['theta'] for r in resultados if r['patas'] == a) /
+                        sum(1 for r in resultados if r['patas'] == a) for a in medidas}
+            for a, b in zip(medidas, medidas[1:]):
+                if a <= inicio <= b:
+                    enviar('set ref %.2f' % (prom_alt[a] + (prom_alt[b] - prom_alt[a]) * (inicio - a) / (b - a)))
+                    break
+        if refauto_antes != '0':
+            enviar('set refauto %s' % refauto_antes)
+        if resultados:
+            alturas = sorted(set(r['patas'] for r in resultados))
+            print('MEDIDO (promedio simple de las pasadas; separado por sentido y suavizado: '
+                  'graficar_equilibrio.py):', flush=True)
+            prom = []
+            for a in alturas:
+                vs = [r['theta'] for r in resultados if r['patas'] == a]
+                m = sum(vs) / len(vs)
+                prom.append((a, m))
+                print('  patas %4.1f°: %6.2f°  (%s)' % (a, m, ', '.join('%.2f' % v for v in vs)), flush=True)
+            print('#define REF_TABLA_PATAS_DEG     { %s }' % ', '.join('%.1ff' % a for a, _ in prom), flush=True)
+            print('#define REF_TABLA_THETA_DEG     { %s }' % ', '.join('%.2ff' % m for _, m in prom), flush=True)
+            print('resultados en', salida_eq, '(figura: graficar_equilibrio.py)', flush=True)
+    elif MODO == 'identificar':
+        alturas = [float(a) for a in ARGS] or [0.0, 10.0, 20.0, 25.0]
+        assert all(0.0 <= a <= 30.0 for a in alturas), 'patas fuera de 0-30'
+        AMP, NIVEL_S, CICLOS = 1.5, 2.0, 5          # onda cuadrada en la ref: ±1,5°, 2 s por nivel
+        marcas = []
+
+        def marca(texto):
+            marcas.append('%.3f|%s' % (time.time(), texto))
+            print('IDENT', texto, flush=True)
+
+        def sigue(i0):
+            if ultimo.get('estado') != 'BALANCING':
+                return 'dejó de equilibrar (%s)' % ultimo.get('estado')
+            return 'joystick: ' + interferencia(i0) if interferencia(i0) else None
+
+        print('IDENT: esperando que lo armen y lo dejen quieto 10 s...', flush=True)
+        esperar_equilibrando()
+        velpata_antes = valor_get('velpata', '16')
+        refauto_antes = valor_get('refauto', '0')
+        if refauto_antes != '0':
+            enviar('set refauto 0')
+        inicio = 0.5 * (f('servo_l_deg') + f('servo_r_deg'))
+        alturas.sort(reverse=inicio > 15.0)     # empieza por la más cercana: sin saltos grandes
+        i_ctrl, motivo = len(filas), None
+        print('IDENT: patas %s; en cada una ±%g° en la ref (%g s por nivel, %d ciclos); después '
+              'patas 10-20° a 4, 16 y 30 °/s. ~%.0f min' % (
+                  alturas, AMP, NIVEL_S, CICLOS, (len(alturas) * 40 + 60) / 60), flush=True)
+        for a in alturas:
+            motivo = mover_patas(a, i_ctrl)
+            if motivo:
+                break
+            time.sleep(5.0)
+            i0 = len(filas)
+            time.sleep(6.0)
+            rs = filas_tlm(i0)
+            eq = sum(r['theta_deg'] for r in rs) / len(rs)
+            enviar('set ref %.2f' % eq)
+            marca('patas %.1f equilibrio %.2f' % (a, eq))
+            time.sleep(3.0)
+            for k in range(CICLOS):
+                for signo in (+1, -1):
+                    enviar('set ref %.2f' % (eq + signo * AMP))
+                    marca('ref %+.1f' % (signo * AMP))
+                    time.sleep(NIVEL_S)
+                    motivo = sigue(i_ctrl)
+                    if motivo:
+                        break
+                if motivo:
+                    break
+            if motivo:
+                break
+            enviar('set ref %.2f' % eq)
+            marca('ref 0')
+            time.sleep(4.0)
+        # Cómo sacuden al cuerpo las patas según la velocidad del servo (DS3240: banda muerta de
+        # 3 us = 0,27°; por debajo de ~14 °/s el servo avanza a saltitos de 0,27°)
+        if not motivo:
+            motivo = mover_patas(10.0, i_ctrl)
+            time.sleep(4.0)
+        for vel in (4, 16, 30):
+            if motivo:
+                break
+            enviar('set velpata %g' % vel)
+            for destino in (20.0, 10.0):
+                marca('patas a %.0f a %g grados/s' % (destino, vel))
+                motivo = mover_patas(destino, i_ctrl, limite_s=10.0 / vel + 10.0)
+                if motivo:
+                    break
+                time.sleep(4.0)
+        enviar('set velpata %s' % velpata_antes)
+        if refauto_antes != '0':
+            enviar('set refauto %s' % refauto_antes)
+        if motivo:
+            print('IDENT: terminó antes: %s' % motivo, flush=True)
+        else:
+            mover_patas(inicio, i_ctrl)
+        salida_id = 'identificar_%s.txt' % time.strftime('%H%M%S')
+        open(salida_id, 'w', encoding='utf-8').write('\n'.join(marcas) + '\n')
+        print('marcas en', salida_id, flush=True)
     elif MODO == 'piso':
         # piso <ref> <kx> <kv> <kphi> <kw> <umax> <notch> <deadband> [espera]
         ref, kx, kv, kphi, kw, umax, notch, db = (float(v) for v in ARGS[:8])

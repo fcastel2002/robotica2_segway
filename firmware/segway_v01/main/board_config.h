@@ -83,15 +83,18 @@
 
 // --- Control de equilibrio: valores al arrancar, se ajustan en vivo con "set" ---
 // Ángulo de equilibrio según la altura de las patas: con el cuatro barras, al moverlas la rueda se
-// corre respecto del cuerpo. 2/11 a la noche, con la IMU dada vuelta, MEDIDO equilibrando (modo
-// calibrar_patas de sesion_placa.py: ángulo medio en régimen, 15-30 s por altura); la estimación
-// a ojo (0° → 11°, 15° → 7°, 25° → 2°) estaba 6-9° abajo. El control usa la tabla interpolada en
-// la pata actual más una corrección: "set ref" la fija para la pata actual y "refauto" la ajusta
-// sola. Con las patas sueltas (posición desconocida) se toma REF_PATA_SUELTA_DEG.
-#define REF_TABLA_PATAS_DEG     { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
-#define REF_TABLA_THETA_DEG     { 18.9f, 16.0f, 14.9f, 13.7f, 12.8f, 10.9f, 11.5f }
-// (30° no se midió: desde el 3/11 las patas llegan a 30 y es el modelo, 1,8°, más los 9,8° de la
-// IMU; simulacion/escalon. Medirlo con calibrar_patas)
+// corre respecto del cuerpo. 3/11, MEDIDO de nuevo (FW-017; sesion_placa.py medir_equilibrio por
+// WiFi y graficar_equilibrio.py): 48 mediciones de 12 s equilibrando quieto, patas de 0 a 30° de a
+// 2,5° en cuatro pasadas; la tabla es una cúbica por el centro entre subiendo y bajando (a 0,08°
+// rms del centro). Ojo: con las patas recién subidas el equilibrio da ~0,9° más que recién bajadas
+// (hasta 1,9° en 27,5°), y después de algunas caídas se corrió 1-2° en las puntas: la tabla no
+// lo puede seguir, "refauto" sí. La del 2/11 (de a 5°, ref automática) estaba 0,6-1,1° alta de
+// 10° a 25°, y 30° (el modelo) 3,6° alta. Figura: firmware/docs/equilibrio_patas_2026-11-03.png.
+// El control usa la tabla interpolada en la pata actual más una corrección: "set ref" la fija
+// para la pata actual y "refauto" la ajusta sola. Con las patas sueltas (posición desconocida) se
+// toma REF_PATA_SUELTA_DEG.
+#define REF_TABLA_PATAS_DEG     { 0.0f, 2.5f, 5.0f, 7.5f, 10.0f, 12.5f, 15.0f, 17.5f, 20.0f, 22.5f, 25.0f, 27.5f, 30.0f }
+#define REF_TABLA_THETA_DEG     { 18.25f, 17.04f, 16.01f, 15.13f, 14.36f, 13.67f, 13.02f, 12.37f, 11.69f, 10.94f, 10.09f, 9.10f, 7.94f }
 #define REF_PATA_SUELTA_DEG     15.0f
 #define DEFAULT_U_MAX           1.0f        // 2/11: con 0,6 se escapó al armar (poco margen); con
                                             // 0,8 anduvo; a la noche, 1,0 para que el joystick a fondo
@@ -116,10 +119,25 @@
 // el de factor_R 4) más el rechaza banda en 7,5 Hz, que saca del comando la vibración propia
 // del robot (7-8 Hz, medida en todos los intentos) y que sin él el LQR excitaba a fondo.
 // Antes de activarlo: IMU, motores y encoders positivos hacia adelante (README, "LQR").
+// Las fijas: se usan con "set lqrpata 0" y se ajustan en vivo con set kx, kv, kphi, kw.
 #define DEFAULT_LQR_KX          1.52f       // [1/m]
 #define DEFAULT_LQR_KV          2.73f       // [1/(m/s)]
 #define DEFAULT_LQR_KPHI        4.14f       // [1/rad]
 #define DEFAULT_LQR_KW          0.478f      // [1/(rad/s)]
+// 3/11 (CTL-301, pedido de Joaquín): el LQR según la altura de las patas, recalculado con el modelo
+// AJUSTADO con el robot (modelado/ajuste/; simulacion/segway_ajustado/ganancias_ajustadas.m, mismo
+// criterio que las fijas: Bryson con 8 grados y R x64, 9,9 V al motor). kx y kv casi no cambian
+// (kx lo fijan los pesos; kv, la masa y el motor); kphi y kw crecen con la pata porque el péndulo
+// se alarga. Con las fijas el lazo queda poco amortiguado con las patas altas (0,31 en 30°, donde se
+// cayó tres veces el 3/11); en la simulación con la planta ajustada, la onda cuadrada de ±1,5° en
+// la ref cabecea 5-6° en todas las alturas (con las fijas, 6° con patas en 0 a 11° en 30).
+// "set lqrpata 0" vuelve a las fijas. Filas: { kx, kv, kphi, kw } para cada pata.
+#define DEFAULT_LQR_POR_PATA    1
+#define LQR_TABLA_PATAS_DEG     { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
+#define LQR_TABLA               { { 1.50f, 2.38f, 3.73f, 0.416f }, { 1.50f, 2.38f, 3.96f, 0.456f }, \
+                                  { 1.50f, 2.38f, 4.17f, 0.496f }, { 1.50f, 2.39f, 4.36f, 0.537f }, \
+                                  { 1.50f, 2.40f, 4.54f, 0.577f }, { 1.50f, 2.40f, 4.71f, 0.618f }, \
+                                  { 1.50f, 2.41f, 4.88f, 0.662f } }
 #define DEFAULT_NOTCH_HZ        7.5f        // rechaza banda del comando ("set notch"); 0 = sin filtro
 #define DEFAULT_NOTCH2_HZ       0.0f        // segundo rechaza banda, angosto ("set notch2"); 0 = sin
                                             // filtro. 2/11: para la vibración de ~16 Hz (FW-015)
@@ -204,7 +222,8 @@
 #define SENSOR_PISO_Z_M         0.020f
 #define SENSOR_PISO_ANG_DEG     40.0f
 // La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo: la tabla de equilibrio
-// medida el 2/11 contra la del modelo da 9,8° (±0,7° entre patas).
+// medida el 2/11 contra la del modelo da 9,8° (±0,7° entre patas). Con la del 3/11 la diferencia
+// va de 9,9° (patas en 5°) a 6,2° (en 30°): con las patas altas el modelo no sigue al robot.
 #define IMU_DELTA_DEG           9.8f
 
 // --- Seguridad ---

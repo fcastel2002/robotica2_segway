@@ -32,6 +32,7 @@ typedef enum {
     PARAM_MARGEN,       // margen de motor: con el comando por encima, la velocidad pedida retrocede
     PARAM_PRIO,         // perturbación [grados] que suelta la velocidad pedida (0 = no)
     PARAM_DBMOV,        // zona muerta andando (deadband es la de quieto)
+    PARAM_LQRPATA,      // 1: las ganancias del LQR salen de la tabla según la pata; 0: las fijas
     PARAM_COUNT,
 } param_id_t;
 

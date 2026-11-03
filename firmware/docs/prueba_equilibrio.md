@@ -62,7 +62,18 @@ C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe firmware\herramientas\ses
    (en grados, con x en cm y positivo hacia adelante).
 4. **Filtro:** si vuelve a vibrar, la frecuencia propia pudo moverse con el peso nuevo. Grabar el intento y
    buscar el pico en `theta_dot_dps` (con el robot del 29/10 estaba en 7,1-7,8 Hz); ajustar `set notch`.
-5. **Postura de las patas:** `ref` depende del ángulo de los servos. Si se cambian, volver a medir `ref`.
+5. **Postura de las patas:** `ref` depende del ángulo de los servos (tabla `REF_TABLA_*` de
+   `board_config.h`). Para volver a medir la tabla entera, con el puente corriendo y el robot armado:
+
+   ```
+   python firmware\herramientas\sesion_placa.py wifi medir_equilibrio 2.5 4
+   python firmware\herramientas\graficar_equilibrio.py equilibrio_<hora>.csv
+   ```
+
+   El primero recorre las patas de 0 a 30° de a 2,5° (cuatro pasadas, ~16 min, no tocar el joystick) y
+   el segundo da la figura y la tabla para pegar. El 3/11 ([figura](equilibrio_patas_2026-11-03.png)):
+   subiendo las patas el equilibrio da ~0,9° más que bajándolas, y después de algunas caídas se corrió
+   1-3°: `set refauto 1` lo corrige solo con el robot quieto.
 6. **Recién con todo eso andando:** subir las ganancias de a poco (factor_R 32: 2,16 · 3,11 · 4,82 · 0,569) para
    que sea más firme, y probar empujones.
 7. **Modelo:** cargar los pesos nuevos, la relación 1:20,4, el motor de 350 rpm y la pata nueva (`PAR-006`)

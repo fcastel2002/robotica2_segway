@@ -5,7 +5,7 @@
 
 #include <math.h>
 
-#include "planta_escalon.h"
+#include "planta_elegida.h"
 #include "planta_plana.h"
 
 // Hermite cúbico en [0, 1]: valor, primera y segunda derivada respecto de a (paso hp)
