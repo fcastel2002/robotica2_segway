@@ -97,7 +97,8 @@
                                             // 0,8 anduvo; a la noche, 1,0 para que el joystick a fondo
                                             // use el 100 % de los motores. Con el DRV8871 revisar
                                             // (LiPo llena a 12,6 V)
-#define DEFAULT_DEADBAND        0.16f       // fracción de PWM en la que el motor no arranca. 29/10,
+#define DEFAULT_DEADBAND        0.0f        // 3/11: el equipo probó 0 y anduvo muchísimo mejor (antes
+                                            // 0,16). Fracción de PWM en la que el motor no arranca. 29/10,
                                             // en el aire: girando, la velocidad se anula en 0,17 (der.)
                                             // y 0,19 (izq.); desde parado arrancan en 0,20-0,30.
                                             // 2/11, en el piso: con 0,18 los saltos de ±18 % en cada

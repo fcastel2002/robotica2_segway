@@ -1,0 +1,6 @@
+# El ejecutable se compila (ver README.md) y los resultados se regeneran corriendo el banco:
+# se versionan solo los cinco casos del resumen y su figura
+*.exe
+resultados/*
+!resultados/[A-E]_*.csv
+!resultados/resumen_estrategias.png

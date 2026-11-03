@@ -28,7 +28,7 @@ Al arrancar imprime una línea CSV cada 20 ms. Las líneas que empiezan con `#` 
 Todo sale por el cable y, si hay red, también [por WiFi](#wifi).
 
 ```text
-t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,vref_mms,giro
+t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,vref_mms,giro,ref_deg
 ```
 
 | Columnas | Qué son |
@@ -42,6 +42,7 @@ t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,s
 | `ax_ms2` … `gz_dps` | IMU cruda: acelerómetro (m/s²) y giróscopo (°/s, con sesgo) **en los ejes del sensor**, sin la rotación de `board_config.h`; `nan` si la lectura falló |
 | `x_mm`, `v_mms` | Avance y velocidad de las ruedas respecto del piso (odometría del LQR): x = 0 donde se armó |
 | `vref_mms`, `giro` | Lo que el control está aplicando de `mov`: referencia de velocidad (mm/s) y PWM sumado a la izquierda y restado a la derecha |
+| `ref_deg` | Ángulo de equilibrio que está usando el control (de la tabla según la altura de las patas, más la corrección de `set ref`); desde el 3/11 |
 
 Son unos 145 caracteres por línea a 50 Hz, la mitad de lo que entra a 115200 baudios. Para verlas
 graficadas, probar cada sensor y actuador y mandar comandos con botones, usar la
@@ -71,7 +72,8 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
 Arranca con lo que mejor anduvo el 2/11: el LQR suave, `ref` de la tabla de patas (13,7° con las
-patas en 15°), `umax` 1,0, `deadband` 0,16 y `notch` 7,5 Hz, así que `arm` equilibra sin cargar nada.
+patas en 15°), `umax` 1,0, `deadband` 0 (3/11: con 0 anduvo mucho mejor que con 0,16) y `notch` 7,5 Hz,
+así que `arm` equilibra sin cargar nada.
 
 ## WiFi
 

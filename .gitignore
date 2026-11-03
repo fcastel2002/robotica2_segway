@@ -54,3 +54,6 @@ sdkconfig.old
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Salidas de herramientas de prueba (capturas y registros de Playwright)
+.playwright-mcp/

@@ -15,8 +15,8 @@ const historiaEnc = [];         // [{ t, l, r }] que cubren VENTANA_RPM_S
 let escalon = null;             // prueba de escalón en curso
 let refGrados = null;           // ref de la placa, de la respuesta de "get"; null sin leer
 
-alMensaje.push((texto) => { // "# kp=… ref=9.00 umax=…"
-  const m = /^kp=.*\bref=([-+\d.eE]+)/.exec(texto);
+alMensaje.push((texto) => { // "# ref=13.70 umax=…" (y el formato viejo "# kp=… ref=9.00 …")
+  const m = /(?:^|\s)ref=([-+\d.eE]+)/.exec(texto);
   if (m) refGrados = Number(m[1]);
 });
 
@@ -110,10 +110,12 @@ setInterval(() => { // 10 veces por segundo, como la tabla de app.js
     valores[`vueltas_${lado}`] = c / cpr;
     valores[`dist_${lado}_mm`] = (c / cpr) * 2 * Math.PI * radio;
   }
-  // El control y la ventana de armado usan θ − ref, no el ángulo crudo de la IMU
-  if (refGrados !== null && ultima.theta_deg !== undefined) valores.theta_rel = ultima.theta_deg - refGrados;
+  // El control y la ventana de armado usan θ − ref, no el ángulo crudo de la IMU. Desde el 3/11 la
+  // placa manda la ref de cada momento (ref_deg: sigue a las patas); si no, la de "get"
+  const ref = Number.isFinite(ultima.ref_deg) ? ultima.ref_deg : refGrados;
+  if (ref !== null && ultima.theta_deg !== undefined) valores.theta_rel = ultima.theta_deg - ref;
   for (const el of celdas) mostrar(el, valores[el.dataset.col]);
-  $('ref-actual').textContent = refGrados === null ? '—' : `${refGrados.toFixed(2)}°`;
+  $('ref-actual').textContent = ref === null ? '—' : `${ref.toFixed(2)}°`;
   const armable = $('armable');
   if (viejo || valores.theta_rel === undefined || ultima.estado !== 'DISARMED') armable.textContent = '';
   else {

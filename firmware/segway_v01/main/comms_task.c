@@ -26,7 +26,7 @@
 // lo que entra a 115200 baudios. vref_mms y giro: lo que el control está aplicando de "mov".
 #define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r," \
                     "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps," \
-                    "x_mm,v_mms,vref_mms,giro\n"
+                    "x_mm,v_mms,vref_mms,giro,ref_deg\n"
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -377,7 +377,7 @@ static void comms_task(void *arg)
             float servo_l = last.servo_free[SERVO_LEFT] ? NAN : last.servo_deg[SERVO_LEFT];
             float servo_r = last.servo_free[SERVO_RIGHT] ? NAN : last.servo_deg[SERVO_RIGHT];
             out("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld,"
-                "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%.1f,%.0f,%.0f,%.3f\n",
+                "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%.1f,%.0f,%.0f,%.3f,%.2f\n",
                 (unsigned long)last.t_ms, supervisor_state_name(last.state),
                 last.theta * RAD2DEG, last.theta_rate * RAD2DEG, last.u,
                 (unsigned long)last.loop_us_max, (unsigned long)last.overruns,
@@ -385,7 +385,8 @@ static void comms_task(void *arg)
                 last.motor_cmd[MOTOR_LEFT], last.motor_cmd[MOTOR_RIGHT], servo_l, servo_r,
                 last.accel[0], last.accel[1], last.accel[2],
                 last.gyro[0] * RAD2DEG, last.gyro[1] * RAD2DEG, last.gyro[2] * RAD2DEG,
-                last.x * 1e3f, last.v * 1e3f, last.v_ref * 1e3f, last.giro);
+                last.x * 1e3f, last.v * 1e3f, last.v_ref * 1e3f, last.giro,
+                last.params.theta_ref * RAD2DEG);
         }
         fflush(stdout);
     }
