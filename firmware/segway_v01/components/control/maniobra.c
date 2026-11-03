@@ -7,6 +7,8 @@
 #define N_VUELO         2           // muestras seguidas en caída libre
 #define T_SIN_HAZ       0.2f        // [s] sin lectura del sensor mientras busca: aborta
 #define T_QUIETO        0.7f        // [s] quieto antes de largar
+#define V_QUIETO        0.06f       // [m/s] "quieto": con más roce que el que compensa el firmware el
+                                    // robot va y viene a ±0,05 m/s y con 0,03 no largaba nunca (3/11)
 #define T_ASENTAR       0.8f        // [s] después de mover las patas, para que se acomode
 #define T_PREPARAR_MAX  8.0f
 #define T_VUELO_MAX     0.6f        // [s] si no toca en este tiempo, se da por aterrizado
@@ -15,24 +17,30 @@
 #define PASADO_MAX      0.15f       // [m] más allá del borde sin caer: algo está mal
 #define K_VEL_VUELO     3.0f        // [1/(m/s)] lazo de velocidad de la rueda en el aire
 
+// La bajada de UN escalón de 18 cm elegida el 3/11 con el modelo ajustado al robot
+// (simulacion/escalon/README.md, "Un escalón con el modelo ajustado"). La idea del equipo
+// (agachado, 30° en el aire, 15° al tocar) era pata_largada 0, v_salida 0,3, pata_final 15 y la
+// rueda sostenida en el aire: con agachado la cabina pega en el borde.
 void maniobra_params_por_defecto(man_params_t *p)
 {
     *p = (man_params_t){
         .pata_busqueda_deg = 15.0f,
-        .pata_largada_deg = 0.0f,
+        .pata_largada_deg = 15.0f,
         .v_busqueda = 0.08f,
         .busqueda_max = 1.5f,
         .desnivel = 0.06f,
         .d_min = 0.06f,
-        .v_salida = 0.30f,
+        .v_salida = 0.54f,              // pasa el borde a 0,45-0,58 según la batería: por debajo de
+                                        // ~0,45 la cabina pega en el borde y por encima de ~0,58,
+                                        // con la batería baja, no se recupera al tocar
         .a_salida_max = 1.0f,
         .kx_largada = 0.0f,
         .d_salto = 0.03f,
         .pata_vuelo_deg = 30.0f,
-        .pata_final_deg = 15.0f,
+        .pata_final_deg = 25.0f,
         .vel_pata_dps = 1000.0f,
-        .vel_pata_final_dps = 150.0f,
-        .t_mantener = 0.06f,
+        .vel_pata_final_dps = 300.0f,
+        .t_mantener = 0.02f,
         .g_vuelo = 0.4f * 9.81f,
         .g_golpe = 1.6f * 9.81f,
         .t_sin_acel = 0.15f,
@@ -40,7 +48,7 @@ void maniobra_params_por_defecto(man_params_t *p)
         .a_frenado = 1.0f,
         .ff = 1.0f,                     // la rueda da ~1 m/s a fondo (MED-005)
         .t_continuo = 0.0f,
-        .motor_vuelo = MAN_MOTOR_VELOCIDAD,
+        .motor_vuelo = MAN_MOTOR_LQR,
     };
 }
 
@@ -141,7 +149,7 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
         x_libre = m->v_ref != 0.0f;
         rampa(&m->v_ref, 0.0f, A_BUSQUEDA, dt);
         s->pata_deg = p->pata_largada_deg;
-        if (sostenido(&m->n_quieto, m->v_ref == 0.0f && fabsf(e->v) < 0.03f
+        if (sostenido(&m->n_quieto, m->v_ref == 0.0f && fabsf(e->v) < V_QUIETO
                       && fabsf(e->pata_deg - p->pata_largada_deg) < 0.5f, dt, T_QUIETO)) {
             float d = e->x - m->borde_x;
             if (d < p->d_min) {
@@ -170,7 +178,10 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
             s->vel_pata_dps = p->vel_pata_dps;
         }
         if (sostenido(&m->n_vuelo, e->acc < p->g_vuelo, dt, (N_VUELO - 0.5f) * dt)) {
-            m->v_vuelo = e->v;
+            // La velocidad del piso: la pedida. La odometría no sirve acá: apenas la rueda se
+            // descarga en el borde gira en vacío (3/11, planta ajustada: 0,9 m/s con el robot a
+            // 0,48) y sostener eso en el aire lo hacía cabecear 20° adelante al tocar
+            m->v_vuelo = m->v_ref;
             cambiar(m, MAN_VUELO);
         } else if (e->x < m->borde_x - PASADO_MAX) {
             maniobra_abortar(m, "paso el borde sin caer");
@@ -217,12 +228,16 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
             m->v_ref = -p->v_salida;
             s->u_ff = p->ff * m->v_ref;
             if (m->t_tocar > 0.1f && sostenido(&m->n_vuelo, e->acc < p->g_vuelo, dt, (N_VUELO - 0.5f) * dt)) {
-                m->v_vuelo = e->v;
+                m->v_vuelo = m->v_ref;          // la del piso, no la de la rueda en vacío
                 cambiar(m, MAN_VUELO);
                 break;
             }
         } else {
             rampa(&m->v_ref, 0.0f, p->a_frenado, dt);
+            // Con el comando anticipado, como antes de caer: sin él, para seguir andando el LQR
+            // necesita el cuerpo inclinado hacia atrás (~4° por el roce del reductor) y lo toma
+            // como error; con la batería baja satura y se cae (3/11, planta ajustada)
+            s->u_ff = p->ff * m->v_ref;
         }
         if (sostenido(&m->n_quieto, m->t > T_ATERRIZAR_MIN && fabsf(e->v) < 0.05f
                       && fabsf(e->rate) < 0.3f, dt, 0.5f) || m->t > T_ATERRIZAR_MAX) {

@@ -159,8 +159,12 @@ typedef struct {
     int    n_escalones;
     double x_contacto0;         // rueda al empezar, respecto del borde [m]
     double factor_servo;        // par de los servos por esto
+    double v_motor;             // [V] al motor con PWM 1 si > 0 (si no, el de la planta)
     double zona_muerta;         // fracción de PWM que no mueve la rueda (la real)
     double mu;
+    double d_ref;               // [grados] la referencia de equilibrio corrida (la IMU se movió)
+    double f_rotor, f_inercia;  // inercia de los rotores y del cuerpo por esto (si > 0)
+    int    semilla;             // del ruido de los sensores
     bool   ruido;
 } caso_t;
 
@@ -183,11 +187,16 @@ typedef struct {
 static resultado_t correr(const caso_t *C, FILE *csv)
 {
     const double T_CAL = 2.5, T_EQ = 1.5, T_MAX = 30.0;
-    srand(1234);
+    srand(1234 + (unsigned)C->semilla);
     planta_t P = planta_base();
     P.servo_par_max *= C->factor_servo;
+    if (C->f_rotor > 0) P.j_rotor *= C->f_rotor;
+    if (C->f_inercia > 0) P.i_cuerpo *= C->f_inercia;
     P.mu = C->mu;
+    // El roce seco es del reductor: la zona muerta se midió con la batería de la planta, y con
+    // otra batería el roce es el mismo (es otra fracción del PWM)
     P.friccion_seca = P.beta_v * C->zona_muerta * P.v_motor;
+    if (C->v_motor > 0) P.v_motor = C->v_motor;
     piso_t piso = { C->alto, C->pisada, C->n_escalones };
 
     // Firmware: los mismos parámetros y el mismo orden que control_task.c
@@ -285,7 +294,8 @@ static resultado_t correr(const caso_t *C, FILE *csv)
         } else {
             attitude_update(&att, acc_fwd, acc_up, gyro, (float)DT_CONTROL, ATTITUDE_TAU_S);
         }
-        p.theta_ref = balance_ref_tabla(pata_pos, tabla_patas, tabla_ref, n_tabla) / (float)GRADOS;
+        p.theta_ref = (balance_ref_tabla(pata_pos, tabla_patas, tabla_ref, n_tabla) + (float)C->d_ref)
+                      / (float)GRADOS;
         if (!armado && !en_la_mano && calibrado
             && fabsf(att.theta - p.theta_ref) < ARM_WINDOW_DEG / GRADOS) {
             armado = true;  odometry_reset(&odo);  balance_reset(&bal);  rampa = 0;
@@ -376,7 +386,8 @@ static resultado_t correr(const caso_t *C, FILE *csv)
         if (R.toco) {
             double th_eq = cabeceo_equilibrio(&P, q[PP_A]);
             R.desvio_max_deg = fmax(R.desvio_max_deg, fabs(q[PP_TH] - th_eq) * GRADOS);
-            if (ex < -C->pisada + 0.005 && C->man.t_continuo == 0.0f) R.se_paso = true;
+            // Con un escalón solo, abajo hay piso de sobra: no hay escalón siguiente al que pasarse
+            if (C->n_escalones > 1 && ex < -C->pisada + 0.005 && C->man.t_continuo == 0.0f) R.se_paso = true;
             R.x_min = fmin(R.x_min, ex);
             R.pata_min = fmin(R.pata_min, q[PP_A] * GRADOS);
         }
@@ -727,6 +738,7 @@ int main(int argc, char **argv)
             struct { const char *n; float *f; } campos[] = {
                 { "pata_busqueda", &c.man.pata_busqueda_deg }, { "pata_largada", &c.man.pata_largada_deg },
                 { "v_busqueda", &c.man.v_busqueda }, { "d_min", &c.man.d_min },
+                { "desnivel", &c.man.desnivel },
                 { "v_salida", &c.man.v_salida }, { "a_salida_max", &c.man.a_salida_max },
                 { "kx_largada", &c.man.kx_largada }, { "pata_vuelo", &c.man.pata_vuelo_deg },
                 { "d_salto", &c.man.d_salto },
@@ -743,9 +755,15 @@ int main(int argc, char **argv)
             if (strcmp(nombre, "motor_vuelo") == 0) { c.man.motor_vuelo = (man_motor_vuelo_t)v; ok = true; }
             if (strcmp(nombre, "alto") == 0) { c.alto = v; ok = true; }
             if (strcmp(nombre, "pisada") == 0) { c.pisada = v; ok = true; }
+            if (strcmp(nombre, "escalones") == 0) { c.n_escalones = (int)v; ok = true; }
             if (strcmp(nombre, "servo") == 0) { c.factor_servo = v; ok = true; }
+            if (strcmp(nombre, "v_motor") == 0) { c.v_motor = v; ok = true; }
             if (strcmp(nombre, "mu") == 0) { c.mu = v; ok = true; }
             if (strcmp(nombre, "zona_muerta") == 0) { c.zona_muerta = v; ok = true; }
+            if (strcmp(nombre, "d_ref") == 0) { c.d_ref = v; ok = true; }
+            if (strcmp(nombre, "f_rotor") == 0) { c.f_rotor = v; ok = true; }
+            if (strcmp(nombre, "f_inercia") == 0) { c.f_inercia = v; ok = true; }
+            if (strcmp(nombre, "semilla") == 0) { c.semilla = (int)v; ok = true; }
             if (strcmp(nombre, "x0") == 0) { c.x_contacto0 = v; ok = true; }
             if (!ok) { fprintf(stderr, "no conozco %s\n", nombre); return 2; }
         }
@@ -755,7 +773,8 @@ int main(int argc, char **argv)
 
     printf("\n%-46s %-8s\n", "caso", "final");
     caso_t c = C0;
-    c.nombre = "equipo: agachado, 30 en el aire, 15 al tocar";
-    correr_y_guardar(&c, "equipo");
+    c.nombre = "la de por defecto, un escalon";
+    c.n_escalones = 1;
+    correr_y_guardar(&c, "por_defecto");
     return 0;
 }

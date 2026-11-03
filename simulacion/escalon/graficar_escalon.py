@@ -3,6 +3,7 @@ las señales principales. Lee resultados/<caso>.csv que escribe banco_escalon.
 
 Uso (desde la raíz del repo):  python simulacion/escalon/graficar_escalon.py equipo [otro ...]
 Deja resultados/<caso>.png. Con --ajustada dibuja con la planta ajustada (planta_escalon_ajustada.h);
+con --escalones N, N escalones (4 si no se dice; el banco con escalones=1 tiene uno solo);
 "resumen [carpeta] [titulo]" arma el resumen de los cinco casos de resultados/<carpeta>/.
 """
 import csv
@@ -17,6 +18,17 @@ import matplotlib.pyplot as plt
 
 AQUI = pathlib.Path(__file__).resolve().parent
 PLANTA = "planta_escalon.h"
+ESCALONES = 4
+
+
+def escalera(alto, pisada, n=None):
+    """Perfil del piso hacia -X: arriba hasta el borde en X = 0 y n escalones; el último sigue."""
+    n = ESCALONES if n is None else n
+    xs, zs = [0.6, 0.0], [0.0, 0.0]
+    for k in range(1, n + 1):
+        xs += [-(k - 1) * pisada, -3.0 if k == n else -k * pisada]
+        zs += [-k * alto, -k * alto]
+    return xs, zs
 
 
 def leer_planta():
@@ -61,12 +73,7 @@ def graficar(caso):
     estados = [f["estado"] for f in filas]
     fig = plt.figure(figsize=(13, 9))
     ax = fig.add_axes([0.06, 0.45, 0.9, 0.5])
-    # escalera: tres escalones hacia -X
-    alto, pisada = 0.18, 0.25
-    xs, zs = [0.6, 0.0], [0.0, 0.0]
-    for k in range(1, 5):
-        xs += [-(k - 1) * pisada, -k * pisada]
-        zs += [-k * alto, -k * alto]
+    xs, zs = escalera(0.18, 0.25)
     ax.fill(xs + [xs[-1], 0.6], zs + [-0.7, -0.7], color="0.85")
     ax.plot(xs, zs, color="k", lw=1)
     # robot: antes de largar cada 0,5 s, desde que larga cada 30 ms
@@ -111,31 +118,27 @@ def graficar(caso):
     print("->", salida)
 
 
-def resumen(casos, salida, pisada_larga=(), titulo_general=None):
+def resumen(casos, salida, pisada_larga=(), titulo_general=None, t_ventana=1.6, xlim=(-0.6, 0.3)):
     """Un panel por caso con el robot dibujado cada 30 ms desde que larga: (archivo, título)."""
     P = leer_planta()
     fig, axes = plt.subplots(1, len(casos), figsize=(4.2 * len(casos), 4.6))
     for ax, (caso, titulo) in zip(axes, casos):
         filas = list(csv.DictReader(open(AQUI / "resultados" / f"{caso}.csv", encoding="utf-8")))
         t = [float(f["t_s"]) for f in filas]
-        alto, pisada = 0.18, (1.0 if caso in pisada_larga else 0.25)
-        xs, zs = [0.6, 0.0], [0.0, 0.0]
-        for k in range(1, 5):
-            xs += [-(k - 1) * pisada, -k * pisada]
-            zs += [-k * alto, -k * alto]
+        xs, zs = escalera(0.18, 1.0 if caso in pisada_larga else 0.25)
         ax.fill(xs + [xs[-1], 0.6], zs + [-0.9, -0.9], color="0.85")
         ax.plot(xs, zs, color="k", lw=1)
         i0 = next(i for i, f in enumerate(filas) if f["estado"] == "largar")
         elegidos, ultimo = [], -1e9
         for i in range(i0, len(filas)):
-            if t[i] - ultimo >= 0.03 and t[i] <= t[i0] + 1.6:
+            if t[i] - ultimo >= 0.03 and t[i] <= t[i0] + t_ventana:
                 elegidos.append(i)
                 ultimo = t[i]
         cmap = plt.get_cmap("viridis")
         for n, i in enumerate(elegidos):
             dibujar_robot(ax, filas[i], P, cmap(n / max(1, len(elegidos) - 1)), 0.7)
         ax.set_aspect("equal")
-        ax.set_xlim(-0.6, 0.3)
+        ax.set_xlim(*xlim)
         ax.set_ylim(-0.42, 0.32)
         ax.set_title(titulo, fontsize=9)
         ax.tick_params(labelsize=7)
@@ -153,6 +156,10 @@ if __name__ == "__main__":
     if "--ajustada" in args:
         args.remove("--ajustada")
         PLANTA = "planta_escalon_ajustada.h"
+    if "--escalones" in args:
+        i = args.index("--escalones")
+        ESCALONES = int(args[i + 1])
+        del args[i:i + 2]
     if args and args[0] == "resumen":
         carpeta = (args[1] + "/") if len(args) > 1 else ""
         titulos = {

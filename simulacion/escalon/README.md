@@ -119,3 +119,72 @@ ajustada sigue lo medido a 0,7-1,2° rms de cabeceo y 11-16 mm rms de x (la orig
 [LQR por altura](resultados/ajustada_lqr/resumen_estrategias.png)): A, B y C chocan igual; D y E,
 que antes pasaban, se caen (ganancias de hoy) o chocan (LQR por altura, se pasan al escalón
 siguiente). La maniobra hay que volver a ajustarla con este modelo.
+
+## Un escalón con el modelo ajustado (3/11, tarde)
+
+Un escalón de 18 cm con piso de sobra abajo (`escalones=1`), la primera prueba en el robot.
+[`un_escalon.py`](un_escalon.py) corre todo y deja las figuras en `resultados/un_escalon/`:
+
+```text
+gcc -std=c11 -O2 -Wall -DPLANTA_AJUSTADA -Isimulacion/escalon ^
+    -Ifirmware/segway_v01/components/control/include -Ifirmware/segway_v01/main ^
+    simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
+    simulacion/escalon/pata_tabla.c firmware/segway_v01/components/control/*.c -lm ^
+    -o simulacion/escalon/banco_escalon_ajustada.exe
+python simulacion/escalon/un_escalon.py          (~30 s; 122 casos)
+```
+
+**La elegida** (ahora los valores por defecto de la maniobra, `maniobra_params_por_defecto`): busca
+el borde y larga con las patas en **15°**, pide **0,54 m/s**, estira a 30° a 3 cm del borde,
+**en el aire el LQR sigue mandando** (`motor_vuelo` 1), al tocar lleva las patas a **25°** a
+300 °/s y frena a 1 m/s². Con la LiPo a 11,9 V pasa el borde a 0,50 m/s, toca a 13 cm de la
+contrahuella, se aparta 8,6° de su equilibrio y queda parado a 30 cm del borde
+([el robot y las señales](resultados/un_escalon/elegida.png)).
+
+- **Robustez** ([tabla](resultados/un_escalon/robustez.png), [datos](resultados/un_escalon/robustez.csv)):
+  queda parada en 25 de 27 variaciones de a una o de a dos (batería de 10,5 a 12,6 V, zona
+  muerta 0,10-0,18, piso con mu 0,4, servos al 80 %, arranque a 35-60 cm, equilibrio corrido
+  ±0,75°, escalón de 16-20 cm, inercias de rotores × 0,5-2 y del cuerpo × 0,7-1,5, otro ruido).
+  Falla con el equilibrio corrido +1,5° (sale a 0,46 y la cabina pega en el borde) y con 10,5 V
+  más el equilibrio corrido −0,75° (sale a 0,61 y se cae). La misma con la rueda sostenida en el
+  aire queda en 22 de 27; la idea del equipo, en 0 (la cabina pega siempre).
+- **Ventana** ([figura](resultados/un_escalon/ventana.png)): la velocidad real al borde depende
+  de la batería (pidiendo 0,54: 0,47 con 12,6 V y 0,58 con 10,5 V). Por debajo de ~0,45 la cabina
+  pega en el borde; por encima de ~0,58 con la batería baja no se recupera al tocar. Pedir 0,52 o
+  0,54 es lo único que anda con las cuatro baterías; 0,54 deja más margen si el equilibrio está
+  corrido hacia adelante.
+- **Por qué el LQR en el aire:** al pasar el borde el cuerpo queda ~2° detrás de su equilibrio y
+  cabeceando hacia atrás. El LQR acelera la rueda hacia atrás (a ~1 m/s): la reacción lo endereza
+  un poco en el aire y, al tocar, la rueda más rápida que el piso empuja la base hacia atrás y el
+  cuerpo vuelve adelante. Con la rueda sostenida a la velocidad del piso toca con el cuerpo atrás
+  y, si la batería no da, el motor satura y se cae de espaldas
+  ([lado a lado](resultados/un_escalon/resumen_un_escalon.png)). Ojo con lo de más arriba («en el
+  aire la rueda tiene que seguir girando a la velocidad del piso»): era con la maniobra de antes.
+  Con la de ahora y la elegida, también en el modelo original el LQR en el aire queda parado (a
+  1 m) y la rueda sostenida se cae. Igual es lo primero a mirar en el robot: `motor_vuelo` es un
+  parámetro.
+- **Escalones más bajos:** igual anda de 8 a 18 cm con la LiPo de 11,1 a 12,6 V. El de 5 cm no lo
+  ve (`desnivel` es 6 cm); con `desnivel=0.03` lo baja a 0,30, 0,40 o 0,54 m/s.
+- **Para el robot:** batería de 11,1 V o más; la tabla de equilibrio medida (un corrimiento de
+  1,5° de la IMU, como los de las caídas del 3/11, ya la hace chocar); el driver de la IMU no tiene
+  que tomar la caída libre como falla (arriba). Para la escalera no alcanza: frena recién a ~30 cm
+  del borde y la pisada es de 25.
+
+**Cambios en la maniobra** ([`maniobra.c`](../../firmware/segway_v01/components/control/maniobra.c)),
+cada uno probado en el banco:
+
+1. **En el aire, la velocidad del piso es la pedida, no la de la odometría:** apenas la rueda se
+   descarga en el borde gira en vacío (0,9 m/s con el robot a 0,48), y sostener eso en el aire lo
+   hacía cabecear 20° adelante al tocar.
+2. **Al tocar, frena con el comando anticipado** (`u_ff = ff · v_ref`), como antes de caer: sin él,
+   para seguir andando el LQR necesita el cuerpo ~4° atrás (el roce del reductor) y lo toma como
+   error; con la batería baja saturaba.
+3. **«Quieto» para largar es |v| < 0,06 m/s** (era 0,03): con más roce que el que compensa el
+   firmware el robot va y viene a ±0,05 m/s y no largaba nunca.
+4. Probados y descartados: un integrador de la velocidad de salida (se pasaba a 0,6-1,05 m/s y se
+   caía) y llegar a la velocidad antes del borde para pasarlo a velocidad constante (no cambió nada).
+
+**En el banco:** al cambiar la batería el roce seco queda fijo (escalaba con la tensión y hacía
+ver mejor la batería baja); con `escalones=1` no hay escalón siguiente al que «pasarse»; y casos
+nuevos: `escalones`, `v_motor`, `d_ref` (equilibrio corrido, en grados), `f_rotor`, `f_inercia`,
+`semilla` (ruido) y `desnivel`. Sin argumentos corre la maniobra por defecto en un escalón.

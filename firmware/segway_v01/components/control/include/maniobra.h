@@ -37,7 +37,13 @@ typedef enum {
 typedef enum {
     MAN_MOTOR_VELOCIDAD = 0,    // en el aire las ruedas siguen girando como al salir: al tocar,
                                 // la goma va a la velocidad del piso y no frena de golpe
-    MAN_MOTOR_LQR,              // en el aire el LQR sigue igual
+    MAN_MOTOR_LQR,              // en el aire el LQR sigue igual. El cuerpo deja el borde inclinado
+                                // hacia atrás, así que el LQR acelera la rueda hacia atrás: la
+                                // reacción lo endereza en el aire y, al tocar, la rueda más rápida
+                                // que el piso empuja la base hacia atrás y el cuerpo vuelve
+                                // adelante. 3/11, modelo ajustado: la más robusta (con la rueda
+                                // sostenida se cae con la LiPo a 10,5 V, o a 11,1 V con más roce
+                                // o el equilibrio corrido 0,75°)
     MAN_MOTOR_CERO,             // en el aire, comando 0 (el L298N frena la rueda)
 } man_motor_vuelo_t;
 
@@ -102,7 +108,7 @@ typedef struct {
     float x_inicio;             // donde empezó a buscar
     float borde_x;              // borde en coordenadas de la odometría [m]
     float a_salida;             // [m/s2] la que usa al largar
-    float v_vuelo;              // [m/s] odometría al despegar: la que se sostiene en el aire
+    float v_vuelo;              // [m/s] la del piso al despegar (la pedida): se sostiene en el aire
     bool  salto;                // ya estiró las patas en el borde
     float t_tocar;              // [s] desde que tocó
     float t_apoyo;              // [s] desde la última muestra en el aire (la rueda rebota)

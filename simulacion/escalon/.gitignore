@@ -12,3 +12,10 @@ resultados/ajustada/*
 !resultados/ajustada_lqr/
 resultados/ajustada_lqr/*
 !resultados/ajustada_lqr/resumen_estrategias.png
+# y la bajada de UN escalón con el modelo ajustado (un_escalon.py): las figuras y las tablas (los
+# casos se regeneran)
+!resultados/un_escalon/
+resultados/un_escalon/*
+!resultados/un_escalon/*.png
+!resultados/un_escalon/robustez.csv
+!resultados/un_escalon/ventana.csv
