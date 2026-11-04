@@ -21,6 +21,7 @@ enum { PP_X = 0, PP_Z, PP_TH, PP_A, PP_F };
 typedef struct {
     double alto, pisada;
     int    n_escalones;
+    double alto_ultimo;         // [m] el último escalón, si es de otra altura (0 = alto)
 } piso_t;
 
 typedef struct {
@@ -44,6 +45,8 @@ typedef struct {
     double k_rueda, c_rueda;            // [N/m], [N s/m] de las dos ruedas contra el piso
     double k_cuerpo, c_cuerpo;          // [N/m], [N s/m] de un golpe del cuerpo
     double mu, v_resbale;               // fricción de Coulomb y velocidad de regularización [m/s]
+    double mu_cuerpo;                   // fricción de la cabina contra el escalón (0 = mu)
+    double recorte;                     // [m] la cabina recortada adelante (la masa queda igual)
     double g;
 } planta_t;
 
@@ -86,6 +89,9 @@ void planta_rk4(const planta_t *P, const piso_t *piso, double q[PP_NQ], double d
 // Altura del piso en X y distancia a lo largo de un rayo desde (x0, z0) en la dirección
 // (ux, uz) unitaria hasta el piso; devuelve < 0 si no lo corta antes de max_m.
 double piso_altura(const piso_t *piso, double x);
+double piso_nivel(const piso_t *piso, int k);
+double piso_distancia(const piso_t *piso, double x, double z);
+double piso_distancia_caja(const piso_t *piso, const double q[PP_NQ], double x0, double x1, double z0, double z1);
 double piso_rayo(const piso_t *piso, double x0, double z0, double ux, double uz, double max_m);
 
 // Posición en el mundo de un punto del cuerpo (ejes del cuerpo, respecto del centro de masa)

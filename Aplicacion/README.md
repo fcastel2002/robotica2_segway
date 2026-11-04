@@ -50,6 +50,8 @@ El mando de PS4 se conecta por Bluetooth o USB a la PC. `Aplicacion/puente.py` i
 | **Botón `L1`** | Baja los servos de las patas **−2°** por cada pulsación (**tope mínimo: 0°**) | `servo <grados>` |
 | **Botón `✕` (Equis)** | Arma el robot (el LQR es el único control desde el 2/11) | `arm` |
 | **Botón `◯` (Círculo)** | **Desarme de emergencia** inmediato (corta motores y movimiento) | `mov 0.000 0.000` + `disarm` |
+| **Botón `△` (Triángulo)** | **Baja el escalón que tiene atrás** (solo equilibrando). Sin el sensor, con el borde a 30 cm detrás del apoyo de la rueda (`man d_borde` en el firmware) | `escalon` |
+| **Botón `□` (Cuadrado)** | **Parada controlada**: frena, baja las patas al mínimo y se deja caer apenas para atrás con los motores apagados | `parar` |
 
 > **Seguridad de las patas (0° a 30° estricto, de la pata):** desde el 2/11 el firmware pide ángulos de **pata** y le suma a cada servo su cero (la derecha tiene 5°, `SERVO_R_ZERO_DEG`). El 3/11 la pata derecha se corrió 5° en el brazo del servo, así que las dos patas van de 0° a 30° (el servo derecho llega a 35°). Tanto `joystick.py`, como la interfaz web (`mando.js` y `banco.js`) y el firmware (`SERVO_HARD_MIN_DEG = 0.0f`, `SERVO_HARD_MAX_DEG = 30.0f` en `board_config.h`, de la pata) acotan el ángulo estrictamente al rango **0° a 30°** para proteger el mecanismo de cuatro barras.
 
@@ -58,7 +60,7 @@ El mando de PS4 se conecta por Bluetooth o USB a la PC. `Aplicacion/puente.py` i
 | Archivo | Qué hace |
 |---|---|
 | `banco.cmd`, `banco.ps1` | Lanzador en un comando: grabar el firmware (opcional), levantar puente y abrir la aplicación |
-| `puente.py` | Servidor HTTP (`:8000`), receptor de telemetría UDP (`:4210`), simulador físico y lanzador automático de `joystick.py` (`:8001`) |
+| `puente.py` | Servidor HTTP (`:8000`), receptor de telemetría UDP (`:4210`), simulador físico y lanzador automático de `joystick.py` (`:8001`). Guarda el registro de cada bajada de escalón (200 Hz, líneas `#r` del robot) en `registros/bajada_<fecha>.csv`, para `simulacion/escalon/comparar_prueba.py` |
 | `joystick.py` | Lector nativo del mando de PS4 (`winmm.dll`/`xinput` + Web Gamepad API), lógica de modos 1/2 (`OPTIONS`), pasos de 2° en servos con tope `0°..30°` (`L1`/`R1`), armado (`✕`) y parada de emergencia (`◯`) |
 | `web/index.html`, `web/estilo.css` | Estructura y estilos de las 4 vistas (**Mando / Conducción**, **Banco de pruebas**, **Gráficos**, **Configuración**) |
 | `web/mando.js` | Vista interactiva del mando de PS4 en vivo, HUD de conducción y botonera de modos y servos |

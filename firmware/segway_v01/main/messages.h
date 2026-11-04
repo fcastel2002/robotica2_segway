@@ -10,6 +10,8 @@
 #include "servo.h"
 #include "motor.h"
 #include "movimiento.h"
+#include "maniobra.h"
+#include "parada.h"
 
 typedef enum {
     PARAM_REF = 0,      // en grados para el usuario, en radianes internamente
@@ -33,6 +35,15 @@ typedef enum {
     PARAM_PRIO,         // perturbación [grados] que suelta la velocidad pedida (0 = no)
     PARAM_DBMOV,        // zona muerta andando (deadband es la de quieto)
     PARAM_LQRPATA,      // 1: las ganancias del LQR salen de la tabla según la pata; 0: las fijas
+    PARAM_GIROMAX,      // fracción de PWM sumada y restada con giro = 1 (R2/L2 del joystick)
+    PARAM_SHARPK,       // calibración del Sharp: d = sharpk / (v - sharpv0) [V m], [V]
+    PARAM_SHARPV0,
+    PARAM_SHARPDIV,     // divisor entre la salida del Sharp y el pin (0,6 con 10k/15k; 1 sin divisor)
+    PARAM_SENSX,        // sensor respecto del eje del servo, ejes del cuerpo [cm] y haz desde la
+    PARAM_SENSZ,        // vertical del cuerpo hacia atrás [grados]: medidos con el sensor montado
+    PARAM_SENSANG,
+    PARAM_PARINC,       // parada (□): cuánto se corre la referencia hacia atrás [grados]
+    PARAM_PARSUELTA,    // parada: con el cuerpo esto detrás de su equilibrio, desarma [grados]
     PARAM_COUNT,
 } param_id_t;
 
@@ -49,6 +60,9 @@ typedef enum {
     CMD_MOTOR_STOP,
     CMD_ENC_RESET,      // cuentas de los encoders a cero
     CMD_MOVE,           // "mov": value = avance, value2 = giro, de -1 a 1 (vencen a MOV_TIMEOUT_MS)
+    CMD_ESCALON,        // "escalon" (△): baja el escalón de atrás; value = 1: solo mide el borde
+    CMD_PARAR,          // "parar" (□): parada controlada (parada.h)
+    CMD_MAN_PARAM,      // "man <nombre> <valor>": param = campo de maniobra_campo(), value
 } command_type_t;
 
 #define SERVO_BOTH  (-1)
@@ -87,4 +101,19 @@ typedef struct {
     float            giro;          // fracción de PWM sumada a la izquierda y restada a la derecha
     mov_params_t     mov;           // parámetros de manejo vigentes, para "get"
     float            deadband_quieto;   // la zona muerta de quieto (params.deadband es la que se usa)
+    // Sensor de distancia al piso y bajada de escalón
+    float            sharp_mv;      // tensión en el pin [mV] (NAN si el ADC no está)
+    float            dist;          // distancia que mide [m] (NAN fuera de 10-150 cm)
+    float            haz_x, haz_z;  // dónde pega el haz respecto del apoyo de la rueda: hacia atrás
+                                    // y de alto [m] (en piso plano, haz_z ~ 0)
+    float            sharp_k, sharp_v0, sharp_div;  // calibración vigente, para "get"
+    float            sens_x, sens_z, sens_ang;      // geometría vigente [m], [m], [rad]
+    man_estado_t     man_estado;
+    const char      *man_motivo;    // por qué abortó (texto fijo de maniobra.c) o NULL
+    float            man_borde;     // [m] rueda-borde visto (NAN si no lo vio)
+    float            man_d_largada; // [m] rueda-borde cuando quedó quieto para largar o medir
+    parada_estado_t  parada_estado;
+    bool             registrando;   // grabando el registro de la bajada (control_task.h)
+    float            giro_max;
+    float            par_inclina, par_suelta;       // [rad]
 } telemetry_t;

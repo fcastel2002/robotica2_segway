@@ -12,8 +12,11 @@
 #include "esp_check.h"
 
 #include "board_config.h"
+#include "control_task.h"
 #include "imu_mpu6050.h"
+#include "maniobra.h"
 #include "messages.h"
+#include "parada.h"
 #include "wifi_link.h"
 
 #define RAD2DEG     57.29578f
@@ -24,9 +27,12 @@
 // Las líneas que no son datos empiezan con '#', para que un graficador CSV las ignore.
 // Desde m_l, columnas del banco de pruebas: ~135 caracteres por línea a 50 Hz, el 60 % de
 // lo que entra a 115200 baudios. vref_mms y giro: lo que el control está aplicando de "mov".
+// Desde sharp_mv: el sensor de distancia (tensión en el pin, distancia, dónde pega el haz respecto
+// del apoyo de la rueda: hacia atrás y de alto) y la bajada del escalón (estado y rueda-borde).
 #define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r," \
                     "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps," \
-                    "x_mm,v_mms,vref_mms,giro,ref_deg\n"
+                    "x_mm,v_mms,vref_mms,giro,ref_deg,sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm\n"
+#define REG_POR_VUELTA  3       // líneas del registro de la bajada por vuelta (150/s: entra en 115200)
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -42,8 +48,15 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_REFAUTO] = "refauto", [PARAM_VMAX] = "vmax", [PARAM_ACEL] = "acel",
     [PARAM_FREN] = "fren", [PARAM_FF] = "ff", [PARAM_XLIBRE] = "xlibre", [PARAM_VELPATA] = "velpata",
     [PARAM_MARGEN] = "margen", [PARAM_PRIO] = "prio", [PARAM_DBMOV] = "dbmov",
-    [PARAM_LQRPATA] = "lqrpata",
+    [PARAM_LQRPATA] = "lqrpata", [PARAM_GIROMAX] = "giromax", [PARAM_SHARPK] = "sharpk",
+    [PARAM_SHARPV0] = "sharpv0", [PARAM_SHARPDIV] = "sharpdiv", [PARAM_SENSX] = "sensx",
+    [PARAM_SENSZ] = "sensz", [PARAM_SENSANG] = "sensang", [PARAM_PARINC] = "parinc",
+    [PARAM_PARSUELTA] = "parsuelta",
 };
+
+// Los parámetros de la bajada como los tiene control (empiezan igual y cambian con los mismos
+// "man <nombre> <valor>" que se le mandan): para mostrarlos con "man"
+static man_params_t s_man;
 
 // Todo lo que dice la consola sale por el cable y, si hay red, por WiFi. Solo desde comms.
 static void out(const char *fmt, ...)
@@ -79,6 +92,14 @@ static void print_help(void)
         "# servo lim: límites en vivo, entre %.0f y %.0f; se pierden al reiniciar (copiarlos a board_config.h)\n"
         "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n"
         "# mov <avance> <giro>: de -1 a 1, solo armado; sin otro en %d ms vuelven a 0; sin ok\n"
+        "# escalon: baja el escalon de atras (triangulo); escalon <cm>: sin sensor, con el borde a esos\n"
+        "#   cm detras del apoyo de la rueda; escalon medir: busca el borde con el sensor y frena;\n"
+        "#   escalon datos: vuelve a mandar el registro de la ultima (200 Hz, lineas #r)\n"
+        "# parar: parada controlada (cuadrado): frena, baja las patas al minimo y se deja caer atras\n"
+        "# man: parametros de la bajada; man <nombre> <valor> los cambia (no en plena bajada)\n"
+        "# param tambien: giromax (giro con R2/L2) | sharpk sharpv0 sharpdiv (calibracion del Sharp)\n"
+        "#        sensx sensz (cm) sensang (grados): donde esta el sensor respecto del eje del servo\n"
+        "#        parinc parsuelta (grados): cuanto se tira atras la parada y cuando suelta\n"
         "# por WiFi (UDP %d) los mismos comandos; hola: la telemetria va a esa PC\n",
         SERVO_HARD_MIN_DEG, SERVO_HARD_MAX_DEG, MOV_TIMEOUT_MS, WIFI_CMD_PORT);
 }
@@ -108,13 +129,34 @@ static void print_params(const telemetry_t *t)
         t->mov.v_max, t->mov.acel, t->mov.fren, t->mov.ff, t->mov.x_libre ? 1 : 0,
         t->mov.vel_pata_dps, t->mov.u_margen, t->mov.prio_theta * RAD2DEG);
     imu_stats_t e = imu_stats();
-    out("# imu fallas: i2c=%lu cero=%lu baja=%lu\n", (unsigned long)e.i2c_errors,
+    out("# imu fallas: i2c=%lu cero=%lu; en caida libre (no fallan): %lu\n", (unsigned long)e.i2c_errors,
         (unsigned long)e.zero_reads, (unsigned long)e.low_reads);
+    out("# sharp: pin=%.0f mV dist=%.1f cm haz atras=%.1f cm alto=%.1f cm | sharpk=%.4f sharpv0=%.3f "
+        "sharpdiv=%.2f sensx=%.1f sensz=%.1f sensang=%.1f\n", t->sharp_mv, t->dist * 100.0f,
+        t->haz_x * 100.0f, t->haz_z * 100.0f, t->sharp_k, t->sharp_v0, t->sharp_div, t->sens_x * 100.0f,
+        t->sens_z * 100.0f, t->sens_ang * RAD2DEG);
+    out("# giromax=%.2f parinc=%.1f parsuelta=%.1f | bajada: %s, d_borde=%.0f cm (0: con el sensor)\n",
+        t->giro_max, t->par_inclina * RAD2DEG, t->par_suelta * RAD2DEG, maniobra_nombre(t->man_estado),
+        s_man.d_borde * 100.0f);
     out("# servo l=%.1f r=%.1f lim_l=%.1f..%.1f lim_r=%.1f..%.1f\n",
         t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT],
         t->servo_lim[SERVO_LEFT][0], t->servo_lim[SERVO_LEFT][1],
         t->servo_lim[SERVO_RIGHT][0], t->servo_lim[SERVO_RIGHT][1]);
     print_wifi();
+}
+
+static void print_man(void)
+{
+    char linea[256];
+    int n = snprintf(linea, sizeof linea, "# man:");
+    for (int i = 0; i < maniobra_n_campos(); i++) {
+        n += snprintf(linea + n, sizeof linea - n, " %s=%g", maniobra_campo_nombre(i),
+                      (double)maniobra_valor(&s_man, i));
+        if (n > (int)sizeof linea - 40 || i == maniobra_n_campos() - 1) {
+            out("%s\n", linea);
+            n = snprintf(linea, sizeof linea, "# man:");
+        }
+    }
 }
 
 static bool parse_float(const char *str, float *out)
@@ -128,7 +170,7 @@ static bool parse_float(const char *str, float *out)
 // Interpreta una línea. Lo que afecta al control se envía como command_t; lo que es
 // solo de la consola (get, tlm, help) se resuelve acá.
 static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *last,
-                        int *get_wait, int *arm_wait, bool *tlm_on)
+                        int *get_wait, int *arm_wait, bool *tlm_on, int *reg_i)
 {
     char *word = strtok(line, " \t");
     if (word == NULL) return;
@@ -260,6 +302,70 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
                            .value2 = fminf(fmaxf(turn, -1.0f), 1.0f) };
         xQueueSend(ctx->command_q, &cmd, 0);
         return;
+    } else if (strcmp(word, "escalon") == 0) {
+        char *arg = strtok(NULL, " \t");
+        float cm = 0.0f;
+        if (arg != NULL && strcmp(arg, "datos") == 0) {
+            *reg_i = -2;            // comms_task lo manda de a poco, si hay
+            return;
+        }
+        if (last->state != SUP_BALANCING) {
+            out("# escalon: primero armarlo (tiene que estar equilibrando)\n");
+            return;
+        }
+        if (last->man_estado != MAN_INACTIVA && last->man_estado != MAN_FIN) {
+            out("# escalon: ya esta bajando (%s)\n", maniobra_nombre(last->man_estado));
+            return;
+        }
+        if (arg != NULL && strcmp(arg, "medir") == 0) {
+            cmd = (command_t){ .type = CMD_ESCALON, .value = -1.0f };
+        } else if (arg != NULL && parse_float(arg, &cm) && cm >= 5.0f && cm <= 100.0f) {
+            cmd = (command_t){ .type = CMD_ESCALON, .value = cm * 0.01f };
+            s_man.d_borde = cm * 0.01f;
+        } else if (arg != NULL) {
+            out("# error: escalon [medir | datos | <cm del borde, 5-100>]\n");
+            return;
+        } else {
+            cmd = (command_t){ .type = CMD_ESCALON };
+        }
+        if (arg == NULL || cm > 0.0f) {
+            if (s_man.d_borde > 0.0f) {
+                out("# escalon: sin sensor, con el borde a %.0f cm detras del apoyo de la rueda\n",
+                    s_man.d_borde * 100.0f);
+            } else {
+                out("# escalon: busca el borde con el sensor\n");
+            }
+        }
+    } else if (strcmp(word, "parar") == 0) {
+        if (last->state != SUP_BALANCING) {
+            out("# parar: no esta equilibrando\n");
+            return;
+        }
+        cmd = (command_t){ .type = CMD_PARAR };
+    } else if (strcmp(word, "man") == 0) {
+        char *name = strtok(NULL, " \t");
+        char *val  = strtok(NULL, " \t");
+        if (name == NULL) {
+            print_man();
+            return;
+        }
+        int campo = maniobra_campo(name);
+        float v;
+        if (campo < 0 || !parse_float(val, &v)) {
+            out("# error: man <nombre> <valor> (man solo los muestra)\n");
+            return;
+        }
+        if (last->man_estado != MAN_INACTIVA && last->man_estado != MAN_FIN) {
+            out("# man: no en plena bajada\n");
+            return;
+        }
+        man_params_t prueba = s_man;
+        if (!maniobra_poner(&prueba, campo, v)) {
+            out("# error: %s no puede valer %g\n", name, (double)v);
+            return;
+        }
+        s_man = prueba;
+        cmd = (command_t){ .type = CMD_MAN_PARAM, .param = campo, .value = v };
     } else if (strcmp(word, "enc") == 0) {
         char *arg = strtok(NULL, " \t");
         if (arg == NULL || strcmp(arg, "reset") != 0) {
@@ -290,14 +396,73 @@ send:
 
 // Un paquete UDP puede traer varias líneas: cada una va a handle_line como si llegara por cable
 static void handle_packet(char *pkt, const comms_ctx_t *ctx, const telemetry_t *last,
-                          int *get_wait, int *arm_wait, bool *tlm_on)
+                          int *get_wait, int *arm_wait, bool *tlm_on, int *reg_i)
 {
     char *save = NULL;
     for (char *l = strtok_r(pkt, "\r\n", &save); l != NULL; l = strtok_r(NULL, "\r\n", &save)) {
         char line[CMD_LINE_MAX];
         strncpy(line, l, sizeof line - 1);
         line[sizeof line - 1] = '\0';
-        handle_line(line, ctx, last, get_wait, arm_wait, tlm_on);
+        handle_line(line, ctx, last, get_wait, arm_wait, tlm_on, reg_i);
+    }
+}
+
+// Lo que pasa en la bajada y en la parada, cuando cambia
+static void explain_maniobra(const telemetry_t *t, man_estado_t *man_antes, parada_estado_t *par_antes,
+                             int *reg_i)
+{
+    if (t->man_estado != *man_antes) {
+        if (t->man_estado == MAN_ABORTADA) {
+            out("# bajada: abortada (%s)\n", t->man_motivo ? t->man_motivo : "?");
+        } else if (t->man_estado == MAN_PREPARAR) {
+            out("# bajada: preparar, el borde a %.1f cm detras del apoyo de la rueda\n", t->man_borde * 100.0f);
+        } else if (t->man_estado == MAN_LARGAR) {
+            out("# bajada: larga con el borde a %.1f cm\n", t->man_d_largada * 100.0f);
+        } else if (t->man_estado == MAN_FIN && *man_antes == MAN_PREPARAR) {
+            out("# bajada: medido, el borde a %.1f cm detras del apoyo de la rueda (comparar con una regla)\n",
+                t->man_d_largada * 100.0f);
+        } else {
+            out("# bajada: %s\n", maniobra_nombre(t->man_estado));
+        }
+        bool termino = t->man_estado == MAN_INACTIVA || t->man_estado == MAN_FIN;
+        bool venia = *man_antes != MAN_INACTIVA && *man_antes != MAN_FIN;
+        if (termino && venia && *reg_i == -1) *reg_i = -2;      // el registro, apenas esté listo
+        *man_antes = t->man_estado;
+    }
+    if (t->parada_estado != *par_antes) {
+        out("# parada: %s\n", parada_nombre(t->parada_estado));
+        *par_antes = t->parada_estado;
+    }
+}
+
+// Manda el registro de la bajada de a REG_POR_VUELTA líneas ("#r," y los valores). *reg_i: -1 nada,
+// -2 esperando que esté listo (deja de esperar si no hay ninguno), >= 0 la próxima línea.
+static void send_registro(int *reg_i, bool grabando)
+{
+    if (*reg_i == -1) return;
+    int n;
+    const registro_t *r = control_registro(&n);
+    if (r == NULL) {
+        if (!grabando) *reg_i = -1;         // no hay ninguno y no se está grabando
+        return;
+    }
+    if (*reg_i < 0) {
+        *reg_i = 0;
+        out("# registro de la bajada: %d muestras a 200 Hz\n", n);
+        out("#r,t_s,maniobra,theta_deg,rate_dps,x_mm,v_mms,vref_mms,u,pata_deg,acc_ms2,dist_mm,ref_deg,"
+            "imu_ok,baja_g,solo_giro,u_directo\n");
+    }
+    for (int k = 0; k < REG_POR_VUELTA && *reg_i < n; k++, (*reg_i)++) {
+        const registro_t *m = &r[*reg_i];
+        out("#r,%.3f,%s,%.2f,%.1f,%d,%d,%d,%.3f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d\n", m->ciclo * 0.005,
+            maniobra_nombre((man_estado_t)m->estado), m->theta_cdeg * 0.01, m->rate_ddps * 0.1, m->x_mm,
+            m->v_mms, m->vref_mms, m->u_mil * 0.001, m->pata_cdeg * 0.01, m->acc_cms2 * 0.01, m->dist_mm,
+            m->ref_cdeg * 0.01, (m->marcas & REG_IMU_OK) != 0, (m->marcas & REG_BAJA_G) != 0,
+            (m->marcas & REG_SOLO_GIRO) != 0, (m->marcas & REG_U_DIRECTO) != 0);
+    }
+    if (*reg_i >= n) {
+        out("# fin del registro\n");
+        *reg_i = -1;
     }
 }
 
@@ -323,6 +488,11 @@ static void comms_task(void *arg)
     wifi_state_t shown_wifi = WIFI_OFF;
     bool tlm_on = true;
     int get_wait = 0, arm_wait = 0;
+    int reg_i = -1;                 // registro de la bajada: -1 nada, -2 esperando, >= 0 mandando
+    man_estado_t man_antes = MAN_INACTIVA;
+    parada_estado_t par_antes = PARADA_INACTIVA;
+    maniobra_params_por_defecto(&s_man);
+    s_man.d_borde = MAN_D_BORDE_M;      // como control_task
     char line[CMD_LINE_MAX];
     size_t len = 0;
     char pkt[256];
@@ -342,7 +512,7 @@ static void comms_task(void *arg)
             if (ch == '\r' || ch == '\n') {
                 if (len > 0) {
                     line[len] = '\0';
-                    handle_line(line, ctx, &last, &get_wait, &arm_wait, &tlm_on);
+                    handle_line(line, ctx, &last, &get_wait, &arm_wait, &tlm_on, &reg_i);
                     len = 0;
                 }
             } else if (len < CMD_LINE_MAX - 1) {
@@ -361,7 +531,7 @@ static void comms_task(void *arg)
                 out("# " CSV_HEADER);
                 print_wifi();
             }
-            if (n > 0) handle_packet(pkt, ctx, &last, &get_wait, &arm_wait, &tlm_on);
+            if (n > 0) handle_packet(pkt, ctx, &last, &get_wait, &arm_wait, &tlm_on, &reg_i);
         }
         // Cada cambio de la red se informa; "sin configurar", recién a los 2 s (el WiFi arranca
         // después de esta tarea, y antes diría que está apagado aunque no lo esté)
@@ -385,12 +555,15 @@ static void comms_task(void *arg)
         // misma tanda, sino con la siguiente: para entonces el control (cada 5 ms) ya lo aplicó.
         if (get_wait > 0 && --get_wait == 0) print_params(&last);
         if (arm_wait > 0 && --arm_wait == 0) explain_arm(&last);
-        if (tlm_on) {
+        explain_maniobra(&last, &man_antes, &par_antes, &reg_i);
+        send_registro(&reg_i, last.registrando);
+        if (tlm_on && reg_i < 0) {      // mientras manda el registro, sin telemetría (no entra)
             // Servo suelto: "nan", porque sin pulsos no se sabe dónde está
             float servo_l = last.servo_free[SERVO_LEFT] ? NAN : last.servo_deg[SERVO_LEFT];
             float servo_r = last.servo_free[SERVO_RIGHT] ? NAN : last.servo_deg[SERVO_RIGHT];
             out("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld,"
-                "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%.1f,%.0f,%.0f,%.3f,%.2f\n",
+                "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%.1f,%.0f,%.0f,%.3f,%.2f,"
+                "%.0f,%.0f,%.0f,%.0f,%s,%.0f\n",
                 (unsigned long)last.t_ms, supervisor_state_name(last.state),
                 last.theta * RAD2DEG, last.theta_rate * RAD2DEG, last.u,
                 (unsigned long)last.loop_us_max, (unsigned long)last.overruns,
@@ -399,7 +572,8 @@ static void comms_task(void *arg)
                 last.accel[0], last.accel[1], last.accel[2],
                 last.gyro[0] * RAD2DEG, last.gyro[1] * RAD2DEG, last.gyro[2] * RAD2DEG,
                 last.x * 1e3f, last.v * 1e3f, last.v_ref * 1e3f, last.giro,
-                last.params.theta_ref * RAD2DEG);
+                last.params.theta_ref * RAD2DEG, last.sharp_mv, last.dist * 1e3f, last.haz_x * 1e3f,
+                last.haz_z * 1e3f, maniobra_nombre(last.man_estado), last.man_borde * 1e3f);
         }
         fflush(stdout);
     }

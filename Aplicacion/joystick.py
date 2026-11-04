@@ -8,6 +8,11 @@ Controles configurados para el mando de PS4 (DualShock 4):
 - Botón L1: baja las patas de a -2° por pulsación (tope mínimo en 0°).
 - Botón ✕ (Equis): arma el robot (`arm`; el LQR es el único control del firmware).
 - Botón ◯ (Círculo): desarme de emergencia inmediato (`mov 0 0` + `disarm`).
+- Botón △ (Triángulo): baja el escalón que tiene atrás (`escalon`; sin el sensor, con el borde a
+  la distancia que tiene el firmware: `man d_borde`, 30 cm por defecto). Solo equilibrando.
+- Botón □ (Cuadrado): parada controlada (`parar`): frena, baja las patas al mínimo y se deja caer
+  apenas para atrás con los motores apagados.
+- Gatillos R2 / L2: no hacen nada (3/11: el giro sobre su eje con los gatillos se sacó).
 
 Expone `GET http://localhost:8001/estado`, `POST /mando` y `POST /accion` con `Access-Control-Allow-Origin: *`.
 Solo usa la biblioteca estándar de Python (`ctypes` en Windows).
@@ -527,7 +532,8 @@ class PuenteJoystick:
         self._web_mando_t: float = -1e9
         self._ultimo_envio_ok: bool = False
         self._destino_texto: str | None = None
-        self._ultimo_evento: str = "Listo (OPTIONS: modo 1/2 · R1/L1: servos ±2° [0..30°] · ✕: armar · ◯: desarmar)"
+        self._ultimo_evento: str = ("Listo (OPTIONS: modo 1/2 · R1/L1: servos ±2° [0..30°] · ✕: armar · ◯: desarmar"
+                                    " · △: bajar escalón · □: parada)")
 
     def _resolver_destino(self) -> tuple[str | None, bool, str]:
         """Devuelve (ip_udp, es_simulado, texto_destino)."""
@@ -603,6 +609,12 @@ class PuenteJoystick:
                 self._mando = {"avance": 0.0, "giro": 0.0}
                 comandos_a_enviar.extend(["mov 0.000 0.000", "disarm"])
                 self._ultimo_evento = "◯ → ¡DESARME DE EMERGENCIA! (disarm)"
+            elif accion == "escalon":
+                comandos_a_enviar.append("escalon")
+                self._ultimo_evento = "△ → Bajar el escalón de atrás (escalon)"
+            elif accion == "parar":
+                comandos_a_enviar.append("parar")
+                self._ultimo_evento = "□ → Parada controlada (parar)"
             evento = self._ultimo_evento
 
         for cmd in comandos_a_enviar:
@@ -627,6 +639,11 @@ class PuenteJoystick:
             self.ejecutar_accion("servo_subir")
         elif botones_actuales.get("l1") and not prev.get("l1"):
             self.ejecutar_accion("servo_bajar")
+
+        if botones_actuales.get("triangulo") and not prev.get("triangulo"):
+            self.ejecutar_accion("escalon")
+        elif botones_actuales.get("cuadrado") and not prev.get("cuadrado"):
+            self.ejecutar_accion("parar")
 
     def actualizar_desde_web(self, datos: dict) -> None:
         """Recibe estado del mando y configuración desde navigator.getGamepads() del navegador."""

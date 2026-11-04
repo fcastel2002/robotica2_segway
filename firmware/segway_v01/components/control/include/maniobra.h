@@ -3,6 +3,7 @@
 //
 // Secuencia:
 //   AGACHAR    patas a la altura de búsqueda y quieto
+//   AVANZAR    (si avance > 0) hacia adelante, lejos del borde, para tener envión
 //   BUSCAR     retrocede despacio hasta que el sensor ve el desnivel: ahí se sabe dónde está el
 //              borde (en coordenadas de la odometría)
 //   PREPARAR   frena donde lo vio, sin volver a ningún punto (x libre), lleva las patas a la
@@ -25,6 +26,7 @@
 typedef enum {
     MAN_INACTIVA = 0,
     MAN_AGACHAR,
+    MAN_AVANZAR,
     MAN_BUSCAR,
     MAN_PREPARAR,
     MAN_LARGAR,
@@ -47,6 +49,28 @@ typedef enum {
     MAN_MOTOR_CERO,             // en el aire, comando 0 (el L298N frena la rueda)
 } man_motor_vuelo_t;
 
+// Programa (opcional, para probar otras maniobras): desde que larga, las patas y/o la velocidad
+// pedida siguen una lista de acciones en lugar de los parámetros de siempre. Cada acción se dispara
+// una vez, cuando pasa lo que dice, y manda la última que se disparó; antes de la primera, las
+// patas quedan en las de largar y la velocidad, como estaba. En la escalera de largo
+// (t_continuo), las de despegar y tocar se vuelven a disparar en cada escalón.
+typedef enum {
+    MAN_EV_LARGA = 0,           // al largar, más `valor` segundos
+    MAN_EV_BORDE,               // con la rueda a `valor` metros del borde visto (+ antes, - pasado)
+    MAN_EV_DESPEGA,             // al detectar la caída libre, más `valor` segundos
+    MAN_EV_TOCA,                // al tocar el piso, más `valor` segundos
+    MAN_N_EVENTOS,
+} man_evento_t;
+
+#define MAN_MAX_ACCIONES 8
+
+typedef struct {
+    man_evento_t evento;
+    float valor;                // [s] o, con MAN_EV_BORDE, [m]
+    float objetivo;             // patas [°] o velocidad hacia atrás [m/s]
+    float ritmo;                // [°/s] o [m/s2] para llegar
+} man_accion_t;
+
 typedef struct {
     float pata_busqueda_deg;    // patas para buscar el borde (el sensor necesita > 10 cm al piso)
     float pata_largada_deg;     // patas para largar (0 = agachado)
@@ -54,6 +78,8 @@ typedef struct {
     float busqueda_max;         // [m] si no encuentra el borde en este recorrido, aborta
     float desnivel;             // [m] el piso bajo el haz más abajo que esto = borde
     float d_min;                // [m] rueda-borde mínima para largar (si quedó más cerca, aborta)
+    float avance;               // [m] antes de buscar, avanza esto hacia adelante (lejos del borde):
+                                // frenando en cada escalón, para tener lugar para tomar envión
     float v_salida;             // [m/s] hacia atrás al pasar el borde
     float a_salida_max;         // [m/s2] tope de la aceleración para llegar a v_salida en el borde
     float kx_largada;           // factor de kx mientras larga (0 = x libre)
@@ -75,6 +101,13 @@ typedef struct {
     float t_continuo;           // [s] > 0: baja la escalera entera sin frenar en cada escalón; frena
                                 // cuando pasa este tiempo en el piso sin volver a caer. 0 = uno solo
     man_motor_vuelo_t motor_vuelo;
+    bool  solo_medir;           // busca el borde, frena y termina sin largar ("escalon medir"): para
+                                // comprobar con una regla dónde ve el borde
+    float d_borde;              // [m] > 0: SIN sensor, el borde está a esto detrás del apoyo de la
+                                // rueda cuando arranca (se pone el robot a esa distancia); 0: lo busca
+    int n_patas, n_vel;         // > 0: las patas / la velocidad siguen el programa (man_accion_t)
+    man_accion_t patas[MAN_MAX_ACCIONES];
+    man_accion_t vel[MAN_MAX_ACCIONES];
 } man_params_t;
 
 typedef struct {                // lo que mide el robot en este ciclo
@@ -106,6 +139,7 @@ typedef struct {
     float t_total;
     float v_ref, x_ref;
     float x_inicio;             // donde empezó a buscar
+    float x_partida;            // donde se apretó △ (con d_borde, el borde está a d_borde de acá)
     float borde_x;              // borde en coordenadas de la odometría [m]
     float a_salida;             // [m/s2] la que usa al largar
     float v_vuelo;              // [m/s] la del piso al despegar (la pedida): se sostiene en el aire
@@ -114,6 +148,13 @@ typedef struct {
     float t_apoyo;              // [s] desde la última muestra en el aire (la rueda rebota)
     int   n_borde, n_vuelo, n_sin_haz, n_quieto;     // muestras seguidas
     const char *motivo;         // por qué abortó (o NULL)
+    float d_largada;            // [m] rueda-borde cuando quedó quieto para largar (o para medir); NAN antes
+    // Programa
+    float t_evento[MAN_N_EVENTOS];  // [s] t_total la última vez que pasó cada evento (< 0: no)
+    int   n_vuelos, n_vuelos_prog;  // vuelos (escalones) y hasta cuál se armó el programa
+    float d_borde_min;              // [m] lo más cerca del borde (o lo más pasado) desde que largó
+    float t_patas[MAN_MAX_ACCIONES], t_vel[MAN_MAX_ACCIONES];   // cuándo se disparó cada acción
+    int   i_patas, i_vel;           // la acción que manda (-1: ninguna)
 } maniobra_t;
 
 void maniobra_params_por_defecto(man_params_t *p);
@@ -126,3 +167,11 @@ void maniobra_abortar(maniobra_t *m, const char *motivo);
 void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e, man_salida_t *s);
 
 const char *maniobra_nombre(man_estado_t e);
+
+// Los parámetros por nombre, como en el banco ("v_salida", "pata_largada", ..., y "motor_vuelo"):
+// para cambiarlos en vivo ("man <nombre> <valor>"). maniobra_campo devuelve el índice o -1.
+int maniobra_campo(const char *nombre);
+int maniobra_n_campos(void);
+const char *maniobra_campo_nombre(int campo);
+float maniobra_valor(const man_params_t *p, int campo);
+bool maniobra_poner(man_params_t *p, int campo, float valor);

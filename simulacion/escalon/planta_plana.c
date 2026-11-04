@@ -15,6 +15,14 @@
 // ---------------------------------------------------------------- piso
 typedef struct { int horizontal; double fijo, desde, hasta; } segmento_t;
 
+// Altura del piso después del escalón k (0 = arriba); el último puede ser de otra altura
+double piso_nivel(const piso_t *p, int k)
+{
+    if (k <= 0) return 0.0;
+    if (k < p->n_escalones || p->alto_ultimo <= 0.0) return -k * p->alto;
+    return -(p->n_escalones - 1) * p->alto - p->alto_ultimo;
+}
+
 // Segmentos del piso: horizontales (Z = fijo, X en [desde, hasta]) y verticales (X = fijo,
 // Z en [desde, hasta]).
 static int segmentos(const piso_t *p, segmento_t s[MAX_SEG])
@@ -23,9 +31,9 @@ static int segmentos(const piso_t *p, segmento_t s[MAX_SEG])
     s[n++] = (segmento_t){ 1, 0.0, 0.0, LEJOS };
     for (int k = 1; k <= p->n_escalones && n < MAX_SEG - 2; k++) {
         double x_borde = -(k - 1) * p->pisada;
-        s[n++] = (segmento_t){ 0, x_borde, -k * p->alto, -(k - 1) * p->alto };
+        s[n++] = (segmento_t){ 0, x_borde, piso_nivel(p, k), piso_nivel(p, k - 1) };
         double x_fin = k == p->n_escalones ? -LEJOS : -k * p->pisada;
-        s[n++] = (segmento_t){ 1, -k * p->alto, x_fin, x_borde };
+        s[n++] = (segmento_t){ 1, piso_nivel(p, k), x_fin, x_borde };
     }
     if (p->n_escalones == 0) s[0].desde = -LEJOS;
     return n;
@@ -36,7 +44,50 @@ double piso_altura(const piso_t *p, double x)
     if (x >= 0.0 || p->n_escalones == 0) return 0.0;
     int k = (int)floor(-x / p->pisada) + 1;
     if (k > p->n_escalones) k = p->n_escalones;
-    return -k * p->alto;
+    return piso_nivel(p, k);
+}
+
+// Distancia de un punto al piso (al segmento más cerca) [m]
+double piso_distancia(const piso_t *p, double x, double z)
+{
+    segmento_t s[MAX_SEG];
+    int n = segmentos(p, s);
+    double mejor = 1e9;
+    for (int i = 0; i < n; i++) {
+        double px = s[i].horizontal ? fmin(fmax(x, s[i].desde), s[i].hasta) : s[i].fijo;
+        double pz = s[i].horizontal ? s[i].fijo : fmin(fmax(z, s[i].desde), s[i].hasta);
+        mejor = fmin(mejor, hypot(x - px, z - pz));
+    }
+    return mejor;
+}
+
+// Distancia del piso a un rectángulo del cuerpo (x0..x1, z0..z1 en el cuerpo) [m], 0 si se meten.
+// La menor distancia entre dos poligonales está entre una esquina de una y un segmento de la otra:
+// las esquinas del rectángulo contra el piso y las esquinas del piso contra el rectángulo.
+double piso_distancia_caja(const piso_t *p, const double q[PP_NQ], double x0, double x1, double z0, double z1)
+{
+    const double esq[4][2] = { { x0, z0 }, { x1, z0 }, { x1, z1 }, { x0, z1 } };
+    double mejor = 1e9;
+    for (int i = 0; i < 4; i++) {
+        double wx, wz;
+        cuerpo_a_mundo(q, esq[i][0], esq[i][1], &wx, &wz);
+        if (wz < piso_altura(p, wx)) return 0.0;
+        mejor = fmin(mejor, piso_distancia(p, wx, wz));
+    }
+    segmento_t s[MAX_SEG];
+    int n = segmentos(p, s);
+    double c = cos(q[PP_TH]), sn = sin(q[PP_TH]);
+    for (int i = 0; i < n; i++) {
+        for (int e = 0; e < 2; e++) {
+            double v = e ? s[i].hasta : s[i].desde;
+            if (fabs(v) >= LEJOS) continue;
+            double dx = (s[i].horizontal ? v : s[i].fijo) - q[PP_X];
+            double dz = (s[i].horizontal ? s[i].fijo : v) - q[PP_Z];
+            double bx = c * dx - sn * dz, bz = sn * dx + c * dz;     // la esquina, en el cuerpo
+            mejor = fmin(mejor, hypot(fmax(fmax(x0 - bx, bx - x1), 0.0), fmax(fmax(z0 - bz, bz - z1), 0.0)));
+        }
+    }
+    return mejor;
 }
 
 double piso_rayo(const piso_t *p, double x0, double z0, double ux, double uz, double max_m)
@@ -260,17 +311,20 @@ void planta_derivada(const planta_t *P, const piso_t *piso, const double q[PP_NQ
         n_rueda += fn;
     }
 
-    // Golpes del cuerpo
-    double n_cuerpo = 0.0;
+    // Golpes del cuerpo; con la cabina recortada, los puntos más adelante que el frente nuevo
+    // pasan al frente nuevo
+    double n_cuerpo = 0.0, x_frente = -1e9;
+    for (int i = 0; i < PP_N_PUNTOS; i++) x_frente = fmax(x_frente, PP_PUNTOS[i][0]);
     for (int i = 0; i < PP_N_PUNTOS; i++) {
         double rx, rz;
-        rotar(th, PP_PUNTOS[i][0], PP_PUNTOS[i][1], &rx, &rz);
+        rotar(th, fmin(PP_PUNTOS[i][0], x_frente - P->recorte), PP_PUNTOS[i][1], &rx, &rz);
         double px = q[PP_X] + rx, pz = q[PP_Z] + rz;
         int nb = contactos(piso, px, pz, 0.005, c);
         for (int k = 0; k < nb; k++) {
             double vx = dq[PP_X] + dth * rz, vz = dq[PP_Z] - dth * rx;
             double fx, fz, fn;
-            fuerza_contacto(&c[k], vx, vz, P->k_cuerpo, P->c_cuerpo, P->mu, P->v_resbale, &fx, &fz, &fn);
+            fuerza_contacto(&c[k], vx, vz, P->k_cuerpo, P->c_cuerpo, P->mu_cuerpo > 0.0 ? P->mu_cuerpo : P->mu,
+                            P->v_resbale, &fx, &fz, &fn);
             double jx[PP_NQ] = { 1, 0, rz, 0, 0 }, jz[PP_NQ] = { 0, 1, -rx, 0, 0 };
             sumar_fuerza(Q, jx, jz, fx, fz);
             n_cuerpo += fn;

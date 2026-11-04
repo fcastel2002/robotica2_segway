@@ -63,6 +63,29 @@ def anunciarse() -> None:
         time.sleep(1)
 
 
+REGISTROS = Path(__file__).resolve().parent / "registros"
+_registro = None  # archivo abierto mientras llega el registro de una bajada
+
+
+def guardar_registro(linea: str) -> None:
+    """El registro de la bajada del escalón (200 Hz, líneas "#r,"; lo manda el robot al terminar o
+    con "escalon datos") va a Aplicacion/registros/bajada_<fecha>.csv, para comparar con la
+    simulación (simulacion/escalon/comparar_prueba.py)."""
+    global _registro
+    if linea.startswith("# registro de la bajada"):
+        REGISTROS.mkdir(exist_ok=True)
+        if _registro:
+            _registro.close()
+        _registro = open(REGISTROS / time.strftime("bajada_%Y%m%d_%H%M%S.csv"), "w", encoding="utf-8")
+        _registro.write(linea + "\n")
+    elif linea.startswith("#r,") and _registro:
+        _registro.write(linea[3:] + "\n")
+    elif linea.startswith("# fin del registro") and _registro:
+        _registro.close()
+        print(f"Registro de la bajada guardado en {_registro.name}")
+        _registro = None
+
+
 def escuchar_udp() -> None:
     global robot
     origenes = set()
@@ -77,6 +100,7 @@ def escuchar_udp() -> None:
         robot = robot or origen[0]
         for linea in datos.decode("utf-8", errors="replace").splitlines():
             if linea.strip():
+                guardar_registro(linea.strip())
                 difundir(linea.strip())
 
 

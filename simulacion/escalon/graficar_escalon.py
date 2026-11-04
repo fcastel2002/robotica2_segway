@@ -19,15 +19,20 @@ import matplotlib.pyplot as plt
 AQUI = pathlib.Path(__file__).resolve().parent
 PLANTA = "planta_escalon.h"
 ESCALONES = 4
+ALTO, PISADA, ULTIMO = 0.18, 0.25, 0.0     # el último escalón, si es de otra altura
+RECORTE = 0.0       # [m] la cabina recortada adelante
 
 
-def escalera(alto, pisada, n=None):
+def escalera(alto=None, pisada=None, n=None):
     """Perfil del piso hacia -X: arriba hasta el borde en X = 0 y n escalones; el último sigue."""
     n = ESCALONES if n is None else n
+    alto = ALTO if alto is None else alto
+    pisada = PISADA if pisada is None else pisada
+    nivel = lambda k: -k * alto if k < n or ULTIMO <= 0 else -(n - 1) * alto - ULTIMO
     xs, zs = [0.6, 0.0], [0.0, 0.0]
     for k in range(1, n + 1):
         xs += [-(k - 1) * pisada, -3.0 if k == n else -k * pisada]
-        zs += [-k * alto, -k * alto]
+        zs += [nivel(k), nivel(k)]
     return xs, zs
 
 
@@ -48,10 +53,10 @@ def rotar(th, x, z):
 
 
 def contorno_cabina(puntos):
-    """Rectángulo de la cabina a partir de los puntos de golpe (extremos)."""
+    """Rectángulo de la cabina a partir de los puntos de golpe (extremos), recortada adelante."""
     xs = [p[0] for p in puntos]
     zs = [p[1] for p in puntos]
-    x0, x1, z0, z1 = min(xs), max(xs), min(zs), max(zs)
+    x0, x1, z0, z1 = min(xs), max(xs) - RECORTE, min(zs), max(zs)
     return [(x0, z0), (x1, z0), (x1, z1), (x0, z1), (x0, z0)]
 
 
@@ -73,8 +78,8 @@ def graficar(caso):
     estados = [f["estado"] for f in filas]
     fig = plt.figure(figsize=(13, 9))
     ax = fig.add_axes([0.06, 0.45, 0.9, 0.5])
-    xs, zs = escalera(0.18, 0.25)
-    ax.fill(xs + [xs[-1], 0.6], zs + [-0.7, -0.7], color="0.85")
+    xs, zs = escalera()
+    ax.fill(xs + [xs[-1], 0.6], zs + [-1.5, -1.5], color="0.85")
     ax.plot(xs, zs, color="k", lw=1)
     # robot: antes de largar cada 0,5 s, desde que larga cada 30 ms
     i_larga = next((i for i, e in enumerate(estados) if e == "largar"), None)
@@ -118,20 +123,21 @@ def graficar(caso):
     print("->", salida)
 
 
-def resumen(casos, salida, pisada_larga=(), titulo_general=None, t_ventana=1.6, xlim=(-0.6, 0.3)):
+def resumen(casos, salida, pisada_larga=(), titulo_general=None, t_ventana=1.6, xlim=(-0.6, 0.3), ylim=(-0.42, 0.32),
+            figsize=None, cada=0.03):
     """Un panel por caso con el robot dibujado cada 30 ms desde que larga: (archivo, título)."""
     P = leer_planta()
-    fig, axes = plt.subplots(1, len(casos), figsize=(4.2 * len(casos), 4.6))
-    for ax, (caso, titulo) in zip(axes, casos):
+    fig, axes = plt.subplots(1, len(casos), figsize=figsize or (4.2 * len(casos), 4.6), squeeze=False)
+    for ax, (caso, titulo) in zip(axes[0], casos):
         filas = list(csv.DictReader(open(AQUI / "resultados" / f"{caso}.csv", encoding="utf-8")))
         t = [float(f["t_s"]) for f in filas]
-        xs, zs = escalera(0.18, 1.0 if caso in pisada_larga else 0.25)
-        ax.fill(xs + [xs[-1], 0.6], zs + [-0.9, -0.9], color="0.85")
+        xs, zs = escalera(pisada=1.0 if caso in pisada_larga else None)
+        ax.fill(xs + [xs[-1], 0.6], zs + [-1.5, -1.5], color="0.85")
         ax.plot(xs, zs, color="k", lw=1)
         i0 = next(i for i, f in enumerate(filas) if f["estado"] == "largar")
         elegidos, ultimo = [], -1e9
         for i in range(i0, len(filas)):
-            if t[i] - ultimo >= 0.03 and t[i] <= t[i0] + t_ventana:
+            if t[i] - ultimo >= cada and t[i] <= t[i0] + t_ventana:
                 elegidos.append(i)
                 ultimo = t[i]
         cmap = plt.get_cmap("viridis")
@@ -139,7 +145,7 @@ def resumen(casos, salida, pisada_larga=(), titulo_general=None, t_ventana=1.6, 
             dibujar_robot(ax, filas[i], P, cmap(n / max(1, len(elegidos) - 1)), 0.7)
         ax.set_aspect("equal")
         ax.set_xlim(*xlim)
-        ax.set_ylim(-0.42, 0.32)
+        ax.set_ylim(*ylim)
         ax.set_title(titulo, fontsize=9)
         ax.tick_params(labelsize=7)
     fig.suptitle(titulo_general or ("Bajada de un escalón de 18 cm hacia atrás (simulación): el robot cada 30 ms "

@@ -19,3 +19,22 @@ resultados/un_escalon/*
 !resultados/un_escalon/*.png
 !resultados/un_escalon/robustez.csv
 !resultados/un_escalon/ventana.csv
+# y la escalera entera de las dos maneras (escalera.py): la figura y las tablas
+!resultados/escalera/
+resultados/escalera/*
+!resultados/escalera/*.png
+!resultados/escalera/*.csv
+
+# y la escalera del equipo (genetico.py y escalera_real.py): lo que encontró el genético, las
+# figuras y las tablas (los CSV de cada corrida se regeneran)
+!resultados/escalera_real/
+resultados/escalera_real/*
+!resultados/escalera_real/*.png
+!resultados/escalera_real/robustez.csv
+!resultados/escalera_real/por_escalon.csv
+!resultados/escalera_real/cambios.csv
+!resultados/escalera_real/genetico.json
+# y las pruebas en el robot contra la simulación (comparar_prueba.py): las figuras
+!resultados/pruebas/
+resultados/pruebas/*
+!resultados/pruebas/*.png

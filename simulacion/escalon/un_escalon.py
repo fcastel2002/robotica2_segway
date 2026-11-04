@@ -9,7 +9,6 @@ Uso (desde la raíz del repo):  python simulacion/escalon/un_escalon.py [banco.e
 import csv
 import os
 import pathlib
-import re
 import subprocess
 import sys
 from multiprocessing import Pool
@@ -20,14 +19,15 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
 import graficar_escalon
+from variaciones import CLASES, VARIACIONES, clase, resultado
 
 AQUI = pathlib.Path(__file__).resolve().parent
 RAIZ = AQUI.parent.parent
 CARPETA = "un_escalon"
 BANCO = sys.argv[1] if len(sys.argv) > 1 else str(AQUI / "banco_escalon_ajustada.exe")
 
-# Un escalón (abajo, piso de sobra); la rueda arranca a 45 cm del borde
-ESCENARIO = dict(escalones="1")
+# Un escalón de 18 cm (abajo, piso de sobra), como el 3/11; la rueda arranca a 45 cm del borde
+ESCENARIO = dict(escalones="1", alto="0.18", ultimo="0")
 ELEGIDA = dict(pata_largada="15", v_salida="0.54", pata_final="25", vel_pata_final="300",
                t_mantener="0.02", motor_vuelo="1")
 ESTRATEGIAS = [
@@ -37,59 +37,16 @@ ESTRATEGIAS = [
      dict(pata_largada="0", v_salida="0.30", pata_final="15", vel_pata_final="150", t_mantener="0.06",
           motor_vuelo="0")),
 ]
-VARIACIONES = [
-    ("nominal", "nominal (LiPo 11,9 V)", {}),
-    ("lipo111", "LiPo 11,1 V (9,1 V al motor)", dict(v_motor="9.1")),
-    ("lipo105", "LiPo 10,5 V (8,5 V al motor)", dict(v_motor="8.5")),
-    ("lipo126", "LiPo 12,6 V (10,6 V al motor)", dict(v_motor="10.6")),
-    ("zm010", "zona muerta 0,10 (no 0,14)", dict(zona_muerta="0.10")),
-    ("zm018", "zona muerta 0,18", dict(zona_muerta="0.18")),
-    ("mu05", "piso resbaloso (mu 0,5)", dict(mu="0.5")),
-    ("mu04", "piso muy resbaloso (mu 0,4)", dict(mu="0.4")),
-    ("servos80", "servos con 80 % del par", dict(servo="0.8")),
-    ("x35", "arranca a 35 cm del borde", dict(x0="0.35")),
-    ("x60", "arranca a 60 cm del borde", dict(x0="0.60")),
-    ("ref+075", "equilibrio corrido +0,75°", dict(d_ref="0.75")),
-    ("ref-075", "equilibrio corrido -0,75°", dict(d_ref="-0.75")),
-    ("ref+15", "equilibrio +1,5° (IMU movida)", dict(d_ref="1.5")),
-    ("ref-15", "equilibrio -1,5° (IMU movida)", dict(d_ref="-1.5")),
-    ("alto16", "escalón de 16 cm", dict(alto="0.16")),
-    ("alto20", "escalón de 20 cm", dict(alto="0.20")),
-    ("rotor2", "inercia de los rotores x 2", dict(f_rotor="2")),
-    ("rotor05", "inercia de los rotores x 0,5", dict(f_rotor="0.5")),
-    ("inercia15", "inercia del cuerpo x 1,5", dict(f_inercia="1.5")),
-    ("inercia07", "inercia del cuerpo x 0,7", dict(f_inercia="0.7")),
-    ("ruido", "otro ruido en los sensores", dict(semilla="5")),
-    ("c1", "11,1 V y equilibrio -0,75°", dict(v_motor="9.1", d_ref="-0.75")),
-    ("c2", "12,6 V y equilibrio +0,75°", dict(v_motor="10.6", d_ref="0.75")),
-    ("c3", "12,6 V y zona muerta 0,10", dict(v_motor="10.6", zona_muerta="0.10")),
-    ("c4", "11,1 V y zona muerta 0,18", dict(v_motor="9.1", zona_muerta="0.18")),
-    ("c5", "10,5 V y equilibrio -0,75°", dict(v_motor="8.5", d_ref="-0.75")),
-]
 LIPOS = [("10,5", "8.5"), ("11,1", "9.1"), ("11,9", "9.9"), ("12,6", "10.6")]
 V_SALIDA = ["0.44", "0.46", "0.48", "0.50", "0.52", "0.54", "0.56", "0.58", "0.60", "0.62"]
 
-# Cómo terminó: bien (parado con menos de 25° de desvío), la cabina pegó, se cayó, abortó
-CLASES = ["bien", "choca", "se cae", "aborta"]
 COLORES = ListedColormap(["#7fc97f", "#fdae61", "#d7191c", "#bdbdbd"])
 
 
 def correr(trabajo):
     archivo, params = trabajo
     cmd = [BANCO, "caso"] + ["%s=%s" % kv for kv in params.items()] + ["csv=" + archivo]
-    r = subprocess.run(cmd, capture_output=True, text=True, cwd=RAIZ)
-    linea = ([l for l in r.stdout.splitlines() if l.startswith("caso a mano")] or [""])[-1]
-    num = lambda clave: float((re.search(clave + r"\s+(-?[\d.]+)", linea) or [None, "nan"])[1])
-    final = linea[47:55].strip() or "?"
-    motivo = (re.search(r"\((.*)\)\s*$", linea) or [None, ""])[1]
-    return dict(final=final, sale=num("sale"), toca=num("toca"), fin=num("fin"),
-                desvio=num("desvio"), motivo=motivo)
-
-
-def clase(r):
-    if r["final"] == "PARADO" and r["desvio"] < 25:
-        return 0
-    return {"CHOCA": 1, "SE CAE": 2, "ABORTA": 3}.get(r["final"], 2)
+    return resultado(subprocess.run(cmd, capture_output=True, text=True, cwd=RAIZ).stdout)
 
 
 def texto_celda(r):

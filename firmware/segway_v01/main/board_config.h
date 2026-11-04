@@ -6,7 +6,7 @@
 // --- Temporización ---
 #define CONTROL_PERIOD_MS       5           // 200 Hz
 #define COMMS_PERIOD_MS         20          // 50 Hz
-#define CONTROL_STACK           4096
+#define CONTROL_STACK           8192        // 3/11: con la maniobra y la parada (4096 justo)
 #define COMMS_STACK             8192        // printf con float y los paquetes UDP usan bastante pila
 
 // --- IMU ---
@@ -198,38 +198,50 @@
 #define MOV_X_ATRASO_MAX_M      0.30f       // si el robot no llega a la consigna (motores al tope), la de
                                             // posición no se le adelanta más que esto: al soltar el
                                             // joystick no sale corriendo a alcanzarla
-#define MOV_GIRO_MAX            0.15f       // fracción de PWM sumada y restada con giro = 1
+#define MOV_GIRO_MAX            0.15f       // fracción de PWM sumada y restada con giro = 1 (en vivo:
+                                            // set giromax). 3/11 se probó 0,30 para girar en el lugar
+                                            // con R2/L2; se sacó (4/11) y vuelve a 0,15 para el stick
 #define MOV_GIRO_RATE           0.60f       // fracción de PWM por segundo
 
 // --- Sensor de distancia al piso y bajada de escalón (FW-016, "escalon" o △ del joystick) ---
 // Sharp GP2Y0A60SZLF (pin en board_pins.h): d = SHARP_K / (v_sensor - SHARP_V0), con v_sensor la
 // tensión antes del divisor. Valores de la ficha (3,6 V a 10 cm, 0,6 V a 150 cm): CALIBRAR contra
 // el piso real (sesion_placa.py calibrar_sensor). Debajo de 10 cm la curva se dobla: no vale.
-#define SHARP_DIVISOR           0.6f        // R42 / (R41 + R42) = 15k / 25k
+#define SHARP_DIVISOR           0.6f        // R42 / (R41 + R42) = 15k / 25k. SIN el divisor la salida
+                                            // llega a 3,6 V a 10 cm: más de lo que aguanta el pin (3,3 V)
 #define SHARP_K                 0.3214f     // [V m]
 #define SHARP_V0                0.386f      // [V]
 #define SHARP_D_MIN_M           0.10f
 #define SHARP_D_MAX_M           1.50f
 // Geometría para saber dónde pega el haz (docs/gestion/2026-11-03-plan-maniobra-escalon.md):
 // eje de la rueda respecto del eje del servo (A), en ejes del cuerpo (x adelante, z arriba), según
-// la pata. Del modelo de cuatro barras (la rueda baja casi en línea recta, 107 mm en 30°).
+// la pata. Del modelo AJUSTADO al robot (VAL-302, 3/11: la pata real está 10,4° más estirada que
+// en el CAD; el eje baja 100 mm de 0 a 30°). Con una regla: la altura de A (el eje del servo)
+// sobre el piso es el radio de la rueda menos PATA_EJE_Z_M: 119 mm en 0° y 218 mm en 30°.
 #define PATA_TABLA_DEG          { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
-#define PATA_EJE_X_M            { 0.0003f, 0.0f, -0.0002f, -0.0001f, 0.0001f, 0.0002f, -0.0002f }
-#define PATA_EJE_Z_M            { -0.0372f, -0.0580f, -0.0770f, -0.0949f, -0.1119f, -0.1282f, -0.1442f }
+#define PATA_EJE_X_M            { -0.0002f, -0.0001f, 0.0001f, 0.0002f, -0.0002f, -0.0020f, -0.0072f }
+#define PATA_EJE_Z_M            { -0.0785f, -0.0963f, -0.1132f, -0.1295f, -0.1455f, -0.1614f, -0.1781f }
 // Sensor respecto de A y ángulo del haz desde la vertical del cuerpo hacia atrás. PROPUESTA del
 // 3/11 (cara de atrás de la cabina, 2 cm arriba de A, 40°): MEDIRLO cuando se monte.
 #define SENSOR_PISO_X_M         -0.0525f
 #define SENSOR_PISO_Z_M         0.020f
 #define SENSOR_PISO_ANG_DEG     40.0f
-// La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo: la tabla de equilibrio
-// medida el 2/11 contra la del modelo da 9,8° (±0,7° entre patas). Con la del 3/11 la diferencia
-// va de 9,9° (patas en 5°) a 6,2° (en 30°): con las patas altas el modelo no sigue al robot.
-#define IMU_DELTA_DEG           9.8f
+// Mientras el sensor no esté conectado (3/11), △ baja el escalón SIN buscarlo: el robot se pone con
+// el apoyo de la rueda a MAN_D_BORDE_M del borde (de espaldas al escalón). 0 = lo busca con el
+// sensor. En vivo: "man d_borde <m>" o "escalon <cm>"
+#define MAN_D_BORDE_M           0.30f
+// La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo ajustado (VAL-302, 3/11:
+// la tabla de equilibrio medida contra la del modelo; con el CAD sin ajustar eran 9,8°). Solo se
+// usa para saber dónde pega el haz.
+#define IMU_DELTA_DEG           4.2f
 
 // --- Seguridad ---
 #define TILT_LIMIT_DEG          30.0f       // corte por caída
 #define ARM_WINDOW_DEG          5.0f        // solo se arma cerca de la referencia
 #define ARM_RAMP_S              0.5f        // la salida máxima sube de 0 a u_max en este tiempo
 #define IMU_FAIL_LIMIT          5           // lecturas fallidas seguidas antes de FAULT
+#define IMU_BAJA_G_MAX_S        0.6f        // caída libre (|a| < 0,1 g) más larga que esto cuenta como
+                                            // falla: bajando un escalón dura ~0,2 s (3/11, antes cada
+                                            // muestra en caída libre era una falla y a los 25 ms FAULT)
 #define OVERRUN_LIMIT           10          // ciclos excedidos seguidos antes de FAULT
 #define SATURATION_LIMIT_CYCLES 200         // 1 s seguido con el comando en u_max -> FALLEN (29/10)

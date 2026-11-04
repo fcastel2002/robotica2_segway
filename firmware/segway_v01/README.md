@@ -120,15 +120,71 @@ joystick ([`Aplicacion/joystick.py`](../../Aplicacion/joystick.py)) 25 veces por
   Los cinco se cambian en vivo (`set vmax 0.4`, `set acel 0.5`, `set fren 0.3`, `set ff 0.8`,
   `set xlibre 1`) o desde la tarjeta Control de la interfaz, y `get` los muestra.
   El 2/11 se probó a fondo con 1,12 m/s, el 100 % de los motores: muy rápido.
-- **Giro**: `giro · MOV_GIRO_MAX` (0,15 de PWM) se suma a la rueda izquierda y se resta a la derecha
-  (positivo gira a la derecha), con rampa de 0,6 por segundo. Las dos quedan dentro del `umax` de ese
-  momento.
+- **Giro**: `giro · giromax` (0,30 de PWM desde el 3/11; antes 0,15, en vivo con `set giromax`) se
+  suma a la rueda izquierda y se resta a la derecha (positivo gira a la derecha), con rampa de 0,6
+  por segundo. Las dos quedan dentro del `umax` de ese momento. En el joystick, el stick (o el
+  derecho en la opción 2) y los gatillos: **R2 gira a la derecha y L2 a la izquierda sobre su eje**,
+  más rápido cuanto más se aprietan.
 - **Tiempo de espera**: sin un `mov` nuevo en **300 ms**, los dos vuelven a cero con sus rampas: el
   robot frena y se queda equilibrando donde esté.
 - Al armar y fuera de BALANCING todo vuelve a cero.
 
 Probado el 2/11 con el joystick a 0,2 m/s: sigue la consigna y al soltar se queda donde quedó. A más
 velocidad, subir el stick de a poco y mirar en Gráficos que `v_mms` siga a `vref_mms`.
+
+## Bajada de escalón (△), parada (□) y registro
+
+La maniobra de [`maniobra.c`](components/control/maniobra.c), la misma que corre la simulación
+([`simulacion/escalon/`](../../simulacion/escalon/README.md)), ya la llama el control
+([`control_task.c`](main/control_task.c)). Solo equilibrando:
+
+- **`escalon`** (△ del joystick): baja el escalón que tiene **atrás**. Mientras el sensor de
+  distancia no esté conectado, **no lo busca**: supone el borde a `d_borde` detrás del apoyo de la
+  rueda en el momento de apretar (30 cm, `MAN_D_BORDE_M`). `escalon 25` baja con el borde a 25 cm
+  (y lo deja para los △ siguientes); con el sensor, `man d_borde 0` y lo busca; `escalon medir` lo
+  busca, frena y dice a cuánto lo vio (para compararlo con una regla), sin bajar.
+  Patas a 15°, quieto, acelera hacia atrás para pasar el borde a ~0,5 m/s (pide 0,54), en el aire
+  estira a 30° y el LQR sigue mandando, al tocar patas a 25° y frena a 1 m/s². **Sin estirar las
+  patas antes del borde** (`d_salto -1`; el equipo no lo ve viable). La consola cuenta cada etapa
+  (`# bajada: ...`) y por qué abortó, si abortó.
+- **`man`** muestra los parámetros de la bajada y **`man <nombre> <valor>`** cambia uno (los nombres
+  del banco: `v_salida`, `pata_largada`, `pata_final`, `motor_vuelo`, `a_frenado`, `d_borde`, ...);
+  no en plena bajada. Se pierden al reiniciar.
+- **`parar`** (□): **parada controlada**: frena, baja las patas al mínimo (0°, a `velpata`), corre la
+  referencia hacia atrás (hasta `parinc`, 6°) y, con el cuerpo `parsuelta` (3°) detrás de su
+  equilibrio, desarma: se deja caer apenas para atrás desde lo más bajo. Cada etapa tiene 4 s como
+  mucho. **Sin probar todavía**: la primera vez, con alguien atajando (y ojo con lo que haya en la
+  cara de atrás: ahí va el sensor de distancia).
+- **◯ (`disarm`) corta cualquiera de las dos**; si se cae (FALLEN) o hay falla, también.
+- **Caída libre**: desde el 3/11 una lectura de la IMU con menos de 0,1 g no es una falla (antes, a
+  los 25 ms de caída el robot pasaba a FAULT en el aire): el ángulo sigue con el giróscopo y recién
+  más de 0,6 s seguidos cuentan como falla (`IMU_BAJA_G_MAX_S`). En el vuelo de la bajada el
+  supervisor no corta por inclinación.
+- **Registro**: cada bajada se graba a 200 Hz (8 s: ángulo, velocidad angular, x, v, consigna,
+  comando, patas, |a|, sensor, referencia) y al terminar el robot lo manda solo (líneas `#r`, ~11 s
+  sin telemetría; `escalon datos` lo vuelve a mandar). [`Aplicacion/puente.py`](../../Aplicacion/puente.py)
+  lo guarda en `Aplicacion/registros/bajada_<fecha>.csv` y
+  [`comparar_prueba.py`](../../simulacion/escalon/comparar_prueba.py) lo compara con la simulación
+  de la misma bajada (figura y tabla en `simulacion/escalon/resultados/pruebas/`).
+- **Sensor de distancia** (Sharp GP2Y0A60SZLF, Pololu #2474, en GPIO3): se lee en cada ciclo y la
+  telemetría trae `sharp_mv`, `dist_mm` y dónde pega el haz respecto del apoyo de la rueda
+  (`haz_x_mm` hacia atrás, `haz_z_mm` de alto: en piso plano ~0). No hace falta instalar nada: es una
+  entrada analógica. **Tiene que ir con el divisor 10k/15k** (como J27): sin él, a 10 cm la salida
+  llega a 3,6 V y el pin aguanta 3,3 V. Calibración en vivo: `set sharpk`, `set sharpv0`,
+  `set sharpdiv`; dónde está montado: `set sensx`, `set sensz` (cm, respecto del eje del servo, x
+  adelante, z arriba) y `set sensang` (grados del haz desde la vertical hacia atrás). `get` los
+  muestra.
+
+Probar la bajada sin el sensor (escalón de 10,5 cm, 3/11; en la simulación anda en las 24
+variaciones, también puesto 6 cm más cerca o más lejos y con escalones de 9 a 12 cm):
+
+1. LiPo cargada (anotar la tensión). Abajo del escalón, 1 m libre.
+2. El robot arriba, **de espaldas al escalón y derecho** (las dos ruedas a la misma distancia del
+   borde: si una cae antes, se tuerce), con el apoyo de las ruedas a **30 cm del borde**.
+3. ✕ para armar; que se quede quieto unos segundos y volver a medir: si se corrió, desarmar y
+   acomodarlo (o `escalon <cm>` con la distancia de verdad).
+4. Alguien con las manos cerca, sin tocarlo. △. Mejor filmarlo de costado, en cámara lenta.
+5. Al terminar, el registro llega solo; después `python simulacion/escalon/comparar_prueba.py --lipo <V>`.
 
 ## LQR
 
