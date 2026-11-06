@@ -36,15 +36,15 @@
 // El L298N es lento para conmutar: si calienta mucho o pierde par con PWM bajo, bajar a 5-10 kHz.
 #define MOTOR_PWM_FREQ_HZ       20000       // inaudible
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
-#define MOTOR_L_INVERT          1           // poner en 1 si la rueda gira al revés
-#define MOTOR_R_INVERT          1           // 29/10: con 1 las ruedas giraban al revés una de otra
+#define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
+#define MOTOR_R_INVERT          0           // 29/10: con 1 las ruedas giraban al revés una de otra
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
 // (guía en firmware/docs/prueba_encoders.md). 29/10, medido con los motores en el aire: con
 // motor positivo (adelante) las dos cuentas suben con estos signos (los pines van cruzados en board_pins.h).
-#define ENC_L_INVERT            1
-#define ENC_R_INVERT            0
+#define ENC_L_INVERT            0
+#define ENC_R_INVERT            1
 #define ENC_GLITCH_NS           1000        // descarta pulsos de menos de 1 us (ruido)
 // Odometría para el LQR (components/control/odometry.h)
 #define ENC_COUNTS_PER_REV      899.0f      // cuentas x4 por vuelta de RUEDA. MEDIDO el 29/10: 8990 en
