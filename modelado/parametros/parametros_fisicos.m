@@ -200,6 +200,11 @@ function o = parametros_fisicos(variante)
   % grados en la referencia a cuatro alturas, repetida en el simulador con el codigo del firmware.
   % Cada linea: el valor nuevo, el de antes y de donde sale.
   if strcmpi(variante, 'ajustada')
+    o.m_carga = 234;        % 5/11: el robot entero con la LiPo y las ruedas con goma espuma pesa 1196 g
+                            % (medido por el equipo) y el modelo 962: faltan 234 g, seguramente la LiPo
+                            % (los 542 g de la caja se pesaron el 21/10 sin ella) y cables. Van en la
+                            % cabina, y la caja se corre (corr_caja) para que el centro de masa de todo
+                            % siga dando la curva de equilibrio medida con la IMU (que no cambio)
     o.pata_cero = 20.4;     % antes 10 (supuesto). La curva de equilibrio solo cierra (0.10 grados rms
                             % contra 1.17) con la pata real 10.4 grados mas estirada que la supuesta, y la
                             % onda cuadrada lo confirma (sobre todo con las patas bajas). VERIFICAR con una
@@ -207,9 +212,15 @@ function o = parametros_fisicos(variante)
     o.th = [309.5 339.7];  % antes [320 350]: el recorrido 0-30 del firmware cae en 20.4-50.4 del
                             % modelo, cerca del punto muerto del cuatro barras (~57): por eso con 30 se
                             % sacude y se cae
-    o.corr_caja = [19.3 0]; % antes [0 0]: el centro de masa de la caja 19 mm mas atras que el reparto
-                            % estimado de los 542 g (pesar la LiPo y ver donde va)
+    o.corr_caja = [24.7 -8.2]; % antes [0 0]: el centro de masa de la caja (con los 234 g) 24,7 mm mas
+                            % atras y 8,2 mas abajo que el del reparto estimado, para que con 1196 g el
+                            % equilibrio siga dando lo medido (0.12 grados rms) con la IMU y la pata del
+                            % 3/11 (ajustar_equilibrio.m). (3/11, sin los 234 g: [19.3 0])
     o.imu_delta_deg = 4.2;  % antes 9.8: con la pata y la caja corregidas, la IMU esta 4.2 grados inclinada
+    o.k_contacto = 8500;    % antes 30e3 (supuesto): 5/11, rueda de 80 mm con goma espuma apretada
+                            % contra una balanza: 78,2 mm con 1,5 kg y 76,5 con 3 kg (8,2-8,7 kN/m, lineal)
+    o.c_contacto = 20;      % antes 60. SUPUESTO (falta la prueba de soltarlo y ver cuanto rebota):
+                            % ~15 % del critico con el robot encima; las simulaciones lo barren de 4 a 100
     o.N = 899/(4*11);       % antes 20 (nominal): 20.43, medido con el encoder (FW-009)
     o.w_nl_motor_rpm = 7000;% antes 6000: es la version de 350 rpm (STEP "DC12V350RPM"); MED-005 midio
                             % 1.37 veces la velocidad por PWM del modelo

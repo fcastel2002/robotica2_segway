@@ -19,6 +19,8 @@ resultados/un_escalon/*
 !resultados/un_escalon/*.png
 !resultados/un_escalon/robustez.csv
 !resultados/un_escalon/ventana.csv
+!resultados/un_escalon/defecto.csv
+!resultados/un_escalon/goma.csv
 # y la escalera entera de las dos maneras (escalera.py): la figura y las tablas
 !resultados/escalera/
 resultados/escalera/*

@@ -1,5 +1,13 @@
-function ajustar_equilibrio()
+function ajustar_equilibrio(m_carga)
 %AJUSTAR_EQUILIBRIO  Qué hay que corregir del modelo para que dé el equilibrio medido el 3/11.
+%
+%  ajustar_equilibrio()        con la carga extra de la variante 'ajustada' (5/11: los 234 g que le
+%                              faltaban al modelo para pesar los 1196 g medidos con la LiPo)
+%  ajustar_equilibrio(0)       como el 3/11 (sin la carga: el modelo de 962 g)
+%
+%  5/11: la curva medida no cambia con el peso (es el centro de masa de todo, LiPo incluida), y la
+%  IMU y el cero de la pata no dependen del peso: con la carga quedan como el 3/11 y solo se corre la
+%  caja (adelante/atrás y arriba/abajo). Es el último caso y el que se grafica como 'ajustada'.
 %
 %  Medido (firmware/docs/equilibrio_patas_2026-11-03.csv, FW-017): el ángulo de la IMU con el
 %  robot quieto, de 0 a 30° de pata de a 2,5°, cuatro pasadas. En cada altura se toma el centro
@@ -38,6 +46,11 @@ end
 
 %% 2. Modelo: masas y cinemática de la segunda iteración
 f = parametros_fisicos('segunda_iteracion');
+if nargin < 1
+    fa = parametros_fisicos('ajustada');
+    m_carga = fa.m_carga;
+end
+f.m_carga = m_carga;                        % en la cabina (r_carga)
 G.AB = f.AB; G.beta = f.ang_AB; G.AD = f.k_AD*f.s_barras; G.BC = f.k_BC*f.s_barras;
 G.CD = f.k_CD*f.s_barras; G.DP = f.k_DP*f.s_barras; G.delta = f.delta;
 n = f.n_servos;
@@ -58,9 +71,9 @@ m_eje = n*1e-3*(f.m_motor + f.m_rueda);
         L = 1e-3*[-Lm(:, 1), Lm(:, 2)];
     end
 
-% los parametros libres (libre) en y, el resto como en x0
+% los parametros libres (libre) en y, el resto como en base
     function x = armar(y)
-        x = x0;
+        x = base;
         x(libre) = y;
     end
 
@@ -75,13 +88,15 @@ m_eje = n*1e-3*(f.m_motor + f.m_rueda);
 
 %% 3. Ajustes: qué corrección explica lo medido
 x0 = [9.8 0 0 0 1];
+x_3nov = [4.17 0 0 10.41 1];                % la IMU y el cero de la pata del 3/11
 casos = {
-    'solo la IMU (como hasta ahora)',           [1 0 0 0 0]
-    'IMU + caja adelante/atras',               [1 1 0 0 0]
-    'IMU + caja adelante/atras y arriba/abajo', [1 1 1 0 0]
-    'IMU + cero de la pata',                   [1 0 0 1 0]
-    'IMU + caja adelante/atras + cero de la pata', [1 1 0 1 0]
-    'IMU + caja (x, z) + cero de la pata',     [1 1 1 1 0]
+    'solo la IMU (como hasta ahora)',           [1 0 0 0 0], x0
+    'IMU + caja adelante/atras',               [1 1 0 0 0], x0
+    'IMU + caja adelante/atras y arriba/abajo', [1 1 1 0 0], x0
+    'IMU + cero de la pata',                   [1 0 0 1 0], x0
+    'IMU + caja adelante/atras + cero de la pata', [1 1 0 1 0], x0
+    'IMU + caja (x, z) + cero de la pata',     [1 1 1 1 0], x0
+    'solo la caja (x, z), IMU y pata del 3/11', [0 1 1 0 0], x_3nov
     };
 opciones = optimoptions('lsqnonlin', 'Display', 'off', 'FunctionTolerance', 1e-12, 'StepTolerance', 1e-10);
 fprintf('Medido (centro subiendo/bajando): %s\n\n', mat2str(round(medido', 2)));
@@ -89,8 +104,9 @@ fprintf('%-46s %7s %7s %7s %7s   rms    max\n', 'corrección', 'IMU', 'dx mm', '
 resultados = cell(size(casos, 1), 1);
 for k = 1:size(casos, 1)
     libre = logical(casos{k, 2});
+    base = casos{k, 3};
     res = @(y) modelo(armar(y), patas) - medido;
-    y = lsqnonlin(res, x0(libre), [], [], opciones);
+    y = lsqnonlin(res, base(libre), [], [], opciones);
     x = armar(y);
     e = res(y);
     resultados{k} = x;
@@ -100,9 +116,15 @@ end
 %% 4. Para graficar
 pf = (0:0.5:30)';
 original = [9.8 0 0 0 1];                  % el modelo como estaba (IMU 9.8 del 2/11)
-salida = table(pf, modelo(original, pf), modelo(resultados{1}, pf), modelo(resultados{5}, pf), ...
+ajustada = modelo(resultados{end}, pf);
+solo_imu = modelo(resultados{1}, pf);
+% el de antes, sin la carga (el último ítem de la caja): modelo() usa estas dos
+m_con_carga = m_caja;  rG_con_carga = rG;   % (ojo: modelo() ya usa el nombre mc)
+m_caja = sum(m(1:end-1));  rG = sum(m(1:end-1).*r(1:end-1, :), 1)/m_caja;
+salida = table(pf, modelo(original, pf), solo_imu, ajustada, ...
     'VariableNames', {'pata', 'original', 'solo_imu', 'ajustada'});
 e = modelo(original, patas) - medido;
+m_caja = m_con_carga;  rG = rG_con_carga;
 fprintf('\nEl modelo como estaba (IMU 9.8): rms %.2f, max %.2f grados\n', sqrt(mean(e.^2)), max(abs(e)));
 writetable(salida, fullfile(aqui, 'ajuste_equilibrio.csv'));
 writetable(table(patas, medido), fullfile(aqui, 'equilibrio_medido_centro.csv'));

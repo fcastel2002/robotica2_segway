@@ -615,6 +615,9 @@ class PuenteJoystick:
             elif accion == "parar":
                 comandos_a_enviar.append("parar")
                 self._ultimo_evento = "□ → Parada controlada (parar)"
+            elif accion == "grabar":
+                comandos_a_enviar.append("grabar")
+                self._ultimo_evento = "SHARE → Grabar 8 s a 200 Hz (grabar)"
             evento = self._ultimo_evento
 
         for cmd in comandos_a_enviar:
@@ -634,6 +637,8 @@ class PuenteJoystick:
 
         if botones_actuales.get("options") and not prev.get("options"):
             self.ejecutar_accion("toggle_modo")
+        if botones_actuales.get("share") and not prev.get("share"):
+            self.ejecutar_accion("grabar")          # 5/11: soltar el robot y medir el rebote
 
         if botones_actuales.get("r1") and not prev.get("r1"):
             self.ejecutar_accion("servo_subir")

@@ -289,7 +289,7 @@ def un_escalon():
     # Sin programa de velocidad: después de tocar frena con a_frenado (con el programa del genético
     # seguía hacia atrás a 0,78 m/s hasta 4 s después: 3 m más allá del escalón)
     # Las ruedas sostenidas en el aire (motor_vuelo 0): con el LQR en el aire el robot se cayó en la
-    # primera prueba (3/11) y el modelo no lo reproduce. La goma, la estimada con espuma (4/11).
+    # primera prueba (3/11) y el modelo no lo reproduce. La goma, la medida con espuma (5/11).
     genes = {k: g for k, g in GENES.items() if k not in ("prog", "v_toca", "a_toca", "motor_vuelo")}
     ISLAS = {"uno": dict(genes=genes, fijos=dict(escalones="1", ultimo="0", alto="0.105", d_borde="0.30",
                                                  x0="0.30", motor_vuelo="0", **GOMA_NOMINAL),
@@ -310,12 +310,13 @@ def un_escalon():
              kx_largada=0.4, kx_aterrizaje=0.3),
     ]}
     PESOS = {k: 0.5 for k, _, _ in VARIACIONES_UN_ESCALON}
-    PESOS.update({"goma_dura": 1.5, "goma_blanda": 2, "goma_rebota": 2.5, "goma_rebota2": 2.5, "zm025": 2,
-                  "rebota_ref+1": 1.5, "rebota_ref-1": 1.5, "rebota_lipo": 1.5, "rebota_zm025": 2})
+    PESOS.update({"goma_dura": 1.5, "goma_blanda": 2, "goma_rebota": 2.5, "goma_rebota2": 2.5, "zm021": 2,
+                  "rebota_ref+1": 1.5, "rebota_ref-1": 1.5, "rebota_lipo": 1.5, "rebota_zm021": 2,
+                  "goma_amortigua": 1.5, "blanda_rebota": 1, "masa+10": 1, "masa-10": 1})
     PESOS.update({"nominal": 3, "alto5": 2, "alto8": 2, "alto12": 2, "alto14": 1.5, "alto166": 1.5, "lipo122": 2,
                   "lipo118": 1, "zm010": 1, "zm018": 1, "mu-": 1, "mu+": 1, "ref+05": 1.5, "ref-05": 1.5,
                   "ref+1": 0.75, "ref-1": 0.75, "x27": 1.5, "x33": 1.5, "ruido1": 1, "ruido2": 1})
-    ETAPA1 = ["goma_rebota2", "rebota_zm025", "zm025", "x27", "ref+05"]
+    ETAPA1 = ["goma_rebota2", "rebota_zm021", "rebota_ref+1", "x27", "ref-1"]
     ETAPA2 = [k for k, _, _ in VARIACIONES_UN_ESCALON if k not in ETAPA1 + ["nominal"]]
     W = sum(PESOS.values())
     VAR = {k: e for k, _, e in VARIACIONES_UN_ESCALON}

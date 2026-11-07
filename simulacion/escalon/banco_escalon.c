@@ -865,6 +865,101 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    if (argc > 1 && strcmp(argv[1], "rebote") == 0) {
+        // rebote [alto=0.03] [pata=15] [k_rueda=] [c_rueda=] [servo=1] [csv=nombre]: el robot
+        // desarmado (sin motor) y sostenido derecho, en su equilibrio, con las ruedas a alto [m] del
+        // piso, se suelta: cuánto rebota (la goma y las patas). Como lo ve el robot con "grabar": |a|
+        // de la IMU cada 5 ms (cada eje recortado a ±4 g y con el filtro del MPU6050), y los tramos en
+        // el aire (|a| < UMBRAL_AIRE). Para comparar con el robot (rebote.py)
+        const double UMBRAL_AIRE = 3.0, TOPE = 4.0 * G;     // [m/s2]
+        double alto = 0.03, pata = 15.0, k = 0.0, c = 0.0, f_servo = 1.0;
+        const char *archivo = NULL;
+        for (int i = 2; i < argc; i++) {
+            if (strncmp(argv[i], "alto=", 5) == 0) alto = atof(argv[i] + 5);
+            else if (strncmp(argv[i], "pata=", 5) == 0) pata = atof(argv[i] + 5);
+            else if (strncmp(argv[i], "k_rueda=", 8) == 0) k = atof(argv[i] + 8);
+            else if (strncmp(argv[i], "c_rueda=", 8) == 0) c = atof(argv[i] + 8);
+            else if (strncmp(argv[i], "servo=", 6) == 0) f_servo = atof(argv[i] + 6);
+            else if (strncmp(argv[i], "csv=", 4) == 0) archivo = argv[i] + 4;
+        }
+        planta_t Pr = planta_base();
+        Pr.servo_par_max *= f_servo;
+        if (k > 0) Pr.k_rueda = k;
+        if (c > 0) Pr.c_rueda = c;
+        piso_t plano = { 0.18, 0.25, 0, 0.0 };
+        double q[PP_NQ], dq[PP_NQ];
+        estado_apoyado(&Pr, pata / GRADOS, 0.0, q, dq);
+        q[PP_Z] += alto;
+        entrada_planta_t e = { 0.0, pata / GRADOS };    // sin tensión al motor; los servos sostienen
+        salida_planta_t sal;
+        FILE *csv = NULL;
+        if (archivo) {
+            char r[256];
+            snprintf(r, sizeof r, "simulacion/escalon/resultados/%s.csv", archivo);
+            csv = fopen(r, "w");
+            if (csv) fprintf(csv, "t_s,eje_z_mm,n_rueda_N,acc_ms2,acc_sin_tope_ms2,en_el_aire,th_deg,pata_deg,"
+                              "par_servo_Nm\n");
+        }
+        double a_mpu = 1.0 - exp(-H * 2 * PI * FC_MPU), f_fwd = 0.0, f_up = G, g_fwd = 0.0, g_up = G;
+        double a_max = 0.0, par_max = 0.0, pata_min = pata;
+        // tramos en el aire, de verdad (la rueda sin tocar) y como los ve la IMU [s]
+        double vuelos[16], vuelos_imu[16], t_desde = 0.0, t_imu = -1.0;
+        int nv = 0, nvi = 0;
+        bool apoyada = false;
+        const int pasos = (int)(1.5 / H);
+        for (int i = 0; i < pasos; i++) {
+            double t = i * H;
+            planta_rk4(&Pr, &plano, q, dq, &e, H, &sal);
+            double fa, ua;
+            acelerometro(q, dq, sal.ddq, &fa, &ua);
+            par_max = fmax(par_max, fabs(sal.par_servo));
+            pata_min = fmin(pata_min, q[PP_A] * GRADOS);
+            f_fwd += a_mpu * (fmin(fmax(fa, -TOPE), TOPE) - f_fwd);     // lo que da el MPU6050
+            f_up += a_mpu * (fmin(fmax(ua, -TOPE), TOPE) - f_up);
+            g_fwd += a_mpu * (fa - g_fwd);                              // sin el tope
+            g_up += a_mpu * (ua - g_up);
+            if (sal.rueda_apoyada != apoyada) {
+                if (sal.rueda_apoyada && nv < 16) vuelos[nv++] = t - t_desde;
+                else t_desde = t;
+                apoyada = sal.rueda_apoyada;
+            }
+            if (i % SUBPASOS == SUBPASOS - 1) {             // una muestra cada 5 ms, como el registro
+                double ts = (i + 1) * H, n = sqrt(f_fwd * f_fwd + f_up * f_up);
+                double n_sin = sqrt(g_fwd * g_fwd + g_up * g_up);
+                a_max = fmax(a_max, n_sin);
+                bool aire = n < UMBRAL_AIRE;
+                if (aire && t_imu < 0) t_imu = ts;
+                if (!aire && t_imu >= 0) {
+                    if (nvi < 16) vuelos_imu[nvi++] = ts - t_imu;
+                    t_imu = -1.0;
+                }
+                if (csv) {
+                    pata_t p;
+                    pata_cinematica(q[PP_A], &p);
+                    double ce = cos(q[PP_TH]), se = sin(q[PP_TH]);
+                    double eje_z = q[PP_Z] - p.px * se + p.pz * ce;
+                    fprintf(csv, "%.3f,%.2f,%.1f,%.2f,%.2f,%d,%.2f,%.2f,%.2f\n", ts, (eje_z - Pr.r_rueda) * 1e3,
+                            sal.n_rueda, n, n_sin, aire, q[PP_TH] * GRADOS, q[PP_A] * GRADOS, sal.par_servo);
+                }
+            }
+        }
+        if (csv) fclose(csv);
+        printf("rebote: suelto a %.0f mm, patas %.0f, goma %.0f N/m y %.0f N s/m, servos x %.2f\n", alto * 1e3,
+               pata, Pr.k_rueda, Pr.c_rueda, f_servo);
+        printf("  en el aire (de verdad) [ms]:");
+        for (int i = 0; i < nv; i++) printf(" %.0f", vuelos[i] * 1e3);
+        printf("\n  en el aire (IMU, |a| < %.0f m/s2) [ms]:", UMBRAL_AIRE);
+        for (int i = 0; i < nvi; i++) printf(" %.0f", vuelos_imu[i] * 1e3);
+        printf("\n  |a| máxima %.1f g (el MPU6050 está en ±4 g); par de los dos servos hasta %.1f N m; pata"
+               " hasta %.1f\n", a_max / G, par_max, pata_min);
+        printf("json {\"vuelos_ms\": [");
+        for (int i = 0; i < nv; i++) printf("%s%.1f", i ? ", " : "", vuelos[i] * 1e3);
+        printf("], \"vuelos_imu_ms\": [");
+        for (int i = 0; i < nvi; i++) printf("%s%.0f", i ? ", " : "", vuelos_imu[i] * 1e3);
+        printf("], \"a_max_g\": %.2f, \"par_servo_max\": %.2f, \"pata_min\": %.2f}\n", a_max / G, par_max, pata_min);
+        return 0;
+    }
+
     if (argc > 1 && strcmp(argv[1], "caida") == 0) {
         // caida <pata> <alto_m> <vx> [pata_al_tocar] [factor_servo]: suelta el robot en el aire
         // sobre piso plano, sin control, para ver el golpe y cuánto lo hace cabecear

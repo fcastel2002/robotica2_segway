@@ -62,6 +62,8 @@ typedef enum {
     CMD_MOVE,           // "mov": value = avance, value2 = giro, de -1 a 1 (vencen a MOV_TIMEOUT_MS)
     CMD_ESCALON,        // "escalon" (△): baja el escalón de atrás; value = 1: solo mide el borde
     CMD_PARAR,          // "parar" (□): parada controlada (parada.h)
+    CMD_GRABAR,         // "grabar": el registro de 200 Hz durante 8 s, armado o no (soltarlo y medir
+                        // cuánto rebota la goma)
     CMD_MAN_PARAM,      // "man <nombre> <valor>": param = campo de maniobra_campo(), value
 } command_type_t;
 

@@ -52,6 +52,7 @@ El mando de PS4 se conecta por Bluetooth o USB a la PC. `Aplicacion/puente.py` i
 | **Botón `◯` (Círculo)** | **Desarme de emergencia** inmediato (corta motores y movimiento) | `mov 0.000 0.000` + `disarm` |
 | **Botón `△` (Triángulo)** | **Baja el escalón que tiene atrás** (solo equilibrando). Sin el sensor, con el borde a 30 cm detrás del apoyo de la rueda (`man d_borde` en el firmware) | `escalon` |
 | **Botón `□` (Cuadrado)** | **Parada controlada**: frena, baja las patas al mínimo y se deja caer apenas para atrás con los motores apagados | `parar` |
+| **Botón `SHARE`** | **Graba 8 s a 200 Hz** (armado o no) y el robot manda el registro al terminar; el puente lo guarda en `registros/`. Para soltar el robot y medir cuánto rebota (5/11) | `grabar` |
 
 > **Seguridad de las patas (0° a 30° estricto, de la pata):** desde el 2/11 el firmware pide ángulos de **pata** y le suma a cada servo su cero (la derecha tiene 5°, `SERVO_R_ZERO_DEG`). El 3/11 la pata derecha se corrió 5° en el brazo del servo, así que las dos patas van de 0° a 30° (el servo derecho llega a 35°). Tanto `joystick.py`, como la interfaz web (`mando.js` y `banco.js`) y el firmware (`SERVO_HARD_MIN_DEG = 0.0f`, `SERVO_HARD_MAX_DEG = 30.0f` en `board_config.h`, de la pata) acotan el ángulo estrictamente al rango **0° a 30°** para proteger el mecanismo de cuatro barras.
 

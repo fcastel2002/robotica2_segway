@@ -10,7 +10,8 @@ const MAX_MENSAJES = 300;
 // Columnas del CSV de firmware/segway_v01 (CSV_HEADER en main/comms_task.c). Si llega otro
 // encabezado, lo reemplaza.
 const COLUMNAS_FIRMWARE = 't_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,'
-  + 'm_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,vref_mms,giro,ref_deg';
+  + 'm_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,vref_mms,giro,ref_deg,'
+  + 'sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm';
 const CLAVES_TIEMPO = ['t', 't_ms'];  // milisegundos del robot
 // Funciones (muestra, t, textos) llamadas con cada muestra antes de guardarla: pueden agregar
 // columnas calculadas a la muestra, que se grafican y graban como las demás (banco.js).
@@ -131,7 +132,11 @@ function borrarHistoria() {
 
 function conectarPuente() {
   const es = new EventSource('eventos');
-  es.onopen = () => estado('puente conectado', 'ok');
+  // Como por USB: "tlm on" hace que el robot vuelva a mandar el encabezado (si se reinició, se perdió)
+  es.onopen = () => {
+    estado('puente conectado', 'ok');
+    fetch('comando', { method: 'POST', body: 'tlm on' }).catch(() => {});
+  };
   es.onerror = () => estado('sin puente, reintentando… (¿está corriendo puente.py?)', 'error');
   es.onmessage = (e) => e.data.split('\n').forEach(procesarLinea);
   const enviar = async (texto) => {

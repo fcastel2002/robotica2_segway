@@ -65,25 +65,31 @@ VARIACIONES_ENSAYO = [
 ]
 
 # La goma de las ruedas (k_rueda, c_rueda de las dos; el modelo tenía 60000 N/m y 120 N s/m: casi
-# rígida). 3/11: huecas, rebotaban; 4/11: con goma espuma adentro. Hasta medirlas (balanza y prueba
-# de caída), una banda: la nominal es una estimación con espuma y se prueba más dura, más blanda y
-# con más rebote (amortiguamiento chico).
-GOMA_NOMINAL = dict(k_rueda="10000", c_rueda="40")
+# rígida). 3/11: huecas, rebotaban; 4/11: con goma espuma adentro. 5/11, MEDIDA con una balanza
+# (parametros_fisicos.m 'ajustada'): 8500 N/m cada rueda, 17000 las dos, lineal de 1,5 a 3 kg. El
+# amortiguamiento falta (la prueba de soltarlo): 40 supuesto, y se barre de 6 a 100. La banda de k va
+# de 0,65 a 1,75 veces la medida (la espuma se puede endurecer al aplastarse más que en la balanza).
+GOMA_NOMINAL = dict(k_rueda="17000", c_rueda="40")
 VARIACIONES_GOMA = [
-    ("goma_dura", "goma más dura (30000; 80)", dict(k_rueda="30000", c_rueda="80")),
-    ("goma_blanda", "goma más blanda (5000; 30)", dict(k_rueda="5000", c_rueda="30")),
-    ("goma_rebota", "goma que rebota (8000; 12)", dict(k_rueda="8000", c_rueda="12")),
-    ("goma_rebota2", "goma blanda que rebota (4000; 8)", dict(k_rueda="4000", c_rueda="8")),
+    ("goma_dura", "goma más dura (30000; 60)", dict(k_rueda="30000", c_rueda="60")),
+    ("goma_blanda", "goma más blanda (11000; 30)", dict(k_rueda="11000", c_rueda="30")),
+    ("goma_rebota", "la medida, que rebota (17000; 10)", dict(k_rueda="17000", c_rueda="10")),
+    ("goma_rebota2", "más blanda y que rebota (11000; 6)", dict(k_rueda="11000", c_rueda="6")),
+    ("goma_amortigua", "la medida, muy amortiguada (17000; 100)", dict(k_rueda="17000", c_rueda="100")),
 ]
 # Más duras, para el escalón suelto (4/11: lo que importa es que no se caiga): el robot que arranca
 # lento (en la prueba del 3/11 casi no aceleró los primeros 0,6 s: más zona muerta) y la goma que
-# más rebota junto con otra cosa corrida
+# más rebota junto con otra cosa corrida. La zona muerta, 0,21: con el peso medido (5/11) y 0,22 o
+# más, el robot del modelo ya no se queda quieto antes de largar (va y viene a ±0,14-0,22 m/s) y la
+# maniobra aborta sin largar ("no se quedó quieto"; con 962 g aguantaba 0,25)
+REBOTA = dict(k_rueda="11000", c_rueda="6")
 VARIACIONES_DURAS = [
-    ("zm025", "zona muerta 0,25 (arranca lento)", dict(zona_muerta="0.25")),
-    ("rebota_ref+1", "goma que rebota y equilibrio +1°", dict(k_rueda="4000", c_rueda="8", d_ref="1")),
-    ("rebota_ref-1", "goma que rebota y equilibrio -1°", dict(k_rueda="4000", c_rueda="8", d_ref="-1")),
-    ("rebota_lipo", "goma que rebota y LiPo 11,8 V", dict(k_rueda="4000", c_rueda="8", v_motor="9.8")),
-    ("rebota_zm025", "goma que rebota y arranca lento", dict(k_rueda="4000", c_rueda="8", zona_muerta="0.25")),
+    ("zm021", "zona muerta 0,21 (arranca lento)", dict(zona_muerta="0.21")),
+    ("rebota_ref+1", "goma que rebota y equilibrio +1°", dict(REBOTA, d_ref="1")),
+    ("rebota_ref-1", "goma que rebota y equilibrio -1°", dict(REBOTA, d_ref="-1")),
+    ("rebota_lipo", "goma que rebota y LiPo 11,8 V", dict(REBOTA, v_motor="9.8")),
+    ("rebota_zm021", "goma que rebota y arranca lento", dict(REBOTA, zona_muerta="0.21")),
+    ("blanda_rebota", "goma de antes de medirla (4000; 8)", dict(k_rueda="4000", c_rueda="8")),
 ]
 
 # UN escalón suelto, el primero que se prueba en el robot: el de 10,5 cm (3/11), y se prueba de 5 a
@@ -98,6 +104,8 @@ VARIACIONES_UN_ESCALON = [
     ("alto166", "escalón de 16,6 cm (uno de la escalera)", dict(alto="0.166")),
     ("x27", "puesto a 27 cm del borde (3 cm más cerca)", dict(x0="0.27")),
     ("x33", "puesto a 33 cm del borde (3 cm más lejos)", dict(x0="0.33")),
+    ("masa+10", "la caja 10 % más pesada (pesada el 5/11: 1196 g)", dict(f_masa="1.1")),
+    ("masa-10", "la caja 10 % más liviana", dict(f_masa="0.9")),
 ] + [v for v in VARIACIONES_ENSAYO if v[0] not in ("nominal", "alto-", "alto+", "pisada-", "pisada+", "x35", "x60")] \
   + VARIACIONES_GOMA + VARIACIONES_DURAS
 

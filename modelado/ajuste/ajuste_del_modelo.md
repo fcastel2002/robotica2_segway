@@ -84,7 +84,8 @@ caídas en 30°.
    con el robot equilibrando. El modelo viejo da ~77 mm con las patas en 0° y ~184 mm en 30°; el
    ajustado, **~119 mm y ~218 mm**.
 2. **Balanza (puntos 2 y 3):** el robot completo con la LiPo, y la LiPo sola con dónde va montada.
-   Los 542 g de la caja se pesaron el 21/10, probablemente sin la LiPo.
+   Los 542 g de la caja se pesaron el 21/10, probablemente sin la LiPo. **5/11: el robot entero
+   pesa 1196 g** (sección 7); falta la LiPo sola y dónde va.
 
 ## 4. El LQR recalculado
 
@@ -137,10 +138,60 @@ llegan hasta 4,6 m/s² (contra 2,2-2,8 a 4 y 16 °/s). Los saltos fuertes que se
 del equilibrio eran del script (escalones de 0,5° cada 0,25 s, cada uno a 16 °/s); ahora manda un
 solo pedido por altura.
 
-## 7. Dónde está cada cosa
+## 7. El peso y la goma medidos (5/11)
+
+El equipo pesó el robot entero con la LiPo y las ruedas con goma espuma: **1196 g**. El modelo
+pesaba 962 g (los 542 g de la caja se pesaron el 21/10, sin la LiPo). Y apretó una rueda contra una
+balanza: 80 mm de diámetro sin carga, **78,2 mm con 1,5 kg y 76,5 mm con 3 kg**.
+
+La curva de equilibrio que se midió con la IMU es el centro de masa de todo el robot, con la LiPo
+(no cambia con el peso; el equipo lo confirmó). Lo que faltaba era cuánto pesa: los 234 g van en la
+cabina y la caja se corre lo justo para que el centro de masa de todo siga dando esa curva. La
+inclinación de la IMU y el cero de la pata no dependen del peso y quedan como el 3/11 (así el
+firmware no cambia).
+
+| Parámetro (`'ajustada'`) | Antes | Ahora | De dónde sale |
+|---|---|---|---|
+| `m_carga` (en la cabina) | 0 | **234 g** | 1196 − 962 g: la LiPo y cables, seguramente |
+| `corr_caja` | 19,3 mm atrás | **24,7 mm atrás y 8,2 mm abajo** | La curva de equilibrio con los 234 g, con la IMU y la pata del 3/11 ([`ajustar_equilibrio.m`](ajustar_equilibrio.m), último caso) |
+| `pata_cero`, `imu_delta_deg` | 20,4°, 4,2° | **sin cambio** | No dependen del peso |
+| `k_contacto` (cada rueda) | 30000 N/m (supuesto) | **8500 N/m** | La balanza: 8,2-8,7 kN/m entre 1,5 y 3 kg, lineal |
+| `c_contacto` (cada rueda) | 60 N s/m | **20 N s/m** | SUPUESTO: falta soltarlo y ver cuánto rebota (abajo) |
+
+Con eso la curva de equilibrio cierra casi igual que antes (**0,12° rms**, 0,26° máx; con 962 g,
+0,10°), y la onda cuadrada también (0,8-1,3° rms de cabeceo y 11-17 mm de x, contra 0,7-1,2° y
+11-16 mm con 962 g). La onda cuadrada no distingue el motor ni la inercia: con la grilla de
+[`ajustar_onda.py`](ajustar_onda.py) (par del motor ×1-1,3, zona muerta 0,10-0,18, inercia ×1-1,6)
+la mejor combinación mejora menos de un 2 %, así que el motor y la inercia quedan como estaban.
+Sin la LiPo, el modelo era un 20 % más liviano que el robot: tocaba el piso con un 20 % menos de
+energía.
+
+**El LQR con 1196 g** (mismo criterio que la sección 4: Bryson con 8°, R ×64): el péndulo cae un
+8 % más rápido (polo inestable 7,2-8,4 1/s contra 6,8-7,7) y las ganancias que da son las mismas
+salvo kphi, un 4-5 % más alta (3,89 a 5,13 de la pata 0 a la 30, contra 3,73 a 4,88 del firmware).
+Las del firmware sobre el modelo de 1196 g quedan con amortiguamiento 0,91-0,92 (1,00 sobre el de
+962 g) y aguantan 4,0-4,3 veces más ganancia antes de oscilar (4,2-4,3): **no hace falta
+cambiarlas** (además son las que equilibran al robot, que siempre pesó 1196 g). Si se quiere,
+kphi +5 % en `LQR_TABLA`.
+
+**Cuánto rebota: soltarlo.** La balanza da la rigidez de la goma, no cuánto rebota. Para eso: el
+robot desarmado, con las patas en 30° y sostenido derecho, se suelta con las ruedas a 5, 10, 15 y
+20 cm del piso (idea de Joaquín), con `grabar` en el firmware (8 s a 200 Hz; la IMU ve la caída, el golpe y lo que sigue) y
+filmándolo en cámara lenta. [`rebote.py`](../../simulacion/escalon/rebote.py) hace lo mismo en el
+banco (`banco_escalon rebote`) y busca el amortiguamiento de la goma y cuánto ceden los servos con
+que la simulación sigue al robot (probado con un registro armado desde el banco: los encuentra). Lo
+que predice el modelo de hoy: **las patas ceden 4-8° y la rueda casi no se despega del piso** (0-3
+mm), sea cual sea la goma; si los servos fueran 4 veces más duros (los reductores no se dejan mover
+tan fácil), las patas cederían 1,5-3° y el robot saltaría 5-59 mm según la altura y el
+amortiguamiento. O sea que la prueba dice las dos cosas: si las patas ceden como en el modelo y, si
+rebota, cuánto amortigua la goma; y de 5 a 20 cm, si la goma se endurece al aplastarse más (en el
+modelo se aplasta 5-11 mm; la balanza llegó a 3,5).
+
+## 8. Dónde está cada cosa
 
 - [`parametros_fisicos.m`](../parametros/parametros_fisicos.m): variante `'ajustada'`.
-- [`ajustar_equilibrio.m`](ajustar_equilibrio.m), [`fig_ajuste.py`](fig_ajuste.py) → `fig_ajuste.png`.
+- [`ajustar_equilibrio.m`](ajustar_equilibrio.m), [`ajustar_onda.py`](ajustar_onda.py) (la onda cuadrada
+  contra el banco de identificación), [`fig_ajuste.py`](fig_ajuste.py) → `fig_ajuste.png`.
 - [`simulacion/segway_ajustado/`](../../simulacion/segway_ajustado/README.md): el **Simulink
   ajustado**, aparte del original (`simulacion/segway_completo`, sin cambios), y el LQR por altura.
 - [`simulacion/escalon/`](../../simulacion/escalon/README.md): `exportar_planta_ajustada.m` →
