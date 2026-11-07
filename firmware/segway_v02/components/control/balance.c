@@ -3,13 +3,18 @@
 #include <math.h>
 
 // Zona muerta: el motor no gira por debajo de cierto PWM. Se reescala [0, 1] a
-// [deadband, 1] para que pequeñas correcciones no se pierdan.
-static float compensar_zona_muerta(float u, float deadband, float u_limit)
+// [deadband, 1] para que pequeñas correcciones no se pierdan. Con rampa > 0 el agregado crece de 0 a
+// deadband mientras |u| va de 0 a rampa: sin el salto de 2·deadband en cada cruce por cero (7/11: con
+// el DRV8871 ese salto hacía vibrar al robot a ~10 Hz con deadband 0,04; con 0,02, menos compensación,
+// se hamacaba lento)
+static float compensar_zona_muerta(float u, float deadband, float rampa, float u_limit)
 {
     if (fabsf(u) < 1e-4f) {
         return 0.0f;
     }
-    float mag = deadband + (1.0f - deadband) * fabsf(u);
+    float agregado = deadband;
+    if (rampa > 0.0f && fabsf(u) < rampa) agregado *= fabsf(u) / rampa;
+    float mag = agregado + (1.0f - deadband) * fabsf(u);
     if (mag > u_limit) mag = u_limit;
     return copysignf(mag, u);
 }
@@ -104,14 +109,14 @@ float balance_lqr_step(balance_t *b, const balance_params_t *p, float x, float v
     u = filtrar(&b->notch2, notch_angosto_coeficientes, p->notch2_hz, dt, u);
     u = filtrar(&b->lowpass, pasabajos_coeficientes, p->lowpass_hz, dt, u);
     u = fminf(fmaxf(u, -u_limit), u_limit);
-    return compensar_zona_muerta(u, p->deadband, u_limit);
+    return compensar_zona_muerta(u, p->deadband, p->deadband_rampa, u_limit);
 }
 
 float balance_compensar(const balance_params_t *p, float u, float u_limit)
 {
     if (u_limit > p->u_max) u_limit = p->u_max;
     u = fminf(fmaxf(u, -u_limit), u_limit);
-    return compensar_zona_muerta(u, p->deadband, u_limit);
+    return compensar_zona_muerta(u, p->deadband, p->deadband_rampa, u_limit);
 }
 
 float balance_ref_auto(float theta_ref, float centro, float rango, float x_err, float v,

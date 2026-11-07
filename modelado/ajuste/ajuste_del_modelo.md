@@ -214,11 +214,67 @@ de siempre (Bryson con 8°, R ×64) daría ganancias un 15-20 % más bajas: kx 1
 nuevo: amortiguamiento 1,00 y margen de ganancia ×2,8-3,0 (las recalculadas, ×3,7). No hace falta
 cambiarlas para la primera prueba con la placa; si se lo ve nervioso, son esas.
 
-## 9. Dónde está cada cosa
+## 9. Con las PCB: lo que falta medir y cómo entra al modelo (7/11)
+
+Con las placas puestas cambió el peso (sin el L298N ni la protoboard, con las PCB), la IMU está en otro
+lugar (otra inclinación respecto de la caja) y ahora se mide la corriente de cada driver (INA219) y la
+tensión de la batería. Lo que el modelo todavía **supone** del motor sale de la ficha o es típico: la
+resistencia (10,28 Ω, deducida de la ficha), el rendimiento del reductor (0,75), la inercia del rotor
+(6e-7) y el roce. Los ensayos, en orden:
+
+| Ensayo | Cómo | Da | Entra en |
+|---|---|---|---|
+| Peso | El robot entero con la LiPo | `m_carga` = peso − 962 g | `'ajustada'` |
+| IMU contra la caja | Desarmado, la arista de la caja a plomo (nivel del celular): el `theta` que marca | La inclinación de la IMU nueva | `imu_delta_deg`, `IMU_DELTA_DEG` |
+| Equilibrio según la pata | [`sesion_placa.py`](../../firmware/herramientas/sesion_placa.py) `wifi medir_equilibrio 2.5 2` (~8 min) | La tabla de referencias y, con la IMU, el centro de masa | `REF_TABLA_*`, `corr_caja` ([`ajustar_equilibrio.m`](ajustar_equilibrio.m)`(m, csv, imu)`) |
+| Ruedas en el aire | [`ensayo_motor.py`](../../firmware/herramientas/ensayo_motor.py) `wifi aire` (~3 min) | Velocidad por voltio, corriente en vacío según la velocidad, arranque y parada | `w_nl_motor_rpm`, `i_vacio`, `tau_c`, `b_m`, `zona_muerta_motor` |
+| Rueda sostenida | `ensayo_motor.py wifi frenada l` y `r` | La resistencia (motor, driver y cables) y la caída de las escobillas | `R_m` |
+| Levantar un peso | `ensayo_motor.py wifi peso l <g> adelante` (un hilo en la goma) | El par que llega a la rueda por amper: el rendimiento | `eta_reductor` |
+| Escalones a 200 Hz | `ensayo_motor.py wifi escalon` (`grabar`, con corrientes y encoders) | La inercia del rotor | `J_r` |
+| LQR en el piso | `sesion_placa.py wifi identificar` con `set lqrpata 1` y con `2` | Cuál tabla anda mejor; la onda cuadrada con corrientes, para el modelo entero | `LQR_TABLA` |
+
+[`ajustar_motor.py`](ajustar_motor.py) junta los archivos del motor y da las líneas para `'ajustada'`
+(probado con datos armados de un motor conocido: encuentra R y Ke con menos de 1 % de error, el
+rendimiento justo, el roce con 5-15 % y la inercia con 6 %). Como el DRV8871 frena en el apagado del PWM, en ese tiempo la
+corriente del motor circula por abajo y no pasa por el INA219: la del motor es la del INA dividida por
+|PWM|, y la tensión media en el motor, |PWM| por la del driver.
+
+La curva de equilibrio sola **no separa** la inclinación de la IMU del centro de masa: con los datos del
+3/11, dejar libres la IMU y la caja (x, z) da la IMU en −0,9° y la caja 51 mm más atrás y 43 más arriba,
+apenas mejor que lo elegido (0,09° contra 0,12° rms). Por eso la IMU se mide aparte contra la caja; sin
+esa medida, `ajustar_equilibrio.m` ajusta solo la IMU con la caja del 5/11.
+
+Después de todo eso: `exportar_planta_ajustada.m` → `planta_escalon_ajustada.h`,
+[`ganancias_ajustadas.m`](../../simulacion/segway_ajustado/ganancias_ajustadas.m) → `LQR_TABLA_DRV` (hoy,
+provisoria con 1196 g: kx 1,25, kv 2,10-2,13, kphi 3,13-4,15, kw 0,33-0,54) y las simulaciones del escalón
+(hoy, con las dos tablas, 37 de 38 variaciones; desvío medio 6,0° y 6,4°).
+
+### Lo medido el 7/11
+
+| Parámetro (`'ajustada'`) | Antes | Medido | Cómo |
+|---|---|---|---|
+| Peso (`m_carga`) | 1196 g (234) | **1208 g (246)** | Balanza |
+| `R_m` | 10,28 Ω (ficha) | **7,81 Ω** (8,06 izq., 7,55 der.) | Rueda sostenida, 8-30 % de PWM; con el driver y los cables |
+| `w_nl_motor_rpm` (Ke en la rueda) | 6060 (0,3665) | **6348 (0,359)** | En el aire, con R e I medidas (0,349-0,368 según rueda y sentido) |
+| `i_vacio`, `tau_c`, `b_m` | 0,060 A, 0,0015, 1e-6 | **0,042 A, 0,00074, 3,3e-7** | Corriente en vacío: 40-45 mA + 0,2-0,55 mA por rad/s |
+| `J_r` | 6e-7 (típico) | **8,2e-7** | Escalones a 200 Hz en el aire: 24-25 ms; 4,0e-4 kg m² en la rueda |
+| `zona_muerta_motor` | 0,026 | **0,027** | Donde se anula la recta de velocidad en el aire |
+| `imu_delta_deg` | 4,2 | **4,8** (provisorio) | Curva de equilibrio del 7/11 con la caja del 5/11 (0,69° rms) |
+| `eta_reductor` | 0,75 | sin medir | Falta levantar un peso (`ensayo_motor.py peso`) |
+
+Con el motor medido el modelo da **29 % más par por voltio** (`beta_V` 0,0535 → 0,0689) y sigue la rueda en
+el aire casi exacto ([`fig_motor.png`](fig_motor.png)). La batería estaba al 56 %: no importa, porque cada punto
+usa la tensión medida en el driver. Lo que el modelo **todavía no explica** es el límite de ganancia: con el
+robot rígido, `LQR_TABLA_DRV` aguantaría ×3,4 antes de oscilar, y en el robot oscila con ×1,0 (4-6 Hz) y anda
+con ×0,6-0,8 (FW-025). Le falta algo mecánico de pocos Hz (las ruedas patinan en cada cambio de sentido, había
+juego en las ruedas, el cuatro barras en 30°) o retardo en la medida.
+
+## 10. Dónde está cada cosa
 
 - [`parametros_fisicos.m`](../parametros/parametros_fisicos.m): variante `'ajustada'`.
 - [`ajustar_equilibrio.m`](ajustar_equilibrio.m), [`ajustar_onda.py`](ajustar_onda.py) (la onda cuadrada
-  contra el banco de identificación), [`fig_ajuste.py`](fig_ajuste.py) → `fig_ajuste.png`.
+  contra el banco de identificación), [`fig_ajuste.py`](fig_ajuste.py) → `fig_ajuste.png`,
+  [`ajustar_motor.py`](ajustar_motor.py) (los ensayos del motor con los INA219) → `fig_motor.png`.
 - [`simulacion/segway_ajustado/`](../../simulacion/segway_ajustado/README.md): el **Simulink
   ajustado**, aparte del original (`simulacion/segway_completo`, sin cambios), y el LQR por altura.
 - [`simulacion/escalon/`](../../simulacion/escalon/README.md): `exportar_planta_ajustada.m` →

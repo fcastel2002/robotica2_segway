@@ -94,7 +94,7 @@ fprintf('Tabla medida - eso: %s (rms %.2f)\n', ...
 p = parametros_pendulo_invertido(f, PATA_REF + f.pata_cero);
 [~, motor] = motor_pendulo_invertido(p, f);
 N_med = f.N;                            % 20,4: reductor medido con el encoder (FW-009)
-V_motor = f.V_bat - f.caida_driver;     % batería menos la caída del L298N
+V_motor = f.V_bat - f.caida_driver;     % batería menos la caída del driver (0 con el DRV8871; 2 V el L298N)
 servo_par = n*41*0.0981;                % DS3240 a 6 V (ficha: 36 kg cm a 5 V, 45 a 6,8 V; la placa da 6 V, SUP-40)
 servo_vel = deg2rad(327);               % [rad/s] en vacío a 6 V (ficha: 300 grados/s a 5 V, 353 a 6,8 V)
 servo_J = n*0.004;                      % SUPUESTO: inercia del motor del servo vista en la pata

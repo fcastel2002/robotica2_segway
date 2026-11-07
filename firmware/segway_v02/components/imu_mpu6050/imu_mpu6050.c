@@ -17,10 +17,13 @@
 #define REG_WHO_AM_I        0x75
 
 #define DLPF_44HZ           3       // ~4,9 ms de retardo; bajar a 2 (~94 Hz) si falta fase
-#define GYRO_FS_500         (1 << 3)
-#define ACCEL_FS_4G         (1 << 3)
-#define GYRO_LSB_PER_DPS    65.5f
-#define ACCEL_LSB_PER_G     8192.0f
+// 7/11: rangos al máximo. Soltándolo desde 3 cm el acelerómetro ya se recortaba en ±4 g y desde 15 cm el
+// giróscopo en ±500 °/s (justo al tocar el piso, cuando más importa el ángulo). La resolución sigue de sobra:
+// 0,005 m/s2 y 0,06 °/s por cuenta.
+#define GYRO_FS_2000        (3 << 3)
+#define ACCEL_FS_16G        (3 << 3)
+#define GYRO_LSB_PER_DPS    16.4f
+#define ACCEL_LSB_PER_G     2048.0f
 
 #define TIMEOUT_MS          4       // la lectura a 100 kHz tarda ~1,7 ms, dentro del lazo de 5 ms
 
@@ -42,8 +45,8 @@ static esp_err_t configurar(void)
     ESP_RETURN_ON_ERROR(write_reg(REG_PWR_MGMT_1, 0x01), TAG, "reloj");   // PLL del giróscopo X
     ESP_RETURN_ON_ERROR(write_reg(REG_SMPLRT_DIV, 0), TAG, "muestreo");
     ESP_RETURN_ON_ERROR(write_reg(REG_CONFIG, DLPF_44HZ), TAG, "filtro");
-    ESP_RETURN_ON_ERROR(write_reg(REG_GYRO_CONFIG, GYRO_FS_500), TAG, "rango gyro");
-    ESP_RETURN_ON_ERROR(write_reg(REG_ACCEL_CONFIG, ACCEL_FS_4G), TAG, "rango accel");
+    ESP_RETURN_ON_ERROR(write_reg(REG_GYRO_CONFIG, GYRO_FS_2000), TAG, "rango gyro");
+    ESP_RETURN_ON_ERROR(write_reg(REG_ACCEL_CONFIG, ACCEL_FS_16G), TAG, "rango accel");
     return ESP_OK;
 }
 

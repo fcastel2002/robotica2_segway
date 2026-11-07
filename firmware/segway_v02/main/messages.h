@@ -46,6 +46,12 @@ typedef enum {
     PARAM_PARINC,       // parada (□): cuánto se corre la referencia hacia atrás [grados]
     PARAM_PARSUELTA,    // parada: con el cuerpo esto detrás de su equilibrio, desarma [grados]
     PARAM_INA,          // 1: lee los INA; 0: no los toca (para descartarlos ante un problema en el bus)
+    PARAM_TAU,          // constante del filtro de inclinación [s] (ATTITUDE_TAU_S al arrancar)
+    PARAM_INACADA,      // cada cuántos ciclos se lee un registro de los INA (INA_CADA_CICLOS al arrancar)
+    PARAM_LQRFAC,       // factor sobre kphi y kw de la tabla del LQR (DEFAULT_LQR_FACTOR al arrancar)
+    PARAM_LQRFACX,      // factor sobre kx y kv de la tabla del LQR (DEFAULT_LQR_FACTOR_X al arrancar)
+    PARAM_DBRAMPA,      // |u| hasta el que crece el agregado de la zona muerta (0: salta en cero)
+    PARAM_EXC,          // amplitud de un barrido de 1 a 20 Hz sumado al comando (7,5 s; solo equilibrando)
     PARAM_COUNT,
 } param_id_t;
 
@@ -120,7 +126,11 @@ typedef struct {
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;
     float            par_inclina, par_suelta;       // [rad]
+    float            tau_att;       // constante del filtro de inclinación [s] ("set tau")
     bool             led_guia;      // guía de armado activa (led_estado.h)
     ina_datos_t      ina;           // corrientes y tensiones de los INA
     bool             ina_activo;    // "set ina"
+    int              ina_cada;      // "set inacada"
+    float            lqr_fac;       // "set lqrfac"
+    float            lqr_fac_x;     // "set lqrfacx"
 } telemetry_t;

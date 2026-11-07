@@ -15,8 +15,9 @@
 
 static const char *TAG = "wifi_link";
 
-// Hasta tres redes (wifi_secrets.h: WIFI_SSID, y si hacen falta WIFI_SSID2 y WIFI_SSID3 con sus
-// claves): si una no aparece o no conecta, prueba la siguiente (5/11: la casa, la facultad, el celular)
+// Hasta cuatro redes (wifi_secrets.h: WIFI_SSID, y si hacen falta WIFI_SSID2 a WIFI_SSID4 con sus
+// claves): si una no aparece o no conecta, prueba la siguiente (5/11: la casa, la facultad, el celular;
+// 7/11: y el laboratorio)
 #ifndef WIFI_SSID2
 #define WIFI_SSID2      ""
 #define WIFI_PASSWORD2  ""
@@ -25,8 +26,13 @@ static const char *TAG = "wifi_link";
 #define WIFI_SSID3      ""
 #define WIFI_PASSWORD3  ""
 #endif
+#ifndef WIFI_SSID4
+#define WIFI_SSID4      ""
+#define WIFI_PASSWORD4  ""
+#endif
 static const char *const REDES[][2] = {
     { WIFI_SSID, WIFI_PASSWORD }, { WIFI_SSID2, WIFI_PASSWORD2 }, { WIFI_SSID3, WIFI_PASSWORD3 },
+    { WIFI_SSID4, WIFI_PASSWORD4 },
 };
 #define N_REDES ((int)(sizeof REDES / sizeof REDES[0]))
 static int s_redes[N_REDES];            // las configuradas (índices de REDES)

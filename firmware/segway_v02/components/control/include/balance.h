@@ -7,6 +7,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 
 // u = kx·x + kv·v + kphi·(theta - theta_ref) + kw·omega, todo positivo hacia adelante.
 // Unidades: fracción de PWM por m, por m/s, por rad y por rad/s.
@@ -19,14 +20,17 @@ typedef struct {
     float theta_ref;    // rad
     float u_max;        // [0, 1]
     float deadband;     // [0, 1): PWM mínimo con el que el motor empieza a girar
+    float deadband_rampa; // 0: la compensación salta de -deadband a +deadband al cruzar cero; > 0: el
+                        // agregado crece de 0 a deadband mientras |u| va de 0 a esto (sin el salto)
     float notch_hz;     // filtro rechaza banda en el comando del LQR; 0 = sin filtro
     float notch2_hz;    // segundo rechaza banda, angosto (Q = 2), después del primero; 0 = sin
                         // filtro. Para la vibración de ~16 Hz con poco retardo a 2-3 Hz
     float lowpass_hz;   // pasabajos de 2.º orden en el comando del LQR, después de los rechaza
                         // banda; 0 = sin filtro
     bool  ref_auto;     // theta_ref se corrige sola con el robot equilibrando (balance_ref_auto)
-    bool  lqr_por_pata; // lqr sale de una tabla según la altura de las patas (balance_lqr_tabla;
-                        // lo hace control_task); si no, las ganancias fijas de "set kx ..."
+    uint8_t lqr_por_pata; // 1 o 2: lqr sale de una tabla según la altura de las patas
+                        // (balance_lqr_tabla; lo hace control_task: 1 LQR_TABLA, 2 LQR_TABLA_DRV);
+                        // 0: las ganancias fijas de "set kx ..."
     float u_ff;         // se suma al comando del LQR (antes de los filtros): lo que hace falta
                         // para sostener la velocidad pedida. 0 = nada (el control normal)
 } balance_params_t;

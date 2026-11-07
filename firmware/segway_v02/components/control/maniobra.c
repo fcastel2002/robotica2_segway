@@ -13,6 +13,8 @@
                                     // robot va y viene a ±0,05 m/s y con 0,03 no largaba nunca (3/11)
 #define T_ASENTAR       0.8f        // [s] después de mover las patas, para que se acomode
 #define T_PREPARAR_MAX  8.0f
+#define T_AGACHAR_MAX   5.0f        // [s] las patas a la de búsqueda: si no llegan (límites), aborta
+#define T_LARGAR_MAX    4.0f        // [s] hasta despegar: con un parámetro raro quedaba colgada
 #define T_VUELO_MAX     0.6f        // [s] si no toca en este tiempo, se da por aterrizado
 #define T_ATERRIZAR_MIN 1.0f
 #define T_ATERRIZAR_MAX 4.0f
@@ -183,13 +185,15 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
         m->v_ref = 0.0f;
         if (sostenido(&m->n_quieto, fabsf(e->pata_deg - p->pata_busqueda_deg) < 0.5f, dt, T_ASENTAR)) {
             m->x_inicio = e->x;
-            if (p->d_borde > 0.0f) {
+            if (p->d_borde > 0.0f && !p->solo_medir) {     // "escalon medir": siempre con el sensor
                 // Sin sensor: el borde está donde dijeron, medido desde donde se apretó △
                 m->borde_x = m->x_partida - p->d_borde;
                 cambiar(m, MAN_PREPARAR);
             } else {
                 cambiar(m, p->avance > 0.0f ? MAN_AVANZAR : MAN_BUSCAR);
             }
+        } else if (m->t > T_AGACHAR_MAX) {
+            maniobra_abortar(m, "las patas no llegaron");
         }
         break;
 
@@ -282,6 +286,8 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
             cambiar(m, MAN_VUELO);
         } else if (e->x < m->borde_x - PASADO_MAX) {
             maniobra_abortar(m, "paso el borde sin caer");
+        } else if (m->t > T_LARGAR_MAX) {
+            maniobra_abortar(m, "no llego al borde");
         }
         break;
 

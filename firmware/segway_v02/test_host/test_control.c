@@ -14,6 +14,7 @@
 #include "led_estado.h"
 #include "movimiento.h"
 #include "odometry.h"
+#include "parada.h"
 #include "sensor_piso.h"
 #include "supervisor.h"
 
@@ -111,6 +112,41 @@ static void test_attitude_calibration_restarts_on_motion(void)
     for (int i = 0; i < 300; i++) attitude_calibrate(&a, 0.0f, 400, 0.2f);
     CHECK(!attitude_calibrate(&a, 1.0f, 400, 0.2f));   // movimiento: reinicia
     CHECK(a.cal_n == 0);
+}
+
+// Auditoría del 5/11: si el cuerpo no se tira atrás, la parada no desarma (con el robot derecho caería
+// para cualquier lado): la referencia vuelve a la de antes y sigue equilibrando
+static void test_parada_no_desarma_derecho(void)
+{
+    parada_params_t p;
+    parada_params_por_defecto(&p);
+    parada_t pa = { 0 };
+    CHECK(parada_iniciar(&pa));
+    parada_entrada_t e = { .v = 0.0f, .pata_deg = p.pata_min_deg, .tilt_err = 0.0f, .dt = 0.005f };
+    parada_salida_t s;
+    bool desarmo = false, volvio = false;
+    float ref_min = 0.0f;
+    for (int k = 0; k < 4000 && pa.estado != PARADA_INACTIVA; k++) {
+        parada_paso(&pa, &p, &e, &s);
+        desarmo |= s.desarmar;
+        volvio |= pa.estado == PARADA_VUELVE;
+        ref_min = fminf(ref_min, s.ref_extra);
+    }
+    CHECK(!desarmo);
+    CHECK(volvio);
+    CHECK(pa.estado == PARADA_INACTIVA);
+    CHECK(ref_min < -5.0f * DEG);                   // se llegó a pedir la inclinación
+    CHECK(fabsf(s.ref_extra) < 1e-6f);              // y volvió
+    // Si se tira atrás, sí desarma
+    pa = (parada_t){ 0 };
+    CHECK(parada_iniciar(&pa));
+    desarmo = false;
+    for (int k = 0; k < 4000 && !desarmo; k++) {
+        e.tilt_err = pa.estado == PARADA_INCLINAR ? -4.0f * DEG : 0.0f;
+        parada_paso(&pa, &p, &e, &s);
+        desarmo |= s.desarmar;
+    }
+    CHECK(desarmo);
 }
 
 static void test_balance_sign_and_deadband(void)
@@ -248,6 +284,12 @@ static void test_lqr_signs_limits_and_reference(void)
     p.deadband = 0.15f;
     float u = balance_lqr_step(&bq, &p, 0, 0, p.theta_ref + 0.001f, 0, 0.005f, 1.0f);
     CHECK(u > 0.15f && u < 0.16f);
+    // Con rampa, la misma corrección chica no salta al deadband: crece de a poco desde cero
+    balance_t br;
+    balance_reset(&br);
+    p.deadband_rampa = 0.05f;
+    float ur = balance_lqr_step(&br, &p, 0, 0, p.theta_ref + 0.001f, 0, 0.005f, 1.0f);
+    CHECK(ur > 0.0f && ur < 0.05f);       // sin rampa daría 0,158
 }
 
 static void test_odometry_rolling(void)
@@ -664,6 +706,7 @@ int main(void)
     test_attitude_unbiased_under_vibration();
     test_attitude_calibration_restarts_on_motion();
     test_attitude_gyro_only_ignores_landing();
+    test_parada_no_desarma_derecho();
     test_balance_sign_and_deadband();
     test_lqr_signs_limits_and_reference();
     test_lqr_lowpass_cuts_vibration();

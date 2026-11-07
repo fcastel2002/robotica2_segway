@@ -5,13 +5,15 @@ Cada variación: (clave, nombre, parámetros de "banco_escalon caso" que cambia)
 """
 import json
 
+# 7/11: con el DRV8871 al motor le llega la batería entera (con el L298N, 2 V menos) y la zona muerta
+# es 0,026 (con el L298N, 0,14): las variaciones de tensión y de zona muerta son las del DRV8871
 VARIACIONES = [
-    ("nominal", "nominal (LiPo 11,9 V)", {}),
-    ("lipo111", "LiPo 11,1 V (9,1 V al motor)", dict(v_motor="9.1")),
-    ("lipo105", "LiPo 10,5 V (8,5 V al motor)", dict(v_motor="8.5")),
-    ("lipo126", "LiPo 12,6 V (10,6 V al motor)", dict(v_motor="10.6")),
-    ("zm010", "zona muerta 0,10 (no 0,14)", dict(zona_muerta="0.10")),
-    ("zm018", "zona muerta 0,18", dict(zona_muerta="0.18")),
+    ("nominal", "nominal (LiPo 12,3 V)", {}),
+    ("lipo111", "LiPo 11,1 V", dict(v_motor="11.1")),
+    ("lipo105", "LiPo 10,5 V", dict(v_motor="10.5")),
+    ("lipo126", "LiPo 12,6 V", dict(v_motor="12.6")),
+    ("zm010", "zona muerta 0,015 (no 0,026)", dict(zona_muerta="0.015")),
+    ("zm018", "zona muerta 0,05", dict(zona_muerta="0.05")),
     ("mu05", "piso resbaloso (mu 0,5)", dict(mu="0.5")),
     ("mu04", "piso muy resbaloso (mu 0,4)", dict(mu="0.4")),
     ("servos80", "servos con 80 % del par", dict(servo="0.8")),
@@ -28,11 +30,11 @@ VARIACIONES = [
     ("inercia15", "inercia del cuerpo x 1,5", dict(f_inercia="1.5")),
     ("inercia07", "inercia del cuerpo x 0,7", dict(f_inercia="0.7")),
     ("ruido", "otro ruido en los sensores", dict(semilla="5")),
-    ("c1", "11,1 V y equilibrio -0,75°", dict(v_motor="9.1", d_ref="-0.75")),
-    ("c2", "12,6 V y equilibrio +0,75°", dict(v_motor="10.6", d_ref="0.75")),
-    ("c3", "12,6 V y zona muerta 0,10", dict(v_motor="10.6", zona_muerta="0.10")),
-    ("c4", "11,1 V y zona muerta 0,18", dict(v_motor="9.1", zona_muerta="0.18")),
-    ("c5", "10,5 V y equilibrio -0,75°", dict(v_motor="8.5", d_ref="-0.75")),
+    ("c1", "11,1 V y equilibrio -0,75°", dict(v_motor="11.1", d_ref="-0.75")),
+    ("c2", "12,6 V y equilibrio +0,75°", dict(v_motor="12.6", d_ref="0.75")),
+    ("c3", "12,6 V y zona muerta 0,015", dict(v_motor="12.6", zona_muerta="0.015")),
+    ("c4", "11,1 V y zona muerta 0,05", dict(v_motor="11.1", zona_muerta="0.05")),
+    ("c5", "10,5 V y equilibrio -0,75°", dict(v_motor="10.5", d_ref="-0.75")),
 ]
 
 # Las del ensayo con la escalera del equipo (medida el 3/11: 6 de 16,6 x 29 cm y uno de 3 cm),

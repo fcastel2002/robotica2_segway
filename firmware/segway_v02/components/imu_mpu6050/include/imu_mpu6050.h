@@ -17,7 +17,7 @@ typedef struct {
 // Configura el sensor: ±4 g, ±500 °/s, filtro interno de ~44 Hz, 1 kHz de muestreo.
 esp_err_t imu_init(i2c_master_bus_handle_t bus, uint32_t scl_hz);
 
-// Lectura de las seis magnitudes en una sola transacción (~0,5 ms a 400 kHz).
+// Lectura de las seis magnitudes en una sola transacción (~1,7 ms a 100 kHz).
 esp_err_t imu_read(imu_sample_t *out);
 
 // Lecturas fallidas desde el arranque, por tipo (ruido en el I2C, sensor reiniciado), y las de

@@ -44,6 +44,7 @@ typedef enum {
     PARAM_SENSANG,
     PARAM_PARINC,       // parada (□): cuánto se corre la referencia hacia atrás [grados]
     PARAM_PARSUELTA,    // parada: con el cuerpo esto detrás de su equilibrio, desarma [grados]
+    PARAM_TAU,          // constante del filtro de inclinación [s] (ATTITUDE_TAU_S al arrancar)
     PARAM_COUNT,
 } param_id_t;
 
@@ -118,5 +119,6 @@ typedef struct {
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;
     float            par_inclina, par_suelta;       // [rad]
+    float            tau_att;       // constante del filtro de inclinación [s] ("set tau")
     bool             led_guia;      // guía de armado activa (led_estado.h)
 } telemetry_t;

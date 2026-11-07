@@ -101,6 +101,10 @@ else:
     s.dtr = False
     s.rts = False
     s.open()
+# Ejes de la IMU en la telemetría (las columnas son los ejes crudos del sensor). 6/11, con la IMU en la
+# PCB (board_config.h de segway_v02): adelante +y, arriba +z, +x hacia el motor derecho. Antes, en la
+# protoboard: arriba +x, adelante +z, +y a la izquierda (con esa IMU se midió el 3/11).
+EJE_ADELANTE, EJE_ARRIBA, EJE_DERECHA = 'ay_ms2', 'az_ms2', 'ax_ms2'
 cols, ultimo, filas, corriendo = None, {}, [], True
 archivo = open(SALIDA, 'w', encoding='utf-8')     # se escribe a medida que llega
 
@@ -171,9 +175,8 @@ def mostrar(segundos, cada=0.5, hasta_desarmar=False, hasta_caer=True):
 
 def promedio_imu(segundos):
     """Rolido medio [°] con el acelerómetro crudo y rms de la velocidad de cabeceo [°/s] en la
-    ventana, solo con el robot equilibrando. Ejes del sensor (FW-003): x arriba e y a la izquierda,
-    así que rolido > 0 es el lado derecho más bajo. El acelerómetro no está calibrado: un offset de
-    0,2 m/s² en y son 1,2° de rolido."""
+    ventana, solo con el robot equilibrando. Rolido > 0 es el lado derecho más bajo (ejes: EJE_*).
+    El acelerómetro no está calibrado: un offset de 0,2 m/s² de costado son 1,2° de rolido."""
     i0 = len(filas)
     time.sleep(segundos)
     sy = sx = 0.0
@@ -185,7 +188,9 @@ def promedio_imu(segundos):
         if d.get('estado') != 'BALANCING':
             continue
         try:
-            a_y, a_x, w = float(d['ay_ms2']), float(d['ax_ms2']), float(d['theta_dot_dps'])
+            # con el lado derecho más bajo, el eje de la derecha apunta abajo: la fuerza que mide el
+            # acelerómetro (hacia arriba) le da negativa
+            a_y, a_x, w = -float(d[EJE_DERECHA]), float(d[EJE_ARRIBA]), float(d['theta_dot_dps'])
         except ValueError:
             continue
         if math.isnan(a_y) or math.isnan(a_x):
@@ -257,6 +262,10 @@ def nivelar_derecha(lim=(8.0, 22.0), tol=0.3, pasos=14):
 ORDENES_JOYSTICK = ('servo', 'arm', 'cal')     # alguien quiere el robot (disarm incluido)
 
 
+NUMERICAS = ('t_ms', 'theta_deg', 'theta_dot_dps', 'u', 'x_mm', 'v_mms', 'vref_mms', 'ref_deg',
+             'servo_l_deg', 'servo_r_deg', EJE_ADELANTE, EJE_ARRIBA)
+
+
 def filas_tlm(i0):
     """La telemetría desde la fila i0, en números (sin las filas con la IMU en falla)."""
     out = []
@@ -264,11 +273,15 @@ def filas_tlm(i0):
         if t.startswith('#') or not cols or t.count(',') != len(cols) - 1:
             continue
         d = dict(zip(cols, t.split(',')))
-        try:
-            r = {k: (v if k == 'estado' else float(v)) for k, v in d.items()}
-        except ValueError:
-            continue
-        if not any(math.isnan(r[k]) for k in ('theta_deg', 'ax_ms2', 'az_ms2')):
+        r = {}
+        for k, v in d.items():
+            try:
+                r[k] = float(v)
+            except ValueError:
+                r[k] = v            # estado, maniobra y bateria son texto
+        if not all(isinstance(r.get(k), float) for k in NUMERICAS):
+            continue                # una línea cortada
+        if not any(math.isnan(r[k]) for k in ('theta_deg', EJE_ADELANTE, EJE_ARRIBA)):
             out.append(r)
     return out
 
@@ -319,13 +332,20 @@ def resumen(rs):
     # frecuencia del vaivén: cruces por cero de la velocidad de cabeceo
     cruces = sum(1 for a, b in zip(w, w[1:]) if a * b < 0)
     dur = (rs[-1]['t_ms'] - rs[0]['t_ms']) / 1e3
+
+    def media_ok(k):
+        # las corrientes y la batería (segway_v02): sin el dato, nan
+        vs = [r[k] for r in rs if isinstance(r.get(k), float) and not math.isnan(r[k])]
+        return sum(vs) / len(vs) if vs else float('nan')
     return {
         'n': n, 'theta': th, 'sd_theta': sd,
-        'theta_acel': math.degrees(math.atan2(-media('az_ms2'), media('ax_ms2'))),
+        # como el firmware: theta = atan2(-adelante, arriba)
+        'theta_acel': math.degrees(math.atan2(-media(EJE_ADELANTE), media(EJE_ARRIBA))),
         'rms_w': (sum(x * x for x in w) / n) ** 0.5, 'f_vaiven': cruces / 2 / dur,
         'u_media': media('u'), 'rms_u': (sum(r['u'] ** 2 for r in rs) / n) ** 0.5,
         'x_ini': rs[0]['x_mm'], 'x_fin': rs[-1]['x_mm'], 'v_media': media('v_mms'),
         'ref': media('ref_deg'), 'pata_l': media('servo_l_deg'), 'pata_r': media('servo_r_deg'),
+        'i_l': media_ok('i_l_ma'), 'i_r': media_ok('i_r_ma'), 'v_bat': media_ok('v_bat'),
     }
 
 
@@ -350,7 +370,7 @@ try:
         mostrar(1.0)
     elif MODO == 'aire':
         ref = float(ARGS[0]) if ARGS else 1.5
-        for c in ('motor stop', 'set lqr 1', 'set kx 0', 'set kv 0', 'set umax 0.4', 'set ref %g' % ref, 'get'):
+        for c in ('motor stop', 'set lqrpata 0', 'set kx 0', 'set kv 0', 'set umax 0.4', 'set ref %g' % ref, 'get'):
             enviar(c)
         time.sleep(0.5)
         print('esperando que lo pongan a menos de 4° de la referencia (%.1f°)...' % ref, flush=True)
@@ -366,7 +386,7 @@ try:
         # quieto 3 s dentro de -5..8°, ese promedio es la referencia y se arma con el LQR completo.
         kx, kv, kphi, kw = (float(v) for v in ARGS[1:5]) if len(ARGS) >= 5 else (6.1, 5.84, 9.91, 1.26)
         umax = float(ARGS[5]) if len(ARGS) >= 6 else 0.8
-        for c in ('motor stop', 'disarm', 'set lqr 1', 'set kx %g' % kx, 'set kv %g' % kv,
+        for c in ('motor stop', 'disarm', 'set lqrpata 0', 'set kx %g' % kx, 'set kv %g' % kv,
                   'set kphi %g' % kphi, 'set kw %g' % kw, 'set umax %g' % umax, 'get'):
             enviar(c)
         espera = float(ARGS[0]) if ARGS else 600
@@ -404,7 +424,7 @@ try:
         cambio = ARGS[9] if len(ARGS) > 9 else None
         # "cal": sesgo del giróscopo de nuevo, porque cambia al calentarse la placa; tarda 2 s
         # con el robot quieto, y mientras tanto no se arma (espera a DISARMED)
-        for c in ('motor stop', 'disarm', 'cal', 'set lqr 1', 'set kx %g' % kx, 'set kv %g' % kv,
+        for c in ('motor stop', 'disarm', 'cal', 'set lqrpata 0', 'set kx %g' % kx, 'set kv %g' % kv,
                   'set kphi %g' % kphi, 'set kw %g' % kw, 'set umax %g' % umax, 'set notch %g' % notch,
                   'set deadband %g' % db, 'set ref %g' % ref, 'get'):
             enviar(c)
@@ -480,9 +500,12 @@ try:
             # De la ref donde lo sostenían a la de la tabla, en 6 s: así la referencia automática
             # busca alrededor de la tabla (±6°) y no de donde lo agarraron
             ref_armado = media
-            for k in range(1, 25):
-                enviar('set ref %.2f' % (ref_armado + (ref - ref_armado) * k / 24))
-                time.sleep(0.17)
+            if ref != ref:      # get no contestó (nan): "set ref nan" daba reversa a fondo (auditoría del 5/11)
+                print('get no contestó: la ref queda donde se armó', flush=True)
+            else:
+                for k in range(1, 25):
+                    enviar('set ref %.2f' % (ref_armado + (ref - ref_armado) * k / 24))
+                    time.sleep(0.17)
             # bajando hasta 0 y subiendo hasta 25, en múltiplos de 'paso'
             alturas = [desde]
             a = desde
@@ -548,7 +571,8 @@ try:
         pata, resultados = recorrido[0], []
         salida_eq = 'equilibrio_%s.csv' % time.strftime('%H%M%S')
         campos = ['pasada', 'patas', 'theta', 'theta_acel', 'sd_theta', 'ref', 'rms_w', 'f_vaiven',
-                  'u_media', 'rms_u', 'x_ini', 'x_fin', 'v_media', 'pata_l', 'pata_r', 'n', 'hora']
+                  'u_media', 'rms_u', 'x_ini', 'x_fin', 'v_media', 'pata_l', 'pata_r', 'n', 'hora',
+                  'i_l', 'i_r', 'v_bat']
         with open(salida_eq, 'w', encoding='utf-8') as feq:
             feq.write(','.join(campos) + '\n')
             pasada = 1
@@ -708,7 +732,7 @@ try:
         # piso <ref> <kx> <kv> <kphi> <kw> <umax> <notch> <deadband> [espera]
         ref, kx, kv, kphi, kw, umax, notch, db = (float(v) for v in ARGS[:8])
         espera = float(ARGS[8]) if len(ARGS) > 8 else 900
-        for c in ('motor stop', 'disarm', 'set lqr 1', 'set kx %g' % kx, 'set kv %g' % kv,
+        for c in ('motor stop', 'disarm', 'set lqrpata 0', 'set kx %g' % kx, 'set kv %g' % kv,
                   'set kphi %g' % kphi, 'set kw %g' % kw, 'set umax %g' % umax, 'set notch %g' % notch,
                   'set deadband %g' % db, 'set ref %g' % ref, 'get'):
             enviar(c)
@@ -726,8 +750,8 @@ finally:
             time.sleep(0.05)
         s.write(b'motor stop\n')
         time.sleep(0.1)
-        if MODO == 'aire':      # vuelven las ganancias de posición para el piso
-            for c in ('set kx 6.1', 'set kv 5.84'):
+        if MODO == 'aire':      # vuelven las ganancias de la tabla según la pata (las del piso)
+            for c in ('set lqrpata 1',):
                 s.write((c + '\n').encode())
                 time.sleep(0.1)
     time.sleep(0.5)

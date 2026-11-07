@@ -200,11 +200,12 @@ function o = parametros_fisicos(variante)
   % grados en la referencia a cuatro alturas, repetida en el simulador con el codigo del firmware.
   % Cada linea: el valor nuevo, el de antes y de donde sale.
   if strcmpi(variante, 'ajustada')
-    o.m_carga = 234;        % 5/11: el robot entero con la LiPo y las ruedas con goma espuma pesa 1196 g
-                            % (medido por el equipo) y el modelo 962: faltan 234 g, seguramente la LiPo
-                            % (los 542 g de la caja se pesaron el 21/10 sin ella) y cables. Van en la
+    o.m_carga = 246;        % 7/11, con las PCB: 1208 g (antes 234: el 5/11 pesaba 1196 g). El modelo
+                            % pesa 962 sin esto: lo que falta, seguramente la LiPo (los 542 g de la
+                            % caja se pesaron el 21/10 sin ella), los cables y las placas. Va en la
                             % cabina, y la caja se corre (corr_caja) para que el centro de masa de todo
-                            % siga dando la curva de equilibrio medida con la IMU (que no cambio)
+                            % siga dando la curva de equilibrio medida con la IMU. corr_caja es la del
+                            % 5/11 hasta medir de nuevo el equilibrio con las PCB (MED-007)
     o.pata_cero = 20.4;     % antes 10 (supuesto). La curva de equilibrio solo cierra (0.10 grados rms
                             % contra 1.17) con la pata real 10.4 grados mas estirada que la supuesta, y la
                             % onda cuadrada lo confirma (sobre todo con las patas bajas). VERIFICAR con una
@@ -216,7 +217,9 @@ function o = parametros_fisicos(variante)
                             % atras y 8,2 mas abajo que el del reparto estimado, para que con 1196 g el
                             % equilibrio siga dando lo medido (0.12 grados rms) con la IMU y la pata del
                             % 3/11 (ajustar_equilibrio.m). (3/11, sin los 234 g: [19.3 0])
-    o.imu_delta_deg = 4.2;  % antes 9.8: con la pata y la caja corregidas, la IMU esta 4.2 grados inclinada
+    o.imu_delta_deg = 4.8;  % 7/11, la IMU en la PCB: la curva de equilibrio del 7/11 con la caja del 5/11
+                            % y 1208 g (ajustar_equilibrio.m, 'solo la IMU': 4.77, 0.69 grados rms;
+                            % PROVISORIO hasta medir la IMU contra la caja). Antes 4.2 (3/11) y 9.8
     o.k_contacto = 8500;    % antes 30e3 (supuesto): 5/11, rueda de 80 mm con goma espuma apretada
                             % contra una balanza: 78,2 mm con 1,5 kg y 76,5 con 3 kg (8,2-8,7 kN/m, lineal)
     o.c_contacto = 20;      % antes 60. SUPUESTO (falta la prueba de soltarlo y ver cuanto rebota):
@@ -232,5 +235,18 @@ function o = parametros_fisicos(variante)
     o.caida_driver = 0;     % antes 2.0 (L298N): el DRV8871 tiene salidas MOSFET (~0.6 ohm, despreciable)
     o.zona_muerta_motor = 0.026; % antes 0.14 (L298N): donde se anula la velocidad en el aire con el DRV8871
                             % (0.031 izq., 0.021 der.; desde parada arranca con 0.06-0.08)
+    % 7/11 (MED-007), el motor MEDIDO con los INA219 (modelado/ajuste/ajustar_motor.py, fig_motor.png;
+    % datos en modelado/ajuste/ensayos_motor_2026-11-07/): la rueda sostenida da la resistencia, las
+    % ruedas en el aire la constante y el roce, y los escalones a 200 Hz la inercia. El rendimiento
+    % del reductor (eta_reductor) sigue SUPUESTO: falta levantar un peso.
+    o.R_m = 7.81;           % antes 10.28 (deducida de la ficha): 8.06 izq., 7.55 der., con el DRV8871 y los
+                            % cables (rueda quieta, 8-30 % de PWM; casi sin caída de escobillas, 0.02-0.05 V)
+    o.i_vacio = 0.042;      % antes 0.060 (ficha): en el aire, 40-45 mA a velocidad cero + 0.2-0.55 mA por rad/s
+    o.w_nl_motor_rpm = 6348;% antes 6060: Ke = 0.359 V s/rad en la rueda (0.349-0.368), con R e i_vacio medidos
+    o.tau_c = 0.00074;      % antes 0.0015: Kt * i_vacio
+    o.b_m = 3.3e-7;         % antes 1e-6: Kt * la pendiente de la corriente en vacío, en el rotor
+    o.J_r = 8.2e-7;         % antes 6e-7 (típico): la rueda libre en el aire tarda 24-25 ms (4.0e-4 kg m2 en la
+                            % rueda con la rueda incluida)
+    o.zona_muerta_motor = 0.027; % la recta de velocidad en el aire se anula en 0.025-0.028 (antes 0.026)
   end
 end

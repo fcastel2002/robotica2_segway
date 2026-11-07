@@ -21,8 +21,8 @@ void parada_params_por_defecto(parada_params_t *p)
 
 const char *parada_nombre(parada_estado_t e)
 {
-    static const char *n[] = { "inactiva", "frenar", "bajar", "inclinar", "soltar" };
-    return (e >= PARADA_INACTIVA && e <= PARADA_SOLTAR) ? n[e] : "?";
+    static const char *n[] = { "inactiva", "frenar", "bajar", "inclinar", "soltar", "vuelve" };
+    return (e >= PARADA_INACTIVA && e <= PARADA_VUELVE) ? n[e] : "?";
 }
 
 static void cambiar(parada_t *pa, parada_estado_t e)
@@ -79,9 +79,19 @@ void parada_paso(parada_t *pa, const parada_params_t *p, const parada_entrada_t 
         s->pata_deg = p->pata_min_deg;
         s->vel_pata_dps = p->vel_pata_dps;
         pa->ref_extra = fmaxf(pa->ref_extra - p->vel_inclina_dps * DEG2RAD * e->dt, -p->inclina_deg * DEG2RAD);
-        if (e->tilt_err < -p->suelta_deg * DEG2RAD || vencida) {
+        if (e->tilt_err < -p->suelta_deg * DEG2RAD) {
             cambiar(pa, PARADA_SOLTAR);
+        } else if (vencida) {
+            // No se tiró atrás a tiempo: desarmar así lo dejaría caer para cualquier lado, también
+            // hacia adelante (auditoría del 5/11). La referencia vuelve y sigue equilibrando
+            cambiar(pa, PARADA_VUELVE);
         }
+        break;
+    case PARADA_VUELVE:
+        s->pata_deg = p->pata_min_deg;
+        s->vel_pata_dps = p->vel_pata_dps;
+        pa->ref_extra = fminf(pa->ref_extra + p->vel_inclina_dps * DEG2RAD * e->dt, 0.0f);
+        if (pa->ref_extra >= 0.0f) parada_cancelar(pa);
         break;
     case PARADA_SOLTAR:
         // Una sola vez: el control desarma y la parada termina

@@ -51,7 +51,7 @@ t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,s
 | `vref_mms`, `giro` | Lo que el control está aplicando de `mov`: referencia de velocidad (mm/s) y PWM sumado a la izquierda y restado a la derecha |
 | `ref_deg` | Ángulo de equilibrio que está usando el control (de la tabla según la altura de las patas, más la corrección de `set ref`); desde el 3/11 |
 
-Son unos 145 caracteres por línea a 50 Hz, la mitad de lo que entra a 115200 baudios. Para verlas
+Son unos 190 caracteres por línea (39 columnas) a 50 Hz, el 85 % de lo que entra a 115200 baudios. Para verlas
 graficadas, probar cada sensor y actuador y mandar comandos con botones, usar la
 [interfaz web](../../gui_hmi/README.md) por USB (pestaña **Banco de pruebas**).
 Prueba de los encoders a mano: [`../docs/prueba_encoders.md`](../docs/prueba_encoders.md).
@@ -63,6 +63,7 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `set ref 8` | Cambiar `ref` (grados), `umax` o `deadband` en vivo |
 | `set kx 1.52` | Ganancias fijas del LQR, el único control desde el 2/11 (el PID se sacó): `kx`, `kv`, `kphi`, `kw`. Se usan con `lqrpata 0` |
 | `set lqrpata 1` | (por defecto desde el 3/11) Las ganancias salen de `LQR_TABLA` según la altura de las patas: el LQR recalculado con el modelo ajustado con el robot (CTL-301). `get` muestra las que se están usando; `0` vuelve a las fijas |
+| `set lqrpata 2` | Las de `LQR_TABLA_DRV`: el mismo criterio con el modelo del DRV8871 (7/11). Con el mismo PWM el motor hace ~44 % más de par que con el L298N, así que dan 15-20 % menos ganancia. Para compararlas en el piso con las de `lqrpata 1` (MED-007) |
 | `set notch 7.5` | Rechaza banda ancho del comando, en Hz (`0` lo apaga); `notch2`: otro angosto (Q = 2) |
 | `set lp 10` | Pasabajos del comando, en Hz (`0` lo apaga). Retrasa el lazo: con 9-11 Hz el robot se hamacaba |
 | `set refauto 1` | La referencia se corrige sola si el robot se queda corrido de su consigna (~10 s, ±6° como mucho) |
@@ -70,14 +71,16 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `set margen 0.85` | Prioridad al equilibrio: con el comando a los motores por encima, la velocidad pedida retrocede (`0` lo apaga). `prio` (grados): con una perturbación mayor suelta la velocidad pedida (apagado: en la simulación no ayudó) |
 | `set velpata 20` | Velocidad con que las patas van a la posición pedida, en °/s |
 | `servo 20` / `servo l 20` / `servo r 10` | Mover los dos servos o uno (grados del servo y a 90°/s; fuera de sus límites se rechaza sin moverse). Suelto, la posición es desconocida: el primer ángulo va **directo**, sin rampa |
-| `servo off` / `servo l on` | Soltar (posición desconocida desde ahí) o agarrar donde está; `on` no hace nada si la posición es desconocida |
+| `servo off` / `servo l on` | Soltar (posición desconocida desde ahí) o agarrar donde está; `on` no hace nada si la posición es desconocida. `off` no se acepta equilibrando (la pata se soltaría de golpe) |
 | `servo lim l 5 25` | Achicar los límites de un servo en vivo, siempre dentro de **0-30°**: más allá se rompe el cuatro barras, y el firmware no deja salir de ahí (`SERVO_HARD_*`) |
 | `cal` | Recalibrar el giróscopo sin reiniciar (solo en DISARMED; dejar quieto 2 s) |
 | `get` | Ver los parámetros vigentes, la posición y los límites de los servos y el estado del WiFi (contesta 40 ms después, con los `set` ya aplicados) |
 | `mov 0.5 -0.2` | Avance y giro, de −1 a 1 (ver [Movimiento](#movimiento)). Sin respuesta, para que el joystick pueda mandarlo seguido |
 | `tlm on` / `tlm off` | Activar o pausar la telemetría (`tlm on` reimprime el encabezado) |
 | `grabar` | Graba 8 s a 200 Hz (armado o no) y los manda como el registro de la bajada (líneas `#r`); SHARE en el joystick |
-| `enc reset` | Poner en cero las cuentas de los dos encoders |
+| `enc reset` | Poner en cero las cuentas de los dos encoders. Solo desarmado (o en falla): equilibrando, la odometría saltaría todo lo recorrido y el robot pegaría un tirón |
+| `set tau 1` | Constante del filtro de inclinación, en s (0,5 al arrancar, `ATTITUDE_TAU_S`). La auditoría de un amigo propone 1 s: menos vaivén lento, a cambio de que un error del giróscopo pese el doble. Para compararlas en el robot (auditoría del 5/11) |
+| `set inacada 1` | Cada cuántos ciclos de 5 ms se lee un registro de los INA (5 al arrancar: cada motor a 13 Hz). Con 1, cada motor a ~67 Hz: para los ensayos del motor ([`ensayo_motor.py`](../herramientas/ensayo_motor.py), MED-007) |
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
 Arranca con lo que mejor anduvo el 2/11: el LQR suave (desde el 3/11 según la altura de las patas,
@@ -95,8 +98,8 @@ sigue por el cable). Completarlo y volver a compilar. Al conectarse informa por 
 ```
 
 Si no encuentra la red: `# wifi: buscando la red MiRed (último motivo de desconexión: N)`, y sigue
-reintentando sola. `get` también muestra esa línea. Se pueden poner hasta tres redes (`WIFI_SSID2`,
-`WIFI_SSID3` con sus claves): si una no aparece, prueba la siguiente. Las abiertas van sin clave,
+reintentando sola. `get` también muestra esa línea. Se pueden poner hasta cuatro redes (`WIFI_SSID2` a
+`WIFI_SSID4` con sus claves): si una no aparece, prueba la siguiente. Las abiertas van sin clave,
 también las abiertas con cifrado (OWE). Motivo 201: no la encuentra (por ejemplo, una red solo de
 5 GHz, como «Facultad de Ingeniería» donde se probó el 5/11; ahí anduvo el celular como punto de acceso
 en 2,4 GHz).
@@ -125,8 +128,9 @@ joystick ([`Aplicacion/joystick.py`](../../Aplicacion/joystick.py)) 25 veces por
   (`acel`, 0,5 m/s²) y una **de frenado** (`fren`, 0,5 m/s²). Con `xlibre 1` (desde el 3/11),
   mientras hay velocidad pedida el LQR sigue solo la velocidad: la consigna de posición acompaña al
   robot. Al soltar, la velocidad pedida baja por la rampa de frenado y, cuando llegó a cero y el
-  robot casi no se mueve, la posición queda fija ahí. `ff` (0,8) suma al comando lo que hace falta
-  para sostener la velocidad pedida; sin eso el robot va más rápido que lo pedido. Con `xlibre 0`
+  robot casi no se mueve, la posición queda fija ahí. `ff` (0,85 desde el 7/11; 1,20 con el L298N,
+  que se comía 0,17 de PWM) suma al comando lo que hace falta para sostener la velocidad pedida; con
+  menos, el robot va más rápido que lo pedido, y con más, más lento. Con `xlibre 0`
   queda como antes: la consigna de posición es la integral de la velocidad pedida, el robot se le
   adelanta 10-25 cm para moverse y al soltar frenaba en seco donde se soltó (por eso se cambió).
   Los cinco se cambian en vivo (`set vmax 0.4`, `set acel 0.5`, `set fren 0.3`, `set ff 0.8`,
@@ -165,7 +169,9 @@ La maniobra de [`maniobra.c`](components/control/maniobra.c), la misma que corre
 - **`parar`** (□): **parada controlada**: frena, baja las patas al mínimo (0°, a `velpata`), corre la
   referencia hacia atrás (hasta `parinc`, 6°) y, con el cuerpo `parsuelta` (3°) detrás de su
   equilibrio, desarma: se deja caer apenas para atrás desde lo más bajo. Cada etapa tiene 4 s como
-  mucho. **Sin probar todavía**: la primera vez, con alguien atajando (y ojo con lo que haya en la
+  mucho. Si en 4 s el cuerpo no se tiró atrás, **no desarma** (con el robot derecho caería para
+  cualquier lado): la referencia vuelve y sigue equilibrando, con las patas abajo («parada: no se tiró
+  atrás a tiempo»; auditoría del 5/11). **Sin probar todavía**: la primera vez, con alguien atajando (y ojo con lo que haya en la
   cara de atrás: ahí va el sensor de distancia).
 - **◯ (`disarm`) corta cualquiera de las dos**; si se cae (FALLEN) o hay falla, también.
 - **Caída libre**: desde el 3/11 una lectura de la IMU con menos de 0,1 g no es una falla (antes, a
@@ -177,7 +183,10 @@ La maniobra de [`maniobra.c`](components/control/maniobra.c), la misma que corre
   sin telemetría; `escalon datos` lo vuelve a mandar). [`Aplicacion/puente.py`](../../Aplicacion/puente.py)
   lo guarda en `Aplicacion/registros/bajada_<fecha>.csv` y
   [`comparar_prueba.py`](../../simulacion/escalon/comparar_prueba.py) lo compara con la simulación
-  de la misma bajada (figura y tabla en `simulacion/escalon/resultados/pruebas/`). **`grabar`** (o
+  de la misma bajada (figura y tabla en `simulacion/escalon/resultados/pruebas/`). Desde el 7/11 trae
+  también la corriente de entrada de cada driver, el comando de cada motor y las cuentas de cada encoder
+  (`i_l_ma`, `i_r_ma`, `m_l`, `m_r`, `enc_l`, `enc_r`), para ajustar el motor del modelo; se manda de a
+  2 líneas por vuelta (~16 s). **`grabar`** (o
   SHARE en el joystick) graba lo mismo durante 8 s desde ese momento, armado o no, y lo manda al
   terminar (también va a `bajada_<fecha>.csv`): para soltar el robot y ver cuánto rebota (abajo).
 - **Sensor de distancia** (Sharp GP2Y0A60SZLF, Pololu #2474, en GPIO3): se lee en cada ciclo y la
@@ -231,7 +240,8 @@ Tres medidores en la placa de potencia, en el mismo bus I2C que la IMU ([`compon
 | INA226 en la rama de lógica | **Tensión de la batería** y corriente de la lógica (hasta 0,82 A). No ve los motores. Da de más: el 6/11 leía 12,86 V con 12,20 y 12,25 V en los INA219, con continuidad entre los pines `VBS` e `IN−` del módulo (falta probar la unión de `VBS` con la pata 8 del chip). Se corrige con `INA226_V_GANANCIA` e `INA226_V_CERO` (`board_config.h`), calibrado contra los INA219; `ina` muestra la lectura sin corregir |
 | Servos (UBEC) | Sin medidor |
 
-- **Cuándo se leen:** un registro cada `INA_CADA_CICLOS` (40 por segundo), al final del ciclo de control y solo si
+- **Cuándo se leen:** un registro cada `INA_CADA_CICLOS` (40 por segundo; en vivo `set inacada`, 1 = 200 por
+  segundo para los ensayos del motor), al final del ciclo de control y solo si
   quedan `INA_MARGEN_US`: el comando ya salió, así que no le agrega retardo, no compite con la IMU por el bus y
   no puede ser lo que haga exceder el ciclo. Medido el 6/11 sin armar: cada lectura cuesta ~1 ms (el peor ciclo
   de la ventana pasa de 3,3 a 4,3 ms de 5), sin ciclos excedidos ni fallas de la IMU en 80 s.
@@ -248,6 +258,13 @@ LiPo casi no cambia. 0 % = 10,5 V; `BAJA` desde 11,2 V y `CRITICA` desde 10,5 V 
 avisan: no cortan nada).
 
 La página los muestra en la vista **Energía** de [`Aplicacion`](../../Aplicacion/README.md).
+
+**Ensayos del motor (MED-007).** Con la corriente de cada driver se mide lo que el modelo todavía supone:
+[`firmware/herramientas/ensayo_motor.py`](../herramientas/ensayo_motor.py) `wifi aire` (colgado: velocidad por
+voltio y roce), `frenada l|r` (la rueda sostenida: resistencia), `peso l|r <g> adelante|atras` (levantando un
+peso con un hilo: el rendimiento del reductor) y `escalon` (200 Hz: la inercia del rotor), y
+[`modelado/ajuste/ajustar_motor.py`](../../modelado/ajuste/ajustar_motor.py) da los parámetros. Como el driver
+frena en el apagado del PWM, la corriente del motor es la del INA219 dividida por |PWM|.
 
 ## LED de estado
 
@@ -294,7 +311,8 @@ Procedimiento, protecciones y qué rehacer con el robot armado completo: [`../do
 4. `ENC_COUNTS_PER_REV` medido (10 vueltas a mano) y `ref` medido (el ángulo en que el robot no cae para ningún lado).
 5. `set deadband` con el PWM mínimo que mueve las ruedas (el escalón del banco lo da).
 6. Sin armar, girar las ruedas a mano hacia adelante: `x_mm` y `v_mms` tienen que subir.
-7. En el aire, con `set kx 0`, `set kv 0` y `set umax 0.3`: armar, y al inclinarlo hacia adelante las ruedas
+7. En el aire, con `set lqrpata 0` (si no, las ganancias salen de la tabla y `set kx` no hace nada),
+   `set kx 0`, `set kv 0` y `set umax 0.3`: armar, y al inclinarlo hacia adelante las ruedas
    avanzan. **En el aire no se ponen `kx` ni `kv`:** sin el péndulo, avanzar pide avanzar más y las ruedas se
    disparan. Es lo esperado (en el piso, para volver al lugar el robot primero tiene que inclinarse hacia
    atrás, y para eso las ruedas avanzan), pero en el aire no hay nada que lo frene.

@@ -51,7 +51,8 @@
 
 // Las ganancias del LQR como el firmware: con DEFAULT_LQR_POR_PATA, de LQR_TABLA según la pata
 // (3/11, CTL-301); con GANANCIAS=fijas (variable de entorno), las fijas de siempre, como antes del
-// 3/11 (así salieron los resultados de las estrategias A-E del modelo original)
+// 3/11 (así salieron los resultados de las estrategias A-E del modelo original); con GANANCIAS=drv,
+// de LQR_TABLA_DRV (la recalculada con el DRV8871, "set lqrpata 2")
 static void ganancias_por_pata(float pata, lqr_gains_t *k)
 {
     if (!DEFAULT_LQR_POR_PATA || (getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "fijas") == 0)) {
@@ -59,7 +60,9 @@ static void ganancias_por_pata(float pata, lqr_gains_t *k)
     }
     static const float patas[] = LQR_TABLA_PATAS_DEG;
     static const float tabla[][4] = LQR_TABLA;
-    balance_lqr_tabla(pata, patas, tabla, sizeof patas / sizeof patas[0], k);
+    static const float tabla_drv[][4] = LQR_TABLA_DRV;
+    bool drv = getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "drv") == 0;
+    balance_lqr_tabla(pata, patas, drv ? tabla_drv : tabla, sizeof patas / sizeof patas[0], k);
 }
 
 // ---------------------------------------------------------------- parámetros de la planta

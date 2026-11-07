@@ -2,7 +2,7 @@
 // Arquitectura y orden de puesta en marcha: firmware/docs/arquitectura_v0_1.md
 //
 // app_main inicializa el hardware, crea las colas y lanza las dos tareas:
-//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos; encoders
+//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> LQR -> motores; servos; encoders
 //   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0 y, si hay red, por WiFi (UDP)
 // Si la IMU no responde, igual se lanzan las tareas: el supervisor pasa a FAULT y
 // la telemetría lo muestra.
