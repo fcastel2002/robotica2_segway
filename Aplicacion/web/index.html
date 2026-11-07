@@ -11,6 +11,7 @@
     <h1>Segway <span class="tenue">control y telemetría</span></h1>
     <button data-vista="mando">Mando / Conducción</button>
     <button data-vista="banco">Banco de pruebas</button>
+    <button data-vista="energia">Energía</button>
     <button data-vista="vista-graficos">Gráficos</button>
     <button data-vista="configuracion">Configuración</button>
   </nav>
@@ -380,6 +381,76 @@
       </div>
     </section>
 
+    <!-- Energía: batería, motores y lógica, de los INA de la placa de potencia (energia.js) -->
+    <section id="energia" class="vista energia">
+      <div class="tablero">
+
+        <article class="tarjeta">
+          <h2>Batería <span id="bat-nivel" class="etiqueta"></span></h2>
+          <div class="bateria-resumen">
+            <div>
+              <div class="grande"><output data-col="v_bat" data-dec="2" data-unidad=" V" data-nan="—">—</output></div>
+              <div class="tenue">tensión ahora</div>
+            </div>
+            <div>
+              <div class="grande"><output id="bat-autonomia">—</output></div>
+              <div class="tenue">autonomía, al ritmo de los últimos minutos</div>
+            </div>
+          </div>
+          <div class="medidor" data-col="soc" data-min="0" data-max="100" data-dec="0" data-unidad=" %" data-nan="—" title="Sale solo de la tensión filtrada, con la curva de una LiPo genérica (board_config.h)">carga</div>
+          <h3>Tensión en esta sesión <span class="tenue">una muestra cada 5 s</span></h3>
+          <canvas id="bat-tendencia" class="tendencia"></canvas>
+          <p class="tenue">Estimada con la tensión, sin contar corriente. Orientativa: a mitad de carga la curva de una LiPo es casi plana. Con una fuente de banco la tensión no baja y la autonomía no se calcula.</p>
+        </article>
+
+        <article class="tarjeta">
+          <h2>Motores <span id="mot-aviso" class="etiqueta alerta"></span></h2>
+          <table class="ruedas">
+            <thead><tr><th></th><th>izq</th><th>der</th></tr></thead>
+            <tbody>
+              <tr><th>corriente</th><td><output data-col="i_l_ma" data-dec="0" data-unidad=" mA" data-nan="sin medidor">—</output></td><td><output data-col="i_r_ma" data-dec="0" data-unidad=" mA" data-nan="sin medidor">—</output></td></tr>
+              <tr><th>tensión en el driver</th><td><output data-col="v_l" data-dec="1" data-unidad=" V" data-nan="—">—</output></td><td><output data-col="v_r" data-dec="1" data-unidad=" V" data-nan="—">—</output></td></tr>
+              <tr><th>potencia</th><td><output data-col="p_l_w" data-dec="1" data-unidad=" W" data-nan="—">—</output></td><td><output data-col="p_r_w" data-dec="1" data-unidad=" W" data-nan="—">—</output></td></tr>
+            </tbody>
+          </table>
+          <h3>Corriente de entrada a cada driver <span class="tenue">negativa: frenando, devuelve a la batería</span></h3>
+          <div class="medidor" data-col="i_l_ma" data-min="-1500" data-max="1500" data-dec="0" data-unidad=" mA" data-nan="—">izq</div>
+          <div class="medidor" data-col="i_r_ma" data-min="-1500" data-max="1500" data-dec="0" data-unidad=" mA" data-nan="—">der</div>
+          <h3>Comando aplicado <span class="tenue">para comparar con la corriente</span></h3>
+          <div class="medidor" data-col="m_l" data-min="-1" data-max="1" data-factor="100" data-dec="0" data-unidad=" %">izq</div>
+          <div class="medidor" data-col="m_r" data-min="-1" data-max="1" data-factor="100" data-dec="0" data-unidad=" %">der</div>
+          <p class="tenue">Es la corriente que entra al driver, parecida a |PWM| × la del motor: no es directamente el par.</p>
+        </article>
+
+        <div class="grupo">
+          <article class="tarjeta">
+            <h2>Consumo medido</h2>
+            <table class="ruedas datos">
+              <tbody>
+                <tr><th>lógica (ESP32, sensores)</th><td><output data-col="i_log_ma" data-dec="0" data-unidad=" mA" data-nan="sin medidor">—</output></td></tr>
+                <tr><th>potencia de la lógica</th><td><output data-col="p_log_w" data-dec="1" data-unidad=" W" data-nan="—">—</output></td></tr>
+                <tr><th>total medido</th><td><output data-col="p_w" data-dec="1" data-unidad=" W" data-nan="—">—</output></td></tr>
+              </tbody>
+            </table>
+            <p class="tenue">No incluye los servos: sus ramas (UBEC) no tienen medidor.</p>
+          </article>
+
+          <article class="tarjeta">
+            <h2>Medidores <span id="ina-estado" class="etiqueta"></span></h2>
+            <p class="tenue">«Diagnóstico» pide al robot qué responde en el bus y lo escribe en los mensajes de abajo.</p>
+            <div class="acciones">
+              <button data-comando="ina" data-requiere-conexion>Diagnóstico</button>
+              <button data-comando="set ina 0" data-requiere-conexion title="Deja de leer los INA: para descartarlos ante un problema en el bus">Pausar lectura</button>
+              <button data-comando="set ina 1" data-requiere-conexion>Reanudar</button>
+            </div>
+            <h3>Peor ciclo de control <span class="tenue">µs, de 5000 disponibles</span></h3>
+            <div class="medidor" data-col="loop_us_max" data-min="0" data-max="5000" data-dec="0">ciclo</div>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
     <main id="vista-graficos" class="vista">
       <aside>
         <div class="barra-graficos">
@@ -506,6 +577,9 @@
               <option value="set deadband 0.05"></option>
               <option value="tlm on"></option>
               <option value="tlm off"></option>
+              <option value="ina"></option>
+              <option value="set ina 0"></option>
+              <option value="set ina 1"></option>
             </datalist>
             <button>Enviar</button>
           </fieldset>
@@ -516,6 +590,7 @@
   </div>
 
   <script src="app.js"></script>
+  <script src="energia.js"></script>
   <script src="banco.js"></script>
   <script src="configuracion.js"></script>
   <script src="mando.js"></script>

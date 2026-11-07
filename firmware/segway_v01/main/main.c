@@ -19,6 +19,7 @@
 #include "dist_sharp.h"
 #include "encoder.h"
 #include "imu_mpu6050.h"
+#include "led_rgb.h"
 #include "messages.h"
 #include "motor.h"
 #include "servo.h"
@@ -68,6 +69,11 @@ void app_main(void)
     // distancia al borde que se le dice ("escalon <cm>", MAN_D_BORDE_M)
     if (dist_sharp_init(PIN_DIST_SUELO) != ESP_OK) {
         ESP_LOGE(TAG, "ADC del sensor de distancia no inicializado");
+    }
+
+    // Solo informa: si falla, el robot anda igual
+    if (led_rgb_init(PIN_LED_RGB) != ESP_OK) {
+        ESP_LOGE(TAG, "LED RGB no inicializado");
     }
 
     QueueHandle_t telemetry_q = xQueueCreate(1, sizeof(telemetry_t));

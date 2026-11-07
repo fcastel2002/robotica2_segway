@@ -16,10 +16,10 @@ La arquitectura, la máquina de estados y el orden de puesta en marcha están en
 ## Compilar, grabar y monitorear
 
 Igual que `servo_test`: con la extensión ESP-IDF de VS Code abriendo esta carpeta, o desde la
-terminal de ESP-IDF. La compilación va a `C:\esp\build\segway_v01`, fuera de OneDrive.
+terminal de ESP-IDF. La compilación va a `build/`, dentro de esta carpeta.
 
 ```powershell
-idf.py -B C:\esp\build\segway_v01 -p COM4 build flash monitor
+idf.py -p COM5 build flash monitor
 ```
 
 ## Consola
@@ -186,6 +186,26 @@ variaciones, también puesto 6 cm más cerca o más lejos y con escalones de 9 a
 4. Alguien con las manos cerca, sin tocarlo. △. Mejor filmarlo de costado, en cámara lenta.
 5. Al terminar, el registro llega solo; después `python simulacion/escalon/comparar_prueba.py --lipo <V>`.
 
+## LED de estado
+
+El LED RGB de la placa ([`led_estado.c`](main/led_estado.c), colores en `board_config.h`):
+
+| Color | Estado |
+|---|---|
+| Azul | Calibrando el giróscopo: no mover el robot |
+| Blanco | `DISARMED` |
+| Verde | `BALANCING`: motores activos |
+| Verde con destellos amarillos | `BALANCING` con los motores cerca del tope (`set margen`, o 95 % de `umax`): queda poco para equilibrar |
+| Violeta | `BALANCING` con la bajada de escalón (△) o la parada (□) en curso: el joystick no manda |
+| Rojo fijo | `FALLEN`: levantarlo y mandar `arm` o `disarm` |
+| Rojo parpadeando | `FAULT`: revisar la IMU y mandar `cal` |
+| Ámbar / cian, más fuerte cuanto más cerca de la referencia | Guía de armado, fuera de la ventana de ±`ARM_WINDOW_DEG`: ámbar = corrido hacia adelante (llevarlo hacia atrás), cian = corrido hacia atrás (llevarlo hacia adelante) |
+| Ámbar / cian parpadeando | Guía de armado, dentro de la ventana: ya se puede armar |
+
+La guía se prende con un `arm` que no armó y se apaga con `disarm` o al armar. **No arma sola:** con el
+LED parpadeando hay que mandar `arm` otra vez. Después de una caída el LED queda rojo hasta el próximo `arm`.
+`FAULT` no tiene guía (`arm` no sale de ahí). Si el LED no prende, probar `PIN_LED_RGB` en 38 (DevKitC v1.1).
+
 ## LQR
 
 `u = kx·x + kv·v + kphi·(theta − ref) + kw·omega`, con los cuatro estados positivos hacia adelante.
@@ -217,11 +237,11 @@ Procedimiento, protecciones y qué rehacer con el robot armado completo: [`../do
 
 ## Pruebas en la PC
 
-La lógica sin hardware (`components/control/` y `main/supervisor.c`) se prueba con gcc
+La lógica sin hardware (`components/control/`, `main/supervisor.c` y `main/led_estado.c`) se prueba con gcc
 (MSYS2), desde esta carpeta:
 
 ```bash
-gcc -std=c11 -Wall -Wextra -Icomponents/control/include -Imain test_host/test_control.c components/control/*.c main/supervisor.c -lm -o test_control && ./test_control
+gcc -std=c11 -Wall -Wextra -Icomponents/control/include -Imain test_host/test_control.c components/control/*.c main/supervisor.c main/led_estado.c -lm -o test_control && ./test_control
 ```
 
 **Banco del LQR** ([`banco_lqr.c`](test_host/banco_lqr.c)): corre el filtro, la odometría y el LQR de

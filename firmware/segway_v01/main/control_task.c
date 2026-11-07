@@ -11,6 +11,7 @@
 #include "dist_sharp.h"
 #include "encoder.h"
 #include "imu_mpu6050.h"
+#include "led_estado.h"
 #include "maniobra.h"
 #include "messages.h"
 #include "motor.h"
@@ -310,6 +311,7 @@ static void control_task(void *arg)
     int fin_reg = 0;                // ciclos que quedan por grabar después de que terminó
     int n_baja_g = 0;
     float acc_norma = 9.81f;        // |a| en el plano del robot (adelante-arriba), la última válida
+    bool led_guia = false;
 
     ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
     TickType_t last_wake = xTaskGetTickCount();
@@ -418,6 +420,7 @@ static void control_task(void *arg)
         };
         sup_state_t st = supervisor_step(&sup, &in, TILT_LIMIT_DEG * DEG2RAD,
                                          ARM_WINDOW_DEG * DEG2RAD);
+        led_guia = led_guia_paso(led_guia, st, cmd);
         if (st == SUP_CALIBRATING && (prev == SUP_DISARMED || prev == SUP_FAULT)) {
             // Recalibración pedida con "cal": se descarta el sesgo y el ángulo anteriores
             calibrated = false;
@@ -645,6 +648,7 @@ static void control_task(void *arg)
             .giro_max    = giro_max,
             .par_inclina = par_p.inclina_deg * DEG2RAD,
             .par_suelta  = par_p.suelta_deg * DEG2RAD,
+            .led_guia    = led_guia,
         };
         for (int i = 0; i < 3; i++) {
             t.accel[i] = imu_ok ? s.accel[i] : NAN;

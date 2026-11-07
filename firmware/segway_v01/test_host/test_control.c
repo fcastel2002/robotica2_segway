@@ -1,7 +1,7 @@
 // Pruebas en la PC de la lógica sin hardware: control/ y supervisor.
 // Compilar y correr desde firmware/segway_v01/:
 //   gcc -std=c11 -Wall -Wextra -Icomponents/control/include -Imain test_host/test_control.c
-//       components/control/*.c main/supervisor.c -lm -o test_host/test_control && test_host/test_control
+//       components/control/*.c main/supervisor.c main/led_estado.c -lm -o test_host/test_control && test_host/test_control
 
 #include <math.h>
 #include <stdio.h>
@@ -9,6 +9,7 @@
 #include "attitude.h"
 #include "balance.h"
 #include "board_config.h"
+#include "led_estado.h"
 #include "movimiento.h"
 #include "odometry.h"
 #include "sensor_piso.h"
@@ -436,6 +437,103 @@ static void test_supervisor_faults(void)
     CHECK(s.state == SUP_FAULT);
 }
 
+static void test_led_guia_se_prende_y_se_apaga(void)
+{
+    bool g = false;
+    CHECK(!led_guia_paso(g, SUP_DISARMED, SUP_CMD_NONE));           // sin "arm", nada
+    g = led_guia_paso(g, SUP_DISARMED, SUP_CMD_ARM);                // "arm" que no armó
+    CHECK(g);
+    CHECK(led_guia_paso(g, SUP_DISARMED, SUP_CMD_NONE));            // sigue hasta el "disarm"
+    CHECK(!led_guia_paso(g, SUP_DISARMED, SUP_CMD_DISARM));
+    CHECK(!led_guia_paso(g, SUP_BALANCING, SUP_CMD_ARM));           // armó
+    CHECK(!led_guia_paso(g, SUP_FAULT, SUP_CMD_ARM));
+    CHECK(!led_guia_paso(g, SUP_CALIBRATING, SUP_CMD_CALIBRATE));
+
+    // Se cae: rojo sin guía, y un "arm" que no arma la vuelve a prender
+    g = led_guia_paso(false, SUP_FALLEN, SUP_CMD_NONE);
+    CHECK(!g);
+    CHECK(led_guia_paso(g, SUP_FALLEN, SUP_CMD_ARM));
+}
+
+static void test_led_colores(void)
+{
+    led_entrada_t in = { .st = SUP_DISARMED };
+    led_color_t c = led_color(&in);
+    CHECK(c.r == LED_BRILLO && c.g == LED_BRILLO && c.b == LED_BRILLO);
+    in.st = SUP_FALLEN;
+    c = led_color(&in);
+    CHECK(c.r == LED_BRILLO && c.g == 0 && c.b == 0);
+    in.t_ms = LED_FAULT_PARPADEO_MS;                                // caído: fijo
+    c = led_color(&in);
+    CHECK(c.r == LED_BRILLO);
+
+    // FAULT parpadea, y gana a la guía
+    in = (led_entrada_t){ .st = SUP_FAULT, .guia = true };
+    c = led_color(&in);
+    CHECK(c.r == LED_BRILLO && c.g == 0 && c.b == 0);
+    in.t_ms = LED_FAULT_PARPADEO_MS;
+    c = led_color(&in);
+    CHECK(c.r == 0 && c.g == 0 && c.b == 0);
+
+    // Armado: verde; destellos amarillos con los motores al límite; violeta con la maniobra
+    in = (led_entrada_t){ .st = SUP_BALANCING };
+    c = led_color(&in);
+    CHECK(c.r == 0 && c.g == LED_BRILLO && c.b == 0);
+    in.motor_limite = true;
+    c = led_color(&in);
+    CHECK(c.r == LED_BRILLO && c.g == LED_BRILLO && c.b == 0);
+    in.t_ms = LED_MOTOR_PARPADEO_MS;
+    c = led_color(&in);
+    CHECK(c.r == 0 && c.g == LED_BRILLO && c.b == 0);
+    in.maniobra = true;                                             // la maniobra gana al aviso
+    c = led_color(&in);
+    CHECK(c.r == LED_BRILLO && c.g == 0 && c.b == LED_BRILLO);
+
+    // Guía: ámbar corrido adelante, cian corrido atrás, y más brillo cuanto más cerca
+    in = (led_entrada_t){ .st = SUP_DISARMED, .guia = true };
+    in.tilt_err_deg = 40.0f;
+    c = led_color(&in);
+    CHECK(c.r == (uint8_t)LED_GUIA_MIN && c.g > 0 && c.r > c.g && c.b == 0);
+    uint8_t lejos = c.r;
+    in.tilt_err_deg = 15.0f;
+    uint8_t medio = led_color(&in).r;
+    in.tilt_err_deg = ARM_WINDOW_DEG + 0.1f;
+    uint8_t cerca = led_color(&in).r;
+    CHECK(lejos < medio && medio < cerca);
+    in.tilt_err_deg = -15.0f;
+    c = led_color(&in);
+    CHECK(c.r == 0 && c.g > 0 && c.b == medio);
+    in.tilt_err_deg = -40.0f;
+    c = led_color(&in);
+    CHECK(c.g > 0 && c.b == (uint8_t)LED_GUIA_MIN);                 // cian, no azul, aun con poca luz
+
+    // Dentro de la ventana parpadea, con el color del lado en que está
+    in.tilt_err_deg = 1.0f;
+    in.t_ms = 0;
+    CHECK(led_color(&in).r == (uint8_t)LED_GUIA_MAX);
+    in.t_ms = LED_GUIA_PARPADEO_MS;
+    CHECK(led_color(&in).r == 0);
+    in.tilt_err_deg = -1.0f;
+    in.t_ms = 0;
+    CHECK(led_color(&in).b == (uint8_t)LED_GUIA_MAX);
+}
+
+static void test_led_motor_limite(void)
+{
+    uint32_t t = 0;
+    CHECK(!led_motor_limite(&t, 0.5f, 0.85f, 1.0f, 5000));
+    CHECK(led_motor_limite(&t, 0.86f, 0.85f, 1.0f, 5020));          // pasó el margen
+    CHECK(led_motor_limite(&t, 0.5f, 0.85f, 1.0f, 5020 + LED_MOTOR_AVISO_MS - 1));   // sostiene
+    CHECK(!led_motor_limite(&t, 0.5f, 0.85f, 1.0f, 5020 + LED_MOTOR_AVISO_MS));
+
+    // Con umax bajo el margen no se alcanza: avisa cerca del tope. Con margen 0, también
+    t = 0;
+    CHECK(led_motor_limite(&t, 0.58f, 0.85f, 0.6f, 5000));
+    t = 0;
+    CHECK(!led_motor_limite(&t, 0.5f, 0.0f, 1.0f, 5000));
+    CHECK(led_motor_limite(&t, 0.96f, 0.0f, 1.0f, 5000));
+}
+
 int main(void)
 {
     test_attitude_from_accel();
@@ -458,6 +556,9 @@ int main(void)
     test_supervisor_recalibration();
     test_supervisor_cuts_sustained_saturation();
     test_supervisor_faults();
+    test_led_guia_se_prende_y_se_apaga();
+    test_led_colores();
+    test_led_motor_limite();
 
     if (failures == 0) {
         printf("OK: todas las pruebas pasaron\n");

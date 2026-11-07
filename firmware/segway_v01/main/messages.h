@@ -116,4 +116,5 @@ typedef struct {
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;
     float            par_inclina, par_suelta;       // [rad]
+    bool             led_guia;      // guía de armado activa (led_estado.h)
 } telemetry_t;

@@ -31,8 +31,8 @@
 #define PIN_MOTOR_FAULT     21
 
 // Servos de las patas (señal; la alimentación va por el UBEC, con GND común)
-#define PIN_SERVO_L         10
-#define PIN_SERVO_R         9
+#define PIN_SERVO_L         9       // sobre el motor izquierdo (J13 de la PCB)
+#define PIN_SERVO_R         10      // sobre el motor derecho (J14 de la PCB)
 
 // Encoders de cuadratura de las ruedas (hall del motor, alimentados a 3,3 V: las salidas
 // no pueden subir a 5 V, los GPIO del ESP32 no lo toleran)
@@ -47,7 +47,9 @@
 // entra por un divisor 10k/15k (x 0,6). ADC1_CH2, convive con el WiFi.
 #define PIN_DIST_SUELO      3
 
+// LED RGB integrado (WS2812), indica el estado del robot
+#define PIN_LED_RGB         48      // 38 en la versión 1.1 de la DevKitC
+
 // Reservados para versiones posteriores (no se configuran en la v0.1)
 #define PIN_BATT_ADC        1       // debe ser ADC1 (GPIO1-10) para convivir con WiFi
 #define PIN_ARM_BUTTON      0       // botón BOOT de la placa
-#define PIN_LED_RGB         48      // 38 en la versión 1.1 de la DevKitC
