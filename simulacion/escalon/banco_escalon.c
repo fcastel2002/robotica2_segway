@@ -8,8 +8,8 @@
 // estrategias de bajada y escribe un CSV por caso en resultados/ para graficar.
 //
 // Compilar desde la raíz del repo (ver README.md):
-//   gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v01/components/control/include
-//       -Ifirmware/segway_v01/main simulacion/escalon/*.c firmware/segway_v01/components/control/*.c
+//   gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v02/components/control/include
+//       -Ifirmware/segway_v02/main simulacion/escalon/*.c firmware/segway_v02/components/control/*.c
 //       -lm -o simulacion/escalon/banco_escalon
 
 #include <math.h>

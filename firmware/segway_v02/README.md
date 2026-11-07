@@ -76,6 +76,7 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `get` | Ver los parámetros vigentes, la posición y los límites de los servos y el estado del WiFi (contesta 40 ms después, con los `set` ya aplicados) |
 | `mov 0.5 -0.2` | Avance y giro, de −1 a 1 (ver [Movimiento](#movimiento)). Sin respuesta, para que el joystick pueda mandarlo seguido |
 | `tlm on` / `tlm off` | Activar o pausar la telemetría (`tlm on` reimprime el encabezado) |
+| `grabar` | Graba 8 s a 200 Hz (armado o no) y los manda como el registro de la bajada (líneas `#r`); SHARE en el joystick |
 | `enc reset` | Poner en cero las cuentas de los dos encoders |
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
@@ -94,7 +95,11 @@ sigue por el cable). Completarlo y volver a compilar. Al conectarse informa por 
 ```
 
 Si no encuentra la red: `# wifi: buscando la red MiRed (último motivo de desconexión: N)`, y sigue
-reintentando sola. `get` también muestra esa línea.
+reintentando sola. `get` también muestra esa línea. Se pueden poner hasta tres redes (`WIFI_SSID2`,
+`WIFI_SSID3` con sus claves): si una no aparece, prueba la siguiente. Las abiertas van sin clave,
+también las abiertas con cifrado (OWE). Motivo 201: no la encuentra (por ejemplo, una red solo de
+5 GHz, como «Facultad de Ingeniería» donde se probó el 5/11; ahí anduvo el celular como punto de acceso
+en 2,4 GHz).
 
 - **Telemetría y mensajes**: las mismas líneas que por el cable, por UDP al puerto **4210** de la PC que
   se anunció con `hola` en los últimos 5 s; si ninguna, por broadcast a toda la red.
@@ -172,7 +177,9 @@ La maniobra de [`maniobra.c`](components/control/maniobra.c), la misma que corre
   sin telemetría; `escalon datos` lo vuelve a mandar). [`Aplicacion/puente.py`](../../Aplicacion/puente.py)
   lo guarda en `Aplicacion/registros/bajada_<fecha>.csv` y
   [`comparar_prueba.py`](../../simulacion/escalon/comparar_prueba.py) lo compara con la simulación
-  de la misma bajada (figura y tabla en `simulacion/escalon/resultados/pruebas/`).
+  de la misma bajada (figura y tabla en `simulacion/escalon/resultados/pruebas/`). **`grabar`** (o
+  SHARE en el joystick) graba lo mismo durante 8 s desde ese momento, armado o no, y lo manda al
+  terminar (también va a `bajada_<fecha>.csv`): para soltar el robot y ver cuánto rebota (abajo).
 - **Sensor de distancia** (Sharp GP2Y0A60SZLF, Pololu #2474, en GPIO3): se lee en cada ciclo y la
   telemetría trae `sharp_mv`, `dist_mm` y dónde pega el haz respecto del apoyo de la rueda
   (`haz_x_mm` hacia atrás, `haz_z_mm` de alto: en piso plano ~0). No hace falta instalar nada: es una
@@ -191,7 +198,28 @@ variaciones, también puesto 6 cm más cerca o más lejos y con escalones de 9 a
 3. ✕ para armar; que se quede quieto unos segundos y volver a medir: si se corrió, desarmar y
    acomodarlo (o `escalon <cm>` con la distancia de verdad).
 4. Alguien con las manos cerca, sin tocarlo. △. Mejor filmarlo de costado, en cámara lenta.
-5. Al terminar, el registro llega solo; después `python simulacion/escalon/comparar_prueba.py --lipo <V>`.
+5. Al terminar, el registro llega solo; después `python simulacion/escalon/comparar_prueba.py --lipo <V>`
+   (con el DRV8871 no hay caída en el driver; para los registros con el L298N, hasta el 5/11, `--caida 2`).
+
+Soltarlo, para ver cuánto rebota (la goma y cuánto ceden las patas; idea de Joaquín, 5/11): desde
+5, 10, 15 y 20 cm, que cubren los escalones de 10,5 y 16,6 cm. El 5/11, con la placa vieja, el ESP32
+se reiniciaba con los golpes (pines flojos): con las PCB, repetirlo.
+
+1. Robot **desarmado**, patas en 30° (`servo 30`, como al tocar en la bajada), con el robot en la mano
+   (sueltos, los servos van directo), sobre el mismo piso de la escalera, con una cinta métrica
+   parada atrás. Antes de cada caída, que `get` o la página muestren los servos en 30 (si el robot se
+   reinició, quedan sueltos).
+2. `grabar` (o SHARE) y, en los 8 s, sostenerlo derecho desde arriba de la cabina, con las dos ruedas a
+   la misma altura (**5 cm** del piso a la goma), y soltarlo abriendo los dedos de golpe, sin
+   acompañarlo. Alguien con las manos alrededor, sin tocarlo, lo agarra apenas rebota (sin motor se
+   cae). Esperar `# fin del registro` antes de la siguiente.
+3. Lo mismo desde **10, 15 y 20 cm**, dos veces cada una, de menor a mayor. Después de cada una,
+   mirar que las patas vuelvan a 30° y que los servos no hagan ruido ni tengan juego: si algo
+   cambia, no seguir subiendo. 20 cm solo si 15 anduvo bien.
+4. Filmarlo de costado en cámara lenta. La altura la da la caída en la IMU (5 cm, 101 ms; 10, 143;
+   15, 175; 20, 202).
+5. `python simulacion/escalon/rebote.py Aplicacion/registros/bajada_<fecha>.csv`: la misma caída en
+   el banco, y con qué goma y qué servos se parece más.
 
 ## Medición de energía (INA)
 

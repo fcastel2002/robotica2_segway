@@ -222,10 +222,15 @@ function o = parametros_fisicos(variante)
     o.c_contacto = 20;      % antes 60. SUPUESTO (falta la prueba de soltarlo y ver cuanto rebota):
                             % ~15 % del critico con el robot encima; las simulaciones lo barren de 4 a 100
     o.N = 899/(4*11);       % antes 20 (nominal): 20.43, medido con el encoder (FW-009)
-    o.w_nl_motor_rpm = 7000;% antes 6000: es la version de 350 rpm (STEP "DC12V350RPM"); MED-005 midio
-                            % 1.37 veces la velocidad por PWM del modelo
-    o.V_bat = 11.9;         % antes 11.1 (nominal): medido por el equipo el 3/11. Con la caida del L298N de
-                            % siempre (2.0 V) llegan 9.9 V al motor, lo que pide la onda cuadrada (9.8)
-    o.zona_muerta_motor = 0.14; % antes 0.17: ajustado con la onda cuadrada (MED-005 en el aire: 0.17-0.19)
+    % 7/11, con el DRV8871 de la placa en lugar del L298N (MED-006, firmware/docs/comparacion_L298N_DRV8871.md):
+    % en el aire la rueda da 26 RPM por voltio de bateria con los dos drivers; el L298N le restaba ~2 V
+    % como una zona muerta (0.17-0.19 de PWM; con el DRV8871, 0.02-0.03), no como menos ganancia. La
+    % onda cuadrada del 3/11 (L298N) la sigue igual con este motor, 11.9 V al motor y el L298N como
+    % zona muerta de 0.16 (costo 7.05 contra 7.19: modelado/ajuste/ajustar_onda.py vm=11.9 zm=0.16)
+    o.w_nl_motor_rpm = 6060;% antes 7000 (350 rpm) y 6000 (300 rpm, nominal): la de 26 RPM/V medida (MED-006)
+    o.V_bat = 12.3;         % antes 11.9 (3/11): LiPo el 6/11 (voltimetro de panel; INA219 12.2)
+    o.caida_driver = 0;     % antes 2.0 (L298N): el DRV8871 tiene salidas MOSFET (~0.6 ohm, despreciable)
+    o.zona_muerta_motor = 0.026; % antes 0.14 (L298N): donde se anula la velocidad en el aire con el DRV8871
+                            % (0.031 izq., 0.021 der.; desde parada arranca con 0.06-0.08)
   end
 end

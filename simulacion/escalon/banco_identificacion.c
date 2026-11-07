@@ -138,10 +138,12 @@ int main(int argc, char **argv)
 
     planta_t P = planta_base();
     P.beta_v *= param(argc, argv, "km", 1.0);
-    P.v_motor = param(argc, argv, "vm", P.v_motor);
+    // La prueba del 3/11 fue con el L298N: 11,9 V al motor y el driver como zona muerta de 0,16 (con la
+    // planta del DRV8871 del 7/11; ajustar_onda.py: vm 11,9 y zm 0,16 la siguen como antes)
+    P.v_motor = param(argc, argv, "vm", 11.9);
     P.b_m *= param(argc, argv, "bm", 1.0);
     P.i_cuerpo *= param(argc, argv, "ic", 1.0);
-    P.friccion_seca = P.beta_v * param(argc, argv, "zm", ZONA_MUERTA) * P.v_motor;
+    P.friccion_seca = P.beta_v * param(argc, argv, "zm", 0.16) * P.v_motor;
     piso_t piso = { 0.0, 1.0, 0 };
 
     // El firmware como estaba en la prueba del 3/11 (get de las 13:43)

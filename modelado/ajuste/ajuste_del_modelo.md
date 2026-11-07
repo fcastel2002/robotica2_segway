@@ -187,7 +187,34 @@ amortiguamiento. O sea que la prueba dice las dos cosas: si las patas ceden como
 rebota, cuánto amortigua la goma; y de 5 a 20 cm, si la goma se endurece al aplastarse más (en el
 modelo se aplasta 5-11 mm; la balanza llegó a 3,5).
 
-## 8. Dónde está cada cosa
+## 8. Con el DRV8871 en lugar del L298N (7/11)
+
+Con las PCB, los motores van con DRV8871. El ensayo de las ruedas en el aire con los dos drivers
+([MED-006](../../firmware/docs/comparacion_L298N_DRV8871.md)) dice que la rueda da **26 RPM por voltio
+de batería con los dos** (25,7-26,4), y que el L298N le restaba ~2 V **como una zona muerta** (la
+velocidad se anula en 0,17-0,19 de PWM; con el DRV8871, en 0,02-0,03), no como menos ganancia. El
+modelo lo explicaba al revés: un motor de 350 rpm y 2 V menos al motor.
+
+| Parámetro (`'ajustada'`) | L298N (3-5/11) | DRV8871 (7/11) | De dónde sale |
+|---|---|---|---|
+| `w_nl_motor_rpm` | 7000 (350 rpm de salida) | **6060** | 26 RPM/V en el aire (el banco da 26,1) |
+| `caida_driver` | 2,0 V | **0** | Salidas MOSFET (~0,6 Ω contra los 10,3 del motor) |
+| `V_bat` | 11,9 V | **12,3 V** | La LiPo el 6/11 (voltímetro de panel; INA219 12,2) |
+| `zona_muerta_motor` | 0,14 | **0,026** | Donde se anula la velocidad en el aire (0,031 / 0,021); desde parada arranca con 0,06-0,08 |
+
+**La onda cuadrada del 3/11 (con el L298N) la sigue igual**: con este motor, 11,9 V y el L298N como
+zona muerta de 0,16, 7,18 de costo contra 7,19 ([`ajustar_onda.py`](ajustar_onda.py); el banco de
+identificación quedó con esos valores para repetir esa prueba). O sea que el modelo nuevo explica las
+dos cosas, la del L298N y la del DRV8871.
+
+**Lo que cambia para el control:** con el mismo PWM, el motor hace **un 44 % más de par** que en el
+modelo de antes (por la tensión que ya no se pierde y por la constante del motor). El mismo criterio
+de siempre (Bryson con 8°, R ×64) daría ganancias un 15-20 % más bajas: kx 1,25, kv 2,10-2,13, kphi
+3,13 a 4,15 y kw 0,33 a 0,54, de la pata 0 a la 30. **Las del firmware siguen andando** sobre el modelo
+nuevo: amortiguamiento 1,00 y margen de ganancia ×2,8-3,0 (las recalculadas, ×3,7). No hace falta
+cambiarlas para la primera prueba con la placa; si se lo ve nervioso, son esas.
+
+## 9. Dónde está cada cosa
 
 - [`parametros_fisicos.m`](../parametros/parametros_fisicos.m): variante `'ajustada'`.
 - [`ajustar_equilibrio.m`](ajustar_equilibrio.m), [`ajustar_onda.py`](ajustar_onda.py) (la onda cuadrada

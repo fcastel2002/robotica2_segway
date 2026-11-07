@@ -28,14 +28,14 @@ RAIZ = AQUI.parent.parent
 CARPETA = AQUI / "resultados" / "un_escalon"
 BANCO = sys.argv[1] if len(sys.argv) > 1 else str(AQUI / "banco_escalon_ajustada.exe")
 
-ESCENARIO = dict(escalones="1", ultimo="0", alto="0.105", d_borde="0.30", x0="0.30", v_motor="10.6",
+ESCENARIO = dict(escalones="1", ultimo="0", alto="0.105", d_borde="0.30", x0="0.30", v_motor="12.6",
                  **GOMA_NOMINAL)
 K_MEDIDA = float(GOMA_NOMINAL["k_rueda"])
 KS = [6000, 8500, 11000, 14000, 17000, 21000, 25000, 30000, 40000]
 CS = [4, 6, 10, 15, 25, 40, 60, 100]
 CONDICIONES = [
     ("nominal", "ensayo nominal", {}),
-    ("zm021", "arranca lento (zona muerta 0,21)", dict(zona_muerta="0.21")),
+    ("zm008", "arranca lento (zona muerta 0,08)", dict(zona_muerta="0.08")),
     ("ref+1", "equilibrio corrido +1°", dict(d_ref="1")),
     ("ref-1", "equilibrio corrido -1°", dict(d_ref="-1")),
 ]

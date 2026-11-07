@@ -46,9 +46,9 @@ const GRUPOS = [
     ['x0', 'Rueda al empezar', 'm del borde', 0.05, 'Dónde arranca el robot, antes de buscar el borde.'],
   ]],
   ['Robot y planta', [
-    ['v_motor', 'Tensión al motor', 'V', 0.1, 'Lo que llega al motor con PWM 100 %: la LiPo menos ~2 V del L298N.', null,
-      [['LiPo 12,6', 10.6], ['11,9', 9.9], ['11,1', 9.1], ['10,5', 8.5]]],
-    ['zona_muerta', 'Zona muerta del motor', 'PWM', 0.01, 'Fracción del PWM que no mueve la rueda (medida el 3/11: 0,14; el firmware compensa 0,16 quieto).'],
+    ['v_motor', 'Tensión al motor', 'V', 0.1, 'Lo que llega al motor con PWM 100 %: con el DRV8871, la LiPo (con el L298N se perdían ~2 V).', null,
+      [['LiPo 12,6', 12.6], ['12,2', 12.2], ['11,8', 11.8], ['11,1', 11.1]]],
+    ['zona_muerta', 'Zona muerta del motor', 'PWM', 0.01, 'Fracción del PWM que no mueve la rueda (DRV8871, medida el 6/11: 0,026; con el L298N, 0,14-0,19; el firmware compensa 0,05 quieto).'],
     ['mu', 'Fricción rueda-piso', 'μ', 0.05, 'Coulomb entre la goma y el piso.'],
     ['servo', 'Par de los servos', '×', 0.05, 'Factor del par de calado de los DS3240.'],
     ['recorte', 'Cabina recortada adelante', 'm', 0.01, 'Cuánto se acorta la cabina adelante (la parte que pega en el borde al bajar hacia atrás); el equipo puede sacarle hasta ~7 cm. La masa queda igual.'],
@@ -123,8 +123,8 @@ const BARRAS = ['bajados', 'desvio', 'fin', 'sale', 'servo', 'rueda'];
 // Rangos de barrido que tienen sentido (si no, ±30 % del valor); el tercero, los pasos
 const RANGOS = {
   v_salida: [0.4, 0.7], pata_largada: [0, 30], pata_vuelo: [15, 30], pata_final: [10, 30], d_salto: [-0.05, 0.1],
-  v_motor: [8.5, 10.6], d_ref: [-1.5, 1.5], a_frenado: [0.3, 2], vel_pata_final: [50, 1000], alto: [0.05, 0.2],
-  x0: [0.3, 0.8], mu: [0.3, 1], zona_muerta: [0.05, 0.25], ff: [0.6, 1.4], a_salida_max: [0.3, 2],
+  v_motor: [11.1, 12.6], d_ref: [-1.5, 1.5], a_frenado: [0.3, 2], vel_pata_final: [50, 1000], alto: [0.05, 0.2],
+  x0: [0.3, 0.8], mu: [0.3, 1], zona_muerta: [0.01, 0.1], ff: [0.6, 1.4], a_salida_max: [0.3, 2],
   vel_pata: [100, 1000], pata_busqueda: [10, 30], t_mantener: [0, 0.1], kx_aterrizaje: [0, 1],
   kx_largada: [0, 1], servo: [0.5, 1.2], motor_vuelo: [0, 2, 3], escalones: [1, 4, 4], semilla: [0, 9, 10],
 };

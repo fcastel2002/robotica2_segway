@@ -33,9 +33,9 @@ Desde la raíz del repo (MATLAB solo para regenerar la planta):
 
 ```text
 matlab: run simulacion/escalon/exportar_planta_escalon.m      (escribe planta_escalon.h)
-gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v01/components/control/include ^
-    -Ifirmware/segway_v01/main simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
-    simulacion/escalon/pata_tabla.c firmware/segway_v01/components/control/*.c -lm ^
+gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v02/components/control/include ^
+    -Ifirmware/segway_v02/main simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
+    simulacion/escalon/pata_tabla.c firmware/segway_v02/components/control/*.c -lm ^
     -o simulacion/escalon/banco_escalon.exe
 simulacion/escalon/banco_escalon.exe caso pata_largada=30 v_salida=0.55 pata_final=15 csv=prueba
 python simulacion/escalon/graficar_escalon.py prueba          (resultados/prueba.png)
@@ -214,9 +214,9 @@ Un escalón de 18 cm con piso de sobra abajo (`escalones=1`), la primera prueba 
 
 ```text
 gcc -std=c11 -O2 -Wall -DPLANTA_AJUSTADA -Isimulacion/escalon ^
-    -Ifirmware/segway_v01/components/control/include -Ifirmware/segway_v01/main ^
+    -Ifirmware/segway_v02/components/control/include -Ifirmware/segway_v02/main ^
     simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
-    simulacion/escalon/pata_tabla.c firmware/segway_v01/components/control/*.c -lm ^
+    simulacion/escalon/pata_tabla.c firmware/segway_v02/components/control/*.c -lm ^
     -o simulacion/escalon/banco_escalon_ajustada.exe
 python simulacion/escalon/un_escalon.py          (~30 s; 122 casos)
 ```
@@ -383,6 +383,18 @@ caiga» del 4/11) en el ensayo de 10,5 cm, a 30 cm del borde, con la LiPo cargad
   0,17-0,19.
 - **Lo de la escalera (arriba) es con el modelo de 962 g y la goma casi rígida:** hay que volver a
   correr el genético de la escalera con este modelo.
+
+**Con el DRV8871 (7/11).** Las PCB traen DRV8871 en lugar del L298N, y el firmware pasó a
+[`segway_v02`](../../firmware/segway_v02/README.md) (`DEFAULT_DEADBAND` 0,05, INA, LED). El banco y el
+visor compilan ahora el control de `segway_v02` (los fuentes del control son los mismos que en v01), y
+la planta es la del DRV8871 ([`ajuste_del_modelo.md`](../../modelado/ajuste/ajuste_del_modelo.md),
+sección 8): 12,3 V al motor sin caída, zona muerta 0,026 y el motor de 26 RPM/V. **La LiPo llega entera
+al motor:** `v_motor` es la tensión de la LiPo (12,6 cargada; antes, la LiPo menos 2 V), en el
+genético, el visor y las variaciones; la zona muerta de las variaciones es la del DRV8871 (0,015 y 0,05;
+«arranca lento», 0,08). `comparar_prueba.py --caida 2` para los registros con el L298N (hasta el 5/11).
+Con todo eso, la bajada del firmware en el ensayo de 10,5 cm sigue andando en **37 de 38 variaciones**
+(falla con 16,6 cm: la cabina pega) y en las 288 gomas, apartándose 4-11° de su equilibrio; la rueda
+llega hasta 58 cm del borde.
 
 **Soltarlo, para ver cuánto rebota** ([`rebote.py`](rebote.py), `banco_escalon rebote`): el robot
 desarmado, con las patas en 30° (como al tocar) y sostenido derecho, se suelta desde 5, 10, 15 y

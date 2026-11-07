@@ -1,4 +1,4 @@
-// GENERADO por simulacion/escalon/exportar_planta_ajustada.m (variante ajustada) el 2026-11-05 09:32.
+// GENERADO por simulacion/escalon/exportar_planta_ajustada.m (variante ajustada) el 2026-11-07 08:17.
 // No editar a mano: cambiar modelado/parametros/parametros_fisicos.m y volver a correrlo.
 // Marco: x adelante, z arriba, origen en el centro de masa del cuerpo; pata del firmware.
 #pragma once
@@ -13,10 +13,10 @@
 #define PE_N_REDUCTOR        20.4318182    // medido con el encoder
 #define PE_J_SERVO           0.008    // servos vistos desde la pata [kg m2] (supuesto)
 #define PE_R_RUEDA           0.04    // [m]
-#define PE_BETA_V            0.0462959359    // par de los dos motores por voltio [N m/V]
-#define PE_B_M               0.0146888431    // contraelectromotriz de los dos motores [N m s/rad]
+#define PE_BETA_V            0.0534771537    // par de los dos motores por voltio [N m/V]
+#define PE_B_M               0.0195992035    // contraelectromotriz de los dos motores [N m s/rad]
 #define PE_B_EJE             0.0002    // friccion del eje [N m s/rad]
-#define PE_V_MOTOR           9.9    // lo que llega al motor con PWM 1 [V]
+#define PE_V_MOTOR           12.3    // lo que llega al motor con PWM 1 [V]
 #define PE_SERVO_PAR_MAX     8.0442    // de calado, los dos [N m]
 #define PE_SERVO_VEL_MAX     5.70722665    // en vacio [rad/s]
 #define PE_SERVO_GANANCIA    11.4591559    // a fondo con 5 grados de error [1/rad]
@@ -26,7 +26,7 @@
 #define PE_K_CUERPO          100000    // golpe del cuerpo contra el escalon [N/m]
 #define PE_C_CUERPO          300    // [N s/m]
 #define PE_MU                0.7    // friccion rueda-piso
-#define PE_ZONA_MUERTA       0.14    // fraccion de PWM que no mueve la rueda (ajustada)
+#define PE_ZONA_MUERTA       0.026    // fraccion de PWM que no mueve la rueda (ajustada)
 #define PE_IMU_X             0.0324409718    // IMU respecto del centro de masa del cuerpo [m]
 #define PE_IMU_Z             0.0121900503    // [m]
 #define PE_IMU_DELTA         0.0733038286    // la IMU marca esto de mas (ajustado a la tabla medida) [rad]

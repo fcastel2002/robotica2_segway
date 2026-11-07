@@ -39,10 +39,10 @@ VARIACIONES = [
 # con la LiPo cargada antes de cada ensayo. "mu*" multiplica la fricción de la goma que se eligió
 VARIACIONES_ENSAYO = [
     ("nominal", "nominal (LiPo 12,6 V)", {}),
-    ("lipo122", "LiPo 12,2 V (después de unos ensayos)", dict(v_motor="10.2")),
-    ("lipo118", "LiPo 11,8 V", dict(v_motor="9.8")),
-    ("zm010", "zona muerta 0,10 (no 0,14)", dict(zona_muerta="0.10")),
-    ("zm018", "zona muerta 0,18", dict(zona_muerta="0.18")),
+    ("lipo122", "LiPo 12,2 V (después de unos ensayos)", dict(v_motor="12.2")),
+    ("lipo118", "LiPo 11,8 V", dict(v_motor="11.8")),
+    ("zm010", "zona muerta 0,015 (no 0,026)", dict(zona_muerta="0.015")),
+    ("zm018", "zona muerta 0,05", dict(zona_muerta="0.05")),
     ("mu-", "goma con 20 % menos agarre", {"mu*": "0.8"}),
     ("mu+", "goma con 20 % más agarre", {"mu*": "1.2"}),
     ("servos80", "servos con 80 % del par", dict(servo="0.8")),
@@ -79,16 +79,15 @@ VARIACIONES_GOMA = [
 ]
 # Más duras, para el escalón suelto (4/11: lo que importa es que no se caiga): el robot que arranca
 # lento (en la prueba del 3/11 casi no aceleró los primeros 0,6 s: más zona muerta) y la goma que
-# más rebota junto con otra cosa corrida. La zona muerta, 0,21: con el peso medido (5/11) y 0,22 o
-# más, el robot del modelo ya no se queda quieto antes de largar (va y viene a ±0,14-0,22 m/s) y la
-# maniobra aborta sin largar ("no se quedó quieto"; con 962 g aguantaba 0,25)
+# más rebota junto con otra cosa corrida. Con el DRV8871 (7/11) la zona muerta en el aire es 0,026 y
+# desde parada arranca con 0,06-0,08: «arranca lento» es 0,08 (con el L298N era 0,21-0,25)
 REBOTA = dict(k_rueda="11000", c_rueda="6")
 VARIACIONES_DURAS = [
-    ("zm021", "zona muerta 0,21 (arranca lento)", dict(zona_muerta="0.21")),
+    ("zm008", "zona muerta 0,08 (arranca lento)", dict(zona_muerta="0.08")),
     ("rebota_ref+1", "goma que rebota y equilibrio +1°", dict(REBOTA, d_ref="1")),
     ("rebota_ref-1", "goma que rebota y equilibrio -1°", dict(REBOTA, d_ref="-1")),
-    ("rebota_lipo", "goma que rebota y LiPo 11,8 V", dict(REBOTA, v_motor="9.8")),
-    ("rebota_zm021", "goma que rebota y arranca lento", dict(REBOTA, zona_muerta="0.21")),
+    ("rebota_lipo", "goma que rebota y LiPo 11,8 V", dict(REBOTA, v_motor="11.8")),
+    ("rebota_zm008", "goma que rebota y arranca lento", dict(REBOTA, zona_muerta="0.08")),
     ("blanda_rebota", "goma de antes de medirla (4000; 8)", dict(k_rueda="4000", c_rueda="8")),
 ]
 

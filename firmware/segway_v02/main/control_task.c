@@ -131,6 +131,7 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
     case CMD_MOVE:      // estos los atiende control_task antes de llamar acá
     case CMD_ESCALON:
     case CMD_PARAR:
+    case CMD_GRABAR:
     case CMD_MAN_PARAM:
         break;
     case CMD_SET:
@@ -360,6 +361,17 @@ static void control_task(void *arg)
                     maniobra_abortar(&man, "parada (cuadrado)");
                     man.estado = MAN_INACTIVA;
                     parada_iniciar(&par);
+                }
+                continue;
+            }
+            if (c.type == CMD_GRABAR) {
+                // REGISTRO_N muestras (8 s) desde ya, armado o no (fuera de una bajada, "termino" es
+                // cierto en cada ciclo y fin_reg cuenta hasta el final)
+                if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) {
+                    s_reg_listo = false;
+                    s_reg_n = 0;
+                    grabando = true;
+                    fin_reg = REGISTRO_N;
                 }
                 continue;
             }

@@ -67,6 +67,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
 static man_params_t s_man;
 
 static bateria_t s_bat;
+static int s_grabar;                // "grabar": 1 pedido, 2 grabando; al terminar se manda el registro
 
 // Todo lo que dice la consola sale por el cable y, si hay red, por WiFi. Solo desde comms.
 static void out(const char *fmt, ...)
@@ -106,6 +107,8 @@ static void print_help(void)
         "#   cm detras del apoyo de la rueda; escalon medir: busca el borde con el sensor y frena;\n"
         "#   escalon datos: vuelve a mandar el registro de la ultima (200 Hz, lineas #r)\n"
         "# parar: parada controlada (cuadrado): frena, baja las patas al minimo y se deja caer atras\n"
+        "# grabar: graba 8 s a 200 Hz (armado o no) y los manda como el de la bajada (lineas #r):\n"
+        "#   para soltar el robot desde unos cm y medir cuanto rebota la goma\n"
         "# man: parametros de la bajada; man <nombre> <valor> los cambia (no en plena bajada)\n"
         "# param tambien: giromax (giro con R2/L2) | sharpk sharpv0 sharpdiv (calibracion del Sharp)\n"
         "#        sensx sensz (cm) sensang (grados): donde esta el sensor respecto del eje del servo\n"
@@ -392,6 +395,14 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             return;
         }
         cmd = (command_t){ .type = CMD_PARAR };
+    } else if (strcmp(word, "grabar") == 0) {
+        if (last->man_estado != MAN_INACTIVA && last->man_estado != MAN_FIN) {
+            out("# grabar: ya esta grabando la bajada\n");
+            return;
+        }
+        cmd = (command_t){ .type = CMD_GRABAR };
+        s_grabar = 1;
+        out("# grabar: %d s a 200 Hz desde ahora; al terminar manda el registro\n", REGISTRO_N / 200);
     } else if (strcmp(word, "man") == 0) {
         char *name = strtok(NULL, " \t");
         char *val  = strtok(NULL, " \t");
@@ -635,6 +646,12 @@ static void comms_task(void *arg)
         if (get_wait > 0 && --get_wait == 0) print_params(&last);
         if (arm_wait > 0 && --arm_wait == 0) explain_arm(&last);
         explain_maniobra(&last, &man_antes, &par_antes, &reg_i);
+        if (s_grabar == 1 && last.registrando) {
+            s_grabar = 2;
+        } else if (s_grabar == 2 && !last.registrando) {
+            s_grabar = 0;
+            if (reg_i == -1) reg_i = -2;        // "grabar" terminó: el registro, apenas esté listo
+        }
         send_registro(&reg_i, last.registrando);
         if (tlm_on && reg_i < 0) {      // mientras manda el registro, sin telemetría (no entra)
             // Servo suelto: "nan", porque sin pulsos no se sabe dónde está

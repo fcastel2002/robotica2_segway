@@ -41,7 +41,7 @@ BANCO = str(AQUI / "banco_escalon_ajustada.exe")
 SALIDA = AQUI / "resultados" / "escalera_real" / "genetico.json"
 
 # El robot como está hoy y la escalera (los valores por defecto del banco), con la LiPo cargada
-FIJOS = dict(v_motor="10.6", d_salto="-1")
+FIJOS = dict(v_motor="12.6", d_salto="-1")
 
 # (mínimo, máximo, paso) o lista de opciones
 GENES = {
@@ -310,13 +310,13 @@ def un_escalon():
              kx_largada=0.4, kx_aterrizaje=0.3),
     ]}
     PESOS = {k: 0.5 for k, _, _ in VARIACIONES_UN_ESCALON}
-    PESOS.update({"goma_dura": 1.5, "goma_blanda": 2, "goma_rebota": 2.5, "goma_rebota2": 2.5, "zm021": 2,
-                  "rebota_ref+1": 1.5, "rebota_ref-1": 1.5, "rebota_lipo": 1.5, "rebota_zm021": 2,
+    PESOS.update({"goma_dura": 1.5, "goma_blanda": 2, "goma_rebota": 2.5, "goma_rebota2": 2.5, "zm008": 2,
+                  "rebota_ref+1": 1.5, "rebota_ref-1": 1.5, "rebota_lipo": 1.5, "rebota_zm008": 2,
                   "goma_amortigua": 1.5, "blanda_rebota": 1, "masa+10": 1, "masa-10": 1})
     PESOS.update({"nominal": 3, "alto5": 2, "alto8": 2, "alto12": 2, "alto14": 1.5, "alto166": 1.5, "lipo122": 2,
                   "lipo118": 1, "zm010": 1, "zm018": 1, "mu-": 1, "mu+": 1, "ref+05": 1.5, "ref-05": 1.5,
                   "ref+1": 0.75, "ref-1": 0.75, "x27": 1.5, "x33": 1.5, "ruido1": 1, "ruido2": 1})
-    ETAPA1 = ["goma_rebota2", "rebota_zm021", "rebota_ref+1", "x27", "ref-1"]
+    ETAPA1 = ["goma_rebota2", "rebota_zm008", "rebota_ref+1", "x27", "ref-1"]
     ETAPA2 = [k for k, _, _ in VARIACIONES_UN_ESCALON if k not in ETAPA1 + ["nominal"]]
     W = sum(PESOS.values())
     VAR = {k: e for k, _, e in VARIACIONES_UN_ESCALON}

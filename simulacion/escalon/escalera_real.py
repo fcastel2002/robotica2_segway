@@ -38,7 +38,7 @@ SOLO_FIGURAS = "--figuras" in sys.argv[1:]
 GUARDADAS = AQUI / "resultados" / "escalera_real" / "corridas.pkl"     # las corridas (no se versiona)
 CABINA_MAX = 150.0      # [N] apoyar la cabina vale si no golpea más fuerte que esto
 HOLGURA = 30.0          # [mm] lo menos que tiene que pasar la cabina de la escalera (Joaquín)
-FIJOS = dict(v_motor="10.6", mu_cabina="0.4")
+FIJOS = dict(v_motor="12.6", mu_cabina="0.4")
 ALTO, PISADA, N, ULTIMO = 0.166, 0.29, 7, 0.03
 CLASES = ["bien", "justo", "pega", "se cae", "no termina"]
 graficar_escalon.PLANTA = "planta_escalon_ajustada.h"       # la del banco (la cabina, 19 mm más atrás)
@@ -51,8 +51,8 @@ VALIDACION = [
     ("val_ruido3", "validación: otro ruido (3)", dict(semilla="23")),
     ("val_ruido4", "validación: otro ruido (4)", dict(semilla="41")),
     ("val_ruido5", "validación: otro ruido (5)", dict(semilla="67")),
-    ("val_lipo_ref", "validación: LiPo 12,2 V y equilibrio +0,5°", dict(v_motor="10.2", d_ref="0.5", semilla="29")),
-    ("val_lipo_ref2", "validación: LiPo 12,2 V y equilibrio -0,5°", dict(v_motor="10.2", d_ref="-0.5", semilla="31")),
+    ("val_lipo_ref", "validación: LiPo 12,2 V y equilibrio +0,5°", dict(v_motor="12.2", d_ref="0.5", semilla="29")),
+    ("val_lipo_ref2", "validación: LiPo 12,2 V y equilibrio -0,5°", dict(v_motor="12.2", d_ref="-0.5", semilla="31")),
     ("val_x45", "validación: arranca a 45 cm, otro ruido", dict(x0="0.45", semilla="53")),
 ]
 

@@ -26,7 +26,7 @@ BANCO = str(AQUI / "banco_escalon_ajustada.exe")
 CARPETA = AQUI / "resultados" / "escalera_real"
 
 # La escalera (los valores por defecto del banco) con la LiPo cargada (12,6 V: 10,6 V al motor)
-FIJOS = dict(v_motor="10.6", mu_cabina="0.4")
+FIJOS = dict(v_motor="12.6", mu_cabina="0.4")
 CABINA_MAX = 150.0      # [N] apoyar la cabina vale si no golpea más fuerte que esto
 
 ESPACIOS = {

@@ -26,7 +26,9 @@ from variaciones import resultado
 AQUI = pathlib.Path(__file__).resolve().parent
 RAIZ = AQUI.parent.parent
 BANCO = AQUI / "banco_escalon_ajustada.exe"
-CAIDA_L298N = 2.0       # [V] lo que se pierde en el L298N a fondo (firmware/docs/arquitectura_v0_1.md)
+# [V] lo que se pierde en el driver a fondo: 0 con el DRV8871 de la placa (desde el 6/11); 2,0 con el L298N
+# (los registros hasta el 5/11, con --caida 2)
+CAIDA_DRIVER = 0.0
 
 
 def leer_registro(ruta):
@@ -74,6 +76,8 @@ def main():
     ap.add_argument("--d_borde", default="0.30")
     ap.add_argument("--x0", default=None, help="dónde estaba de verdad el apoyo de la rueda [m]")
     ap.add_argument("--lipo", type=float, default=12.6, help="tensión de la LiPo [V]")
+    ap.add_argument("--caida", type=float, default=CAIDA_DRIVER,
+                    help="lo que se pierde en el driver [V]: 0 con el DRV8871, 2 con el L298N (hasta el 5/11)")
     ap.add_argument("--param", action="append", default=[], help="nombre=valor (lo cambiado con man)")
     a = ap.parse_args()
     if a.registro is None:
@@ -85,7 +89,7 @@ def main():
     nombre = "pruebas/" + reg.stem
     (AQUI / "resultados" / "pruebas").mkdir(parents=True, exist_ok=True)
     p = dict(escalones="1", ultimo="0", alto=a.alto, d_borde=a.d_borde, x0=a.x0 or a.d_borde,
-             v_motor="%.2f" % (a.lipo - CAIDA_L298N))
+             v_motor="%.2f" % (a.lipo - a.caida))
     p.update(kv.split("=", 1) for kv in a.param)
     r = resultado(subprocess.run([str(BANCO), "caso"] + ["%s=%s" % kv for kv in p.items()] + ["csv=" + nombre],
                                  capture_output=True, text=True, cwd=RAIZ).stdout)
