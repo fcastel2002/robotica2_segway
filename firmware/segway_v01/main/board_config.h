@@ -20,11 +20,13 @@
 // 2/11, a la noche: el equipo dio vuelta la IMU (media vuelta alrededor del eje vertical). Medido
 // con las ruedas apoyadas: derecho, x +10,3 y z −0,2; inclinado ~25° adelante, z baja a −4,5 y el
 // giróscopo y marca −12 °/s al inclinarlo. Arriba sigue +x; adelante pasa a +z y el cabeceo a −y.
-#define IMU_AXIS_FWD            2
+// 6/11: con la IMU en la PCB, +y apunta adelante, +x hacia el motor derecho y +z arriba (dicho por el
+// equipo, todavía sin medir). Inclinar adelante lleva z hacia y: es un giro negativo alrededor de x.
+#define IMU_AXIS_FWD            1
 #define IMU_SIGN_FWD            1.0f
-#define IMU_AXIS_UP             0
+#define IMU_AXIS_UP             2
 #define IMU_SIGN_UP             1.0f
-#define IMU_AXIS_PITCH          1
+#define IMU_AXIS_PITCH          0
 #define IMU_SIGN_PITCH          -1.0f
 
 // --- Estimación ---
@@ -36,15 +38,15 @@
 // El L298N es lento para conmutar: si calienta mucho o pierde par con PWM bajo, bajar a 5-10 kHz.
 #define MOTOR_PWM_FREQ_HZ       20000       // inaudible
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
-#define MOTOR_L_INVERT          1           // poner en 1 si la rueda gira al revés
-#define MOTOR_R_INVERT          1           // 29/10: con 1 las ruedas giraban al revés una de otra
+#define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
+#define MOTOR_R_INVERT          0           // 29/10: con 1 las ruedas giraban al revés una de otra
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
 // (guía en firmware/docs/prueba_encoders.md). 29/10, medido con los motores en el aire: con
 // motor positivo (adelante) las dos cuentas suben con estos signos (los pines van cruzados en board_pins.h).
-#define ENC_L_INVERT            1
-#define ENC_R_INVERT            0
+#define ENC_L_INVERT            0
+#define ENC_R_INVERT            1
 #define ENC_GLITCH_NS           1000        // descarta pulsos de menos de 1 us (ruido)
 // Odometría para el LQR (components/control/odometry.h)
 #define ENC_COUNTS_PER_REV      899.0f      // cuentas x4 por vuelta de RUEDA. MEDIDO el 29/10: 8990 en
@@ -63,8 +65,11 @@
 // 2/11 (Joaquín y el equipo, a ojo con el robot en el aire): las dos patas quedan iguales con
 // la izquierda en 0° y la derecha en 5°. Ese 5 es el 0 de la derecha: los ángulos que se piden
 // ("servo", "servo lim", telemetría) son de la pata, y el driver le suma a cada servo su cero.
-#define SERVO_L_ZERO_DEG        0.0f
-#define SERVO_R_ZERO_DEG        5.0f
+// 6/11: con la PCB, "izquierdo" movía el servo que está sobre el motor derecho. Se cruzaron los
+// nombres (PIN_SERVO_*); el cero y el invert acompañan al pin, así cada servo físico recibe los
+// mismos pulsos que antes. Por eso el 5° y el invert, medidos como "derecha", quedan en la izquierda.
+#define SERVO_L_ZERO_DEG        5.0f
+#define SERVO_R_ZERO_DEG        0.0f
 // 29/10: el recorrido es 0-30°, ESTRICTO: fuera de ahí se rompe el cuatro barras. 3/11: la
 // pata derecha se corrió 5° en el brazo del servo, así que su 0-30 de pata es 5-35 del servo
 // (Joaquín: "con ambas a 30"). Los límites son de la PATA y valen igual para las dos;
@@ -78,8 +83,8 @@
 #define SERVO_MAX_SPEED_DPS     20.0f       // velocidad hacia la posición pedida (en vivo: set velpata).
                                             // 3/11: 90 -> 20 °/s, el equipo pidió que se muevan suave
                                             // (con el joystick cada clic mueve 2°)
-#define SERVO_L_INVERT          0           // 1 si el servo está montado en espejo
-#define SERVO_R_INVERT          1
+#define SERVO_L_INVERT          1           // 1 si el servo está montado en espejo
+#define SERVO_R_INVERT          0
 
 // --- Control de equilibrio: valores al arrancar, se ajustan en vivo con "set" ---
 // Ángulo de equilibrio según la altura de las patas: con el cuatro barras, al moverlas la rueda se
@@ -234,6 +239,25 @@
 // la tabla de equilibrio medida contra la del modelo; con el CAD sin ajustar eran 9,8°). Solo se
 // usa para saber dónde pega el haz.
 #define IMU_DELTA_DEG           4.2f
+
+// --- LED RGB de estado (main/led_estado.c; tabla en el README) ---
+// Brillo de 0 a 255. El WS2812 encandila: con 20 ya se ve bien de cerca.
+#define LED_BRILLO              40          // blanco, verde, rojo y azul fijos
+// Guía de armado: ámbar si está corrido hacia adelante, cian si está corrido hacia atrás; más fuerte
+// cuanto más cerca de la referencia y parpadea dentro de ARM_WINDOW_DEG. Ni verde ni violeta:
+// esos quieren decir motores activos.
+#define LED_GUIA_MIN            6.0f        // con menos, el verde del ámbar se redondea a 0 y se ve rojo
+#define LED_GUIA_MAX            150.0f
+#define LED_AMBAR_VERDE         0.4f        // verde respecto del rojo, para el ámbar
+#define LED_CIAN_VERDE          0.8f        // verde respecto del azul, para el cian
+#define LED_GUIA_RANGO_DEG      25.0f       // desde este error [grados] empieza a subir el brillo
+#define LED_GUIA_PARPADEO_MS    125u        // medio periodo: 4 Hz
+#define LED_FAULT_PARPADEO_MS   250u        // medio periodo: 2 Hz. FALLEN es rojo fijo
+// Motores cerca del tope: verde con destellos amarillos. Avisa desde MOV_U_MARGEN ("set margen") o
+// desde LED_MOTOR_TOPE · u_max, lo que llegue antes (con "set umax" bajo, el margen nunca llegaría)
+#define LED_MOTOR_TOPE          0.95f
+#define LED_MOTOR_AVISO_MS      300u        // que un pico corto llegue a verse
+#define LED_MOTOR_PARPADEO_MS   60u
 
 // --- Seguridad ---
 #define TILT_LIMIT_DEG          30.0f       // corte por caída

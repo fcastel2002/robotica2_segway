@@ -2,10 +2,11 @@
 
 Aplicación completa y 100 % portable (solo requiere Python estándar, sin `pip install` ni dependencias externas) para controlar el Segway con un mando de PS4 (DualShock 4) por Bluetooth/USB y visualizar toda la telemetría en tiempo real.
 
-Tiene cuatro secciones en el menú lateral:
+Tiene cinco secciones en el menú lateral:
 
 - **[Mando / Conducción](#mando--conducción)**: vista principal de manejo con mapa interactivo en vivo del joystick de PS4, selector de modo de sticks (**Opción 1** y **Opción 2** con el botón **OPTIONS**), control de servos de las patas por pasos de **2°** con **R1** / **L1** (el firmware las mueve suave, a «patas °/s») (**de 0° a 30°**, las dos patas), armado con **✕** y desarme de emergencia con **◯**.
 - **[Banco de pruebas](#banco-de-pruebas)**: cada sensor y cada actuador por separado, en tres grupos (sensores, actuadores, control y sistema).
+- **Energía**: tensión, carga y autonomía de la batería, corriente y tensión de cada motor y consumo de la lógica, de los INA de la placa de potencia (desde `firmware/segway_v02`).
 - **Gráficos**: un gráfico por variable en tiempo real, ventana ajustable, pausa y cursor de inspección.
 - **[Configuración](#configuración)**: diagnóstico de la aplicación puente del joystick (`http://localhost:8001/estado`) y calibración guiada de la IMU.
 
@@ -63,8 +64,9 @@ El mando de PS4 se conecta por Bluetooth o USB a la PC. `Aplicacion/puente.py` i
 | `banco.cmd`, `banco.ps1` | Lanzador en un comando: grabar el firmware (opcional), levantar puente y abrir la aplicación |
 | `puente.py` | Servidor HTTP (`:8000`), receptor de telemetría UDP (`:4210`), simulador físico y lanzador automático de `joystick.py` (`:8001`). Guarda el registro de cada bajada de escalón (200 Hz, líneas `#r` del robot) en `registros/bajada_<fecha>.csv`, para `simulacion/escalon/comparar_prueba.py` |
 | `joystick.py` | Lector nativo del mando de PS4 (`winmm.dll`/`xinput` + Web Gamepad API), lógica de modos 1/2 (`OPTIONS`), pasos de 2° en servos con tope `0°..30°` (`L1`/`R1`), armado (`✕`) y parada de emergencia (`◯`) |
-| `web/index.html`, `web/estilo.css` | Estructura y estilos de las 4 vistas (**Mando / Conducción**, **Banco de pruebas**, **Gráficos**, **Configuración**) |
+| `web/index.html`, `web/estilo.css` | Estructura y estilos de las 5 vistas (**Mando / Conducción**, **Banco de pruebas**, **Energía**, **Gráficos**, **Configuración**) |
 | `web/mando.js` | Vista interactiva del mando de PS4 en vivo, HUD de conducción y botonera de modos y servos |
 | `web/app.js` | Motor de telemetría (SSE / Web Serial), gráficos en `<canvas>`, consola y grabación CSV |
 | `web/banco.js` | Tarjetas de sensores, encoders, prueba de escalón de motores y servos |
+| `web/energia.js` | Vista de energía: potencias calculadas, autonomía, avisos y tendencia de la tensión |
 | `web/configuracion.js` | Sincronización continua con `http://localhost:8001` (`/estado`, `/mando`, `/accion`) y calibración de IMU |

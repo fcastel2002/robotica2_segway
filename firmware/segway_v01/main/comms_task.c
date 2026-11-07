@@ -14,6 +14,8 @@
 #include "board_config.h"
 #include "control_task.h"
 #include "imu_mpu6050.h"
+#include "led_estado.h"
+#include "led_rgb.h"
 #include "maniobra.h"
 #include "messages.h"
 #include "parada.h"
@@ -502,6 +504,7 @@ static void comms_task(void *arg)
     int reg_i = -1;                 // registro de la bajada: -1 nada, -2 esperando, >= 0 mandando
     man_estado_t man_antes = MAN_INACTIVA;
     parada_estado_t par_antes = PARADA_INACTIVA;
+    uint32_t led_motor_t = 0;
     maniobra_params_por_defecto(&s_man);
     s_man.d_borde = MAN_D_BORDE_M;      // como control_task
     char line[CMD_LINE_MAX];
@@ -562,6 +565,20 @@ static void comms_task(void *arg)
                 supervisor_state_name(last.state));
             shown_state = last.state;
         }
+        led_entrada_t led_in = {
+            .st = last.state,
+            .guia = last.led_guia,
+            .tilt_err_deg = (last.theta - last.params.theta_ref) * RAD2DEG,
+            .t_ms = last.t_ms,
+            .maniobra = (last.man_estado >= MAN_AGACHAR && last.man_estado <= MAN_ATERRIZAR)
+                        || last.parada_estado != PARADA_INACTIVA,
+            .motor_limite = led_motor_limite(&led_motor_t,
+                                             fmaxf(fabsf(last.motor_cmd[MOTOR_LEFT]),
+                                                   fabsf(last.motor_cmd[MOTOR_RIGHT])),
+                                             last.mov.u_margen, last.params.u_max, last.t_ms),
+        };
+        led_color_t led = led_color(&led_in);
+        led_rgb_set(led.r, led.g, led.b);
         // "get" no contesta con la foto de esta vuelta, que puede ser anterior a un "set" de la
         // misma tanda, sino con la siguiente: para entonces el control (cada 5 ms) ya lo aplicó.
         if (get_wait > 0 && --get_wait == 0) print_params(&last);

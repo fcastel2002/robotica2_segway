@@ -1,5 +1,5 @@
 // Interfaz de telemetría del Segway. Sin bibliotecas: lee líneas "nombre:valor,nombre:valor" o
-// CSV con encabezado (el formato de firmware/segway_v01) del puente (Server-Sent Events) o del
+// CSV con encabezado (el formato de firmware/segway_v02) del puente (Server-Sent Events) o del
 // puerto USB (Web Serial), las grafica en <canvas> y manda comandos de texto al robot.
 'use strict';
 
@@ -7,11 +7,11 @@ const HISTORIA_S = 60;         // segundos guardados en memoria por variable (= 
 const GRAFICOS_INICIALES = 8;  // las primeras variables que aparecen se grafican solas
 const MAX_MENSAJES = 300;
 
-// Columnas del CSV de firmware/segway_v01 (CSV_HEADER en main/comms_task.c). Si llega otro
+// Columnas del CSV de firmware/segway_v02 (CSV_HEADER en main/comms_task.c). Si llega otro
 // encabezado, lo reemplaza.
 const COLUMNAS_FIRMWARE = 't_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,'
   + 'm_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,vref_mms,giro,ref_deg,'
-  + 'sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm';
+  + 'sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm,v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria';
 const CLAVES_TIEMPO = ['t', 't_ms'];  // milisegundos del robot
 // Funciones (muestra, t, textos) llamadas con cada muestra antes de guardarla: pueden agregar
 // columnas calculadas a la muestra, que se grafican y graban como las demás (banco.js).

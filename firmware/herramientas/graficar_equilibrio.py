@@ -14,7 +14,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-CONFIG = Path(__file__).resolve().parents[1] / 'segway_v01' / 'main' / 'board_config.h'
+CONFIG = Path(__file__).resolve().parents[1] / 'segway_v02' / 'main' / 'board_config.h'
 
 
 def tabla_vigente():

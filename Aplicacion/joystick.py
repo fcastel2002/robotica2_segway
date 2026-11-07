@@ -30,7 +30,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Callable
 
 PUERTO_HTTP = 8001
-PUERTO_COMANDOS = 4211   # WIFI_CMD_PORT en firmware/segway_v01/main/board_config.h
+PUERTO_COMANDOS = 4211   # WIFI_CMD_PORT en firmware/segway_v02/main/board_config.h
 ZONA_MUERTA = 0.08       # descarta deriva del stick en reposo
 FLECHAS_FRACCION = 0.5   # las flechitas mandan el 50 %; el stick, de 0 a 100 % según cuánto se mueva
 FRECUENCIA_HZ = 25.0     # cada 40 ms (< 300 ms de MOV_TIMEOUT_MS del firmware)

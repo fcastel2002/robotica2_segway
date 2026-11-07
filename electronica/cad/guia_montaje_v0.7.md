@@ -44,7 +44,7 @@ Además, **fuera de la placa**, un **fusible en línea de 20 A** junto al pack d
 | A1 ESP32-S3 DevKitC | Lógica | **Zócalo** 2 × 22 | **Cortar el pin 24 (GPIO43) del módulo y tapar esa posición del zócalo**: así solo entra en una posición. Antena hacia el borde superior, USB-C hacia abajo |
 | A2 MPU6050 | Lógica | **Zócalo** 1 × 8 | Pin 5 cortado y posición tapada, igual que A1 |
 | A3, A4 DRV8871 | Potencia | **Zócalo**: tira 1 × 4 y 4 posiciones sueltas | Desoldar las borneras del módulo y poner pines macho en esos agujeros (paso de 5,0 mm) |
-| A5, A6 INA219 | Potencia | **Soldados** | Antes de soldar, hacer el puente de dirección: **A0 en A5 (0x41) y A1 en A6 (0x44)** |
+| A5, A6 INA219 | Potencia | **Soldados** | Antes de soldar, hacer el puente de dirección: **A0 en uno solo de los dos (0x41); el otro sin puente (0x40)**. Corregido el 06/11/2026: el INA226 viene en 0x44, así que un puente A1 chocaría con él. El firmware dice cuál es de cada motor (`board_pins.h`) |
 | A7 INA226 | Potencia | **Soldado** | Pin 1 (IN+) en el pad cuadrado |
 | A8 buck de 5 V, A9 buck de 3,3 V | Potencia / lógica | **Soldados** sobre 4 pines macho con el espaciador | IN+ en el pad cuadrado; el rótulo «IN» del cobre marca el borde de entrada. **Los rótulos del módulo están en su cara de abajo**: leerlos antes de presentarlo |
 

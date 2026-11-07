@@ -2,7 +2,7 @@
 Banco de pruebas del Segway en un solo comando (Windows). Desde la raíz del repo:
 
     gui_hmi\banco                 puente + página en Chrome/Edge + conexión USB automática
-    gui_hmi\banco -Grabar         antes compila y graba firmware/segway_v01 (detecta el puerto)
+    gui_hmi\banco -Grabar         antes compila y graba firmware/segway_v02 (detecta el puerto)
     gui_hmi\banco -Grabar -Puerto COM5
     gui_hmi\banco -Simular        sin robot, con datos falsos
 
@@ -34,9 +34,9 @@ if ($Grabar) {
         Write-Host 'Activando ESP-IDF...'
         . $perfil.FullName *> $null
     }
-    Write-Host "Compilando y grabando firmware/segway_v01 por $Puerto..."
+    Write-Host "Compilando y grabando firmware/segway_v02 por $Puerto..."
     # build/ es la misma carpeta que usa la extensión de VS Code (idf.buildPath)
-    Push-Location (Join-Path $PSScriptRoot '..\firmware\segway_v01')
+    Push-Location (Join-Path $PSScriptRoot '..\firmware\segway_v02')
     try {
         idf.py -p $Puerto build flash
         if ($LASTEXITCODE) { throw "Falló la compilación o la grabación (código $LASTEXITCODE)." }
