@@ -1,0 +1,67 @@
+hora_pc,t_ms,tipo,detalle
+1794255705.888,10504,cmd,get
+1794255705.980,10629,mensaje,# ref=13.65 umax=1.00 deadband=0.030 dbrampa=0.000 dbmov=0.000 refauto=1
+1794255705.980,10629,mensaje,# kx=1.075 kv=1.815 kphi=3.210 kw=0.378 lqrpata=2 lqrfac=0.87 lqrfacx=0.86 notch=11.6 notch2=7.7 lp=0.0
+1794255706.005,10629,mensaje,# vmax=0.40 acel=0.50 fren=0.50 ff=1.15 xlibre=1 velpata=20 margen=0.85 prio=0.0
+1794255706.005,10629,mensaje,# imu fallas: i2c=0 cero=0; en caida libre (no fallan): 0
+1794255706.005,10629,mensaje,# sharp: pin=7 mV dist=nan cm haz atras=nan cm alto=nan cm | sharpk=0.3214 sharpv0=0.386 sharpdiv=0.60 sensx=-5.2 sensz=2.0 sensang=40.0
+1794255706.032,10629,mensaje,"# giromax=0.15 parinc=6.0 parsuelta=3.0 tau=0.50 velf=20.0 | bajada: inactiva, d_borde=30 cm (0: con el sensor)"
+1794255706.032,10629,mensaje,# servo l=nan r=nan lim_l=0.0..30.0 lim_r=0.0..30.0
+1794255706.032,10629,mensaje,# armar: el primero pide las dos patas mandadas al mismo ángulo; nunca con una pata suelta
+1794255706.053,10629,mensaje,"# ina: lectura activa, un registro cada 5 ciclos (inacada); en el bus al arrancar: 0x40=INA219 0x41=INA219 0x44=INA226"
+1794255706.053,10629,mensaje,# ina: resto del bus (la IMU es 0x68): 0x68
+1794255706.053,10629,mensaje,"# ina: INA219 motor izq: 12.04 V 0 mA, fallas 0"
+1794255706.053,10629,mensaje,"# ina: INA219 motor der: 11.99 V -0 mA, fallas 0"
+1794255706.053,10629,mensaje,"# ina: INA226 logica (tension sin corregir): 12.65 V 43 mA, fallas 0"
+1794255706.078,10629,mensaje,"# ina: INA226 id de fabricante 0x5449 (original 0x5449), de chip 0x2260 (original 0x2260)"
+1794255706.078,10629,mensaje,"# bateria: 12.04 V (filtrada), carga 79 %, autonomia nan min, nivel NORMAL"
+1794255706.078,10629,mensaje,# wifi: red=Pachisale ip=192.168.100.22 rssi=-42 telemetria=192.168.100.47
+1794255706.104,10629,mensaje,# arranque: encendido: se cortó la alimentación o bajó el pin EN (la ESP32-S3 no los distingue; también al grabar); prendida hace 11 s
+1794255709.448,14089,cmd,set inacada 5
+1794255709.499,14144,mensaje,# ok: set
+1794255709.818,14444,marca,empieza el protocolo
+1794255709.818,14444,tramo_inicio,ina5
+1794255739.819,44469,tramo_fin,ina5
+1794255739.819,44469,cmd,set inacada 1
+1794255739.831,44469,tramo_inicio,ina1
+1794255739.865,44504,mensaje,# ok: set
+1794255769.818,74469,tramo_fin,ina1
+1794255769.818,74469,cmd,grabar
+1794255769.833,74469,grabar,reposo_ina1
+1794255769.866,74508,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794255769.866,74508,mensaje,# ok: grabar
+1794255777.887,82524,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 12.03 V"
+1794255795.789,82524,registro,reposo_ina1 1600/1600 reintentos 0
+1794255795.790,82524,cmd,motor stop
+1794255795.790,82524,mensaje,# fin del registro
+1794255795.818,100469,mensaje,# ok: motor
+1794255795.843,100490,cmd,motor stop
+1794255795.886,100534,mensaje,# ok: motor
+1794255795.895,100534,cmd,set exc 0
+1794255795.935,100599,mensaje,# ok: set
+1794255795.971,100634,cmd,set exc 0
+1794255796.029,100679,mensaje,# ok: set
+1794255796.047,100704,cmd,mov 0 0
+1794255796.100,100764,cmd,mov 0 0
+1794255796.175,100824,cmd,set inacada 5
+1794255796.209,100854,mensaje,# ok: set
+1794255796.227,100879,cmd,set inacada 5
+1794255796.289,100934,mensaje,# ok: set
+1794255796.597,101254,cmd,get
+1794255796.648,101304,mensaje,# ref=13.65 umax=1.00 deadband=0.030 dbrampa=0.000 dbmov=0.000 refauto=1
+1794255796.674,101304,mensaje,# kx=1.075 kv=1.815 kphi=3.210 kw=0.378 lqrpata=2 lqrfac=0.87 lqrfacx=0.86 notch=11.6 notch2=7.7 lp=0.0
+1794255796.674,101304,mensaje,# vmax=0.40 acel=0.50 fren=0.50 ff=1.15 xlibre=1 velpata=20 margen=0.85 prio=0.0
+1794255796.674,101304,mensaje,# imu fallas: i2c=0 cero=0; en caida libre (no fallan): 0
+1794255796.674,101304,mensaje,# sharp: pin=4 mV dist=nan cm haz atras=nan cm alto=nan cm | sharpk=0.3214 sharpv0=0.386 sharpdiv=0.60 sensx=-5.2 sensz=2.0 sensang=40.0
+1794255796.697,101304,mensaje,"# giromax=0.15 parinc=6.0 parsuelta=3.0 tau=0.50 velf=20.0 | bajada: inactiva, d_borde=30 cm (0: con el sensor)"
+1794255796.697,101304,mensaje,# servo l=nan r=nan lim_l=0.0..30.0 lim_r=0.0..30.0
+1794255796.697,101304,mensaje,# armar: el primero pide las dos patas mandadas al mismo ángulo; nunca con una pata suelta
+1794255796.725,101304,mensaje,"# ina: lectura activa, un registro cada 5 ciclos (inacada); en el bus al arrancar: 0x40=INA219 0x41=INA219 0x44=INA226"
+1794255796.725,101304,mensaje,# ina: resto del bus (la IMU es 0x68): 0x68
+1794255796.725,101304,mensaje,"# ina: INA219 motor izq: 12.03 V 0 mA, fallas 0"
+1794255796.725,101304,mensaje,"# ina: INA219 motor der: 11.99 V -0 mA, fallas 0"
+1794255796.725,101304,mensaje,"# ina: INA226 logica (tension sin corregir): 12.64 V 44 mA, fallas 0"
+1794255796.753,101304,mensaje,"# ina: INA226 id de fabricante 0x5449 (original 0x5449), de chip 0x2260 (original 0x2260)"
+1794255796.753,101304,mensaje,"# bateria: 12.03 V (filtrada), carga 78 %, autonomia 196 min, nivel NORMAL"
+1794255796.753,101304,mensaje,# wifi: red=Pachisale ip=192.168.100.22 rssi=-48 telemetria=192.168.100.47
+1794255796.775,101304,mensaje,# arranque: encendido: se cortó la alimentación o bajó el pin EN (la ESP32-S3 no los distingue; también al grabar); prendida hace 101 s

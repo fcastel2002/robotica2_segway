@@ -1,0 +1,393 @@
+{
+ "carpeta": "ensayos\\datos\\2026-11-09\\E0_reposo_172145",
+ "notas": [],
+ "manifiesto": {
+  "id": "E0",
+  "nombre": "reposo",
+  "resultado": "completo",
+  "motivo": "",
+  "restaurado": true,
+  "simulado": false,
+  "inicio": "2026-11-09T17:21:45-03:00",
+  "fin": "2026-11-09T17:23:17-03:00",
+  "v_bat_inicial": 12.03
+ },
+ "telemetria": {
+  "total": {
+   "filas": 3678,
+   "duracion_s": 91.275,
+   "saltos": 1,
+   "salto_max_ms": 135.0,
+   "perdida_pct": 0.1629106706489275,
+   "descarga_s": 18.089,
+   "estados": {
+    "DISARMED": 3678
+   },
+   "theta_media_deg": -115.4432925502991,
+   "theta_std_deg": 0.01504594392055797,
+   "thetadot_std_dps": 0.2021291971537975,
+   "x_corrimiento_mm": 0.0,
+   "x_std_mm": 0.0036861486308949996,
+   "u_std": 0.0,
+   "m_max_abs": 0.0,
+   "sat_l_pct": 0.0,
+   "sat_r_pct": 0.0,
+   "i_l_media_ma": 0.0,
+   "i_r_media_ma": 0.0,
+   "v_bat_media": 12.029700924415442,
+   "loop_us_mediana": 4455.0,
+   "loop_us_max": 5281.0,
+   "overruns_subida": 62.0,
+   "overruns_por_min": 40.75595727198028,
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 0.0,
+     "comando_pct": 0.0,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 0.0,
+     "comando_pct": 0.0,
+     "aviso": false
+    }
+   }
+  },
+  "tramos": [
+   {
+    "filas": 1502,
+    "duracion_s": 30.025,
+    "saltos": 0,
+    "salto_max_ms": 0.0,
+    "perdida_pct": 0.0,
+    "descarga_s": 0.0,
+    "estados": {
+     "DISARMED": 1502
+    },
+    "theta_media_deg": -115.4382623169108,
+    "theta_std_deg": 0.015168047727451324,
+    "thetadot_std_dps": 0.1452840296714412,
+    "x_corrimiento_mm": 0.0,
+    "x_std_mm": 1.4210854715202004e-14,
+    "u_std": 0.0,
+    "m_max_abs": 0.0,
+    "sat_l_pct": 0.0,
+    "sat_r_pct": 0.0,
+    "i_l_media_ma": 0.0,
+    "i_r_media_ma": 0.0,
+    "v_bat_media": 12.029999999999998,
+    "loop_us_mediana": 4122.0,
+    "loop_us_max": 4680.0,
+    "overruns_subida": 0.0,
+    "overruns_por_min": 0.0,
+    "encoders": {
+     "l": {
+      "cuentas_recorridas": 0.0,
+      "comando_pct": 0.0,
+      "aviso": false
+     },
+     "r": {
+      "cuentas_recorridas": 0.0,
+      "comando_pct": 0.0,
+      "aviso": false
+     }
+    },
+    "nombre": "ina5",
+    "abierto": false
+   },
+   {
+    "filas": 1501,
+    "duracion_s": 30.0,
+    "saltos": 0,
+    "salto_max_ms": 0.0,
+    "perdida_pct": 0.0,
+    "descarga_s": 0.0,
+    "estados": {
+     "DISARMED": 1501
+    },
+    "theta_media_deg": -115.44819453697538,
+    "theta_std_deg": 0.012549892307803075,
+    "thetadot_std_dps": 0.10511416436609675,
+    "x_corrimiento_mm": 0.0,
+    "x_std_mm": 1.4210854715202004e-14,
+    "u_std": 0.0,
+    "m_max_abs": 0.0,
+    "sat_l_pct": 0.0,
+    "sat_r_pct": 0.0,
+    "i_l_media_ma": 0.0,
+    "i_r_media_ma": 0.0,
+    "v_bat_media": 12.02990006662225,
+    "loop_us_mediana": 4472.0,
+    "loop_us_max": 4815.0,
+    "overruns_subida": 0.0,
+    "overruns_por_min": 0.0,
+    "encoders": {
+     "l": {
+      "cuentas_recorridas": 0.0,
+      "comando_pct": 0.0,
+      "aviso": false
+     },
+     "r": {
+      "cuentas_recorridas": 0.0,
+      "comando_pct": 0.0,
+      "aviso": false
+     }
+    },
+    "nombre": "ina1",
+    "abierto": false
+   }
+  ],
+  "desde_inicio": {
+   "t_ms": 14444.0,
+   "estados": {
+    "DISARMED": 3478
+   }
+  },
+  "filas_descartadas": 0
+ },
+ "registros": [
+  {
+   "archivo": "reg_01_reposo_ina1.csv",
+   "vbat_archivo": 12.03,
+   "integridad": {
+    "esperadas": 1600,
+    "recibidas": 1600,
+    "completo_pct": 100.0,
+    "filas_en_archivo": 1600,
+    "repetidas": 0,
+    "filas_descartadas": 0,
+    "huecos": []
+   },
+   "senales": {
+    "theta_deg": {
+     "min": -115.48,
+     "media": -115.44390625000004,
+     "max": -115.42,
+     "std": 0.01240176241255447
+    },
+    "rate_dps": {
+     "min": -0.1,
+     "media": 0.11537499999999999,
+     "max": 0.3,
+     "std": 0.07306578799273981
+    },
+    "x_mm": {
+     "min": -81.0,
+     "media": -81.0,
+     "max": -81.0,
+     "std": 0.0
+    },
+    "v_mms": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "u": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "exc": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_l": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_r": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "i_l_ma": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "i_r_ma": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    }
+   },
+   "inacada": 1,
+   "saturacion_pct": {
+    "l": 0.0,
+    "r": 0.0
+   },
+   "vbat_usada": 12.03,
+   "ina": {
+    "l": {
+     "cambios": 0,
+     "cambios_por_s": 0.0,
+     "valores_distintos": 1,
+     "periodo_muestras": null,
+     "lecturas_por_s": null
+    },
+    "r": {
+     "cambios": 0,
+     "cambios_por_s": 0.0,
+     "valores_distintos": 1,
+     "periodo_muestras": null,
+     "lecturas_por_s": null
+    }
+   },
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 0.0,
+     "comando_pct": 0.0,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 0.0,
+     "comando_pct": 0.0,
+     "aviso": false
+    }
+   },
+   "electrico": {
+    "l": {
+     "estado": "sin datos suficientes",
+     "motivo": "el INA casi no cambia de valor (0 lecturas nuevas)",
+     "lecturas": 0
+    },
+    "r": {
+     "estado": "sin datos suficientes",
+     "motivo": "el INA casi no cambia de valor (0 lecturas nuevas)",
+     "lecturas": 0
+    }
+   },
+   "barrido": null
+  }
+ ],
+ "barridos_promedio": [],
+ "motores": {
+  "escalones": [
+   {
+    "comando": "motor stop",
+    "t_inicio_s": 82.524,
+    "filas": 2,
+    "rpm_l": null,
+    "m_l": 0.0,
+    "i_l_ma": 0.0,
+    "rpm_r": null,
+    "m_r": 0.0,
+    "i_r_ma": 0.0,
+    "v_bat": 12.02
+   }
+  ],
+  "cortos_sin_tabular": 1
+ },
+ "umbrales": {
+  "R_ref_ohm": 7.81,
+  "Ke_ref_vsrad": 0.359,
+  "cuentas_por_vuelta": 899,
+  "radio_rueda_mm": 40.0,
+  "fs_hz": 200.0,
+  "muestras_registro": 1600,
+  "grabacion_s": 8.0,
+  "paso_tlm_ms": 20.0,
+  "salto_tlm_ms": 30.0,
+  "perdida_tlm_max_pct": 2.0,
+  "registro_completo_min_pct": 99.0,
+  "ina_lecturas_min_s": 40.0,
+  "ina_intervalos_min": 10,
+  "saturacion_m": 0.95,
+  "saturacion_max_pct": 5.0,
+  "comando_m": 0.08,
+  "comando_min_pct": 5.0,
+  "enc_cuentas_min": 5,
+  "estado_otro_max_pct": 0.0,
+  "overruns_max_por_min": 5.0,
+  "retardo_max_muestras": 8,
+  "suavizado_w_muestras": 7,
+  "ajuste_lecturas_min": 30,
+  "ajuste_lecturas_total_min": 10,
+  "ajuste_muestras_min": 30,
+  "ajuste_m_std_min": 0.03,
+  "ajuste_w_ptp_min_rads": 1.0,
+  "ajuste_cond_max": 1000.0,
+  "barrido_exc_min_muestras": 400,
+  "nperseg": 256,
+  "banda_S_hz": [
+   1.5,
+   15.0
+  ],
+  "frecuencias_planta_hz": [
+   2.0,
+   3.0,
+   5.0,
+   8.0,
+   11.0,
+   12.5
+  ],
+  "motor_descartar": 0.3333333333333333,
+  "motor_ventana_min_s": 0.5
+ },
+ "veredicto": [
+  {
+   "control": "perdida_telemetria",
+   "estado": "OK",
+   "valor": 0.1629106706489275,
+   "umbral": 2.0,
+   "detalle": "1 saltos, máximo 135 ms (descargas de registro aparte: 18.1 s)"
+  },
+  {
+   "control": "registros_completos",
+   "estado": "OK",
+   "valor": 100.0,
+   "umbral": 99.0,
+   "detalle": "reg_01_reposo_ina1.csv: 1600 de 1600 muestras (mínimo entre 1 registros)"
+  },
+  {
+   "control": "ritmo_ina",
+   "estado": "N/C",
+   "valor": null,
+   "umbral": null,
+   "detalle": "la corriente casi no cambia de valor: el ritmo no se puede medir"
+  },
+  {
+   "control": "encoders_cuentan",
+   "estado": "OK",
+   "valor": 0,
+   "umbral": 0,
+   "detalle": "ambos cuentan donde hay comando"
+  },
+  {
+   "control": "saturacion",
+   "estado": "OK",
+   "valor": 0.0,
+   "umbral": 5.0,
+   "detalle": "peor caso: telemetría con |m| >= 0.95"
+  },
+  {
+   "control": "estado_pedido",
+   "estado": "OK",
+   "valor": 0.0,
+   "umbral": 0.0,
+   "detalle": "pedido DISARMED; desde que empezó el protocolo: DISARMED 3478"
+  },
+  {
+   "control": "overruns",
+   "estado": "REVISAR",
+   "valor": 40.75595727198028,
+   "umbral": 5.0,
+   "detalle": "subió 62 en 91 s"
+  },
+  {
+   "control": "restaurado",
+   "estado": "OK",
+   "valor": true,
+   "umbral": true,
+   "detalle": "resultado de la corrida: completo"
+  }
+ ]
+}

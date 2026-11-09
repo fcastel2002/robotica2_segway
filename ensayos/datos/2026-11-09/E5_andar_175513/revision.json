@@ -1,0 +1,756 @@
+{
+ "carpeta": ".",
+ "notas": [],
+ "manifiesto": {
+  "id": "E5",
+  "nombre": "andar",
+  "resultado": "completo",
+  "motivo": "",
+  "restaurado": true,
+  "simulado": false,
+  "inicio": "2026-11-09T17:55:13-03:00",
+  "fin": "2026-11-09T17:57:24-03:00",
+  "v_bat_inicial": 11.76
+ },
+ "telemetria": {
+  "total": {
+   "filas": 3006,
+   "duracion_s": 131.515,
+   "saltos": 2,
+   "salto_max_ms": 145.0,
+   "perdida_pct": 0.39774610540271793,
+   "descarga_s": 77.089,
+   "estados": {
+    "BALANCING": 3006
+   },
+   "theta_media_deg": 13.736793080505656,
+   "theta_std_deg": 0.6409256252622368,
+   "thetadot_std_dps": 4.6394118917716325,
+   "x_corrimiento_mm": -49.6,
+   "x_std_mm": 184.76092959309528,
+   "u_std": 0.10292522045433608,
+   "m_max_abs": 0.27,
+   "sat_l_pct": 0.0,
+   "sat_r_pct": 0.0,
+   "i_l_media_ma": 11.28210246174318,
+   "i_r_media_ma": 11.142381902860945,
+   "v_bat_media": 11.753705921490353,
+   "loop_us_mediana": 4879.0,
+   "loop_us_max": 5416.0,
+   "overruns_subida": 247.0,
+   "overruns_por_min": 112.68676576816334,
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 7117.0,
+     "comando_pct": 49.9001996007984,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 9952.0,
+     "comando_pct": 49.9001996007984,
+     "aviso": false
+    }
+   }
+  },
+  "tramos": [],
+  "desde_inicio": {
+   "t_ms": 2023809.0,
+   "estados": {
+    "BALANCING": 2707
+   }
+  },
+  "filas_descartadas": 0
+ },
+ "registros": [
+  {
+   "archivo": "reg_01_v10_ida.csv",
+   "vbat_archivo": 11.76,
+   "integridad": {
+    "esperadas": 1600,
+    "recibidas": 1600,
+    "completo_pct": 100.0,
+    "filas_en_archivo": 1600,
+    "repetidas": 0,
+    "filas_descartadas": 0,
+    "huecos": []
+   },
+   "senales": {
+    "theta_deg": {
+     "min": 12.78,
+     "media": 14.284193750000002,
+     "max": 16.34,
+     "std": 0.7601803075329809
+    },
+    "rate_dps": {
+     "min": -13.2,
+     "media": -0.0021249999999999147,
+     "max": 12.9,
+     "std": 3.82797700938433
+    },
+    "x_mm": {
+     "min": 52.0,
+     "media": 240.59,
+     "max": 387.0,
+     "std": 127.66565473924457
+    },
+    "v_mms": {
+     "min": -72.0,
+     "media": 41.400625,
+     "max": 123.0,
+     "std": 43.801228574200685
+    },
+    "u": {
+     "min": -0.171,
+     "media": 0.07212249999999999,
+     "max": 0.191,
+     "std": 0.08551583183101244
+    },
+    "exc": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_l": {
+     "min": -0.171,
+     "media": 0.07212249999999999,
+     "max": 0.191,
+     "std": 0.08551583183101244
+    },
+    "m_r": {
+     "min": -0.171,
+     "media": 0.07212249999999999,
+     "max": 0.191,
+     "std": 0.08551583183101244
+    },
+    "i_l_ma": {
+     "min": 3.0,
+     "media": 13.64375,
+     "max": 33.0,
+     "std": 6.101891996545006
+    },
+    "i_r_ma": {
+     "min": 2.0,
+     "media": 13.163125,
+     "max": 32.0,
+     "std": 6.184174579875232
+    }
+   },
+   "inacada": 1,
+   "saturacion_pct": {
+    "l": 0.0,
+    "r": 0.0
+   },
+   "vbat_usada": 11.76,
+   "ina": {
+    "l": {
+     "cambios": 332,
+     "cambios_por_s": 41.5,
+     "valores_distintos": 29,
+     "periodo_muestras": 3,
+     "lecturas_por_s": 66.66666666666667
+    },
+    "r": {
+     "cambios": 332,
+     "cambios_por_s": 41.5,
+     "valores_distintos": 30,
+     "periodo_muestras": 3,
+     "lecturas_por_s": 66.66666666666667
+    }
+   },
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 1102.0,
+     "comando_pct": 69.625,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 1737.0,
+     "comando_pct": 69.625,
+     "aviso": false
+    }
+   },
+   "electrico": {
+    "l": {
+     "estado": "ok",
+     "i_q_ma": 4.795115217503371,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.8029976503605754,
+     "lecturas": 332,
+     "muestras": 331,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 944.065718065453,
+     "coef_Ke_sobre_R_ma": 22.669255751303606,
+     "vbat": 11.76,
+     "R_ohm": 12.4567599214366,
+     "Ke_vsrad": 0.2823854764916349,
+     "R_vs_ref_pct": 59.49756621557747,
+     "Ke_vs_ref_pct": -21.341092899266034
+    },
+    "r": {
+     "estado": "ok",
+     "i_q_ma": 5.339842641896839,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.7015414332836776,
+     "lecturas": 332,
+     "muestras": 331,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 1036.6168940635987,
+     "coef_Ke_sobre_R_ma": 26.151225420659685,
+     "vbat": 11.76,
+     "R_ohm": 11.344596125479022,
+     "Ke_vsrad": 0.29667509058374436,
+     "R_vs_ref_pct": 45.257312746210275,
+     "Ke_vs_ref_pct": -17.360699001742518
+    }
+   },
+   "barrido": null
+  },
+  {
+   "archivo": "reg_02_v10_vuelta.csv",
+   "vbat_archivo": 11.76,
+   "integridad": {
+    "esperadas": 1600,
+    "recibidas": 1600,
+    "completo_pct": 100.0,
+    "filas_en_archivo": 1600,
+    "repetidas": 0,
+    "filas_descartadas": 0,
+    "huecos": []
+   },
+   "senales": {
+    "theta_deg": {
+     "min": 11.18,
+     "media": 13.307937499999998,
+     "max": 14.47,
+     "std": 0.6609394799024719
+    },
+    "rate_dps": {
+     "min": -13.1,
+     "media": 0.20518750000000005,
+     "max": 11.4,
+     "std": 3.4808984960558313
+    },
+    "x_mm": {
+     "min": 29.0,
+     "media": 187.836875,
+     "max": 382.0,
+     "std": 140.84511977784098
+    },
+    "v_mms": {
+     "min": -126.0,
+     "media": -43.35625,
+     "max": 62.0,
+     "std": 49.29492200965024
+    },
+    "u": {
+     "min": -0.201,
+     "media": -0.06869687499999999,
+     "max": 0.138,
+     "std": 0.08991142858521588
+    },
+    "exc": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_l": {
+     "min": -0.201,
+     "media": -0.06869687499999999,
+     "max": 0.138,
+     "std": 0.08991142858521588
+    },
+    "m_r": {
+     "min": -0.201,
+     "media": -0.06869687499999999,
+     "max": 0.138,
+     "std": 0.08991142858521588
+    },
+    "i_l_ma": {
+     "min": 3.0,
+     "media": 13.5825,
+     "max": 45.0,
+     "std": 7.487285472719736
+    },
+    "i_r_ma": {
+     "min": 2.0,
+     "media": 12.969375,
+     "max": 37.0,
+     "std": 7.054674840797058
+    }
+   },
+   "inacada": 1,
+   "saturacion_pct": {
+    "l": 0.0,
+    "r": 0.0
+   },
+   "vbat_usada": 11.76,
+   "ina": {
+    "l": {
+     "cambios": 199,
+     "cambios_por_s": 24.875,
+     "valores_distintos": 32,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    },
+    "r": {
+     "cambios": 231,
+     "cambios_por_s": 28.875,
+     "valores_distintos": 31,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    }
+   },
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 1152.0,
+     "comando_pct": 63.5625,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 1748.0,
+     "comando_pct": 63.5625,
+     "aviso": false
+    }
+   },
+   "electrico": {
+    "l": {
+     "estado": "ok",
+     "i_q_ma": 4.148380311461042,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.8681597421295724,
+     "lecturas": 199,
+     "muestras": 198,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 1083.465064160691,
+     "coef_Ke_sobre_R_ma": 32.02302551367999,
+     "vbat": 11.76,
+     "R_ohm": 10.854064786214323,
+     "Ke_vsrad": 0.3475799935760768,
+     "R_vs_ref_pct": 38.976501744101455,
+     "Ke_vs_ref_pct": -3.1810602852153758
+    },
+    "r": {
+     "estado": "ok",
+     "i_q_ma": 4.036657644283813,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.8399810612392935,
+     "lecturas": 231,
+     "muestras": 230,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 1325.0724224680923,
+     "coef_Ke_sobre_R_ma": 38.69460626543791,
+     "vbat": 11.76,
+     "R_ohm": 8.874986604955307,
+     "Ke_vsrad": 0.34341411228978114,
+     "R_vs_ref_pct": 13.636192124907897,
+     "Ke_vs_ref_pct": -4.341472899782406
+    }
+   },
+   "barrido": null
+  },
+  {
+   "archivo": "reg_03_v20_ida.csv",
+   "vbat_archivo": 11.75,
+   "integridad": {
+    "esperadas": 1600,
+    "recibidas": 1600,
+    "completo_pct": 100.0,
+    "filas_en_archivo": 1600,
+    "repetidas": 0,
+    "filas_descartadas": 0,
+    "huecos": []
+   },
+   "senales": {
+    "theta_deg": {
+     "min": 12.66,
+     "media": 14.1580375,
+     "max": 16.5,
+     "std": 0.6492331234570137
+    },
+    "rate_dps": {
+     "min": -13.3,
+     "media": -0.1226875,
+     "max": 25.7,
+     "std": 4.985239866580518
+    },
+    "x_mm": {
+     "min": 31.0,
+     "media": 322.681875,
+     "max": 504.0,
+     "std": 191.05647900943944
+    },
+    "v_mms": {
+     "min": -81.0,
+     "media": 57.368125,
+     "max": 221.0,
+     "std": 79.93063467147233
+    },
+    "u": {
+     "min": -0.191,
+     "media": 0.07586874999999998,
+     "max": 0.275,
+     "std": 0.11030959397730326
+    },
+    "exc": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_l": {
+     "min": -0.191,
+     "media": 0.07586874999999998,
+     "max": 0.275,
+     "std": 0.11030959397730326
+    },
+    "m_r": {
+     "min": -0.191,
+     "media": 0.07586874999999998,
+     "max": 0.275,
+     "std": 0.11030959397730326
+    },
+    "i_l_ma": {
+     "min": 3.0,
+     "media": 14.70125,
+     "max": 44.0,
+     "std": 9.26954683021236
+    },
+    "i_r_ma": {
+     "min": 3.0,
+     "media": 14.425625,
+     "max": 60.0,
+     "std": 9.233673069768878
+    }
+   },
+   "inacada": 1,
+   "saturacion_pct": {
+    "l": 0.0,
+    "r": 0.0
+   },
+   "vbat_usada": 11.75,
+   "ina": {
+    "l": {
+     "cambios": 229,
+     "cambios_por_s": 28.625,
+     "valores_distintos": 39,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    },
+    "r": {
+     "cambios": 231,
+     "cambios_por_s": 28.875,
+     "valores_distintos": 41,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    }
+   },
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 1771.0,
+     "comando_pct": 61.3125,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 2260.0,
+     "comando_pct": 61.3125,
+     "aviso": false
+    }
+   },
+   "electrico": {
+    "l": {
+     "estado": "ok",
+     "i_q_ma": 5.121407963273501,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.8574018880233605,
+     "lecturas": 229,
+     "muestras": 228,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 865.6469875285919,
+     "coef_Ke_sobre_R_ma": 22.02328350278226,
+     "vbat": 11.75,
+     "R_ohm": 13.573662438941836,
+     "Ke_vsrad": 0.298936616063883,
+     "R_vs_ref_pct": 73.79849473677127,
+     "Ke_vs_ref_pct": -16.73074761451727
+    },
+    "r": {
+     "estado": "ok",
+     "i_q_ma": 4.38864926582048,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.8021265399171619,
+     "lecturas": 231,
+     "muestras": 229,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 1160.1743241652118,
+     "coef_Ke_sobre_R_ma": 31.47754266791495,
+     "vbat": 11.75,
+     "R_ohm": 10.127788346337141,
+     "Ke_vsrad": 0.31879788980343915,
+     "R_vs_ref_pct": 29.677187533126002,
+     "Ke_vs_ref_pct": -11.19835938622864
+    }
+   },
+   "barrido": null
+  },
+  {
+   "archivo": "reg_04_v20_vuelta.csv",
+   "vbat_archivo": 11.75,
+   "integridad": {
+    "esperadas": 1600,
+    "recibidas": 1600,
+    "completo_pct": 100.0,
+    "filas_en_archivo": 1600,
+    "repetidas": 0,
+    "filas_descartadas": 0,
+    "huecos": []
+   },
+   "senales": {
+    "theta_deg": {
+     "min": 10.95,
+     "media": 13.395074999999999,
+     "max": 14.89,
+     "std": 0.6377145673222464
+    },
+    "rate_dps": {
+     "min": -23.9,
+     "media": 0.12075,
+     "max": 13.8,
+     "std": 4.973785724928246
+    },
+    "x_mm": {
+     "min": 2.0,
+     "media": 190.256875,
+     "max": 500.0,
+     "std": 199.9191077416923
+    },
+    "v_mms": {
+     "min": -225.0,
+     "media": -60.758125,
+     "max": 75.0,
+     "std": 82.75992914136874
+    },
+    "u": {
+     "min": -0.29,
+     "media": -0.080295,
+     "max": 0.161,
+     "std": 0.10956466344127562
+    },
+    "exc": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_l": {
+     "min": -0.29,
+     "media": -0.080295,
+     "max": 0.161,
+     "std": 0.10956466344127562
+    },
+    "m_r": {
+     "min": -0.29,
+     "media": -0.080295,
+     "max": 0.161,
+     "std": 0.10956466344127562
+    },
+    "i_l_ma": {
+     "min": 3.0,
+     "media": 14.871875,
+     "max": 63.0,
+     "std": 9.463440652552062
+    },
+    "i_r_ma": {
+     "min": 2.0,
+     "media": 14.131875,
+     "max": 77.0,
+     "std": 9.87715718131361
+    }
+   },
+   "inacada": 1,
+   "saturacion_pct": {
+    "l": 0.0,
+    "r": 0.0
+   },
+   "vbat_usada": 11.75,
+   "ina": {
+    "l": {
+     "cambios": 225,
+     "cambios_por_s": 28.125,
+     "valores_distintos": 40,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    },
+    "r": {
+     "cambios": 223,
+     "cambios_por_s": 27.875,
+     "valores_distintos": 41,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    }
+   },
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 1848.0,
+     "comando_pct": 59.8125,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 2365.0,
+     "comando_pct": 59.8125,
+     "aviso": false
+    }
+   },
+   "electrico": {
+    "l": {
+     "estado": "ok",
+     "i_q_ma": 4.704585571904865,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.8698815601078428,
+     "lecturas": 225,
+     "muestras": 225,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 979.9546248264338,
+     "coef_Ke_sobre_R_ma": 27.09279641447147,
+     "vbat": 11.75,
+     "R_ohm": 11.99035108598127,
+     "Ke_vsrad": 0.32485214091052744,
+     "R_vs_ref_pct": 53.525622099632145,
+     "Ke_vs_ref_pct": -9.511938465034131
+    },
+    "r": {
+     "estado": "ok",
+     "i_q_ma": 4.081049064636917,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.9034362072377089,
+     "lecturas": 223,
+     "muestras": 222,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 1339.4939170788944,
+     "coef_Ke_sobre_R_ma": 40.08155187985789,
+     "vbat": 11.75,
+     "R_ohm": 8.771969659723316,
+     "Ke_vsrad": 0.3515941570047395,
+     "R_vs_ref_pct": 12.317153133461156,
+     "Ke_vs_ref_pct": -2.0629089123288202
+    }
+   },
+   "barrido": null
+  }
+ ],
+ "barridos_promedio": [],
+ "motores": null,
+ "umbrales": {
+  "R_ref_ohm": 7.81,
+  "Ke_ref_vsrad": 0.359,
+  "cuentas_por_vuelta": 899,
+  "radio_rueda_mm": 40.0,
+  "fs_hz": 200.0,
+  "muestras_registro": 1600,
+  "grabacion_s": 8.0,
+  "paso_tlm_ms": 20.0,
+  "salto_tlm_ms": 30.0,
+  "perdida_tlm_max_pct": 2.0,
+  "registro_completo_min_pct": 99.0,
+  "ina_lecturas_min_s": 40.0,
+  "ina_intervalos_min": 10,
+  "saturacion_m": 0.95,
+  "saturacion_max_pct": 5.0,
+  "comando_m": 0.08,
+  "comando_min_pct": 5.0,
+  "enc_cuentas_min": 5,
+  "estado_otro_max_pct": 0.0,
+  "overruns_max_por_min": 5.0,
+  "retardo_max_muestras": 8,
+  "suavizado_w_muestras": 7,
+  "ajuste_lecturas_min": 30,
+  "ajuste_lecturas_total_min": 10,
+  "ajuste_muestras_min": 30,
+  "ajuste_m_std_min": 0.03,
+  "ajuste_w_ptp_min_rads": 1.0,
+  "ajuste_cond_max": 1000.0,
+  "barrido_exc_min_muestras": 400,
+  "nperseg": 256,
+  "banda_S_hz": [
+   1.5,
+   15.0
+  ],
+  "frecuencias_planta_hz": [
+   2.0,
+   3.0,
+   5.0,
+   8.0,
+   11.0,
+   12.5
+  ],
+  "motor_descartar": 0.3333333333333333,
+  "motor_ventana_min_s": 0.5
+ },
+ "veredicto": [
+  {
+   "control": "perdida_telemetria",
+   "estado": "OK",
+   "valor": 0.39774610540271793,
+   "umbral": 2.0,
+   "detalle": "2 saltos, máximo 145 ms (descargas de registro aparte: 77.1 s)"
+  },
+  {
+   "control": "registros_completos",
+   "estado": "OK",
+   "valor": 100.0,
+   "umbral": 99.0,
+   "detalle": "reg_01_v10_ida.csv: 1600 de 1600 muestras (mínimo entre 4 registros)"
+  },
+  {
+   "control": "ritmo_ina",
+   "estado": "OK",
+   "valor": 50.0,
+   "umbral": 40.0,
+   "detalle": "reg_02_v10_vuelta.csv motor l: una lectura cada 4 muestras (peor de 8 medidos)"
+  },
+  {
+   "control": "encoders_cuentan",
+   "estado": "OK",
+   "valor": 0,
+   "umbral": 0,
+   "detalle": "ambos cuentan donde hay comando"
+  },
+  {
+   "control": "saturacion",
+   "estado": "OK",
+   "valor": 0.0,
+   "umbral": 5.0,
+   "detalle": "peor caso: telemetría con |m| >= 0.95"
+  },
+  {
+   "control": "estado_pedido",
+   "estado": "OK",
+   "valor": 0.0,
+   "umbral": 0.0,
+   "detalle": "pedido BALANCING; desde que empezó el protocolo: BALANCING 2707"
+  },
+  {
+   "control": "overruns",
+   "estado": "REVISAR",
+   "valor": 112.68676576816334,
+   "umbral": 5.0,
+   "detalle": "subió 247 en 132 s"
+  },
+  {
+   "control": "restaurado",
+   "estado": "OK",
+   "valor": true,
+   "umbral": true,
+   "detalle": "resultado de la corrida: completo"
+  }
+ ]
+}

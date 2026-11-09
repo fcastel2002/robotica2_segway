@@ -1,0 +1,547 @@
+{
+ "carpeta": "ensayos\\datos\\2026-11-09\\E2_quieto_173617",
+ "notas": [],
+ "manifiesto": {
+  "id": "E2",
+  "nombre": "quieto",
+  "resultado": "completo",
+  "motivo": "",
+  "restaurado": true,
+  "simulado": false,
+  "inicio": "2026-11-09T17:36:17-03:00",
+  "fin": "2026-11-09T17:38:54-03:00",
+  "v_bat_inicial": 11.94
+ },
+ "telemetria": {
+  "total": {
+   "filas": 6038,
+   "duracion_s": 156.475,
+   "saltos": 2,
+   "salto_max_ms": 140.0,
+   "perdida_pct": 0.19837989750371962,
+   "descarga_s": 38.109,
+   "estados": {
+    "BALANCING": 6038
+   },
+   "theta_media_deg": 13.984526333222922,
+   "theta_std_deg": 0.2812731887501455,
+   "thetadot_std_dps": 4.013108279331249,
+   "x_corrimiento_mm": 5.599999999999909,
+   "x_std_mm": 4.633708432803129,
+   "u_std": 0.06163453977903015,
+   "m_max_abs": 0.18,
+   "sat_l_pct": 0.0,
+   "sat_r_pct": 0.0,
+   "i_l_media_ma": 7.135806558463067,
+   "i_r_media_ma": 7.2702881748923485,
+   "v_bat_media": 11.935553163299105,
+   "loop_us_mediana": 4672.5,
+   "loop_us_max": 5376.0,
+   "overruns_subida": 185.0,
+   "overruns_por_min": 70.93784949672472,
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 4720.0,
+     "comando_pct": 21.778734680357733,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 7774.0,
+     "comando_pct": 21.778734680357733,
+     "aviso": false
+    }
+   }
+  },
+  "tramos": [
+   {
+    "filas": 1502,
+    "duracion_s": 30.015,
+    "saltos": 0,
+    "salto_max_ms": 0.0,
+    "perdida_pct": 0.0,
+    "descarga_s": 0.0,
+    "estados": {
+     "BALANCING": 1502
+    },
+    "theta_media_deg": 14.167416777629827,
+    "theta_std_deg": 0.28174127706437807,
+    "thetadot_std_dps": 3.46492145705791,
+    "x_corrimiento_mm": 0.10000000000002274,
+    "x_std_mm": 2.3020671602025353,
+    "u_std": 0.058841225592889825,
+    "m_max_abs": 0.16,
+    "sat_l_pct": 0.0,
+    "sat_r_pct": 0.0,
+    "i_l_media_ma": 7.219041278295606,
+    "i_r_media_ma": 7.561917443408788,
+    "v_bat_media": 11.94051930758988,
+    "loop_us_mediana": 4407.0,
+    "loop_us_max": 5048.0,
+    "overruns_subida": 23.0,
+    "overruns_por_min": 45.97701149425288,
+    "encoders": {
+     "l": {
+      "cuentas_recorridas": 932.0,
+      "comando_pct": 20.10652463382157,
+      "aviso": false
+     },
+     "r": {
+      "cuentas_recorridas": 1645.0,
+      "comando_pct": 20.10652463382157,
+      "aviso": false
+     }
+    },
+    "nombre": "ina5",
+    "abierto": false
+   },
+   {
+    "filas": 3002,
+    "duracion_s": 60.02,
+    "saltos": 0,
+    "salto_max_ms": 0.0,
+    "perdida_pct": 0.0,
+    "descarga_s": 0.0,
+    "estados": {
+     "BALANCING": 3002
+    },
+    "theta_media_deg": 13.939373750832779,
+    "theta_std_deg": 0.2587316103347204,
+    "thetadot_std_dps": 3.8749841193207555,
+    "x_corrimiento_mm": 8.799999999999955,
+    "x_std_mm": 3.045956505784428,
+    "u_std": 0.06106310207933688,
+    "m_max_abs": 0.18,
+    "sat_l_pct": 0.0,
+    "sat_r_pct": 0.0,
+    "i_l_media_ma": 7.090606262491672,
+    "i_r_media_ma": 7.08294470353098,
+    "v_bat_media": 11.936608927381744,
+    "loop_us_mediana": 4669.0,
+    "loop_us_max": 5376.0,
+    "overruns_subida": 15.0,
+    "overruns_por_min": 14.995001666111296,
+    "encoders": {
+     "l": {
+      "cuentas_recorridas": 2266.0,
+      "comando_pct": 21.552298467688207,
+      "aviso": false
+     },
+     "r": {
+      "cuentas_recorridas": 3851.0,
+      "comando_pct": 21.552298467688207,
+      "aviso": false
+     }
+    },
+    "nombre": "ina1",
+    "abierto": false
+   }
+  ],
+  "desde_inicio": {
+   "t_ms": 888649.0,
+   "estados": {
+    "BALANCING": 5738
+   }
+  },
+  "filas_descartadas": 0
+ },
+ "registros": [
+  {
+   "archivo": "reg_01_quieto_1.csv",
+   "vbat_archivo": 11.93,
+   "integridad": {
+    "esperadas": 1600,
+    "recibidas": 1600,
+    "completo_pct": 100.0,
+    "filas_en_archivo": 1600,
+    "repetidas": 0,
+    "filas_descartadas": 0,
+    "huecos": []
+   },
+   "senales": {
+    "theta_deg": {
+     "min": 13.03,
+     "media": 13.786868749999998,
+     "max": 14.35,
+     "std": 0.2677730060581863
+    },
+    "rate_dps": {
+     "min": -17.9,
+     "media": 0.06131249999999998,
+     "max": 16.8,
+     "std": 4.695932764355102
+    },
+    "x_mm": {
+     "min": 646.0,
+     "media": 650.5875,
+     "max": 656.0,
+     "std": 2.9053560453066676
+    },
+    "v_mms": {
+     "min": -81.0,
+     "media": 0.644375,
+     "max": 77.0,
+     "std": 26.241649259514446
+    },
+    "u": {
+     "min": -0.146,
+     "media": -0.003710625000000001,
+     "max": 0.16,
+     "std": 0.06640173670250933
+    },
+    "exc": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_l": {
+     "min": -0.146,
+     "media": -0.003710625000000001,
+     "max": 0.16,
+     "std": 0.06640173670250933
+    },
+    "m_r": {
+     "min": -0.146,
+     "media": -0.003710625000000001,
+     "max": 0.16,
+     "std": 0.06640173670250933
+    },
+    "i_l_ma": {
+     "min": 3.0,
+     "media": 7.374375,
+     "max": 20.0,
+     "std": 2.975393815846064
+    },
+    "i_r_ma": {
+     "min": 3.0,
+     "media": 7.760625,
+     "max": 24.0,
+     "std": 3.449757181219426
+    }
+   },
+   "inacada": 1,
+   "saturacion_pct": {
+    "l": 0.0,
+    "r": 0.0
+   },
+   "vbat_usada": 11.93,
+   "ina": {
+    "l": {
+     "cambios": 323,
+     "cambios_por_s": 40.375,
+     "valores_distintos": 18,
+     "periodo_muestras": 3,
+     "lecturas_por_s": 66.66666666666667
+    },
+    "r": {
+     "cambios": 301,
+     "cambios_por_s": 37.625,
+     "valores_distintos": 19,
+     "periodo_muestras": 3,
+     "lecturas_por_s": 66.66666666666667
+    }
+   },
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 408.0,
+     "comando_pct": 20.8125,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 606.0,
+     "comando_pct": 20.8125,
+     "aviso": false
+    }
+   },
+   "electrico": {
+    "l": {
+     "estado": "ok",
+     "i_q_ma": 4.400195830019172,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.6727119328636815,
+     "lecturas": 323,
+     "muestras": 321,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 758.3451051713256,
+     "coef_Ke_sobre_R_ma": 12.054293816774914,
+     "vbat": 11.93,
+     "R_ohm": 15.731623925105668,
+     "Ke_vsrad": 0.18963361700822956,
+     "R_vs_ref_pct": 101.42924359930431,
+     "Ke_vs_ref_pct": -47.177265457317674
+    },
+    "r": {
+     "estado": "ok",
+     "i_q_ma": 3.7530080045902987,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.685647018393435,
+     "lecturas": 301,
+     "muestras": 300,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 1181.752373436102,
+     "coef_Ke_sobre_R_ma": 27.34882849401803,
+     "vbat": 11.93,
+     "R_ohm": 10.095177524638212,
+     "Ke_vsrad": 0.27609127873799594,
+     "R_vs_ref_pct": 29.259635398696695,
+     "Ke_vs_ref_pct": -23.094351326463524
+    }
+   },
+   "barrido": null
+  },
+  {
+   "archivo": "reg_02_quieto_2.csv",
+   "vbat_archivo": 11.93,
+   "integridad": {
+    "esperadas": 1600,
+    "recibidas": 1600,
+    "completo_pct": 100.0,
+    "filas_en_archivo": 1600,
+    "repetidas": 0,
+    "filas_descartadas": 0,
+    "huecos": []
+   },
+   "senales": {
+    "theta_deg": {
+     "min": 13.29,
+     "media": 13.863531250000001,
+     "max": 14.43,
+     "std": 0.2018200752488154
+    },
+    "rate_dps": {
+     "min": -19.0,
+     "media": 0.14312500000000006,
+     "max": 18.7,
+     "std": 5.055606069936125
+    },
+    "x_mm": {
+     "min": 646.0,
+     "media": 651.00625,
+     "max": 656.0,
+     "std": 3.0538845651890645
+    },
+    "v_mms": {
+     "min": -83.0,
+     "media": 0.086875,
+     "max": 83.0,
+     "std": 29.55660802146239
+    },
+    "u": {
+     "min": -0.167,
+     "media": 0.0028656250000000027,
+     "max": 0.166,
+     "std": 0.06730990876802148
+    },
+    "exc": {
+     "min": 0.0,
+     "media": 0.0,
+     "max": 0.0,
+     "std": 0.0
+    },
+    "m_l": {
+     "min": -0.167,
+     "media": 0.0028656250000000027,
+     "max": 0.166,
+     "std": 0.06730990876802148
+    },
+    "m_r": {
+     "min": -0.167,
+     "media": 0.0028656250000000027,
+     "max": 0.166,
+     "std": 0.06730990876802148
+    },
+    "i_l_ma": {
+     "min": 3.0,
+     "media": 7.196875,
+     "max": 20.0,
+     "std": 2.8342750809289843
+    },
+    "i_r_ma": {
+     "min": 3.0,
+     "media": 7.590625,
+     "max": 25.0,
+     "std": 3.3552998538692482
+    }
+   },
+   "inacada": 1,
+   "saturacion_pct": {
+    "l": 0.0,
+    "r": 0.0
+   },
+   "vbat_usada": 11.93,
+   "ina": {
+    "l": {
+     "cambios": 217,
+     "cambios_por_s": 27.125,
+     "valores_distintos": 17,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    },
+    "r": {
+     "cambios": 229,
+     "cambios_por_s": 28.625,
+     "valores_distintos": 18,
+     "periodo_muestras": 4,
+     "lecturas_por_s": 50.0
+    }
+   },
+   "encoders": {
+    "l": {
+     "cuentas_recorridas": 488.0,
+     "comando_pct": 23.0625,
+     "aviso": false
+    },
+    "r": {
+     "cuentas_recorridas": 730.0,
+     "comando_pct": 23.0625,
+     "aviso": false
+    }
+   },
+   "electrico": {
+    "l": {
+     "estado": "ok",
+     "i_q_ma": 4.636354542851413,
+     "retardo_muestras": 2,
+     "retardo_ms": 10.0,
+     "R2": 0.6988688815232497,
+     "lecturas": 217,
+     "muestras": 215,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 601.7064427203544,
+     "coef_Ke_sobre_R_ma": -0.8185599107971023,
+     "vbat": 11.93,
+     "R_ohm": 19.826944092643725,
+     "Ke_vsrad": -0.016229541587853582,
+     "R_vs_ref_pct": 153.86612154473403,
+     "Ke_vs_ref_pct": -104.52076367349683
+    },
+    "r": {
+     "estado": "ok",
+     "i_q_ma": 4.492687847989745,
+     "retardo_muestras": 3,
+     "retardo_ms": 15.0,
+     "R2": 0.7125407676071709,
+     "lecturas": 229,
+     "muestras": 228,
+     "usa_solo_lecturas_nuevas": true,
+     "coef_V_sobre_R_ma": 865.8508837936349,
+     "coef_Ke_sobre_R_ma": 17.0001334241526,
+     "vbat": 11.93,
+     "R_ohm": 13.7783540137188,
+     "Ke_vsrad": 0.23423385659842813,
+     "R_vs_ref_pct": 76.41938557898594,
+     "Ke_vs_ref_pct": -34.753800390409985
+    }
+   },
+   "barrido": null
+  }
+ ],
+ "barridos_promedio": [],
+ "motores": null,
+ "umbrales": {
+  "R_ref_ohm": 7.81,
+  "Ke_ref_vsrad": 0.359,
+  "cuentas_por_vuelta": 899,
+  "radio_rueda_mm": 40.0,
+  "fs_hz": 200.0,
+  "muestras_registro": 1600,
+  "grabacion_s": 8.0,
+  "paso_tlm_ms": 20.0,
+  "salto_tlm_ms": 30.0,
+  "perdida_tlm_max_pct": 2.0,
+  "registro_completo_min_pct": 99.0,
+  "ina_lecturas_min_s": 40.0,
+  "ina_intervalos_min": 10,
+  "saturacion_m": 0.95,
+  "saturacion_max_pct": 5.0,
+  "comando_m": 0.08,
+  "comando_min_pct": 5.0,
+  "enc_cuentas_min": 5,
+  "estado_otro_max_pct": 0.0,
+  "overruns_max_por_min": 5.0,
+  "retardo_max_muestras": 8,
+  "suavizado_w_muestras": 7,
+  "ajuste_lecturas_min": 30,
+  "ajuste_lecturas_total_min": 10,
+  "ajuste_muestras_min": 30,
+  "ajuste_m_std_min": 0.03,
+  "ajuste_w_ptp_min_rads": 1.0,
+  "ajuste_cond_max": 1000.0,
+  "barrido_exc_min_muestras": 400,
+  "nperseg": 256,
+  "banda_S_hz": [
+   1.5,
+   15.0
+  ],
+  "frecuencias_planta_hz": [
+   2.0,
+   3.0,
+   5.0,
+   8.0,
+   11.0,
+   12.5
+  ],
+  "motor_descartar": 0.3333333333333333,
+  "motor_ventana_min_s": 0.5
+ },
+ "veredicto": [
+  {
+   "control": "perdida_telemetria",
+   "estado": "OK",
+   "valor": 0.19837989750371962,
+   "umbral": 2.0,
+   "detalle": "2 saltos, máximo 140 ms (descargas de registro aparte: 38.1 s)"
+  },
+  {
+   "control": "registros_completos",
+   "estado": "OK",
+   "valor": 100.0,
+   "umbral": 99.0,
+   "detalle": "reg_01_quieto_1.csv: 1600 de 1600 muestras (mínimo entre 2 registros)"
+  },
+  {
+   "control": "ritmo_ina",
+   "estado": "OK",
+   "valor": 50.0,
+   "umbral": 40.0,
+   "detalle": "reg_02_quieto_2.csv motor l: una lectura cada 4 muestras (peor de 4 medidos)"
+  },
+  {
+   "control": "encoders_cuentan",
+   "estado": "OK",
+   "valor": 0,
+   "umbral": 0,
+   "detalle": "ambos cuentan donde hay comando"
+  },
+  {
+   "control": "saturacion",
+   "estado": "OK",
+   "valor": 0.0,
+   "umbral": 5.0,
+   "detalle": "peor caso: telemetría con |m| >= 0.95"
+  },
+  {
+   "control": "estado_pedido",
+   "estado": "OK",
+   "valor": 0.0,
+   "umbral": 0.0,
+   "detalle": "pedido BALANCING; desde que empezó el protocolo: BALANCING 5738"
+  },
+  {
+   "control": "overruns",
+   "estado": "REVISAR",
+   "valor": 70.93784949672472,
+   "umbral": 5.0,
+   "detalle": "subió 185 en 156 s"
+  },
+  {
+   "control": "restaurado",
+   "estado": "OK",
+   "valor": true,
+   "umbral": true,
+   "detalle": "resultado de la corrida: completo"
+  }
+ ]
+}
