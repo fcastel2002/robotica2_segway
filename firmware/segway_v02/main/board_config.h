@@ -38,7 +38,7 @@
 #define MOTOR_PWM_FREQ_HZ       20000       // inaudible
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
 #define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
-#define MOTOR_R_INVERT          0           // 29/10: con 1 las ruedas giraban al revés una de otra
+#define MOTOR_R_INVERT          1           // 29/10: con 1 las ruedas giraban al revés una de otra
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
@@ -51,7 +51,11 @@
 #define ENC_COUNTS_PER_REV      899.0f      // cuentas x4 por vuelta de RUEDA. MEDIDO el 29/10: 8990 en
                                             // 10 vueltas a mano (4 · 11 pulsos · 1:20,4; se suponía 880)
 #define WHEEL_RADIUS_M          0.040f      // rueda de 80 mm de diámetro
-#define VEL_FILTER_HZ           20.0f       // filtro de la velocidad de las ruedas (el del modelo)
+#define VEL_FILTER_HZ           20.0f       // filtro de la velocidad de las ruedas (el del modelo); en vivo:
+                                            // set velf (0 = sin filtro). 7/11, en el modelo con los dos notch:
+                                            // 10 Hz da margen x3,1 y la mitad del ruido del encoder; 20, x2,5;
+                                            // sin filtro, x1,55 (kv > 0 realimenta la rueda en positivo y el
+                                            // filtro le baja esa parte). Sin probar en el robot
 
 // --- Servos de las patas: todavía sin función en el control, solo posición a mano ---
 // Los ángulos que se piden son de la pata: el del servo menos su cero (SERVO_*_ZERO_DEG), así
@@ -362,6 +366,12 @@
 // --- Seguridad ---
 #define TILT_LIMIT_DEG          30.0f       // corte por caída
 #define ARM_WINDOW_DEG          5.0f        // solo se arma cerca de la referencia
+// 7/11 (pedido de Francisco): no armar con las patas flojas. Sin encoder en los servos, nunca se arma con
+// una pata suelta, y el primer armado desde que se prendió pide las dos mandadas al mismo ángulo. Si no,
+// "arm" no arma y manda las dos a ARM_PATAS_DEG (una suelta va directo, a la velocidad del servo); se
+// vuelve a armar cuando llegan. Los armados siguientes respetan dónde quedaron (supervisor.h)
+#define ARM_PATAS_DEG           15.0f       // de la pata
+#define ARM_PATAS_TOL_DEG       0.5f        // "mismo ángulo" para el primer armado
 #define ARM_RAMP_S              0.5f        // la salida máxima sube de 0 a u_max en este tiempo
 #define IMU_FAIL_LIMIT          5           // lecturas fallidas seguidas antes de FAULT
 #define IMU_BAJA_G_MAX_S        0.6f        // caída libre (|a| < 0,1 g) más larga que esto cuenta como

@@ -64,6 +64,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_SENSZ] = "sensz", [PARAM_SENSANG] = "sensang", [PARAM_PARINC] = "parinc",
     [PARAM_PARSUELTA] = "parsuelta", [PARAM_TAU] = "tau", [PARAM_INA] = "ina",
     [PARAM_INACADA] = "inacada", [PARAM_LQRFAC] = "lqrfac", [PARAM_LQRFACX] = "lqrfacx", [PARAM_DBRAMPA] = "dbrampa", [PARAM_EXC] = "exc",
+    [PARAM_VELF] = "velf",
 };
 
 // Los parámetros de la bajada como los tiene control (empiezan igual y cambian con los mismos
@@ -122,6 +123,8 @@ static void print_help(void)
         "#        sensx sensz (cm) sensang (grados): donde esta el sensor respecto del eje del servo\n"
         "#        parinc parsuelta (grados): cuanto se tira atras la parada y cuando suelta\n"
         "#        tau (s): constante del filtro de inclinacion (0,5 al arrancar; probar 1)\n"
+        "#        velf (Hz): pasabajos de la velocidad de las ruedas (20 al arrancar; 0 = sin filtro;\n"
+        "#        de 2 a 80; probar 10)\n"
         "#        ina (1: lee los INA; 0: no los toca, para descartarlos ante problemas en el bus)\n"
         "#        inacada (cada cuantos ciclos de 5 ms lee un registro de los INA: 5 al arrancar,\n"
         "#        13 Hz cada motor; 1 para los ensayos del modelo, 67 Hz)\n"
@@ -223,13 +226,16 @@ static void print_params(const telemetry_t *t)
         "sharpdiv=%.2f sensx=%.1f sensz=%.1f sensang=%.1f\n", t->sharp_mv, t->dist * 100.0f,
         t->haz_x * 100.0f, t->haz_z * 100.0f, t->sharp_k, t->sharp_v0, t->sharp_div, t->sens_x * 100.0f,
         t->sens_z * 100.0f, t->sens_ang * RAD2DEG);
-    out("# giromax=%.2f parinc=%.1f parsuelta=%.1f tau=%.2f | bajada: %s, d_borde=%.0f cm (0: con el sensor)\n",
-        t->giro_max, t->par_inclina * RAD2DEG, t->par_suelta * RAD2DEG, t->tau_att, maniobra_nombre(t->man_estado),
-        s_man.d_borde * 100.0f);
+    out("# giromax=%.2f parinc=%.1f parsuelta=%.1f tau=%.2f velf=%.1f | bajada: %s, d_borde=%.0f cm (0: con el sensor)\n",
+        t->giro_max, t->par_inclina * RAD2DEG, t->par_suelta * RAD2DEG, t->tau_att, t->vel_hz,
+        maniobra_nombre(t->man_estado), s_man.d_borde * 100.0f);
     out("# servo l=%.1f r=%.1f lim_l=%.1f..%.1f lim_r=%.1f..%.1f\n",
         t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT],
         t->servo_lim[SERVO_LEFT][0], t->servo_lim[SERVO_LEFT][1],
         t->servo_lim[SERVO_RIGHT][0], t->servo_lim[SERVO_RIGHT][1]);
+    out("# armar: %s; nunca con una pata suelta\n", t->armo_alguna_vez
+        ? "ya armó desde que se prendió, las patas pueden estar en ángulos distintos"
+        : "el primero pide las dos patas mandadas al mismo ángulo");
     print_ina(t);
     print_wifi();
     print_arranque();
@@ -614,6 +620,13 @@ static void explain_arm(const telemetry_t *t)
         out("# no se armó: está en FAULT (la IMU falló); con la IMU leyendo, mandar cal\n");
     } else if (t->state == SUP_CALIBRATING || t->state == SUP_INIT) {
         out("# no se armó: está calibrando el giróscopo, dejarlo quieto 2 s\n");
+    } else if (t->arm_patas == PATAS_SUELTA) {
+        out("# no se armó: una pata estaba suelta (sin posición conocida). Van las dos a %.0f°: "
+            "armar de nuevo cuando lleguen\n", ARM_PATAS_DEG);
+    } else if (t->arm_patas == PATAS_DISTINTAS) {
+        out("# no se armó: el primer armado pide las dos patas en el mismo ángulo (izq %.1f°, der %.1f°). "
+            "Van las dos a %.0f°: armar de nuevo cuando lleguen\n",
+            t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT], ARM_PATAS_DEG);
     } else {
         out("# no se armó: inclinación %.1f°, referencia %.1f°: tiene que estar a menos de %.0f°\n",
             t->theta * RAD2DEG, t->params.theta_ref * RAD2DEG, ARM_WINDOW_DEG);

@@ -44,6 +44,10 @@ static int s_ina_cada = INA_CADA_CICLOS;
 // Factor sobre las ganancias de la tabla ("set lqrfac"; 7/11: 0,6 con el DRV8871)
 static float s_lqr_fac = DEFAULT_LQR_FACTOR;
 static float s_lqr_fac_x = DEFAULT_LQR_FACTOR_X;    // el de kx y kv ("set lqrfacx")
+// Pasabajos de la velocidad de las ruedas [Hz] ("set velf"; 0 = sin filtro). 7/11: en el modelo, 10 Hz deja
+// más margen que 20 (×3,1 contra ×2,5) y la mitad del ruido del encoder; sin filtro, ×1,55
+// (firmware/docs/lazo_equilibrio_explicado.md). Para probarlo en el robot sin regrabar
+static float s_vel_hz = VEL_FILTER_HZ;
 // "set exc <amp>": un barrido senoidal de EXC_F0 a EXC_F1 Hz (logarítmico, EXC_T s) que se suma al comando
 // del LQR, para medir en el robot cómo responde a cada frecuencia y el margen del lazo (7/11: el modelo
 // no explicaba vibraciones de 8 y 10 Hz). Empezarlo junto con "grabar" (8 s a 200 Hz).
@@ -192,6 +196,7 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_DBRAMPA:  p->deadband_rampa = fminf(fmaxf(c->value, 0.0f), 0.3f); break;
         case PARAM_EXC:      s_exc_amp = fminf(fmaxf(c->value, 0.0f), 0.2f); s_exc_t = s_exc_amp > 0.0f ? 0.0f : -1.0f;
                              break;
+        case PARAM_VELF:     s_vel_hz = c->value <= 0.0f ? 0.0f : fminf(fmaxf(c->value, 2.0f), 80.0f); break;
         default: break;
         }
         break;
@@ -284,7 +289,6 @@ static void control_task(void *arg)
     odometry_reset(&odo);
 
     bool calibrated = false;
-    const float tau_vel = 1.0f / (6.2831853f * VEL_FILTER_HZ);    // [s]
     bool overrun = false;
     float ramp = 0.0f;              // 0..1 durante el armado
     float u = 0.0f;
@@ -337,6 +341,8 @@ static void control_task(void *arg)
     parada_params_por_defecto(&par_p);
     parada_salida_t ps = { 0 };
     bool pedir_desarme = false;
+    bool armo_alguna_vez = false;   // desde que se prendió: el primer armado pide las patas iguales
+    patas_arm_t arm_patas = PATAS_OK;   // por qué no armó el último "arm" por las patas (para comms)
     float ref_vuelo = 0.0f;         // la referencia al despegar (la que queda en el vuelo)
     bool grabando = false;
     int fin_reg = 0;                // ciclos que quedan por grabar después de que terminó
@@ -426,6 +432,17 @@ static void control_task(void *arg)
                 ref_correccion = ref_centro = params.theta_ref - ref_de_patas(servo_pos);
             }
         }
+        // No armar con las patas flojas (supervisor.h): con una suelta, o en el primer armado con las dos en
+        // ángulos distintos, "arm" no arma y las manda a ARM_PATAS_DEG; se arma de nuevo cuando llegan.
+        // cmd_arm queda para la guía del LED (un "arm" que no armó la prende, como siempre)
+        sup_cmd_t cmd_arm = cmd;
+        if (cmd == SUP_CMD_ARM && (sup.state == SUP_DISARMED || sup.state == SUP_FALLEN)) {
+            arm_patas = patas_para_armar(servo_pos, servo_free, !armo_alguna_vez, ARM_PATAS_TOL_DEG);
+            if (arm_patas != PATAS_OK) {
+                cmd = SUP_CMD_NONE;
+                pedir_patas(ARM_PATAS_DEG, servo_pos, servo_target, servo_free, servo_lim);
+            }
+        }
         // La referencia sigue a las patas mientras se mueven (update_servos las lleva a 90 °/s)
         params.theta_ref = ref_de_patas(servo_pos) + ref_correccion;
         // En el vuelo la tabla de equilibrio no vale (no está apoyado): queda la de antes de despegar.
@@ -482,7 +499,8 @@ static void control_task(void *arg)
         };
         sup_state_t st = supervisor_step(&sup, &in, TILT_LIMIT_DEG * DEG2RAD,
                                          ARM_WINDOW_DEG * DEG2RAD);
-        led_guia = led_guia_paso(led_guia, st, cmd);
+        led_guia = led_guia_paso(led_guia, st, cmd_arm);
+        if (st == SUP_BALANCING) armo_alguna_vez = true;
         if (st == SUP_CALIBRATING && (prev == SUP_DISARMED || prev == SUP_FAULT)) {
             // Recalibración pedida con "cal": se descarta el sesgo y el ángulo anteriores
             calibrated = false;
@@ -493,6 +511,7 @@ static void control_task(void *arg)
         // armó (el LQR lo lleva de vuelta ahí). Se resetea antes de usarla en el primer ciclo.
         if (st == SUP_BALANCING && prev != SUP_BALANCING) odometry_reset(&odo);
         float cuentas = 0.5f * ((float)encoder_get(ENC_LEFT) + (float)encoder_get(ENC_RIGHT));
+        float tau_vel = s_vel_hz > 0.0f ? 1.0f / (6.2831853f * s_vel_hz) : 0.0f;     // [s]; 0: sin filtro
         odometry_update(&odo, cuentas, att.theta, ENC_COUNTS_PER_REV, WHEEL_RADIUS_M, dt, tau_vel);
 
         // Sensor de distancia: cuánto mide y dónde pega el haz respecto del apoyo de la rueda
@@ -747,6 +766,9 @@ static void control_task(void *arg)
             .ina_cada    = s_ina_cada,
             .lqr_fac     = s_lqr_fac,
             .lqr_fac_x   = s_lqr_fac_x,
+            .vel_hz      = s_vel_hz,
+            .arm_patas   = (uint8_t)arm_patas,
+            .armo_alguna_vez = armo_alguna_vez,
         };
         for (int i = 0; i < 3; i++) {
             t.accel[i] = imu_ok ? s.accel[i] : NAN;

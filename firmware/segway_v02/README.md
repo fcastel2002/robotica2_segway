@@ -59,7 +59,7 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 
 | Comando | Efecto |
 |---|---|
-| `arm` / `disarm` | Armar (desde DISARMED o FALLEN, a menos de 5° de la referencia; si no arma, dice por qué) o desarmar |
+| `arm` / `disarm` | Armar (desde DISARMED o FALLEN, a menos de 5° de la referencia; si no arma, dice por qué) o desarmar. **Patas (7/11):** nunca arma con una pata suelta, y el primer armado desde que se prendió pide las dos mandadas al mismo ángulo (±0,5°). Si no, no arma y manda las dos a 15° (`ARM_PATAS_DEG`; una suelta va directo, a la velocidad del servo): armar de nuevo cuando lleguen. Los armados siguientes respetan dónde quedaron, aunque sean distintas. Lo decide el firmware, venga el `arm` de donde venga; `get` dice si el primero ya pasó |
 | `set ref 8` | Cambiar `ref` (grados), `umax` o `deadband` en vivo |
 | `set kx 1.52` | Ganancias fijas del LQR, el único control desde el 2/11 (el PID se sacó): `kx`, `kv`, `kphi`, `kw`. Se usan con `lqrpata 0` |
 | `set lqrpata 1` | (por defecto desde el 3/11) Las ganancias salen de `LQR_TABLA` según la altura de las patas: el LQR recalculado con el modelo ajustado con el robot (CTL-301). `get` muestra las que se están usando; `0` vuelve a las fijas |
@@ -80,6 +80,7 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `grabar` | Graba 8 s a 200 Hz (armado o no) y los manda como el registro de la bajada (líneas `#r`); SHARE en el joystick |
 | `enc reset` | Poner en cero las cuentas de los dos encoders. Solo desarmado (o en falla): equilibrando, la odometría saltaría todo lo recorrido y el robot pegaría un tirón |
 | `set tau 1` | Constante del filtro de inclinación, en s (0,5 al arrancar, `ATTITUDE_TAU_S`). La auditoría de un amigo propone 1 s: menos vaivén lento, a cambio de que un error del giróscopo pese el doble. Para compararlas en el robot (auditoría del 5/11) |
+| `set velf 10` | Pasabajos de la velocidad de las ruedas, en Hz (20 al arrancar, `VEL_FILTER_HZ`; de 2 a 80; `0` = sin filtro). En el modelo, 10 Hz deja más margen que 20 (×3,1 contra ×2,5, margen de fase 41° contra 37°) y la mitad del ruido del encoder en el comando; sin filtro queda en ×1,55 ([explicación](../docs/lazo_equilibrio_explicado.md)). Para compararlo en el robot (7/11) |
 | `set inacada 1` | Cada cuántos ciclos de 5 ms se lee un registro de los INA (5 al arrancar: cada motor a 13 Hz). Con 1, cada motor a ~67 Hz: para los ensayos del motor ([`ensayo_motor.py`](../herramientas/ensayo_motor.py), MED-007) |
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.

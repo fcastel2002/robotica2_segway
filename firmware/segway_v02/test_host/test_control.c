@@ -308,6 +308,21 @@ static void test_odometry_rolling(void)
     CHECK(fabsf(o.v - v_real) < 0.02f);
 }
 
+static void test_odometry_sin_filtro(void)
+{
+    // tau = 0 ("set velf 0"): la velocidad es la derivada cruda, sin pasabajos ni NaN
+    const float cpr = 899.0f, r = 0.040f, dt = 0.005f;
+    const float una_cuenta = 6.2831853f * r / cpr;  // m
+    odometry_t o;
+    odometry_reset(&o);
+    odometry_update(&o, 0.0f, 0.0f, cpr, r, dt, 0.0f);
+    odometry_update(&o, 1.0f, 0.0f, cpr, r, dt, 0.0f);
+    CHECK(isfinite(o.v));
+    CHECK(fabsf(o.v - una_cuenta / dt) < 1e-4f);    // 0,056 m/s de golpe por una cuenta
+    odometry_update(&o, 1.0f, 0.0f, cpr, r, dt, 0.0f);
+    CHECK(fabsf(o.v) < 1e-6f);                      // y vuelve a cero en la muestra siguiente
+}
+
 static void test_odometry_pitch_is_not_motion(void)
 {
     // El cuerpo cabecea 10° adelante con la rueda quieta en el piso: el encoder ve la rueda
@@ -327,6 +342,29 @@ static void test_odometry_pitch_is_not_motion(void)
     odometry_reset(&o);
     odometry_update(&o, 5000.0f, 0.0f, cpr, r, dt, tau);
     CHECK(o.x == 0.0f && o.v == 0.0f);
+}
+
+// Patas para armar (7/11): nunca con una suelta; el primer armado, además, con las dos iguales
+static void test_patas_para_armar(void)
+{
+    const float tol = ARM_PATAS_TOL_DEG;
+    float pos[2] = { NAN, NAN };
+    bool suelta[2] = { true, true };
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_SUELTA);     // al encender
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_SUELTA);    // y después también
+    pos[0] = pos[1] = 15.0f;
+    suelta[0] = suelta[1] = false;
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_OK);         // mandadas a 15°
+    pos[1] = 22.0f;                                                      // nivelando: distintas
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_DISTINTAS);
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_OK);        // ya armó una vez: vale
+    pos[1] = 15.4f;
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_OK);         // dentro de la tolerancia
+    suelta[0] = true;                                                    // "servo l off" después
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_SUELTA);
+    suelta[0] = false;
+    pos[0] = NAN;                                                        // sin posición conocida
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_SUELTA);
 }
 
 static sup_state_t step(supervisor_t *s, bool imu_ok, bool cal, float tilt_deg, sup_cmd_t cmd)
@@ -715,6 +753,8 @@ int main(void)
     test_lqr_tabla_patas();
     test_ref_auto_converges();
     test_odometry_rolling();
+    test_odometry_sin_filtro();
+    test_patas_para_armar();
     test_odometry_pitch_is_not_motion();
     test_sensor_piso_geometria();
     test_movimiento_rampas_y_x_libre();

@@ -52,6 +52,7 @@ typedef enum {
     PARAM_LQRFACX,      // factor sobre kx y kv de la tabla del LQR (DEFAULT_LQR_FACTOR_X al arrancar)
     PARAM_DBRAMPA,      // |u| hasta el que crece el agregado de la zona muerta (0: salta en cero)
     PARAM_EXC,          // amplitud de un barrido de 1 a 20 Hz sumado al comando (7,5 s; solo equilibrando)
+    PARAM_VELF,         // Hz del pasabajos de la velocidad de las ruedas (VEL_FILTER_HZ al arrancar; 0 = sin filtro)
     PARAM_COUNT,
 } param_id_t;
 
@@ -133,4 +134,7 @@ typedef struct {
     int              ina_cada;      // "set inacada"
     float            lqr_fac;       // "set lqrfac"
     float            lqr_fac_x;     // "set lqrfacx"
+    float            vel_hz;        // pasabajos de la velocidad de las ruedas [Hz] ("set velf"; 0 = sin filtro)
+    uint8_t          arm_patas;     // patas_arm_t del último "arm" revisado: si no armó por las patas
+    bool             armo_alguna_vez;   // ya armó desde que se prendió (el primero pide las patas iguales)
 } telemetry_t;
