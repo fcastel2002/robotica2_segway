@@ -42,6 +42,7 @@ PARAMETROS_INICIALES = {
     'notch': 11.6, 'notch2': 7.7, 'lp': 0.0,
     'vmax': 0.4, 'acel': 0.5, 'fren': 0.5, 'ff': 1.15, 'xlibre': 1, 'velpata': 20, 'margen': 0.85, 'prio': 0.0,
     'giromax': 0.15, 'parinc': 6.0, 'parsuelta': 3.0, 'tau': 0.5, 'velf': 20.0, 'inacada': 5,
+    'trim': 0.0, 'dlpf': 3,             # desde el firmware del 9/11
 }
 _GET_LINEAS = [
     '# ref=%(ref).2f umax=%(umax).2f deadband=%(deadband).3f dbrampa=%(dbrampa).3f dbmov=%(dbmov).3f refauto=%(refauto)d',
@@ -54,6 +55,9 @@ _GET_LINEAS = [
     'sensx=-5.2 sensz=2.0 sensang=40.0',
     '# giromax=%(giromax).2f parinc=%(parinc).1f parsuelta=%(parsuelta).1f tau=%(tau).2f velf=%(velf).1f | '
     'bajada: inactiva, d_borde=30 cm (0: con el sensor)',
+    '# trim=%(trim).3f dlpf=%(dlpf)d (filtro de la IMU: 1 es 188 Hz, 2 es 98, 3 es 42, 4 es 20)',
+    '# ciclo, ultimo segundo: ciclo_medio_us=3259 ciclo_max_us=4662 imu_medio_us=2029 imu_max_us=2298 '
+    'ina_medio_us=987 ina_max_us=1210 periodo_max_us=5246',
     '# servo l=%(pata_l).1f r=%(pata_r).1f lim_l=0.0..30.0 lim_r=0.0..30.0',
     '# armar: ya armó desde que se prendió, las patas pueden estar en ángulos distintos; nunca con una pata suelta',
     '# ina: lectura activa, un registro cada %(inacada)d ciclos (inacada); en el bus al arrancar: '

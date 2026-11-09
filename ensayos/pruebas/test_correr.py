@@ -104,7 +104,7 @@ def verbos(link):
 class TestValidacion(unittest.TestCase):
     def test_los_seis_protocolos_validan(self):
         archivos = sorted((ENSAYOS / 'protocolos').glob('*.json'))
-        self.assertEqual([f.name[:2] for f in archivos], ['E0', 'E1', 'E2', 'E3', 'E4', 'E5'])
+        self.assertEqual([f.name[:2] for f in archivos if f.name[0] == 'E'], ['E0', 'E1', 'E2', 'E3', 'E4', 'E5'])
         for f in archivos:
             with self.subTest(f.name):
                 p, _, err = correr.cargar(f)
@@ -245,6 +245,16 @@ class TestParseo(unittest.TestCase):
         self.assertEqual(d['lqrpata'], 2)
         self.assertNotIn('ip', d)                       # 192.168.100.22 no es un número
         self.assertNotIn('lim_l', d)
+        for k in set(correr.en.PARAMETROS_INICIALES) - {'trim', 'dlpf'}:   # esa muestra es del firmware anterior
+            self.assertIn(k, d)
+
+    def test_get_real_con_trim_dlpf_y_tiempos(self):
+        # el mismo robot con el firmware del 9/11 a la tarde (FW-028), desarmado y sin batería
+        lineas = (DATOS / 'get_real_2026-11-09_fw028.txt').read_text(encoding='utf-8').splitlines()
+        d = en.parsear_get(lineas)
+        self.assertEqual((d['trim'], d['dlpf']), (0.0, 3))
+        self.assertGreater(d['imu_medio_us'], 500)
+        self.assertGreater(d['ciclo_max_us'], d['ciclo_medio_us'])
         for k in correr.en.PARAMETROS_INICIALES:
             self.assertIn(k, d)
 
@@ -822,7 +832,8 @@ class TestLineaDeComandos(unittest.TestCase):
     def test_validar_y_listar(self):
         codigo, salida, _ = self.llamar('--validar')
         self.assertEqual(codigo, 0)
-        self.assertEqual(salida.count('ok   '), 6)
+        self.assertEqual(salida.count('ok   '), len(list((ENSAYOS / 'protocolos').glob('*.json'))))
+        self.assertNotIn('ERROR', salida)
         codigo, salida, _ = self.llamar('--listar')
         self.assertEqual(codigo, 0)
         self.assertIn('E3', salida)

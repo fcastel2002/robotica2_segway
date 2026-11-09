@@ -13,6 +13,8 @@ Nació con la cosimulación robot ↔ Simulink (VAL-303, 9/11/2026):
 | [`correr.py`](correr.py) | Ejecuta un protocolo por el puente y guarda la corrida. También valida y muestra la línea de tiempo sin conectarse |
 | [`enlace.py`](enlace.py) | El enlace con el robot (por `Aplicacion/puente.py`) y un robot simulado en proceso, sin red, para probar |
 | [`revisar.py`](revisar.py) | Controla una corrida (pérdidas, registros completos, ritmo de la corriente, encoders) y saca los primeros números (bloque eléctrico, sensibilidad del lazo) |
+| [`analizar_trim.py`](analizar_trim.py) | Con una corrida del protocolo `A1_trim_motores` (ida y vuelta con varios `set trim`), dice qué compensación iguala las dos ruedas |
+| [`analizar_filtro.py`](analizar_filtro.py) | Con una corrida del protocolo `A2_filtro_imu` (quieto y tres barridos con cada `set dlpf`), compara el pico de sensibilidad, la fase de la planta y cuánto vibra con cada filtro de la IMU |
 | [`FORMATO.md`](FORMATO.md) | El contrato: interfaz con el firmware, esquema de los protocolos y archivos de cada corrida |
 | `datos/<fecha>/<ID>_<nombre>_<hora>/` | Una carpeta por corrida. Las simuladas van a `datos/_simulado/` (git las ignora) |
 | [`pruebas/`](pruebas/) | Pruebas en la PC, sin robot: contra un robot simulado en proceso y un puente de mentira en `127.0.0.1` |
