@@ -317,9 +317,10 @@
                 <button data-servo="r off" title="Sin pulsos: el servo queda sin fuerza y la posición deja de conocerse">Soltar</button>
               </div>
               <div class="acciones">
+                <label title="El deslizador, los pasos o Ir a de una pata mueven las dos al mismo ángulo (servo &lt;grados&gt;)"><input id="servos-juntos" type="checkbox" checked> juntos</label>
                 <button data-servo="off">Soltar los dos</button>
               </div>
-              <p class="tenue">Ángulo del servo acotado estrictamente entre <b>0° y 30°</b> (<code>board_config.h</code>). Desde el mando PS4 se suben con <b>R1 (+10°)</b> y se bajan con <b>L1 (−10°)</b>.</p>
+              <p class="tenue">Ángulo del servo acotado estrictamente entre <b>0° y 30°</b> (<code>board_config.h</code>). Desde el mando PS4 se suben con <b>R1 (+10°)</b> y se bajan con <b>L1 (−10°)</b>. Para armar, el firmware pide las dos patas fijas y, la primera vez desde que se prende, en el mismo ángulo: si no, no arma y las manda a 15°.</p>
             </fieldset>
           </article>
         </div>

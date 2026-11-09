@@ -149,6 +149,7 @@ def simular(frecuencia_hz: float) -> None:
     servo = [0.0, 0.0]
     servo_objetivo = [0.0, 0.0]
     servo_suelto = [False, False]
+    armo_alguna_vez = False  # el primer armado pide las patas iguales (como el firmware)
     lim = [list(SERVO_LIM), list(SERVO_LIM)]  # mínimo y máximo de cada servo, acotado a 0..30°
     mov_fwd, mov_turn, mov_t = 0.0, 0.0, -1e9
     v_ref_mms, giro = 0.0, 0.0
@@ -164,8 +165,23 @@ def simular(frecuencia_hz: float) -> None:
                 pwm = [0.0, 0.0]  # igual que el firmware: armar o desarmar suelta el motor a mano
                 v_ref_mms, giro = 0.0, 0.0
             if palabras[:1] == ["arm"] and estado == "DISARMED":
-                estado = "BALANCING"
-                difundir("# estado: DISARMED -> BALANCING")
+                # Como el firmware (7/11, patas_para_armar): nunca con una pata suelta, y el primer
+                # armado con las dos al mismo ángulo; si no, no arma y las manda a 15°
+                suelta = any(servo_suelto[i] or math.isnan(servo[i]) for i in (0, 1))
+                distintas = not armo_alguna_vez and abs(servo[0] - servo[1]) > 0.5
+                if suelta or distintas:
+                    for i in (0, 1):
+                        servo_objetivo[i] = max(lim[i][0], min(lim[i][1], 15.0))
+                        if math.isnan(servo[i]):
+                            servo[i] = servo_objetivo[i]
+                        servo_suelto[i] = False
+                    motivo = ("una pata estaba suelta (sin posición conocida)" if suelta else
+                              f"el primer armado pide las dos patas en el mismo ángulo (izq {servo[0]:.1f}°, der {servo[1]:.1f}°)")
+                    difundir(f"# no se armó: {motivo}. Van las dos a 15°: armar de nuevo cuando lleguen")
+                else:
+                    estado = "BALANCING"
+                    armo_alguna_vez = True
+                    difundir("# estado: DISARMED -> BALANCING")
             elif palabras[:1] == ["disarm"] and estado != "DISARMED":
                 difundir(f"# estado: {estado} -> DISARMED")
                 estado = "DISARMED"
