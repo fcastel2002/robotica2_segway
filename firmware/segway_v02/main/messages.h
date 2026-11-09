@@ -53,6 +53,8 @@ typedef enum {
     PARAM_DBRAMPA,      // |u| hasta el que crece el agregado de la zona muerta (0: salta en cero)
     PARAM_EXC,          // amplitud de un barrido de 1 a 20 Hz sumado al comando (7,5 s; solo equilibrando)
     PARAM_VELF,         // Hz del pasabajos de la velocidad de las ruedas (VEL_FILTER_HZ al arrancar; 0 = sin filtro)
+    PARAM_TRIM,         // compensación entre motores: fracción de PWM de más a la izquierda (balance_trim)
+    PARAM_DLPF,         // filtro interno de la IMU: 1 = 188 Hz, 2 = 98, 3 = 42, 4 = 20 (imu_set_dlpf)
     PARAM_COUNT,
 } param_id_t;
 
@@ -87,6 +89,14 @@ typedef struct {
     float          value;   // valor del parámetro, grados del servo o comando del motor [-1, 1]
     float          value2;  // CMD_SERVO_LIMITS: máximo
 } command_t;
+
+// Tiempos del ciclo de control en el último segundo completo [us], para "get": dónde se va el ciclo
+typedef struct {
+    uint32_t total_medio, total_max;    // todo el ciclo, desde que despierta hasta que termina
+    uint32_t imu_medio, imu_max;        // la lectura de la IMU
+    uint32_t ina_medio, ina_max;        // la lectura de un registro de los INA (solo los ciclos que leen)
+    uint32_t periodo_max;               // el intervalo más largo entre el comienzo de dos ciclos
+} ciclo_t;
 
 typedef struct {
     uint32_t         t_ms;
@@ -135,6 +145,9 @@ typedef struct {
     float            lqr_fac;       // "set lqrfac"
     float            lqr_fac_x;     // "set lqrfacx"
     float            vel_hz;        // pasabajos de la velocidad de las ruedas [Hz] ("set velf"; 0 = sin filtro)
+    float            trim;          // compensación entre motores ("set trim")
+    uint8_t          dlpf;          // filtro interno que tiene la IMU ("set dlpf")
+    ciclo_t          ciclo;         // tiempos del ciclo en el último segundo
     uint8_t          arm_patas;     // patas_arm_t del último "arm" revisado: si no armó por las patas
     bool             armo_alguna_vez;   // ya armó desde que se prendió (el primero pide las patas iguales)
 } telemetry_t;

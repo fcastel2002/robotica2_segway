@@ -10,7 +10,11 @@
 #define COMMS_STACK             8192        // printf con float y los paquetes UDP usan bastante pila
 
 // --- IMU ---
-#define I2C_FREQ_HZ             100000      // 29/10: 400 -> 100 kHz, más tolerante al ruido de los motores
+// 29/10: 400 -> 100 kHz, más tolerante al ruido de los motores (antes de las placas soldadas). 9/11: a 100 kHz
+// el bus ocupa 2,1 ms de cada ciclo en la IMU y 1,0 ms en cada lectura de INA (medido con "get", línea
+// "# ciclo"): el ciclo llega a 4,7-5,0 ms de 5. De vuelta a 400 kHz, A PRUEBA: mirar "imu fallas: i2c" en
+// "get" con los motores andando; si aparecen fallas, volver a 100000.
+#define I2C_FREQ_HZ             400000
 // Montaje: qué eje del sensor (0=x, 1=y, 2=z) apunta hacia adelante, cuál hacia arriba y
 // alrededor de cuál se mide el cabeceo, con su signo. Se ajusta en la puesta en marcha (paso 2):
 // inclinar hacia adelante debe dar ángulo y velocidad angular positivos.
@@ -39,6 +43,14 @@
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
 #define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
 #define MOTOR_R_INVERT          1           // 29/10: con 1 las ruedas giraban al revés una de otra
+// Compensación entre motores (balance_trim, "set trim"): fracción de PWM de más a la izquierda y de menos a
+// la derecha. 9/11, ensayo A1 de ensayos/ (ida y vuelta a 0,1 m/s, patas en 15°): con 0 la izquierda gira
+// 0,96 rad/s menos que la derecha; con 0,03 la diferencia queda en +0,03 rad/s y el robot deja de doblar
+// (dos pasadas: el cero cae en 0,031 y en 0,028)
+#define DEFAULT_MOTOR_TRIM      0.03f
+// Filtro interno de la IMU al arrancar ("set dlpf", imu_mpu6050.h). 9/11, ensayo A2 de ensayos/: con 1 (188 Hz)
+// el pico de sensibilidad del lazo baja de 3,94 a 3,34 respecto de 3 (42 Hz, el de antes) y parado no vibra más
+#define IMU_DLPF_DEFAULT        1
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano

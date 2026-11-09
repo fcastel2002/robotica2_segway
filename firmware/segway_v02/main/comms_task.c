@@ -64,7 +64,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_SENSZ] = "sensz", [PARAM_SENSANG] = "sensang", [PARAM_PARINC] = "parinc",
     [PARAM_PARSUELTA] = "parsuelta", [PARAM_TAU] = "tau", [PARAM_INA] = "ina",
     [PARAM_INACADA] = "inacada", [PARAM_LQRFAC] = "lqrfac", [PARAM_LQRFACX] = "lqrfacx", [PARAM_DBRAMPA] = "dbrampa", [PARAM_EXC] = "exc",
-    [PARAM_VELF] = "velf",
+    [PARAM_VELF] = "velf", [PARAM_TRIM] = "trim", [PARAM_DLPF] = "dlpf",
 };
 
 // Los parámetros de la bajada como los tiene control (empiezan igual y cambian con los mismos
@@ -125,6 +125,9 @@ static void print_help(void)
         "#        tau (s): constante del filtro de inclinacion (0,5 al arrancar; probar 1)\n"
         "#        velf (Hz): pasabajos de la velocidad de las ruedas (20 al arrancar; 0 = sin filtro;\n"
         "#        de 2 a 80; probar 10)\n"
+        "#        trim: compensacion entre motores, fraccion de PWM de mas a la izquierda y de menos a la\n"
+        "#        derecha (-0.10 a 0.10; 0.03 al arrancar)\n"
+        "#        dlpf: filtro interno de la IMU, 1 = 188 Hz (al arrancar), 2 = 98, 3 = 42, 4 = 20\n"
         "#        ina (1: lee los INA; 0: no los toca, para descartarlos ante problemas en el bus)\n"
         "#        inacada (cada cuantos ciclos de 5 ms lee un registro de los INA: 5 al arrancar,\n"
         "#        13 Hz cada motor; 1 para los ensayos del modelo, 67 Hz)\n"
@@ -229,6 +232,12 @@ static void print_params(const telemetry_t *t)
     out("# giromax=%.2f parinc=%.1f parsuelta=%.1f tau=%.2f velf=%.1f | bajada: %s, d_borde=%.0f cm (0: con el sensor)\n",
         t->giro_max, t->par_inclina * RAD2DEG, t->par_suelta * RAD2DEG, t->tau_att, t->vel_hz,
         maniobra_nombre(t->man_estado), s_man.d_borde * 100.0f);
+    out("# trim=%.3f dlpf=%u (filtro de la IMU: 1 es 188 Hz, 2 es 98, 3 es 42, 4 es 20)\n", t->trim,
+        (unsigned)t->dlpf);
+    out("# ciclo, ultimo segundo: ciclo_medio_us=%lu ciclo_max_us=%lu imu_medio_us=%lu imu_max_us=%lu "
+        "ina_medio_us=%lu ina_max_us=%lu periodo_max_us=%lu\n", (unsigned long)t->ciclo.total_medio,
+        (unsigned long)t->ciclo.total_max, (unsigned long)t->ciclo.imu_medio, (unsigned long)t->ciclo.imu_max,
+        (unsigned long)t->ciclo.ina_medio, (unsigned long)t->ciclo.ina_max, (unsigned long)t->ciclo.periodo_max);
     out("# servo l=%.1f r=%.1f lim_l=%.1f..%.1f lim_r=%.1f..%.1f\n",
         t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT],
         t->servo_lim[SERVO_LEFT][0], t->servo_lim[SERVO_LEFT][1],

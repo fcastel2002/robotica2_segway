@@ -65,6 +65,15 @@ float balance_lqr_step(balance_t *b, const balance_params_t *p, float x, float v
 // motores sin el LQR (la maniobra de escalón en el aire).
 float balance_compensar(const balance_params_t *p, float u, float u_limit);
 
+// Compensación entre motores ("set trim"): lo que se le suma al comando de la rueda izquierda y se le resta
+// al de la derecha, en el sentido en que gira cada una, para que con el mismo comando anden igual.
+// trim es la diferencia total en fracción de PWM (positivo: más a la izquierda); cada rueda recibe la
+// mitad. Crece de 0 a trim/2 mientras |u| va de 0 a BALANCE_TRIM_RAMPA, así no salta al cruzar por cero.
+// 9/11 (ensayos E1 y E5): la izquierda arranca con 8 % de PWM y la derecha con 5 %, y andando gira
+// 0,6-0,8 rad/s menos con el mismo comando.
+#define BALANCE_TRIM_RAMPA  0.05f
+float balance_trim(float u, float trim);
+
 // Ángulo de equilibrio según la altura de las patas: con el cuatro barras, al moverlas la rueda se
 // corre respecto del cuerpo y el equilibrio cambia. Interpolación lineal en una tabla (patas en
 // grados de pata, de menor a mayor; refs en las mismas unidades que se quieran de salida),

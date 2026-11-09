@@ -119,6 +119,12 @@ float balance_compensar(const balance_params_t *p, float u, float u_limit)
     return compensar_zona_muerta(u, p->deadband, p->deadband_rampa, u_limit);
 }
 
+float balance_trim(float u, float trim)
+{
+    float f = fminf(fmaxf(u / BALANCE_TRIM_RAMPA, -1.0f), 1.0f);
+    return 0.5f * trim * f;
+}
+
 float balance_ref_auto(float theta_ref, float centro, float rango, float x_err, float v,
                        float v_max, bool motor_al_tope, float gain, float dt)
 {

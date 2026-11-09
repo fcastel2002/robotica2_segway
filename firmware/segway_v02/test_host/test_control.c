@@ -308,6 +308,21 @@ static void test_odometry_rolling(void)
     CHECK(fabsf(o.v - v_real) < 0.02f);
 }
 
+static void test_trim_entre_motores(void)
+{
+    // "set trim 0.02": con comando hacia adelante la izquierda recibe 0,01 más y la derecha 0,01 menos;
+    // hacia atrás, lo mismo en el otro sentido (más magnitud a la izquierda)
+    CHECK(fabsf(balance_trim(0.20f, 0.02f) - 0.01f) < 1e-6f);
+    CHECK(fabsf(balance_trim(-0.20f, 0.02f) + 0.01f) < 1e-6f);
+    // sin salto al cruzar por cero: crece con el comando hasta BALANCE_TRIM_RAMPA
+    CHECK(balance_trim(0.0f, 0.02f) == 0.0f);
+    CHECK(fabsf(balance_trim(0.5f * BALANCE_TRIM_RAMPA, 0.02f) - 0.005f) < 1e-6f);
+    CHECK(fabsf(balance_trim(BALANCE_TRIM_RAMPA, 0.02f) - 0.01f) < 1e-6f);
+    // trim 0 (como arranca) no cambia nada, y negativo favorece a la derecha
+    CHECK(balance_trim(0.3f, 0.0f) == 0.0f);
+    CHECK(balance_trim(0.3f, -0.04f) < 0.0f);
+}
+
 static void test_odometry_sin_filtro(void)
 {
     // tau = 0 ("set velf 0"): la velocidad es la derivada cruda, sin pasabajos ni NaN
@@ -754,6 +769,7 @@ int main(void)
     test_ref_auto_converges();
     test_odometry_rolling();
     test_odometry_sin_filtro();
+    test_trim_entre_motores();
     test_patas_para_armar();
     test_odometry_pitch_is_not_motion();
     test_sensor_piso_geometria();

@@ -48,6 +48,11 @@ static float s_lqr_fac_x = DEFAULT_LQR_FACTOR_X;    // el de kx y kv ("set lqrfa
 // más margen que 20 (×3,1 contra ×2,5) y la mitad del ruido del encoder; sin filtro, ×1,55
 // (firmware/docs/lazo_equilibrio_explicado.md). Para probarlo en el robot sin regrabar
 static float s_vel_hz = VEL_FILTER_HZ;
+// Compensación entre motores ("set trim", balance_trim) y filtro interno de la IMU ("set dlpf"), en vivo
+// para ajustarlos con los ensayos sin regrabar (9/11, VAL-303)
+static float s_trim = DEFAULT_MOTOR_TRIM;
+static int s_dlpf = IMU_DLPF_DEFAULT;
+#define CICLO_VENTANA   (1000 / CONTROL_PERIOD_MS)     // ciclos por cada resumen de tiempos (1 s)
 // "set exc <amp>": un barrido senoidal de EXC_F0 a EXC_F1 Hz (logarítmico, EXC_T s) que se suma al comando
 // del LQR, para medir en el robot cómo responde a cada frecuencia y el margen del lazo (7/11: el modelo
 // no explicaba vibraciones de 8 y 10 Hz). Empezarlo junto con "grabar" (8 s a 200 Hz).
@@ -197,6 +202,8 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_EXC:      s_exc_amp = fminf(fmaxf(c->value, 0.0f), 0.2f); s_exc_t = s_exc_amp > 0.0f ? 0.0f : -1.0f;
                              break;
         case PARAM_VELF:     s_vel_hz = c->value <= 0.0f ? 0.0f : fminf(fmaxf(c->value, 2.0f), 80.0f); break;
+        case PARAM_TRIM:     s_trim = fminf(fmaxf(c->value, -0.10f), 0.10f); break;
+        case PARAM_DLPF:     s_dlpf = (int)fminf(fmaxf(roundf(c->value), 1.0f), 4.0f); break;
         default: break;
         }
         break;
@@ -353,6 +360,10 @@ static void control_task(void *arg)
     ina_datos_reset(&ina);
     bool ina_activo = true;
     int ina_ciclos = 0;
+    // Tiempos del ciclo: se acumulan CICLO_VENTANA ciclos y se publica el resumen (get)
+    ciclo_t ciclo = { 0 };
+    uint32_t cs_total = 0, cs_imu = 0, cs_ina = 0, cm_total = 0, cm_imu = 0, cm_ina = 0, cm_periodo = 0;
+    int cn = 0, cn_ina = 0;
 
     ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
     TickType_t last_wake = xTaskGetTickCount();
@@ -361,6 +372,7 @@ static void control_task(void *arg)
     for (;;) {
         xTaskDelayUntil(&last_wake, pdMS_TO_TICKS(CONTROL_PERIOD_MS));
         int64_t t0 = esp_timer_get_time();
+        uint32_t periodo_us = (uint32_t)(t0 - t_prev);
         float dt = (t0 - t_prev) * 1e-6f;
         t_prev = t0;
         esp_task_wdt_reset();
@@ -464,7 +476,10 @@ static void control_task(void *arg)
         // IMU lee bien pero la inclinación sigue solo con el giróscopo; demasiado tiempo así es una
         // falla (un sensor que no mide). La maniobra también pide solo giróscopo al largar y al tocar.
         imu_sample_t s;
+        if (s_dlpf != imu_dlpf()) imu_set_dlpf((uint8_t)s_dlpf);    // "set dlpf": insiste hasta que el sensor lo toma
+        int64_t t_imu = esp_timer_get_time();
         bool imu_ok = imu_read(&s) == ESP_OK;
+        uint32_t imu_us = (uint32_t)(esp_timer_get_time() - t_imu);
         bool imu_leida = imu_ok;            // la lectura salió (aunque esté en caída libre): para el registro
         if (imu_ok) {
             n_baja_g = s.baja_g ? n_baja_g + 1 : 0;
@@ -629,8 +644,10 @@ static void control_task(void *arg)
                 s_exc_t += dt;
                 if (s_exc_t > EXC_T) s_exc_t = -1.0f;
             }
-            applied[MOTOR_LEFT]  = fminf(fmaxf(u + giro, -u_limit), u_limit);
-            applied[MOTOR_RIGHT] = fminf(fmaxf(u - giro, -u_limit), u_limit);
+            // Compensación entre motores: de más a la izquierda y de menos a la derecha, cada una en su sentido
+            float u_l = u + giro, u_r = u - giro;
+            applied[MOTOR_LEFT]  = fminf(fmaxf(u_l + balance_trim(u_l, s_trim), -u_limit), u_limit);
+            applied[MOTOR_RIGHT] = fminf(fmaxf(u_r - balance_trim(u_r, s_trim), -u_limit), u_limit);
             motor_set(MOTOR_LEFT, applied[MOTOR_LEFT]);
             motor_set(MOTOR_RIGHT, applied[MOTOR_RIGHT]);
         } else if (st == SUP_DISARMED || st == SUP_FAULT) {
@@ -709,13 +726,33 @@ static void control_task(void *arg)
         } else if (++ina_ciclos >= s_ina_cada
                    && esp_timer_get_time() - t0 < PERIOD_US - INA_MARGEN_US) {
             ina_ciclos = 0;
+            int64_t t_ina = esp_timer_get_time();
             ina_leer_siguiente(&ina);
+            uint32_t ina_us = (uint32_t)(esp_timer_get_time() - t_ina);
+            cs_ina += ina_us;
+            if (ina_us > cm_ina) cm_ina = ina_us;
+            cn_ina++;
         }
 
         // 5. Telemetría y medición del ciclo
         uint32_t exec_us = (uint32_t)(esp_timer_get_time() - t0);
         overrun = exec_us > PERIOD_US;
         if (overrun) overruns_total++;
+        cs_total += exec_us;
+        cs_imu += imu_us;
+        if (exec_us > cm_total) cm_total = exec_us;
+        if (imu_us > cm_imu) cm_imu = imu_us;
+        if (periodo_us > cm_periodo) cm_periodo = periodo_us;
+        if (++cn >= CICLO_VENTANA) {
+            ciclo = (ciclo_t){
+                .total_medio = cs_total / cn, .total_max = cm_total,
+                .imu_medio = cs_imu / cn, .imu_max = cm_imu,
+                .ina_medio = cn_ina > 0 ? cs_ina / cn_ina : 0, .ina_max = cm_ina,
+                .periodo_max = cm_periodo,
+            };
+            cs_total = cs_imu = cs_ina = cm_total = cm_imu = cm_ina = cm_periodo = 0;
+            cn = cn_ina = 0;
+        }
         if (exec_us > exec_max) exec_max = exec_us;
         if (++window_n >= WINDOW_CYCLES) {
             window_max = exec_max;
@@ -767,6 +804,9 @@ static void control_task(void *arg)
             .lqr_fac     = s_lqr_fac,
             .lqr_fac_x   = s_lqr_fac_x,
             .vel_hz      = s_vel_hz,
+            .trim        = s_trim,
+            .dlpf        = imu_dlpf(),
+            .ciclo       = ciclo,
             .arm_patas   = (uint8_t)arm_patas,
             .armo_alguna_vez = armo_alguna_vez,
         };

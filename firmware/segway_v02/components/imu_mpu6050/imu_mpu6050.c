@@ -30,6 +30,8 @@
 static const char *TAG = "imu";
 static i2c_master_dev_handle_t s_dev;
 static imu_stats_t s_stats;     // fallas desde el arranque, para diagnosticar ruido
+static uint8_t s_dlpf = DLPF_44HZ;      // el filtro pedido ("set dlpf")
+static uint8_t s_dlpf_puesto = 0;       // el que tiene el sensor (0: todavía ninguno)
 
 static esp_err_t write_reg(uint8_t reg, uint8_t value)
 {
@@ -44,7 +46,8 @@ static esp_err_t configurar(void)
 {
     ESP_RETURN_ON_ERROR(write_reg(REG_PWR_MGMT_1, 0x01), TAG, "reloj");   // PLL del giróscopo X
     ESP_RETURN_ON_ERROR(write_reg(REG_SMPLRT_DIV, 0), TAG, "muestreo");
-    ESP_RETURN_ON_ERROR(write_reg(REG_CONFIG, DLPF_44HZ), TAG, "filtro");
+    ESP_RETURN_ON_ERROR(write_reg(REG_CONFIG, s_dlpf), TAG, "filtro");
+    s_dlpf_puesto = s_dlpf;
     ESP_RETURN_ON_ERROR(write_reg(REG_GYRO_CONFIG, GYRO_FS_2000), TAG, "rango gyro");
     ESP_RETURN_ON_ERROR(write_reg(REG_ACCEL_CONFIG, ACCEL_FS_16G), TAG, "rango accel");
     return ESP_OK;
@@ -76,6 +79,29 @@ esp_err_t imu_init(i2c_master_bus_handle_t bus, uint32_t scl_hz)
 
     ESP_LOGI(TAG, "MPU lista (WHO_AM_I 0x%02X)", who);
     return ESP_OK;
+}
+
+esp_err_t imu_set_dlpf(uint8_t cfg)
+{
+    if (cfg < 1 || cfg > 4) {
+        return ESP_ERR_INVALID_ARG;
+    }
+    s_dlpf = cfg;
+    if (s_dev == NULL) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    esp_err_t err = write_reg(REG_CONFIG, cfg);
+    if (err != ESP_OK) {
+        s_stats.i2c_errors++;
+        return err;
+    }
+    s_dlpf_puesto = cfg;
+    return ESP_OK;
+}
+
+uint8_t imu_dlpf(void)
+{
+    return s_dlpf_puesto;
 }
 
 esp_err_t imu_read(imu_sample_t *out)
