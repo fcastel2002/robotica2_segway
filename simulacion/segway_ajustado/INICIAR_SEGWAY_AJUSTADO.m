@@ -25,9 +25,13 @@ addpath(aqui);
 % --- el robot
 pata_fw        = 20;        % [grados] pata del FIRMWARE (0 agachado, 30 estirado; la del joystick)
 ganancias      = 'firmware';% 'firmware' = las de board_config.h; 'ajustadas' = LQR del modelo ajustado en esta pata
-k_firmware     = [1.52 2.73 4.14 0.478];   % board_config.h (set kx kv kphi kw)
-db_fw          = 0.15;      % zona muerta compensada (set deadband; 0,15 en la prueba)
-notch_hz       = 7.0;       % rechaza banda (set notch; 7,0 en la prueba). 0 = sin filtro
+% 11/11: el control de hoy (segway_v02): LQR_TABLA_DRV según la pata, por lqrfac (kphi, kw) y lqrfacx (kx, kv)
+tabla_drv      = [1.25 2.10 3.13 0.329; 1.25 2.10 3.34 0.364; 1.25 2.10 3.52 0.399; 1.25 2.11 3.69 0.435; ...
+                  1.25 2.11 3.85 0.470; 1.25 2.12 4.00 0.506; 1.25 2.13 4.15 0.544];   % patas 0:5:30
+k_firmware     = interp1((0:5:30)', tabla_drv, pata_fw) .* [0.86 0.86 0.87 0.87];
+db_fw          = 0.03;      % zona muerta compensada (DEFAULT_DEADBAND)
+notch_hz       = 11.6;      % rechaza banda ancho (Q 0,7; set notch). 0 = sin filtro
+notch2_hz      = 7.7;       % rechaza banda angosto (Q 2; set notch2). 0 = sin filtro
 vel_pata_dps   = 16;        % velocidad de las patas del firmware (set velpata)
 
 % --- de donde arranca y que se le pide
@@ -69,13 +73,17 @@ K = -k_fw*V_motor;                  % en voltios, para leer y comparar con el or
 %% 4. Variables que lee el modelo ==========================================
 Ts = fisicos.Ts;
 % rechaza banda del firmware (balance.c: RBJ con Q = 0,7) a 200 Hz
-if notch_hz > 0
-    w0 = 2*pi*notch_hz*Ts;  alfa = sin(w0)/(2*0.7);  a0 = 1 + alfa;
-    notch_num = [1, -2*cos(w0), 1]/a0;
-    notch_den = [1, -2*cos(w0)/a0, (1 - alfa)/a0];
-else
-    notch_num = [1 0 0];  notch_den = [1 0 0];
+notch_num = 1;  notch_den = 1;
+for nq = [notch_hz 0.7; notch2_hz 2]'      % los dos en cascada, como balance.c
+    if nq(1) > 0
+        w0 = 2*pi*nq(1)*Ts;  alfa = sin(w0)/(2*nq(2));  a0 = 1 + alfa;
+        notch_num = conv(notch_num, [1, -2*cos(w0), 1]/a0);
+        notch_den = conv(notch_den, [1, -2*cos(w0)/a0, (1 - alfa)/a0]);
+    end
 end
+% 11/11: el retardo de la planta medido con los barridos (parametros_fisicos: retardo_s) se suma al ciclo de
+% retardo del firmware, en ciclos enteros de 5 ms
+n_retardo = 1 + round(fisicos.retardo_s/Ts);
 % motores de rueda: uno por bloque
 V_bat        = fisicos.V_bat;
 beta_V_motor = motor.beta_V / motor.n_motores;

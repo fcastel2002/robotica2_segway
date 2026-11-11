@@ -232,7 +232,7 @@ static double par_servo(const planta_t *P, double a, double da, double a_pedido)
 void planta_derivada(const planta_t *P, const piso_t *piso, const double q[PP_NQ],
                      const double dq[PP_NQ], const entrada_planta_t *e, salida_planta_t *s)
 {
-    const double th = q[PP_TH], dth = dq[PP_TH], da = dq[PP_A], df = dq[PP_F];
+    const double th = q[PP_TH], dth = dq[PP_TH], da = dq[PP_A], df = dq[PP_F], ds = dq[PP_S];
     pata_t p;
     pata_cinematica(q[PP_A], &p);
 
@@ -256,12 +256,12 @@ void planta_derivada(const planta_t *P, const piso_t *piso, const double q[PP_NQ
     double bLx = -dth * dth * lx + 2.0 * dth * da * l1z + da * da * l2x;
     double bLz = -dth * dth * lz - 2.0 * dth * da * l1x + da * da * l2z;
 
-    // Giros: eslabón del motor, rueda y rotor (todos absolutos)
-    double Jl[PP_NQ] = { 0, 0, 1, p.dg, 0 };
-    double Jw[PP_NQ] = { 0, 0, 1, p.dg, 1 };
-    double Jr[PP_NQ] = { 0, 0, 1, p.dg, P->n_reductor };
+    // Giros: eslabón del motor, rueda y rotor (todos absolutos). El eslabón gira además s (torsión)
+    double Jl[PP_NQ] = { 0, 0, 1, p.dg, 0, 1 };
+    double Jw[PP_NQ] = { 0, 0, 1, p.dg, 1, 1 };
+    double Jr[PP_NQ] = { 0, 0, 1, p.dg, P->n_reductor, 1 };
     double b_giro = p.ddg * da * da;
-    double w_rueda = dth + p.dg * da + df;
+    double w_rueda = dth + p.dg * da + df + ds;
 
     double M[PP_NQ][PP_NQ] = { { 0 } }, h[PP_NQ] = { 0 }, Q[PP_NQ] = { 0 };
     M[PP_X][PP_X] += P->m_cuerpo;
@@ -293,6 +293,9 @@ void planta_derivada(const planta_t *P, const piso_t *piso, const double q[PP_NQ
     // Servos
     double par_s = par_servo(P, q[PP_A], da, e->a_pedido);
     Q[PP_A] += par_s;
+
+    // Torsión del eslabón del motor contra la caja (los agarres de plástico)
+    Q[PP_S] += -P->k_torsion * q[PP_S] - P->c_torsion * ds;
 
     // Contacto de la rueda: el punto material de la rueda en el contacto
     double ex = q[PP_X] + wx, ez = q[PP_Z] + wz;
@@ -333,6 +336,12 @@ void planta_derivada(const planta_t *P, const piso_t *piso, const double q[PP_NQ
 
     double rhs[PP_NQ];
     for (int i = 0; i < PP_NQ; i++) rhs[i] = Q[i] - h[i];
+    if (P->k_torsion <= 0.0) {
+        // Rígido: s queda trabado (su ecuación pasa a ser dds = 0 y no pesa en las demás)
+        for (int i = 0; i < PP_NQ; i++) M[PP_S][i] = M[i][PP_S] = 0.0;
+        M[PP_S][PP_S] = 1.0;
+        rhs[PP_S] = 0.0;
+    }
     resolver(M, rhs, s->ddq);
     s->n_rueda = n_rueda;
     s->n_cuerpo = n_cuerpo;

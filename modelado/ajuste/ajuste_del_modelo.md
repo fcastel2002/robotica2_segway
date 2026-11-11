@@ -269,6 +269,52 @@ robot rígido, `LQR_TABLA_DRV` aguantaría ×3,4 antes de oscilar, y en el robot
 con ×0,6-0,8 (FW-025). Le falta algo mecánico de pocos Hz (las ruedas patinan en cada cambio de sentido, había
 juego en las ruedas, el cuatro barras en 30°) o retardo en la medida.
 
+## 9b. El robot de 1327 g: centro de masa, inercia y planta medidos (10-11/11, MED-008)
+
+Con el firmware de Francisco del 9/11 (FW-028: filtro de la IMU a 188 Hz, I2C a 400 kHz, `trim` 0,03).
+
+1. **Centro de masa e inercia** ([`ajustar_caidas.py`](ajustar_caidas.py), [figura](fig_caidas.png)), patas en 30°:
+   22 caídas sin motores (ruedas trabadas: λ = 6,74 1/s, igual en las 5 con ±2 %) y la prueba de inclinación
+   (286 g atrás y adelante, 140 mm entre los dos: el equilibrio se corre +4,9° y −4,5°). **Cuerpo a 140 mm del eje,
+   inercia propia 0,0124 kg m²** (el modelo daba 150 mm y 0,0072). Comprobado con las tres tandas con peso: la
+   velocidad de caída que predicen l y J coincide con la medida con 1-1,4 % de error.
+2. **Barridos** en 0, 15 y 30° ([datos](../../firmware/docs/barridos_lazo_2026-11-11/),
+   [`frf_barridos.py`](frf_barridos.py)): pico de sensibilidad 2,89 / 2,56 / 2,39 (el 7/11 en 30°: 3,7). El
+   equilibrio de hoy (ref con `refauto`): 17,11 / 12,33 / 5,96°.
+3. **El modelo** ([`ajustar_modelo_11nov.m`](ajustar_modelo_11nov.m), [figura](fig_modelo_11nov.png)): con 1327 g
+   (`m_carga` 365), la caja (`corr_caja` [21,2 −26,1]) y la IMU (`imu_delta_deg` 4,06) que dan el equilibrio de
+   las tres alturas (0,2-0,7° de error) y la altura medida en 30°, y `J_extra` 0,0060 kg m² para la inercia. La
+   planta medida (cabeceo y avance por unidad de PWM, 2 a 9,5 Hz, las tres alturas) queda con error 0,20 contra
+   0,26 del modelo anterior con **un amortiguamiento equivalente en el eje de 0,020 N m s/rad** (el roce seco
+   de la reductora con poca amplitud: lo que faltaba debajo de 5 Hz, igual en las tres alturas) **y 4,7 ms de
+   retardo**. El rendimiento de la reductora no se separa de ese roce con estos datos (queda 0,75). En
+   `parametros_fisicos.m` ('ajustada'), `planta_escalon_ajustada.h` regenerado y el banco recompilado.
+4. **El LQR** con este modelo ([`ganancias_ajustadas.m`](../../simulacion/segway_ajustado/ganancias_ajustadas.m)):
+   kx 1,25, kv 2,10-2,13, kphi 3,22-4,11, kw 0,43-0,58; casi la `LQR_TABLA_DRV` de hoy, con kw 10-30 % más
+   (la inercia es mayor). En el modelo rígido aguanta ×4-4,7 de ganancia; en el robot hubo que bajarla a ×0,87.
+5. **Lo que todavía no tiene el modelo:** la planta medida sube hasta un pico en 5,5-6,5 Hz y la fase cae de golpe
+   arriba de 7-8 Hz, en las tres alturas, y hay otro pico que cambia con la pata (14,8 Hz en 0°, 11,7 en 30°).
+   Es la estructura que no es rígida: lo más probable, el cuerpo rebotando sobre las patas y los servos (con la
+   rigidez supuesta del servo da 7-8 Hz; ver «La pata que cede» en [`modelo_en_elementos.md`](modelo_en_elementos.md)).
+   Eso, más el retardo, es lo que obliga al ×0,87. Siguiente: agregarle al modelo lineal un grado de libertad (el
+   cuerpo sobre la pata, resorte y amortiguador) y ajustarlo con estos mismos barridos.
+5b. **Lo que cede** ([`ajustar_pata_flexible.m`](ajustar_pata_flexible.m), [figura](fig_pata_flexible.png),
+   `pata_flexible.csv`): el modelo lineal en cuatro cuerpos (rueda, pata, caja con la IMU, rotores), con un resorte
+   de torsión entre la caja y la pata y otro en la reductora del motor, ajustados con los mismos barridos (2 a 15 Hz,
+   las tres alturas). Error 0,313 (rígido 0,372; solo la pata 0,322; solo la reductora 0,332). Da **k_s 5,3 N m/rad
+   en la pata y k_g 3,7 N m/rad en las reductoras**, con modos de 5,7-6,8 Hz (la reductora, muy amortiguado) y
+   16 Hz (la pata). Sigue a la planta medida de 2 a 9 Hz, incluida la joroba de ~6 Hz, y pone el pico de
+   sensibilidad en ~5,3 Hz como el robot (4,7), **pero más bajo (1,5-1,7 contra 2,4-2,9)**, y dice que el lazo
+   aguantaría ×2,2-2,6 la ganancia del ángulo cuando el robot oscila con ×1,15 (`lqrfac` 1,0). O sea: lo que
+   todavía limita al robot no es lineal. Lo más probable: el juego de la reductora, el roce seco y la compensación
+   de zona muerta, que juntos hacen oscilar con ganancias que el modelo lineal da por estables. Las caídas desde
+   altura del 7/11, con el banco actualizado, no piden servos más blandos (el acelerómetro estaba recortado en
+   4 g); el banco y `rebote.py` ya simulan la IMU de hoy (±16 g, ±2000 °/s, filtro de 188 Hz) y comparan con 4 g
+   las caídas viejas.
+6. **Simulink** ([`INICIAR_SEGWAY_AJUSTADO.m`](../../simulacion/segway_ajustado/INICIAR_SEGWAY_AJUSTADO.m)): con el
+   control de hoy (la tabla por los factores según la pata, los dos notch, zona muerta 0,03) y 2 ciclos de retardo
+   (el del firmware más el medido); `segway_ajustado.slx` regenerado.
+
 ## 10. Dónde está cada cosa
 
 - [`parametros_fisicos.m`](../parametros/parametros_fisicos.m): variante `'ajustada'`.

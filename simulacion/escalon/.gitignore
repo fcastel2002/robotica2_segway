@@ -40,3 +40,9 @@ resultados/escalera_real/*
 !resultados/pruebas/
 resultados/pruebas/*
 !resultados/pruebas/*.png
+# y el escalón final de 12 cm (escalon_12cm.py, caida_de_lado.py; 11/11): las figuras y las tablas
+!resultados/caida_de_lado.png
+!resultados/escalon_12cm/
+resultados/escalon_12cm/*
+!resultados/escalon_12cm/*.png
+!resultados/escalon_12cm/robustez_*.csv

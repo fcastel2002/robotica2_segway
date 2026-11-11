@@ -248,5 +248,42 @@ function o = parametros_fisicos(variante)
     o.J_r = 8.2e-7;         % antes 6e-7 (típico): la rueda libre en el aire tarda 24-25 ms (4.0e-4 kg m2 en la
                             % rueda con la rueda incluida)
     o.zona_muerta_motor = 0.027; % la recta de velocidad en el aire se anula en 0.025-0.028 (antes 0.026)
+    % 10-11/11 (MED-008): el robot con 1327 g. Centro de masa e inercia MEDIDOS en patas 30° dejándolo caer
+    % sin motores y con la prueba de inclinación (modelado/ajuste/ajustar_caidas.py: cuerpo a 140 mm del eje,
+    % inercia propia 0,0124 kg m2), y el equilibrio en 0/15/30° de los barridos del 11/11; ajustado con
+    % modelado/ajuste/ajustar_modelo_11nov.m (equilibrio 0,2-0,7° de error, l en 30° exacto)
+    o.m_carga = 365;        % antes 246: el robot pesa 1327 g (no se sabe qué se agregó: va en la cabina)
+    o.corr_caja = [21.2 -26.1]; % antes [24.7 -8.2]: con la altura medida, la caja 18 mm más abajo
+    o.imu_delta_deg = 4.06; % antes 4.8 (provisorio): sale junto con la caja, de las tres alturas
+    o.J_extra = 0.0060;     % [kg m2] lo que les falta a las piezas: dan 0,0064 en 30° y se midió 0,0124
+    % Solo para el modelo LINEAL (LQR, respuesta en frecuencia): con poca amplitud el roce seco de la
+    % reductora frena como un amortiguador en el eje rueda-cuerpo; los barridos del 11/11 en las tres alturas
+    % dan esto (junto con el retardo). Las simulaciones no lineales ya tienen el roce seco: no sumarlo ahí.
+    o.b_roce_equivalente = 0.0203;  % [N m s/rad], los dos motores
+    % 11/11, más tarde: le sacaron la tapa nueva (87 g, arriba, a ~260 mm del eje en patas 30): pesa 1240 g. Lo
+    % medido con 1327 g menos la tapa da el cuerpo (1,140 kg) a 131 mm del eje y 0,0110 kg m2 de inercia
+    % propia en 30°; se corrige la carga, la altura de la caja y J_extra (el equilibrio de las tres alturas
+    % falta medirlo de nuevo sin la tapa)
+    o.m_carga = 278;            % 1240 g
+    % 11/11, MEDIDO: con 1,5 kg arriba de la caja, robot desarmado parado en patas 30°, el eje del servo baja
+    % 20 mm (Joaquín). Menos 0,9 mm de la goma, la pata gira 0,095 rad (dpz/da = 0,202 m/rad en 30°) con 2,97 N m
+    % más: el conjunto hace 31 N m/rad, visto como giro de la pata (el banco suponía 92: el servo a fondo con 5°
+    % de error). OJO (Joaquín): no es el servo, que casi no cede; es el plástico de los agarres que flexiona. O
+    % sea un resorte ELÁSTICO (devuelve la energía) en serie con un servo duro, no un servo que se deja llevar.
+    % En el banco va hoy como ganancia del servo (PE_SERVO_GANANCIA); falta separarlo
+    o.k_servo_medido = 31.4;    % [N m/rad] los dos: el plástico de los agarres + el servo
+    o.corr_caja = [15.8 -35.1]; % con la curva de equilibrio sin la tapa (firmware/docs/equilibrio_patas_2026-11-11_1240g.csv)
+    o.J_extra = 0.0051;
+    o.imu_delta_deg = 9.27;     % sale junto con la caja (0,44° rms en las 13 alturas). Con la tapa daba 4,06: ¿se movió la IMU?
+    o.retardo_s = 0.0047;   % retardo de la planta (del comando al cabeceo medido) que falta en el modelo
+    % El modelo lineal con lo que cede (modelado/ajuste/ajustar_pata_flexible.m, mismos barridos): la caja gira
+    % respecto de la pata con un resorte de torsión (el servo, su reductora y las barras) y el rotor respecto de
+    % la rueda (la reductora del motor), los dos vistos alrededor del eje de la rueda. Con esto el modelo sigue
+    % a la planta medida de 2 a 9 Hz en las tres alturas (la joroba de ~6 Hz) y pone el pico de sensibilidad en
+    % ~5 Hz como el robot, aunque más bajo (1,5-1,7 contra 2,4-2,9). En este modelo el roce y el retardo son
+    % otros (el retardo lo absorbe la reductora que cede): usar estos juntos, no con los de arriba.
+    o.modelo_flexible = struct('k_s', 5.3, 'c_s', 0.136, ...   % [N m/rad], [N m s/rad] caja-pata
+                               'k_g', 3.66, 'c_g', 0.0131, ... % [N m/rad], [N m s/rad] reductoras (las dos), del lado de la rueda
+                               'b_roce', 0.0309, 'retardo_s', 0);
   end
 end

@@ -95,6 +95,7 @@ static void estado_apoyado(const planta_t *P, double a, double q[PP_NQ], double 
     q[PP_TH] = cabeceo_equilibrio(P, a);
     q[PP_A] = a;
     q[PP_F] = 0.0;
+    q[PP_S] = 0.0;
     pata_t p;
     pata_cinematica(a, &p);
     double c = cos(q[PP_TH]), s = sin(q[PP_TH]);
