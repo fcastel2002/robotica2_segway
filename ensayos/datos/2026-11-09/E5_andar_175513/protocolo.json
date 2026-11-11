@@ -1,0 +1,137 @@
+{
+  "esquema": 1,
+  "id": "E5",
+  "nombre": "andar",
+  "titulo": "Andar despacio, ida y vuelta (0,1 y 0,2 m/s)",
+  "pregunta": "A velocidad constante la corriente es el roce (rodadura y reductor) y el comando, el ff: ¿cuánto roce hay y cuánto comando hace falta por m/s? Y la inclinación al acelerar y frenar.",
+  "criterio": "Sale el roce (seco y viscoso) y el rendimiento; el gemelo da el comando de crucero a ±10 %.",
+  "requisitos": {
+    "estado": "BALANCING",
+    "confirmar": [
+      "atajando",
+      "despejado"
+    ],
+    "patas_deg": 15.0,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.6,
+    "quieto_s": 5.0,
+    "espera_max_s": 180
+  },
+  "config": {
+    "inacada": 1,
+    "refauto": 0
+  },
+  "limites": {
+    "mov_max": 0.5
+  },
+  "abortar": {
+    "theta_err_deg": 10.0,
+    "x_desde_inicio_mm": 1000
+  },
+  "pasos": [
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "v10_ida"
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.0
+    },
+    {
+      "hacer": "mov",
+      "avance": 0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 3.0
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "v10_vuelta"
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.0
+    },
+    {
+      "hacer": "mov",
+      "avance": -0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 3.0
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "v20_ida"
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.0
+    },
+    {
+      "hacer": "mov",
+      "avance": 0.5,
+      "giro": 0.0,
+      "s": 3.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "v20_vuelta"
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.0
+    },
+    {
+      "hacer": "mov",
+      "avance": -0.5,
+      "giro": 0.0,
+      "s": 3.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 3
+    }
+  ]
+}

@@ -33,9 +33,9 @@ Desde la raíz del repo (MATLAB solo para regenerar la planta):
 
 ```text
 matlab: run simulacion/escalon/exportar_planta_escalon.m      (escribe planta_escalon.h)
-gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v01/components/control/include ^
-    -Ifirmware/segway_v01/main simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
-    simulacion/escalon/pata_tabla.c firmware/segway_v01/components/control/*.c -lm ^
+gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v02/components/control/include ^
+    -Ifirmware/segway_v02/main simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
+    simulacion/escalon/pata_tabla.c firmware/segway_v02/components/control/*.c -lm ^
     -o simulacion/escalon/banco_escalon.exe
 simulacion/escalon/banco_escalon.exe caso pata_largada=30 v_salida=0.55 pata_final=15 csv=prueba
 python simulacion/escalon/graficar_escalon.py prueba          (resultados/prueba.png)
@@ -214,9 +214,9 @@ Un escalón de 18 cm con piso de sobra abajo (`escalones=1`), la primera prueba 
 
 ```text
 gcc -std=c11 -O2 -Wall -DPLANTA_AJUSTADA -Isimulacion/escalon ^
-    -Ifirmware/segway_v01/components/control/include -Ifirmware/segway_v01/main ^
+    -Ifirmware/segway_v02/components/control/include -Ifirmware/segway_v02/main ^
     simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
-    simulacion/escalon/pata_tabla.c firmware/segway_v01/components/control/*.c -lm ^
+    simulacion/escalon/pata_tabla.c firmware/segway_v02/components/control/*.c -lm ^
     -o simulacion/escalon/banco_escalon_ajustada.exe
 python simulacion/escalon/un_escalon.py          (~30 s; 122 casos)
 ```
@@ -346,3 +346,65 @@ python simulacion/escalon/escalera_real.py   (~11 min: robustez, escalón por es
   `genetico.json` (la de más corridas bien, `bajan` 24) y en el visor («Las mejores para la
   escalera»). Faltan los mismos pendientes del escalón: el driver de la IMU con la caída libre,
   llamarla con △ y probar primero un escalón con alguien atajando.
+
+## Con el peso y la goma medidos (5/11)
+
+El equipo pesó el robot entero (**1196 g** con la LiPo; el modelo pesaba 962) y apretó una rueda
+con goma espuma contra una balanza (**8500 N/m** cada una). Están en la variante `'ajustada'` de
+`parametros_fisicos.m` y en `planta_escalon_ajustada.h`: los 234 g van en la cabina y la caja se
+corre para que el centro de masa de todo siga dando la curva de equilibrio medida con la IMU (que
+no cambia); la IMU y el cero de la pata quedan como estaban
+([`ajuste_del_modelo.md`](../../modelado/ajuste/ajuste_del_modelo.md), sección 7). La goma nominal
+de las simulaciones (`GOMA_NOMINAL` en [`variaciones.py`](variaciones.py)) es la medida, 17000 N/m
+las dos, con 40 N s/m supuesto (falta medir cuánto rebota).
+
+```text
+matlab: run simulacion/escalon/exportar_planta_ajustada.m       (escribe planta_escalon_ajustada.h)
+gcc ... -DPLANTA_AJUSTADA ... -o simulacion/escalon/banco_escalon_ajustada.exe   (como arriba)
+python simulacion/escalon/barrido_goma.py        (~1 min; resultados/un_escalon/defecto.csv, goma.csv, goma.png)
+python simulacion/escalon/rebote.py [registro]   (soltarlo: lo que predice el modelo, o el robot contra el modelo)
+```
+
+[`barrido_goma.py`](barrido_goma.py) prueba la maniobra del firmware (la del genético «que no se
+caiga» del 4/11) en el ensayo de 10,5 cm, a 30 cm del borde, con la LiPo cargada:
+
+- **En 37 de 38 variaciones baja y queda parado** ([`defecto.csv`](resultados/un_escalon/defecto.csv)):
+  pasa el borde a 0,49-0,55 m/s, toca a 5-9 cm, se aparta de su equilibrio 5-7,5° y la goma se
+  aplasta 4-8 mm (14 con la goma blanda de antes de medirla). Falla con el escalón de 16,6 cm (la
+  cabina pega en el borde). La rueda llega a 34-56 cm del borde con la goma medida, y hasta 57 cm
+  con las gomas más blandas.
+- **La goma barrida** ([figura](resultados/un_escalon/goma.png)): de 6000 a 40000 N/m y de 4 a 100
+  N s/m, en el ensayo nominal, con el robot que arranca lento y con el equilibrio corrido ±1°:
+  **anda en las 288**, apartándose 5-8° (14° en la más blanda con poco amortiguamiento y el
+  equilibrio corrido -1°).
+- Con el peso medido, si al motor le cuesta mucho arrancar (zona muerta de 0,23 o más) el robot del
+  modelo ya no se queda quieto antes de largar y la maniobra aborta sin largar («no se quedó
+  quieto»); por eso la variación «arranca lento» pasó de 0,25 a 0,21. En el robot real se midió
+  0,17-0,19.
+- **Lo de la escalera (arriba) es con el modelo de 962 g y la goma casi rígida:** hay que volver a
+  correr el genético de la escalera con este modelo.
+
+**Con el DRV8871 (7/11).** Las PCB traen DRV8871 en lugar del L298N, y el firmware pasó a
+[`segway_v02`](../../firmware/segway_v02/README.md) (`DEFAULT_DEADBAND` 0,05, INA, LED). El banco y el
+visor compilan ahora el control de `segway_v02` (los fuentes del control son los mismos que en v01), y
+la planta es la del DRV8871 ([`ajuste_del_modelo.md`](../../modelado/ajuste/ajuste_del_modelo.md),
+sección 8): 12,3 V al motor sin caída, zona muerta 0,026 y el motor de 26 RPM/V. **La LiPo llega entera
+al motor:** `v_motor` es la tensión de la LiPo (12,6 cargada; antes, la LiPo menos 2 V), en el
+genético, el visor y las variaciones; la zona muerta de las variaciones es la del DRV8871 (0,015 y 0,05;
+«arranca lento», 0,08). `comparar_prueba.py --caida 2` para los registros con el L298N (hasta el 5/11).
+Con todo eso, la bajada del firmware en el ensayo de 10,5 cm sigue andando en **37 de 38 variaciones**
+(falla con 16,6 cm: la cabina pega) y en las 288 gomas, apartándose 4-11° de su equilibrio; la rueda
+llega hasta 58 cm del borde.
+
+**Soltarlo, para ver cuánto rebota** ([`rebote.py`](rebote.py), `banco_escalon rebote`): el robot
+desarmado, con las patas en 30° (como al tocar) y sostenido derecho, se suelta desde 5, 10, 15 y
+20 cm (idea de Joaquín: cubre los escalones de 10,5 y 16,6 cm); en el robot con `grabar` (el
+registro de 200 Hz durante 8 s, armado o no). La IMU ve la caída (|a| ~ 0: su duración
+da la altura), el golpe (recortado a 4 g) y lo que sigue. Con el registro, `rebote.py` simula la
+misma caída con el amortiguamiento de la goma de 4 a 100 N s/m y el par de los servos de ×0,5 a ×6,
+y dice con cuál la |a| simulada sigue mejor a la del robot (probado con un registro armado desde el
+banco con 15 N s/m y servos ×3: los encuentra). Lo que predice el modelo de hoy, de 5 a 20 cm: **las patas ceden
+4-8° y la rueda casi no se despega** (0-3 mm), sea cual sea la goma, que se aplasta 5-11 mm; con
+servos 4 veces más duros, las patas ceden 1,5-3° y el robot salta 5-59 mm según la altura y el
+amortiguamiento. En el golpe los dos servos llegan a 10-21 N m (el doble y medio de lo que dan
+quietos, ~8 N m: los empuja la caída) y, si fueran más duros, a 15-33 N m.

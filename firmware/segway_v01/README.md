@@ -44,7 +44,7 @@ t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,m_l,m_r,s
 | `vref_mms`, `giro` | Lo que el control está aplicando de `mov`: referencia de velocidad (mm/s) y PWM sumado a la izquierda y restado a la derecha |
 | `ref_deg` | Ángulo de equilibrio que está usando el control (de la tabla según la altura de las patas, más la corrección de `set ref`); desde el 3/11 |
 
-Son unos 145 caracteres por línea a 50 Hz, la mitad de lo que entra a 115200 baudios. Para verlas
+Son unos 160 caracteres por línea (30 columnas) a 50 Hz, el 70 % de lo que entra a 115200 baudios. Para verlas
 graficadas, probar cada sensor y actuador y mandar comandos con botones, usar la
 [interfaz web](../../gui_hmi/README.md) por USB (pestaña **Banco de pruebas**).
 Prueba de los encoders a mano: [`../docs/prueba_encoders.md`](../docs/prueba_encoders.md).
@@ -63,13 +63,14 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `set margen 0.85` | Prioridad al equilibrio: con el comando a los motores por encima, la velocidad pedida retrocede (`0` lo apaga). `prio` (grados): con una perturbación mayor suelta la velocidad pedida (apagado: en la simulación no ayudó) |
 | `set velpata 20` | Velocidad con que las patas van a la posición pedida, en °/s |
 | `servo 20` / `servo l 20` / `servo r 10` | Mover los dos servos o uno (grados del servo y a 90°/s; fuera de sus límites se rechaza sin moverse). Suelto, la posición es desconocida: el primer ángulo va **directo**, sin rampa |
-| `servo off` / `servo l on` | Soltar (posición desconocida desde ahí) o agarrar donde está; `on` no hace nada si la posición es desconocida |
+| `servo off` / `servo l on` | Soltar (posición desconocida desde ahí) o agarrar donde está; `on` no hace nada si la posición es desconocida. `off` no se acepta equilibrando (la pata se soltaría de golpe) |
 | `servo lim l 5 25` | Achicar los límites de un servo en vivo, siempre dentro de **0-30°**: más allá se rompe el cuatro barras, y el firmware no deja salir de ahí (`SERVO_HARD_*`) |
 | `cal` | Recalibrar el giróscopo sin reiniciar (solo en DISARMED; dejar quieto 2 s) |
 | `get` | Ver los parámetros vigentes, la posición y los límites de los servos y el estado del WiFi (contesta 40 ms después, con los `set` ya aplicados) |
 | `mov 0.5 -0.2` | Avance y giro, de −1 a 1 (ver [Movimiento](#movimiento)). Sin respuesta, para que el joystick pueda mandarlo seguido |
 | `tlm on` / `tlm off` | Activar o pausar la telemetría (`tlm on` reimprime el encabezado) |
-| `enc reset` | Poner en cero las cuentas de los dos encoders |
+| `enc reset` | Poner en cero las cuentas de los dos encoders. Solo desarmado (o en falla): equilibrando, la odometría saltaría todo lo recorrido y el robot pegaría un tirón |
+| `set tau 1` | Constante del filtro de inclinación, en s (0,5 al arrancar, `ATTITUDE_TAU_S`). La auditoría de un amigo propone 1 s: menos vaivén lento, a cambio de que un error del giróscopo pese el doble. Para compararlas en el robot (auditoría del 5/11) |
 
 Los cambios se pierden al reiniciar: cuando las ganancias funcionen, copiarlas en `board_config.h`.
 Arranca con lo que mejor anduvo el 2/11: el LQR suave (desde el 3/11 según la altura de las patas,
@@ -87,7 +88,10 @@ sigue por el cable). Completarlo y volver a compilar. Al conectarse informa por 
 ```
 
 Si no encuentra la red: `# wifi: buscando la red MiRed (último motivo de desconexión: N)`, y sigue
-reintentando sola. `get` también muestra esa línea.
+reintentando sola. `get` también muestra esa línea. Se pueden poner hasta tres redes (`WIFI_SSID2`,
+`WIFI_SSID3` con sus claves): si una no aparece, prueba la siguiente. Las abiertas van sin clave,
+también las abiertas con cifrado (OWE). Motivo 201: no la encuentra (por ejemplo, una red solo de
+5 GHz, como «Facultad de Ingeniería» donde se probó el 5/11).
 
 - **Telemetría y mensajes**: las mismas líneas que por el cable, por UDP al puerto **4210** de la PC que
   se anunció con `hola` en los últimos 5 s; si ninguna, por broadcast a toda la red.
@@ -153,7 +157,9 @@ La maniobra de [`maniobra.c`](components/control/maniobra.c), la misma que corre
 - **`parar`** (□): **parada controlada**: frena, baja las patas al mínimo (0°, a `velpata`), corre la
   referencia hacia atrás (hasta `parinc`, 6°) y, con el cuerpo `parsuelta` (3°) detrás de su
   equilibrio, desarma: se deja caer apenas para atrás desde lo más bajo. Cada etapa tiene 4 s como
-  mucho. **Sin probar todavía**: la primera vez, con alguien atajando (y ojo con lo que haya en la
+  mucho. Si en 4 s el cuerpo no se tiró atrás, **no desarma** (con el robot derecho caería para
+  cualquier lado): la referencia vuelve y sigue equilibrando, con las patas abajo («parada: no se tiró
+  atrás a tiempo»; auditoría del 5/11). **Sin probar todavía**: la primera vez, con alguien atajando (y ojo con lo que haya en la
   cara de atrás: ahí va el sensor de distancia).
 - **◯ (`disarm`) corta cualquiera de las dos**; si se cae (FALLEN) o hay falla, también.
 - **Caída libre**: desde el 3/11 una lectura de la IMU con menos de 0,1 g no es una falla (antes, a
@@ -165,7 +171,9 @@ La maniobra de [`maniobra.c`](components/control/maniobra.c), la misma que corre
   sin telemetría; `escalon datos` lo vuelve a mandar). [`Aplicacion/puente.py`](../../Aplicacion/puente.py)
   lo guarda en `Aplicacion/registros/bajada_<fecha>.csv` y
   [`comparar_prueba.py`](../../simulacion/escalon/comparar_prueba.py) lo compara con la simulación
-  de la misma bajada (figura y tabla en `simulacion/escalon/resultados/pruebas/`).
+  de la misma bajada (figura y tabla en `simulacion/escalon/resultados/pruebas/`). **`grabar`**
+  graba lo mismo durante 8 s desde ese momento, armado o no, y lo manda al terminar (también va a
+  `bajada_<fecha>.csv`): para soltar el robot y ver cuánto rebota (abajo).
 - **Sensor de distancia** (Sharp GP2Y0A60SZLF, Pololu #2474, en GPIO3): se lee en cada ciclo y la
   telemetría trae `sharp_mv`, `dist_mm` y dónde pega el haz respecto del apoyo de la rueda
   (`haz_x_mm` hacia atrás, `haz_z_mm` de alto: en piso plano ~0). No hace falta instalar nada: es una
@@ -185,6 +193,23 @@ variaciones, también puesto 6 cm más cerca o más lejos y con escalones de 9 a
    acomodarlo (o `escalon <cm>` con la distancia de verdad).
 4. Alguien con las manos cerca, sin tocarlo. △. Mejor filmarlo de costado, en cámara lenta.
 5. Al terminar, el registro llega solo; después `python simulacion/escalon/comparar_prueba.py --lipo <V>`.
+
+Soltarlo, para ver cuánto rebota (la goma y cuánto ceden las patas; idea de Joaquín, 5/11): desde
+5, 10, 15 y 20 cm, que cubren los escalones de 10,5 y 16,6 cm.
+
+1. Robot **desarmado**, patas en 30° (`servo 30`, como al tocar en la bajada), sobre el mismo piso
+   de la escalera, con una cinta métrica parada atrás.
+2. `grabar` y, en los 8 s, sostenerlo derecho (en su equilibrio) de la cabina, con las dos ruedas a
+   la misma altura (**5 cm** del piso a la goma) y soltarlo sin empujarlo. Atajarlo medio segundo
+   después del golpe, no antes (sin motor se cae). Un `grabar` por caída.
+3. Lo mismo desde **10, 15 y 20 cm**, dos veces cada una, de menor a mayor. Después de cada una,
+   mirar que las patas vuelvan a 30° y que los servos no hagan ruido ni tengan juego: si algo
+   cambia, no seguir subiendo. 20 cm solo si 15 anduvo bien.
+4. Filmarlo de costado en cámara lenta: si la rueda se despega y cuánto, cuánto ceden las patas.
+   La altura no hace falta medirla bien: la da la caída en la IMU (5 cm, 101 ms; 10, 143; 15, 175;
+   20, 202).
+5. `python simulacion/escalon/rebote.py Aplicacion/registros/bajada_<fecha>.csv`: la misma caída en
+   el banco, y con qué goma y qué servos se parece más.
 
 ## LED de estado
 
@@ -230,7 +255,8 @@ Procedimiento, protecciones y qué rehacer con el robot armado completo: [`../do
 4. `ENC_COUNTS_PER_REV` medido (10 vueltas a mano) y `ref` medido (el ángulo en que el robot no cae para ningún lado).
 5. `set deadband` con el PWM mínimo que mueve las ruedas (el escalón del banco lo da).
 6. Sin armar, girar las ruedas a mano hacia adelante: `x_mm` y `v_mms` tienen que subir.
-7. En el aire, con `set kx 0`, `set kv 0` y `set umax 0.3`: armar, y al inclinarlo hacia adelante las ruedas
+7. En el aire, con `set lqrpata 0` (si no, las ganancias salen de la tabla y `set kx` no hace nada),
+   `set kx 0`, `set kv 0` y `set umax 0.3`: armar, y al inclinarlo hacia adelante las ruedas
    avanzan. **En el aire no se ponen `kx` ni `kv`:** sin el péndulo, avanzar pide avanzar más y las ruedas se
    disparan. Es lo esperado (en el piso, para volver al lugar el robot primero tiene que inclinarse hacia
    atrás, y para eso las ruedas avanzan), pero en el aire no hay nada que lo frene.

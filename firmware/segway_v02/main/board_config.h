@@ -10,7 +10,11 @@
 #define COMMS_STACK             8192        // printf con float y los paquetes UDP usan bastante pila
 
 // --- IMU ---
-#define I2C_FREQ_HZ             100000      // 29/10: 400 -> 100 kHz, más tolerante al ruido de los motores
+// 29/10: 400 -> 100 kHz, más tolerante al ruido de los motores (antes de las placas soldadas). 9/11: a 100 kHz
+// el bus ocupa 2,1 ms de cada ciclo en la IMU y 1,0 ms en cada lectura de INA (medido con "get", línea
+// "# ciclo"): el ciclo llega a 4,7-5,0 ms de 5. De vuelta a 400 kHz, A PRUEBA: mirar "imu fallas: i2c" en
+// "get" con los motores andando; si aparecen fallas, volver a 100000.
+#define I2C_FREQ_HZ             400000
 // Montaje: qué eje del sensor (0=x, 1=y, 2=z) apunta hacia adelante, cuál hacia arriba y
 // alrededor de cuál se mide el cabeceo, con su signo. Se ajusta en la puesta en marcha (paso 2):
 // inclinar hacia adelante debe dar ángulo y velocidad angular positivos.
@@ -34,12 +38,19 @@
 #define GYRO_CAL_TIME_S         2.0f        // calibración del sesgo con el robot quieto
 #define GYRO_CAL_MAX_RATE       0.2f        // rad/s; si se supera, la calibración reinicia
 
-// --- Motores (L298N en el prototipo, DRV8871 en la versión final) ---
-// El L298N es lento para conmutar: si calienta mucho o pierde par con PWM bajo, bajar a 5-10 kHz.
+// --- Motores: DRV8871 en la placa de potencia desde el 6/11 (el prototipo tenía un L298N) ---
 #define MOTOR_PWM_FREQ_HZ       20000       // inaudible
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
 #define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
-#define MOTOR_R_INVERT          0           // 29/10: con 1 las ruedas giraban al revés una de otra
+#define MOTOR_R_INVERT          1           // 29/10: con 1 las ruedas giraban al revés una de otra
+// Compensación entre motores (balance_trim, "set trim"): fracción de PWM de más a la izquierda y de menos a
+// la derecha. 9/11, ensayo A1 de ensayos/ (ida y vuelta a 0,1 m/s, patas en 15°): con 0 la izquierda gira
+// 0,96 rad/s menos que la derecha; con 0,03 la diferencia queda en +0,03 rad/s y el robot deja de doblar
+// (dos pasadas: el cero cae en 0,031 y en 0,028)
+#define DEFAULT_MOTOR_TRIM      0.03f
+// Filtro interno de la IMU al arrancar ("set dlpf", imu_mpu6050.h). 9/11, ensayo A2 de ensayos/: con 1 (188 Hz)
+// el pico de sensibilidad del lazo baja de 3,94 a 3,34 respecto de 3 (42 Hz, el de antes) y parado no vibra más
+#define IMU_DLPF_DEFAULT        1
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
@@ -52,7 +63,11 @@
 #define ENC_COUNTS_PER_REV      899.0f      // cuentas x4 por vuelta de RUEDA. MEDIDO el 29/10: 8990 en
                                             // 10 vueltas a mano (4 · 11 pulsos · 1:20,4; se suponía 880)
 #define WHEEL_RADIUS_M          0.040f      // rueda de 80 mm de diámetro
-#define VEL_FILTER_HZ           20.0f       // filtro de la velocidad de las ruedas (el del modelo)
+#define VEL_FILTER_HZ           20.0f       // filtro de la velocidad de las ruedas (el del modelo); en vivo:
+                                            // set velf (0 = sin filtro). 7/11, en el modelo con los dos notch:
+                                            // 10 Hz da margen x3,1 y la mitad del ruido del encoder; 20, x2,5;
+                                            // sin filtro, x1,55 (kv > 0 realimenta la rueda en positivo y el
+                                            // filtro le baja esa parte). Sin probar en el robot
 
 // --- Servos de las patas: todavía sin función en el control, solo posición a mano ---
 // Los ángulos que se piden son de la pata: el del servo menos su cero (SERVO_*_ZERO_DEG), así
@@ -95,11 +110,15 @@
 // (hasta 1,9° en 27,5°), y después de algunas caídas se corrió 1-2° en las puntas: la tabla no
 // lo puede seguir, "refauto" sí. La del 2/11 (de a 5°, ref automática) estaba 0,6-1,1° alta de
 // 10° a 25°, y 30° (el modelo) 3,6° alta. Figura: firmware/docs/equilibrio_patas_2026-11-03.png.
+// 7/11, con las PCB, el DRV8871 y 1208 g (MED-007): 25 mediciones de 12 s (2 pasadas de a 2,5°, LQR al
+// 60 %), cúbica por el centro (0,24° rms; firmware/docs/equilibrio_patas_2026-11-07.png). Contra la del
+// 3/11: 1,5° más en 0°, 0,6° más en 15°, 0,9° menos en 30°. Subiendo da hasta 3° más que bajando en
+// 2,5-5° (antes, 0,9° en promedio).
 // El control usa la tabla interpolada en la pata actual más una corrección: "set ref" la fija
 // para la pata actual y "refauto" la ajusta sola. Con las patas sueltas (posición desconocida) se
 // toma REF_PATA_SUELTA_DEG.
 #define REF_TABLA_PATAS_DEG     { 0.0f, 2.5f, 5.0f, 7.5f, 10.0f, 12.5f, 15.0f, 17.5f, 20.0f, 22.5f, 25.0f, 27.5f, 30.0f }
-#define REF_TABLA_THETA_DEG     { 18.25f, 17.04f, 16.01f, 15.13f, 14.36f, 13.67f, 13.02f, 12.37f, 11.69f, 10.94f, 10.09f, 9.10f, 7.94f }
+#define REF_TABLA_THETA_DEG     { 19.74f, 18.18f, 16.93f, 15.91f, 15.07f, 14.33f, 13.65f, 12.95f, 12.18f, 11.26f, 10.14f, 8.75f, 7.03f }
 #define REF_PATA_SUELTA_DEG     15.0f
 #define DEFAULT_U_MAX           1.0f        // 2/11: con 0,6 se escapó al armar (poco margen); con
                                             // 0,8 anduvo; a la noche, 1,0 para que el joystick a fondo
@@ -109,7 +128,18 @@
 // velocidad se anula en 0,02-0,03 y arranca desde parada en 0,06-0,08. Lo que se medía con el L298N
 // (0,17-0,19) era sobre todo la caída del driver. 0,05 es para ARRANCAR en el piso, sin probar: ajustar
 // con "set deadband". Lo que sigue es lo aprendido con el L298N.
-#define DEFAULT_DEADBAND        0.05f       // QUIETO (manteniendo la posición). Fracción de PWM en la
+// 7/11, en el piso con el DRV8871 (MED-007): con 0,04, el LQR al 60 % y refauto quedó quieto (x ±1 cm);
+// con 0,02 y sin refauto se iba para adelante hasta la pared. Después, con refauto, patas en 15° y 8 s
+// cada una (probar_ganancias.py): 0,04 vibra 17,6 °/s de 5 a 25 Hz; 0,02, 3,8 (x se corre ~6 cm); 0,
+// 6,4 y un vaivén lento de ±3,5°. Sus saltos en cada cruce por cero eran la vibración. En 30° las tres
+// vibran parecido (29-43 °/s): ahí es otra cosa (con el LQR al 50 % se fue para adelante y se cayó).
+// "set dbrampa" (DEFAULT_DEADBAND_RAMPA): el agregado de la zona muerta crece de a poco hasta ese |u|, en
+// lugar de saltar en cada cruce por cero. 0 = el salto de siempre. Para probar en el robot.
+#define DEFAULT_DEADBAND_RAMPA  0.0f
+// Más tarde: grabada en 0,02 se hamacó lento (0,4 Hz, ±6,5°) y se cayó al subir las patas; y con los dos
+// notch de abajo, 0,02, 0,04 y la rampa vibran igual (17-21 °/s a 10,4 Hz sin el notch de 10,4): vuelve a 0,04.
+// Ajuste automático (7/11): 0,03 (0,02 y 0,04 dieron peor en las tres rondas).
+#define DEFAULT_DEADBAND        0.03f       // QUIETO (manteniendo la posición). Fracción de PWM en la
                                             // que el motor no arranca. 3/11: con 0 el robot quieto no
                                             // sostiene la x (las correcciones chicas no vencen la
                                             // fricción: se va ±15 cm y vuelve tarde, y una vez se
@@ -141,22 +171,52 @@
 // cayó tres veces el 3/11); en la simulación con la planta ajustada, la onda cuadrada de ±1,5° en
 // la ref cabecea 5-6° en todas las alturas (con las fijas, 6° con patas en 0 a 11° en 30).
 // "set lqrpata 0" vuelve a las fijas. Filas: { kx, kv, kphi, kw } para cada pata.
-#define DEFAULT_LQR_POR_PATA    1
+// 7/11 (MED-007): con el DRV8871 y las tablas como salen del modelo el robot se balanceaba ±8-15° a
+// 4-6 Hz con los motores a fondo (con el notch de 7,5 Hz, peor). Al 60 % de LQR_TABLA_DRV, sin el notch
+// ancho y con el angosto en 8,2 Hz, equilibra: ±0,3°, x ±1 cm, comando 0,11 rms, y aguanta empujones.
+// El modelo da margen x2,5-3,6: le falta algo (las ruedas patinan en cada cambio de sentido con la
+// fuerza del DRV8871; el motor tendría ~7 ohm, no 10,3). "set lqrfac" multiplica la tabla en vivo.
+#define DEFAULT_LQR_POR_PATA    2
+// 7/11, ajuste automático en el robot (firmware/herramientas/autoajuste.py, patas en 15°, batería 11,4 V):
+// partiendo de 0,65 y 0,65, en 3 rondas quedó kphi y kw al 82 % de la tabla ("set lqrfac") y kx y kv al
+// 86 % ("set lqrfacx"), zona muerta 0,03, notch en 11,6 y 7,7 Hz: vibración 2,5 °/s, quieto ±0,16°, y
+// ante un empujón (la ref 1,5° adelante 3 s) se aleja 47 mm en lugar de 74 y el ángulo sigue mejor. Una
+// segunda pasada fina (pasos chicos, cambia solo si mejora más que el ruido, ~0,4) dejó kphi y kw en 0,87
+// y lo demás igual: ya no mejora más de lo que varía entre pruebas iguales (puntaje 7-8).
+#define DEFAULT_LQR_FACTOR      0.87f       // kphi y kw (el ángulo)
+#define DEFAULT_LQR_FACTOR_X    0.86f       // kx y kv (la posición)
 #define LQR_TABLA_PATAS_DEG     { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
 #define LQR_TABLA               { { 1.50f, 2.38f, 3.73f, 0.416f }, { 1.50f, 2.38f, 3.96f, 0.456f }, \
                                   { 1.50f, 2.38f, 4.17f, 0.496f }, { 1.50f, 2.39f, 4.36f, 0.537f }, \
                                   { 1.50f, 2.40f, 4.54f, 0.577f }, { 1.50f, 2.40f, 4.71f, 0.618f }, \
                                   { 1.50f, 2.41f, 4.88f, 0.662f } }
-#define DEFAULT_NOTCH_HZ        7.5f        // rechaza banda del comando ("set notch"); 0 = sin filtro
-#define DEFAULT_NOTCH2_HZ       0.0f        // segundo rechaza banda, angosto ("set notch2"); 0 = sin
-                                            // filtro. 2/11: para la vibración de ~16 Hz (FW-015)
+// 7/11 (MED-007): la misma cuenta con el modelo del DRV8871 (26 RPM/V, sin caída, 12,3 V) y 1196 g
+// (simulacion/segway_ajustado/ganancias_ajustadas.m). Con el mismo PWM el motor hace ~44 % más de par
+// que con el L298N, así que el mismo criterio da 15-20 % menos ganancia. "set lqrpata 2" la usa, para
+// compararla en el robot con la de arriba (que sobre este modelo queda con margen x2,8-3,0; esta, x3,7).
+// Provisoria: se rehace con el peso nuevo y los ensayos de los motores con los INA.
+#define LQR_TABLA_DRV           { { 1.25f, 2.10f, 3.13f, 0.329f }, { 1.25f, 2.10f, 3.34f, 0.364f }, \
+                                  { 1.25f, 2.10f, 3.52f, 0.399f }, { 1.25f, 2.11f, 3.69f, 0.435f }, \
+                                  { 1.25f, 2.11f, 3.85f, 0.470f }, { 1.25f, 2.12f, 4.00f, 0.506f }, \
+                                  { 1.25f, 2.13f, 4.15f, 0.544f } }
+#define DEFAULT_NOTCH_HZ        11.6f       // rechaza banda ancho del comando ("set notch"); 0 = sin
+                                            // filtro. Era 7,5 Hz con el L298N; 7/11, con el DRV8871 su
+                                            // retraso (~40° a 3,5 Hz) hacía oscilar al robot. En 10,4 Hz
+                                            // (~29° a 3,5 Hz), junto con el angosto en 8,2: la vibración
+                                            // de 5 a 25 Hz baja de 21 a 1,7 °/s (patas en 15°, LQR al 60 %,
+                                            // medido prendiéndolos uno por uno). El ajuste automático
+                                            // (7/11) los corrió a 11,6 y 7,7
+#define DEFAULT_NOTCH2_HZ       7.7f        // segundo rechaza banda, angosto ("set notch2"); 0 = sin
+                                            // filtro. 2/11: para la vibración de ~16 Hz (FW-015). 7/11:
+                                            // en 8,2 Hz, la vibración que queda (8-9 Hz): el cabeceo
+                                            // baja de 22 a 16 °/s rms, medido prendiéndolo y apagándolo
 // Referencia automática ("set refauto 1"): si el robot se queda corrido de su consigna, ref no es
 // el ángulo de equilibrio (x = kphi/kx · (ref - equilibrio)) y se corrige despacio:
 // d(ref)/dt = -REF_AUTO_GAIN · x. Con kphi/kx = 2,7 m/rad tarda ~10 s; solo con el robot casi
 // quieto, sin "mov" ni el motor al tope. Corrige la corrección sobre la tabla de patas, sin alejarla
 // más de REF_AUTO_RANGE_DEG de la que tenía al armar o en la última "set ref". "get" muestra la ref
 // que va encontrando (tabla + corrección).
-#define DEFAULT_REF_AUTO        0
+#define DEFAULT_REF_AUTO        1           // 7/11: prendida (con el LQR al 60 % la posición tira menos)
 #define REF_AUTO_GAIN           0.035f      // rad por m y por s
 #define REF_AUTO_V_MAX          0.10f       // m/s
 #define REF_AUTO_RANGE_DEG      6.0f
@@ -184,13 +244,22 @@
 // (antes frenaba en seco donde se soltaba). Valores de partida; los ajusta el equipo.
 #define MOV_ACEL_MS2            0.50f       // subida (2/11: 0,4 -> 0,6; 3/11: 0,5)
 #define MOV_FREN_MS2            0.50f       // frenado
-#define MOV_FF                  1.20f       // comando por m/s pedido. Tiene que ser lo que el motor
+#define MOV_FF                  1.15f       // comando por m/s pedido. Tiene que ser lo que el motor
                                             // necesita por m/s; si es menos, el robot va más rápido
                                             // que lo pedido y gasta el margen. 3/11: con 0,8 iba a
                                             // 0,55 m/s pidiendo 0,40 (o sea ~1,3) y se cayó al
                                             // perturbarlo; la simulación con la batería a media carga
                                             // se cae con 0,8 y no con 1,2. Con la LiPo llena va un poco
-                                            // más lento que lo pedido
+                                            // más lento que lo pedido. Eso era con el L298N, que se
+                                            // comía 0,17 de PWM: 0,17 + 0,40 / 1,33 = 0,47 a 0,4 m/s,
+                                            // 1,2 por m/s. 7/11, con el DRV8871 la pendiente es la misma
+                                            // (1,33 m/s por unidad de PWM, MED-006) y la zona muerta
+                                            // 0,026: 0,33 a 0,4 m/s, 0,85 por m/s. Sin probar en el piso:
+                                            // si va más rápido que lo pedido, set ff más alto. 7/11,
+                                            // MEDIDO manejando (manejo.py, patas en 20°): con 0,85 iba a
+                                            // 0,27-0,32 m/s pidiendo 0,2 y a 0,54 pidiendo 0,4; con 1,0, 0,23-0,28
+                                            // y 0,45-0,48; con 1,15, 0,20 y 0,37-0,40 (y menos ángulo, ±2-4°);
+                                            // con 1,3, más lento (0,14-0,17 y 0,30): 1,15
 // Prioridad al equilibrio (movimiento.h). margen: con el comando a los motores por encima, la
 // velocidad pedida retrocede (como un Segway al llegar a su tope). prio: con una perturbación
 // mayor que esto, la velocidad pedida pasa a ser la que lleva el robot; en la simulación no ayudó
@@ -241,8 +310,9 @@
 #define MAN_D_BORDE_M           0.30f
 // La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo ajustado (VAL-302, 3/11:
 // la tabla de equilibrio medida contra la del modelo; con el CAD sin ajustar eran 9,8°). Solo se
-// usa para saber dónde pega el haz.
-#define IMU_DELTA_DEG           4.2f
+// usa para saber dónde pega el haz. 7/11, con la IMU en la PCB: 4,8 (provisorio: la curva de equilibrio
+// con la caja del 5/11; falta medir la IMU contra la caja)
+#define IMU_DELTA_DEG           4.8f
 
 // --- LED RGB de estado (main/led_estado.c; tabla en el README) ---
 // Brillo de 0 a 255. El WS2812 encandila: con 20 ya se ve bien de cerca.
@@ -271,7 +341,11 @@
 // Un registro cada INA_CADA_CICLOS, al final del ciclo de control y solo si quedan INA_MARGEN_US del
 // período: no agrega retardo al comando y no puede ser lo que haga exceder el ciclo. En vivo: set ina 0.
 #define INA_SHUNT_OHM           0.1f        // R100 de los tres módulos (marcado, sin medir)
-#define INA_CADA_CICLOS         5           // 40 lecturas/s: 13 Hz cada motor y 3 Hz el resto
+#define INA_CADA_CICLOS         5           // 40 lecturas/s: 13 Hz cada motor y 3 Hz el resto. En vivo:
+                                            // "set inacada 1", 200 lecturas/s (67 Hz cada motor), para
+                                            // los ensayos del modelo (MED-007). Cada lectura cuesta ~1 ms
+                                            // (6/11: el peor ciclo, 4,3 de 5 ms); INA_MARGEN_US la salta
+                                            // si el ciclo vino justo
 #define INA_MARGEN_US           1500
 // Lo que marca cada módulo con cero corriente, en A { izq, der, lógica }. Medido el 6/11 con los motores
 // parados, igual con 2 V y con 12 V. El de la lógica no se puede medir: siempre consume.
@@ -304,6 +378,12 @@
 // --- Seguridad ---
 #define TILT_LIMIT_DEG          30.0f       // corte por caída
 #define ARM_WINDOW_DEG          5.0f        // solo se arma cerca de la referencia
+// 7/11 (pedido de Francisco): no armar con las patas flojas. Sin encoder en los servos, nunca se arma con
+// una pata suelta, y el primer armado desde que se prendió pide las dos mandadas al mismo ángulo. Si no,
+// "arm" no arma y manda las dos a ARM_PATAS_DEG (una suelta va directo, a la velocidad del servo); se
+// vuelve a armar cuando llegan. Los armados siguientes respetan dónde quedaron (supervisor.h)
+#define ARM_PATAS_DEG           15.0f       // de la pata
+#define ARM_PATAS_TOL_DEG       0.5f        // "mismo ángulo" para el primer armado
 #define ARM_RAMP_S              0.5f        // la salida máxima sube de 0 a u_max en este tiempo
 #define IMU_FAIL_LIMIT          5           // lecturas fallidas seguidas antes de FAULT
 #define IMU_BAJA_G_MAX_S        0.6f        // caída libre (|a| < 0,1 g) más larga que esto cuenta como

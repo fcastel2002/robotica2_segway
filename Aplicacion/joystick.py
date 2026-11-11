@@ -615,6 +615,9 @@ class PuenteJoystick:
             elif accion == "parar":
                 comandos_a_enviar.append("parar")
                 self._ultimo_evento = "□ → Parada controlada (parar)"
+            elif accion == "grabar":
+                comandos_a_enviar.append("grabar")
+                self._ultimo_evento = "SHARE → Grabar 8 s a 200 Hz (grabar)"
             evento = self._ultimo_evento
 
         for cmd in comandos_a_enviar:
@@ -634,6 +637,8 @@ class PuenteJoystick:
 
         if botones_actuales.get("options") and not prev.get("options"):
             self.ejecutar_accion("toggle_modo")
+        if botones_actuales.get("share") and not prev.get("share"):
+            self.ejecutar_accion("grabar")          # 5/11: soltar el robot y medir el rebote
 
         if botones_actuales.get("r1") and not prev.get("r1"):
             self.ejecutar_accion("servo_subir")
@@ -742,13 +747,19 @@ class PuenteJoystick:
 
             ip_udp, simulado, texto_dest = self._resolver_destino()
             enviado_ok = False
+            # Con el stick suelto no manda nada (el firmware vuelve a 0 solo a los 300 ms), salvo un "mov 0 0"
+            # al soltarlo: así otro programa puede manejar el robot con "mov" sin que el joystick lo pise
+            # (7/11, pruebas de manejo automáticas). Los botones siguen andando igual.
+            en_uso = abs(avance) > 0.0 or abs(giro) > 0.0
+            mandar_mov = conectado and (en_uso or getattr(self, "_mov_en_uso", False))
+            self._mov_en_uso = en_uso
             if simulado:
                 enviado_ok = True
-                if conectado and self.enviar_interno is not None:
+                if mandar_mov and self.enviar_interno is not None:
                     self.enviar_interno(f"mov {avance:.3f} {giro:.3f}")
             elif ip_udp:
                 enviado_ok = True
-                if conectado:
+                if mandar_mov:
                     cmd = f"mov {avance:.3f} {giro:.3f}\n".encode("utf-8")
                     try:
                         self.sock.sendto(cmd, (ip_udp, PUERTO_COMANDOS))

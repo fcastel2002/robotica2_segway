@@ -1,0 +1,154 @@
+hora_pc,t_ms,tipo,detalle
+1794259995.650,456557,cmd,get
+1794259995.715,456657,mensaje,# ref=15.80 umax=1.00 deadband=0.030 dbrampa=0.000 dbmov=0.000 refauto=1
+1794259995.715,456657,mensaje,# kx=1.075 kv=1.815 kphi=3.210 kw=0.378 lqrpata=2 lqrfac=0.87 lqrfacx=0.86 notch=11.6 notch2=7.7 lp=0.0
+1794259995.738,456657,mensaje,# vmax=0.40 acel=0.50 fren=0.50 ff=1.15 xlibre=1 velpata=20 margen=0.85 prio=0.0
+1794259995.738,456657,mensaje,# imu fallas: i2c=0 cero=1; en caida libre (no fallan): 0
+1794259995.738,456657,mensaje,# sharp: pin=484 mV dist=76.4 cm haz atras=61.3 cm alto=-29.2 cm | sharpk=0.3214 sharpv0=0.386 sharpdiv=0.60 sensx=-5.2 sensz=2.0 sensang=40.0
+1794259995.765,456657,mensaje,"# giromax=0.15 parinc=6.0 parsuelta=3.0 tau=0.50 velf=20.0 | bajada: inactiva, d_borde=30 cm (0: con el sensor)"
+1794259995.765,456657,mensaje,"# trim=0.030 dlpf=3 (filtro de la IMU: 1 es 188 Hz, 2 es 98, 3 es 42, 4 es 20)"
+1794259995.786,456657,mensaje,"# ciclo, ultimo segundo: ciclo_medio_us=3561 ciclo_max_us=4878 imu_medio_us=2094 imu_max_us=2662 ina_medio_us=992 ina_max_us=1575 periodo_max_us=6000"
+1794259995.786,456657,mensaje,# servo l=15.0 r=15.0 lim_l=0.0..30.0 lim_r=0.0..30.0
+1794259995.786,456657,mensaje,"# armar: ya armó desde que se prendió, las patas pueden estar en ángulos distintos; nunca con una pata suelta"
+1794259995.809,456657,mensaje,"# ina: lectura activa, un registro cada 5 ciclos (inacada); en el bus al arrancar: 0x40=INA219 0x41=INA219 0x44=INA226"
+1794259995.809,456657,mensaje,# ina: resto del bus (la IMU es 0x68): 0x68
+1794259995.809,456657,mensaje,"# ina: INA219 motor izq: 11.72 V 10 mA, fallas 4"
+1794259995.809,456657,mensaje,"# ina: INA219 motor der: 11.67 V 5 mA, fallas 5"
+1794259995.833,456657,mensaje,"# ina: INA226 logica (tension sin corregir): 12.31 V 45 mA, fallas 1"
+1794259995.833,456657,mensaje,"# ina: INA226 id de fabricante 0x5449 (original 0x5449), de chip 0x2260 (original 0x2260)"
+1794259995.833,456657,mensaje,"# bateria: 11.71 V (filtrada), carga 64 %, autonomia 169 min, nivel NORMAL"
+1794259995.833,456657,mensaje,# wifi: red=Pachisale ip=192.168.100.22 rssi=-44 telemetria=192.168.100.47
+1794259995.862,456657,mensaje,# arranque: encendido: se cortó la alimentación o bajó el pin EN (la ESP32-S3 no los distingue; también al grabar); prendida hace 457 s
+1794260001.175,462117,cmd,set refauto 0
+1794260001.221,462157,mensaje,# ok: set
+1794260001.539,462477,marca,empieza el protocolo
+1794260003.540,464477,cmd,set dlpf 3
+1794260003.580,464517,mensaje,# ok: set
+1794260005.540,466477,tramo_inicio,quieto_d3
+1794260015.540,476496,tramo_fin,quieto_d3
+1794260015.540,476496,cmd,grabar
+1794260015.554,476496,grabar,d3_1
+1794260015.554,476496,cmd,set exc 0.06
+1794260015.598,476537,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260015.598,476537,mensaje,# ok: grabar
+1794260015.598,476537,mensaje,# ok: set
+1794260023.623,484557,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.71 V"
+1794260043.340,484557,mensaje,# fin del registro
+1794260043.343,504277,registro,d3_1 1600/1600 reintentos 0
+1794260045.344,506277,cmd,grabar
+1794260045.346,506277,grabar,d3_2
+1794260045.346,506277,cmd,set exc 0.06
+1794260045.385,506327,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260045.385,506327,mensaje,# ok: grabar
+1794260045.385,506327,mensaje,# ok: set
+1794260053.408,514352,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.70 V"
+1794260073.086,514352,mensaje,# fin del registro
+1794260073.108,514352,registro,d3_2 1600/1600 reintentos 0
+1794260075.109,536052,cmd,grabar
+1794260075.110,536052,grabar,d3_3
+1794260075.111,536052,cmd,set exc 0.06
+1794260075.150,536087,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260075.150,536087,mensaje,# ok: grabar
+1794260075.150,536087,mensaje,# ok: set
+1794260083.160,544102,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.70 V"
+1794260102.848,544102,mensaje,# fin del registro
+1794260102.850,563787,registro,d3_3 1600/1600 reintentos 0
+1794260104.852,565787,cmd,set dlpf 2
+1794260104.892,565837,mensaje,# ok: set
+1794260106.851,567787,tramo_inicio,quieto_d2
+1794260116.851,577802,tramo_fin,quieto_d2
+1794260116.851,577802,cmd,grabar
+1794260116.853,577802,grabar,d2_1
+1794260116.853,577802,cmd,set exc 0.06
+1794260116.892,577837,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260116.892,577837,mensaje,# ok: grabar
+1794260116.892,577837,mensaje,# ok: set
+1794260124.912,585857,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.69 V"
+1794260144.612,585857,mensaje,# fin del registro
+1794260144.622,605552,registro,d2_1 1600/1600 reintentos 0
+1794260146.623,607557,cmd,grabar
+1794260146.625,607557,grabar,d2_2
+1794260146.625,607557,cmd,set exc 0.06
+1794260146.661,607607,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260146.661,607607,mensaje,# ok: grabar
+1794260146.661,607607,mensaje,# ok: set
+1794260154.672,615618,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.69 V"
+1794260174.334,615618,mensaje,# fin del registro
+1794260174.349,615618,registro,d2_2 1600/1600 reintentos 0
+1794260176.350,637297,cmd,grabar
+1794260176.352,637297,grabar,d2_3
+1794260176.352,637297,cmd,set exc 0.06
+1794260176.385,637332,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260176.385,637332,mensaje,# ok: grabar
+1794260176.406,637357,mensaje,# ok: set
+1794260184.410,645352,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.68 V"
+1794260204.076,645352,mensaje,# fin del registro
+1794260204.081,645352,registro,d2_3 1600/1600 reintentos 0
+1794260206.083,667047,cmd,set dlpf 1
+1794260206.113,667062,mensaje,# ok: set
+1794260208.083,669032,tramo_inicio,quieto_d1
+1794260218.082,679027,tramo_fin,quieto_d1
+1794260218.082,679027,cmd,grabar
+1794260218.085,679027,grabar,d1_1
+1794260218.085,679027,cmd,set exc 0.06
+1794260218.116,679062,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260218.116,679062,mensaje,# ok: grabar
+1794260218.116,679062,mensaje,# ok: set
+1794260226.137,687083,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.68 V"
+1794260245.840,687083,mensaje,# fin del registro
+1794260245.861,706787,registro,d1_1 1600/1600 reintentos 0
+1794260247.863,708832,cmd,grabar
+1794260247.865,708832,grabar,d1_2
+1794260247.865,708832,cmd,set exc 0.06
+1794260247.891,708847,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260247.891,708847,mensaje,# ok: grabar
+1794260247.919,708876,mensaje,# ok: set
+1794260255.920,716867,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.68 V"
+1794260275.601,716867,mensaje,# fin del registro
+1794260275.617,736547,cmd,escalon datos
+1794260275.661,736612,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.67 V"
+1794260295.341,736612,registro,d1_2 1600/1600 reintentos 1
+1794260295.359,736612,mensaje,# fin del registro
+1794260297.342,758307,cmd,grabar
+1794260297.344,758307,grabar,d1_3
+1794260297.344,758307,cmd,set exc 0.06
+1794260297.368,758322,mensaje,# grabar: 8 s a 200 Hz desde ahora; al terminar manda el registro
+1794260297.368,758322,mensaje,# ok: grabar
+1794260297.368,758322,mensaje,# ok: set
+1794260305.384,766337,mensaje,"# registro de la bajada: 1600 muestras a 200 Hz, bateria 11.67 V"
+1794260325.076,766337,mensaje,# fin del registro
+1794260325.080,786027,registro,d1_3 1600/1600 reintentos 0
+1794260327.081,788037,cmd,set exc 0
+1794260327.095,788072,mensaje,# ok: set
+1794260327.134,788107,cmd,set exc 0
+1794260327.166,788127,mensaje,# ok: set
+1794260327.187,788127,cmd,mov 0 0
+1794260327.239,788182,cmd,mov 0 0
+1794260327.292,788252,cmd,set dlpf 3
+1794260327.310,788287,mensaje,# ok: set
+1794260327.344,788302,cmd,set dlpf 3
+1794260327.364,788337,mensaje,# ok: set
+1794260327.398,788373,cmd,set refauto 1
+1794260327.432,788392,mensaje,# ok: set
+1794260327.450,788412,cmd,set refauto 1
+1794260327.470,788447,mensaje,# ok: set
+1794260327.804,788777,cmd,get
+1794260327.861,788812,mensaje,# ref=15.72 umax=1.00 deadband=0.030 dbrampa=0.000 dbmov=0.000 refauto=1
+1794260327.861,788812,mensaje,# kx=1.075 kv=1.815 kphi=3.210 kw=0.378 lqrpata=2 lqrfac=0.87 lqrfacx=0.86 notch=11.6 notch2=7.7 lp=0.0
+1794260327.861,788812,mensaje,# vmax=0.40 acel=0.50 fren=0.50 ff=1.15 xlibre=1 velpata=20 margen=0.85 prio=0.0
+1794260327.861,788812,mensaje,# imu fallas: i2c=0 cero=2; en caida libre (no fallan): 0
+1794260327.894,788812,mensaje,# sharp: pin=432 mV dist=96.2 cm haz atras=76.9 cm alto=-41.3 cm | sharpk=0.3214 sharpv0=0.386 sharpdiv=0.60 sensx=-5.2 sensz=2.0 sensang=40.0
+1794260327.894,788812,mensaje,"# giromax=0.15 parinc=6.0 parsuelta=3.0 tau=0.50 velf=20.0 | bajada: inactiva, d_borde=30 cm (0: con el sensor)"
+1794260327.894,788812,mensaje,"# trim=0.030 dlpf=3 (filtro de la IMU: 1 es 188 Hz, 2 es 98, 3 es 42, 4 es 20)"
+1794260327.925,788812,mensaje,"# ciclo, ultimo segundo: ciclo_medio_us=3662 ciclo_max_us=4963 imu_medio_us=2137 imu_max_us=3063 ina_medio_us=1070 ina_max_us=1809 periodo_max_us=6486"
+1794260327.925,788812,mensaje,# servo l=15.0 r=15.0 lim_l=0.0..30.0 lim_r=0.0..30.0
+1794260327.925,788812,mensaje,"# armar: ya armó desde que se prendió, las patas pueden estar en ángulos distintos; nunca con una pata suelta"
+1794260327.946,788812,mensaje,"# ina: lectura activa, un registro cada 5 ciclos (inacada); en el bus al arrancar: 0x40=INA219 0x41=INA219 0x44=INA226"
+1794260327.946,788812,mensaje,# ina: resto del bus (la IMU es 0x68): 0x68
+1794260327.946,788812,mensaje,"# ina: INA219 motor izq: 11.67 V 11 mA, fallas 22"
+1794260327.946,788812,mensaje,"# ina: INA219 motor der: 11.63 V 4 mA, fallas 20"
+1794260327.969,788812,mensaje,"# ina: INA226 logica (tension sin corregir): 12.27 V 46 mA, fallas 7"
+1794260327.969,788812,mensaje,"# ina: INA226 id de fabricante 0x5449 (original 0x5449), de chip 0x2260 (original 0x2260)"
+1794260327.969,788812,mensaje,"# bateria: 11.67 V (filtrada), carga 62 %, autonomia 175 min, nivel NORMAL"
+1794260327.969,788812,mensaje,# wifi: red=Pachisale ip=192.168.100.22 rssi=-49 telemetria=192.168.100.47
+1794260328.001,788812,mensaje,# arranque: encendido: se cortó la alimentación o bajó el pin EN (la ESP32-S3 no los distingue; también al grabar); prendida hace 789 s

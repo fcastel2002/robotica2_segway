@@ -35,6 +35,10 @@ typedef struct {
 
 static control_ctx_t s_ctx;
 
+// Constante del filtro de inclinación: "set tau" la cambia en vivo (auditoría del 5/11: comparar 0,5 y
+// 1 s en el robot; al reiniciar vuelve a ATTITUDE_TAU_S)
+static float s_tau_att = ATTITUDE_TAU_S;
+
 // Registro de la bajada (control_task.h): lo escribe control mientras graba; comms lo lee
 // cuando s_reg_listo (sin escritura en curso)
 static registro_t s_reg[REGISTRO_N];
@@ -91,11 +95,12 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         }
         break;
     case CMD_SERVO_LIMITS:
-        // Solo cambia los próximos pedidos: no mueve un servo que haya quedado afuera
+        // Solo cambia los próximos pedidos: no mueve un servo que haya quedado afuera. Siempre dentro
+        // de SERVO_HARD_* (comms ya lo controla; acá también, por si llega algo raro)
         for (int i = 0; i < SERVO_COUNT; i++) {
             if (c->servo == SERVO_BOTH || c->servo == i) {
-                servo_lim[i][0] = c->value;
-                servo_lim[i][1] = c->value2;
+                servo_lim[i][0] = fmaxf(c->value, SERVO_HARD_MIN_DEG);
+                servo_lim[i][1] = fminf(c->value2, SERVO_HARD_MAX_DEG);
             }
         }
         break;
@@ -131,10 +136,12 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
     case CMD_MOVE:      // estos los atiende control_task antes de llamar acá
     case CMD_ESCALON:
     case CMD_PARAR:
+    case CMD_GRABAR:
     case CMD_MAN_PARAM:
         break;
     case CMD_SET:
         switch (c->param) {
+        case PARAM_TAU:      s_tau_att = fminf(fmaxf(c->value, 0.1f), 3.0f); break;
         case PARAM_REF:      p->theta_ref = c->value * DEG2RAD; break;
         case PARAM_UMAX:     p->u_max = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
         case PARAM_DEADBAND: *db_quieto = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
@@ -329,6 +336,15 @@ static void control_task(void *arg)
         pedir_desarme = false;
         command_t c;
         while (xQueueReceive(ctx->command_q, &c, 0) == pdTRUE) {
+            // Auditoría del 5/11: un nan o inf no es un valor (comms ya no los deja pasar; esto es por
+            // las dudas). Motores a mano y encoders a cero, solo desarmado o en falla: equilibrando,
+            // un "motor" quedaba guardado y se aplicaba al desarmar, y "enc reset" hacía saltar la
+            // odometría todo lo recorrido (un tirón a fondo).
+            if (!isfinite(c.value) || !isfinite(c.value2)) continue;
+            if ((c.type == CMD_MOTOR || c.type == CMD_ENC_RESET)
+                && sup.state != SUP_DISARMED && sup.state != SUP_FAULT) {
+                continue;
+            }
             if (c.type == CMD_MOVE) {
                 mov_fwd = c.value;
                 mov_turn = c.value2;
@@ -355,6 +371,17 @@ static void control_task(void *arg)
                     maniobra_abortar(&man, "parada (cuadrado)");
                     man.estado = MAN_INACTIVA;
                     parada_iniciar(&par);
+                }
+                continue;
+            }
+            if (c.type == CMD_GRABAR) {
+                // REGISTRO_N muestras (8 s) desde ya, armado o no (fuera de una bajada, "termino" es
+                // cierto en cada ciclo y fin_reg cuenta hasta el final)
+                if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) {
+                    s_reg_listo = false;
+                    s_reg_n = 0;
+                    grabando = true;
+                    fin_reg = REGISTRO_N;
                 }
                 continue;
             }
@@ -403,7 +430,7 @@ static void control_task(void *arg)
             } else if (s.baja_g || (ms.activa && ms.solo_giroscopo)) {
                 attitude_update_gyro(&att, gyro, dt);
             } else {
-                attitude_update(&att, acc_fwd, acc_up, gyro, dt, ATTITUDE_TAU_S);
+                attitude_update(&att, acc_fwd, acc_up, gyro, dt, s_tau_att);
             }
         }
 
@@ -648,6 +675,7 @@ static void control_task(void *arg)
             .giro_max    = giro_max,
             .par_inclina = par_p.inclina_deg * DEG2RAD,
             .par_suelta  = par_p.suelta_deg * DEG2RAD,
+            .tau_att     = s_tau_att,
             .led_guia    = led_guia,
         };
         for (int i = 0; i < 3; i++) {

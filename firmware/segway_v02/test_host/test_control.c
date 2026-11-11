@@ -14,6 +14,7 @@
 #include "led_estado.h"
 #include "movimiento.h"
 #include "odometry.h"
+#include "parada.h"
 #include "sensor_piso.h"
 #include "supervisor.h"
 
@@ -111,6 +112,41 @@ static void test_attitude_calibration_restarts_on_motion(void)
     for (int i = 0; i < 300; i++) attitude_calibrate(&a, 0.0f, 400, 0.2f);
     CHECK(!attitude_calibrate(&a, 1.0f, 400, 0.2f));   // movimiento: reinicia
     CHECK(a.cal_n == 0);
+}
+
+// Auditoría del 5/11: si el cuerpo no se tira atrás, la parada no desarma (con el robot derecho caería
+// para cualquier lado): la referencia vuelve a la de antes y sigue equilibrando
+static void test_parada_no_desarma_derecho(void)
+{
+    parada_params_t p;
+    parada_params_por_defecto(&p);
+    parada_t pa = { 0 };
+    CHECK(parada_iniciar(&pa));
+    parada_entrada_t e = { .v = 0.0f, .pata_deg = p.pata_min_deg, .tilt_err = 0.0f, .dt = 0.005f };
+    parada_salida_t s;
+    bool desarmo = false, volvio = false;
+    float ref_min = 0.0f;
+    for (int k = 0; k < 4000 && pa.estado != PARADA_INACTIVA; k++) {
+        parada_paso(&pa, &p, &e, &s);
+        desarmo |= s.desarmar;
+        volvio |= pa.estado == PARADA_VUELVE;
+        ref_min = fminf(ref_min, s.ref_extra);
+    }
+    CHECK(!desarmo);
+    CHECK(volvio);
+    CHECK(pa.estado == PARADA_INACTIVA);
+    CHECK(ref_min < -5.0f * DEG);                   // se llegó a pedir la inclinación
+    CHECK(fabsf(s.ref_extra) < 1e-6f);              // y volvió
+    // Si se tira atrás, sí desarma
+    pa = (parada_t){ 0 };
+    CHECK(parada_iniciar(&pa));
+    desarmo = false;
+    for (int k = 0; k < 4000 && !desarmo; k++) {
+        e.tilt_err = pa.estado == PARADA_INCLINAR ? -4.0f * DEG : 0.0f;
+        parada_paso(&pa, &p, &e, &s);
+        desarmo |= s.desarmar;
+    }
+    CHECK(desarmo);
 }
 
 static void test_balance_sign_and_deadband(void)
@@ -248,6 +284,12 @@ static void test_lqr_signs_limits_and_reference(void)
     p.deadband = 0.15f;
     float u = balance_lqr_step(&bq, &p, 0, 0, p.theta_ref + 0.001f, 0, 0.005f, 1.0f);
     CHECK(u > 0.15f && u < 0.16f);
+    // Con rampa, la misma corrección chica no salta al deadband: crece de a poco desde cero
+    balance_t br;
+    balance_reset(&br);
+    p.deadband_rampa = 0.05f;
+    float ur = balance_lqr_step(&br, &p, 0, 0, p.theta_ref + 0.001f, 0, 0.005f, 1.0f);
+    CHECK(ur > 0.0f && ur < 0.05f);       // sin rampa daría 0,158
 }
 
 static void test_odometry_rolling(void)
@@ -264,6 +306,36 @@ static void test_odometry_rolling(void)
     }
     CHECK(fabsf(o.x - 0.4f) < 0.001f);              // una cuenta son 0,29 mm
     CHECK(fabsf(o.v - v_real) < 0.02f);
+}
+
+static void test_trim_entre_motores(void)
+{
+    // "set trim 0.02": con comando hacia adelante la izquierda recibe 0,01 más y la derecha 0,01 menos;
+    // hacia atrás, lo mismo en el otro sentido (más magnitud a la izquierda)
+    CHECK(fabsf(balance_trim(0.20f, 0.02f) - 0.01f) < 1e-6f);
+    CHECK(fabsf(balance_trim(-0.20f, 0.02f) + 0.01f) < 1e-6f);
+    // sin salto al cruzar por cero: crece con el comando hasta BALANCE_TRIM_RAMPA
+    CHECK(balance_trim(0.0f, 0.02f) == 0.0f);
+    CHECK(fabsf(balance_trim(0.5f * BALANCE_TRIM_RAMPA, 0.02f) - 0.005f) < 1e-6f);
+    CHECK(fabsf(balance_trim(BALANCE_TRIM_RAMPA, 0.02f) - 0.01f) < 1e-6f);
+    // trim 0 (como arranca) no cambia nada, y negativo favorece a la derecha
+    CHECK(balance_trim(0.3f, 0.0f) == 0.0f);
+    CHECK(balance_trim(0.3f, -0.04f) < 0.0f);
+}
+
+static void test_odometry_sin_filtro(void)
+{
+    // tau = 0 ("set velf 0"): la velocidad es la derivada cruda, sin pasabajos ni NaN
+    const float cpr = 899.0f, r = 0.040f, dt = 0.005f;
+    const float una_cuenta = 6.2831853f * r / cpr;  // m
+    odometry_t o;
+    odometry_reset(&o);
+    odometry_update(&o, 0.0f, 0.0f, cpr, r, dt, 0.0f);
+    odometry_update(&o, 1.0f, 0.0f, cpr, r, dt, 0.0f);
+    CHECK(isfinite(o.v));
+    CHECK(fabsf(o.v - una_cuenta / dt) < 1e-4f);    // 0,056 m/s de golpe por una cuenta
+    odometry_update(&o, 1.0f, 0.0f, cpr, r, dt, 0.0f);
+    CHECK(fabsf(o.v) < 1e-6f);                      // y vuelve a cero en la muestra siguiente
 }
 
 static void test_odometry_pitch_is_not_motion(void)
@@ -285,6 +357,29 @@ static void test_odometry_pitch_is_not_motion(void)
     odometry_reset(&o);
     odometry_update(&o, 5000.0f, 0.0f, cpr, r, dt, tau);
     CHECK(o.x == 0.0f && o.v == 0.0f);
+}
+
+// Patas para armar (7/11): nunca con una suelta; el primer armado, además, con las dos iguales
+static void test_patas_para_armar(void)
+{
+    const float tol = ARM_PATAS_TOL_DEG;
+    float pos[2] = { NAN, NAN };
+    bool suelta[2] = { true, true };
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_SUELTA);     // al encender
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_SUELTA);    // y después también
+    pos[0] = pos[1] = 15.0f;
+    suelta[0] = suelta[1] = false;
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_OK);         // mandadas a 15°
+    pos[1] = 22.0f;                                                      // nivelando: distintas
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_DISTINTAS);
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_OK);        // ya armó una vez: vale
+    pos[1] = 15.4f;
+    CHECK(patas_para_armar(pos, suelta, true, tol) == PATAS_OK);         // dentro de la tolerancia
+    suelta[0] = true;                                                    // "servo l off" después
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_SUELTA);
+    suelta[0] = false;
+    pos[0] = NAN;                                                        // sin posición conocida
+    CHECK(patas_para_armar(pos, suelta, false, tol) == PATAS_SUELTA);
 }
 
 static sup_state_t step(supervisor_t *s, bool imu_ok, bool cal, float tilt_deg, sup_cmd_t cmd)
@@ -664,6 +759,7 @@ int main(void)
     test_attitude_unbiased_under_vibration();
     test_attitude_calibration_restarts_on_motion();
     test_attitude_gyro_only_ignores_landing();
+    test_parada_no_desarma_derecho();
     test_balance_sign_and_deadband();
     test_lqr_signs_limits_and_reference();
     test_lqr_lowpass_cuts_vibration();
@@ -672,6 +768,9 @@ int main(void)
     test_lqr_tabla_patas();
     test_ref_auto_converges();
     test_odometry_rolling();
+    test_odometry_sin_filtro();
+    test_trim_entre_motores();
+    test_patas_para_armar();
     test_odometry_pitch_is_not_motion();
     test_sensor_piso_geometria();
     test_movimiento_rampas_y_x_libre();

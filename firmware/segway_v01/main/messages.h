@@ -44,6 +44,7 @@ typedef enum {
     PARAM_SENSANG,
     PARAM_PARINC,       // parada (□): cuánto se corre la referencia hacia atrás [grados]
     PARAM_PARSUELTA,    // parada: con el cuerpo esto detrás de su equilibrio, desarma [grados]
+    PARAM_TAU,          // constante del filtro de inclinación [s] (ATTITUDE_TAU_S al arrancar)
     PARAM_COUNT,
 } param_id_t;
 
@@ -62,6 +63,8 @@ typedef enum {
     CMD_MOVE,           // "mov": value = avance, value2 = giro, de -1 a 1 (vencen a MOV_TIMEOUT_MS)
     CMD_ESCALON,        // "escalon" (△): baja el escalón de atrás; value = 1: solo mide el borde
     CMD_PARAR,          // "parar" (□): parada controlada (parada.h)
+    CMD_GRABAR,         // "grabar": el registro de 200 Hz durante 8 s, armado o no (soltarlo y medir
+                        // cuánto rebota la goma)
     CMD_MAN_PARAM,      // "man <nombre> <valor>": param = campo de maniobra_campo(), value
 } command_type_t;
 
@@ -116,5 +119,6 @@ typedef struct {
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;
     float            par_inclina, par_suelta;       // [rad]
+    float            tau_att;       // constante del filtro de inclinación [s] ("set tau")
     bool             led_guia;      // guía de armado activa (led_estado.h)
 } telemetry_t;

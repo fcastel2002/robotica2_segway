@@ -7,6 +7,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 
 // u = kx·x + kv·v + kphi·(theta - theta_ref) + kw·omega, todo positivo hacia adelante.
 // Unidades: fracción de PWM por m, por m/s, por rad y por rad/s.
@@ -19,14 +20,17 @@ typedef struct {
     float theta_ref;    // rad
     float u_max;        // [0, 1]
     float deadband;     // [0, 1): PWM mínimo con el que el motor empieza a girar
+    float deadband_rampa; // 0: la compensación salta de -deadband a +deadband al cruzar cero; > 0: el
+                        // agregado crece de 0 a deadband mientras |u| va de 0 a esto (sin el salto)
     float notch_hz;     // filtro rechaza banda en el comando del LQR; 0 = sin filtro
     float notch2_hz;    // segundo rechaza banda, angosto (Q = 2), después del primero; 0 = sin
                         // filtro. Para la vibración de ~16 Hz con poco retardo a 2-3 Hz
     float lowpass_hz;   // pasabajos de 2.º orden en el comando del LQR, después de los rechaza
                         // banda; 0 = sin filtro
     bool  ref_auto;     // theta_ref se corrige sola con el robot equilibrando (balance_ref_auto)
-    bool  lqr_por_pata; // lqr sale de una tabla según la altura de las patas (balance_lqr_tabla;
-                        // lo hace control_task); si no, las ganancias fijas de "set kx ..."
+    uint8_t lqr_por_pata; // 1 o 2: lqr sale de una tabla según la altura de las patas
+                        // (balance_lqr_tabla; lo hace control_task: 1 LQR_TABLA, 2 LQR_TABLA_DRV);
+                        // 0: las ganancias fijas de "set kx ..."
     float u_ff;         // se suma al comando del LQR (antes de los filtros): lo que hace falta
                         // para sostener la velocidad pedida. 0 = nada (el control normal)
 } balance_params_t;
@@ -60,6 +64,15 @@ float balance_lqr_step(balance_t *b, const balance_params_t *p, float x, float v
 // u_limit (nunca más que p->u_max) y con la compensación de zona muerta. Para quien mande los
 // motores sin el LQR (la maniobra de escalón en el aire).
 float balance_compensar(const balance_params_t *p, float u, float u_limit);
+
+// Compensación entre motores ("set trim"): lo que se le suma al comando de la rueda izquierda y se le resta
+// al de la derecha, en el sentido en que gira cada una, para que con el mismo comando anden igual.
+// trim es la diferencia total en fracción de PWM (positivo: más a la izquierda); cada rueda recibe la
+// mitad. Crece de 0 a trim/2 mientras |u| va de 0 a BALANCE_TRIM_RAMPA, así no salta al cruzar por cero.
+// 9/11 (ensayos E1 y E5): la izquierda arranca con 8 % de PWM y la derecha con 5 %, y andando gira
+// 0,6-0,8 rad/s menos con el mismo comando.
+#define BALANCE_TRIM_RAMPA  0.05f
+float balance_trim(float u, float trim);
 
 // Ángulo de equilibrio según la altura de las patas: con el cuatro barras, al moverlas la rueda se
 // corre respecto del cuerpo y el equilibrio cambia. Interpolación lineal en una tabla (patas en

@@ -37,7 +37,8 @@ ESTRATEGIAS = [
      dict(pata_largada="0", v_salida="0.30", pata_final="15", vel_pata_final="150", t_mantener="0.06",
           motor_vuelo="0")),
 ]
-LIPOS = [("10,5", "8.5"), ("11,1", "9.1"), ("11,9", "9.9"), ("12,6", "10.6")]
+# Tensión de la LiPo y lo que llega al motor: con el DRV8871 (7/11), la misma (con el L298N, 2 V menos)
+LIPOS = [("10,5", "10.5"), ("11,1", "11.1"), ("11,9", "11.9"), ("12,6", "12.6")]
 V_SALIDA = ["0.44", "0.46", "0.48", "0.50", "0.52", "0.54", "0.56", "0.58", "0.60", "0.62"]
 
 COLORES = ListedColormap(["#7fc97f", "#fdae61", "#d7191c", "#bdbdbd"])
@@ -135,10 +136,10 @@ def main():
     graficar_escalon.ESCALONES = 1
     graficar_escalon.graficar(CARPETA + "/elegida")
     casos = [
-        ("equipo", "nominal", "Idea del equipo (agachado, 0,30 m/s),\nLiPo 11,9 V"),
+        ("equipo", "nominal", "Idea del equipo (agachado, 0,30 m/s),\nLiPo 12,3 V"),
         ("sostenida", "lipo105", "Rueda sostenida en el aire,\nLiPo 10,5 V"),
         ("elegida", "lipo105", "Elegida, LiPo 10,5 V"),
-        ("elegida", "nominal", "Elegida, LiPo 11,9 V"),
+        ("elegida", "nominal", "Elegida, LiPo 12,3 V"),
         ("elegida", "lipo126", "Elegida, LiPo 12,6 V"),
     ]
 

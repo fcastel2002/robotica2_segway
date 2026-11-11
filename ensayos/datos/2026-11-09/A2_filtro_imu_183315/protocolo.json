@@ -1,0 +1,149 @@
+{
+  "esquema": 1,
+  "id": "A2",
+  "nombre": "filtro_imu",
+  "titulo": "Filtro interno de la IMU (set dlpf): quieto y tres barridos con cada valor",
+  "pregunta": "¿Cuánto retardo se gana aflojando el filtro de la IMU (3 = 42 Hz, 2 = 98 Hz, 1 = 188 Hz) y cuánto más vibra? ¿Baja el pico de sensibilidad del lazo?",
+  "criterio": "Con menos filtro la fase de la planta u -> giróscopo adelanta lo que dice la hoja de datos (~2 ms con 2, ~3 ms con 1) y el pico de sensibilidad baja más de lo que se repite entre barridos iguales, sin que el robot vibre más parado. Se analiza con analizar_filtro.py.",
+  "requisitos": {
+    "estado": "BALANCING",
+    "confirmar": [
+      "atajando"
+    ],
+    "patas_deg": 15.0,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.4,
+    "quieto_s": 5.0,
+    "espera_max_s": 180
+  },
+  "config": {
+    "refauto": 0
+  },
+  "limites": {
+    "exc_max": 0.08
+  },
+  "abortar": {
+    "theta_err_deg": 8.0,
+    "x_desde_inicio_mm": 500
+  },
+  "pasos": [
+    {
+      "hacer": "esperar",
+      "s": 2
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set dlpf 3"
+    },
+    {
+      "hacer": "esperar",
+      "s": 2
+    },
+    {
+      "hacer": "tramo",
+      "nombre": "quieto_d3",
+      "s": 10
+    },
+    {
+      "hacer": "repetir",
+      "veces": 3,
+      "pasos": [
+        {
+          "hacer": "grabar",
+          "etiqueta": "d3_{i}"
+        },
+        {
+          "hacer": "cmd",
+          "texto": "set exc 0.06"
+        },
+        {
+          "hacer": "esperar",
+          "s": 7.9
+        },
+        {
+          "hacer": "esperar_registro"
+        },
+        {
+          "hacer": "esperar",
+          "s": 2
+        }
+      ]
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set dlpf 2"
+    },
+    {
+      "hacer": "esperar",
+      "s": 2
+    },
+    {
+      "hacer": "tramo",
+      "nombre": "quieto_d2",
+      "s": 10
+    },
+    {
+      "hacer": "repetir",
+      "veces": 3,
+      "pasos": [
+        {
+          "hacer": "grabar",
+          "etiqueta": "d2_{i}"
+        },
+        {
+          "hacer": "cmd",
+          "texto": "set exc 0.06"
+        },
+        {
+          "hacer": "esperar",
+          "s": 7.9
+        },
+        {
+          "hacer": "esperar_registro"
+        },
+        {
+          "hacer": "esperar",
+          "s": 2
+        }
+      ]
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set dlpf 1"
+    },
+    {
+      "hacer": "esperar",
+      "s": 2
+    },
+    {
+      "hacer": "tramo",
+      "nombre": "quieto_d1",
+      "s": 10
+    },
+    {
+      "hacer": "repetir",
+      "veces": 3,
+      "pasos": [
+        {
+          "hacer": "grabar",
+          "etiqueta": "d1_{i}"
+        },
+        {
+          "hacer": "cmd",
+          "texto": "set exc 0.06"
+        },
+        {
+          "hacer": "esperar",
+          "s": 7.9
+        },
+        {
+          "hacer": "esperar_registro"
+        },
+        {
+          "hacer": "esperar",
+          "s": 2
+        }
+      ]
+    }
+  ]
+}

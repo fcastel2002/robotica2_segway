@@ -1,11 +1,13 @@
 r"""Figura y tabla de una o varias mediciones de sesion_placa.py medir_equilibrio.
 
-    python graficar_equilibrio.py equilibrio_<hora>.csv [otro.csv ...] [--png salida.png]
+    python graficar_equilibrio.py equilibrio_<hora>.csv [otro.csv ...] [--png salida.png] [--csv todo.csv]
 
 Separa cada medición según cómo llegaron las patas a esa altura (subiendo o bajando: 3/11, el
 equilibrio subiendo da ~0,9° más que bajando), toma en cada altura el centro entre los dos
 promedios y le ajusta una cúbica, que es la tabla nueva para board_config.h (cada 2,5°). Arriba,
-las mediciones contra la tabla vigente; abajo, cómo equilibra quieto en cada altura.
+las mediciones contra la tabla vigente; abajo, cómo equilibra quieto en cada altura. Con --csv junta
+todas las mediciones con su sentido (sube/baja), como firmware/docs/equilibrio_patas_2026-11-03.csv: es
+lo que lee modelado/ajuste/ajustar_equilibrio.m para corregir el centro de masa y la IMU del modelo.
 """
 import csv, re, sys
 from pathlib import Path
@@ -45,14 +47,26 @@ def leer_mediciones(rutas):
 
 def main():
     args = sys.argv[1:]
-    png = None
+    png = salida_csv = None
     if '--png' in args:
         i = args.index('--png')
         png = Path(args[i + 1])
         del args[i:i + 2]
+    if '--csv' in args:
+        i = args.index('--csv')
+        salida_csv = Path(args[i + 1])
+        del args[i:i + 2]
     rutas = [Path(a) for a in args]
     png = png or rutas[0].with_suffix('.png')
     filas = leer_mediciones(rutas)
+    if salida_csv:
+        campos = [k for k in filas[0] if k != 'sube'] + ['sentido']
+        with open(salida_csv, 'w', newline='', encoding='utf-8') as f:
+            w = csv.DictWriter(f, campos, extrasaction='ignore')
+            w.writeheader()
+            for r in filas:
+                w.writerow(dict(r, sentido='sube' if r['sube'] else 'baja'))
+        print('mediciones con su sentido en', salida_csv)
 
     alturas = sorted(set(r['patas'] for r in filas))
     sube = {a: [r['theta'] for r in filas if r['patas'] == a and r['sube']] for a in alturas}

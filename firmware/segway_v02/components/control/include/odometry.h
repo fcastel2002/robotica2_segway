@@ -27,6 +27,6 @@ typedef struct {
 void odometry_reset(odometry_t *o);
 
 // counts: promedio de las cuentas de las dos ruedas (x4, avanzar suma).
-// theta: inclinación del cuerpo [rad]. tau_v: constante del filtro de velocidad [s].
+// theta: inclinación del cuerpo [rad]. tau_v: constante del filtro de velocidad [s]; 0 = sin filtro.
 void odometry_update(odometry_t *o, float counts, float theta, float counts_per_rev,
                      float wheel_radius, float dt, float tau_v);

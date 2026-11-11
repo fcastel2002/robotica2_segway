@@ -22,6 +22,8 @@
 #include "messages.h"
 #include "parada.h"
 #include "wifi_link.h"
+#include "esp_system.h"
+#include "esp_timer.h"
 
 #define RAD2DEG     57.29578f
 #define CMD_LINE_MAX    64
@@ -40,7 +42,8 @@
                     "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps," \
                     "x_mm,v_mms,vref_mms,giro,ref_deg,sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm," \
                     "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria\n"
-#define REG_POR_VUELTA  3       // líneas del registro de la bajada por vuelta (150/s: entra en 115200)
+#define REG_POR_VUELTA  2       // líneas del registro de la bajada por vuelta (100/s de ~120 caracteres:
+                                // entra justo en 115200; 7/11, con corrientes y encoders)
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -59,7 +62,9 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_LQRPATA] = "lqrpata", [PARAM_GIROMAX] = "giromax", [PARAM_SHARPK] = "sharpk",
     [PARAM_SHARPV0] = "sharpv0", [PARAM_SHARPDIV] = "sharpdiv", [PARAM_SENSX] = "sensx",
     [PARAM_SENSZ] = "sensz", [PARAM_SENSANG] = "sensang", [PARAM_PARINC] = "parinc",
-    [PARAM_PARSUELTA] = "parsuelta", [PARAM_INA] = "ina",
+    [PARAM_PARSUELTA] = "parsuelta", [PARAM_TAU] = "tau", [PARAM_INA] = "ina",
+    [PARAM_INACADA] = "inacada", [PARAM_LQRFAC] = "lqrfac", [PARAM_LQRFACX] = "lqrfacx", [PARAM_DBRAMPA] = "dbrampa", [PARAM_EXC] = "exc",
+    [PARAM_VELF] = "velf", [PARAM_TRIM] = "trim", [PARAM_DLPF] = "dlpf",
 };
 
 // Los parámetros de la bajada como los tiene control (empiezan igual y cambian con los mismos
@@ -67,6 +72,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
 static man_params_t s_man;
 
 static bateria_t s_bat;
+static int s_grabar;                // "grabar": 1 pedido, 2 grabando; al terminar se manda el registro
 
 // Todo lo que dice la consola sale por el cable y, si hay red, por WiFi. Solo desde comms.
 static void out(const char *fmt, ...)
@@ -88,7 +94,11 @@ static void print_help(void)
         "#           cal | tlm on | tlm off | enc reset | help\n"
         "#           servo [l|r] off|on | servo lim l|r <min> <max> | motor [l|r] <-100..100> | motor stop\n"
         "# param: ref(grados) umax deadband | kx kv kphi kw (LQR, el único control)\n"
-        "#        lqrpata (1: kx kv kphi kw salen de la tabla según la pata; 0: las fijas de set)\n"
+        "#        lqrpata (1: kx kv kphi kw salen de la tabla según la pata; 2: de la recalculada con\n"
+        "#        el DRV8871, LQR_TABLA_DRV; 0: las fijas de set)\n"
+        "#        lqrfac lqrfacx (factores sobre la tabla: kphi y kw, y kx y kv; 0,82 y 0,86 al arrancar)\n"
+        "#        dbrampa (|u| hasta el que crece el agregado de la zona muerta; 0 = salta en cero)\n"
+        "#        exc (amplitud de un barrido de 1 a 20 Hz sumado al comando, 7,5 s; con grabar)\n"
         "#        notch notch2 lp (Hz de los rechaza banda, ancho y angosto, y del pasabajos del\n"
         "#        comando; 0 = sin filtro)\n"
         "#        refauto (1: ref se corrige sola si el robot se queda corrido; get la muestra)\n"
@@ -106,11 +116,21 @@ static void print_help(void)
         "#   cm detras del apoyo de la rueda; escalon medir: busca el borde con el sensor y frena;\n"
         "#   escalon datos: vuelve a mandar el registro de la ultima (200 Hz, lineas #r)\n"
         "# parar: parada controlada (cuadrado): frena, baja las patas al minimo y se deja caer atras\n"
+        "# grabar: graba 8 s a 200 Hz (armado o no) y los manda como el de la bajada (lineas #r):\n"
+        "#   para soltar el robot desde unos cm y medir cuanto rebota la goma\n"
         "# man: parametros de la bajada; man <nombre> <valor> los cambia (no en plena bajada)\n"
         "# param tambien: giromax (giro con R2/L2) | sharpk sharpv0 sharpdiv (calibracion del Sharp)\n"
         "#        sensx sensz (cm) sensang (grados): donde esta el sensor respecto del eje del servo\n"
         "#        parinc parsuelta (grados): cuanto se tira atras la parada y cuando suelta\n"
+        "#        tau (s): constante del filtro de inclinacion (0,5 al arrancar; probar 1)\n"
+        "#        velf (Hz): pasabajos de la velocidad de las ruedas (20 al arrancar; 0 = sin filtro;\n"
+        "#        de 2 a 80; probar 10)\n"
+        "#        trim: compensacion entre motores, fraccion de PWM de mas a la izquierda y de menos a la\n"
+        "#        derecha (-0.10 a 0.10; 0.03 al arrancar)\n"
+        "#        dlpf: filtro interno de la IMU, 1 = 188 Hz (al arrancar), 2 = 98, 3 = 42, 4 = 20\n"
         "#        ina (1: lee los INA; 0: no los toca, para descartarlos ante problemas en el bus)\n"
+        "#        inacada (cada cuantos ciclos de 5 ms lee un registro de los INA: 5 al arrancar,\n"
+        "#        13 Hz cada motor; 1 para los ensayos del modelo, 67 Hz)\n"
         "# ina: quien responde en el bus, lectura de cada medidor, carga y autonomia de la bateria\n"
         "# por WiFi (UDP %d) los mismos comandos; hola: la telemetria va a esa PC\n",
         SERVO_HARD_MIN_DEG, SERVO_HARD_MAX_DEG, MOV_TIMEOUT_MS, WIFI_CMD_PORT);
@@ -142,8 +162,8 @@ static void print_ina(const telemetry_t *t)
             n += snprintf(lista + n, sizeof lista - n, " 0x%02X=%s", 0x40 + i, ina_modelo_nombre(info.modelo[i]));
         }
     }
-    out("# ina: lectura %s; en el bus al arrancar:%s\n", t->ina_activo ? "activa" : "pausada (set ina 1)",
-        n ? lista : " nadie");
+    out("# ina: lectura %s, un registro cada %d ciclos (inacada); en el bus al arrancar:%s\n",
+        t->ina_activo ? "activa" : "pausada (set ina 1)", t->ina_cada, n ? lista : " nadie");
     n = 0;
     lista[0] = '\0';
     for (int i = 0; i < info.n_otras; i++) {
@@ -166,14 +186,39 @@ static void print_ina(const telemetry_t *t)
         s_bat.autonomia_s / 60.0f, bateria_nombre(s_bat.nivel));
 }
 
+// Por qué arrancó la ESP32 la última vez (7/11: se reiniciaba seguido y no se sabía si era un corte de la
+// alimentación, una baja de tensión o el programa)
+static const char *razon_arranque(void)
+{
+    switch (esp_reset_reason()) {
+    case ESP_RST_POWERON:   return "encendido: se cortó la alimentación o bajó el pin EN (la ESP32-S3 no los distingue; también al grabar)";
+    case ESP_RST_BROWNOUT:  return "BAJA TENSION (brownout)";
+    case ESP_RST_PANIC:     return "ERROR DEL PROGRAMA (panic)";
+    case ESP_RST_INT_WDT:   return "watchdog de interrupciones";
+    case ESP_RST_TASK_WDT:  return "watchdog de tareas (el control se trabó)";
+    case ESP_RST_WDT:       return "watchdog";
+    case ESP_RST_SW:        return "por software (esp_restart)";
+    case ESP_RST_EXT:       return "pin de reset (EN)";
+    case ESP_RST_DEEPSLEEP: return "salida de deep sleep";
+    case ESP_RST_USB:       return "USB (grabación o puerto serie)";
+    default:                return "desconocida";
+    }
+}
+
+static void print_arranque(void)
+{
+    out("# arranque: %s; prendida hace %.0f s\n", razon_arranque(), esp_timer_get_time() * 1e-6);
+}
+
 static void print_params(const telemetry_t *t)
 {
     const balance_params_t *p = &t->params;
-    out("# ref=%.2f umax=%.2f deadband=%.3f dbmov=%.3f refauto=%d\n",
-        p->theta_ref * RAD2DEG, p->u_max, t->deadband_quieto, t->mov.deadband_mov, p->ref_auto ? 1 : 0);
-    out("# kx=%.3f kv=%.3f kphi=%.3f kw=%.3f lqrpata=%d notch=%.1f notch2=%.1f lp=%.1f\n",
-        p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, p->lqr_por_pata ? 1 : 0, p->notch_hz,
-        p->notch2_hz, p->lowpass_hz);
+    out("# ref=%.2f umax=%.2f deadband=%.3f dbrampa=%.3f dbmov=%.3f refauto=%d\n",
+        p->theta_ref * RAD2DEG, p->u_max, t->deadband_quieto, p->deadband_rampa, t->mov.deadband_mov,
+        p->ref_auto ? 1 : 0);
+    out("# kx=%.3f kv=%.3f kphi=%.3f kw=%.3f lqrpata=%d lqrfac=%.2f lqrfacx=%.2f notch=%.1f notch2=%.1f lp=%.1f\n",
+        p->lqr.kx, p->lqr.kv, p->lqr.kphi, p->lqr.kw, (int)p->lqr_por_pata, t->lqr_fac, t->lqr_fac_x,
+        p->notch_hz, p->notch2_hz, p->lowpass_hz);
     out("# vmax=%.2f acel=%.2f fren=%.2f ff=%.2f xlibre=%d velpata=%.0f margen=%.2f prio=%.1f\n",
         t->mov.v_max, t->mov.acel, t->mov.fren, t->mov.ff, t->mov.x_libre ? 1 : 0,
         t->mov.vel_pata_dps, t->mov.u_margen, t->mov.prio_theta * RAD2DEG);
@@ -184,15 +229,25 @@ static void print_params(const telemetry_t *t)
         "sharpdiv=%.2f sensx=%.1f sensz=%.1f sensang=%.1f\n", t->sharp_mv, t->dist * 100.0f,
         t->haz_x * 100.0f, t->haz_z * 100.0f, t->sharp_k, t->sharp_v0, t->sharp_div, t->sens_x * 100.0f,
         t->sens_z * 100.0f, t->sens_ang * RAD2DEG);
-    out("# giromax=%.2f parinc=%.1f parsuelta=%.1f | bajada: %s, d_borde=%.0f cm (0: con el sensor)\n",
-        t->giro_max, t->par_inclina * RAD2DEG, t->par_suelta * RAD2DEG, maniobra_nombre(t->man_estado),
-        s_man.d_borde * 100.0f);
+    out("# giromax=%.2f parinc=%.1f parsuelta=%.1f tau=%.2f velf=%.1f | bajada: %s, d_borde=%.0f cm (0: con el sensor)\n",
+        t->giro_max, t->par_inclina * RAD2DEG, t->par_suelta * RAD2DEG, t->tau_att, t->vel_hz,
+        maniobra_nombre(t->man_estado), s_man.d_borde * 100.0f);
+    out("# trim=%.3f dlpf=%u (filtro de la IMU: 1 es 188 Hz, 2 es 98, 3 es 42, 4 es 20)\n", t->trim,
+        (unsigned)t->dlpf);
+    out("# ciclo, ultimo segundo: ciclo_medio_us=%lu ciclo_max_us=%lu imu_medio_us=%lu imu_max_us=%lu "
+        "ina_medio_us=%lu ina_max_us=%lu periodo_max_us=%lu\n", (unsigned long)t->ciclo.total_medio,
+        (unsigned long)t->ciclo.total_max, (unsigned long)t->ciclo.imu_medio, (unsigned long)t->ciclo.imu_max,
+        (unsigned long)t->ciclo.ina_medio, (unsigned long)t->ciclo.ina_max, (unsigned long)t->ciclo.periodo_max);
     out("# servo l=%.1f r=%.1f lim_l=%.1f..%.1f lim_r=%.1f..%.1f\n",
         t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT],
         t->servo_lim[SERVO_LEFT][0], t->servo_lim[SERVO_LEFT][1],
         t->servo_lim[SERVO_RIGHT][0], t->servo_lim[SERVO_RIGHT][1]);
+    out("# armar: %s; nunca con una pata suelta\n", t->armo_alguna_vez
+        ? "ya armó desde que se prendió, las patas pueden estar en ángulos distintos"
+        : "el primero pide las dos patas mandadas al mismo ángulo");
     print_ina(t);
     print_wifi();
+    print_arranque();
 }
 
 static void print_man(void)
@@ -214,7 +269,9 @@ static bool parse_float(const char *str, float *out)
     char *end = NULL;
     if (str == NULL) return false;
     *out = strtof(str, &end);
-    return end != str && *end == '\0';
+    // strtof acepta "nan" e "inf", y ninguna comparación los frena (auditoría del 5/11: "servo lim l
+    // nan nan" anulaba el tope de 0-30°, "set ref nan" daba reversa a fondo)
+    return end != str && *end == '\0' && isfinite(*out);
 }
 
 // Interpreta una línea. Lo que afecta al control se envía como command_t; lo que es
@@ -251,8 +308,8 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             const float uso[] = { last->params.lqr.kx, last->params.lqr.kv, last->params.lqr.kphi,
                                   last->params.lqr.kw };
             if (fabsf(v - uso[id - PARAM_KX]) > 1e-3f) {
-                out("# aviso: lqrpata=1, las ganancias salen de la tabla segun la pata; esta queda "
-                    "para cuando se ponga set lqrpata 0\n");
+                out("# aviso: lqrpata=%d, las ganancias salen de la tabla segun la pata; esta queda "
+                    "para cuando se ponga set lqrpata 0\n", last->params.lqr_por_pata);
             }
         }
     } else if (strcmp(word, "servo") == 0) {
@@ -281,6 +338,10 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
         }
         float deg;
         if (side != -2 && a != NULL && strcmp(a, "off") == 0) {
+            if (last->state == SUP_BALANCING) {
+                out("# servo off: no mientras equilibra (la pata se suelta de golpe); desarmar antes\n");
+                return;
+            }
             cmd = (command_t){ .type = CMD_SERVO_RELEASE, .servo = side };
         } else if (side != -2 && a != NULL && strcmp(a, "on") == 0) {
             bool known = false;
@@ -338,6 +399,10 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             if (pct < -100.0f || pct > 100.0f) {
                 out("# aviso: fuera de rango, se limita a -100..100\n");
             }
+            if (last->state != SUP_DISARMED && last->state != SUP_FAULT) {
+                out("# motor: solo desarmado (o en falla)\n");
+                return;
+            }
             cmd = (command_t){ .type = CMD_MOTOR, .motor = side, .value = pct / 100.0f };
         }
     } else if (strcmp(word, "mov") == 0) {
@@ -392,6 +457,14 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             return;
         }
         cmd = (command_t){ .type = CMD_PARAR };
+    } else if (strcmp(word, "grabar") == 0) {
+        if (last->man_estado != MAN_INACTIVA && last->man_estado != MAN_FIN) {
+            out("# grabar: ya esta grabando la bajada\n");
+            return;
+        }
+        cmd = (command_t){ .type = CMD_GRABAR };
+        s_grabar = 1;
+        out("# grabar: %d s a 200 Hz desde ahora; al terminar manda el registro\n", REGISTRO_N / 200);
     } else if (strcmp(word, "man") == 0) {
         char *name = strtok(NULL, " \t");
         char *val  = strtok(NULL, " \t");
@@ -420,6 +493,12 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
         char *arg = strtok(NULL, " \t");
         if (arg == NULL || strcmp(arg, "reset") != 0) {
             out("# error: enc reset\n");
+            return;
+        }
+        if (last->state != SUP_DISARMED && last->state != SUP_FAULT) {
+            // La odometría usa las cuentas desde que arrancó: equilibrando, la x saltaría todo lo
+            // recorrido y el robot pegaría un tirón a fondo
+            out("# enc reset: solo desarmado (o en falla)\n");
             return;
         }
         cmd = (command_t){ .type = CMD_ENC_RESET };
@@ -483,9 +562,19 @@ static void explain_maniobra(const telemetry_t *t, man_estado_t *man_antes, para
         *man_antes = t->man_estado;
     }
     if (t->parada_estado != *par_antes) {
-        out("# parada: %s\n", parada_nombre(t->parada_estado));
+        if (t->parada_estado == PARADA_VUELVE) {
+            out("# parada: no se tiro atras a tiempo: vuelve a la referencia y sigue equilibrando (no desarma)\n");
+        } else {
+            out("# parada: %s\n", parada_nombre(t->parada_estado));
+        }
         *par_antes = t->parada_estado;
     }
+}
+
+// Un valor del registro guardado en entero, en sus unidades (INT16_MIN: no había dato)
+static double crudo(int16_t v, float escala)
+{
+    return v == INT16_MIN ? NAN : v * escala;
 }
 
 // Manda el registro de la bajada de a REG_POR_VUELTA líneas ("#r," y los valores). *reg_i: -1 nada,
@@ -503,15 +592,21 @@ static void send_registro(int *reg_i, bool grabando)
         *reg_i = 0;
         out("# registro de la bajada: %d muestras a 200 Hz, bateria %.2f V\n", n, s_bat.v_filt);
         out("#r,t_s,maniobra,theta_deg,rate_dps,x_mm,v_mms,vref_mms,u,pata_deg,acc_ms2,dist_mm,ref_deg,"
-            "imu_ok,baja_g,solo_giro,u_directo\n");
+            "imu_ok,baja_g,solo_giro,u_directo,i_l_ma,i_r_ma,m_l,m_r,enc_l,enc_r,exc,ax,ay,az,gx,gy,gz\n");
     }
     for (int k = 0; k < REG_POR_VUELTA && *reg_i < n; k++, (*reg_i)++) {
         const registro_t *m = &r[*reg_i];
-        out("#r,%.3f,%s,%.2f,%.1f,%d,%d,%d,%.3f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d\n", m->ciclo * 0.005,
+        out("#r,%.3f,%s,%.2f,%.1f,%d,%d,%d,%.3f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d,%.0f,%.0f,%.3f,%.3f,%ld,%ld,%.3f,"
+            "%.2f,%.2f,%.2f,%.1f,%.1f,%.1f\n",
+            m->ciclo * 0.005,
             maniobra_nombre((man_estado_t)m->estado), m->theta_cdeg * 0.01, m->rate_ddps * 0.1, m->x_mm,
             m->v_mms, m->vref_mms, m->u_mil * 0.001, m->pata_cdeg * 0.01, m->acc_cms2 * 0.01, m->dist_mm,
             m->ref_cdeg * 0.01, (m->marcas & REG_IMU_OK) != 0, (m->marcas & REG_BAJA_G) != 0,
-            (m->marcas & REG_SOLO_GIRO) != 0, (m->marcas & REG_U_DIRECTO) != 0);
+            (m->marcas & REG_SOLO_GIRO) != 0, (m->marcas & REG_U_DIRECTO) != 0,
+            m->i_l_ma == INT16_MIN ? NAN : (float)m->i_l_ma, m->i_r_ma == INT16_MIN ? NAN : (float)m->i_r_ma,
+            m->m_l_mil * 0.001, m->m_r_mil * 0.001, (long)m->enc_l, (long)m->enc_r, m->exc_mil * 0.001,
+            crudo(m->imu_acc_cms2[0], 0.01f), crudo(m->imu_acc_cms2[1], 0.01f), crudo(m->imu_acc_cms2[2], 0.01f),
+            crudo(m->imu_gyro_ddps[0], 0.1f), crudo(m->imu_gyro_ddps[1], 0.1f), crudo(m->imu_gyro_ddps[2], 0.1f));
     }
     if (*reg_i >= n) {
         out("# fin del registro\n");
@@ -534,6 +629,13 @@ static void explain_arm(const telemetry_t *t)
         out("# no se armó: está en FAULT (la IMU falló); con la IMU leyendo, mandar cal\n");
     } else if (t->state == SUP_CALIBRATING || t->state == SUP_INIT) {
         out("# no se armó: está calibrando el giróscopo, dejarlo quieto 2 s\n");
+    } else if (t->arm_patas == PATAS_SUELTA) {
+        out("# no se armó: una pata estaba suelta (sin posición conocida). Van las dos a %.0f°: "
+            "armar de nuevo cuando lleguen\n", ARM_PATAS_DEG);
+    } else if (t->arm_patas == PATAS_DISTINTAS) {
+        out("# no se armó: el primer armado pide las dos patas en el mismo ángulo (izq %.1f°, der %.1f°). "
+            "Van las dos a %.0f°: armar de nuevo cuando lleguen\n",
+            t->servo_deg[SERVO_LEFT], t->servo_deg[SERVO_RIGHT], ARM_PATAS_DEG);
     } else {
         out("# no se armó: inclinación %.1f°, referencia %.1f°: tiene que estar a menos de %.0f°\n",
             t->theta * RAD2DEG, t->params.theta_ref * RAD2DEG, ARM_WINDOW_DEG);
@@ -561,6 +663,7 @@ static void comms_task(void *arg)
     int cycles = 0;
 
     out("# segway v0.2\n");
+    print_arranque();
     print_help();
     out("# " CSV_HEADER);
 
@@ -590,6 +693,7 @@ static void comms_task(void *arg)
             if (n < 0) break;
             if (new_client) {
                 out("# segway v0.2\n");
+                print_arranque();
                 out("# " CSV_HEADER);
                 print_wifi();
             }
@@ -635,6 +739,12 @@ static void comms_task(void *arg)
         if (get_wait > 0 && --get_wait == 0) print_params(&last);
         if (arm_wait > 0 && --arm_wait == 0) explain_arm(&last);
         explain_maniobra(&last, &man_antes, &par_antes, &reg_i);
+        if (s_grabar == 1 && last.registrando) {
+            s_grabar = 2;
+        } else if (s_grabar == 2 && !last.registrando) {
+            s_grabar = 0;
+            if (reg_i == -1) reg_i = -2;        // "grabar" terminó: el registro, apenas esté listo
+        }
         send_registro(&reg_i, last.registrando);
         if (tlm_on && reg_i < 0) {      // mientras manda el registro, sin telemetría (no entra)
             // Servo suelto: "nan", porque sin pulsos no se sabe dónde está

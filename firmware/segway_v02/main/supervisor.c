@@ -64,6 +64,16 @@ sup_state_t supervisor_step(supervisor_t *s, const sup_input_t *in,
     return s->state;
 }
 
+patas_arm_t patas_para_armar(const float pos_deg[2], const bool suelta[2], bool primer_armado,
+                             float tolerancia_deg)
+{
+    for (int i = 0; i < 2; i++) {
+        if (suelta[i] || isnan(pos_deg[i])) return PATAS_SUELTA;
+    }
+    if (primer_armado && fabsf(pos_deg[0] - pos_deg[1]) > tolerancia_deg) return PATAS_DISTINTAS;
+    return PATAS_OK;
+}
+
 const char *supervisor_state_name(sup_state_t st)
 {
     static const char *names[] = {

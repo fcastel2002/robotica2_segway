@@ -18,6 +18,7 @@ typedef enum {
     PARADA_BAJAR,
     PARADA_INCLINAR,
     PARADA_SOLTAR,
+    PARADA_VUELVE,      // no se tiró atrás a tiempo: la referencia vuelve y sigue equilibrando
 } parada_estado_t;
 
 typedef struct {

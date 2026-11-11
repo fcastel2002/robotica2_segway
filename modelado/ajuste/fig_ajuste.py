@@ -38,7 +38,7 @@ ax.plot(pf, [float(v) for v in curvas["original"]], "--", color="0.5", lw=2, lab
 ax.plot(pf, [float(v) for v in curvas["ajustada"]], "k-", lw=2, label="modelo ajustado")
 ax.set_xlabel("pata del firmware [°]")
 ax.set_ylabel("ángulo de equilibrio en la IMU [°]")
-ax.set_title("Equilibrio: el modelo como estaba erra hasta 3,7° (1,5° rms);\nel ajustado, 0,22° (0,10° rms)", fontsize=10)
+ax.set_title("Equilibrio: el modelo como estaba erra hasta 3,7° (1,5° rms);\nel ajustado (con el peso medido, 5/11), 0,22° (0,11° rms)", fontsize=10)
 ax.grid(alpha=0.3)
 ax.legend(fontsize=8)
 
@@ -62,6 +62,6 @@ for pata, col, etiqueta, pos in paneles:
         a.legend(fontsize=8, loc="upper right")
     if pata == 0 or col == "th_rel":
         a.set_xlabel("t [s]")
-fig.suptitle("Ajuste del modelo con el robot (3/11/2026)", fontsize=13, y=0.985)
+fig.suptitle("Ajuste del modelo con el robot (3/11/2026; 5/11: con el peso medido, 1196 g)", fontsize=13, y=0.985)
 fig.savefig(AQUI / "fig_ajuste.png", dpi=120)
 print("->", AQUI / "fig_ajuste.png")

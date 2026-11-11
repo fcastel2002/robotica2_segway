@@ -132,7 +132,11 @@ function borrarHistoria() {
 
 function conectarPuente() {
   const es = new EventSource('eventos');
-  es.onopen = () => estado('puente conectado', 'ok');
+  // Como por USB: "tlm on" hace que el robot vuelva a mandar el encabezado (si se reinició, se perdió)
+  es.onopen = () => {
+    estado('puente conectado', 'ok');
+    fetch('comando', { method: 'POST', body: 'tlm on' }).catch(() => {});
+  };
   es.onerror = () => estado('sin puente, reintentando… (¿está corriendo puente.py?)', 'error');
   es.onmessage = (e) => e.data.split('\n').forEach(procesarLinea);
   const enviar = async (texto) => {

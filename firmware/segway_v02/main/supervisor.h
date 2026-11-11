@@ -45,3 +45,17 @@ sup_state_t supervisor_step(supervisor_t *s, const sup_input_t *in,
                             float tilt_limit, float arm_window);
 
 const char *supervisor_state_name(sup_state_t st);
+
+// Patas para armar (7/11, pedido de Francisco). Los servos no tienen encoder: una pata solo tiene
+// posición conocida si se la mandó con un ángulo, y suelta (sin pulsos) puede estar en cualquier lado.
+// Nunca se arma con una pata suelta, y el primer armado desde que se prendió pide además las dos en el
+// mismo ángulo (a menos de 'tolerancia' grados de pata). Los siguientes respetan dónde quedaron, aunque
+// sean distintas (nivelar). Si no se puede, control_task no arma y manda las dos a ARM_PATAS_DEG.
+typedef enum {
+    PATAS_OK = 0,
+    PATAS_SUELTA,           // alguna sin posición conocida (suelta, o nunca mandada desde que se prendió)
+    PATAS_DISTINTAS,        // primer armado con las dos en ángulos distintos (o una todavía yendo)
+} patas_arm_t;
+
+patas_arm_t patas_para_armar(const float pos_deg[2], const bool suelta[2], bool primer_armado,
+                             float tolerancia_deg);

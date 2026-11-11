@@ -35,7 +35,7 @@ sys.path.insert(0, str(ESCALON))
 from variaciones import VARIACIONES, clase, resultado  # noqa: E402
 
 CARPETA = "visor/%d" % os.getpid()  # dentro de simulacion/escalon/resultados/: una por visor abierto
-DEFECTOS_VISOR = {"v_motor": 10.6}  # la LiPo cargada (12,6 V) antes de cada ensayo: siempre se pasa
+DEFECTOS_VISOR = {"v_motor": 12.6}  # la LiPo cargada (12,6 V; con el DRV8871 llega toda al motor): siempre se pasa
 # Programa de la maniobra (patas=..., vel=...): hasta 8 "evento:valor:objetivo:ritmo" separados por /
 _ACCION = r"(larga|borde|despega|toca):-?\d+(\.\d+)?:-?\d+(\.\d+)?:\d+(\.\d+)?"
 PROGRAMA = re.compile(r"^(%s(/%s){0,7})?$" % (_ACCION, _ACCION))
@@ -47,9 +47,9 @@ PLANTAS = {
                      nombre="original (antes del 3/11)"),
 }
 FUENTES = (["simulacion/escalon/*.c", "simulacion/escalon/*.h",
-            "firmware/segway_v01/components/control/*.c",
-            "firmware/segway_v01/components/control/include/*.h",
-            "firmware/segway_v01/main/board_config.h"])
+            "firmware/segway_v02/components/control/*.c",
+            "firmware/segway_v02/components/control/include/*.h",
+            "firmware/segway_v02/main/board_config.h"])
 
 _compilar = threading.Lock()
 _corridas = {}                       # id -> {"planta", "params", "resumen", "archivo"}
@@ -75,11 +75,11 @@ def banco(planta):
             raise Error("No encuentro gcc para compilar el banco. Instalalo (MSYS2/MinGW) o compilalo "
                         "como dice simulacion/escalon/README.md y dejá " + p["exe"] + " en simulacion/escalon/.")
         cmd = ([gcc, "-std=c11", "-O2"] + p["define"]
-               + ["-Isimulacion/escalon", "-Ifirmware/segway_v01/components/control/include",
-                  "-Ifirmware/segway_v01/main", "simulacion/escalon/banco_escalon.c",
+               + ["-Isimulacion/escalon", "-Ifirmware/segway_v02/components/control/include",
+                  "-Ifirmware/segway_v02/main", "simulacion/escalon/banco_escalon.c",
                   "simulacion/escalon/planta_plana.c", "simulacion/escalon/pata_tabla.c"]
                + sorted(os.path.relpath(f, RAIZ)
-                        for f in glob.glob(str(RAIZ / "firmware/segway_v01/components/control/*.c")))
+                        for f in glob.glob(str(RAIZ / "firmware/segway_v02/components/control/*.c")))
                + ["-lm", "-o", str(exe)])
         print("compilando el banco (%s)..." % planta, flush=True)
         r = subprocess.run(cmd, cwd=RAIZ, capture_output=True, text=True)

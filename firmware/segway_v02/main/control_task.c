@@ -35,6 +35,32 @@ typedef struct {
 
 static control_ctx_t s_ctx;
 
+// Constante del filtro de inclinación: "set tau" la cambia en vivo (auditoría del 5/11: comparar 0,5 y
+// 1 s en el robot; al reiniciar vuelve a ATTITUDE_TAU_S)
+static float s_tau_att = ATTITUDE_TAU_S;
+// Cada cuántos ciclos se lee un registro de los INA: "set inacada 1" para los ensayos del modelo
+// (cada motor a ~67 Hz en lugar de 13; MED-007)
+static int s_ina_cada = INA_CADA_CICLOS;
+// Factor sobre las ganancias de la tabla ("set lqrfac"; 7/11: 0,6 con el DRV8871)
+static float s_lqr_fac = DEFAULT_LQR_FACTOR;
+static float s_lqr_fac_x = DEFAULT_LQR_FACTOR_X;    // el de kx y kv ("set lqrfacx")
+// Pasabajos de la velocidad de las ruedas [Hz] ("set velf"; 0 = sin filtro). 7/11: en el modelo, 10 Hz deja
+// más margen que 20 (×3,1 contra ×2,5) y la mitad del ruido del encoder; sin filtro, ×1,55
+// (firmware/docs/lazo_equilibrio_explicado.md). Para probarlo en el robot sin regrabar
+static float s_vel_hz = VEL_FILTER_HZ;
+// Compensación entre motores ("set trim", balance_trim) y filtro interno de la IMU ("set dlpf"), en vivo
+// para ajustarlos con los ensayos sin regrabar (9/11, VAL-303)
+static float s_trim = DEFAULT_MOTOR_TRIM;
+static int s_dlpf = IMU_DLPF_DEFAULT;
+#define CICLO_VENTANA   (1000 / CONTROL_PERIOD_MS)     // ciclos por cada resumen de tiempos (1 s)
+// "set exc <amp>": un barrido senoidal de EXC_F0 a EXC_F1 Hz (logarítmico, EXC_T s) que se suma al comando
+// del LQR, para medir en el robot cómo responde a cada frecuencia y el margen del lazo (7/11: el modelo
+// no explicaba vibraciones de 8 y 10 Hz). Empezarlo junto con "grabar" (8 s a 200 Hz).
+#define EXC_F0  1.0f
+#define EXC_F1  20.0f
+#define EXC_T   7.5f
+static float s_exc_amp, s_exc_t = -1.0f;
+
 // Registro de la bajada (control_task.h): lo escribe control mientras graba; comms lo lee
 // cuando s_reg_listo (sin escritura en curso)
 static registro_t s_reg[REGISTRO_N];
@@ -91,11 +117,12 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         }
         break;
     case CMD_SERVO_LIMITS:
-        // Solo cambia los próximos pedidos: no mueve un servo que haya quedado afuera
+        // Solo cambia los próximos pedidos: no mueve un servo que haya quedado afuera. Siempre dentro
+        // de SERVO_HARD_* (comms ya lo controla; acá también, por si llega algo raro)
         for (int i = 0; i < SERVO_COUNT; i++) {
             if (c->servo == SERVO_BOTH || c->servo == i) {
-                servo_lim[i][0] = c->value;
-                servo_lim[i][1] = c->value2;
+                servo_lim[i][0] = fmaxf(c->value, SERVO_HARD_MIN_DEG);
+                servo_lim[i][1] = fminf(c->value2, SERVO_HARD_MAX_DEG);
             }
         }
         break;
@@ -131,10 +158,12 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
     case CMD_MOVE:      // estos los atiende control_task antes de llamar acá
     case CMD_ESCALON:
     case CMD_PARAR:
+    case CMD_GRABAR:
     case CMD_MAN_PARAM:
         break;
     case CMD_SET:
         switch (c->param) {
+        case PARAM_TAU:      s_tau_att = fminf(fmaxf(c->value, 0.1f), 3.0f); break;
         case PARAM_REF:      p->theta_ref = c->value * DEG2RAD; break;
         case PARAM_UMAX:     p->u_max = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
         case PARAM_DEADBAND: *db_quieto = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
@@ -143,7 +172,7 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_KV:       lqr_fijas->kv = c->value; break;
         case PARAM_KPHI:     lqr_fijas->kphi = c->value; break;
         case PARAM_KW:       lqr_fijas->kw = c->value; break;
-        case PARAM_LQRPATA:  p->lqr_por_pata = c->value != 0.0f; break;
+        case PARAM_LQRPATA:  p->lqr_por_pata = (uint8_t)fminf(fmaxf(roundf(c->value), 0.0f), 2.0f); break;
         case PARAM_NOTCH:    p->notch_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
         case PARAM_NOTCH2:   p->notch2_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
         case PARAM_LOWPASS:  p->lowpass_hz = fminf(fmaxf(c->value, 0.0f), 40.0f); break;
@@ -166,6 +195,15 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_PARINC:   pp->inclina_deg = fminf(fmaxf(c->value, 0.0f), 15.0f); break;
         case PARAM_PARSUELTA: pp->suelta_deg = fminf(fmaxf(c->value, 0.5f), 10.0f); break;
         case PARAM_INA:      *ina_activo = c->value != 0.0f; break;
+        case PARAM_INACADA:  s_ina_cada = (int)fminf(fmaxf(roundf(c->value), 1.0f), 20.0f); break;
+        case PARAM_LQRFAC:   s_lqr_fac = fminf(fmaxf(c->value, 0.2f), 1.5f); break;
+        case PARAM_LQRFACX:  s_lqr_fac_x = fminf(fmaxf(c->value, 0.2f), 1.5f); break;
+        case PARAM_DBRAMPA:  p->deadband_rampa = fminf(fmaxf(c->value, 0.0f), 0.3f); break;
+        case PARAM_EXC:      s_exc_amp = fminf(fmaxf(c->value, 0.0f), 0.2f); s_exc_t = s_exc_amp > 0.0f ? 0.0f : -1.0f;
+                             break;
+        case PARAM_VELF:     s_vel_hz = c->value <= 0.0f ? 0.0f : fminf(fmaxf(c->value, 2.0f), 80.0f); break;
+        case PARAM_TRIM:     s_trim = fminf(fmaxf(c->value, -0.10f), 0.10f); break;
+        case PARAM_DLPF:     s_dlpf = (int)fminf(fmaxf(roundf(c->value), 1.0f), 4.0f); break;
         default: break;
         }
         break;
@@ -218,14 +256,17 @@ static float ref_de_patas(const float pos[SERVO_COUNT])
     return balance_ref_tabla(pata_actual(pos), patas, refs, sizeof patas / sizeof patas[0]) * DEG2RAD;
 }
 
-// Ganancias del LQR para la altura de patas actual (LQR_TABLA de board_config.h)
-static void lqr_de_patas(const float pos[SERVO_COUNT], lqr_gains_t *k)
+// Ganancias del LQR para la altura de patas actual: de LQR_TABLA (cual = 1) o de LQR_TABLA_DRV (2)
+static void lqr_de_patas(const float pos[SERVO_COUNT], int cual, lqr_gains_t *k)
 {
     static const float patas[] = LQR_TABLA_PATAS_DEG;
     static const float tabla[][4] = LQR_TABLA;
+    static const float tabla_drv[][4] = LQR_TABLA_DRV;
     _Static_assert(sizeof tabla / sizeof tabla[0] == sizeof patas / sizeof patas[0],
                    "LQR_TABLA y LQR_TABLA_PATAS_DEG tienen que tener las mismas filas");
-    balance_lqr_tabla(pata_actual(pos), patas, tabla, sizeof patas / sizeof patas[0], k);
+    _Static_assert(sizeof tabla_drv / sizeof tabla_drv[0] == sizeof patas / sizeof patas[0],
+                   "LQR_TABLA_DRV y LQR_TABLA_PATAS_DEG tienen que tener las mismas filas");
+    balance_lqr_tabla(pata_actual(pos), patas, cual == 2 ? tabla_drv : tabla, sizeof patas / sizeof patas[0], k);
 }
 
 static void control_task(void *arg)
@@ -236,6 +277,7 @@ static void control_task(void *arg)
         .lqr       = { DEFAULT_LQR_KX, DEFAULT_LQR_KV, DEFAULT_LQR_KPHI, DEFAULT_LQR_KW },
         .u_max     = DEFAULT_U_MAX,
         .deadband  = DEFAULT_DEADBAND,
+        .deadband_rampa = DEFAULT_DEADBAND_RAMPA,
         .notch_hz  = DEFAULT_NOTCH_HZ,
         .notch2_hz = DEFAULT_NOTCH2_HZ,
         .lowpass_hz = DEFAULT_LOWPASS_HZ,
@@ -254,7 +296,6 @@ static void control_task(void *arg)
     odometry_reset(&odo);
 
     bool calibrated = false;
-    const float tau_vel = 1.0f / (6.2831853f * VEL_FILTER_HZ);    // [s]
     bool overrun = false;
     float ramp = 0.0f;              // 0..1 durante el armado
     float u = 0.0f;
@@ -307,6 +348,8 @@ static void control_task(void *arg)
     parada_params_por_defecto(&par_p);
     parada_salida_t ps = { 0 };
     bool pedir_desarme = false;
+    bool armo_alguna_vez = false;   // desde que se prendió: el primer armado pide las patas iguales
+    patas_arm_t arm_patas = PATAS_OK;   // por qué no armó el último "arm" por las patas (para comms)
     float ref_vuelo = 0.0f;         // la referencia al despegar (la que queda en el vuelo)
     bool grabando = false;
     int fin_reg = 0;                // ciclos que quedan por grabar después de que terminó
@@ -317,6 +360,10 @@ static void control_task(void *arg)
     ina_datos_reset(&ina);
     bool ina_activo = true;
     int ina_ciclos = 0;
+    // Tiempos del ciclo: se acumulan CICLO_VENTANA ciclos y se publica el resumen (get)
+    ciclo_t ciclo = { 0 };
+    uint32_t cs_total = 0, cs_imu = 0, cs_ina = 0, cm_total = 0, cm_imu = 0, cm_ina = 0, cm_periodo = 0;
+    int cn = 0, cn_ina = 0;
 
     ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
     TickType_t last_wake = xTaskGetTickCount();
@@ -325,6 +372,7 @@ static void control_task(void *arg)
     for (;;) {
         xTaskDelayUntil(&last_wake, pdMS_TO_TICKS(CONTROL_PERIOD_MS));
         int64_t t0 = esp_timer_get_time();
+        uint32_t periodo_us = (uint32_t)(t0 - t_prev);
         float dt = (t0 - t_prev) * 1e-6f;
         t_prev = t0;
         esp_task_wdt_reset();
@@ -334,6 +382,15 @@ static void control_task(void *arg)
         pedir_desarme = false;
         command_t c;
         while (xQueueReceive(ctx->command_q, &c, 0) == pdTRUE) {
+            // Auditoría del 5/11: un nan o inf no es un valor (comms ya no los deja pasar; esto es por
+            // las dudas). Motores a mano y encoders a cero, solo desarmado o en falla: equilibrando,
+            // un "motor" quedaba guardado y se aplicaba al desarmar, y "enc reset" hacía saltar la
+            // odometría todo lo recorrido (un tirón a fondo).
+            if (!isfinite(c.value) || !isfinite(c.value2)) continue;
+            if ((c.type == CMD_MOTOR || c.type == CMD_ENC_RESET)
+                && sup.state != SUP_DISARMED && sup.state != SUP_FAULT) {
+                continue;
+            }
             if (c.type == CMD_MOVE) {
                 mov_fwd = c.value;
                 mov_turn = c.value2;
@@ -363,6 +420,17 @@ static void control_task(void *arg)
                 }
                 continue;
             }
+            if (c.type == CMD_GRABAR) {
+                // REGISTRO_N muestras (8 s) desde ya, armado o no (fuera de una bajada, "termino" es
+                // cierto en cada ciclo y fin_reg cuenta hasta el final)
+                if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) {
+                    s_reg_listo = false;
+                    s_reg_n = 0;
+                    grabando = true;
+                    fin_reg = REGISTRO_N;
+                }
+                continue;
+            }
             if (c.type == CMD_MAN_PARAM) {
                 // Los parámetros no cambian en plena maniobra (comms avisa)
                 if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) maniobra_poner(&man_p, c.param, c.value);
@@ -376,6 +444,17 @@ static void control_task(void *arg)
                 ref_correccion = ref_centro = params.theta_ref - ref_de_patas(servo_pos);
             }
         }
+        // No armar con las patas flojas (supervisor.h): con una suelta, o en el primer armado con las dos en
+        // ángulos distintos, "arm" no arma y las manda a ARM_PATAS_DEG; se arma de nuevo cuando llegan.
+        // cmd_arm queda para la guía del LED (un "arm" que no armó la prende, como siempre)
+        sup_cmd_t cmd_arm = cmd;
+        if (cmd == SUP_CMD_ARM && (sup.state == SUP_DISARMED || sup.state == SUP_FALLEN)) {
+            arm_patas = patas_para_armar(servo_pos, servo_free, !armo_alguna_vez, ARM_PATAS_TOL_DEG);
+            if (arm_patas != PATAS_OK) {
+                cmd = SUP_CMD_NONE;
+                pedir_patas(ARM_PATAS_DEG, servo_pos, servo_target, servo_free, servo_lim);
+            }
+        }
         // La referencia sigue a las patas mientras se mueven (update_servos las lleva a 90 °/s)
         params.theta_ref = ref_de_patas(servo_pos) + ref_correccion;
         // En el vuelo la tabla de equilibrio no vale (no está apoyado): queda la de antes de despegar.
@@ -384,14 +463,24 @@ static void control_task(void *arg)
         if (man.estado == MAN_VUELO) params.theta_ref = ref_vuelo;
         else ref_vuelo = params.theta_ref;
         // Y las ganancias, según la pata o las fijas (get muestra las que se están usando)
-        if (params.lqr_por_pata) lqr_de_patas(servo_pos, &params.lqr);
+        if (params.lqr_por_pata) {
+            lqr_de_patas(servo_pos, params.lqr_por_pata, &params.lqr);
+            params.lqr.kx *= s_lqr_fac_x;
+            params.lqr.kv *= s_lqr_fac_x;
+            params.lqr.kphi *= s_lqr_fac;
+            params.lqr.kw *= s_lqr_fac;
+        }
         else params.lqr = lqr_fijas;
 
         // 2. Sensores y estimación, en los ejes del robot. En caída libre (bajando un escalón) la
         // IMU lee bien pero la inclinación sigue solo con el giróscopo; demasiado tiempo así es una
         // falla (un sensor que no mide). La maniobra también pide solo giróscopo al largar y al tocar.
         imu_sample_t s;
+        if (s_dlpf != imu_dlpf()) imu_set_dlpf((uint8_t)s_dlpf);    // "set dlpf": insiste hasta que el sensor lo toma
+        int64_t t_imu = esp_timer_get_time();
         bool imu_ok = imu_read(&s) == ESP_OK;
+        uint32_t imu_us = (uint32_t)(esp_timer_get_time() - t_imu);
+        bool imu_leida = imu_ok;            // la lectura salió (aunque esté en caída libre): para el registro
         if (imu_ok) {
             n_baja_g = s.baja_g ? n_baja_g + 1 : 0;
             if (n_baja_g > BAJA_G_CICLOS) imu_ok = false;
@@ -408,7 +497,7 @@ static void control_task(void *arg)
             } else if (s.baja_g || (ms.activa && ms.solo_giroscopo)) {
                 attitude_update_gyro(&att, gyro, dt);
             } else {
-                attitude_update(&att, acc_fwd, acc_up, gyro, dt, ATTITUDE_TAU_S);
+                attitude_update(&att, acc_fwd, acc_up, gyro, dt, s_tau_att);
             }
         }
 
@@ -425,7 +514,8 @@ static void control_task(void *arg)
         };
         sup_state_t st = supervisor_step(&sup, &in, TILT_LIMIT_DEG * DEG2RAD,
                                          ARM_WINDOW_DEG * DEG2RAD);
-        led_guia = led_guia_paso(led_guia, st, cmd);
+        led_guia = led_guia_paso(led_guia, st, cmd_arm);
+        if (st == SUP_BALANCING) armo_alguna_vez = true;
         if (st == SUP_CALIBRATING && (prev == SUP_DISARMED || prev == SUP_FAULT)) {
             // Recalibración pedida con "cal": se descarta el sesgo y el ángulo anteriores
             calibrated = false;
@@ -436,6 +526,7 @@ static void control_task(void *arg)
         // armó (el LQR lo lleva de vuelta ahí). Se resetea antes de usarla en el primer ciclo.
         if (st == SUP_BALANCING && prev != SUP_BALANCING) odometry_reset(&odo);
         float cuentas = 0.5f * ((float)encoder_get(ENC_LEFT) + (float)encoder_get(ENC_RIGHT));
+        float tau_vel = s_vel_hz > 0.0f ? 1.0f / (6.2831853f * s_vel_hz) : 0.0f;     // [s]; 0: sin filtro
         odometry_update(&odo, cuentas, att.theta, ENC_COUNTS_PER_REV, WHEEL_RADIUS_M, dt, tau_vel);
 
         // Sensor de distancia: cuánto mide y dónde pega el haz respecto del apoyo de la rueda
@@ -458,6 +549,7 @@ static void control_task(void *arg)
 
         // 4. Control y actuación. Fuera de BALANCING se apaga en cada ciclo, no solo al salir.
         float applied[MOTOR_COUNT] = { 0.0f };      // para la telemetría
+        float exc = 0.0f;                           // el barrido de "set exc" en este ciclo
         if (st == SUP_BALANCING) {
             if (prev != SUP_BALANCING) {
                 balance_reset(&bal);
@@ -542,8 +634,20 @@ static void control_task(void *arg)
                                                   odo.v, REF_AUTO_V_MAX,
                                                   fabsf(u) >= 0.95f * u_limit, REF_AUTO_GAIN, dt);
             }
-            applied[MOTOR_LEFT]  = fminf(fmaxf(u + giro, -u_limit), u_limit);
-            applied[MOTOR_RIGHT] = fminf(fmaxf(u - giro, -u_limit), u_limit);
+            // El barrido de "set exc", sumado después del LQR y sus filtros (así los notch no lo sacan)
+            exc = 0.0f;
+            if (s_exc_t >= 0.0f) {
+                float k = EXC_F1 / EXC_F0;
+                float fase = 6.2831853f * EXC_F0 * EXC_T / logf(k) * (powf(k, s_exc_t / EXC_T) - 1.0f);
+                exc = s_exc_amp * sinf(fase);
+                u += exc;
+                s_exc_t += dt;
+                if (s_exc_t > EXC_T) s_exc_t = -1.0f;
+            }
+            // Compensación entre motores: de más a la izquierda y de menos a la derecha, cada una en su sentido
+            float u_l = u + giro, u_r = u - giro;
+            applied[MOTOR_LEFT]  = fminf(fmaxf(u_l + balance_trim(u_l, s_trim), -u_limit), u_limit);
+            applied[MOTOR_RIGHT] = fminf(fmaxf(u_r - balance_trim(u_r, s_trim), -u_limit), u_limit);
             motor_set(MOTOR_LEFT, applied[MOTOR_LEFT]);
             motor_set(MOTOR_RIGHT, applied[MOTOR_RIGHT]);
         } else if (st == SUP_DISARMED || st == SUP_FAULT) {
@@ -564,6 +668,7 @@ static void control_task(void *arg)
             motor_stop_all();
         }
         if (st != SUP_BALANCING) {
+            s_exc_t = -1.0f;                // el barrido de "set exc" se corta
             mov_reset(&mov, 0.0f);
             giro = 0.0f;
             // Sin equilibrio no hay maniobra ni parada: las patas quedan donde estén
@@ -590,6 +695,14 @@ static void control_task(void *arg)
                 .vref_mms = a_i16((ms.activa ? ms.v_ref : mov.v_ref) * 1e3f), .u_mil = a_i16(u * 1e3f),
                 .pata_cdeg = a_i16(pata_actual(servo_pos) * 100.0f), .acc_cms2 = a_i16(acc_norma * 100.0f),
                 .dist_mm = isnan(dist) ? -1 : a_i16(dist * 1e3f), .ref_cdeg = a_i16(params.theta_ref * 5729.578f),
+                .i_l_ma = a_i16(ina.corriente[INA_MOTOR_L] * 1e3f), .i_r_ma = a_i16(ina.corriente[INA_MOTOR_R] * 1e3f),
+                .m_l_mil = a_i16(applied[MOTOR_LEFT] * 1e3f), .m_r_mil = a_i16(applied[MOTOR_RIGHT] * 1e3f),
+                .enc_l = encoder_get(ENC_LEFT), .enc_r = encoder_get(ENC_RIGHT),
+                .exc_mil = a_i16(exc * 1e3f),
+                .imu_acc_cms2 = { a_i16(imu_leida ? s.accel[0] * 100.0f : NAN), a_i16(imu_leida ? s.accel[1] * 100.0f : NAN),
+                              a_i16(imu_leida ? s.accel[2] * 100.0f : NAN) },
+                .imu_gyro_ddps = { a_i16(imu_leida ? s.gyro[0] * 572.9578f : NAN), a_i16(imu_leida ? s.gyro[1] * 572.9578f : NAN),
+                               a_i16(imu_leida ? s.gyro[2] * 572.9578f : NAN) },
             };
             s_reg_n = n + 1;
             bool termino = man.estado == MAN_INACTIVA || man.estado == MAN_FIN || st != SUP_BALANCING;
@@ -610,16 +723,36 @@ static void control_task(void *arg)
         // el bus con la IMU. Si este ciclo vino justo se deja para el próximo.
         if (!ina_activo) {
             ina_datos_reset(&ina);
-        } else if (++ina_ciclos >= INA_CADA_CICLOS
+        } else if (++ina_ciclos >= s_ina_cada
                    && esp_timer_get_time() - t0 < PERIOD_US - INA_MARGEN_US) {
             ina_ciclos = 0;
+            int64_t t_ina = esp_timer_get_time();
             ina_leer_siguiente(&ina);
+            uint32_t ina_us = (uint32_t)(esp_timer_get_time() - t_ina);
+            cs_ina += ina_us;
+            if (ina_us > cm_ina) cm_ina = ina_us;
+            cn_ina++;
         }
 
         // 5. Telemetría y medición del ciclo
         uint32_t exec_us = (uint32_t)(esp_timer_get_time() - t0);
         overrun = exec_us > PERIOD_US;
         if (overrun) overruns_total++;
+        cs_total += exec_us;
+        cs_imu += imu_us;
+        if (exec_us > cm_total) cm_total = exec_us;
+        if (imu_us > cm_imu) cm_imu = imu_us;
+        if (periodo_us > cm_periodo) cm_periodo = periodo_us;
+        if (++cn >= CICLO_VENTANA) {
+            ciclo = (ciclo_t){
+                .total_medio = cs_total / cn, .total_max = cm_total,
+                .imu_medio = cs_imu / cn, .imu_max = cm_imu,
+                .ina_medio = cn_ina > 0 ? cs_ina / cn_ina : 0, .ina_max = cm_ina,
+                .periodo_max = cm_periodo,
+            };
+            cs_total = cs_imu = cs_ina = cm_total = cm_imu = cm_ina = cm_periodo = 0;
+            cn = cn_ina = 0;
+        }
         if (exec_us > exec_max) exec_max = exec_us;
         if (++window_n >= WINDOW_CYCLES) {
             window_max = exec_max;
@@ -663,9 +796,19 @@ static void control_task(void *arg)
             .giro_max    = giro_max,
             .par_inclina = par_p.inclina_deg * DEG2RAD,
             .par_suelta  = par_p.suelta_deg * DEG2RAD,
+            .tau_att     = s_tau_att,
             .led_guia    = led_guia,
             .ina         = ina,
             .ina_activo  = ina_activo,
+            .ina_cada    = s_ina_cada,
+            .lqr_fac     = s_lqr_fac,
+            .lqr_fac_x   = s_lqr_fac_x,
+            .vel_hz      = s_vel_hz,
+            .trim        = s_trim,
+            .dlpf        = imu_dlpf(),
+            .ciclo       = ciclo,
+            .arm_patas   = (uint8_t)arm_patas,
+            .armo_alguna_vez = armo_alguna_vez,
         };
         for (int i = 0; i < 3; i++) {
             t.accel[i] = imu_ok ? s.accel[i] : NAN;

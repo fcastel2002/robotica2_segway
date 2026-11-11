@@ -24,6 +24,6 @@ void odometry_update(odometry_t *o, float counts, float theta, float counts_per_
     o->x = x_abs - o->x0;
     float v_cruda = (x_abs - o->x_abs_prev) / dt;
     o->x_abs_prev = x_abs;
-    float alfa = 1.0f - expf(-dt / tau_v);
+    float alfa = tau_v > 0.0f ? 1.0f - expf(-dt / tau_v) : 1.0f;     // tau_v = 0: sin filtro
     o->v += alfa * (v_cruda - o->v);
 }

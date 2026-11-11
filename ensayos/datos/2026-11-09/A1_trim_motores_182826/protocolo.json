@@ -1,0 +1,144 @@
+{
+  "esquema": 1,
+  "id": "A1",
+  "nombre": "trim_motores",
+  "titulo": "Ajuste de la compensación entre motores (set trim): ida y vuelta a 0,1 m/s con cada valor",
+  "pregunta": "¿Con qué trim giran igual las dos ruedas andando? (9/11, E5: con el mismo comando la izquierda gira 0,6-0,8 rad/s menos.)",
+  "criterio": "La diferencia de velocidad entre ruedas en crucero cambia de signo dentro de los valores probados; el trim que la anula sale con analizar_trim.py. Sin registros de 200 Hz: alcanza la telemetría.",
+  "requisitos": {
+    "estado": "BALANCING",
+    "confirmar": [
+      "atajando",
+      "despejado"
+    ],
+    "patas_deg": 15.0,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.4,
+    "quieto_s": 5.0,
+    "espera_max_s": 180
+  },
+  "config": {
+    "refauto": 0
+  },
+  "limites": {
+    "mov_max": 0.5
+  },
+  "abortar": {
+    "theta_err_deg": 10.0,
+    "x_desde_inicio_mm": 1000
+  },
+  "pasos": [
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set trim 0.025"
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.5
+    },
+    {
+      "hacer": "marca",
+      "texto": "trim 0.025 ida"
+    },
+    {
+      "hacer": "mov",
+      "avance": 0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 2.5
+    },
+    {
+      "hacer": "marca",
+      "texto": "trim 0.025 vuelta"
+    },
+    {
+      "hacer": "mov",
+      "avance": -0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 2.5
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set trim 0.03"
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.5
+    },
+    {
+      "hacer": "marca",
+      "texto": "trim 0.03 ida"
+    },
+    {
+      "hacer": "mov",
+      "avance": 0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 2.5
+    },
+    {
+      "hacer": "marca",
+      "texto": "trim 0.03 vuelta"
+    },
+    {
+      "hacer": "mov",
+      "avance": -0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 2.5
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set trim 0.035"
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.5
+    },
+    {
+      "hacer": "marca",
+      "texto": "trim 0.035 ida"
+    },
+    {
+      "hacer": "mov",
+      "avance": 0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 2.5
+    },
+    {
+      "hacer": "marca",
+      "texto": "trim 0.035 vuelta"
+    },
+    {
+      "hacer": "mov",
+      "avance": -0.25,
+      "giro": 0.0,
+      "s": 4.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 2.5
+    }
+  ]
+}
