@@ -83,7 +83,10 @@
 // 6/11: con la PCB, "izquierdo" movía el servo que está sobre el motor derecho. Se cruzaron los
 // nombres (PIN_SERVO_*); el cero y el invert acompañan al pin, así cada servo físico recibe los
 // mismos pulsos que antes. Por eso el 5° y el invert, medidos como "derecha", quedan en la izquierda.
-#define SERVO_L_ZERO_DEG        5.0f
+// 10/11 (Joaquín, mirando las dos patas): la izquierda quedaba 2° por detrás de la derecha (más
+// floja): su cero pasa de 5 a 7. Con "servo 30" la derecha va a 30 y la izquierda a lo que antes era
+// 32, las dos en el mismo lugar; en la página y en la consigna se sigue viendo 30.
+#define SERVO_L_ZERO_DEG        7.0f
 #define SERVO_R_ZERO_DEG        0.0f
 // 29/10: el recorrido es 0-30°, ESTRICTO: fuera de ahí se rompe el cuatro barras. 3/11: la
 // pata derecha se corrió 5° en el brazo del servo, así que su 0-30 de pata es 5-35 del servo
@@ -118,7 +121,10 @@
 // para la pata actual y "refauto" la ajusta sola. Con las patas sueltas (posición desconocida) se
 // toma REF_PATA_SUELTA_DEG.
 #define REF_TABLA_PATAS_DEG     { 0.0f, 2.5f, 5.0f, 7.5f, 10.0f, 12.5f, 15.0f, 17.5f, 20.0f, 22.5f, 25.0f, 27.5f, 30.0f }
-#define REF_TABLA_THETA_DEG     { 19.74f, 18.18f, 16.93f, 15.91f, 15.07f, 14.33f, 13.65f, 12.95f, 12.18f, 11.26f, 10.14f, 8.75f, 7.03f }
+// 11/11: sin la tapa nueva (1240 g), medida con sesion_placa.py medir_equilibrio 2,5 2 (ida y vuelta, promedio;
+// firmware/docs/equilibrio_patas_2026-11-11_1240g.csv). La del 7/11 (1208 g, con las PCB) era
+// { 19.74, 18.18, 16.93, 15.91, 15.07, 14.33, 13.65, 12.95, 12.18, 11.26, 10.14, 8.75, 7.03 }
+#define REF_TABLA_THETA_DEG     { 21.40f, 19.28f, 18.33f, 17.75f, 17.20f, 16.56f, 15.61f, 14.64f, 13.69f, 13.34f, 12.96f, 11.68f, 11.49f }
 #define REF_PATA_SUELTA_DEG     15.0f
 #define DEFAULT_U_MAX           1.0f        // 2/11: con 0,6 se escapó al armar (poco margen); con
                                             // 0,8 anduvo; a la noche, 1,0 para que el joystick a fondo
@@ -280,6 +286,31 @@
                                             // set giromax). 3/11 se probó 0,30 para girar en el lugar
                                             // con R2/L2; se sacó (4/11) y vuelve a 0,15 para el stick
 #define MOV_GIRO_RATE           0.60f       // fracción de PWM por segundo
+// 11/11: la bajada derecha. Yendo marcha atrás al borde (~0,5 m en 1,7 s) el robot se torcía entre -6 y +6°
+// (giróscopo vertical, las 5 bajadas del 11/11: un motor empuja más) y llegaba con una rueda antes que la
+// otra. Desde que se aprieta △ hasta que cae, sostiene el rumbo de ese momento: giro = KP·rumbo + KW·w
+// (rumbo y w del giróscopo vertical, sin su sesgo medido quieto en AGACHAR y PREPARAR). Con ~7,8 rad/s
+// de giro por unidad de giro (1,33 m/s por PWM, trocha ~0,17 m), KP 0,8 corrige en ~0,2 s. En vivo: set rumbo
+#define RUMBO_KP                0.8f        // [PWM/rad]
+#define RUMBO_KW                0.05f       // [PWM/(rad/s)]
+#define RUMBO_GIRO_MAX          0.15f       // fracción de PWM
+// 11/11 (más tarde): el mismo lazo con una referencia que gira, para alinearse con el borde (OPTIONS) y
+// para girar sobre su eje con R3/L3 (comando "eje"). La trocha es 0,194 m, no 0,17: son ~13,7 rad/s por
+// unidad de giro, o sea 0,073 de PWM por rad/s; el anticipado va un poco corto y el resto lo pone kp
+#define RUMBO_FF                0.06f       // [PWM/(rad/s)]
+#define RUMBO_GIRO_MAX_GIRANDO  0.30f       // fracción de PWM con un giro pedido (3/11: con 0,30 giraba en el lugar)
+#define RUMBO_ACEL_DPS2         360.0f      // [°/s2] rampa de la velocidad de giro pedida
+#define EJE_W_DPS               90.0f       // [°/s] giro sobre su eje con R3/L3 (en vivo: set weje)
+// Infrarrojos del borde: los dos Sharp (ELE-049; el de J27 y el de la expansión), uno de cada lado,
+// mirando el piso detrás de las ruedas. Para alinearse alcanza con saber si cada uno ve el piso de
+// arriba o no: con el piso más lejos (pasó el borde) la tensión BAJA, así que "sin piso" es por debajo
+// del umbral (irinv 1). El umbral depende de dónde queden montados: 800 mV es una cuenta (a 19 cm del
+// piso y 48° de la vertical: ~920 mV en el pin sobre el piso de arriba y ~650 con el piso 12 cm más
+// abajo). CALIBRARLO: "get" muestra los dos sobre el piso y asomados al escalón; el umbral, al medio.
+#define IR_UMBRAL_MV            800.0f      // en vivo: set irumbral
+#define IR_INVERTIDO            1           // en vivo: set irinv (0: sin piso la tensión sube)
+#define IR_SHARP1_ES_IZQ        1           // SUPUESTO: el Sharp de J27 va a la izquierda y el segundo a la
+                                            // derecha. Si se montan al revés, 0 (si no, gira para el otro lado)
 
 // --- Sensor de distancia al piso y bajada de escalón (FW-016, "escalon" o △ del joystick) ---
 // Sharp GP2Y0A60SZLF (pin en board_pins.h): d = SHARP_K / (v_sensor - SHARP_V0), con v_sensor la
@@ -307,12 +338,18 @@
 // Mientras el sensor no esté conectado (3/11), △ baja el escalón SIN buscarlo: el robot se pone con
 // el apoyo de la rueda a MAN_D_BORDE_M del borde (de espaldas al escalón). 0 = lo busca con el
 // sensor. En vivo: "man d_borde <m>" o "escalon <cm>"
-#define MAN_D_BORDE_M           0.30f
+// 11/11 (escalón de 12 cm): 0,40, el equipo lo pone a 30-55 cm. Con 0,30 abortaron 3 de 5 (arrancaban a
+// 45-49 cm): la maniobra frena si pasa 15 cm más allá del borde esperado sin caer, o sea que con 0,40
+// el máximo es 55 cm (pedido de Joaquín). Más tarde, 0,55: las 4 que abortaron con 0,40 arrancaban con el
+// borde a 59-67 cm de la rueda (así lo pone el equipo); ahora aborta recién a 70 cm
+#define MAN_D_BORDE_M           0.55f
 // La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo ajustado (VAL-302, 3/11:
 // la tabla de equilibrio medida contra la del modelo; con el CAD sin ajustar eran 9,8°). Solo se
 // usa para saber dónde pega el haz. 7/11, con la IMU en la PCB: 4,8 (provisorio: la curva de equilibrio
 // con la caja del 5/11; falta medir la IMU contra la caja)
-#define IMU_DELTA_DEG           4.8f
+// 11/11: 9,27 con el modelo de 1240 g (ajustado a la curva de arriba y a la altura del centro de masa medida;
+// modelado/parametros/parametros_fisicos.m). OJO: con la tapa daba 4,06; ¿se movió la placa de la IMU?
+#define IMU_DELTA_DEG           9.27f
 
 // --- LED RGB de estado (main/led_estado.c; tabla en el README) ---
 // Brillo de 0 a 255. El WS2812 encandila: con 20 ya se ve bien de cerca.

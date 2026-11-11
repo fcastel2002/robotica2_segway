@@ -29,7 +29,9 @@
 // Para el DRV8871 (sin EN) también va -1.
 #define PIN_MOTOR_L_IN1     14
 #define PIN_MOTOR_L_IN2     13
-#define PIN_MOTOR_L_EN      1       // como en la versión del 6/11 que andaba; en prueba (FW-022)
+#define PIN_MOTOR_L_EN      -1      // 11/11: era 1 ("como en la versión del 6/11 que andaba", FW-022), pero el
+                                    // DRV8871 no tiene EN y GPIO1 pasó a ser del segundo Sharp (ELE-049): como
+                                    // salida le pisaba la lectura. COMPROBAR la rueda izquierda al grabar
 #define PIN_MOTOR_R_IN1     12
 #define PIN_MOTOR_R_IN2     11
 #define PIN_MOTOR_R_EN      -1
@@ -53,6 +55,9 @@
 // Sensor de distancia al piso para el escalón (Sharp GP2Y0A60SZLF en J27, SUP-82): su salida
 // entra por un divisor 10k/15k (x 0,6). ADC1_CH2, convive con el WiFi.
 #define PIN_DIST_SUELO      3
+// Segundo Sharp (ELE-049, 11/11): por la expansión, OUT con un divisor 10k/15k en el cable a J25.4.
+// ADC1_CH0. Con los dos, uno de cada lado, el robot se alinea con el borde ("escalon alinear")
+#define PIN_DIST_SUELO_2    1
 
 // LED RGB integrado (WS2812), indica el estado del robot
 #define PIN_LED_RGB         48      // 38 en la versión 1.1 de la DevKitC

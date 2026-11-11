@@ -2,19 +2,23 @@
 // libertad, movida por los servos) + rueda con motor, con contacto contra un piso escalonado,
 // vuelo y aterrizaje. Las dos patas y las dos ruedas van juntas (sin rolido ni guiñada).
 //
-// Coordenadas generalizadas q = [X, Z, th, a, f]:
+// Coordenadas generalizadas q = [X, Z, th, a, f, s]:
 //   X, Z  centro de masa del cuerpo en el mundo [m] (X adelante, Z arriba)
 //   th    cabeceo del cuerpo [rad], positivo hacia adelante (la cabeza va hacia +X)
 //   a     ángulo de la pata, el que se le pide al servo [rad] (0 = agachado)
 //   f     giro de la rueda respecto del eslabón que lleva el motor [rad], + rodando hacia adelante
+//   s     (11/11) torsión del eslabón que lleva el motor respecto de donde lo pone el cuatro barras
+//         [rad]: los agarres de plástico ceden y la carcasa del motor gira un poco sobre el eje sin
+//         que se mueva la caja (el k_s de los barridos del 11/11, modelado/ajuste/ajustar_pata_flexible.m).
+//         Con k_torsion = 0 queda trabado en 0: la planta rígida de siempre.
 // Los giros son positivos en sentido horario mirando el robot desde su derecha (X a la derecha,
 // Z arriba): un punto en (dx, dz) respecto del centro de giro va a w·(dz, -dx).
 #pragma once
 
 #include <stdbool.h>
 
-#define PP_NQ 5
-enum { PP_X = 0, PP_Z, PP_TH, PP_A, PP_F };
+#define PP_NQ 6
+enum { PP_X = 0, PP_Z, PP_TH, PP_A, PP_F, PP_S };
 
 // Piso: escalones que bajan hacia -X. El borde del primero está en X = 0 (arriba, Z = 0, para
 // X >= 0); cada escalón baja `alto` y tiene `pisada` de largo. n_escalones = 0: piso plano.
@@ -41,6 +45,8 @@ typedef struct {
     double servo_par_max, servo_vel_max;// [N m] de calado, [rad/s] en vacío
     double servo_ganancia;              // [1/rad]: error que lleva el servo a fondo
     double servo_b;                     // [N m s/rad] fricción viscosa del reductor
+    double k_torsion, c_torsion;        // [N m/rad], [N m s/rad] del eslabón del motor contra la caja
+                                        // (coordenada s); k_torsion = 0: rígido
     // contacto
     double k_rueda, c_rueda;            // [N/m], [N s/m] de las dos ruedas contra el piso
     double k_cuerpo, c_cuerpo;          // [N/m], [N s/m] de un golpe del cuerpo

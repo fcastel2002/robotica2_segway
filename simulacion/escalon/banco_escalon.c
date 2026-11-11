@@ -34,7 +34,7 @@
 #endif
 #define H               (DT_CONTROL / SUBPASOS)
 #define SUBPASO_COMPUTO (SUBPASOS / 5)              // el PWM nuevo sale 1 ms después de leer
-#define FC_MPU          44.0
+#define FC_MPU          188.0                       // 11/11: el filtro de la IMU de hoy (dlpf 1, FW-028; antes 44)
 #define G               9.81
 #define PI              3.141592653589793
 #define GRADOS          (180.0 / PI)
@@ -61,8 +61,19 @@ static void ganancias_por_pata(float pata, lqr_gains_t *k)
     static const float patas[] = LQR_TABLA_PATAS_DEG;
     static const float tabla[][4] = LQR_TABLA;
     static const float tabla_drv[][4] = LQR_TABLA_DRV;
-    bool drv = getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "drv") == 0;
+    // 11/11: como el firmware de hoy: la tabla de DEFAULT_LQR_POR_PATA (2 = la del DRV8871) por los
+    // factores de fábrica (set lqrfac, set lqrfacx). GANANCIAS=drv | vieja elige la tabla; LQRFAC=1 y
+    // LQRFACX=1, la tabla sin factores (como corría el banco hasta el 11/11)
+    bool drv = DEFAULT_LQR_POR_PATA == 2;
+    if (getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "drv") == 0) drv = true;
+    if (getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "vieja") == 0) drv = false;
     balance_lqr_tabla(pata, patas, drv ? tabla_drv : tabla, sizeof patas / sizeof patas[0], k);
+    float fac = getenv("LQRFAC") ? (float)atof(getenv("LQRFAC")) : DEFAULT_LQR_FACTOR;
+    float fac_x = getenv("LQRFACX") ? (float)atof(getenv("LQRFACX")) : DEFAULT_LQR_FACTOR_X;
+    k->kx *= fac_x;
+    k->kv *= fac_x;
+    k->kphi *= fac;
+    k->kw *= fac;
 }
 
 // ---------------------------------------------------------------- parámetros de la planta
@@ -80,7 +91,34 @@ static planta_t planta_base(void)
         .k_rueda = PE_K_RUEDA, .c_rueda = PE_C_RUEDA,
         .k_cuerpo = PE_K_CUERPO, .c_cuerpo = PE_C_CUERPO,
         .mu = PE_MU, .v_resbale = 0.01, .g = G,
+#ifdef PE_K_TORSION
+        .k_torsion = PE_K_TORSION, .c_torsion = PE_C_TORSION,
+#endif
     };
+}
+
+// Lo que cede (11/11), para probar sin regenerar la planta: K_TORSION y C_TORSION [N m/rad, N m s/rad]
+// (0 = rígido) y C_PATA [N m s/rad]: la pata cede por el plástico, elástico, y no por el servo; su
+// amortiguamiento en lugar de la recta par-velocidad del servo
+static void planta_del_entorno(planta_t *P)
+{
+    if (getenv("K_TORSION")) P->k_torsion = atof(getenv("K_TORSION"));
+    if (getenv("C_TORSION")) P->c_torsion = atof(getenv("C_TORSION"));
+    if (getenv("C_PATA")) { P->servo_vel_max = 1e9; P->servo_b = atof(getenv("C_PATA")); }
+    if (getenv("K_PATA")) P->servo_ganancia = atof(getenv("K_PATA")) / P->servo_par_max;
+    if (getenv("F_ROTOR")) P->j_rotor *= atof(getenv("F_ROTOR"));
+    if (getenv("C_RUEDA")) P->c_rueda = atof(getenv("C_RUEDA"));
+}
+
+// A_EXTRA [grados]: la pata de la planta está esto más estirada que lo que pide el firmware (cuánto
+// le falta al cuatro barras para su punto muerto en 30 se ajustó con la tabla de equilibrio, ±2 grados)
+static double a_extra(void)
+{
+#ifdef PE_A_EXTRA
+    return getenv("A_EXTRA") ? atof(getenv("A_EXTRA")) : PE_A_EXTRA;
+#else
+    return getenv("A_EXTRA") ? atof(getenv("A_EXTRA")) : 0.0;
+#endif
 }
 
 // Centro de masa de todo el robot respecto del eje de la rueda, en ejes del cuerpo
@@ -111,6 +149,7 @@ static void estado_apoyado(const planta_t *P, double a, double x_contacto, doubl
     q[PP_TH] = cabeceo_equilibrio(P, a);
     q[PP_A] = a;
     q[PP_F] = 0.0;
+    q[PP_S] = 0.0;
     pata_t p;
     pata_cinematica(a, &p);
     double c = cos(q[PP_TH]), s = sin(q[PP_TH]);
@@ -174,6 +213,9 @@ typedef struct {
     double recorte;             // [m] la cabina recortada adelante
     double k_rueda, c_rueda;    // [N/m], [N s/m] de las dos ruedas contra el piso (0 = los del modelo)
     bool   ruido;
+    double ir_x_real;           // [m] dónde miran de verdad los infrarrojos del borde, detrás del apoyo de
+                                // la rueda (0 = donde cree la maniobra, man.ir_x). Con alinear=1; el banco
+                                // es plano, así que los dos ven el borde a la vez (llega derecho)
 } caso_t;
 
 typedef struct {
@@ -196,6 +238,8 @@ typedef struct {
     double holgura;             // [m] lo más cerca que pasó la cabina de la escalera desde que largó
     double holgura_t, holgura_x;    // [s] cuándo y [m] con el eje dónde
     const char *holgura_en;         // en qué estado de la maniobra
+    double x_min_arriba;            // [m] lo más cerca del borde que estuvo la rueda antes de largar
+    double d_largada;               // [m] rueda-borde de verdad cuando largó (NAN: no largó)
 } resultado_t;
 
 static resultado_t correr(const caso_t *C, FILE *csv)
@@ -204,6 +248,7 @@ static resultado_t correr(const caso_t *C, FILE *csv)
     const double T_MAX = C->repetir ? 15.0 + 14.0 * C->n_escalones : 30.0;
     srand(1234 + (unsigned)C->semilla);
     planta_t P = planta_base();
+    planta_del_entorno(&P);
     P.servo_par_max *= C->factor_servo;
     if (C->f_rotor > 0) P.j_rotor *= C->f_rotor;
     if (C->f_inercia > 0) P.i_cuerpo *= C->f_inercia;
@@ -251,14 +296,15 @@ static resultado_t correr(const caso_t *C, FILE *csv)
 
     // Planta: equilibrio con las patas de búsqueda y la rueda a x_contacto0 del borde
     double q[PP_NQ], dq[PP_NQ];
-    estado_apoyado(&P, pata_pos / GRADOS, C->x_contacto0, q, dq);
-    entrada_planta_t ent = { 0.0, pata_pos / GRADOS };
+    const double extra = a_extra();
+    estado_apoyado(&P, (pata_pos + extra) / GRADOS, C->x_contacto0, q, dq);
+    entrada_planta_t ent = { 0.0, (pata_pos + extra) / GRADOS };
     salida_planta_t sal = { 0 };
     double f_fwd = 0, f_up = G, f_gyro = 0, a_mpu = 1.0 - exp(-H * 2 * PI * FC_MPU);
     double t_servo = 0, t_sharp = 0, d_sharp = NAN;
 
     resultado_t R = { .x_final = NAN, .borde_error = NAN,      // NAN: no vio el borde
-                      .escalones = C->n_escalones, .holgura = 1e9 };
+                      .escalones = C->n_escalones, .holgura = 1e9, .x_min_arriba = 1e9, .d_largada = NAN };
     bool largo = false;             // ya largó alguna vez (desde ahí cuenta la holgura)
     double caja[4] = { 1e9, -1e9, 1e9, -1e9 };      // la cabina: x0, x1 (el frente, recortado), z0, z1
     for (int i = 0; i < PP_N_PUNTOS; i++) {
@@ -280,7 +326,7 @@ static resultado_t correr(const caso_t *C, FILE *csv)
             double ts = t + i * H;
             ent.tension = u * P.v_motor;
             if (ts >= t_servo) {                    // el servo toma el pulso nuevo cada 20 ms
-                ent.a_pedido = pata_pos / GRADOS;
+                ent.a_pedido = (pata_pos + extra) / GRADOS;
                 t_servo += T_SERVO;
             }
             if (ts >= t_sharp) {                    // el Sharp renueva su salida cada 16,5 ms
@@ -309,8 +355,8 @@ static resultado_t correr(const caso_t *C, FILE *csv)
         }
         if (fabs(q[PP_TH]) > 1.3) { R.cayo = true; R.motivo = "volco"; break; }
 
-        // --- lo que lee el firmware (con la saturación de la MPU: 4 g y 500 grados/s)
-        double ruido = C->ruido ? 1.0 : 0.0, lim_a = 4 * G, lim_w = 500 / GRADOS;
+        // --- lo que lee el firmware (con la saturación de la MPU: 16 g y 2000 grados/s desde el 7/11)
+        double ruido = C->ruido ? 1.0 : 0.0, lim_a = 16 * G, lim_w = 2000 / GRADOS;
         float acc_fwd = (float)fmin(fmax(f_fwd + ruido * 0.2 * gauss(), -lim_a), lim_a);
         float acc_up = (float)fmin(fmax(f_up + ruido * 0.2 * gauss(), -lim_a), lim_a);
         float gyro = (float)fmin(fmax(f_gyro + 0.0087 + ruido * 0.0017 * gauss(), -lim_w), lim_w);
@@ -353,6 +399,16 @@ static resultado_t correr(const caso_t *C, FILE *csv)
             .acc = sqrtf(acc_fwd * acc_fwd + acc_up * acc_up), .pata_deg = pata_pos,
             .haz_valido = !isnan(d_medida),
         };
+        {
+            // Infrarrojos del borde: miran el piso ir_x detrás del apoyo de la rueda (el borde está en X = 0)
+            double exi, ezi;
+            eje_rueda(q, &exi, &ezi);
+            double ir = C->ir_x_real > 0.0 ? C->ir_x_real : C->man.ir_x;
+            me.ir_valido = true;
+            me.ir_izq = me.ir_der = exi - ir < 0.0;
+            if (lanzada && !largo) R.x_min_arriba = fmin(R.x_min_arriba, exi);
+            if (man.estado == MAN_LARGAR && isnan(R.d_largada)) R.d_largada = exi;
+        }
         if (me.haz_valido) {
             float x_atras, z0;
             haz_punto(&haz, th_cuerpo, WHEEL_RADIUS_M, d_medida, &x_atras, &me.haz_z);
@@ -449,7 +505,7 @@ static resultado_t correr(const caso_t *C, FILE *csv)
                     t - T_CAL, maniobra_nombre(man.estado), ex, ez, q[PP_TH] * GRADOS,
                     q[PP_A] * GRADOS, odo.x, odo.v, att.theta * GRADOS, p.theta_ref * GRADOS,
                     u_nuevo, pata_pos, d_medida, sal.n_rueda, sal.par_servo, dq[PP_X], dq[PP_Z],
-                    q[PP_X], q[PP_Z], x_ref, v_ref, (q[PP_TH] + pk.g + q[PP_F]) * GRADOS, sal.n_cuerpo,
+                    q[PP_X], q[PP_Z], x_ref, v_ref, (q[PP_TH] + pk.g + q[PP_F] + q[PP_S]) * GRADOS, sal.n_cuerpo,
                     hypot(acc_fwd, acc_up));
         }
         if (man.estado == MAN_INACTIVA && (R.toco || R.aborto)) {
@@ -631,6 +687,8 @@ static void imprimir_json(const resultado_t *R)
         json_num("t_toque", R->t_toque, 3);
     }
     json_num("borde_error", R->borde_error * 1e3, 1);
+    json_num("rueda_min_arriba", R->x_min_arriba < 1e8 ? R->x_min_arriba * 1e3 : NAN, 1);
+    json_num("d_largada", R->d_largada * 1e3, 0);
     json_num("cabina_max", R->cabina_max, 0);
     json_num("cabina_t", R->cabina_t, 3);
     json_num("holgura", R->holgura < 1e8 ? R->holgura * 1e3 : NAN, 1);
@@ -701,6 +759,9 @@ static int campos_del_caso(caso_t *c, campo_t *k)
     F("t_mantener", man.t_mantener);             F("t_sin_acel", man.t_sin_acel);
     F("kx_aterrizaje", man.kx_aterrizaje);       F("a_frenado", man.a_frenado);
     F("t_continuo", man.t_continuo);             F("d_borde", man.d_borde);
+    F("ir_x", man.ir_x);                         F("d_carrera", man.d_carrera);
+    F("v_alejar", man.v_alejar);                 D("ir_x_real", ir_x_real);
+    F("v_buscar_ir", man.v_buscar_ir);
     D("alto", alto);                             D("pisada", pisada);
     I("escalones", n_escalones);                 D("x0", x_contacto0);
     D("v_motor", v_motor);                       D("zona_muerta", zona_muerta);
@@ -872,10 +933,12 @@ int main(int argc, char **argv)
         // rebote [alto=0.03] [pata=15] [k_rueda=] [c_rueda=] [servo=1] [csv=nombre]: el robot
         // desarmado (sin motor) y sostenido derecho, en su equilibrio, con las ruedas a alto [m] del
         // piso, se suelta: cuánto rebota (la goma y las patas). Como lo ve el robot con "grabar": |a|
-        // de la IMU cada 5 ms (cada eje recortado a ±4 g y con el filtro del MPU6050), y los tramos en
-        // el aire (|a| < UMBRAL_AIRE). Para comparar con el robot (rebote.py)
-        const double UMBRAL_AIRE = 3.0, TOPE = 4.0 * G;     // [m/s2]
-        double alto = 0.03, pata = 15.0, k = 0.0, c = 0.0, f_servo = 1.0;
+        // de la IMU cada 5 ms (cada eje recortado a ±tope g, 16 por defecto: 4 para las caídas del 7/11, y
+        // con el filtro del MPU6050), y los tramos en el aire (|a| < UMBRAL_AIRE). Para comparar con el
+        // robot (rebote.py)
+        const double UMBRAL_AIRE = 3.0;
+        double TOPE = 16.0 * G;     // [m/s2]
+        double alto = 0.03, pata = 15.0, k = 0.0, c = 0.0, f_servo = 1.0, inclinacion = 0.0, c_pata = -1.0;
         const char *archivo = NULL;
         for (int i = 2; i < argc; i++) {
             if (strncmp(argv[i], "alto=", 5) == 0) alto = atof(argv[i] + 5);
@@ -883,15 +946,34 @@ int main(int argc, char **argv)
             else if (strncmp(argv[i], "k_rueda=", 8) == 0) k = atof(argv[i] + 8);
             else if (strncmp(argv[i], "c_rueda=", 8) == 0) c = atof(argv[i] + 8);
             else if (strncmp(argv[i], "servo=", 6) == 0) f_servo = atof(argv[i] + 6);
+            else if (strncmp(argv[i], "tope=", 5) == 0) TOPE = atof(argv[i] + 5) * G;
+            // 11/11: soltado inclinado respecto del equilibrio [grados, + adelante], como lo sostienen
+            else if (strncmp(argv[i], "inclinacion=", 12) == 0) inclinacion = atof(argv[i] + 12);
+            // 11/11: la pata cede por el plástico (elástico), no por el servo: su amortiguamiento [N m s/rad]
+            // en lugar de la recta par-velocidad del servo
+            else if (strncmp(argv[i], "c_pata=", 7) == 0) c_pata = atof(argv[i] + 7);
             else if (strncmp(argv[i], "csv=", 4) == 0) archivo = argv[i] + 4;
         }
         planta_t Pr = planta_base();
+        planta_del_entorno(&Pr);
         Pr.servo_par_max *= f_servo;
+        if (c_pata >= 0.0) { Pr.servo_vel_max = 1e9; Pr.servo_b = c_pata; }
         if (k > 0) Pr.k_rueda = k;
         if (c > 0) Pr.c_rueda = c;
         piso_t plano = { 0.18, 0.25, 0, 0.0 };
         double q[PP_NQ], dq[PP_NQ];
+        pata += a_extra();
         estado_apoyado(&Pr, pata / GRADOS, 0.0, q, dq);
+        if (inclinacion != 0.0) {                       // se gira alrededor del contacto de la rueda
+            pata_t pc;
+            pata_cinematica(pata / GRADOS, &pc);
+            double c0 = cos(q[PP_TH]), s0 = sin(q[PP_TH]);
+            double cx = q[PP_X] + pc.px * c0 + pc.pz * s0, cz = q[PP_Z] - pc.px * s0 + pc.pz * c0;
+            q[PP_TH] += inclinacion / GRADOS;
+            double c1 = cos(q[PP_TH]), s1 = sin(q[PP_TH]);
+            q[PP_X] = cx - (pc.px * c1 + pc.pz * s1);
+            q[PP_Z] = cz - (-pc.px * s1 + pc.pz * c1);
+        }
         q[PP_Z] += alto;
         entrada_planta_t e = { 0.0, pata / GRADOS };    // sin tensión al motor; los servos sostienen
         salida_planta_t sal;
@@ -1030,6 +1112,7 @@ int main(int argc, char **argv)
                 ok = true;
             }
             if (strcmp(nombre, "motor_vuelo") == 0) { c.man.motor_vuelo = (man_motor_vuelo_t)v; ok = true; }
+            if (strcmp(nombre, "alinear") == 0) { c.man.alinear = v != 0.0; ok = true; }
             if (!ok) { fprintf(stderr, "no conozco %s\n", nombre); return 2; }
         }
         resultado_t R = correr_y_guardar(&c, archivo);

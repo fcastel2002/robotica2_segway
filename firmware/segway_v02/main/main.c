@@ -82,6 +82,10 @@ void app_main(void)
     if (dist_sharp_init(PIN_DIST_SUELO) != ESP_OK) {
         ESP_LOGE(TAG, "ADC del sensor de distancia no inicializado");
     }
+    // Segundo Sharp: sin él "escalon alinear" (OPTIONS) aborta antes de moverse
+    if (dist_sharp2_init(PIN_DIST_SUELO_2) != ESP_OK) {
+        ESP_LOGE(TAG, "ADC del segundo sensor de distancia no inicializado");
+    }
 
     // Solo informa: si falla, el robot anda igual
     if (led_rgb_init(PIN_LED_RGB) != ESP_OK) {

@@ -21,6 +21,29 @@ Con el DRV8871 el robot equilibra bien quieto y manejando (FW-025, MED-007), per
 - Por eso el LQR del modelo hubo que bajarlo a mano (`lqrfac` 0,87, `lqrfacx` 0,86, dos notch en 11,6 y 7,7 Hz) y
   ajustarlo a ciegas ya no mejora más que el ruido entre pruebas.
 
+## Qué retardo tiene hoy cada modelo (9/11)
+
+Joaquín (9/11): si el retardo no está en el modelo, al ajustar se van a corregir otras variables para imitarlo.
+Es así: un retardo baja la fase en proporción a la frecuencia y el ajuste lo "explicaría" con más inercia, menos
+par o más amortiguamiento. Y sí afecta al LQR: la cuenta del LQR supone que no hay retardo, y con retardo las
+mismas ganancias pierden margen de fase (es lo que se ve: pico de sensibilidad 3,7, `lqrfac` 1,0 oscila).
+
+| De dónde | En el robot | Simulink (`segway_ajustado`) | Banco en C | `respuesta_frecuencia_modelo.m` |
+|---|---|---|---|---|
+| Muestreo cada 5 ms (retenedor) | ~2,5 ms equivalentes | sí | sí | **no** |
+| Del dato de la IMU al PWM (lectura I2C ~1,7 ms + cálculo) | dentro del mismo ciclo; falta medir cuánto | 5 ms (un ciclo entero) | 1 ms | 5 ms |
+| Filtro de la IMU (DLPF de 44 Hz, en el ángulo y el giróscopo) | ~4,9 ms | **no** | sí (primer orden de 44 Hz, ~3,6 ms) | **no** |
+| Filtro de la velocidad (20 Hz) y los dos notch | sí (fase, no retardo puro) | uno solo de los notch, sin el de velocidad | sí (el código del firmware) | sí |
+| Driver y parte eléctrica del motor (L/R) | 0,19 ms | despreciado | despreciado | despreciado |
+| Juego de la reductora | ? (suele ser ~1,5°) | no | no | no |
+| Servos de las patas (un pulso cada 20 ms) | sí | no (solo velocidad y banda muerta) | sí | no aplica |
+
+El barrido del 7/11 da 12-17 ms **más** que `respuesta_frecuencia_modelo.m` (que tiene 5). El filtro de la IMU y el
+retenedor explican ~7 ms; quedan ~5-10 ms por encontrar (dónde sale el PWM en el ciclo, el juego de la reductora,
+el modo de ~11 Hz). Para el ajuste del modelo el orden es: **primero el retardo** (se separa solo, porque es una
+fase que crece en línea recta con la frecuencia), después lo demás. Las caídas sin motores para el centro de masa
+y la inercia (MED-008) son a lazo abierto: el retardo no las afecta.
+
 ## Qué hacer, en orden
 
 1. **Bajar el retardo real en el firmware** (`segway_v02`):

@@ -14,3 +14,10 @@ esp_err_t dist_sharp_init(int gpio);
 // Tensión en el pin [mV], promedio de unas lecturas seguidas (el sensor renueva su salida cada
 // 16,5 ms; el promedio solo baja el ruido del ADC). false si el ADC no está o falla.
 bool dist_sharp_read_mv(int *mv);
+
+// El segundo Sharp (ELE-049, 11/11: otro GP2Y0A60SZLF por la expansión, con el mismo divisor x 0,6 en el
+// cable), en otra entrada del ADC1 (comparte la unidad con el primero). Con los dos, uno de cada lado,
+// el robot se alinea con el borde del escalón ("escalon alinear").
+esp_err_t dist_sharp2_init(int gpio);
+// Tensión en el pin del segundo [mV]. false si el ADC no está o falla.
+bool dist_sharp2_read_mv(int *mv);

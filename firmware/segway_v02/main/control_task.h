@@ -40,6 +40,8 @@ typedef struct {
 #define REG_BAJA_G      0x02
 #define REG_SOLO_GIRO   0x04
 #define REG_U_DIRECTO   0x08
+#define REG_IR_IZQ      0x10    // ese infrarrojo no ve el piso
+#define REG_IR_DER      0x20
 
 // Las muestras del último registro, cuando ya terminó (si no, NULL). Solo lo lee comms.
 const registro_t *control_registro(int *n);

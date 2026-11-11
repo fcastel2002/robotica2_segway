@@ -16,12 +16,32 @@
 #define T_AGACHAR_MAX   5.0f        // [s] las patas a la de búsqueda: si no llegan (límites), aborta
 #define T_LARGAR_MAX    4.0f        // [s] hasta despegar: con un parámetro raro quedaba colgada
 #define T_VUELO_MAX     0.6f        // [s] si no toca en este tiempo, se da por aterrizado
+#define T_REBOTE_MAX    0.35f       // [s] después de tocar, solo hasta acá una caída libre es un rebote
 #define T_ATERRIZAR_MIN 1.0f
 #define T_ATERRIZAR_MAX 4.0f
 #define PASADO_MAX      0.15f       // [m] más allá del borde sin caer: algo está mal
 #define K_VEL_VUELO     3.0f        // [1/(m/s)] lazo de velocidad de la rueda en el aire
 #define V_AVANCE        0.10f       // [m/s] al avanzar antes de buscar
 #define T_AVANZAR_MAX   5.0f
+#define T_ALINEAR_MAX   6.0f        // [s] un giro para alinearse: si no termina, aborta
+#define T_ALEJAR_MAX    12.0f       // [s] alejándose del borde
+#define A_ALEJAR        0.25f       // [m/s2] rampa de velocidad al alejarse (suave: para ir hacia adelante,
+                                    // las ruedas primero van un poco hacia atrás, hacia el borde)
+#define N_ALINEAR_MAX   6           // giros para alinearse, como mucho
+#define IR_MARGEN       0.02f       // [m] lo más cerca del borde que puede quedar la rueda, ya frenada
+#define T_FRENA_BORDE   0.6f        // [s] para frenar sigue v_buscar_ir por esto (banco del escalón, 11/11: a
+                                    // 0,08 m/s seguía 4,8 cm y a 0,05, 2,8 cm; frena sosteniendo la posición)
+#define V_FRENADO       0.03f       // [m/s] ya frenó
+#define T_BLOQUE        0.4f        // [s] antes de buscar el borde: el promedio de x de un bloque...
+#define X_QUIETO        0.004f      // [m] ...no cambia más que esto respecto del anterior, dos veces
+                                    // seguidas (1,2 s sin moverse más que eso): está quieto
+#define T_QUIETO_MAX    6.0f        // [s] si no se queda quieto en este tiempo, no va hacia el borde
+#define T_FRENAR_MAX    1.5f        // [s] esperando que frene antes de alejarse
+#define D_REMEDIR       0.04f       // [m] para volver a medir, los infrarrojos quedan a esto del borde
+#define D_REMEDIR_MAX   0.12f       // [m] si avanzando esto de más no vuelven a ver el piso, aborta
+#define RUMBO_TOL       (0.7f * DEG2RAD)    // el giro terminó cuando el rumbo está a esto del pedido...
+#define T_GIRO_ASENTAR  1.5f        // [s] ...o pasó este tiempo desde que se terminó de pedir
+#define DEG2RAD         0.01745329f
 
 // La bajada de UN escalón: la del genético de un escalón del 4/11 (simulacion/escalon/genetico.py
 // un_escalon), elegida para que NO SE CAIGA: escalón de 10,5 cm sin sensor a 30 cm del borde, ruedas
@@ -39,7 +59,7 @@ void maniobra_params_por_defecto(man_params_t *p)
         .desnivel = 0.06f,
         .d_min = 0.06f,
         .avance = 0.0f,
-        .v_salida = 0.54f,              // pasa el borde a ~0,5 m/s
+        .v_salida = 0.65f,              // 11/11, escalón de 12 cm: 3/3 parado; a 0,75-0,85 el motor satura al tocar
         .a_salida_max = 3.7f,           // a 30 cm usa ~0,5 m/s2; el tope solo cuenta si está más cerca
         .kx_largada = 0.5f,
         .d_salto = -1.0f,               // sin estirar las patas antes del borde: el equipo no lo ve
@@ -60,21 +80,34 @@ void maniobra_params_por_defecto(man_params_t *p)
         .ff = 1.0f,                     // la rueda da ~1 m/s a fondo (MED-005)
         .t_continuo = 0.0f,
         .motor_vuelo = MAN_MOTOR_VELOCIDAD,     // 3/11: con el LQR en el aire se cayó en el robot
+        // Alinearse con los infrarrojos (11/11). ir_x no tiene valor de fábrica hasta que se monten y
+        // se mida: si se creyera más chico de lo que es, el borde quedaría más lejos de lo que el robot
+        // cree y al largar frenaría justo encima ("paso el borde sin caer"). Con 0 no arranca
+        .ir_x = 0.0f,
+        .ir_sep = 0.15f,
+        .v_buscar_ir = 0.05f,
+        .ir_dx = 0.0f,
+        .ir_tol_deg = 1.0f,             // 2,6 mm entre los dos infrarrojos (a 0,08 m/s ve 0,4 mm por muestra)
+        .w_alinear_dps = 20.0f,
+        .alinear_max_deg = 40.0f,
+        .d_carrera = 0.50f,             // las bajadas del 11/11 que anduvieron largaron a 48-74 cm
+        .v_alejar = 0.20f,
     };
 }
 
 const char *maniobra_nombre(man_estado_t e)
 {
     static const char *n[] = { "inactiva", "agachar", "avanzar", "buscar", "preparar", "largar", "vuelo",
-                               "aterrizar", "fin", "abortada" };
-    return (e >= MAN_INACTIVA && e <= MAN_ABORTADA) ? n[e] : "?";
+                               "aterrizar", "fin", "abortada", "alinear", "alejar" };
+    return (e >= MAN_INACTIVA && e <= MAN_ALEJAR) ? n[e] : "?";
 }
 
 static void cambiar(maniobra_t *m, man_estado_t e)
 {
     m->estado = e;
     m->t = 0.0f;
-    m->n_borde = m->n_vuelo = m->n_sin_haz = m->n_quieto = 0;
+    m->n_borde = m->n_vuelo = m->n_sin_haz = m->n_quieto = m->n_rebote = 0;
+    m->n_ir[0] = m->n_ir[1] = 0;
     // Los eventos del programa: en cada vuelo, despegar y tocar empiezan de nuevo
     if (e == MAN_LARGAR) m->t_evento[MAN_EV_LARGA] = m->t_total;
     if (e == MAN_VUELO) {
@@ -88,7 +121,7 @@ static void cambiar(maniobra_t *m, man_estado_t e)
 bool maniobra_iniciar(maniobra_t *m, float x)
 {
     if (m->estado != MAN_INACTIVA && m->estado != MAN_FIN) return false;
-    *m = (maniobra_t){ .d_largada = NAN };
+    *m = (maniobra_t){ .d_largada = NAN, .torcido = NAN, .x_ir = { NAN, NAN }, .x_bloques = -1 };
     for (int i = 0; i < MAN_N_EVENTOS; i++) m->t_evento[i] = -1.0f;
     for (int i = 0; i < MAN_MAX_ACCIONES; i++) m->t_patas[i] = m->t_vel[i] = -1.0f;
     m->d_borde_min = 1e9f;
@@ -151,6 +184,57 @@ static void velocidad(maniobra_t *m, const man_params_t *p, float objetivo, floa
     rampa(&m->v_ref, objetivo, a, dt);
 }
 
+// Cerca del borde: frena sosteniendo la posición donde está (el LQR con su kx entero), que es como
+// menos se pasa; con la consigna de velocidad sola (x libre) seguía el doble
+static void frenar_aca(maniobra_t *m, const man_entrada_t *e)
+{
+    m->v_ref = 0.0f;
+    m->x_ref = e->x - m->x_sesgo;       // donde el LQR lo deja es la consigna más el sesgo (ver AGACHAR)
+}
+
+// Antes de buscar el borde: ¿está quieto en su lugar? Promedia x en bloques de T_BLOQUE; cuando dos
+// seguidos dan lo mismo, está quieto y lo que le falta para llegar a su consigna es el sesgo (el
+// equilibrio de la tabla un poco corrido: con -0,75° se queda 4 cm más cerca del borde y al frenar
+// seguía hasta caerse, banco del 11/11). Un robot que va y viene (zona muerta mal compensada) no pasa
+static bool quieto_en_su_lugar(maniobra_t *m, const man_entrada_t *e)
+{
+    m->x_suma += e->x;
+    if (++m->x_n * e->dt < T_BLOQUE) return false;
+    float media = m->x_suma / (float)m->x_n;
+    bool primero = m->x_bloques < 0;
+    m->x_bloques = (!primero && fabsf(media - m->x_bloque_ant) < X_QUIETO) ? m->x_bloques + 1 : 0;
+    m->x_bloque_ant = media;
+    m->x_suma = 0.0f;
+    m->x_n = 0;
+    if (m->x_bloques < 2) return false;
+    m->x_sesgo = media - m->x_ref;
+    return true;
+}
+
+// Alinearse: arranca un giro de `ang` [rad] (+ antihorario) o aborta si ya son demasiados
+static void girar(maniobra_t *m, const man_params_t *p, const man_entrada_t *e, float ang)
+{
+    if (m->n_alinear >= N_ALINEAR_MAX) {
+        maniobra_abortar(m, "no se alineo");
+    } else if (fabsf(m->giro_alinear + ang) > p->alinear_max_deg * DEG2RAD) {
+        maniobra_abortar(m, "muy torcido para alinearse");
+    } else {
+        m->n_alinear++;
+        m->giro_alinear += ang;
+        m->giro_falta = ang;
+        m->rumbo_obj = e->rumbo + ang;
+        frenar_aca(m, e);
+        cambiar(m, MAN_ALINEAR);
+    }
+}
+
+// Lo que puede seguir retrocediendo después de que el primer infrarrojo vio el borde: lo que deja la
+// rueda a IR_MARGEN del borde contando lo que tarda en frenar
+static float recorrido_tras_ver(const man_params_t *p)
+{
+    return p->ir_x - IR_MARGEN - p->v_buscar_ir * T_FRENA_BORDE;
+}
+
 // Cuenta muestras seguidas en que se cumple `cond`; true cuando suman más de t_min segundos
 static bool sostenido(int *n, bool cond, float dt, float t_min)
 {
@@ -185,7 +269,24 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
         m->v_ref = 0.0f;
         if (sostenido(&m->n_quieto, fabsf(e->pata_deg - p->pata_busqueda_deg) < 0.5f, dt, T_ASENTAR)) {
             m->x_inicio = e->x;
-            if (p->d_borde > 0.0f && !p->solo_medir) {     // "escalon medir": siempre con el sensor
+            if (p->alinear) {
+                // Antes de ir hacia el borde, los dos infrarrojos tienen que estar viendo el piso: si
+                // no (desconectados, umbral o polaridad mal puestos), no se acerca a ciegas. Y el robot,
+                // quieto en su lugar (de paso mide cuánto se corre de su consigna)
+                if (!e->ir_valido) maniobra_abortar(m, "los infrarrojos no se leen");
+                else if (e->ir_izq || e->ir_der) maniobra_abortar(m, "un infrarrojo no ve el piso");
+                else if (p->ir_x <= 0.0f) {
+                    maniobra_abortar(m, "falta medir donde miran los infrarrojos (man ir_x)");
+                } else if (recorrido_tras_ver(p) < 0.004f) {
+                    maniobra_abortar(m, "infrarrojos muy cerca de las ruedas para frenar (ir_x, v_buscar_ir)");
+                } else if (quieto_en_su_lugar(m, e)) {
+                    // la consigna arranca donde está el robot menos el sesgo: sin tirón al empezar
+                    m->x_ref = e->x - m->x_sesgo;
+                    cambiar(m, MAN_BUSCAR);
+                } else if (m->t > T_QUIETO_MAX) {
+                    maniobra_abortar(m, "no se queda quieto en su lugar");
+                }
+            } else if (p->d_borde > 0.0f && !p->solo_medir) {     // "escalon medir": siempre con el sensor
                 // Sin sensor: el borde está donde dijeron, medido desde donde se apretó △
                 m->borde_x = m->x_partida - p->d_borde;
                 cambiar(m, MAN_PREPARAR);
@@ -213,7 +314,53 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
         break;
 
     case MAN_BUSCAR:
-        rampa(&m->v_ref, -p->v_busqueda, A_BUSQUEDA, dt);
+        rampa(&m->v_ref, p->alinear ? -p->v_buscar_ir : -p->v_busqueda, A_BUSQUEDA, dt);
+        if (p->alinear) {
+            // Con los infrarrojos: hasta que uno de los dos deja de ver el piso
+            if (!e->ir_valido) {
+                m->n_ir[0] = m->n_ir[1] = 0;
+                if (++m->n_sin_haz * dt > T_SIN_HAZ) maniobra_abortar(m, "los infrarrojos no se leen");
+                break;
+            }
+            m->n_sin_haz = 0;
+            // Dónde deja de ver el piso cada uno (N_BORDE muestras seguidas, igual para los dos)
+            const bool ve[2] = { e->ir_izq, e->ir_der };
+            for (int i = 0; i < 2; i++) {
+                if (!isnan(m->x_ir[i])) continue;
+                m->n_ir[i] = ve[i] ? m->n_ir[i] + 1 : 0;
+                if (m->n_ir[i] >= N_BORDE) m->x_ir[i] = e->x;
+            }
+            bool izq = !isnan(m->x_ir[0]), der = !isnan(m->x_ir[1]);
+            float lim = recorrido_tras_ver(p);      // lo que puede seguir después del primero
+            if (izq && der) {
+                // Los dos: el que lo vio antes (x más grande: va marcha atrás) está más cerca del borde.
+                // Con el izquierdo antes, el robot está girado en sentido antihorario: gira al revés
+                float dif = m->x_ir[0] - m->x_ir[1] - p->ir_dx;
+                m->torcido = atan2f(dif, p->ir_sep);
+                m->borde_x = 0.5f * (m->x_ir[0] + m->x_ir[1]) - p->ir_x;
+                if (fabsf(m->torcido) <= p->ir_tol_deg * DEG2RAD) {
+                    m->alineado = true;
+                    m->alejando = false;
+                    m->x_alejar = m->borde_x + p->d_carrera;
+                    frenar_aca(m, e);
+                    cambiar(m, MAN_ALEJAR);
+                } else {
+                    girar(m, p, e, -m->torcido);
+                }
+            } else if (izq || der) {
+                float x1 = izq ? m->x_ir[0] : m->x_ir[1];
+                if (x1 - e->x > lim) {
+                    // El otro no llegó a verlo: torcido por lo menos lo que da este recorrido
+                    float cota = atan2f(lim, p->ir_sep);
+                    m->torcido = izq ? cota : -cota;
+                    m->borde_x = x1 - p->ir_x;
+                    girar(m, p, e, -m->torcido);
+                }
+            } else if (m->x_inicio - e->x > p->busqueda_max) {
+                maniobra_abortar(m, "no encontro el borde");
+            }
+            break;
+        }
         if (!e->haz_valido) {
             m->n_borde = 0;
             if (++m->n_sin_haz * dt > T_SIN_HAZ) maniobra_abortar(m, "el sensor no mide");
@@ -235,6 +382,65 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
             maniobra_abortar(m, "no encontro el borde");
         }
         break;
+
+    case MAN_ALINEAR: {
+        // Frenado donde midió (frenar_aca), gira en el lugar: pide el giro a w_alinear hasta completarlo y
+        // espera a que el rumbo (giróscopo) llegue; después avanza un poco para volver a medir
+        m->v_ref = 0.0f;
+        float paso = p->w_alinear_dps * DEG2RAD * dt;
+        if (fabsf(m->giro_falta) > paso) {
+            s->w_ref = copysignf(p->w_alinear_dps * DEG2RAD, m->giro_falta);
+            m->giro_falta -= copysignf(paso, m->giro_falta);
+            m->t_giro = 0.0f;
+        } else {
+            m->giro_falta = 0.0f;
+            m->t_giro += dt;
+            if (sostenido(&m->n_quieto, fabsf(e->rumbo - m->rumbo_obj) < RUMBO_TOL, dt, 0.2f)
+                || m->t_giro > T_GIRO_ASENTAR) {
+                m->alineado = false;
+                m->alejando = false;
+                m->x_alejar = m->borde_x + p->ir_x + D_REMEDIR;     // los infrarrojos, a D_REMEDIR del borde
+                cambiar(m, MAN_ALEJAR);
+            }
+        }
+        if (m->estado == MAN_ALINEAR && m->t > T_ALINEAR_MAX) maniobra_abortar(m, "no termino de girar");
+        break;
+    }
+
+    case MAN_ALEJAR: {
+        // Primero termina de frenar donde midió, sosteniendo la posición. Después avanza (se aleja del
+        // borde) hasta x_alejar y frena con la rampa. Ya alineado, es d_carrera: de ahí larga. Si no, es
+        // apenas para que los dos infrarrojos vuelvan a ver el piso y medir de nuevo: si alguno no lo ve,
+        // sigue un poco más
+        if (!m->alejando) {
+            m->v_ref = 0.0f;
+            if (sostenido(&m->n_quieto, fabsf(e->v) < V_FRENADO, dt, 0.2f) || m->t > T_FRENAR_MAX) m->alejando = true;
+            break;
+        }
+        float falta = m->x_alejar - e->x;
+        float frenado = m->v_ref * m->v_ref / (2.0f * A_ALEJAR);
+        bool ven_piso = m->alineado || (e->ir_valido && !e->ir_izq && !e->ir_der);
+        if (!ven_piso && falta <= frenado && falta > -D_REMEDIR_MAX) falta = frenado + 0.01f;
+        // La consigna de posición avanza con la velocidad pedida (no x libre): con el equilibrio de la
+        // tabla corrido hacia el borde, siguiendo solo la velocidad el robot se quedaba o volvía hacia
+        // el borde (banco, 11/11). Al llegar frena donde está, sin ir a buscar la consigna que se adelantó
+        rampa(&m->v_ref, falta > frenado ? p->v_alejar : 0.0f, A_ALEJAR, dt);
+        if (m->v_ref == 0.0f && falta <= frenado && !ven_piso) {
+            maniobra_abortar(m, "un infrarrojo no vuelve a ver el piso");
+        } else if (m->v_ref == 0.0f && falta <= frenado) {
+            frenar_aca(m, e);
+            if (m->alineado) {
+                cambiar(m, MAN_PREPARAR);
+            } else {
+                m->x_ir[0] = m->x_ir[1] = NAN;
+                m->x_inicio = e->x;
+                cambiar(m, MAN_BUSCAR);
+            }
+        } else if (m->t > T_ALEJAR_MAX) {
+            maniobra_abortar(m, "no termino de alejarse");
+        }
+        break;
+    }
 
     case MAN_PREPARAR:
         // Frena donde vio el borde sin volver atrás a buscar la consigna, pone las patas de
@@ -317,8 +523,16 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
 
     case MAN_ATERRIZAR:
         m->t_tocar += dt;
-        // La rueda rebota: cada muestra en caída libre vuelve a contar como en el aire
-        m->t_apoyo = e->acc < p->g_vuelo ? 0.0f : m->t_apoyo + dt;
+        // La rueda rebota: volver a estar en caída libre cuenta como en el aire. 11/11, escalón de 12 cm:
+        // con UNA muestra alcanzaba, y al tocar el golpe hace vibrar la estructura a ~40 Hz y |a| pasa por
+        // debajo de g_vuelo una y otra vez sin que la rueda se despegue; ahora hacen falta N_VUELO seguidas,
+        // como al despegar
+        // Y solo en los primeros T_REBOTE_MAX: el rebote del escalón de 12 cm dura ~0,1 s y termina antes de
+        // 0,3 s; más tarde |a| baja por el cabeceo (~2,5 Hz, la IMU va arriba del eje) y no por un rebote. En
+        // la del 11/11 13:28 (0,75 m/s) volvía a mandar la rueda a la velocidad del vuelo a 0,55, 0,71, 1,36 y
+        // 1,45 s, con el cuerpo inclinado 8 a 25° hacia el otro lado: u = -1 en la dirección contraria y cayó
+        bool rebota = sostenido(&m->n_rebote, e->acc < p->g_vuelo, dt, (N_VUELO - 0.5f) * dt);
+        m->t_apoyo = rebota && m->t_tocar < T_REBOTE_MAX ? 0.0f : m->t_apoyo + dt;
         s->pata_deg = p->pata_final_deg;
         s->vel_pata_dps = p->vel_pata_final_dps;
         s->kx_factor = p->kx_aterrizaje;
@@ -327,7 +541,10 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
             // (con la rueda en el aire la haría girar a fondo y al volver a tocar frenaría de golpe)
             s->u_directo_activo = true;
             s->u_directo = p->ff * m->v_vuelo + K_VEL_VUELO * (m->v_vuelo - e->v);
-            m->v_ref = e->v;
+            // 11/11: la consigna NO se lleva a la velocidad de la rueda (antes v_ref = e->v): en cada
+            // rebote la rueda gira en vacío (±0,7 m/s en las bajadas del 11/11) y la consigna saltaba con
+            // ella; al retomar, el LQR frenaba o aceleraba de golpe y en 2 de 4 se cayó adelante. Sigue la
+            // rampa de frenado desde la del piso (v_vuelo)
         }
         s->solo_giroscopo = m->t_tocar < p->t_sin_acel || m->t_apoyo < p->t_mantener;
         x_libre = p->kx_aterrizaje == 0.0f;
@@ -388,7 +605,8 @@ void maniobra_paso(maniobra_t *m, const man_params_t *p, const man_entrada_t *e,
     }
     s->v_ref = m->v_ref;
     s->x_ref = m->x_ref;
-    if (m->estado == MAN_BUSCAR || m->estado == MAN_PREPARAR || m->estado == MAN_LARGAR) {
+    if (m->estado == MAN_BUSCAR || m->estado == MAN_PREPARAR || m->estado == MAN_LARGAR
+        || m->estado == MAN_ALINEAR || m->estado == MAN_ALEJAR) {
         s->u_ff = p->ff * m->v_ref;
     }
 }
@@ -408,6 +626,11 @@ static const struct { const char *nombre; size_t donde; } CAMPOS[] = {
     CAMPO("t_sin_acel", t_sin_acel),           CAMPO("kx_aterrizaje", kx_aterrizaje),
     CAMPO("a_frenado", a_frenado),             CAMPO("ff", ff),
     CAMPO("t_continuo", t_continuo),          CAMPO("d_borde", d_borde),
+    CAMPO("ir_x", ir_x),                       CAMPO("ir_sep", ir_sep),
+    CAMPO("ir_dx", ir_dx),                     CAMPO("ir_tol", ir_tol_deg),
+    CAMPO("w_alinear", w_alinear_dps),         CAMPO("alinear_max", alinear_max_deg),
+    CAMPO("d_carrera", d_carrera),             CAMPO("v_alejar", v_alejar),
+    CAMPO("v_buscar_ir", v_buscar_ir),
 };
 #undef CAMPO
 #define N_CAMPOS ((int)(sizeof CAMPOS / sizeof CAMPOS[0]))

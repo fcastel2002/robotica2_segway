@@ -44,11 +44,12 @@ El mando de PS4 se conecta por Bluetooth o USB a la PC. `Aplicacion/puente.py` i
 
 | Control del Mando PS4 | Función en el Segway | Comando enviado |
 |---|---|---|
-| **Botón `OPTIONS`** | Alterna entre **Opción 1** y **Opción 2** de manejo con sticks | Cambia modo en `joystick.py` |
+| **Botón `OPTIONS`** (11/11) | **Se alinea con el borde del escalón** con los dos infrarrojos y lo baja (solo equilibrando, de espaldas al escalón). El modo de sticks se cambia desde la página | `escalon alinear` |
 | **Opción 1 (por defecto)** | **1 Stick (Izquierdo)** + **Flechitas (D-Pad)** controlan tanto `avance` como `giro` | `mov <avance> <giro>` |
 | **Opción 2** | **2 Sticks separados**: **Stick Izquierdo** = `avance`, **Stick Derecho** = `giro` (+ **Flechitas**) | `mov <avance> <giro>` |
-| **Botón `R1`** | Sube los servos de las patas **+2°** por cada pulsación (**tope: 30°**) | `servo <grados>` |
-| **Botón `L1`** | Baja los servos de las patas **−2°** por cada pulsación (**tope mínimo: 0°**) | `servo <grados>` |
+| **Botón `R1`** (11/11) | **Mientras está apretado** las patas suben, suave; al soltarlo quedan donde están. Un toque las mueve ~2° (**tope: 30°**) | `servo 30` y, al soltar, `servo on` |
+| **Botón `L1`** (11/11) | Lo mismo hacia abajo (**tope mínimo: 0°**) | `servo 0` y, al soltar, `servo on` |
+| **`R3` / `L3`** (apretar el stick derecho / izquierdo), 11/11 | **Mientras está apretado gira sobre su eje** a la derecha / a la izquierda (90 °/s, `set weje`) | `eje 1` / `eje -1` |
 | **Botón `✕` (Equis)** | Arma el robot (el LQR es el único control desde el 2/11) | `arm` |
 | **Botón `◯` (Círculo)** | **Desarme de emergencia** inmediato (corta motores y movimiento) | `mov 0.000 0.000` + `disarm` |
 | **Botón `△` (Triángulo)** | **Baja el escalón que tiene atrás** (solo equilibrando). Sin el sensor, con el borde a 30 cm detrás del apoyo de la rueda (`man d_borde` en el firmware) | `escalon` |

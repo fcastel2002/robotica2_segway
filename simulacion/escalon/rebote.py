@@ -28,7 +28,7 @@ G = 9.81
 AIRE = 3.0          # [m/s2] |a| menos que esto: en el aire (o casi)
 GOLPE = 15.0        # [m/s2] |a| más que esto: el golpe
 CS = [4, 6, 10, 15, 25, 40, 60, 100]
-SERVOS = [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0]   # el par de los servos por esto: cuánto ceden las patas
+SERVOS = [0.1, 0.15, 0.2, 0.3, 0.5, 1.0, 2.0]   # el par de los servos por esto (11/11: también más blandos)
 VENTANA = (-0.02, 0.45)     # [s] respecto del golpe, lo que se compara (desde 20 cm puede saltar ~6 cm)
 
 
@@ -102,11 +102,14 @@ def prediccion(pool, pata, k):
                     h * 100, sv, c, cede, max(despega, 0.0), -min(z), tope, aire))
 
 
-def comparar(pool, ruta, pata, k):
+def comparar(pool, ruta, pata, k, equilibrio):
     filas = [l for l in open(ruta, encoding="utf-8") if l.strip() and not l.startswith("#")]
     reg = list(csv.DictReader(filas))
     t = [float(r["t_s"]) for r in reg]
     a = [float(r["acc_ms2"]) for r in reg]
+    tope = 4 if max(a) < 4.3 * G else 16      # el rango del acelerómetro: ±4 g hasta el 7/11, ±16 g desde ahí
+    th = [float(r["theta_deg"]) for r in reg]
+    inclinacion = sorted(th[:60])[30] - equilibrio     # 11/11: cómo lo sostenían respecto del equilibrio
     lista = caidas(t, a)
     if not lista:
         print("No encuentro ninguna caída en el registro (|a| < %g m/s2 60 ms o más y después un golpe)" % AIRE)
@@ -119,7 +122,7 @@ def comparar(pool, ruta, pata, k):
         dur = t_golpe - t_suelta
         h = 0.5 * G * dur ** 2
         real = recorte(t, a, t_golpe)
-        trabajos = [((c, s), dict(alto="%.4f" % h, c_rueda=c, k_rueda=k, pata=pata, servo=s))
+        trabajos = [((c, s), dict(alto="%.4f" % h, c_rueda=c, k_rueda=k, pata=pata, servo=s, tope=tope, inclinacion="%.2f" % inclinacion))
                     for c in CS for s in SERVOS]
         R = dict(pool.imap_unordered(simular, trabajos))
         errores = {}
@@ -129,7 +132,7 @@ def comparar(pool, ruta, pata, k):
             errores[clave] = (sum((real[x] - sim[x]) ** 2 for x in comunes) / len(comunes)) ** 0.5
         mejor = min(errores, key=errores.get)
         tope_r, aire_r = rasgos(t, a, t_golpe)
-        print("Caída %d: %.0f ms en el aire -> soltado a %.1f cm" % (n + 1, dur * 1e3, h * 100))
+        print("Caída %d: %.0f ms en el aire -> soltado a %.1f cm, %.1f° del equilibrio" % (n + 1, dur * 1e3, h * 100, inclinacion))
         print("   robot: golpe a 4 g o más %d ms, casi en el aire después %d ms" % (tope_r, aire_r))
         for clave in sorted(errores, key=errores.get)[:5]:
             ts, as_, _, _ = R[clave]
@@ -162,11 +165,13 @@ def main():
     ap.add_argument("registro", nargs="?")
     ap.add_argument("--pata", type=float, default=30)
     ap.add_argument("--k", type=float, default=17000)
+    ap.add_argument("--equilibrio", type=float, default=5.96,
+                    help="lo que marca la IMU en el equilibrio con esas patas (11/11, patas 30: 5,96)")
     p = ap.parse_args()
     (AQUI / "resultados" / "pruebas").mkdir(parents=True, exist_ok=True)
     with Pool(max(1, (os.cpu_count() or 2) - 1)) as pool:
         if p.registro:
-            comparar(pool, p.registro, p.pata, p.k)
+            comparar(pool, p.registro, p.pata, p.k, p.equilibrio)
         else:
             prediccion(pool, p.pata, p.k)
     for f in (AQUI / "resultados" / "pruebas").glob("_rebote_*.csv"):

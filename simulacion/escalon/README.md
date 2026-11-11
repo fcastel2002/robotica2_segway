@@ -408,3 +408,82 @@ banco con 15 N s/m y servos ×3: los encuentra). Lo que predice el modelo de hoy
 servos 4 veces más duros, las patas ceden 1,5-3° y el robot salta 5-59 mm según la altura y el
 amortiguamiento. En el golpe los dos servos llegan a 10-21 N m (el doble y medio de lo que dan
 quietos, ~8 N m: los empuja la caída) y, si fueran más duros, a 15-33 N m.
+
+## El escalón final: uno de 12 cm (11/11)
+
+El escenario quedó en **un escalón de 12 cm con lugar de sobra abajo**. El robot lo bajó parado 3 de 3 a
+0,65 m/s (△, sin sensor, puesto a ~55 cm del borde). Lo que se hizo con el banco, con el control de hoy
+(`LQR_TABLA_DRV` por los factores de fábrica; hasta el 11/11 el banco corría la tabla vieja sin factores:
+`GANANCIAS=vieja LQRFAC=1 LQRFACX=1` da lo de antes) y el `maniobra.c` de hoy:
+
+**Ojo con `ultimo`.** `banco_escalon caso escalones=1 alto=0.12` baja un escalón de **3 cm** si no se
+agrega `ultimo=0` (de fábrica el último escalón de la escalera es de 3 cm).
+
+**El aterrizaje, contra el robot** ([`aterrizaje_12cm.py`](aterrizaje_12cm.py), las tres bajadas a
+0,65 m/s). En el robot, después de tocar, el cuerpo cabecea **+8° hacia adelante en 40 ms**, vuelve hasta
+**−8° a los 150 ms** (el LQR contesta a fondo y la rueda se despega ~50 ms) y se asienta en ~0,6 s. El
+banco rígido da la misma forma con la mitad de amplitud o menos (+3,8°, −1,6°). Lo mismo en las
+**soltadas** sin motores ([`golpe_soltadas.py`](golpe_soltadas.py), 11 del 11/11): +4 a +12° en 40 ms en
+el robot, +0,4 a +3,7° en el banco.
+
+**De dónde sale ese cabeceo.** Al tocar, la pata cede; cerca de 30° el cuatro barras está casi en su punto
+muerto y un poco de pata es mucho giro del eslabón que lleva el motor. La rueda está engranada al rotor
+(que visto desde el eje pesa varias veces más que ella), así que gira con el eslabón, empuja el piso hacia
+adelante y el piso tira del pie hacia atrás: el cuerpo cabecea hacia adelante. Está en el banco, pero
+corto. Lo que lo acerca al robot (variables de entorno del banco, `planta_del_entorno` en
+`banco_escalon.c`): la pata más blanda y **elástica** (`K_PATA=20 C_PATA=0.8`: el plástico de los agarres,
+no la recta par-velocidad del servo) y **3° más cerca del punto muerto** (`A_EXTRA=3`). Con eso el banco
+da +6,6° a los 40 ms y −4,5° a los 200 ms, y el error contra las soltadas baja de 7,7° a 4,4°. **Es un
+ajuste, no una medida**, y sigue corto: una búsqueda libre de los parámetros se va a los topes (rotor ×5,
+la pata en el final de la tabla), o sea que falta algo en el modelo. Para cerrarlo hace falta medir a qué
+ángulo de pata se traba derecho el cuatro barras. También se agregó la torsión del eslabón del motor contra
+la caja (`K_TORSION`, la coordenada `s` de `planta_plana.c`, el k_s de los barridos): al golpe no le
+cambia nada y queda apagada.
+
+**Robustez de la bajada con △** ([`escalon_12cm.py`](escalon_12cm.py), 32 variaciones de la planta y de
+cómo se lo pone × 6 maniobras × las dos plantas; tablas en
+[`resultados/escalon_12cm/`](resultados/escalon_12cm/)):
+
+| maniobra | planta rígida | con la pata que cede: bien y cuánto se aparta (mediana / la peor) |
+|---|---|---|
+| 0,55 m/s | 31 de 32 (falla con 15 cm) | 32 de 32; 5,7° / 13,1° |
+| **0,65 m/s (la de hoy)** | 32 de 32 | 32 de 32; 5,7° / **12,8°** |
+| 0,75 m/s | 32 de 32 | 32 de 32; 5,7° / 13,3° |
+| 0,85 m/s | 32 de 32 | 32 de 32; 6,8° / 16,8° |
+| 0,65 m/s, patas 25° al tocar | 32 de 32 | 32 de 32; 6,5° / 15,5° |
+| 0,65 m/s, larga con patas 20° | 31 de 32 | 31 de 32; 7,6° / 14,2° (no larga si arranca lento) |
+
+La de hoy es la que menos se aparta; ni las patas a 25° al tocar ni largar con 20° la mejoran. **El
+banco es optimista con la velocidad:** dice que a 0,85 m/s anda siempre y en el robot se cayó 1 de 2 (el
+motor a fondo sin margen); en el banco el robot sale además a 0,59 m/s cuando se piden 0,65 (el de verdad,
+a 0,65).
+
+**Caer de lado** ([`caida_de_lado.py`](caida_de_lado.py), [figura](resultados/caida_de_lado.png)). El
+banco es plano; esto es el robot visto de atrás, sin control, llegando torcido al borde: una rueda se queda
+sin piso antes, rola, y toca primero con esa. Por cada grado torcido rola ~2° al tocar (a 0,65 m/s: 5°
+torcido son 7,5°; a 0,75 m/s, 10 % menos) y **recién vuelca de costado llegando torcido más de ~19-25°**
+(más margen cuanto más rápido), casi igual con la inercia de rolido a la mitad o al doble, las patas el
+doble de duras o el piso resbaloso. En el robot, las 16 bajadas del 11/11 (giróscopo): hasta 20° de rolido
+al tocar, y esas quedaron paradas; **las 4 caídas de esas 16 fueron con poco rolido** (0 a 6°): se cayó de
+cabeceo, no de costado. Lo que el modelo no dice es si el LQR lo sostiene después de tocar con una rueda
+sola (eso pediría un modelo en tres dimensiones).
+
+**La bajada autónoma (OPTIONS, `escalon alinear`)** ([`alinear_banco.py`](alinear_banco.py); el banco tiene
+ahora los dos infrarrojos: `caso alinear=1`, `ir_x`, `ir_x_real`, `v_buscar_ir`, `d_carrera`). Como el
+banco es plano llega derecho; lo que se prueba es el robot equilibrando cerca del borde. Lo que mostró, y
+cómo quedó el firmware:
+
+- **Para frenar, primero sigue.** Buscando a 0,08 m/s y frenando con la consigna de velocidad, la rueda
+  seguía 4,8 cm después de ver el borde (con los infrarrojos a 6 cm de la rueda quedaba a 1 cm). Ahora
+  busca a **0,05 m/s** y frena **sosteniendo la posición** donde lo vio: queda a 4-5 cm del borde.
+- **El equilibrio de la tabla un poco corrido lo tiraba del escalón.** Con −0,75° el LQR deja al robot
+  7 cm más allá de su consigna de posición: frenaba "en su lugar" y seguía hasta caerse. Ahora, antes de
+  ir hacia el borde, espera a estar quieto (tres promedios de 0,4 s que no cambien más de 4 mm; un robot
+  que va y viene no arranca) y mide ese corrimiento; frena y se aleja descontándolo.
+- Con eso, **16 de 18 variaciones bajan bien y 2 abortan sin moverse** (zona muerta mal compensada: no se
+  queda quieto), en las dos plantas; la rueda nunca llega a menos de 2,2 cm del borde, ni con los
+  infrarrojos mirando 1,5 cm más cerca de lo que se cree ni con el equilibrio corrido ±1,5°.
+
+Alinearse girando no está en el banco (no tiene guiñada): está en las pruebas de PC del firmware
+(`test_host/test_control.c`), con el robot visto de arriba y el lazo de rumbo: torcido hasta ±20° queda a
+menos de 2° (6 giros como mucho) y larga desde 50 cm.

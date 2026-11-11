@@ -2,10 +2,15 @@
 envía `mov <avance> <giro>` y comandos de botones por UDP al puerto 4211 del Segway (o al simulador).
 
 Controles configurados para el mando de PS4 (DualShock 4):
-- Botón OPTIONS: cambia entre Opción 1 (1 stick izquierdo + flechitas) y Opción 2 (2 sticks separados + flechitas).
-- Botón R1: sube las patas de a +2° por pulsación (tope en 30°: ver SERVO_MAX_DEG). El firmware
-  las lleva suave, a «velpata» grados por segundo (20 por defecto).
-- Botón L1: baja las patas de a -2° por pulsación (tope mínimo en 0°).
+- Botón OPTIONS (11/11): se alinea con el borde del escalón con los dos infrarrojos y lo baja
+  (`escalon alinear`). El modo de sticks (Opción 1: stick izquierdo + flechitas; Opción 2: dos sticks) se
+  cambia desde la página.
+- Botón R1 (11/11): mientras está apretado las patas suben (`servo 30`: el firmware las lleva suave, a
+  «velpata» grados por segundo, 20 por defecto); al soltarlo quedan donde están (`servo on`). Un toque
+  corto las mueve ~2°. Tope en 30° (SERVO_MAX_DEG).
+- Botón L1: lo mismo hacia abajo (`servo 0`), tope en 0°.
+- R3 / L3 (apretar el stick derecho / izquierdo), 11/11: mientras está apretado gira sobre su eje a la
+  derecha / a la izquierda (`eje 1` / `eje -1`, a «weje» grados por segundo, con el giróscopo).
 - Botón ✕ (Equis): arma el robot (`arm`; el LQR es el único control del firmware).
 - Botón ◯ (Círculo): desarme de emergencia inmediato (`mov 0 0` + `disarm`).
 - Botón △ (Triángulo): baja el escalón que tiene atrás (`escalon`; sin el sensor, con el borde a
@@ -41,7 +46,8 @@ SONY_VID = 0x054C        # DualShock 4 / DualSense
 # las dos patas van de 0 a 30° (la derecha se corrió 5° en el brazo: su servo llega a 35°).
 SERVO_MIN_DEG = 0
 SERVO_MAX_DEG = 30
-SERVO_PASO_DEG = 2       # 3/11: antes 10; el equipo los quiere de a poco
+SERVO_PASO_DEG = 2       # 3/11: antes 10; el equipo los quiere de a poco (los botones de la página)
+SERVO_VEL_DPS = 20.0     # «velpata» del firmware: solo para estimar dónde quedaron al soltar R1/L1
 
 MODOS_VALIDOS = ("opcion_1", "opcion_2")
 DESCRIPCION_MODOS = {
@@ -52,6 +58,7 @@ DESCRIPCION_MODOS = {
 BOTONES_VACIOS = {
     "x": False, "o": False, "cuadrado": False, "triangulo": False,
     "l1": False, "r1": False, "l2": False, "r2": False,
+    "l3": False, "r3": False,
     "share": False, "options": False,
     "up": False, "down": False, "left": False, "right": False,
 }
@@ -224,7 +231,7 @@ if sys.platform == "win32":
     #   0x11 (Bluetooth extendido): datos desde el byte 3;  0x01 (USB o Bluetooth básico): desde el 1
     #   ejes LX LY RX RY (0-255, centro 128), botones1 (cruceta abajo; cuadrado 0x10, cruz 0x20,
     #   círculo 0x40, triángulo 0x80), botones2 (L1 0x01, R1 0x02, L2 0x04, R2 0x08, share 0x10,
-    #   options 0x20); batería en datos+29 (0-10, ×10 %)
+    #   options 0x20, L3 0x40, R3 0x80); batería en datos+29 (0-10, ×10 %)
     import ctypes.wintypes as _wt
     import threading as _threading
 
@@ -359,6 +366,7 @@ if sys.platform == "win32":
                     "triangulo": bool(b1 & 0x80),
                     "l1": bool(b2 & 0x01), "r1": bool(b2 & 0x02), "l2": bool(b2 & 0x04),
                     "r2": bool(b2 & 0x08), "share": bool(b2 & 0x10), "options": bool(b2 & 0x20),
+                    "l3": bool(b2 & 0x40), "r3": bool(b2 & 0x80),
                     "up": av > 0, "down": av < 0, "left": gi < 0, "right": gi > 0,
                 },
             }
@@ -421,6 +429,7 @@ if sys.platform == "win32":
                         "r2": gp.bRightTrigger > 60,
                         "share": bool(btn & 0x0020),
                         "options": bool(btn & 0x0010),
+                        "l3": bool(btn & 0x0040), "r3": bool(btn & 0x0080),
                         "up": up, "down": down, "left": left, "right": right,
                     }
                     bateria = None
@@ -469,6 +478,7 @@ if sys.platform == "win32":
                     "r2": bool(b & 0x0080),
                     "share": bool(b & 0x0100),
                     "options": bool(b & 0x0200),
+                    "l3": bool(b & 0x0400), "r3": bool(b & 0x0800),
                     "up": dpad_y > 0.5, "down": dpad_y < -0.5,
                     "left": dpad_x < -0.5, "right": dpad_x > 0.5,
                 }
@@ -532,8 +542,16 @@ class PuenteJoystick:
         self._web_mando_t: float = -1e9
         self._ultimo_envio_ok: bool = False
         self._destino_texto: str | None = None
-        self._ultimo_evento: str = ("Listo (OPTIONS: modo 1/2 · R1/L1: servos ±2° [0..30°] · ✕: armar · ◯: desarmar"
-                                    " · △: bajar escalón · □: parada)")
+        self._ultimo_evento: str = ("Listo (R1/L1 apretado: sube/baja las patas [0..30°] · R3/L3: gira sobre su eje"
+                                    " · ✕: armar · ◯: desarmar · △: bajar escalón · OPTIONS: alinearse y bajar"
+                                    " · □: parada)")
+        # R1/L1 apretado: hacia dónde van las patas (+1, -1 o 0), desde cuándo y desde qué ángulo (para
+        # estimar dónde quedan al soltar), y cuántos "servo on" faltan repetir (UDP: por si uno se pierde)
+        self._patas_dir = 0
+        self._patas_t = 0.0
+        self._patas_desde = 0.0
+        self._agarrar_pendientes = 0
+        self._eje_previo = 0.0      # R3/L3: lo último mandado con "eje"
 
     def _resolver_destino(self) -> tuple[str | None, bool, str]:
         """Devuelve (ip_udp, es_simulado, texto_destino)."""
@@ -598,6 +616,24 @@ class PuenteJoystick:
                     self._ultimo_evento = f"L1 → Servo en tope mínimo ({SERVO_MIN_DEG}°)"
                 else:
                     self._ultimo_evento = f"L1 → Bajar servos a {self.servo_deg}° (-{SERVO_PASO_DEG}°, mín {SERVO_MIN_DEG}°)"
+            elif accion in ("patas_subir", "patas_bajar"):
+                # R1/L1 apretado: van al tope (el firmware las lleva a «velpata» °/s) hasta que se suelte
+                self._patas_estimar()
+                self._patas_dir = 1 if accion == "patas_subir" else -1
+                self._patas_t = time.monotonic()
+                self._patas_desde = float(self.servo_deg)
+                self._agarrar_pendientes = 0
+                tope = SERVO_MAX_DEG if self._patas_dir > 0 else SERVO_MIN_DEG
+                comandos_a_enviar.append(f"servo {tope}")
+                self._ultimo_evento = (f"{'R1' if self._patas_dir > 0 else 'L1'} apretado → las patas "
+                                       f"{'suben' if self._patas_dir > 0 else 'bajan'} hasta soltar (tope {tope}°)")
+            elif accion == "patas_parar":
+                if self._patas_dir != 0:
+                    self._patas_estimar()
+                    self._patas_dir = 0
+                    self._agarrar_pendientes = 2        # dos repeticiones más, en las próximas vueltas
+                    comandos_a_enviar.append("servo on")
+                    self._ultimo_evento = f"R1/L1 suelto → las patas quedan donde están (~{self.servo_deg}°)"
             elif accion == "servo_set" and valor is not None:
                 self.servo_deg = acotar_servo_estricto(valor)
                 comandos_a_enviar.append(f"servo {self.servo_deg}")
@@ -612,17 +648,26 @@ class PuenteJoystick:
             elif accion == "escalon":
                 comandos_a_enviar.append("escalon")
                 self._ultimo_evento = "△ → Bajar el escalón de atrás (escalon)"
+            elif accion == "alinear":
+                comandos_a_enviar.append("escalon alinear")
+                self._ultimo_evento = "OPTIONS → Alinearse con el borde y bajar (escalon alinear)"
             elif accion == "parar":
                 comandos_a_enviar.append("parar")
                 self._ultimo_evento = "□ → Parada controlada (parar)"
             elif accion == "grabar":
-                comandos_a_enviar.append("grabar")
-                self._ultimo_evento = "SHARE → Grabar 8 s a 200 Hz (grabar)"
+                comandos_a_enviar.append("grabar 4")      # 10/11: 4 s alcanzan para soltarlo o dejarlo caer
+                self._ultimo_evento = "SHARE → Grabar 4 s a 200 Hz (grabar 4)"
             evento = self._ultimo_evento
 
         for cmd in comandos_a_enviar:
             self._enviar_comando_robot(cmd, mostrar=( not cmd.startswith("mov ") ))
         return evento
+
+    def _patas_estimar(self) -> None:
+        """Con R1/L1 apretado, dónde van las patas (estimado con la velocidad del firmware). Con el lock."""
+        if self._patas_dir != 0:
+            avance = SERVO_VEL_DPS * (time.monotonic() - self._patas_t) * self._patas_dir
+            self.servo_deg = acotar_servo_estricto(self._patas_desde + avance)
 
     def _procesar_flancos_botones(self, botones_actuales: dict) -> None:
         """Detecta pulsaciones (flanco de subida False -> True) en los botones del PS4."""
@@ -636,14 +681,19 @@ class PuenteJoystick:
             self.ejecutar_accion("armar")
 
         if botones_actuales.get("options") and not prev.get("options"):
-            self.ejecutar_accion("toggle_modo")
+            self.ejecutar_accion("alinear")         # 11/11: antes cambiaba el modo de sticks
         if botones_actuales.get("share") and not prev.get("share"):
             self.ejecutar_accion("grabar")          # 5/11: soltar el robot y medir el rebote
 
-        if botones_actuales.get("r1") and not prev.get("r1"):
-            self.ejecutar_accion("servo_subir")
-        elif botones_actuales.get("l1") and not prev.get("l1"):
-            self.ejecutar_accion("servo_bajar")
+        # R1/L1 (11/11): mientras están apretados las patas suben/bajan; al soltar quedan donde están
+        r1, l1 = bool(botones_actuales.get("r1")), bool(botones_actuales.get("l1"))
+        if r1 and not prev.get("r1"):
+            self.ejecutar_accion("patas_subir")
+        elif l1 and not prev.get("l1"):
+            self.ejecutar_accion("patas_bajar")
+        elif (prev.get("r1") and not r1) or (prev.get("l1") and not l1):
+            # se soltó uno: si el otro sigue apretado, manda ese; si no, paran
+            self.ejecutar_accion("patas_subir" if r1 else "patas_bajar" if l1 else "patas_parar")
 
         if botones_actuales.get("triangulo") and not prev.get("triangulo"):
             self.ejecutar_accion("escalon")
@@ -733,6 +783,7 @@ class PuenteJoystick:
                     self._botones = dict(lectura["botones"])
                     self._mando = {"avance": avance, "giro": giro}
             else:
+                self.ejecutar_accion("patas_parar")     # se desconectó con R1/L1 apretado: que no sigan
                 with self._lock:
                     self._botones_previos = dict(BOTONES_VACIOS)
                     self._estado_joy = {"conectado": False, "nombre": None, "bateria": None}
@@ -744,6 +795,18 @@ class PuenteJoystick:
                 conectado = self._estado_joy["conectado"]
                 avance = self._mando["avance"]
                 giro = self._mando["giro"]
+                self._patas_estimar()
+                repetir_agarre = self._agarrar_pendientes > 0
+                if repetir_agarre:
+                    self._agarrar_pendientes -= 1
+                # R3/L3: giro sobre su eje mientras estén apretados (los dos a la vez se anulan)
+                eje = (1.0 if self._botones.get("r3") else 0.0) - (1.0 if self._botones.get("l3") else 0.0)
+                eje_previo, self._eje_previo = self._eje_previo, eje
+            if repetir_agarre:
+                self._enviar_comando_robot("servo on")
+            if conectado and (eje != 0.0 or eje_previo != 0.0):
+                # como "mov": se repite en cada vuelta (el firmware lo vence a los 300 ms) y un 0 al soltar
+                self._enviar_comando_robot(f"eje {eje:.0f}")
 
             ip_udp, simulado, texto_dest = self._resolver_destino()
             enviado_ok = False
