@@ -1,8 +1,8 @@
 # segway_v03 — segway_v02 más pararse solo y modo sport
 
 Copia de [`segway_v02`](../segway_v02/README.md) hecha el 11/11/2026 (pedido de Francisco): la v02, que anda
-estable, queda como estaba, y acá van las funciones nuevas sin probar: pararse solo con □ (estado `STANDUP`) y
-el modo sport. Ver [«Pararse solo y modo sport»](#pararse-solo--desarmado-y-modo-sport-1111). Lo demás es
+estable, queda como estaba, y acá van las funciones nuevas sin probar: pararse solo con □ (estado `STANDUP`), el modo
+sport (más velocidad) y el baile. Ver [«Pararse solo y modo sport»](#pararse-solo--desarmado-y-modo-sport-1111). Lo demás es
 igual a la v02; lo que sigue es su README.
 
 Copia de [`segway_v01`](../segway_v01/README.md) hecha el 6/11/2026, para las funciones de la versión final en
@@ -352,8 +352,9 @@ controlada de siempre; desarmado o caído, `levantar` (`cuadrado` es un sinónim
 
 | Etapa | Qué hace | Termina |
 |---|---|---|
-| `patas` ([`levantar.c`](components/control/levantar.c)) | Las dos patas a `levpata` (6°), a 20 °/s | Llegaron y pasaron 0,5 s; si en 4 s no llegaron, aborta |
-| `empujar` | Los dos motores hacia atrás con `levu` (1,0 = a fondo; sube en 50 ms). La inclinación sigue solo con el giróscopo (el acelerómetro ve la aceleración de las ruedas) | El supervisor arma, o a `levt` (1 s) aborta y apaga |
+| `preparar` ([`levantar.c`](components/control/levantar.c)) | Las dos patas a `levpata0` (15°), a 20 °/s | Llegaron y pasaron 0,5 s; si en 4 s no llegaron, aborta |
+| `bajar` | Las patas **de golpe** a `levpata` (4°): un escalón (`levvel` 3000 °/s), el servo a su velocidad máxima, para que el tirón le dé una rotación al cuerpo | Enseguida (más `levespera`, 0 s) |
+| `empujar` | Los dos motores hacia atrás con `levu` (1,0 = a fondo, de golpe), en el mismo instante en que se piden los 4°. La inclinación sigue solo con el giróscopo (el acelerómetro ve la aceleración de las ruedas) | El supervisor arma, o a `levt` (1 s) aborta y apaga |
 | armado automático ([`supervisor.c`](main/supervisor.c)) | Con los motores empujando, apenas θ − θref > −`levvent` (10°) pasa a `BALANCING`: el LQR entra **sin la rampa de 0,5 s** (llega girando y con las ruedas a fondo) y la posición se fija recién cuando frenó | — |
 
 `disarm` (◯) lo corta en cualquier momento; si pasa de largo hacia adelante sin armar, desarmado.
@@ -361,28 +362,43 @@ No arranca si está caído hacia adelante, calibrando o en falla. La consola cue
 (`# levantar: ARMADO solo a ...` o `# levantar: no armo (motivo)`) y `get` muestra los parámetros.
 
 Para ajustarlo: si llega muy rápido y se pasa, bajar `levu` o agrandar `levvent` (el LQR lo agarra
-antes); si las ruedas patinan y no levanta, bajar `levu`; si no le da el motor, probar otra `levpata`.
+antes); si las ruedas patinan y no levanta, bajar `levu`; si no le da el motor, probar otra `levpata`
+o `levpata0`; para que empuje recién con las patas ya abajo (el servo tarda ~40-60 ms), `set levespera 0.05`.
 **La primera vez, con alguien atajando y lugar libre atrás**: las ruedas salen a fondo hacia atrás.
+
+Todos se cambian en caliente desde la página: tarjeta «Parámetros de control», sección «Levantarse
+solo» (apertura = `levpata0`, cierre = `levpata`, bajada, espera, empuje, ventana, empuje máx), con
+«Leer parámetros» para ver los del robot, «Cargar» para mandar los cambiados y el botón «Levantar».
 
 ### Modo sport: `set sport 1`
 
-- **Velocidad a fondo `sportvmax` (0,9 m/s)** en lugar de `vmax` (que no se toca). Ojo: con `ff` 1,15
-  el comando anticipado a 0,9 m/s ya es 1,03 de PWM, así que el margen de motor (`set margen`, 0,85)
-  frena la velocidad pedida antes de llegar: es lo que deja motor para equilibrar. A ver en el piso
-  hasta dónde llega (el techo del motor medido el 11/11 con la bajada era ~0,75 m/s con margen).
-- **Se inclina hacia adentro de la curva como una moto** ([`sport.c`](components/control/sport.c)), y
-  no un ángulo fijo: sigue a la aceleración de costado `v·w` (velocidad por velocidad de giro, medidas
-  con los encoders y el giróscopo vertical), o sea a lo agresivo del giro. Pide `sporttilt` veces el
-  ángulo de equilibrio de una moto, `atan(v·w/g)`: a 0,9 m/s girando a 60 °/s son 5,5°; a 120 °/s,
-  10,9°; girando en el lugar o yendo derecho, nada. Lo hace con la diferencia entre las patas (hasta
-  ±6° cada una, a 40 °/s), encima de la altura pedida: la altura media y la referencia de equilibrio
-  no cambian. Mientras está inclinado a propósito, el nivel de costado no corrige.
-- Si se inclina **para afuera**, `set sporttilt -1` (el signo sale de los ejes de la IMU de
-  `board_config.h`, que el rumbo ya usa, pero no se probó). `set sporttilt 0`: sport sin inclinarse.
-- En el mando (huevo de pascua, [`joystick.py`](../../Aplicacion/joystick.py)): se prende y se apaga con
-  el truco de «manejo perfecto» del GTA San Andreas de PS2, **△ R1 R1 ← R1 L1 R2 L1**, con el robot
-  desarmado (cada botón sigue haciendo lo suyo). En sport, **R2 es el acelerador y L2 la marcha
-  atrás**, analógicos, y L2 deja de prender el nivel de costado.
+- **Velocidad a fondo `sportvmax` (0,8 m/s)** en lugar de `vmax` (que no se toca). Ojo: con `ff` 1,15
+  el comando anticipado a 0,8 m/s ya es 0,92 de PWM, así que el margen de motor (`set margen`, 0,85)
+  frena la velocidad pedida antes de llegar: es lo que deja motor para equilibrar.
+- **Sin inclinación en las curvas** (12/11, Francisco): se probó inclinarse como una moto con la
+  diferencia entre las patas, pero a estas velocidades no mejora el agarre y le quitaba estabilidad.
+- **El truco** (huevo de pascua): con el robot **desarmado y sin poder armar** (acostado, por ejemplo;
+  dentro de la ventana el primer ✕ arma), **✕ tres veces seguidas** (`arm` × 3, con menos de 1,5 s
+  entre una y otra) lo prende, y otra vez lo apaga. Lo cuenta el firmware (`control_task.c`).
+- **LED naranja**: fijo desarmado; equilibrando alterna verde y naranja. La consola dice
+  `# sport: PRENDIDO` / `apagado` y la telemetría tiene la columna `sport`.
+- En el mando ([`joystick.py`](../../Aplicacion/joystick.py), que sigue lo que informa el robot): en
+  sport, **R2 es el acelerador y L2 la marcha atrás**, analógicos, y L2 deja de prender el nivel de
+  costado. **Hay que reiniciar `puente.py`** después de actualizar `joystick.py`. Si el puente arranca
+  con el robot ya prendido, le pide `tlm on` para conocer las columnas de la telemetría.
+- En la página, sección «Modo sport» de «Parámetros de control»: `sport` y `sportvmax`, en caliente.
+
+### Modo baile: pad táctil o `bailar [s]`
+
+**Apretar el pad táctil del mando** lo prende y otra vez lo apaga (`bailar 600` / `bailar 0`; el robot
+informa si está bailando con la columna `baile` y «# baile: ...»). Por XInput (DS4Windows, Steam) el pad
+no llega; por HID directo (el del puente), sí. También los botones «Bailar» y «Parar baile» de la página.
+
+Solo equilibrando. Por consola, durante `s` segundos (20 sin número) gira sobre su eje con el lazo de
+rumbo (a `weje` °/s, cambiando de sentido cada 3 s) y hamaca las patas en contrafase (±5° cada una,
+0,8 Hz): como una sube lo que la otra baja, la altura media y la referencia de equilibrio no cambian.
+`bailar 0`, mover el stick, ◯, una bajada o una parada lo cortan. Constantes `BAILE_*` de
+`board_config.h`. **Sin probar en el robot.**
 
 ## Medición de energía (INA)
 

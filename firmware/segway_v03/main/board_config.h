@@ -387,19 +387,13 @@
 // modelado/parametros/parametros_fisicos.m). OJO: con la tapa daba 4,06; ¿se movió la placa de la IMU?
 #define IMU_DELTA_DEG           9.27f
 
-// --- Modo sport (sport.h; "set sport 1", o el truco del mando: ver Aplicacion/joystick.py) ---
-// SIN PROBAR en el robot. La velocidad a fondo pasa de vmax a SPORT_V_MAX_MS y en las curvas se inclina
-// hacia adentro lo que pide la aceleración de costado (v·w). OJO con 0,9 m/s: con MOV_FF 1,15 el comando
-// anticipado solo ya es 1,03 de PWM, así que el margen de motor (MOV_U_MARGEN, 0,85) va a frenar la
-// velocidad pedida antes de llegar; es lo que evita que se quede sin motor para equilibrar.
-#define SPORT_V_MAX_MS          0.90f       // en vivo: set sportvmax
-#define SPORT_TILT_GAN          1.0f        // fracción del ángulo de moto atan(v·w/g) (en vivo: set sporttilt;
-                                            // si se inclina para afuera, negativo)
-#define SPORT_ROL_POR_DELTA     0.95f       // ° de rolido por ° de diferencia entre patas (nivel.h)
-#define SPORT_DELTA_MAX_DEG     12.0f       // ±6° cada pata: ~11° de rolido (0,9 m/s girando a 120 °/s)
-#define SPORT_BANDA_DEG         0.5f
-#define SPORT_TAU_S             0.10f       // filtro de v·w
-#define SPORT_VEL_DPS           80.0f       // ° de delta por segundo (40 °/s cada pata)
+// --- Modo sport ("set sport 1", o el truco: ✕ tres veces desarmado) ---
+// La velocidad a fondo pasa de vmax a SPORT_V_MAX_MS; en el mando R2 acelera y L2 va marcha atrás.
+// 12/11 (Francisco): se sacó la inclinación en las curvas: a estas velocidades no mejora el agarre y
+// le quitaba estabilidad. OJO: con MOV_FF 1,15 el comando anticipado a 0,8 m/s ya es 0,92 de PWM, así que
+// el margen de motor (MOV_U_MARGEN, 0,85) frena la velocidad pedida antes de llegar; es lo que evita que
+// se quede sin motor para equilibrar.
+#define SPORT_V_MAX_MS          0.80f       // en vivo: set sportvmax
 
 // El truco que prende y apaga el modo sport: SPORT_TRUCO_N veces "arm" (✕) seguidas, con menos de
 // SPORT_TRUCO_T_S entre una y otra, con el robot DESARMADO y sin poder armar (fuera de la ventana:
@@ -424,8 +418,9 @@
 // hacia atrás a fondo). En vivo: set levpata, set levu, set levvent, set levt
 // 11/11, segunda versión (Francisco): acostado hacia atrás, primero las patas a 15°, después bajan de
 // golpe a 4° y, apenas llegan, los motores al máximo.
-#define LEV_PATA_INICIO_DEG     15.0f       // patas antes de empezar (en vivo: set levpata0)
-#define LEV_PATA_DEG            4.0f        // patas para levantarse: bajan de golpe a esto (set levpata)
+// 12/11: con 15 -> 4 no se paraba; con 20 -> 3 se paró (Francisco, desde la página): quedan esos
+#define LEV_PATA_INICIO_DEG     20.0f       // patas antes de empezar (en vivo: set levpata0)
+#define LEV_PATA_DEG            3.0f        // patas para levantarse: bajan de golpe a esto (set levpata)
 #define LEV_VEL_BAJADA_DPS      3000.0f     // velocidad pedida de esa bajada (set levvel): 15° por ciclo, o sea
                                             // un escalón: el servo va a su velocidad MÁXIMA (pedido de
                                             // Francisco: el tirón de las patas tiene que generar una rotación)
@@ -436,7 +431,8 @@
 #define LEV_RAMPA_S             0.0f        // 0: el empuje arranca al máximo de golpe
 #define LEV_VENTANA_DEG         10.0f       // arma solo cuando le faltan menos de estos grados para la
                                             // referencia (llega girando rápido: el LQR lo frena con kw)
-#define LEV_T_EMPUJE_MAX_S      1.0f        // si empujando este tiempo no entró en la ventana, apaga
+#define LEV_T_EMPUJE_MAX_S      2.0f        // si empujando este tiempo no entró en la ventana, apaga. 12/11: de 1 a
+                                            // 2 s (con 20 -> 3° se paró pero no armó: ¿tardó más de 1 s?)
 
 // --- LED RGB de estado (main/led_estado.c; tabla en el README) ---
 // Brillo de 0 a 255. El WS2812 encandila: con 20 ya se ve bien de cerca.

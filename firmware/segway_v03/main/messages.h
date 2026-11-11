@@ -66,8 +66,7 @@ typedef enum {
     PARAM_NIVELCERO,    // (cualquier valor) toma como cero el rolido de este momento
     PARAM_SHARPDIV2,    // divisor del segundo Sharp
     PARAM_IRCAL,        // 1: calibra los sensores de piso (robot parado en piso plano); 0: sin calibrar
-    PARAM_SPORT,        // 1: modo sport (se inclina en las curvas y vmax pasa a SPORT_V_MAX_MS); 0: normal
-    PARAM_SPORTTILT,    // sport: fracción del ángulo de moto atan(v·w/g) que se pide (0 = no se inclina; < 0 al revés)
+    PARAM_SPORT,        // 1: modo sport (la velocidad a fondo pasa a SPORT_V_MAX_MS); 0: normal
     PARAM_SPORTVMAX,    // sport: velocidad con avance = 1 [m/s]
     PARAM_LEVPATA,      // levantarse solo (□ desarmado): ángulo de las patas [°]
     PARAM_LEVU,         // levantarse: fracción de PWM hacia atrás
@@ -198,9 +197,7 @@ typedef struct {
     uint8_t          arm_patas;     // patas_arm_t del último "arm" revisado: si no armó por las patas
     bool             armo_alguna_vez;   // ya armó desde que se prendió (el primero pide las patas iguales)
     bool             sport;         // modo sport ("set sport")
-    float            sport_gan;     // "set sporttilt"
     float            sport_v_max;   // [m/s] "set sportvmax"
-    float            sport_delta;   // [°] diferencia entre las patas que pide la curva (izquierda - derecha)
     lev_estado_t     lev_estado;    // levantarse solo (levantar.h)
     const char      *lev_motivo;    // por qué abortó la última vez (texto fijo de levantar.c) o NULL
     lev_params_t     lev;           // parámetros vigentes, para "get"

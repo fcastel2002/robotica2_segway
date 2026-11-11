@@ -388,9 +388,23 @@
               <label title="Zona muerta mientras anda (desde que se mueve el stick hasta que frenó y fijó la posición). La de «deadband» es la de quieto">dbmov <input name="dbmov" type="number" min="0" max="0.5" step="0.01"></label>
               <label title="Margen de motor (0-1): si el comando a los motores pasa de esto, la velocidad pedida retrocede para que quede con qué equilibrar. 0 = no">margen <input name="margen" type="number" min="0" max="1" step="0.05"></label>
               <label title="Prioridad por perturbación, en grados: si se inclina más que esto, suelta la velocidad pedida. 0 = no (en la simulación no ayudó)">prio ° <input name="prio" type="number" min="0" max="30" step="1"></label>
+              <h3>Levantarse solo (□ desarmado) <span class="tenue">segway_v03</span></h3>
+              <label title="Patas antes de empezar (apertura), en grados de pata: van ahí despacio y se asientan">apertura ° <input name="levpata0" type="number" min="0" max="30" step="0.5"></label>
+              <label title="Patas a las que bajan DE GOLPE (cierre), en grados: apenas se piden, los motores empujan">cierre ° <input name="levpata" type="number" min="0" max="30" step="0.5"></label>
+              <label title="Velocidad pedida de la bajada, en °/s: 3000 = un escalón (el servo a su máximo)">bajada °/s <input name="levvel" type="number" min="5" max="6000" step="10"></label>
+              <label title="Espera entre que se piden las patas abajo y el empuje, en s (0 = a la vez; 0,05 = con las patas ya abajo)">espera s <input name="levespera" type="number" min="0" max="1" step="0.01"></label>
+              <label title="Empuje hacia atrás, fracción de PWM (1 = a fondo)">empuje <input name="levu" type="number" min="0" max="1" step="0.05"></label>
+              <label title="Arma solo cuando le faltan menos de estos grados para la referencia">ventana ° <input name="levvent" type="number" min="1" max="25" step="1"></label>
+              <label title="Si empujando este tiempo no llegó a la ventana, apaga">empuje máx s <input name="levt" type="number" min="0.1" max="3" step="0.1"></label>
+              <h3>Modo sport <span class="tenue">segway_v03</span></h3>
+              <label title="1: modo sport (lo mismo que ✕ tres veces desarmado); 0: normal">sport <input name="sport" type="number" min="0" max="1" step="1"></label>
+              <label title="Velocidad a fondo en sport, en m/s">vmax sport <input name="sportvmax" type="number" min="0" max="1.2" step="0.05"></label>
               <div class="acciones fila-entera">
                 <button>Cargar</button>
                 <button type="button" data-comando="get">Leer parámetros</button>
+                <button type="button" data-comando="levantar" title="Desarmado o caído, acostado hacia atrás: se para solo (como □)">Levantar</button>
+                <button type="button" data-comando="bailar 600" title="Equilibrando: gira en el lugar y hamaca las patas (como el pad táctil)">Bailar</button>
+                <button type="button" data-comando="bailar 0">Parar baile</button>
                 <span class="tenue">se pierden al reiniciar</span>
               </div>
             </fieldset>

@@ -41,7 +41,7 @@
 #define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r," \
                     "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps," \
                     "x_mm,v_mms,vref_mms,giro,ref_deg,sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm," \
-                    "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria,alt_mm,alt2_mm,sport\n"
+                    "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria,alt_mm,alt2_mm,sport,baile\n"
 #define REG_POR_VUELTA  2       // líneas del registro de la bajada por vuelta (100/s de ~120 caracteres:
                                 // entra justo en 115200; 7/11, con corrientes y encoders)
 #define REG_POR_VUELTA_WIFI 6   // 10/11: con una PC escuchando por WiFi, solo por WiFi y en un paquete por
@@ -70,7 +70,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_RUMBO] = "rumbo", [PARAM_IRUMBRAL] = "irumbral", [PARAM_WEJE] = "weje",
     [PARAM_NIVEL] = "nivel", [PARAM_NIVELKP] = "nivelkp", [PARAM_NIVELKI] = "nivelki", [PARAM_ROLCERO] = "rolcero", [PARAM_NIVELCERO] = "nivelcero",
     [PARAM_SHARPDIV2] = "sharpdiv2", [PARAM_IRCAL] = "ircal",
-    [PARAM_SPORT] = "sport", [PARAM_SPORTTILT] = "sporttilt", [PARAM_SPORTVMAX] = "sportvmax",
+    [PARAM_SPORT] = "sport", [PARAM_SPORTVMAX] = "sportvmax",
     [PARAM_LEVPATA] = "levpata", [PARAM_LEVU] = "levu", [PARAM_LEVVENT] = "levvent", [PARAM_LEVT] = "levt",
     [PARAM_LEVPATA0] = "levpata0", [PARAM_LEVVEL] = "levvel", [PARAM_LEVESPERA] = "levespera",
 };
@@ -135,8 +135,7 @@ static void print_help(void)
         "# bailar [s]: equilibrando, gira en el lugar y hamaca las patas s segundos (20); bailar 0 lo corta\n"
         "# truco: desarmado y sin poder armar, arm (la X) 3 veces seguidas prende o apaga el modo sport\n"
         "# parar sin estar equilibrando (el cuadrado del mando; tambien cuadrado): es levantar\n"
-        "# param sport (1/0): modo sport: la velocidad a fondo pasa a sportvmax (m/s) y en las curvas se\n"
-        "#   inclina hacia adentro sporttilt veces el angulo de una moto, atan(v w / g); 0 = no se inclina\n"
+        "# param sport (1/0): modo sport: la velocidad a fondo pasa a sportvmax (m/s); R2 acelera, L2 atras\n"
         "# grabar [s]: graba s segundos (8 sin numero) a 200 Hz (armado o no) y los manda como el de\n"
         "#   la bajada (lineas #r):\n"
         "#   para soltar el robot desde unos cm y medir cuanto rebota la goma\n"
@@ -281,9 +280,9 @@ static void print_params(const telemetry_t *t)
         " + = izquierda abajo) patas izq-der=%.1f\n",
         t->nivel_gan, t->nivel_kp, t->nivel_ki, t->rolido * RAD2DEG, t->rol_cero,
         t->rolido * RAD2DEG - t->rol_cero, t->nivel_delta);
-    out("# sport=%d sportvmax=%.2f sporttilt=%.2f (patas izq-der por la curva: %.1f) | levantar: levpata0=%.0f "
-        "levpata=%.0f levvel=%.0f levespera=%.2f levu=%.2f levvent=%.0f levt=%.1f, %s%s%s\n",
-        t->sport ? 1 : 0, t->sport_v_max, t->sport_gan, t->sport_delta, t->lev.pata_inicio_deg, t->lev.pata_deg,
+    out("# sport=%d sportvmax=%.2f | levantar: "
+        "levpata0=%.1f levpata=%.1f levvel=%.0f levespera=%.2f levu=%.2f levvent=%.0f levt=%.1f, %s%s%s\n",
+        t->sport ? 1 : 0, t->sport_v_max, t->lev.pata_inicio_deg, t->lev.pata_deg,
         t->lev.vel_bajada_dps, t->lev.espera_s, t->lev.u_empuje,
         t->lev_ventana * RAD2DEG, t->lev.t_empuje_max_s, lev_nombre(t->lev_estado),
         t->lev_motivo ? "; el ultimo no armo: " : "", t->lev_motivo ? t->lev_motivo : "");
@@ -577,6 +576,7 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
                 last->ina.tension[INA_MOTOR_L], last->ina.tension[INA_MOTOR_R]);
         }
         cmd = (command_t){ .type = CMD_LEVANTAR };
+        s_grabar = 1;           // control graba el intento (4 s): al terminar se manda el registro
         out("# levantar: patas a %.0f grados, de golpe a %.0f, empuja hacia atras con %.0f %% y arma solo a %.0f "
             "grados de la referencia (esta a %.1f)\n", last->lev.pata_inicio_deg, last->lev.pata_deg,
             last->lev.u_empuje * 100.0f, last->lev_ventana * RAD2DEG, err_deg);
@@ -595,7 +595,7 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             out("# bailar: hay una bajada o una parada en curso\n");
             return;
         }
-        cmd = (command_t){ .type = CMD_BAILAR, .value = fminf(fmaxf(seg, 0.0f), 120.0f) };
+        cmd = (command_t){ .type = CMD_BAILAR, .value = fminf(fmaxf(seg, 0.0f), 600.0f) };
     } else if (strcmp(word, "grabar") == 0) {
         if (last->man_estado != MAN_INACTIVA && last->man_estado != MAN_FIN) {
             out("# grabar: ya esta grabando la bajada\n");
@@ -768,7 +768,7 @@ static void send_registro(int *reg_i, bool grabando)
         por_wifi = wifi_link_state() == WIFI_CONNECTED && wifi_link_info().client[0] != '\0';
         out("# registro de la bajada: %d muestras a 200 Hz, bateria %.2f V\n", n, s_bat.v_filt);
         out("#r,t_s,maniobra,theta_deg,rate_dps,x_mm,v_mms,vref_mms,u,pata_deg,acc_ms2,dist_mm,ref_deg,"
-            "imu_ok,baja_g,solo_giro,u_directo,i_l_ma,i_r_ma,m_l,m_r,enc_l,enc_r,exc,ax,ay,az,gx,gy,gz,ir_l,ir_r\n");
+            "imu_ok,baja_g,solo_giro,u_directo,i_l_ma,i_r_ma,m_l,m_r,enc_l,enc_r,exc,ax,ay,az,gx,gy,gz,ir_l,ir_r,standup,armado\n");
     }
     int largo = 0;
     for (int k = 0; k < (por_wifi ? REG_POR_VUELTA_WIFI : REG_POR_VUELTA) && *reg_i < n; k++, (*reg_i)++) {
@@ -777,7 +777,7 @@ static void send_registro(int *reg_i, bool grabando)
         int lugar = (int)sizeof paquete - largo;
         if (por_wifi && lugar < 220) break;
         int escrito = linea_registro(dst, lugar, "#r,%.3f,%s,%.2f,%.1f,%d,%d,%d,%.3f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d,%.0f,%.0f,%.3f,%.3f,%ld,%ld,%.3f,"
-            "%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%d,%d\n",
+            "%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%d,%d,%d,%d\n",
             m->ciclo * 0.005,
             maniobra_nombre((man_estado_t)m->estado), m->theta_cdeg * 0.01, m->rate_ddps * 0.1, m->x_mm,
             m->v_mms, m->vref_mms, m->u_mil * 0.001, m->pata_cdeg * 0.01, m->acc_cms2 * 0.01, m->dist_mm,
@@ -787,7 +787,8 @@ static void send_registro(int *reg_i, bool grabando)
             m->m_l_mil * 0.001, m->m_r_mil * 0.001, (long)m->enc_l, (long)m->enc_r, m->exc_mil * 0.001,
             crudo(m->imu_acc_cms2[0], 0.01f), crudo(m->imu_acc_cms2[1], 0.01f), crudo(m->imu_acc_cms2[2], 0.01f),
             crudo(m->imu_gyro_ddps[0], 0.1f), crudo(m->imu_gyro_ddps[1], 0.1f), crudo(m->imu_gyro_ddps[2], 0.1f),
-            (m->marcas & REG_IR_IZQ) != 0, (m->marcas & REG_IR_DER) != 0);
+            (m->marcas & REG_IR_IZQ) != 0, (m->marcas & REG_IR_DER) != 0,
+            (m->marcas & REG_STANDUP) != 0, (m->marcas & REG_ARMADO) != 0);
         if (escrito > 0) largo += escrito;
     }
     if (por_wifi && largo > 0) wifi_link_send(paquete, (size_t)largo);
@@ -919,10 +920,9 @@ static void comms_task(void *arg)
         if (last.sport != shown_sport) {
             shown_sport = last.sport;
             if (last.sport) {
-                out("# sport: PRENDIDO. Velocidad a fondo %.2f m/s (era %.2f), se inclina en las curvas, R2 "
-                    "acelera y L2 marcha atras\n", last.sport_v_max, last.mov.v_max);
+                out("# sport: PRENDIDO. Velocidad a fondo %.2f m/s (era %.2f), R2 acelera y L2 marcha atras\n", last.sport_v_max, last.mov.v_max);
             } else {
-                out("# sport: apagado. Velocidad a fondo %.2f m/s, sin inclinarse\n", last.mov.v_max);
+                out("# sport: apagado. Velocidad a fondo %.2f m/s\n", last.mov.v_max);
             }
         }
         if (last.lev_estado != shown_lev) {
@@ -972,7 +972,7 @@ static void comms_task(void *arg)
             out("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld,"
                 "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%.1f,%.0f,%.0f,%.3f,%.2f,"
                 "%.0f,%.0f,%.0f,%.0f,%s,%.0f,"
-                "%.2f,%.0f,%.0f,%.0f,%.0f,%.0f,%.1f,%.1f,%s,%.0f,%.0f,%d\n",
+                "%.2f,%.0f,%.0f,%.0f,%.0f,%.0f,%.1f,%.1f,%s,%.0f,%.0f,%d,%d\n",
                 (unsigned long)last.t_ms, supervisor_state_name(last.state),
                 last.theta * RAD2DEG, last.theta_rate * RAD2DEG, last.u,
                 (unsigned long)last.loop_us_max, (unsigned long)last.overruns,
@@ -987,7 +987,7 @@ static void comms_task(void *arg)
                 last.ina.corriente[INA_MOTOR_L] * 1e3f, last.ina.corriente[INA_MOTOR_R] * 1e3f,
                 last.ina.corriente[INA_LOGICA] * 1e3f, last.ina.tension[INA_MOTOR_L],
                 last.ina.tension[INA_MOTOR_R], bateria_nombre(s_bat.nivel),
-                last.altura[0] * 1e3f, last.altura[1] * 1e3f, last.sport ? 1 : 0);
+                last.altura[0] * 1e3f, last.altura[1] * 1e3f, last.sport ? 1 : 0, last.baile ? 1 : 0);
         }
         fflush(stdout);
     }

@@ -20,7 +20,6 @@
 #include "parada.h"
 #include "rumbo.h"
 #include "sensor_piso.h"
-#include "sport.h"
 #include "supervisor.h"
 
 static int failures = 0;
@@ -1232,56 +1231,9 @@ static void test_levantar_y_armado_automatico(void)
     CHECK(c.r == 0 && c.g > 0);
 }
 
-// Modo sport (11/11): la inclinación sigue a v·w (lo agresivo del giro), hacia adentro de la curva
-static void test_sport_inclinacion_en_curva(void)
-{
-    const float dt = 0.005f;
-    const sport_params_t p = { .gan = SPORT_TILT_GAN, .rol_por_delta = SPORT_ROL_POR_DELTA,
-                               .delta_max_deg = SPORT_DELTA_MAX_DEG, .banda_deg = SPORT_BANDA_DEG,
-                               .tau = SPORT_TAU_S, .vel_dps = SPORT_VEL_DPS };
-    sport_t s = { 0 };
-    // Derecho o girando en el lugar: nada
-    for (int k = 0; k < 400; k++) sport_paso(&s, &p, 0.9f, 0.0f, true, dt);
-    CHECK(s.delta_deg == 0.0f);
-    for (int k = 0; k < 400; k++) sport_paso(&s, &p, 0.0f, 2.0f, true, dt);
-    CHECK(s.delta_deg == 0.0f);
-    // A 0,9 m/s girando a la derecha (w < 0) a 60 °/s: atan(0,9·1,047/9,81) = 5,49° de rolido con el
-    // lado derecho abajo, o sea la izquierda más larga (delta > 0): 5,49/0,95 − 0,5 de banda
-    float d_max_paso = 0.0f, antes = 0.0f;
-    for (int k = 0; k < 400; k++) {
-        float d = sport_paso(&s, &p, 0.9f, -60.0f * DEG, true, dt);
-        if (fabsf(d - antes) > d_max_paso) d_max_paso = fabsf(d - antes);
-        antes = d;
-    }
-    float suave = s.delta_deg;
-    CHECK(fabsf(suave - (5.49f / 0.95f - 0.5f)) < 0.05f);
-    CHECK(d_max_paso <= SPORT_VEL_DPS * dt + 1e-5f);        // sin saltos
-    // El doble de agresivo (120 °/s) inclina más; a la izquierda, lo mismo para el otro lado
-    for (int k = 0; k < 400; k++) sport_paso(&s, &p, 0.9f, -120.0f * DEG, true, dt);
-    CHECK(s.delta_deg > 1.8f * suave && s.delta_deg <= SPORT_DELTA_MAX_DEG);
-    float fuerte = s.delta_deg;
-    for (int k = 0; k < 400; k++) sport_paso(&s, &p, 0.9f, 120.0f * DEG, true, dt);
-    CHECK(fabsf(s.delta_deg + fuerte) < 1e-3f);
-    // Marcha atrás con el mismo giro, el centro de la curva está del otro lado
-    for (int k = 0; k < 400; k++) sport_paso(&s, &p, -0.9f, 120.0f * DEG, true, dt);
-    CHECK(fabsf(s.delta_deg - fuerte) < 1e-3f);
-    // Una curva imposible no pasa del tope, y al apagar el modo vuelve a cero con la rampa
-    for (int k = 0; k < 400; k++) sport_paso(&s, &p, 1.2f, -400.0f * DEG, true, dt);
-    CHECK(s.delta_deg == SPORT_DELTA_MAX_DEG);
-    sport_paso(&s, &p, 1.2f, -400.0f * DEG, false, dt);
-    CHECK(s.delta_deg > SPORT_DELTA_MAX_DEG - SPORT_VEL_DPS * dt - 1e-4f);
-    for (int k = 0; k < 400; k++) sport_paso(&s, &p, 1.2f, -400.0f * DEG, false, dt);
-    CHECK(s.delta_deg == 0.0f);
-    // Con las dos patas: 15° de base y delta 8 → 19 y 11; la altura media no cambia (misma referencia)
-    float izq, der;
-    nivel_patas(15.0f, 15.0f, 8.0f, 0.0f, 30.0f, &izq, &der);
-    CHECK(izq == 19.0f && der == 11.0f);
-}
-
 int main(void)
 {
     test_levantar_y_armado_automatico();
-    test_sport_inclinacion_en_curva();
     test_nivel_de_costado();
     test_maniobra_espera_quieto_antes_del_borde();
     test_rumbo_sostiene_la_direccion();

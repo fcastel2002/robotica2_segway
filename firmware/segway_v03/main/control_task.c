@@ -24,7 +24,6 @@
 #include "sensor_piso.h"
 #include "sharp_lib.h"
 #include "servo.h"
-#include "sport.h"
 #include "supervisor.h"
 
 #define DEG2RAD             0.01745329f
@@ -67,13 +66,9 @@ static nivel_params_t s_nivel_p = {
     .delta_max_deg = NIVEL_DELTA_MAX_DEG, .tau = NIVEL_TAU_S,
 };
 static bool s_nivel_tomar_cero;
-// Modo sport ("set sport", "set sporttilt", "set sportvmax"; sport.h), en vivo. Apagado al arrancar
+// Modo sport ("set sport", "set sportvmax"), en vivo: solo la velocidad a fondo. Apagado al arrancar
 static bool s_sport;
 static float s_sport_vmax = SPORT_V_MAX_MS;
-static sport_params_t s_sport_p = {
-    .gan = SPORT_TILT_GAN, .rol_por_delta = SPORT_ROL_POR_DELTA, .delta_max_deg = SPORT_DELTA_MAX_DEG,
-    .banda_deg = SPORT_BANDA_DEG, .tau = SPORT_TAU_S, .vel_dps = SPORT_VEL_DPS,
-};
 // Levantarse solo ("levantar", □ desarmado; levantar.h): "set levpata", "set levu", "set levvent", "set levt"
 static lev_params_t s_lev_p;
 static float s_lev_ventana = LEV_VENTANA_DEG * DEG2RAD;
@@ -263,7 +258,6 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_ROLCERO:  s_nivel_p.cero_deg = fminf(fmaxf(c->value, -15.0f), 15.0f); break;
         case PARAM_NIVELCERO: s_nivel_tomar_cero = true; break;
         case PARAM_SPORT:    s_sport = c->value != 0.0f; break;
-        case PARAM_SPORTTILT: s_sport_p.gan = fminf(fmaxf(c->value, -3.0f), 3.0f); break;
         case PARAM_SPORTVMAX: s_sport_vmax = fminf(fmaxf(c->value, 0.0f), 1.2f); break;
         case PARAM_LEVPATA:  s_lev_p.pata_deg = fminf(fmaxf(c->value, SERVO_HARD_MIN_DEG), SERVO_HARD_MAX_DEG); break;
         case PARAM_LEVU:     s_lev_p.u_empuje = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
@@ -280,8 +274,8 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
 }
 
 // Acerca los servos a su objetivo sin superar vel_dps (set velpata): un salto brusco con
-// el peso del robot encima sacudiría la estructura. Encima de esa posición va la inclinación del modo
-// sport (delta_deg, izquierda − derecha, con su propia rampa en sport.c): no cambia pos[], así la tabla
+// el peso del robot encima sacudiría la estructura. Encima de esa posición va la hamacada del modo
+// baile (delta_deg, izquierda − derecha, con su propia rampa): no cambia pos[], así la tabla
 // de equilibrio y la telemetría siguen viendo la altura pedida. Al servo solo se le escribe si cambió
 // (enviado[]: lo último escrito, NAN si está suelto).
 static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT],
@@ -447,7 +441,7 @@ static void control_task(void *arg)
     parada_params_t par_p;
     parada_params_por_defecto(&par_p);
     parada_salida_t ps = { 0 };
-    // Levantarse solo (levantar.h) y la inclinación del modo sport (sport.h)
+    // Levantarse solo (levantar.h)
     lev_params_por_defecto(&s_lev_p);
     s_lev_p.pata_inicio_deg = LEV_PATA_INICIO_DEG;
     s_lev_p.pata_deg = LEV_PATA_DEG;
@@ -463,7 +457,6 @@ static void control_task(void *arg)
     s_lev_p.t_empuje_max_s = LEV_T_EMPUJE_MAX_S;
     lev_t lev = { 0 };
     lev_salida_t ls = { 0 };
-    sport_t sport = { 0 };
     float servo_enviado[SERVO_COUNT] = { NAN, NAN };
     bool pedir_desarme = false;
     bool armo_alguna_vez = false;   // desde que se prendió: el primer armado pide las patas iguales
@@ -572,6 +565,14 @@ static void control_task(void *arg)
                 if (sup.state == SUP_DISARMED || sup.state == SUP_FALLEN) {
                     for (int i = 0; i < MOTOR_COUNT; i++) motor_manual[i] = 0.0f;
                     cmd = SUP_CMD_STANDUP;
+                    // 12/11: se graba cada intento (4 s a 200 Hz; comms lo manda al terminar y el puente lo
+                    // guarda en Aplicacion/registros/), para ver por qué no armó si no armó
+                    if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) {
+                        s_reg_listo = false;
+                        s_reg_n = 0;
+                        grabando = true;
+                        fin_reg = 800;
+                    }
                 }
                 continue;
             }
@@ -665,6 +666,10 @@ static void control_task(void *arg)
             } else {
                 attitude_update(&att, acc_fwd, acc_up, gyro, dt, s_tau_att);
             }
+        } else if (calibrated && ls.empujando) {
+            // Levantándose, con los motores a fondo una lectura puede fallar (ruido en el I2C): se sigue
+            // con el último giro medido, para que la inclinación no se quede atrás y llegue a la ventana
+            att.theta += att.rate * dt;
         }
 
         // 3. Supervisor. En el vuelo de la maniobra la inclinación no dice que se cayó.
@@ -999,7 +1004,8 @@ static void control_task(void *arg)
             s_reg[n] = (registro_t){
                 .ciclo = (uint16_t)n, .estado = (uint8_t)man.estado,
                 .marcas = (imu_ok ? REG_IMU_OK : 0) | (imu_ok && s.baja_g ? REG_BAJA_G : 0)
-                          | (ms.activa && ms.solo_giroscopo ? REG_SOLO_GIRO : 0)
+                          | ((ms.activa && ms.solo_giroscopo) || ls.empujando ? REG_SOLO_GIRO : 0)
+                          | (st == SUP_STANDUP ? REG_STANDUP : 0) | (st == SUP_BALANCING ? REG_ARMADO : 0)
                           | (ms.activa && ms.u_directo_activo ? REG_U_DIRECTO : 0)
                           | (ir_izq ? REG_IR_IZQ : 0) | (ir_der ? REG_IR_DER : 0),
                 .theta_cdeg = a_i16(att.theta * 5729.578f), .rate_ddps = a_i16(att.rate * 572.9578f),
@@ -1036,15 +1042,11 @@ static void control_task(void *arg)
         bool nivelar = st == SUP_BALANCING && !ms.activa && !ps.activa && imu_ok
                        && !servo_free[SERVO_LEFT] && !servo_free[SERVO_RIGHT]
                        && !isnan(servo_target[SERVO_LEFT]) && !isnan(servo_target[SERVO_RIGHT]);
-        // Modo sport: en las mismas condiciones, se inclina hacia adentro de la curva lo que pide v·w
-        // (sport.h). Fuera de eso el pedido es 0 y vuelve derecho con su rampa
-        float w_giro = imu_ok ? IMU_SIGN_UP * s.gyro[IMU_AXIS_UP] - rum.sesgo : 0.0f;
-        float sport_delta = sport_paso(&sport, &s_sport_p, odo.v, w_giro, s_sport && nivelar, dt);
         // Modo baile: las patas en contrafase (la misma diferencia izquierda − derecha), con su rampa
         // para que al empezar y al terminar no salten
         float baile_obj = (baile_t >= 0.0f && nivelar) ? BAILE_AMP_DEG * sinf(6.2831853f * BAILE_HZ * baile_t) : 0.0f;
         baile_delta += fminf(fmaxf(baile_obj - baile_delta, -BAILE_VEL_DPS * dt), BAILE_VEL_DPS * dt);
-        float delta_extra = sport_delta + baile_delta;
+        float delta_extra = baile_delta;
         if (nivelar) {
             // Inclinado a propósito, el nivel no corrige (lo enderezaría)
             bool gira = fabsf(s.gyro[IMU_AXIS_UP]) > NIVEL_W_MAX_DPS * DEG2RAD || delta_extra != 0.0f;
@@ -1169,9 +1171,7 @@ static void control_task(void *arg)
             .arm_patas   = (uint8_t)arm_patas,
             .armo_alguna_vez = armo_alguna_vez,
             .sport       = s_sport,
-            .sport_gan   = s_sport_p.gan,
             .sport_v_max = s_sport_vmax,
-            .sport_delta = sport_delta,
             .lev_estado  = lev.estado,
             .lev_motivo  = lev.motivo,
             .lev         = s_lev_p,

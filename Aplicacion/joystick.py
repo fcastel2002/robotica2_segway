@@ -31,10 +31,15 @@ Controles configurados para el mando de PS4 (DualShock 4):
   por ejemplo), apretar ✕ TRES VECES SEGUIDAS (menos de 1,5 s entre una y otra) lo prende; otra vez, lo
   apaga. Lo reconoce el FIRMWARE (cuenta los `arm` que no armaron) y lo avisa con el LED en naranja, con
   «# sport: PRENDIDO» en la consola y con la columna `sport` de la telemetría; este puente solo lo sigue
-  (puente.py le pasa lo que dice el robot, `linea_del_robot`). Velocidad a fondo 0,9 m/s y el robot se
-  inclina hacia adentro de las curvas como una moto, más cuanto más agresivo el giro.
+  (puente.py le pasa lo que dice el robot, `linea_del_robot`). Velocidad a fondo 0,8 m/s (12/11: se
+  sacó la inclinación en las curvas).
   En modo sport los gatillos son los del GTA y dejan de hacer lo de arriba: R2 es el acelerador y L2 la
-  marcha atrás, analógicos (cuanto más se aprieta, más rápido); el stick sigue doblando.
+  marcha atrás, analógicos (cuanto más se aprieta, más rápido); el stick sigue doblando. Si este puente
+  arrancó con el robot ya prendido, el robot no le repite el encabezado de la telemetría: el puente le
+  pide `tlm on` para conocer las columnas (si no, no sabría que está en sport).
+- PAD TÁCTIL (apretar el touchpad; 12/11, solo segway_v03): prende y apaga el modo baile (`bailar 600` /
+  `bailar 0`): equilibrando, gira en el lugar y hamaca las patas. El stick o ◯ también lo cortan. Por
+  XInput (DS4Windows, Steam) el touchpad no llega.
 
 Expone `GET http://localhost:8001/estado`, `POST /mando` y `POST /accion` con `Access-Control-Allow-Origin: *`.
 Solo usa la biblioteca estándar de Python (`ctypes` en Windows).
@@ -77,7 +82,7 @@ BOTONES_VACIOS = {
     "x": False, "o": False, "cuadrado": False, "triangulo": False,
     "l1": False, "r1": False, "l2": False, "r2": False,
     "l3": False, "r3": False,
-    "share": False, "options": False,
+    "share": False, "options": False, "touchpad": False,
     "up": False, "down": False, "left": False, "right": False,
 }
 
@@ -102,6 +107,17 @@ def mayor_magnitud(*valores: float) -> float:
         if abs(v) > abs(mejor):
             mejor = v
     return mejor
+
+
+def gatillos_a_avance(lectura: dict, escala: float = 1.0) -> float:
+    """Modo sport: R2 acelera y L2 va marcha atrás, cuanto más apretados más rápido (de -1 a 1). Sin
+    lectura analógica del gatillo (algunos caminos solo dan el botón), el botón vale a fondo."""
+    gat = {}
+    for g in ("l2", "r2"):
+        gat[g] = float(lectura.get("ejes", {}).get(g, 0.0) or 0.0)
+        if gat[g] == 0.0 and lectura.get("botones", {}).get(g):
+            gat[g] = 1.0
+    return aplicar_zona_muerta(gat["r2"] - gat["l2"], 0.05) * max(0.1, min(1.0, escala))
 
 
 def calcular_mando(ejes: dict, modo: str, escala: float = 1.0) -> tuple[float, float]:
@@ -368,7 +384,7 @@ if sys.platform == "win32":
             else:
                 return None
             eje = lambda v: max(-1.0, min(1.0, (v - 127.5) / 127.5))
-            b1, b2 = b[o + 4], b[o + 5]
+            b1, b2, b3 = b[o + 4], b[o + 5], b[o + 6]
             av, gi = self.CRUCETA.get(b1 & 0x0F, (0, 0))
             bateria = None
             if len(b) > o + 29:
@@ -386,6 +402,7 @@ if sys.platform == "win32":
                     "triangulo": bool(b1 & 0x80),
                     "l1": bool(b2 & 0x01), "r1": bool(b2 & 0x02), "l2": bool(b2 & 0x04),
                     "r2": bool(b2 & 0x08), "share": bool(b2 & 0x10), "options": bool(b2 & 0x20),
+                    "touchpad": bool(b3 & 0x02),
                     "l3": bool(b2 & 0x40), "r3": bool(b2 & 0x80),
                     "up": av > 0, "down": av < 0, "left": gi < 0, "right": gi > 0,
                 },
@@ -501,6 +518,7 @@ if sys.platform == "win32":
                     "r2": bool(b & 0x0080),
                     "share": bool(b & 0x0100),
                     "options": bool(b & 0x0200),
+                    "touchpad": bool(b & 0x2000),
                     "l3": bool(b & 0x0400), "r3": bool(b & 0x0800),
                     "up": dpad_y > 0.5, "down": dpad_y < -0.5,
                     "left": dpad_x < -0.5, "right": dpad_x > 0.5,
@@ -582,6 +600,10 @@ class PuenteJoystick:
         self._demo_usada = False    # alguna vez en esta sesión: al armar se reponen los valores de fábrica
         self._sport = False         # modo sport, como lo informa el robot: R2 acelera, L2 marcha atrás
         self._col_sport = None      # columna "sport" de la telemetría (según el último encabezado)
+        self._col_baile = None      # columna "baile"
+        self._baile = False         # modo baile, como lo informa el robot (pad táctil)
+        self._encabezado_visto = False
+        self._tlm_pedida_t = -1e9   # última vez que se pidió "tlm on" para conocer las columnas
 
     def _resolver_destino(self) -> tuple[str | None, bool, str]:
         """Devuelve (ip_udp, es_simulado, texto_destino)."""
@@ -717,6 +739,11 @@ class PuenteJoystick:
                 pedido = not self._sport if valor is None else bool(valor)
                 comandos_a_enviar.append(f"set sport {1 if pedido else 0}")
                 self._ultimo_evento = f"Modo sport: pedido {'prender' if pedido else 'apagar'} (set sport)"
+            elif accion == "bailar":
+                # Pad táctil: prende y apaga (el robot dice si está bailando; 600 s es "hasta que se toque")
+                comandos_a_enviar.append("bailar 0" if self._baile else "bailar 600")
+                self._ultimo_evento = ("PAD TÁCTIL → termina el baile (bailar 0)" if self._baile else
+                                       "PAD TÁCTIL → ¡a bailar! gira en el lugar y hamaca las patas (bailar)")
             elif accion == "grabar":
                 comandos_a_enviar.append("grabar 4")      # 10/11: 4 s alcanzan para soltarlo o dejarlo caer
                 self._ultimo_evento = "SHARE → Grabar 4 s a 200 Hz (grabar 4)"
@@ -729,25 +756,43 @@ class PuenteJoystick:
     def linea_del_robot(self, linea: str) -> None:
         """Lo que manda el robot (se lo pasa puente.py): de ahí sale si está en modo sport. Lo dice la
         columna `sport` de la telemetría (según el encabezado) y las líneas «# sport: ...»."""
-        sport = None
+        sport = baile = None
         if linea.startswith("# t_ms,"):
             columnas = linea[2:].strip().split(",")
             self._col_sport = columnas.index("sport") if "sport" in columnas else None
+            self._col_baile = columnas.index("baile") if "baile" in columnas else None
+            self._encabezado_visto = True
         elif linea.startswith("# sport: PRENDIDO"):
             sport = True
         elif linea.startswith("# sport: apagado"):
             sport = False
-        elif self._col_sport is not None and linea[:1].isdigit():
+        elif linea.startswith("# baile: empezo"):
+            baile = True
+        elif linea.startswith("# baile: termino"):
+            baile = False
+        elif linea[:1].isdigit():
+            if not self._encabezado_visto:
+                # Llega telemetría sin saber las columnas (el puente arrancó con el robot ya prendido: el
+                # robot no repite el encabezado). "tlm on" lo repite; cada 5 s como mucho
+                ahora = time.monotonic()
+                if ahora - self._tlm_pedida_t > 5.0:
+                    self._tlm_pedida_t = ahora
+                    self._enviar_comando_robot("tlm on")
+                return
             campos = linea.strip().split(",")
-            if len(campos) > self._col_sport and campos[self._col_sport] in ("0", "1"):
+            if self._col_sport is not None and len(campos) > self._col_sport and campos[self._col_sport] in ("0", "1"):
                 sport = campos[self._col_sport] == "1"
+            if self._col_baile is not None and len(campos) > self._col_baile and campos[self._col_baile] in ("0", "1"):
+                baile = campos[self._col_baile] == "1"
+        if baile is not None:
+            with self._lock:
+                self._baile = baile
         if sport is None:
             return
         with self._lock:
             if sport != self._sport:
                 self._sport = sport
-                self._ultimo_evento = ("TRUCO ACTIVADO → MODO SPORT: 0,9 m/s, se inclina en las curvas, "
-                                       "R2 acelera y L2 marcha atrás" if sport else
+                self._ultimo_evento = ("TRUCO ACTIVADO → MODO SPORT: 0,8 m/s, R2 acelera y L2 marcha atrás" if sport else
                                        "Modo sport apagado (L2 vuelve a ser el nivel de costado)")
 
     def _patas_estimar(self) -> None:
@@ -770,6 +815,8 @@ class PuenteJoystick:
 
         if botones_actuales.get("options") and not prev.get("options"):
             self.ejecutar_accion("alinear")         # 11/11: antes cambiaba el modo de sticks
+        if botones_actuales.get("touchpad") and not prev.get("touchpad"):
+            self.ejecutar_accion("bailar")          # 12/11: modo baile, se prende y se apaga
         if botones_actuales.get("share") and not prev.get("share"):
             self.ejecutar_accion("grabar")          # 5/11: soltar el robot y medir el rebote
 
@@ -874,15 +921,8 @@ class PuenteJoystick:
                     escala = self.escala
                     avance, giro = calcular_mando(lectura["ejes"], modo, escala)
                     if self._sport:
-                        # Como en el GTA: R2 acelera y L2 va marcha atrás, cuanto más apretado más rápido
-                        # (sin lectura analógica, el botón vale a fondo). El stick sigue valiendo
-                        gat = {}
-                        for g in ("l2", "r2"):
-                            gat[g] = float(lectura["ejes"].get(g, 0.0))
-                            if gat[g] == 0.0 and lectura["botones"].get(g):
-                                gat[g] = 1.0
-                        gas = aplicar_zona_muerta(gat["r2"] - gat["l2"], 0.05) * max(0.1, min(1.0, escala))
-                        avance = round(mayor_magnitud(avance, gas), 3)
+                        # Como en el GTA: R2 acelera y L2 va marcha atrás. El stick sigue valiendo
+                        avance = round(mayor_magnitud(avance, gatillos_a_avance(lectura, escala)), 3)
                     self._estado_joy = {
                         "conectado": True,
                         "nombre": lectura["nombre"],
@@ -988,6 +1028,7 @@ class PuenteJoystick:
                     "zona_muerta": self.zona_muerta,
                 },
                 "sport": self._sport,
+                "baile": self._baile,
                 "ultimo_evento": self._ultimo_evento,
             }
 
