@@ -1,0 +1,17 @@
+# ref=13.55 umax=1.00 deadband=0.030 dbrampa=0.000 dbmov=0.000 refauto=1
+# kx=1.075 kv=1.815 kphi=3.210 kw=0.378 lqrpata=2 lqrfac=0.87 lqrfacx=0.86 notch=11.6 notch2=7.7 lp=0.0
+# vmax=0.40 acel=0.50 fren=0.50 ff=1.15 xlibre=1 velpata=20 margen=0.85 prio=0.0
+# imu fallas: i2c=0 cero=0; en caida libre (no fallan): 0
+# sharp: pin=0 mV dist=nan cm haz atras=nan cm alto=nan cm | sharpk=0.3214 sharpv0=0.386 sharpdiv=0.60 sensx=-5.2 sensz=2.0 sensang=40.0
+# giromax=0.15 parinc=6.0 parsuelta=3.0 tau=0.50 velf=20.0 | bajada: inactiva, d_borde=30 cm (0: con el sensor)
+# servo l=15.0 r=15.0 lim_l=0.0..30.0 lim_r=0.0..30.0
+# armar: ya armó desde que se prendió, las patas pueden estar en ángulos distintos; nunca con una pata suelta
+# ina: lectura activa, un registro cada 5 ciclos (inacada); en el bus al arrancar: 0x40=INA219 0x41=INA219 0x44=INA226
+# ina: resto del bus (la IMU es 0x68): 0x68
+# ina: INA219 motor izq: 11.86 V 5 mA, fallas 4
+# ina: INA219 motor der: 11.82 V 5 mA, fallas 5
+# ina: INA226 logica (tension sin corregir): 12.47 V 46 mA, fallas 2
+# ina: INA226 id de fabricante 0x5449 (original 0x5449), de chip 0x2260 (original 0x2260)
+# bateria: 11.86 V (filtrada), carga 70 %, autonomia 110 min, nivel NORMAL
+# wifi: red=Pachisale ip=192.168.100.22 rssi=-49 telemetria=192.168.100.47
+# arranque: encendido: se cortó la alimentación o bajó el pin EN (la ESP32-S3 no los distingue; también al grabar); prendida hace 1352 s

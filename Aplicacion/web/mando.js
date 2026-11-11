@@ -1,7 +1,7 @@
 // Pestaña "Mando / Conducción": mapa interactivo en vivo del joystick PS4 (DualShock 4),
-// cambio entre Opción 1 (1 stick) y Opción 2 (2 sticks) con OPTIONS, control de servos
-// de las patas con R1 (+2°) y L1 (−2°) con tope 0°..30° (las dos patas desde el 3/11), y
-// armado (✕) / desarme (◯).
+// cambio entre Opción 1 (1 stick) y Opción 2 (2 sticks) con los botones de la página, control de
+// servos de las patas (R1/L1 apretado en el mando: suben/bajan hasta soltar; acá, de a 2°) con tope
+// 0°..30°, y armado (✕) / desarme (◯). 11/11: OPTIONS se alinea con el borde y baja; R3/L3 giran.
 'use strict';
 
 (function iniciarVistaMando() {
@@ -16,12 +16,12 @@
     o: '◯ (Desarmar)',
     cuadrado: '□',
     triangulo: '△',
-    l1: 'L1 (−2°)',
-    r1: 'R1 (+2°)',
+    l1: 'L1 (bajan las patas)',
+    r1: 'R1 (suben las patas)',
     l2: 'L2',
     r2: 'R2',
     share: 'SHARE',
-    options: 'OPTIONS (Modo 1/2)',
+    options: 'OPTIONS (alinear y bajar)',
     up: '↑',
     down: '↓',
     left: '←',
@@ -96,6 +96,8 @@
     }
     if (bot.l2) activos.push('L2');
     if (bot.r2) activos.push('R2');
+    if (bot.l3) activos.push('L3 (gira a la izquierda)');
+    if (bot.r3) activos.push('R3 (gira a la derecha)');
     $('mando-botones-activos').textContent = activos.length ? activos.join(' · ') : 'ninguno';
 
     // Estado de los servos (0° a 30° en pasos de 2°)
@@ -111,10 +113,10 @@
     }
   };
 
-  // Botones de cambio de modo (Opción 1 / Opción 2 / OPTIONS)
+  // Botones de cambio de modo (Opción 1 / Opción 2). OPTIONS ya no lo cambia (11/11: alinear y bajar),
+  // y como △ no se dispara con un clic en el dibujo
   $('btn-modo-1')?.addEventListener('click', () => window.enviarAccionJoy?.('opcion_1'));
   $('btn-modo-2')?.addEventListener('click', () => window.enviarAccionJoy?.('opcion_2'));
-  $('svg-btn-options')?.addEventListener('click', () => window.enviarAccionJoy?.('toggle_modo'));
 
   // Botones de servos (L1 -2°, R1 +2° y escalones fijos 0°, 10°, 20°, 30°)
   $('btn-servo-l1')?.addEventListener('click', () => window.enviarAccionJoy?.('servo_bajar'));

@@ -1,0 +1,422 @@
+{
+  "esquema": 1,
+  "id": "E1",
+  "nombre": "motores_aire",
+  "titulo": "Motores en el aire con poco PWM (colgado, desarmado)",
+  "pregunta": "¿i_ina = i_q + m·(m·V − Ke·w)/R vale con el PWM bajo en que vive el equilibrio (2-30 %)? ¿Cuánto consume el driver despierto (i_q)? ¿Con qué retardo llega la corriente al registro? ¿Dónde arranca y dónde se para cada rueda en cada sentido? ¿Las dos ruedas, en los dos sentidos (FW-022)?",
+  "criterio": "El bloque eléctrico reproduce la corriente con R² > 0,9 y da Ke a menos de 10 % de lo medido el 7/11 (0,359 V·s/rad), el consumo del driver y el retardo de la medida. En el aire la rueda sigue al voltaje y casi no circula corriente, así que R queda mal determinada (con los escalones del 7/11 da 12-14 Ω según cómo se filtre): R sale del piso, con E3.",
+  "requisitos": {
+    "estado": "DISARMED",
+    "confirmar": [
+      "colgado"
+    ],
+    "patas_deg": null,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.6,
+    "quieto_s": 3.0,
+    "espera_max_s": 60
+  },
+  "config": {
+    "inacada": 1
+  },
+  "limites": {
+    "motor_pct_max": 30
+  },
+  "abortar": {},
+  "pasos": [
+    {
+      "hacer": "tramo",
+      "nombre": "cero",
+      "s": 2
+    },
+    {
+      "hacer": "marca",
+      "texto": "escalera adelante"
+    },
+    {
+      "hacer": "motor",
+      "pct": 2,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 3,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 5,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 8,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 12,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 20,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 30,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 20,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 12,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 8,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 5,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 3,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 2,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "marca",
+      "texto": "escalera atras"
+    },
+    {
+      "hacer": "motor",
+      "pct": -2,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -3,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -5,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -8,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -12,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -20,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -30,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -20,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -12,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -8,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -5,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -3,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": -2,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "ambos",
+      "s": 1.5
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "escalones"
+    },
+    {
+      "hacer": "esperar",
+      "s": 0.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 8,
+      "lado": "ambos",
+      "s": 0.75
+    },
+    {
+      "hacer": "motor",
+      "pct": 16,
+      "lado": "ambos",
+      "s": 0.75
+    },
+    {
+      "hacer": "motor",
+      "pct": 8,
+      "lado": "ambos",
+      "s": 0.75
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "ambos",
+      "s": 0.75
+    },
+    {
+      "hacer": "motor",
+      "pct": -8,
+      "lado": "ambos",
+      "s": 0.75
+    },
+    {
+      "hacer": "motor",
+      "pct": -16,
+      "lado": "ambos",
+      "s": 0.75
+    },
+    {
+      "hacer": "motor",
+      "pct": -8,
+      "lado": "ambos",
+      "s": 0.75
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "ambos",
+      "s": 0.5
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.5
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "inversiones"
+    },
+    {
+      "hacer": "esperar",
+      "s": 0.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 12,
+      "lado": "ambos",
+      "s": 0.8
+    },
+    {
+      "hacer": "motor",
+      "pct": -12,
+      "lado": "ambos",
+      "s": 0.8
+    },
+    {
+      "hacer": "motor",
+      "pct": 12,
+      "lado": "ambos",
+      "s": 0.8
+    },
+    {
+      "hacer": "motor",
+      "pct": -12,
+      "lado": "ambos",
+      "s": 0.8
+    },
+    {
+      "hacer": "motor",
+      "pct": 25,
+      "lado": "ambos",
+      "s": 0.8
+    },
+    {
+      "hacer": "motor",
+      "pct": -25,
+      "lado": "ambos",
+      "s": 0.8
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "ambos",
+      "s": 1.0
+    },
+    {
+      "hacer": "esperar",
+      "s": 1.5
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "rampa"
+    },
+    {
+      "hacer": "esperar",
+      "s": 0.25
+    },
+    {
+      "hacer": "motor_rampa",
+      "de": 0,
+      "a": 30,
+      "s": 1.75,
+      "lado": "ambos"
+    },
+    {
+      "hacer": "motor_rampa",
+      "de": 30,
+      "a": -30,
+      "s": 3.5,
+      "lado": "ambos"
+    },
+    {
+      "hacer": "motor_rampa",
+      "de": -30,
+      "a": 0,
+      "s": 1.75,
+      "lado": "ambos"
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "ambos",
+      "s": 0.5
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "ruedas"
+    },
+    {
+      "hacer": "esperar",
+      "s": 0.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 12,
+      "lado": "l",
+      "s": 1.0
+    },
+    {
+      "hacer": "motor",
+      "pct": -12,
+      "lado": "l",
+      "s": 1.0
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "l",
+      "s": 0.5
+    },
+    {
+      "hacer": "motor",
+      "pct": 12,
+      "lado": "r",
+      "s": 1.0
+    },
+    {
+      "hacer": "motor",
+      "pct": -12,
+      "lado": "r",
+      "s": 1.0
+    },
+    {
+      "hacer": "motor",
+      "pct": 0,
+      "lado": "r",
+      "s": 0.5
+    },
+    {
+      "hacer": "esperar",
+      "s": 2.0
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "cmd",
+      "texto": "motor stop"
+    }
+  ]
+}

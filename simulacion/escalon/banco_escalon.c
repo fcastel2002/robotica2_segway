@@ -8,8 +8,8 @@
 // estrategias de bajada y escribe un CSV por caso en resultados/ para graficar.
 //
 // Compilar desde la raíz del repo (ver README.md):
-//   gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v01/components/control/include
-//       -Ifirmware/segway_v01/main simulacion/escalon/*.c firmware/segway_v01/components/control/*.c
+//   gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v02/components/control/include
+//       -Ifirmware/segway_v02/main simulacion/escalon/*.c firmware/segway_v02/components/control/*.c
 //       -lm -o simulacion/escalon/banco_escalon
 
 #include <math.h>
@@ -29,10 +29,12 @@
 #include "sensor_piso.h"
 
 #define DT_CONTROL      (CONTROL_PERIOD_MS * 1e-3)
+#ifndef SUBPASOS                                    // -DSUBPASOS=25: 4 veces más rápido (para buscar)
 #define SUBPASOS        100                         // planta cada 0,05 ms
+#endif
 #define H               (DT_CONTROL / SUBPASOS)
-#define SUBPASO_COMPUTO 20                          // el PWM nuevo sale 1 ms después de leer
-#define FC_MPU          44.0
+#define SUBPASO_COMPUTO (SUBPASOS / 5)              // el PWM nuevo sale 1 ms después de leer
+#define FC_MPU          188.0                       // 11/11: el filtro de la IMU de hoy (dlpf 1, FW-028; antes 44)
 #define G               9.81
 #define PI              3.141592653589793
 #define GRADOS          (180.0 / PI)
@@ -43,17 +45,14 @@
 #else
 #define ZONA_MUERTA     0.17
 #endif
-// Lo que la maniobra sabe del robot (IMU y dónde queda el eje según la pata): con la planta
-// ajustada, el firmware tendría que usar los valores ajustados, no los de board_config.h
-#ifdef PLANTA_AJUSTADA
+// Lo que la maniobra sabe del robot (IMU y dónde queda el eje según la pata): los de la planta que
+// se simula (board_config.h tiene los de la ajustada, que es la que sigue al robot)
 #define IMU_DELTA_BANCO (PE_IMU_DELTA * GRADOS)
-#else
-#define IMU_DELTA_BANCO IMU_DELTA_DEG
-#endif
 
 // Las ganancias del LQR como el firmware: con DEFAULT_LQR_POR_PATA, de LQR_TABLA según la pata
 // (3/11, CTL-301); con GANANCIAS=fijas (variable de entorno), las fijas de siempre, como antes del
-// 3/11 (así salieron los resultados de las estrategias A-E del modelo original)
+// 3/11 (así salieron los resultados de las estrategias A-E del modelo original); con GANANCIAS=drv,
+// de LQR_TABLA_DRV (la recalculada con el DRV8871, "set lqrpata 2")
 static void ganancias_por_pata(float pata, lqr_gains_t *k)
 {
     if (!DEFAULT_LQR_POR_PATA || (getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "fijas") == 0)) {
@@ -61,7 +60,20 @@ static void ganancias_por_pata(float pata, lqr_gains_t *k)
     }
     static const float patas[] = LQR_TABLA_PATAS_DEG;
     static const float tabla[][4] = LQR_TABLA;
-    balance_lqr_tabla(pata, patas, tabla, sizeof patas / sizeof patas[0], k);
+    static const float tabla_drv[][4] = LQR_TABLA_DRV;
+    // 11/11: como el firmware de hoy: la tabla de DEFAULT_LQR_POR_PATA (2 = la del DRV8871) por los
+    // factores de fábrica (set lqrfac, set lqrfacx). GANANCIAS=drv | vieja elige la tabla; LQRFAC=1 y
+    // LQRFACX=1, la tabla sin factores (como corría el banco hasta el 11/11)
+    bool drv = DEFAULT_LQR_POR_PATA == 2;
+    if (getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "drv") == 0) drv = true;
+    if (getenv("GANANCIAS") && strcmp(getenv("GANANCIAS"), "vieja") == 0) drv = false;
+    balance_lqr_tabla(pata, patas, drv ? tabla_drv : tabla, sizeof patas / sizeof patas[0], k);
+    float fac = getenv("LQRFAC") ? (float)atof(getenv("LQRFAC")) : DEFAULT_LQR_FACTOR;
+    float fac_x = getenv("LQRFACX") ? (float)atof(getenv("LQRFACX")) : DEFAULT_LQR_FACTOR_X;
+    k->kx *= fac_x;
+    k->kv *= fac_x;
+    k->kphi *= fac;
+    k->kw *= fac;
 }
 
 // ---------------------------------------------------------------- parámetros de la planta
@@ -79,7 +91,34 @@ static planta_t planta_base(void)
         .k_rueda = PE_K_RUEDA, .c_rueda = PE_C_RUEDA,
         .k_cuerpo = PE_K_CUERPO, .c_cuerpo = PE_C_CUERPO,
         .mu = PE_MU, .v_resbale = 0.01, .g = G,
+#ifdef PE_K_TORSION
+        .k_torsion = PE_K_TORSION, .c_torsion = PE_C_TORSION,
+#endif
     };
+}
+
+// Lo que cede (11/11), para probar sin regenerar la planta: K_TORSION y C_TORSION [N m/rad, N m s/rad]
+// (0 = rígido) y C_PATA [N m s/rad]: la pata cede por el plástico, elástico, y no por el servo; su
+// amortiguamiento en lugar de la recta par-velocidad del servo
+static void planta_del_entorno(planta_t *P)
+{
+    if (getenv("K_TORSION")) P->k_torsion = atof(getenv("K_TORSION"));
+    if (getenv("C_TORSION")) P->c_torsion = atof(getenv("C_TORSION"));
+    if (getenv("C_PATA")) { P->servo_vel_max = 1e9; P->servo_b = atof(getenv("C_PATA")); }
+    if (getenv("K_PATA")) P->servo_ganancia = atof(getenv("K_PATA")) / P->servo_par_max;
+    if (getenv("F_ROTOR")) P->j_rotor *= atof(getenv("F_ROTOR"));
+    if (getenv("C_RUEDA")) P->c_rueda = atof(getenv("C_RUEDA"));
+}
+
+// A_EXTRA [grados]: la pata de la planta está esto más estirada que lo que pide el firmware (cuánto
+// le falta al cuatro barras para su punto muerto en 30 se ajustó con la tabla de equilibrio, ±2 grados)
+static double a_extra(void)
+{
+#ifdef PE_A_EXTRA
+    return getenv("A_EXTRA") ? atof(getenv("A_EXTRA")) : PE_A_EXTRA;
+#else
+    return getenv("A_EXTRA") ? atof(getenv("A_EXTRA")) : 0.0;
+#endif
 }
 
 // Centro de masa de todo el robot respecto del eje de la rueda, en ejes del cuerpo
@@ -110,6 +149,7 @@ static void estado_apoyado(const planta_t *P, double a, double x_contacto, doubl
     q[PP_TH] = cabeceo_equilibrio(P, a);
     q[PP_A] = a;
     q[PP_F] = 0.0;
+    q[PP_S] = 0.0;
     pata_t p;
     pata_cinematica(a, &p);
     double c = cos(q[PP_TH]), s = sin(q[PP_TH]);
@@ -159,9 +199,23 @@ typedef struct {
     int    n_escalones;
     double x_contacto0;         // rueda al empezar, respecto del borde [m]
     double factor_servo;        // par de los servos por esto
+    double v_motor;             // [V] al motor con PWM 1 si > 0 (si no, el de la planta)
     double zona_muerta;         // fracción de PWM que no mueve la rueda (la real)
     double mu;
+    double d_ref;               // [grados] la referencia de equilibrio corrida (la IMU se movió)
+    double f_rotor, f_inercia;  // inercia de los rotores y del cuerpo por esto (si > 0)
+    int    semilla;             // del ruido de los sensores
+    int    repetir;             // escalera frenando en cada escalón: al terminar, otra vez (△)
+    double alto_ultimo;         // [m] el último escalón, si es de otra altura (0 = alto)
+    double f_masa;              // masa (e inercia) del cuerpo por esto (si > 0)
+    double mu_cabina;           // fricción de la cabina contra el escalón (0 = la de la rueda)
+    int    apoyo;               // 1: que la cabina toque el escalón no cuenta como choque
+    double recorte;             // [m] la cabina recortada adelante
+    double k_rueda, c_rueda;    // [N/m], [N s/m] de las dos ruedas contra el piso (0 = los del modelo)
     bool   ruido;
+    double ir_x_real;           // [m] dónde miran de verdad los infrarrojos del borde, detrás del apoyo de
+                                // la rueda (0 = donde cree la maniobra, man.ir_x). Con alinear=1; el banco
+                                // es plano, así que los dos ven el borde a la vez (llega derecho)
 } caso_t;
 
 typedef struct {
@@ -178,17 +232,37 @@ typedef struct {
     double v_salida;            // [m/s] del eje al pasar el borde
     double pata_min;            // [grados] lo más que se plegó la pata al tocar
     double borde_error;         // [m] borde estimado menos el real
+    int    toques;              // aterrizajes (uno por escalón bajado con la maniobra)
+    int    bajados, escalones;  // escalones bajados al final, de cuántos
+    double cabina_max, cabina_t;    // [N] golpe más fuerte de la cabina, [s] tiempo apoyada
+    double holgura;             // [m] lo más cerca que pasó la cabina de la escalera desde que largó
+    double holgura_t, holgura_x;    // [s] cuándo y [m] con el eje dónde
+    const char *holgura_en;         // en qué estado de la maniobra
+    double x_min_arriba;            // [m] lo más cerca del borde que estuvo la rueda antes de largar
+    double d_largada;               // [m] rueda-borde de verdad cuando largó (NAN: no largó)
 } resultado_t;
 
 static resultado_t correr(const caso_t *C, FILE *csv)
 {
-    const double T_CAL = 2.5, T_EQ = 1.5, T_MAX = 30.0;
-    srand(1234);
+    const double T_CAL = 2.5, T_EQ = 1.5, ESPERA_REPETIR = 1.0;
+    const double T_MAX = C->repetir ? 15.0 + 14.0 * C->n_escalones : 30.0;
+    srand(1234 + (unsigned)C->semilla);
     planta_t P = planta_base();
+    planta_del_entorno(&P);
     P.servo_par_max *= C->factor_servo;
+    if (C->f_rotor > 0) P.j_rotor *= C->f_rotor;
+    if (C->f_inercia > 0) P.i_cuerpo *= C->f_inercia;
+    if (C->f_masa > 0) { P.m_cuerpo *= C->f_masa; P.i_cuerpo *= C->f_masa; }
+    P.mu_cuerpo = C->mu_cabina;
+    if (C->k_rueda > 0) P.k_rueda = C->k_rueda;
+    if (C->c_rueda > 0) P.c_rueda = C->c_rueda;
+    P.recorte = C->recorte;
     P.mu = C->mu;
+    // El roce seco es del reductor: la zona muerta se midió con la batería de la planta, y con
+    // otra batería el roce es el mismo (es otra fracción del PWM)
     P.friccion_seca = P.beta_v * C->zona_muerta * P.v_motor;
-    piso_t piso = { C->alto, C->pisada, C->n_escalones };
+    if (C->v_motor > 0) P.v_motor = C->v_motor;
+    piso_t piso = { C->alto, C->pisada, C->n_escalones, C->alto_ultimo };
 
     // Firmware: los mismos parámetros y el mismo orden que control_task.c
     balance_params_t p = {
@@ -201,14 +275,13 @@ static resultado_t correr(const caso_t *C, FILE *csv)
     static const float eje_patas[] = PATA_TABLA_DEG;
     float eje_x[] = PATA_EJE_X_M, eje_z[] = PATA_EJE_Z_M;
     const int n_eje = sizeof eje_patas / sizeof eje_patas[0];
-#ifdef PLANTA_AJUSTADA
-    for (int i = 0; i < n_eje; i++) {       // el eje respecto de A, de la cinemática ajustada
+    for (int i = 0; i < n_eje; i++) {       // el eje respecto de A, de la cinemática de la planta
         pata_t pe;
         pata_cinematica(eje_patas[i] / GRADOS, &pe);
         eje_x[i] = (float)(pe.px - PE_A_X);
         eje_z[i] = (float)(pe.pz - PE_A_Z);
     }
-#endif
+    float ref_vuelo = 0.0f;         // la referencia al despegar (como el firmware, 4/11)
     attitude_t att;  attitude_reset(&att);
     odometry_t odo;  odometry_reset(&odo);
     balance_t bal;   balance_reset(&bal);
@@ -223,14 +296,25 @@ static resultado_t correr(const caso_t *C, FILE *csv)
 
     // Planta: equilibrio con las patas de búsqueda y la rueda a x_contacto0 del borde
     double q[PP_NQ], dq[PP_NQ];
-    estado_apoyado(&P, pata_pos / GRADOS, C->x_contacto0, q, dq);
-    entrada_planta_t ent = { 0.0, pata_pos / GRADOS };
+    const double extra = a_extra();
+    estado_apoyado(&P, (pata_pos + extra) / GRADOS, C->x_contacto0, q, dq);
+    entrada_planta_t ent = { 0.0, (pata_pos + extra) / GRADOS };
     salida_planta_t sal = { 0 };
     double f_fwd = 0, f_up = G, f_gyro = 0, a_mpu = 1.0 - exp(-H * 2 * PI * FC_MPU);
     double t_servo = 0, t_sharp = 0, d_sharp = NAN;
 
-    resultado_t R = { .x_final = NAN };
-    double t_man = -1;
+    resultado_t R = { .x_final = NAN, .borde_error = NAN,      // NAN: no vio el borde
+                      .escalones = C->n_escalones, .holgura = 1e9, .x_min_arriba = 1e9, .d_largada = NAN };
+    bool largo = false;             // ya largó alguna vez (desde ahí cuenta la holgura)
+    double caja[4] = { 1e9, -1e9, 1e9, -1e9 };      // la cabina: x0, x1 (el frente, recortado), z0, z1
+    for (int i = 0; i < PP_N_PUNTOS; i++) {
+        caja[0] = fmin(caja[0], PP_PUNTOS[i][0]);
+        caja[1] = fmax(caja[1], PP_PUNTOS[i][0]);
+        caja[2] = fmin(caja[2], PP_PUNTOS[i][1]);
+        caja[3] = fmax(caja[3], PP_PUNTOS[i][1]);
+    }
+    caja[1] -= C->recorte;
+    double t_man = -1, t_terminada = -1;
 
     for (int k = 0; k * DT_CONTROL < T_MAX; k++) {
         double t = k * DT_CONTROL;
@@ -242,7 +326,7 @@ static resultado_t correr(const caso_t *C, FILE *csv)
             double ts = t + i * H;
             ent.tension = u * P.v_motor;
             if (ts >= t_servo) {                    // el servo toma el pulso nuevo cada 20 ms
-                ent.a_pedido = pata_pos / GRADOS;
+                ent.a_pedido = (pata_pos + extra) / GRADOS;
                 t_servo += T_SERVO;
             }
             if (ts >= t_sharp) {                    // el Sharp renueva su salida cada 16,5 ms
@@ -264,13 +348,15 @@ static resultado_t correr(const caso_t *C, FILE *csv)
                 R.par_servo_max = fmax(R.par_servo_max, fabs(sal.par_servo));
                 R.n_rueda_max = fmax(R.n_rueda_max, sal.n_rueda);
                 R.acc_max_g = fmax(R.acc_max_g, hypot(fa, ua) / G);
-                if (sal.cuerpo_toca) R.choco = true;
+                if (sal.cuerpo_toca && !C->apoyo) R.choco = true;
+                R.cabina_max = fmax(R.cabina_max, sal.n_cuerpo);
+                if (sal.cuerpo_toca) R.cabina_t += H;
             }
         }
         if (fabs(q[PP_TH]) > 1.3) { R.cayo = true; R.motivo = "volco"; break; }
 
-        // --- lo que lee el firmware (con la saturación de la MPU: 4 g y 500 grados/s)
-        double ruido = C->ruido ? 1.0 : 0.0, lim_a = 4 * G, lim_w = 500 / GRADOS;
+        // --- lo que lee el firmware (con la saturación de la MPU: 16 g y 2000 grados/s desde el 7/11)
+        double ruido = C->ruido ? 1.0 : 0.0, lim_a = 16 * G, lim_w = 2000 / GRADOS;
         float acc_fwd = (float)fmin(fmax(f_fwd + ruido * 0.2 * gauss(), -lim_a), lim_a);
         float acc_up = (float)fmin(fmax(f_up + ruido * 0.2 * gauss(), -lim_a), lim_a);
         float gyro = (float)fmin(fmax(f_gyro + 0.0087 + ruido * 0.0017 * gauss(), -lim_w), lim_w);
@@ -285,7 +371,10 @@ static resultado_t correr(const caso_t *C, FILE *csv)
         } else {
             attitude_update(&att, acc_fwd, acc_up, gyro, (float)DT_CONTROL, ATTITUDE_TAU_S);
         }
-        p.theta_ref = balance_ref_tabla(pata_pos, tabla_patas, tabla_ref, n_tabla) / (float)GRADOS;
+        p.theta_ref = (balance_ref_tabla(pata_pos, tabla_patas, tabla_ref, n_tabla) + (float)C->d_ref)
+                      / (float)GRADOS;
+        if (man.estado == MAN_VUELO) p.theta_ref = ref_vuelo;
+        else ref_vuelo = p.theta_ref;
         if (!armado && !en_la_mano && calibrado
             && fabsf(att.theta - p.theta_ref) < ARM_WINDOW_DEG / GRADOS) {
             armado = true;  odometry_reset(&odo);  balance_reset(&bal);  rampa = 0;
@@ -310,6 +399,16 @@ static resultado_t correr(const caso_t *C, FILE *csv)
             .acc = sqrtf(acc_fwd * acc_fwd + acc_up * acc_up), .pata_deg = pata_pos,
             .haz_valido = !isnan(d_medida),
         };
+        {
+            // Infrarrojos del borde: miran el piso ir_x detrás del apoyo de la rueda (el borde está en X = 0)
+            double exi, ezi;
+            eje_rueda(q, &exi, &ezi);
+            double ir = C->ir_x_real > 0.0 ? C->ir_x_real : C->man.ir_x;
+            me.ir_valido = true;
+            me.ir_izq = me.ir_der = exi - ir < 0.0;
+            if (lanzada && !largo) R.x_min_arriba = fmin(R.x_min_arriba, exi);
+            if (man.estado == MAN_LARGAR && isnan(R.d_largada)) R.d_largada = exi;
+        }
         if (me.haz_valido) {
             float x_atras, z0;
             haz_punto(&haz, th_cuerpo, WHEEL_RADIUS_M, d_medida, &x_atras, &me.haz_z);
@@ -323,12 +422,13 @@ static resultado_t correr(const caso_t *C, FILE *csv)
                    t - T_CAL, maniobra_nombre(man.estado), odo.x, ms.x_ref, odo.v, ms.v_ref, man.borde_x,
                    man.a_salida, me.haz_z, me.haz_x_piso, me.acc);
         }
-        if (antes == MAN_BUSCAR && man.estado == MAN_PREPARAR) {
+        if (antes == MAN_BUSCAR && man.estado == MAN_PREPARAR && isnan(R.borde_error)) {
             // borde real en coordenadas de la odometría: la rueda apoya en X = ex del mundo
             double ex, ez;
             eje_rueda(q, &ex, &ez);
             R.borde_error = man.borde_x - (odo.x - ex);
         }
+        if (antes == MAN_VUELO && man.estado == MAN_ATERRIZAR) R.toques++;
         if (antes == MAN_VUELO && man.estado == MAN_ATERRIZAR && !R.toco) {
             R.toco = true;
             R.t_toque = t_man;
@@ -372,27 +472,61 @@ static resultado_t correr(const caso_t *C, FILE *csv)
         // --- medidas
         double ex, ez;
         eje_rueda(q, &ex, &ez);
+        if (man.estado == MAN_LARGAR) largo = true;
+        if (largo) {
+            double d = piso_distancia_caja(&piso, q, caja[0], caja[1], caja[2], caja[3]);
+            if (d < R.holgura) {
+                R.holgura = d;
+                R.holgura_t = t - T_CAL;
+                R.holgura_x = ex;
+                R.holgura_en = maniobra_nombre(man.estado);
+            }
+        }
         if (ex < 0.0 && R.v_salida == 0.0 && t_man > 0) R.v_salida = dq[PP_X];
         if (R.toco) {
             double th_eq = cabeceo_equilibrio(&P, q[PP_A]);
             R.desvio_max_deg = fmax(R.desvio_max_deg, fabs(q[PP_TH] - th_eq) * GRADOS);
-            if (ex < -C->pisada + 0.005 && C->man.t_continuo == 0.0f) R.se_paso = true;
+            // Frenando en cada escalón: después del aterrizaje j, pasar el borde siguiente sin la
+            // maniobra (fuera de largar y volar) es pasarse. Con uno solo, abajo hay piso de sobra
+            // (un escalón chico, como el último de 3 cm, se puede bajar rodando)
+            if (C->n_escalones > 1 && C->man.t_continuo == 0.0f && R.toques < C->n_escalones
+                && man.estado != MAN_LARGAR && man.estado != MAN_VUELO
+                && ex < -R.toques * C->pisada + 0.005
+                && piso_nivel(&piso, R.toques) - piso_nivel(&piso, R.toques + 1) > 0.05) {
+                R.se_paso = true;
+            }
             R.x_min = fmin(R.x_min, ex);
             R.pata_min = fmin(R.pata_min, q[PP_A] * GRADOS);
         }
         if (csv && !en_la_mano) {
-            fprintf(csv, "%.4f,%s,%.5f,%.5f,%.3f,%.3f,%.4f,%.4f,%.3f,%.3f,%.3f,%.3f,%.4f,%.2f,%.3f,%.4f,%.4f,%.5f,%.5f,%.4f,%.4f\n",
+            pata_t pk;
+            pata_cinematica(q[PP_A], &pk);
+            fprintf(csv, "%.4f,%s,%.5f,%.5f,%.3f,%.3f,%.4f,%.4f,%.3f,%.3f,%.3f,%.3f,%.4f,%.2f,%.3f,%.4f,%.4f,%.5f,%.5f,%.4f,%.4f,%.1f,%.1f,%.2f\n",
                     t - T_CAL, maniobra_nombre(man.estado), ex, ez, q[PP_TH] * GRADOS,
                     q[PP_A] * GRADOS, odo.x, odo.v, att.theta * GRADOS, p.theta_ref * GRADOS,
                     u_nuevo, pata_pos, d_medida, sal.n_rueda, sal.par_servo, dq[PP_X], dq[PP_Z],
-                    q[PP_X], q[PP_Z], x_ref, v_ref);
+                    q[PP_X], q[PP_Z], x_ref, v_ref, (q[PP_TH] + pk.g + q[PP_F] + q[PP_S]) * GRADOS, sal.n_cuerpo,
+                    hypot(acc_fwd, acc_up));
         }
-        if (R.toco && man.estado == MAN_INACTIVA) break;
-        if (R.aborto && man.estado == MAN_INACTIVA) break;
+        if (man.estado == MAN_INACTIVA && (R.toco || R.aborto)) {
+            // Terminó la maniobra. Frenando en cada escalón: quieto un rato y otra vez (△)
+            if (!C->repetir || R.aborto || R.se_paso || R.toques >= C->n_escalones) break;
+            if (t_terminada < 0) t_terminada = t;
+            if (t - t_terminada >= ESPERA_REPETIR) {
+                maniobra_iniciar(&man, odo.x);
+                t_terminada = -1;
+            }
+        }
     }
     double ex, ez;
     eje_rueda(q, &ex, &ez);
     R.x_final = ex;
+    // Escalones bajados: el nivel de piso más cerca de donde quedó la rueda
+    for (int k = 1; k <= C->n_escalones; k++) {
+        if (fabs(ez - PE_R_RUEDA - piso_nivel(&piso, k)) < fabs(ez - PE_R_RUEDA - piso_nivel(&piso, R.bajados))) {
+            R.bajados = k;
+        }
+    }
     return R;
 }
 
@@ -416,7 +550,7 @@ static manejo_t correr_manejo(const mov_params_t *mp, double avance, double t_st
     planta_t P = planta_base();
     P.friccion_seca = P.beta_v * ZONA_MUERTA * P.v_motor;
     // Con lomo: el robot arranca abajo, 1,2 m antes de un escalón de g_lomo hacia arriba en X = 0
-    piso_t piso = { g_lomo, 5.0, g_lomo > 0 ? 1 : 0 };
+    piso_t piso = { g_lomo, 5.0, g_lomo > 0 ? 1 : 0, 0.0 };
     if (g_v_motor > 0) P.v_motor = g_v_motor;
     if (g_mu > 0) P.mu = g_mu;
     balance_params_t p = {
@@ -506,12 +640,14 @@ static manejo_t correr_manejo(const mov_params_t *mp, double avance, double t_st
 
 #define CSV_ENCABEZADO "t_s,estado,eje_x_m,eje_z_m,th_deg,pata_real_deg,odo_x_m,odo_v_ms," \
                        "theta_medido_deg,ref_deg,u,pata_pedida_deg,dist_m,n_rueda_N,par_servo_Nm," \
-                       "vx_ms,vz_ms,cm_x_m,cm_z_m,x_ref_m,v_ref_ms\n"
+                       "vx_ms,vz_ms,cm_x_m,cm_z_m,x_ref_m,v_ref_ms,rueda_deg,n_cuerpo_N,acc_ms2\n"
 
 static const char *final_de(const resultado_t *R)
 {
+    // Abajo de todo y parado: bien, aunque la última maniobra no haya encontrado otro borde
+    if (!R->choco && !R->cayo && !R->se_paso && R->escalones > 1 && R->bajados >= R->escalones) return "PARADO";
     return R->choco ? "CHOCA" : R->cayo ? "SE CAE" : R->se_paso ? "SE PASA" : R->aborto ? "ABORTA" :
-           !R->toco ? "NO BAJO" : "PARADO";
+           !R->toco ? "NO BAJO" : R->escalones > 1 && R->bajados < R->escalones ? "A MEDIAS" : "PARADO";
 }
 
 static void imprimir(const caso_t *C, const resultado_t *R)
@@ -526,6 +662,44 @@ static void imprimir(const caso_t *C, const resultado_t *R)
     printf("\n");
 }
 
+// Lo mismo en una línea "json {...}", para el visor y un_escalon.py (null si no es un número)
+static void json_num(const char *nombre, double v, int decimales)
+{
+    if (isfinite(v)) printf(", \"%s\": %.*f", nombre, decimales, v);
+    else printf(", \"%s\": null", nombre);
+}
+
+static void imprimir_json(const resultado_t *R)
+{
+    printf("json {\"final\": \"%s\", \"motivo\": \"%s\", \"toco\": %s, \"toques\": %d, \"bajados\": %d,"
+           " \"escalones\": %d", final_de(R), R->motivo ? R->motivo : "", R->toco ? "true" : "false", R->toques,
+           R->bajados, R->escalones);
+    if (R->toco) {
+        json_num("sale", -R->v_salida, 3);
+        json_num("toca", R->x_toque * 1e3, 0);
+        json_num("min", R->x_min * 1e3, 0);
+        json_num("fin", R->x_final * 1e3, 0);
+        json_num("desvio", R->desvio_max_deg, 2);
+        json_num("pata_min", R->pata_min, 1);
+        json_num("servo", R->par_servo_max, 2);
+        json_num("rueda", R->n_rueda_max, 0);
+        json_num("golpe", R->acc_max_g, 2);
+        json_num("t_toque", R->t_toque, 3);
+    }
+    json_num("borde_error", R->borde_error * 1e3, 1);
+    json_num("rueda_min_arriba", R->x_min_arriba < 1e8 ? R->x_min_arriba * 1e3 : NAN, 1);
+    json_num("d_largada", R->d_largada * 1e3, 0);
+    json_num("cabina_max", R->cabina_max, 0);
+    json_num("cabina_t", R->cabina_t, 3);
+    json_num("holgura", R->holgura < 1e8 ? R->holgura * 1e3 : NAN, 1);
+    if (R->holgura_en) {
+        json_num("holgura_t", R->holgura_t, 3);
+        json_num("holgura_x", R->holgura_x * 1e3, 0);
+        printf(", \"holgura_en\": \"%s\"", R->holgura_en);
+    }
+    printf("}\n");
+}
+
 static resultado_t correr_y_guardar(const caso_t *C, const char *archivo)
 {
     char ruta[256];
@@ -536,6 +710,72 @@ static resultado_t correr_y_guardar(const caso_t *C, const char *archivo)
     if (csv) fclose(csv);
     imprimir(C, &R);
     return R;
+}
+
+// Un programa de la maniobra, "evento:valor:objetivo:ritmo/..." (eventos larga, borde, despega,
+// toca; ver man_accion_t): cuántas acciones, o -1 si no se entiende
+static int leer_acciones(const char *texto, man_accion_t *a)
+{
+    static const char *eventos[MAN_N_EVENTOS] = { "larga", "borde", "despega", "toca" };
+    int n = 0;
+    const char *s = texto;
+    while (*s) {
+        char ev[16];
+        float valor, objetivo, ritmo;
+        int usados = 0;
+        if (n >= MAN_MAX_ACCIONES
+            || sscanf(s, "%15[a-z]:%f:%f:%f%n", ev, &valor, &objetivo, &ritmo, &usados) != 4) {
+            return -1;
+        }
+        int k = 0;
+        while (k < MAN_N_EVENTOS && strcmp(ev, eventos[k]) != 0) k++;
+        if (k == MAN_N_EVENTOS) return -1;
+        a[n++] = (man_accion_t){ (man_evento_t)k, valor, objetivo, ritmo };
+        s += usados;
+        if (*s == '/') s++;
+        else if (*s) return -1;
+    }
+    return n;
+}
+
+// Los parámetros que se cambian con "caso nombre=valor" ("parametros" los lista con sus valores
+// por defecto). motor_vuelo va aparte (es un enum) y también patas=... y vel=... (programa)
+typedef struct { const char *nombre; float *f; double *d; int *i; } campo_t;
+
+static int campos_del_caso(caso_t *c, campo_t *k)
+{
+    int n = 0;
+#define F(nom, x) k[n++] = (campo_t){ nom, &c->x, NULL, NULL }
+#define D(nom, x) k[n++] = (campo_t){ nom, NULL, &c->x, NULL }
+#define I(nom, x) k[n++] = (campo_t){ nom, NULL, NULL, &c->x }
+    F("pata_busqueda", man.pata_busqueda_deg);   F("v_busqueda", man.v_busqueda);
+    F("desnivel", man.desnivel);                 F("d_min", man.d_min);
+    F("avance", man.avance);
+    F("pata_largada", man.pata_largada_deg);     F("v_salida", man.v_salida);
+    F("a_salida_max", man.a_salida_max);         F("kx_largada", man.kx_largada);
+    F("ff", man.ff);                             F("d_salto", man.d_salto);
+    F("pata_vuelo", man.pata_vuelo_deg);         F("vel_pata", man.vel_pata_dps);
+    F("pata_final", man.pata_final_deg);         F("vel_pata_final", man.vel_pata_final_dps);
+    F("t_mantener", man.t_mantener);             F("t_sin_acel", man.t_sin_acel);
+    F("kx_aterrizaje", man.kx_aterrizaje);       F("a_frenado", man.a_frenado);
+    F("t_continuo", man.t_continuo);             F("d_borde", man.d_borde);
+    F("ir_x", man.ir_x);                         F("d_carrera", man.d_carrera);
+    F("v_alejar", man.v_alejar);                 D("ir_x_real", ir_x_real);
+    F("v_buscar_ir", man.v_buscar_ir);
+    D("alto", alto);                             D("pisada", pisada);
+    I("escalones", n_escalones);                 D("x0", x_contacto0);
+    D("v_motor", v_motor);                       D("zona_muerta", zona_muerta);
+    D("mu", mu);                                 D("servo", factor_servo);
+    D("d_ref", d_ref);                           D("f_rotor", f_rotor);
+    D("f_inercia", f_inercia);                   I("semilla", semilla);
+    I("repetir", repetir);                       D("ultimo", alto_ultimo);
+    D("f_masa", f_masa);                         D("mu_cabina", mu_cabina);
+    I("apoyo", apoyo);                           D("recorte", recorte);
+    D("k_rueda", k_rueda);                       D("c_rueda", c_rueda);
+#undef F
+#undef D
+#undef I
+    return n;
 }
 
 int main(int argc, char **argv)
@@ -554,9 +794,23 @@ int main(int argc, char **argv)
     man_params_t base;
     maniobra_params_por_defecto(&base);
     caso_t C0 = {
-        .nombre = "", .man = base, .alto = 0.18, .pisada = 0.25, .n_escalones = 4,
-        .x_contacto0 = 0.45, .factor_servo = 1.0, .zona_muerta = ZONA_MUERTA, .mu = PE_MU, .ruido = true,
+        .nombre = "", .man = base, .alto = 0.166, .pisada = 0.29, .n_escalones = 7, .alto_ultimo = 0.03,
+        .x_contacto0 = 0.45, .factor_servo = 1.0, .v_motor = P.v_motor, .zona_muerta = ZONA_MUERTA,
+        .mu = PE_MU, .f_rotor = 1.0, .f_inercia = 1.0, .f_masa = 1.0, .ruido = true,
     };
+
+    if (argc > 1 && strcmp(argv[1], "parametros") == 0) {
+        // Los parámetros de "caso" con sus valores por defecto, en una línea "json {...}"
+        caso_t c = C0;
+        campo_t k[64];
+        int n = campos_del_caso(&c, k);
+        printf("json {\"motor_vuelo\": %d, \"patas\": \"\", \"vel\": \"\"", (int)c.man.motor_vuelo);
+        for (int i = 0; i < n; i++) {
+            printf(", \"%s\": %g", k[i].nombre, k[i].f ? (double)*k[i].f : k[i].d ? *k[i].d : (double)*k[i].i);
+        }
+        printf("}\n");
+        return 0;
+    }
 
     if (argc > 1 && strcmp(argv[1], "barrido") == 0) {
         // Patas al largar x velocidad de salida, patas a 30 en el aire y 15 al tocar
@@ -675,6 +929,122 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    if (argc > 1 && strcmp(argv[1], "rebote") == 0) {
+        // rebote [alto=0.03] [pata=15] [k_rueda=] [c_rueda=] [servo=1] [csv=nombre]: el robot
+        // desarmado (sin motor) y sostenido derecho, en su equilibrio, con las ruedas a alto [m] del
+        // piso, se suelta: cuánto rebota (la goma y las patas). Como lo ve el robot con "grabar": |a|
+        // de la IMU cada 5 ms (cada eje recortado a ±tope g, 16 por defecto: 4 para las caídas del 7/11, y
+        // con el filtro del MPU6050), y los tramos en el aire (|a| < UMBRAL_AIRE). Para comparar con el
+        // robot (rebote.py)
+        const double UMBRAL_AIRE = 3.0;
+        double TOPE = 16.0 * G;     // [m/s2]
+        double alto = 0.03, pata = 15.0, k = 0.0, c = 0.0, f_servo = 1.0, inclinacion = 0.0, c_pata = -1.0;
+        const char *archivo = NULL;
+        for (int i = 2; i < argc; i++) {
+            if (strncmp(argv[i], "alto=", 5) == 0) alto = atof(argv[i] + 5);
+            else if (strncmp(argv[i], "pata=", 5) == 0) pata = atof(argv[i] + 5);
+            else if (strncmp(argv[i], "k_rueda=", 8) == 0) k = atof(argv[i] + 8);
+            else if (strncmp(argv[i], "c_rueda=", 8) == 0) c = atof(argv[i] + 8);
+            else if (strncmp(argv[i], "servo=", 6) == 0) f_servo = atof(argv[i] + 6);
+            else if (strncmp(argv[i], "tope=", 5) == 0) TOPE = atof(argv[i] + 5) * G;
+            // 11/11: soltado inclinado respecto del equilibrio [grados, + adelante], como lo sostienen
+            else if (strncmp(argv[i], "inclinacion=", 12) == 0) inclinacion = atof(argv[i] + 12);
+            // 11/11: la pata cede por el plástico (elástico), no por el servo: su amortiguamiento [N m s/rad]
+            // en lugar de la recta par-velocidad del servo
+            else if (strncmp(argv[i], "c_pata=", 7) == 0) c_pata = atof(argv[i] + 7);
+            else if (strncmp(argv[i], "csv=", 4) == 0) archivo = argv[i] + 4;
+        }
+        planta_t Pr = planta_base();
+        planta_del_entorno(&Pr);
+        Pr.servo_par_max *= f_servo;
+        if (c_pata >= 0.0) { Pr.servo_vel_max = 1e9; Pr.servo_b = c_pata; }
+        if (k > 0) Pr.k_rueda = k;
+        if (c > 0) Pr.c_rueda = c;
+        piso_t plano = { 0.18, 0.25, 0, 0.0 };
+        double q[PP_NQ], dq[PP_NQ];
+        pata += a_extra();
+        estado_apoyado(&Pr, pata / GRADOS, 0.0, q, dq);
+        if (inclinacion != 0.0) {                       // se gira alrededor del contacto de la rueda
+            pata_t pc;
+            pata_cinematica(pata / GRADOS, &pc);
+            double c0 = cos(q[PP_TH]), s0 = sin(q[PP_TH]);
+            double cx = q[PP_X] + pc.px * c0 + pc.pz * s0, cz = q[PP_Z] - pc.px * s0 + pc.pz * c0;
+            q[PP_TH] += inclinacion / GRADOS;
+            double c1 = cos(q[PP_TH]), s1 = sin(q[PP_TH]);
+            q[PP_X] = cx - (pc.px * c1 + pc.pz * s1);
+            q[PP_Z] = cz - (-pc.px * s1 + pc.pz * c1);
+        }
+        q[PP_Z] += alto;
+        entrada_planta_t e = { 0.0, pata / GRADOS };    // sin tensión al motor; los servos sostienen
+        salida_planta_t sal;
+        FILE *csv = NULL;
+        if (archivo) {
+            char r[256];
+            snprintf(r, sizeof r, "simulacion/escalon/resultados/%s.csv", archivo);
+            csv = fopen(r, "w");
+            if (csv) fprintf(csv, "t_s,eje_z_mm,n_rueda_N,acc_ms2,acc_sin_tope_ms2,en_el_aire,th_deg,pata_deg,"
+                              "par_servo_Nm\n");
+        }
+        double a_mpu = 1.0 - exp(-H * 2 * PI * FC_MPU), f_fwd = 0.0, f_up = G, g_fwd = 0.0, g_up = G;
+        double a_max = 0.0, par_max = 0.0, pata_min = pata;
+        // tramos en el aire, de verdad (la rueda sin tocar) y como los ve la IMU [s]
+        double vuelos[16], vuelos_imu[16], t_desde = 0.0, t_imu = -1.0;
+        int nv = 0, nvi = 0;
+        bool apoyada = false;
+        const int pasos = (int)(1.5 / H);
+        for (int i = 0; i < pasos; i++) {
+            double t = i * H;
+            planta_rk4(&Pr, &plano, q, dq, &e, H, &sal);
+            double fa, ua;
+            acelerometro(q, dq, sal.ddq, &fa, &ua);
+            par_max = fmax(par_max, fabs(sal.par_servo));
+            pata_min = fmin(pata_min, q[PP_A] * GRADOS);
+            f_fwd += a_mpu * (fmin(fmax(fa, -TOPE), TOPE) - f_fwd);     // lo que da el MPU6050
+            f_up += a_mpu * (fmin(fmax(ua, -TOPE), TOPE) - f_up);
+            g_fwd += a_mpu * (fa - g_fwd);                              // sin el tope
+            g_up += a_mpu * (ua - g_up);
+            if (sal.rueda_apoyada != apoyada) {
+                if (sal.rueda_apoyada && nv < 16) vuelos[nv++] = t - t_desde;
+                else t_desde = t;
+                apoyada = sal.rueda_apoyada;
+            }
+            if (i % SUBPASOS == SUBPASOS - 1) {             // una muestra cada 5 ms, como el registro
+                double ts = (i + 1) * H, n = sqrt(f_fwd * f_fwd + f_up * f_up);
+                double n_sin = sqrt(g_fwd * g_fwd + g_up * g_up);
+                a_max = fmax(a_max, n_sin);
+                bool aire = n < UMBRAL_AIRE;
+                if (aire && t_imu < 0) t_imu = ts;
+                if (!aire && t_imu >= 0) {
+                    if (nvi < 16) vuelos_imu[nvi++] = ts - t_imu;
+                    t_imu = -1.0;
+                }
+                if (csv) {
+                    pata_t p;
+                    pata_cinematica(q[PP_A], &p);
+                    double ce = cos(q[PP_TH]), se = sin(q[PP_TH]);
+                    double eje_z = q[PP_Z] - p.px * se + p.pz * ce;
+                    fprintf(csv, "%.3f,%.2f,%.1f,%.2f,%.2f,%d,%.2f,%.2f,%.2f\n", ts, (eje_z - Pr.r_rueda) * 1e3,
+                            sal.n_rueda, n, n_sin, aire, q[PP_TH] * GRADOS, q[PP_A] * GRADOS, sal.par_servo);
+                }
+            }
+        }
+        if (csv) fclose(csv);
+        printf("rebote: suelto a %.0f mm, patas %.0f, goma %.0f N/m y %.0f N s/m, servos x %.2f\n", alto * 1e3,
+               pata, Pr.k_rueda, Pr.c_rueda, f_servo);
+        printf("  en el aire (de verdad) [ms]:");
+        for (int i = 0; i < nv; i++) printf(" %.0f", vuelos[i] * 1e3);
+        printf("\n  en el aire (IMU, |a| < %.0f m/s2) [ms]:", UMBRAL_AIRE);
+        for (int i = 0; i < nvi; i++) printf(" %.0f", vuelos_imu[i] * 1e3);
+        printf("\n  |a| máxima %.1f g (el MPU6050 está en ±4 g); par de los dos servos hasta %.1f N m; pata"
+               " hasta %.1f\n", a_max / G, par_max, pata_min);
+        printf("json {\"vuelos_ms\": [");
+        for (int i = 0; i < nv; i++) printf("%s%.1f", i ? ", " : "", vuelos[i] * 1e3);
+        printf("], \"vuelos_imu_ms\": [");
+        for (int i = 0; i < nvi; i++) printf("%s%.0f", i ? ", " : "", vuelos_imu[i] * 1e3);
+        printf("], \"a_max_g\": %.2f, \"par_servo_max\": %.2f, \"pata_min\": %.2f}\n", a_max / G, par_max, pata_min);
+        return 0;
+    }
+
     if (argc > 1 && strcmp(argv[1], "caida") == 0) {
         // caida <pata> <alto_m> <vx> [pata_al_tocar] [factor_servo]: suelta el robot en el aire
         // sobre piso plano, sin control, para ver el golpe y cuánto lo hace cabecear
@@ -682,7 +1052,7 @@ int main(int argc, char **argv)
         double vx = argc > 4 ? atof(argv[4]) : 0.0, a_toca = argc > 5 ? atof(argv[5]) / GRADOS : a;
         planta_t Pc = planta_base();
         if (argc > 6) Pc.servo_par_max *= atof(argv[6]);
-        piso_t plano = { 0.18, 0.25, 0 };
+        piso_t plano = { 0.18, 0.25, 0, 0.0 };
         double q[PP_NQ], dq[PP_NQ];
         estado_apoyado(&Pc, a, 0.0, q, dq);
         q[PP_Z] += alto;
@@ -720,42 +1090,40 @@ int main(int argc, char **argv)
         for (int i = 2; i < argc; i++) {
             char nombre[64];
             double v;
+            if (strncmp(argv[i], "patas=", 6) == 0 || strncmp(argv[i], "vel=", 4) == 0) {
+                bool patas = argv[i][0] == 'p';
+                int n = leer_acciones(strchr(argv[i], '=') + 1, patas ? c.man.patas : c.man.vel);
+                if (n < 0) { fprintf(stderr, "no entiendo %s\n", argv[i]); return 2; }
+                if (patas) c.man.n_patas = n; else c.man.n_vel = n;
+                continue;
+            }
             if (sscanf(argv[i], "%63[^=]=%lf", nombre, &v) != 2) {
                 if (strncmp(argv[i], "csv=", 4) == 0) archivo = argv[i] + 4;
                 continue;
             }
-            struct { const char *n; float *f; } campos[] = {
-                { "pata_busqueda", &c.man.pata_busqueda_deg }, { "pata_largada", &c.man.pata_largada_deg },
-                { "v_busqueda", &c.man.v_busqueda }, { "d_min", &c.man.d_min },
-                { "v_salida", &c.man.v_salida }, { "a_salida_max", &c.man.a_salida_max },
-                { "kx_largada", &c.man.kx_largada }, { "pata_vuelo", &c.man.pata_vuelo_deg },
-                { "d_salto", &c.man.d_salto },
-                { "pata_final", &c.man.pata_final_deg }, { "vel_pata", &c.man.vel_pata_dps },
-                { "vel_pata_final", &c.man.vel_pata_final_dps }, { "t_mantener", &c.man.t_mantener },
-                { "t_sin_acel", &c.man.t_sin_acel }, { "kx_aterrizaje", &c.man.kx_aterrizaje },
-                { "a_frenado", &c.man.a_frenado }, { "ff", &c.man.ff },
-                { "t_continuo", &c.man.t_continuo },
-            };
+            campo_t k[64];
+            int n = campos_del_caso(&c, k);
             bool ok = false;
-            for (size_t k = 0; k < sizeof campos / sizeof campos[0]; k++) {
-                if (strcmp(nombre, campos[k].n) == 0) { *campos[k].f = (float)v; ok = true; }
+            for (int j = 0; j < n; j++) {
+                if (strcmp(nombre, k[j].nombre) != 0) continue;
+                if (k[j].f) *k[j].f = (float)v;
+                if (k[j].d) *k[j].d = v;
+                if (k[j].i) *k[j].i = (int)v;
+                ok = true;
             }
             if (strcmp(nombre, "motor_vuelo") == 0) { c.man.motor_vuelo = (man_motor_vuelo_t)v; ok = true; }
-            if (strcmp(nombre, "alto") == 0) { c.alto = v; ok = true; }
-            if (strcmp(nombre, "pisada") == 0) { c.pisada = v; ok = true; }
-            if (strcmp(nombre, "servo") == 0) { c.factor_servo = v; ok = true; }
-            if (strcmp(nombre, "mu") == 0) { c.mu = v; ok = true; }
-            if (strcmp(nombre, "zona_muerta") == 0) { c.zona_muerta = v; ok = true; }
-            if (strcmp(nombre, "x0") == 0) { c.x_contacto0 = v; ok = true; }
+            if (strcmp(nombre, "alinear") == 0) { c.man.alinear = v != 0.0; ok = true; }
             if (!ok) { fprintf(stderr, "no conozco %s\n", nombre); return 2; }
         }
-        correr_y_guardar(&c, archivo);
+        resultado_t R = correr_y_guardar(&c, archivo);
+        imprimir_json(&R);
         return 0;
     }
 
     printf("\n%-46s %-8s\n", "caso", "final");
     caso_t c = C0;
-    c.nombre = "equipo: agachado, 30 en el aire, 15 al tocar";
-    correr_y_guardar(&c, "equipo");
+    c.nombre = "la de por defecto, un escalon";
+    c.n_escalones = 1;
+    correr_y_guardar(&c, "por_defecto");
     return 0;
 }

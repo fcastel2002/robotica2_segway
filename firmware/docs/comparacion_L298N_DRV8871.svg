@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" width="1200" height="650" font-family="Arial, Helvetica, sans-serif"><rect width="1200" height="650" fill="#fcfcfb"/>
+<line x1="70" y1="33" x2="110" y2="33" stroke="#2a78d6" stroke-width="3"/><circle cx="90" cy="33" r="5" fill="#2a78d6"/>
+<text x="120.0" y="39.0" font-size="17" fill="#0b0b0b" text-anchor="start" font-weight="normal">DRV8871, medido el 6/11 (de 4 a 100 %)</text>
+<line x1="480" y1="33" x2="520" y2="33" stroke="#eb6834" stroke-width="3" stroke-dasharray="9 6"/>
+<text x="530.0" y="39.0" font-size="17" fill="#0b0b0b" text-anchor="start" font-weight="normal">L298N: recta de MED-005, 29/10 (de 30 a 90 %)</text>
+<circle cx="965" cy="33" r="6" fill="#fcfcfb" stroke="#eb6834" stroke-width="3"/>
+<text x="980.0" y="39.0" font-size="17" fill="#0b0b0b" text-anchor="start" font-weight="normal">L298N al 100 %, medido</text>
+<text x="70.0" y="81.0" font-size="20" fill="#0b0b0b" text-anchor="start" font-weight="bold">Rueda izquierda</text>
+<line x1="70" y1="545.0" x2="580" y2="545.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="551.0" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">0</text>
+<line x1="70" y1="480.7" x2="580" y2="480.7" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="486.7" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">50</text>
+<line x1="70" y1="416.4" x2="580" y2="416.4" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="422.4" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">100</text>
+<line x1="70" y1="352.1" x2="580" y2="352.1" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="358.1" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">150</text>
+<line x1="70" y1="287.9" x2="580" y2="287.9" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="293.9" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">200</text>
+<line x1="70" y1="223.6" x2="580" y2="223.6" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="229.6" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">250</text>
+<line x1="70" y1="159.3" x2="580" y2="159.3" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="165.3" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">300</text>
+<line x1="70" y1="95.0" x2="580" y2="95.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="60.0" y="101.0" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">350</text>
+<text x="70.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">0</text>
+<text x="172.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">20</text>
+<text x="274.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">40</text>
+<text x="376.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">60</text>
+<text x="478.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">80</text>
+<text x="580.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">100</text>
+<text x="325.0" y="597.0" font-size="16" fill="#52514e" text-anchor="middle" font-weight="normal">PWM (%)</text>
+<text x="22" y="320.0" font-size="16" fill="#52514e" text-anchor="middle" transform="rotate(-90 22 320.0)">Velocidad de la rueda (RPM)</text>
+<line x1="223.0" y1="500.5" x2="529.0" y2="257.6" stroke="#eb6834" stroke-width="3" stroke-dasharray="9 6"/>
+<circle cx="580.0" cy="200.5" r="6" fill="#fcfcfb" stroke="#eb6834" stroke-width="3"/>
+<polyline points="90.4,545.0 100.6,545.0 110.8,527.0 121.0,518.8 131.2,510.2 146.5,497.9 161.8,486.5 182.2,470.4 202.6,454.6 223.0,438.5 248.5,418.4 274.0,398.7 325.0,357.0 376.0,317.0 427.0,276.8 478.0,236.7 529.0,196.6 580.0,154.3" fill="none" stroke="#2a78d6" stroke-width="3"/>
+<circle cx="90.4" cy="545.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="100.6" cy="545.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="110.8" cy="527.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="121.0" cy="518.8" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="131.2" cy="510.2" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="146.5" cy="497.9" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="161.8" cy="486.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="182.2" cy="470.4" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="202.6" cy="454.6" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="223.0" cy="438.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="248.5" cy="418.4" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="274.0" cy="398.7" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="325.0" cy="357.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="376.0" cy="317.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="427.0" cy="276.8" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="478.0" cy="236.7" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="529.0" cy="196.6" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="580.0" cy="154.3" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<text x="85.3" y="352.1" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="normal">DRV8871: se anula en 3 %</text>
+<text x="335.2" y="493.6" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="normal">L298N: se anula en 19 %</text>
+<text x="640.0" y="81.0" font-size="20" fill="#0b0b0b" text-anchor="start" font-weight="bold">Rueda derecha</text>
+<line x1="640" y1="545.0" x2="1150" y2="545.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="551.0" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">0</text>
+<line x1="640" y1="480.7" x2="1150" y2="480.7" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="486.7" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">50</text>
+<line x1="640" y1="416.4" x2="1150" y2="416.4" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="422.4" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">100</text>
+<line x1="640" y1="352.1" x2="1150" y2="352.1" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="358.1" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">150</text>
+<line x1="640" y1="287.9" x2="1150" y2="287.9" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="293.9" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">200</text>
+<line x1="640" y1="223.6" x2="1150" y2="223.6" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="229.6" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">250</text>
+<line x1="640" y1="159.3" x2="1150" y2="159.3" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="165.3" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">300</text>
+<line x1="640" y1="95.0" x2="1150" y2="95.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="630.0" y="101.0" font-size="15" fill="#52514e" text-anchor="end" font-weight="normal">350</text>
+<text x="640.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">0</text>
+<text x="742.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">20</text>
+<text x="844.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">40</text>
+<text x="946.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">60</text>
+<text x="1048.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">80</text>
+<text x="1150.0" y="569.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">100</text>
+<text x="895.0" y="597.0" font-size="16" fill="#52514e" text-anchor="middle" font-weight="normal">PWM (%)</text>
+<line x1="793.0" y1="491.0" x2="1099.0" y2="242.0" stroke="#eb6834" stroke-width="3" stroke-dasharray="9 6"/>
+<circle cx="1150.0" cy="186.7" r="6" fill="#fcfcfb" stroke="#eb6834" stroke-width="3"/>
+<polyline points="660.4,545.0 670.6,529.1 680.8,520.8 691.0,512.6 701.2,504.5 716.5,492.4 731.8,480.2 752.2,464.0 772.6,447.7 793.0,431.3 818.5,410.8 844.0,389.9 895.0,348.5 946.0,306.5 997.0,265.4 1048.0,223.8 1099.0,182.6 1150.0,139.0" fill="none" stroke="#2a78d6" stroke-width="3"/>
+<circle cx="660.4" cy="545.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="670.6" cy="529.1" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="680.8" cy="520.8" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="691.0" cy="512.6" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="701.2" cy="504.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="716.5" cy="492.4" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="731.8" cy="480.2" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="752.2" cy="464.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="772.6" cy="447.7" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="793.0" cy="431.3" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="818.5" cy="410.8" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="844.0" cy="389.9" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="895.0" cy="348.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="946.0" cy="306.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="997.0" cy="265.4" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="1048.0" cy="223.8" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="1099.0" cy="182.6" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<circle cx="1150.0" cy="139.0" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>
+<text x="655.3" y="352.1" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="normal">DRV8871: se anula en 2 %</text>
+<text x="905.2" y="493.6" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="normal">L298N: se anula en 17 %</text>
+<text x="70.0" y="638.0" font-size="14" fill="#52514e" text-anchor="start" font-weight="normal">Robot colgado, sin armar, ruedas hacia adelante. Sin carga: el valor en el piso se mide aparte. L298N con 12 V de cargador; DRV8871 con LiPo a 12,26 V.</text>
+</svg>

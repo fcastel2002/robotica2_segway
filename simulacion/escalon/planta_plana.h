@@ -2,25 +2,30 @@
 // libertad, movida por los servos) + rueda con motor, con contacto contra un piso escalonado,
 // vuelo y aterrizaje. Las dos patas y las dos ruedas van juntas (sin rolido ni guiñada).
 //
-// Coordenadas generalizadas q = [X, Z, th, a, f]:
+// Coordenadas generalizadas q = [X, Z, th, a, f, s]:
 //   X, Z  centro de masa del cuerpo en el mundo [m] (X adelante, Z arriba)
 //   th    cabeceo del cuerpo [rad], positivo hacia adelante (la cabeza va hacia +X)
 //   a     ángulo de la pata, el que se le pide al servo [rad] (0 = agachado)
 //   f     giro de la rueda respecto del eslabón que lleva el motor [rad], + rodando hacia adelante
+//   s     (11/11) torsión del eslabón que lleva el motor respecto de donde lo pone el cuatro barras
+//         [rad]: los agarres de plástico ceden y la carcasa del motor gira un poco sobre el eje sin
+//         que se mueva la caja (el k_s de los barridos del 11/11, modelado/ajuste/ajustar_pata_flexible.m).
+//         Con k_torsion = 0 queda trabado en 0: la planta rígida de siempre.
 // Los giros son positivos en sentido horario mirando el robot desde su derecha (X a la derecha,
 // Z arriba): un punto en (dx, dz) respecto del centro de giro va a w·(dz, -dx).
 #pragma once
 
 #include <stdbool.h>
 
-#define PP_NQ 5
-enum { PP_X = 0, PP_Z, PP_TH, PP_A, PP_F };
+#define PP_NQ 6
+enum { PP_X = 0, PP_Z, PP_TH, PP_A, PP_F, PP_S };
 
 // Piso: escalones que bajan hacia -X. El borde del primero está en X = 0 (arriba, Z = 0, para
 // X >= 0); cada escalón baja `alto` y tiene `pisada` de largo. n_escalones = 0: piso plano.
 typedef struct {
     double alto, pisada;
     int    n_escalones;
+    double alto_ultimo;         // [m] el último escalón, si es de otra altura (0 = alto)
 } piso_t;
 
 typedef struct {
@@ -40,10 +45,14 @@ typedef struct {
     double servo_par_max, servo_vel_max;// [N m] de calado, [rad/s] en vacío
     double servo_ganancia;              // [1/rad]: error que lleva el servo a fondo
     double servo_b;                     // [N m s/rad] fricción viscosa del reductor
+    double k_torsion, c_torsion;        // [N m/rad], [N m s/rad] del eslabón del motor contra la caja
+                                        // (coordenada s); k_torsion = 0: rígido
     // contacto
     double k_rueda, c_rueda;            // [N/m], [N s/m] de las dos ruedas contra el piso
     double k_cuerpo, c_cuerpo;          // [N/m], [N s/m] de un golpe del cuerpo
     double mu, v_resbale;               // fricción de Coulomb y velocidad de regularización [m/s]
+    double mu_cuerpo;                   // fricción de la cabina contra el escalón (0 = mu)
+    double recorte;                     // [m] la cabina recortada adelante (la masa queda igual)
     double g;
 } planta_t;
 
@@ -86,6 +95,9 @@ void planta_rk4(const planta_t *P, const piso_t *piso, double q[PP_NQ], double d
 // Altura del piso en X y distancia a lo largo de un rayo desde (x0, z0) en la dirección
 // (ux, uz) unitaria hasta el piso; devuelve < 0 si no lo corta antes de max_m.
 double piso_altura(const piso_t *piso, double x);
+double piso_nivel(const piso_t *piso, int k);
+double piso_distancia(const piso_t *piso, double x, double z);
+double piso_distancia_caja(const piso_t *piso, const double q[PP_NQ], double x0, double x1, double z0, double z1);
 double piso_rayo(const piso_t *piso, double x0, double z0, double ux, double uz, double max_m);
 
 // Posición en el mundo de un punto del cuerpo (ejes del cuerpo, respecto del centro de masa)

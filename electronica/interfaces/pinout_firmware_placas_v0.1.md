@@ -74,16 +74,16 @@ Cada motor tiene solo dos entradas, IN1 e IN2. **No hay EN**: en el código va `
 | Dirección | Módulo | Qué mide | Dónde está |
 |---|---|---|---|
 | 0x68 | MPU6050 (GY-521) | Acelerómetro y giróscopo | Lógica |
-| 0x41 | INA219 IZQ (A5) | Tensión y corriente del motor izquierdo, shunt de 0,1 Ω | Potencia |
-| 0x44 | INA219 DER (A6) | Ídem, motor derecho | Potencia |
-| 0x40 | INA226 (A7) | Tensión de batería y corriente de la rama lógica, shunt de 0,1 Ω (hasta 0,82 A) | Potencia |
+| 0x40 | INA219 del motor izquierdo | Tensión y corriente del motor izquierdo, shunt de 0,1 Ω | Potencia |
+| 0x41 | INA219 del motor derecho | Ídem, motor derecho | Potencia |
+| 0x44 | INA226 (A7) | Tensión de batería y corriente de la rama lógica, shunt de 0,1 Ω (hasta 0,82 A). Lee ~5 % de más: el firmware lo corrige | Potencia |
 
 - El bus va por el cable J20 hasta la potencia. Empezar a 100 kHz y probar 400 kHz recién después del ensayo E-08.
-- Las direcciones de los INA219 se fijan con los puentes A0/A1 de cada módulo, que hay que soldar antes de montarlo (SUP-34).
+- Medido el 06/11/2026 en la placa montada. Los INA219 vienen en 0x40 y se cambian con los puentes del recuadro «I2C Address» de cada módulo: **A0 en uno solo** (0x41; en el robot quedó en el del motor derecho, comprobado moviendo cada rueda) y el otro sin puente. El INA226 viene en 0x44, así que un puente A1 chocaría con él.
 
 ### Batería
 
-- Desde la v0.4 no hay divisor: la tensión de la batería la da el INA226 (0x40), registro de tensión de bus (VBS, después de F5). GPIO3 (ADC1_CH2) pasó a leer el Sharp de J27.
+- Desde la v0.4 no hay divisor: la tensión de la batería la da el INA226 (0x44), registro de tensión de bus (VBS, después de F5). GPIO3 (ADC1_CH2) pasó a leer el Sharp de J27.
 
 ## Bloque listo para `board_pins.h`
 
@@ -114,9 +114,9 @@ Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se
 #define PIN_DIST_SUELO      3       // Sharp GP2Y0A60SZLF en J27, ADC1_CH2, divisor 10k/15k (x 0,6)
 #define PIN_DIST_SUELO_2    1       // segundo Sharp por J25.4, ADC1_CH0, divisor 10k/15k en el cable (x 0,6)
 #define I2C_ADDR_MPU6050    0x68
-#define I2C_ADDR_INA219_L   0x41
-#define I2C_ADDR_INA219_R   0x44
-#define I2C_ADDR_INA226     0x40
+#define I2C_ADDR_INA219_L   0x40
+#define I2C_ADDR_INA219_R   0x41
+#define I2C_ADDR_INA226     0x44
 ```
 
 ## Cable entre placas (J20)

@@ -6,7 +6,7 @@
 // --- Temporización ---
 #define CONTROL_PERIOD_MS       5           // 200 Hz
 #define COMMS_PERIOD_MS         20          // 50 Hz
-#define CONTROL_STACK           4096
+#define CONTROL_STACK           8192        // 3/11: con la maniobra y la parada (4096 justo)
 #define COMMS_STACK             8192        // printf con float y los paquetes UDP usan bastante pila
 
 // --- IMU ---
@@ -20,11 +20,13 @@
 // 2/11, a la noche: el equipo dio vuelta la IMU (media vuelta alrededor del eje vertical). Medido
 // con las ruedas apoyadas: derecho, x +10,3 y z −0,2; inclinado ~25° adelante, z baja a −4,5 y el
 // giróscopo y marca −12 °/s al inclinarlo. Arriba sigue +x; adelante pasa a +z y el cabeceo a −y.
-#define IMU_AXIS_FWD            2
+// 6/11: con la IMU en la PCB, +y apunta adelante, +x hacia el motor derecho y +z arriba (dicho por el
+// equipo, todavía sin medir). Inclinar adelante lleva z hacia y: es un giro negativo alrededor de x.
+#define IMU_AXIS_FWD            1
 #define IMU_SIGN_FWD            1.0f
-#define IMU_AXIS_UP             0
+#define IMU_AXIS_UP             2
 #define IMU_SIGN_UP             1.0f
-#define IMU_AXIS_PITCH          1
+#define IMU_AXIS_PITCH          0
 #define IMU_SIGN_PITCH          -1.0f
 
 // --- Estimación ---
@@ -36,15 +38,15 @@
 // El L298N es lento para conmutar: si calienta mucho o pierde par con PWM bajo, bajar a 5-10 kHz.
 #define MOTOR_PWM_FREQ_HZ       20000       // inaudible
 #define MOTOR_SLOW_DECAY        1           // 1: frena en el apagado del PWM (más lineal)
-#define MOTOR_L_INVERT          1           // poner en 1 si la rueda gira al revés
-#define MOTOR_R_INVERT          1           // 29/10: con 1 las ruedas giraban al revés una de otra
+#define MOTOR_L_INVERT          0           // poner en 1 si la rueda gira al revés
+#define MOTOR_R_INVERT          0           // 29/10: con 1 las ruedas giraban al revés una de otra
 
 // --- Encoders de las ruedas ---
 // Avanzar tiene que contar positivo en las dos ruedas. Se verifica girándolas a mano
 // (guía en firmware/docs/prueba_encoders.md). 29/10, medido con los motores en el aire: con
 // motor positivo (adelante) las dos cuentas suben con estos signos (los pines van cruzados en board_pins.h).
-#define ENC_L_INVERT            1
-#define ENC_R_INVERT            0
+#define ENC_L_INVERT            0
+#define ENC_R_INVERT            1
 #define ENC_GLITCH_NS           1000        // descarta pulsos de menos de 1 us (ruido)
 // Odometría para el LQR (components/control/odometry.h)
 #define ENC_COUNTS_PER_REV      899.0f      // cuentas x4 por vuelta de RUEDA. MEDIDO el 29/10: 8990 en
@@ -63,8 +65,11 @@
 // 2/11 (Joaquín y el equipo, a ojo con el robot en el aire): las dos patas quedan iguales con
 // la izquierda en 0° y la derecha en 5°. Ese 5 es el 0 de la derecha: los ángulos que se piden
 // ("servo", "servo lim", telemetría) son de la pata, y el driver le suma a cada servo su cero.
-#define SERVO_L_ZERO_DEG        0.0f
-#define SERVO_R_ZERO_DEG        5.0f
+// 6/11: con la PCB, "izquierdo" movía el servo que está sobre el motor derecho. Se cruzaron los
+// nombres (PIN_SERVO_*); el cero y el invert acompañan al pin, así cada servo físico recibe los
+// mismos pulsos que antes. Por eso el 5° y el invert, medidos como "derecha", quedan en la izquierda.
+#define SERVO_L_ZERO_DEG        5.0f
+#define SERVO_R_ZERO_DEG        0.0f
 // 29/10: el recorrido es 0-30°, ESTRICTO: fuera de ahí se rompe el cuatro barras. 3/11: la
 // pata derecha se corrió 5° en el brazo del servo, así que su 0-30 de pata es 5-35 del servo
 // (Joaquín: "con ambas a 30"). Los límites son de la PATA y valen igual para las dos;
@@ -78,8 +83,8 @@
 #define SERVO_MAX_SPEED_DPS     20.0f       // velocidad hacia la posición pedida (en vivo: set velpata).
                                             // 3/11: 90 -> 20 °/s, el equipo pidió que se muevan suave
                                             // (con el joystick cada clic mueve 2°)
-#define SERVO_L_INVERT          0           // 1 si el servo está montado en espejo
-#define SERVO_R_INVERT          1
+#define SERVO_L_INVERT          1           // 1 si el servo está montado en espejo
+#define SERVO_R_INVERT          0
 
 // --- Control de equilibrio: valores al arrancar, se ajustan en vivo con "set" ---
 // Ángulo de equilibrio según la altura de las patas: con el cuatro barras, al moverlas la rueda se
@@ -198,38 +203,69 @@
 #define MOV_X_ATRASO_MAX_M      0.30f       // si el robot no llega a la consigna (motores al tope), la de
                                             // posición no se le adelanta más que esto: al soltar el
                                             // joystick no sale corriendo a alcanzarla
-#define MOV_GIRO_MAX            0.15f       // fracción de PWM sumada y restada con giro = 1
+#define MOV_GIRO_MAX            0.15f       // fracción de PWM sumada y restada con giro = 1 (en vivo:
+                                            // set giromax). 3/11 se probó 0,30 para girar en el lugar
+                                            // con R2/L2; se sacó (4/11) y vuelve a 0,15 para el stick
 #define MOV_GIRO_RATE           0.60f       // fracción de PWM por segundo
 
 // --- Sensor de distancia al piso y bajada de escalón (FW-016, "escalon" o △ del joystick) ---
 // Sharp GP2Y0A60SZLF (pin en board_pins.h): d = SHARP_K / (v_sensor - SHARP_V0), con v_sensor la
 // tensión antes del divisor. Valores de la ficha (3,6 V a 10 cm, 0,6 V a 150 cm): CALIBRAR contra
 // el piso real (sesion_placa.py calibrar_sensor). Debajo de 10 cm la curva se dobla: no vale.
-#define SHARP_DIVISOR           0.6f        // R42 / (R41 + R42) = 15k / 25k
+#define SHARP_DIVISOR           0.6f        // R42 / (R41 + R42) = 15k / 25k. SIN el divisor la salida
+                                            // llega a 3,6 V a 10 cm: más de lo que aguanta el pin (3,3 V)
 #define SHARP_K                 0.3214f     // [V m]
 #define SHARP_V0                0.386f      // [V]
 #define SHARP_D_MIN_M           0.10f
 #define SHARP_D_MAX_M           1.50f
 // Geometría para saber dónde pega el haz (docs/gestion/2026-11-03-plan-maniobra-escalon.md):
 // eje de la rueda respecto del eje del servo (A), en ejes del cuerpo (x adelante, z arriba), según
-// la pata. Del modelo de cuatro barras (la rueda baja casi en línea recta, 107 mm en 30°).
+// la pata. Del modelo AJUSTADO al robot (VAL-302, 3/11: la pata real está 10,4° más estirada que
+// en el CAD; el eje baja 100 mm de 0 a 30°). Con una regla: la altura de A (el eje del servo)
+// sobre el piso es el radio de la rueda menos PATA_EJE_Z_M: 119 mm en 0° y 218 mm en 30°.
 #define PATA_TABLA_DEG          { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
-#define PATA_EJE_X_M            { 0.0003f, 0.0f, -0.0002f, -0.0001f, 0.0001f, 0.0002f, -0.0002f }
-#define PATA_EJE_Z_M            { -0.0372f, -0.0580f, -0.0770f, -0.0949f, -0.1119f, -0.1282f, -0.1442f }
+#define PATA_EJE_X_M            { -0.0002f, -0.0001f, 0.0001f, 0.0002f, -0.0002f, -0.0020f, -0.0072f }
+#define PATA_EJE_Z_M            { -0.0785f, -0.0963f, -0.1132f, -0.1295f, -0.1455f, -0.1614f, -0.1781f }
 // Sensor respecto de A y ángulo del haz desde la vertical del cuerpo hacia atrás. PROPUESTA del
 // 3/11 (cara de atrás de la cabina, 2 cm arriba de A, 40°): MEDIRLO cuando se monte.
 #define SENSOR_PISO_X_M         -0.0525f
 #define SENSOR_PISO_Z_M         0.020f
 #define SENSOR_PISO_ANG_DEG     40.0f
-// La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo: la tabla de equilibrio
-// medida el 2/11 contra la del modelo da 9,8° (±0,7° entre patas). Con la del 3/11 la diferencia
-// va de 9,9° (patas en 5°) a 6,2° (en 30°): con las patas altas el modelo no sigue al robot.
-#define IMU_DELTA_DEG           9.8f
+// Mientras el sensor no esté conectado (3/11), △ baja el escalón SIN buscarlo: el robot se pone con
+// el apoyo de la rueda a MAN_D_BORDE_M del borde (de espaldas al escalón). 0 = lo busca con el
+// sensor. En vivo: "man d_borde <m>" o "escalon <cm>"
+#define MAN_D_BORDE_M           0.30f
+// La IMU marca IMU_DELTA_DEG más que el cabeceo del cuerpo del modelo ajustado (VAL-302, 3/11:
+// la tabla de equilibrio medida contra la del modelo; con el CAD sin ajustar eran 9,8°). Solo se
+// usa para saber dónde pega el haz.
+#define IMU_DELTA_DEG           4.2f
+
+// --- LED RGB de estado (main/led_estado.c; tabla en el README) ---
+// Brillo de 0 a 255. El WS2812 encandila: con 20 ya se ve bien de cerca.
+#define LED_BRILLO              40          // blanco, verde, rojo y azul fijos
+// Guía de armado: ámbar si está corrido hacia adelante, cian si está corrido hacia atrás; más fuerte
+// cuanto más cerca de la referencia y parpadea dentro de ARM_WINDOW_DEG. Ni verde ni violeta:
+// esos quieren decir motores activos.
+#define LED_GUIA_MIN            6.0f        // con menos, el verde del ámbar se redondea a 0 y se ve rojo
+#define LED_GUIA_MAX            150.0f
+#define LED_AMBAR_VERDE         0.4f        // verde respecto del rojo, para el ámbar
+#define LED_CIAN_VERDE          0.8f        // verde respecto del azul, para el cian
+#define LED_GUIA_RANGO_DEG      25.0f       // desde este error [grados] empieza a subir el brillo
+#define LED_GUIA_PARPADEO_MS    125u        // medio periodo: 4 Hz
+#define LED_FAULT_PARPADEO_MS   250u        // medio periodo: 2 Hz. FALLEN es rojo fijo
+// Motores cerca del tope: verde con destellos amarillos. Avisa desde MOV_U_MARGEN ("set margen") o
+// desde LED_MOTOR_TOPE · u_max, lo que llegue antes (con "set umax" bajo, el margen nunca llegaría)
+#define LED_MOTOR_TOPE          0.95f
+#define LED_MOTOR_AVISO_MS      300u        // que un pico corto llegue a verse
+#define LED_MOTOR_PARPADEO_MS   60u
 
 // --- Seguridad ---
 #define TILT_LIMIT_DEG          30.0f       // corte por caída
 #define ARM_WINDOW_DEG          5.0f        // solo se arma cerca de la referencia
 #define ARM_RAMP_S              0.5f        // la salida máxima sube de 0 a u_max en este tiempo
 #define IMU_FAIL_LIMIT          5           // lecturas fallidas seguidas antes de FAULT
+#define IMU_BAJA_G_MAX_S        0.6f        // caída libre (|a| < 0,1 g) más larga que esto cuenta como
+                                            // falla: bajando un escalón dura ~0,2 s (3/11, antes cada
+                                            // muestra en caída libre era una falla y a los 25 ms FAULT)
 #define OVERRUN_LIMIT           10          // ciclos excedidos seguidos antes de FAULT
 #define SATURATION_LIMIT_CYCLES 200         // 1 s seguido con el comando en u_max -> FALLEN (29/10)

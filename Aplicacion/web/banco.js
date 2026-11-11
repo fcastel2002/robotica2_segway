@@ -246,19 +246,27 @@ function ponerServo(lado, grados) {
   $(`objetivo-${lado}`).textContent = `${$(`servo-${lado}`).value}°`;
 }
 
+// "juntos" (como los motores): lo que se haga con una pata va a las dos, con "servo <grados>" sin lado.
+// La regla de armado (patas fijas e iguales la primera vez) la pone el firmware, no esta página.
+const servosJuntos = () => $('servos-juntos').checked;
+const ladosDe = (lado) => (servosJuntos() ? Object.keys(LADOS) : [lado]);
+
+// Manda el ángulo del deslizador de 'lado' a esa pata, o a las dos si están juntas
 function mandarServo(lado) {
-  clearTimeout(servoPendiente[lado]);
-  servoPendiente[lado] = null;
+  for (const l of ladosDe(lado)) { clearTimeout(servoPendiente[l]); servoPendiente[l] = null; }
   const v = acotar(Number($(`servo-${lado}`).value), SERVO_MIN_ESTRICTO, SERVO_MAX_ESTRICTO);
-  if (v !== servoEnviado[lado]) enviar(`servo ${lado} ${v}`, true);
-  servoEnviado[lado] = v;
+  const lados = ladosDe(lado);
+  if (lados.some((l) => v !== servoEnviado[l])) enviar(lados.length > 1 ? `servo ${v}` : `servo ${lado} ${v}`, true);
+  for (const l of lados) servoEnviado[l] = v;
 }
 
 for (const lado in LADOS) {
   const deslizador = $(`servo-${lado}`);
   deslizador.addEventListener('input', () => {
-    ponerServo(lado, deslizador.value);
-    if (agarrado(lado)) servoPendiente[lado] ??= setTimeout(() => mandarServo(lado), PERIODO_SERVO_MS);
+    for (const l of ladosDe(lado)) ponerServo(l, deslizador.value);
+    // Mientras se arrastra solo se manda si todas las que se mueven tienen posición conocida; una suelta
+    // recibe el ángulo al soltar el deslizador (va directo)
+    if (ladosDe(lado).every(agarrado)) servoPendiente[lado] ??= setTimeout(() => mandarServo(lado), PERIODO_SERVO_MS);
   });
   deslizador.addEventListener('change', () => mandarServo(lado));
 }
@@ -266,10 +274,14 @@ for (const lado in LADOS) {
 for (const b of document.querySelectorAll('[data-paso]')) {
   b.onclick = () => {
     const [lado, paso] = b.dataset.paso.split(' ');
-    if (!agarrado(lado)) return;
-    ponerServo(lado, Number($(`servo-${lado}`).value) + Number(paso));
-    servoEnviado[lado] = Number($(`servo-${lado}`).value);
-    enviar(`servo ${lado} ${servoEnviado[lado]}`);
+    const lados = ladosDe(lado);
+    if (!lados.every(agarrado)) {
+      if (lados.length > 1) mensaje('[servos] juntos: la otra pata está suelta; darle un ángulo con Ir a');
+      return;
+    }
+    const v = acotar(Math.round(Number($(`servo-${lado}`).value) + Number(paso)), SERVO_MIN_ESTRICTO, SERVO_MAX_ESTRICTO);
+    for (const l of lados) { ponerServo(l, v); servoEnviado[l] = v; }
+    enviar(lados.length > 1 ? `servo ${v}` : `servo ${lado} ${v}`);
   };
 }
 
@@ -278,14 +290,16 @@ for (const form of document.querySelectorAll('.servo .ir-a')) {
   form.onsubmit = (e) => {
     e.preventDefault();
     const v = Number(form.elements[0].value);
-    const lim = limites[lado];
-    if (v < SERVO_MIN_ESTRICTO || v > SERVO_MAX_ESTRICTO || (lim && (v < lim[0] || v > lim[1]))) {
-      mensaje(`[servo ${LADOS[lado]}] ${v}° fuera del rango permitido 0–30°: bloqueado por seguridad`);
-      return;
+    const lados = ladosDe(lado);
+    for (const l of lados) {
+      const lim = limites[l];
+      if (v < SERVO_MIN_ESTRICTO || v > SERVO_MAX_ESTRICTO || (lim && (v < lim[0] || v > lim[1]))) {
+        mensaje(`[servo ${LADOS[l]}] ${v}° fuera del rango permitido ${lim[0]}–${lim[1]}°: bloqueado por seguridad`);
+        return;
+      }
     }
-    ponerServo(lado, v);
-    servoEnviado[lado] = Number($(`servo-${lado}`).value);
-    enviar(`servo ${lado} ${servoEnviado[lado]}`);
+    for (const l of lados) { ponerServo(l, v); servoEnviado[l] = Number($(`servo-${l}`).value); }
+    enviar(lados.length > 1 ? `servo ${servoEnviado[lado]}` : `servo ${lado} ${servoEnviado[lado]}`);
   };
 }
 

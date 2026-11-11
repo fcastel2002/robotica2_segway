@@ -12,7 +12,7 @@ firmware: banco.cmd en esta carpeta.
 Formato de cada línea (el mismo que entiende el Serial Plotter de Arduino):
     t:1234,theta:0.52,dtheta:-3.1,u_izq:0.40
 `t` es opcional y va en milisegundos del ESP32; el resto son variables con cualquier nombre.
-También entiende el CSV con encabezado de firmware/segway_v01, que es lo que imita --simular.
+También entiende el CSV con encabezado de firmware/segway_v02, que es lo que imita --simular.
 """
 
 import argparse
@@ -37,7 +37,7 @@ clientes: set[queue.Queue] = set()  # una cola por pestaña del navegador abiert
 comandos: queue.Queue = queue.Queue()  # lo que la página manda al robot simulado
 sock_udp: socket.socket | None = None  # el mismo socket recibe la telemetría y manda los comandos
 robot: str | None = None  # IP del robot: la de --robot o la de quien manda la telemetría
-PUERTO_COMANDOS = 4211  # WIFI_CMD_PORT de firmware/segway_v01 (board_config.h)
+PUERTO_COMANDOS = 4211  # WIFI_CMD_PORT de firmware/segway_v02 (board_config.h)
 
 
 def difundir(linea: str) -> None:
@@ -63,6 +63,29 @@ def anunciarse() -> None:
         time.sleep(1)
 
 
+REGISTROS = Path(__file__).resolve().parent / "registros"
+_registro = None  # archivo abierto mientras llega el registro de una bajada
+
+
+def guardar_registro(linea: str) -> None:
+    """El registro de la bajada del escalón (200 Hz, líneas "#r,"; lo manda el robot al terminar o
+    con "escalon datos") va a Aplicacion/registros/bajada_<fecha>.csv, para comparar con la
+    simulación (simulacion/escalon/comparar_prueba.py)."""
+    global _registro
+    if linea.startswith("# registro de la bajada"):
+        REGISTROS.mkdir(exist_ok=True)
+        if _registro:
+            _registro.close()
+        _registro = open(REGISTROS / time.strftime("bajada_%Y%m%d_%H%M%S.csv"), "w", encoding="utf-8")
+        _registro.write(linea + "\n")
+    elif linea.startswith("#r,") and _registro:
+        _registro.write(linea[3:] + "\n")
+    elif linea.startswith("# fin del registro") and _registro:
+        _registro.close()
+        print(f"Registro de la bajada guardado en {_registro.name}")
+        _registro = None
+
+
 def escuchar_udp() -> None:
     global robot
     origenes = set()
@@ -77,19 +100,36 @@ def escuchar_udp() -> None:
         robot = robot or origen[0]
         for linea in datos.decode("utf-8", errors="replace").splitlines():
             if linea.strip():
+                guardar_registro(linea.strip())
                 difundir(linea.strip())
 
 
-# Columnas de firmware/segway_v01 (CSV_HEADER en main/comms_task.c)
+# Columnas de firmware/segway_v02 (CSV_HEADER en main/comms_task.c)
 ENCABEZADO = ("t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,"
               "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,"
-              "vref_mms,giro")
+              "vref_mms,giro,ref_deg,sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm,"
+              "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria")
 RADIO_MM = 40.0
 SERVO_LIM, SERVO_DPS = (0.0, 30.0), 90.0  # board_config.h: 0-30° estricto (cuatro barras) y velocidad
+# Batería simulada: la tabla de board_config.h y una descarga acelerada, para ver los avisos enseguida
+TABLA_V_CELDA = (3.50, 3.61, 3.69, 3.73, 3.77, 3.80, 3.84, 3.87, 3.95, 4.02, 4.11, 4.20)
+TABLA_SOC = (0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+DESCARGA_V_POR_S = 0.005
+
+
+def soc_simulado(v: float) -> float:
+    celda = v / 3
+    if celda <= TABLA_V_CELDA[0]:
+        return 0.0
+    for i in range(1, len(TABLA_V_CELDA)):
+        if celda <= TABLA_V_CELDA[i]:
+            f = (celda - TABLA_V_CELDA[i - 1]) / (TABLA_V_CELDA[i] - TABLA_V_CELDA[i - 1])
+            return TABLA_SOC[i - 1] + f * (TABLA_SOC[i] - TABLA_SOC[i - 1])
+    return 100.0
 
 
 def simular(frecuencia_hz: float) -> None:
-    """Imita la consola de firmware/segway_v01: CSV con encabezado, mensajes con '#' y comandos.
+    """Imita la consola de firmware/segway_v02: CSV con encabezado, mensajes con '#' y comandos.
 
     Armado, el ángulo oscila y de vez en cuando recibe un empujón; desarmado se aquieta, como el
     robot apoyado (así se puede probar la calibración de la IMU). Las ruedas obedecen a "motor":
@@ -109,12 +149,14 @@ def simular(frecuencia_hz: float) -> None:
     servo = [0.0, 0.0]
     servo_objetivo = [0.0, 0.0]
     servo_suelto = [False, False]
+    armo_alguna_vez = False  # el primer armado pide las patas iguales (como el firmware)
     lim = [list(SERVO_LIM), list(SERVO_LIM)]  # mínimo y máximo de cada servo, acotado a 0..30°
     mov_fwd, mov_turn, mov_t = 0.0, 0.0, -1e9
     v_ref_mms, giro = 0.0, 0.0
     cuentas_por_s = 370 / 60 * 880
     n = 0
-    difundir("# segway v0.1 (simulado)")
+    difundir("# segway v0.2 (simulado)")
+    v_bat, soc_inicial = 12.1, soc_simulado(12.1)
     difundir("# " + ENCABEZADO)
     while True:
         while not comandos.empty():
@@ -123,8 +165,23 @@ def simular(frecuencia_hz: float) -> None:
                 pwm = [0.0, 0.0]  # igual que el firmware: armar o desarmar suelta el motor a mano
                 v_ref_mms, giro = 0.0, 0.0
             if palabras[:1] == ["arm"] and estado == "DISARMED":
-                estado = "BALANCING"
-                difundir("# estado: DISARMED -> BALANCING")
+                # Como el firmware (7/11, patas_para_armar): nunca con una pata suelta, y el primer
+                # armado con las dos al mismo ángulo; si no, no arma y las manda a 15°
+                suelta = any(servo_suelto[i] or math.isnan(servo[i]) for i in (0, 1))
+                distintas = not armo_alguna_vez and abs(servo[0] - servo[1]) > 0.5
+                if suelta or distintas:
+                    for i in (0, 1):
+                        servo_objetivo[i] = max(lim[i][0], min(lim[i][1], 15.0))
+                        if math.isnan(servo[i]):
+                            servo[i] = servo_objetivo[i]
+                        servo_suelto[i] = False
+                    motivo = ("una pata estaba suelta (sin posición conocida)" if suelta else
+                              f"el primer armado pide las dos patas en el mismo ángulo (izq {servo[0]:.1f}°, der {servo[1]:.1f}°)")
+                    difundir(f"# no se armó: {motivo}. Van las dos a 15°: armar de nuevo cuando lleguen")
+                else:
+                    estado = "BALANCING"
+                    armo_alguna_vez = True
+                    difundir("# estado: DISARMED -> BALANCING")
             elif palabras[:1] == ["disarm"] and estado != "DISARMED":
                 difundir(f"# estado: {estado} -> DISARMED")
                 estado = "DISARMED"
@@ -198,8 +255,20 @@ def simular(frecuencia_hz: float) -> None:
                 except (AssertionError, ValueError):
                     difundir("# error: mov <avance> <giro>, de -1 a 1")
                 continue  # sin "ok", igual que comms_task.c
+            elif palabras[:1] == ["eje"]:
+                # R3/L3 (11/11): giro sobre su eje, vence como "mov"; acá, el doble de giro que el stick
+                try:
+                    assert len(palabras) == 2
+                    mov_fwd, mov_turn = 0.0, 2.0 * max(-1.0, min(1.0, float(palabras[1])))
+                    mov_t = time.monotonic()
+                except (AssertionError, ValueError):
+                    difundir("# error: eje <giro>, de -1 a 1")
+                continue
             elif palabras == ["enc", "reset"]:
                 enc = [0.0, 0.0]
+            elif palabras == ["ina"]:
+                difundir("# ina: lectura activa; en el bus al arrancar: 0x40=INA219 0x41=INA219 0x44=INA226 (simulado)")
+                continue
             elif palabras == ["tlm", "on"]:
                 difundir("# " + ENCABEZADO)
                 continue
@@ -251,10 +320,18 @@ def simular(frecuencia_hz: float) -> None:
                f"{dtheta + 0.8 + random.gauss(0, 0.3):.1f},{random.gauss(0, 0.3):.1f}")
         x_mm = (enc[0] + enc[1]) / 2 / 880 * 2 * math.pi * RADIO_MM
         v_mms = (aplicado[0] + aplicado[1]) / 2 * cuentas_por_s / 880 * 2 * math.pi * RADIO_MM
+        v_bat = max(10.2, 12.1 - DESCARGA_V_POR_S * t)
+        soc = soc_simulado(v_bat)
+        autonomia = soc / ((soc_inicial - soc) / t) / 60 if t > 60 and soc < soc_inicial else math.nan
+        nivel = "CRITICA" if v_bat < 10.5 else "BAJA" if v_bat < 11.2 else "NORMAL"
+        corriente = [abs(a) * 700 + random.gauss(0, 3) for a in aplicado]
         difundir(f"{int(t * 1000)},{estado},{theta + random.gauss(0, 0.05):.2f},{dtheta:.1f},{u:.3f},"
                  f"{random.randint(180, 260)},0,{round(enc[0])},{round(enc[1])},"
                  f"{aplicado[0]:.2f},{aplicado[1]:.2f},{servos},{imu},{x_mm:.1f},{v_mms:.0f},"
-                 f"{v_ref_mms:.0f},{giro:.3f}")
+                 f"{v_ref_mms:.0f},{giro:.3f},{par['ref']:.2f},nan,nan,nan,nan,inactiva,nan,"
+                 f"{v_bat - sum(corriente) * 5e-5:.2f},{soc:.0f},{autonomia:.0f},"
+                 f"{corriente[0]:.0f},{corriente[1]:.0f},{90 + random.gauss(0, 2):.0f},"
+                 f"{v_bat - 0.1:.1f},{v_bat - 0.1:.1f},{nivel}")
         n += 1
         time.sleep(max(0.0, t0 + n * dt - time.monotonic()))
 

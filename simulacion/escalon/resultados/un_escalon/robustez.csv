@@ -1,0 +1,82 @@
+estrategia,variacion,final,sale,toca,fin,desvio,motivo
+elegida,"nominal (LiPo 11,9 V)",PARADO,0.501,-130,-305,8.59,
+elegida,"LiPo 11,1 V (9,1 V al motor)",PARADO,0.542,-133,-315,10.65,
+elegida,"LiPo 10,5 V (8,5 V al motor)",PARADO,0.577,-136,-629,16.64,
+elegida,"LiPo 12,6 V (10,6 V al motor)",PARADO,0.47,-128,-272,9.05,
+elegida,"zona muerta 0,10 (no 0,14)",PARADO,0.473,-124,-296,7.84,
+elegida,"zona muerta 0,18",PARADO,0.532,-136,-289,9.27,
+elegida,"piso resbaloso (mu 0,5)",PARADO,0.501,-129,-302,8.11,
+elegida,"piso muy resbaloso (mu 0,4)",PARADO,0.505,-131,-314,9.12,
+elegida,servos con 80 % del par,PARADO,0.502,-134,-311,8.57,
+elegida,arranca a 35 cm del borde,PARADO,0.497,-131,-287,8.65,
+elegida,arranca a 60 cm del borde,PARADO,0.498,-126,-300,8.41,
+elegida,"equilibrio corrido +0,75°",PARADO,0.488,-126,-229,8.67,
+elegida,"equilibrio corrido -0,75°",PARADO,0.548,-141,-408,9.6,
+elegida,"equilibrio +1,5° (IMU movida)",CHOCA,0.464,-118,-114,7.79,
+elegida,"equilibrio -1,5° (IMU movida)",PARADO,0.56,-143,-672,9.75,
+elegida,escalón de 16 cm,PARADO,0.501,-126,-299,8.6,
+elegida,escalón de 20 cm,PARADO,0.501,-135,-308,8.46,
+elegida,inercia de los rotores x 2,PARADO,0.512,-124,-298,9.86,
+elegida,"inercia de los rotores x 0,5",PARADO,0.494,-133,-316,9.11,
+elegida,"inercia del cuerpo x 1,5",PARADO,0.494,-127,-307,8.7,
+elegida,"inercia del cuerpo x 0,7",PARADO,0.505,-135,-296,7.83,
+elegida,otro ruido en los sensores,PARADO,0.503,-130,-307,8.93,
+elegida,"11,1 V y equilibrio -0,75°",PARADO,0.577,-143,-565,11.96,
+elegida,"12,6 V y equilibrio +0,75°",PARADO,0.466,-126,-212,8.77,
+elegida,"12,6 V y zona muerta 0,10",PARADO,0.449,-118,-264,8.55,
+elegida,"11,1 V y zona muerta 0,18",PARADO,0.583,-140,-462,13.51,
+elegida,"10,5 V y equilibrio -0,75°",SE CAE,0.611,-141,-411,36.22,supervisor: inclinacion
+sostenida,"nominal (LiPo 11,9 V)",PARADO,0.501,-125,-253,10.75,
+sostenida,"LiPo 11,1 V (9,1 V al motor)",PARADO,0.542,-129,-385,16.58,
+sostenida,"LiPo 10,5 V (8,5 V al motor)",SE CAE,0.577,-132,-419,35.89,supervisor: inclinacion
+sostenida,"LiPo 12,6 V (10,6 V al motor)",PARADO,0.47,-121,-301,7.87,
+sostenida,"zona muerta 0,10 (no 0,14)",PARADO,0.473,-117,-265,10.3,
+sostenida,"zona muerta 0,18",PARADO,0.532,-130,-237,11.88,
+sostenida,"piso resbaloso (mu 0,5)",PARADO,0.501,-124,-238,10.61,
+sostenida,"piso muy resbaloso (mu 0,4)",PARADO,0.505,-125,-265,11.76,
+sostenida,servos con 80 % del par,PARADO,0.502,-124,-248,11.42,
+sostenida,arranca a 35 cm del borde,PARADO,0.497,-121,-217,11.51,
+sostenida,arranca a 60 cm del borde,PARADO,0.498,-121,-234,11.25,
+sostenida,"equilibrio corrido +0,75°",PARADO,0.488,-120,-176,11.18,
+sostenida,"equilibrio corrido -0,75°",PARADO,0.548,-135,-498,12.84,
+sostenida,"equilibrio +1,5° (IMU movida)",CHOCA,0.464,-113,-119,10.53,
+sostenida,"equilibrio -1,5° (IMU movida)",PARADO,0.56,-138,-656,15.58,
+sostenida,escalón de 16 cm,PARADO,0.501,-120,-336,9.46,
+sostenida,escalón de 20 cm,PARADO,0.501,-129,-254,10.92,
+sostenida,inercia de los rotores x 2,PARADO,0.512,-118,-340,16.94,
+sostenida,"inercia de los rotores x 0,5",PARADO,0.494,-130,-245,8.3,
+sostenida,"inercia del cuerpo x 1,5",PARADO,0.494,-122,-234,11.4,
+sostenida,"inercia del cuerpo x 0,7",PARADO,0.505,-129,-331,8.94,
+sostenida,otro ruido en los sensores,PARADO,0.503,-124,-258,11.55,
+sostenida,"11,1 V y equilibrio -0,75°",SE CAE,0.577,-138,-619,37.79,supervisor: inclinacion
+sostenida,"12,6 V y equilibrio +0,75°",PARADO,0.466,-119,-242,8.41,
+sostenida,"12,6 V y zona muerta 0,10",PARADO,0.449,-112,-237,9.36,
+sostenida,"11,1 V y zona muerta 0,18",SE CAE,0.583,-135,-517,37.19,supervisor: inclinacion
+sostenida,"10,5 V y equilibrio -0,75°",SE CAE,0.611,-137,-287,32.6,supervisor: inclinacion
+equipo,"nominal (LiPo 11,9 V)",CHOCA,0.253,-93,-64,28.22,supervisor: inclinacion
+equipo,"LiPo 11,1 V (9,1 V al motor)",CHOCA,0.276,-92,-90,29.29,supervisor: inclinacion
+equipo,"LiPo 10,5 V (8,5 V al motor)",CHOCA,0.298,-96,-86,30.14,supervisor: inclinacion
+equipo,"LiPo 12,6 V (10,6 V al motor)",CHOCA,0.229,-89,-51,28.1,supervisor: inclinacion
+equipo,"zona muerta 0,10 (no 0,14)",CHOCA,0.226,-89,-54,27.71,supervisor: inclinacion
+equipo,"zona muerta 0,18",CHOCA,0.283,-97,-88,30.67,supervisor: inclinacion
+equipo,"piso resbaloso (mu 0,5)",CHOCA,0.25,-91,-63,27.87,supervisor: inclinacion
+equipo,"piso muy resbaloso (mu 0,4)",CHOCA,0.249,-88,-78,29.72,supervisor: inclinacion
+equipo,servos con 80 % del par,CHOCA,0.256,-93,-72,29.93,supervisor: inclinacion
+equipo,arranca a 35 cm del borde,CHOCA,0.263,-95,-89,30.22,supervisor: inclinacion
+equipo,arranca a 60 cm del borde,CHOCA,0.261,-91,-62,28.66,supervisor: inclinacion
+equipo,"equilibrio corrido +0,75°",CHOCA,0.22,-85,-52,28.12,supervisor: inclinacion
+equipo,"equilibrio corrido -0,75°",CHOCA,0.291,-99,-99,31.22,supervisor: inclinacion
+equipo,"equilibrio +1,5° (IMU movida)",CHOCA,0.225,-87,-51,27.81,supervisor: inclinacion
+equipo,"equilibrio -1,5° (IMU movida)",CHOCA,0.297,-101,-97,30.99,supervisor: inclinacion
+equipo,escalón de 16 cm,CHOCA,0.253,-93,-39,29.12,supervisor: inclinacion
+equipo,escalón de 20 cm,CHOCA,0.253,-93,-40,29.99,supervisor: inclinacion
+equipo,inercia de los rotores x 2,CHOCA,0.254,-87,-83,29.03,supervisor: inclinacion
+equipo,"inercia de los rotores x 0,5",CHOCA,0.251,-95,-58,28.07,supervisor: inclinacion
+equipo,"inercia del cuerpo x 1,5",CHOCA,0.241,-88,-65,28.36,supervisor: inclinacion
+equipo,"inercia del cuerpo x 0,7",CHOCA,0.254,-92,-58,27.52,supervisor: inclinacion
+equipo,otro ruido en los sensores,CHOCA,0.255,-89,-60,28.86,supervisor: inclinacion
+equipo,"11,1 V y equilibrio -0,75°",CHOCA,0.304,-96,-95,30.08,supervisor: inclinacion
+equipo,"12,6 V y equilibrio +0,75°",CHOCA,0.242,-95,-59,29.08,supervisor: inclinacion
+equipo,"12,6 V y zona muerta 0,10",CHOCA,0.223,-91,-55,27.76,supervisor: inclinacion
+equipo,"11,1 V y zona muerta 0,18",CHOCA,0.298,-96,-92,30.44,supervisor: inclinacion
+equipo,"10,5 V y equilibrio -0,75°",CHOCA,0.309,-98,-85,31.41,supervisor: inclinacion

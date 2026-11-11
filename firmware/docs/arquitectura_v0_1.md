@@ -3,6 +3,11 @@
 Fecha: 2026-10-16. Estado: implementada en [`segway_v01/`](../segway_v01/) (compila; falta probarla en la placa).
 Ítems del backlog: `FW-001` a `FW-008`.
 
+> **Desactualizado en partes** (auditoría del 5/11): desde el 2/11 el único control es el LQR (no hay
+> PID, `set kp` ni `set lqr 1`), el I²C va a 100 kHz y los motores van con DRV8871 en la placa (desde
+> el 6/11). Lo vigente está en los README de [`segway_v02`](../segway_v02/README.md) (la placa) y
+> [`segway_v01`](../segway_v01/README.md).
+
 ## 1. Objetivo y alcance
 
 La v0.1 es el **primer prototipo entregable**. Su objetivo es que el robot se mantenga en equilibrio

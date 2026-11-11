@@ -1,0 +1,5 @@
+caso,final,bajados,toques,sale,toca,fin,desvio,motivo
+frena,CHOCA,2,1,0.501,-130,-337,35.51,supervisor: inclinacion
+frena_fuerte,SE PASA,1,1,0.449,-118,-181,7.48,
+largo,SE CAE,3,3,0.501,-130,-651,30.72,supervisor: inclinacion
+largo_mejor,PARADO,4,4,0.57,-137,-1640,9.69,

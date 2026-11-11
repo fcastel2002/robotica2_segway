@@ -104,13 +104,13 @@ esp_err_t imu_read(imu_sample_t *out)
         out->gyro[i]  = g * (0.01745329f / GYRO_LSB_PER_DPS);
     }
     // Quieto o equilibrando, la aceleración medida anda cerca de 1 g. Menos de 0,1 g es caída libre
-    // o un sensor que no mide: tampoco sirve para estimar la inclinación.
+    // (al bajar un escalón, ~0,2 s) o un sensor que no mide: la lectura vale (el giróscopo sirve),
+    // pero no para corregir la inclinación. Quien la usa decide cuánto tiempo es razonable
+    // (control_task: más de IMU_BAJA_G_MAX_S seguido cuenta como falla).
     float a2 = out->accel[0] * out->accel[0] + out->accel[1] * out->accel[1]
              + out->accel[2] * out->accel[2];
-    if (a2 < 1.0f * 1.0f) {
-        s_stats.low_reads++;
-        return ESP_ERR_INVALID_RESPONSE;
-    }
+    out->baja_g = a2 < 1.0f * 1.0f;
+    if (out->baja_g) s_stats.low_reads++;
     return ESP_OK;
 }
 

@@ -2,7 +2,7 @@
 // Arquitectura y orden de puesta en marcha: firmware/docs/arquitectura_v0_1.md
 //
 // app_main inicializa el hardware, crea las colas y lanza las dos tareas:
-//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> PID -> motores; servos; encoders
+//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> LQR -> motores; servos; encoders
 //   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0 y, si hay red, por WiFi (UDP)
 // Si la IMU no responde, igual se lanzan las tareas: el supervisor pasa a FAULT y
 // la telemetría lo muestra.
@@ -16,8 +16,10 @@
 #include "board_pins.h"
 #include "comms_task.h"
 #include "control_task.h"
+#include "dist_sharp.h"
 #include "encoder.h"
 #include "imu_mpu6050.h"
+#include "led_rgb.h"
 #include "messages.h"
 #include "motor.h"
 #include "servo.h"
@@ -61,6 +63,17 @@ void app_main(void)
     ESP_ERROR_CHECK(i2c_new_master_bus(&bus_cfg, &bus));
     if (imu_init(bus, I2C_FREQ_HZ) != ESP_OK) {
         ESP_LOGE(TAG, "IMU no inicializada: el robot quedará en FAULT");
+    }
+
+    // Sensor de distancia al piso (Sharp, entrada analógica): sin él conectado la bajada usa la
+    // distancia al borde que se le dice ("escalon <cm>", MAN_D_BORDE_M)
+    if (dist_sharp_init(PIN_DIST_SUELO) != ESP_OK) {
+        ESP_LOGE(TAG, "ADC del sensor de distancia no inicializado");
+    }
+
+    // Solo informa: si falla, el robot anda igual
+    if (led_rgb_init(PIN_LED_RGB) != ESP_OK) {
+        ESP_LOGE(TAG, "LED RGB no inicializado");
     }
 
     QueueHandle_t telemetry_q = xQueueCreate(1, sizeof(telemetry_t));

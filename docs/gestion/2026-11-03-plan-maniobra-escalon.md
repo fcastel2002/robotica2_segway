@@ -70,6 +70,23 @@ Detalle, cómo correrla y figuras en [`simulacion/escalon/`](../../simulacion/es
 3. Mientras tanto se puede armar y probar lo que no depende de esto: leer el Sharp, calibrarlo,
    retroceder despacio hasta ver el borde y frenar antes, y alinearse con el borde.
 
+## Un escalón con el modelo ajustado (3/11, tarde)
+
+Con el modelo ajustado al robot (VAL-302) se buscó cómo bajar **un** escalón de 18 cm con piso de
+sobra abajo (la etapa 5). Detalle en la sección «Un escalón con el modelo ajustado» de
+[`simulacion/escalon/README.md`](../../simulacion/escalon/README.md).
+
+- **La elegida** (valores por defecto de la maniobra): busca y larga con las patas en 15°, pide
+  0,54 m/s, estira a 30° en el borde, el LQR sigue mandando en el aire y al tocar lleva las patas a
+  25°. Con la LiPo a 11,9 V queda parada a 30 cm del borde; anda en 25 de 27 variaciones.
+- **Agachado sigue sin pasar** (la cabina pega siempre) y la velocidad al borde tiene una ventana
+  angosta: por debajo de ~0,45 m/s pega la cabina, por encima de ~0,58 con la batería baja se cae
+  al tocar.
+- **Para probarla en el robot:** batería de 11,1 V o más, la tabla de equilibrio recién medida, el
+  driver de la IMU arreglado para la caída libre, y empezar por 5 y 10 cm con alguien atajando (en
+  la simulación anda de 8 a 18 cm; el de 5 cm, con `desnivel` 0,03, porque con 0,06 no ve el borde).
+- **La escalera sigue abierta:** frena recién a ~30 cm y la pisada es de 25.
+
 ## Riesgos
 
 - El golpe al aterrizar en el servo y en el cuatro barras (el análisis del 21/10 daba hasta 421 N

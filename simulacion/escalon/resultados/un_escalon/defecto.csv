@@ -1,0 +1,39 @@
+variacion,descripcion,resultado,sale_ms,toca_mm,min_mm,fin_mm,desvio_deg,rueda_N,aplastada_mm
+nominal,"nominal (10,5 cm, a 30 cm del borde, LiPo 12,6 V)",bien,0.488,-82,-421,-361,5.43,87,5.1
+alto5,escalón de 5 cm,bien,0.488,-53,-472,-409,4.7,112,6.6
+alto8,escalón de 8 cm,bien,0.488,-71,-397,-337,4.8,90,5.3
+alto12,escalón de 12 cm,bien,0.488,-88,-522,-464,6.57,98,5.8
+alto14,escalón de 14 cm,bien,0.488,-98,-522,-467,6.89,114,6.7
+alto166,"escalón de 16,6 cm (uno de la escalera)",choca,0.488,-106,-370,-322,4.57,136,8.0
+x27,puesto a 27 cm del borde (3 cm más cerca),bien,0.474,-84,-443,-382,4.84,86,5.1
+x33,puesto a 33 cm del borde (3 cm más lejos),bien,0.499,-82,-393,-334,6.34,87,5.1
+masa+10,la caja 10 % más pesada (pesada el 5/11: 1196 g),bien,0.493,-79,-374,-305,5.07,87,5.1
+masa-10,la caja 10 % más liviana,bien,0.48,-82,-422,-366,5.14,87,5.1
+lipo122,"LiPo 12,2 V (después de unos ensayos)",bien,0.493,-78,-386,-316,4.92,88,5.2
+lipo118,"LiPo 11,8 V",bien,0.5,-80,-407,-338,4.99,90,5.3
+zm010,"zona muerta 0,015 (no 0,026)",bien,0.485,-79,-358,-307,6.45,89,5.2
+zm018,"zona muerta 0,05",bien,0.493,-81,-396,-319,5.61,89,5.2
+mu-,goma con 20 % menos agarre,bien,0.488,-83,-428,-371,6.74,91,5.4
+mu+,goma con 20 % más agarre,bien,0.488,-80,-393,-330,4.79,87,5.1
+servos80,servos con 80 % del par,bien,0.486,-80,-380,-326,6.41,89,5.2
+ref+05,"equilibrio corrido +0,5°",bien,0.497,-80,-400,-323,6.43,91,5.4
+ref-05,"equilibrio corrido -0,5°",bien,0.476,-80,-406,-365,5.52,88,5.2
+ref+1,equilibrio corrido +1°,bien,0.5,-75,-336,-235,6.38,92,5.4
+ref-1,equilibrio corrido -1°,bien,0.461,-80,-436,-407,5.06,89,5.2
+rotor2,inercia de los rotores x 2,bien,0.492,-79,-393,-335,5.44,92,5.4
+rotor05,"inercia de los rotores x 0,5",bien,0.487,-80,-405,-345,5.54,87,5.1
+inercia15,"inercia del cuerpo x 1,5",bien,0.487,-80,-356,-299,6.29,89,5.2
+inercia07,"inercia del cuerpo x 0,7",bien,0.488,-82,-410,-350,5.55,87,5.1
+ruido1,otro ruido en los sensores,bien,0.484,-83,-426,-403,5.59,87,5.1
+ruido2,otro ruido más,bien,0.483,-78,-363,-294,5.22,88,5.2
+goma_dura,goma más dura (30000; 60),bien,0.492,-82,-422,-361,5.8,111,3.7
+goma_blanda,goma más blanda (11000; 30),bien,0.484,-82,-528,-471,6.41,72,6.5
+goma_rebota,"la medida, que rebota (17000; 10)",bien,0.487,-78,-380,-322,7.36,108,6.4
+goma_rebota2,más blanda y que rebota (11000; 6),bien,0.485,-80,-494,-443,9.22,87,7.9
+goma_amortigua,"la medida, muy amortiguada (17000; 100)",bien,0.487,-79,-394,-334,5.19,107,6.3
+zm008,"zona muerta 0,08 (arranca lento)",bien,0.503,-77,-382,-279,5.13,93,5.5
+rebota_ref+1,goma que rebota y equilibrio +1°,bien,0.495,-77,-353,-284,10.72,90,8.2
+rebota_ref-1,goma que rebota y equilibrio -1°,bien,0.46,-80,-570,-539,8.0,86,7.8
+rebota_lipo,"goma que rebota y LiPo 11,8 V",bien,0.496,-83,-495,-430,7.45,86,7.8
+rebota_zm008,goma que rebota y arranca lento,bien,0.499,-79,-543,-443,7.25,87,7.9
+blanda_rebota,goma de antes de medirla (4000; 8),bien,0.464,-28,-583,-533,4.33,60,15.0

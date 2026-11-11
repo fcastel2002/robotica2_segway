@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un robot que no se cae — Grupo 4, Robótica II</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<div id="barra-progreso"><div id="progreso"></div></div>
+<div id="acto-actual"></div>
+<div id="contador"></div>
+<div id="reloj" class="oculto"></div>
+
+<main id="mazo">
+
+<!-- ======================= ACTO I: EL DESAFÍO ======================= -->
+
+<section class="slide portada" data-acto="I · El desafío" data-min="1">
+  <div class="portada-texto">
+    <p class="sobretitulo">Robótica II · UNCUYO · Grupo 4</p>
+    <h1>Un robot que <span class="resalta">no se cae</span><br>y aprende a bajar escaleras</h1>
+    <p class="autores">Joaquín Calderón · Francisco Castel · Matías Armani</p>
+    <p class="pista">→ o espacio para avanzar · N notas · T reloj · F pantalla completa</p>
+  </div>
+  <img class="portada-robot flota" src="assets/robot.png" alt="Diseño 3D del robot">
+  <aside class="notas">
+    <b>~1 min.</b> Saludar y presentarse. Frase de gancho: «Les vamos a contar cómo construimos y controlamos
+    un robot que se mantiene parado sobre dos ruedas, como un Segway, pero que además tiene rodillas».
+  </aside>
+</section>
+
+<section class="slide" data-acto="I · El desafío" data-min="1.5">
+  <h2>Ruedas o patas: cada una tiene su problema</h2>
+  <div class="dos-columnas">
+    <div class="tarjeta">
+      <div class="icono-grande">🛞</div>
+      <h3>Ruedas</h3>
+      <p>Rápidas y eficientes en lo plano.</p>
+      <p class="malo">Un escalón o un cordón las frena.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icono-grande">🦿</div>
+      <h3>Patas</h3>
+      <p>Pasan por casi cualquier lado.</p>
+      <p class="malo">Son lentas, gastan mucho y son difíciles de controlar.</p>
+    </div>
+  </div>
+  <p class="pregunta aparece">¿Y si un robot tuviera <span class="resalta">las dos cosas</span>?</p>
+  <aside class="notas">
+    <b>~1,5 min.</b> Preguntar al público: «¿Alguien vio un robot repartidor trabado en un cordón?».
+    Las ruedas son eficientes pero no bajan escalones; las patas sí, pero son lentas.
+    La idea del proyecto es combinar lo mejor de las dos.
+  </aside>
+</section>
+
+<section class="slide" data-acto="I · El desafío" data-min="1.5">
+  <h2>Nuestro robot (<span class="resalta">segway_v02</span>)</h2>
+  <div class="robot-y-datos">
+    <img src="assets/robot.png" alt="Diseño 3D del robot" class="robot-medio">
+    <ul class="datos-grandes">
+      <li><span class="num">2</span> ruedas para mantenerse parado y avanzar</li>
+      <li><span class="num">2</span> patas con rodilla para agacharse, estirarse y amortiguar</li>
+      <li><span class="num">1.208&nbsp;g</span> listo para andar (962&nbsp;g de chasis + 246&nbsp;g de batería y placas)</li>
+      <li><span class="num">200</span> correcciones por segundo para no caerse</li>
+    </ul>
+  </div>
+  <aside class="notas">
+    <b>~1,5 min.</b> Mostrar el robot físico con su tapa de chasis si está en la mesa.
+    Señalar las ruedas con interior de gomaespuma, las patas de cuatro barras y la cabina cerrada donde van
+    la batería LiPo y las dos placas definitivas de <code>segway_v02</code>.
+  </aside>
+</section>
+
+<!-- ======================= ACTO II: EL ARTE DE NO CAERSE ======================= -->
+
+<section class="slide" data-acto="II · El arte de no caerse" data-min="1.5" data-anim="escoba">
+  <h2>Es como sostener una escoba parada en la mano</h2>
+  <div class="sim-con-texto">
+    <canvas id="cv-escoba" width="760" height="520"></canvas>
+    <div class="texto-lateral">
+      <p class="dato-enorme" id="escoba-tiempo">0,00 s</p>
+      <p class="dato-sub" id="escoba-angulo">inclinación: 2°</p>
+      <p>Sin nadie que la corrija, la inclinación <b>se duplica cada 94 milésimas de segundo</b>.</p>
+      <p>Un parpadeo dura unas 300.</p>
+      <div class="botones">
+        <button data-accion="escoba-soltar">Soltar</button>
+        <button data-accion="escoba-lento">Cámara lenta: no</button>
+      </div>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~1,5 min.</b> Apretar «Soltar». Con cámara lenta se ven las marcas: 2°, 4°, 8°, 16°…
+    El dato de 94 ms sale del polo inestable real del robot (7,35 por segundo).
+    Mensaje: el robot está siempre cayéndose y tiene que corregir antes de que nosotros lo notemos.
+  </aside>
+</section>
+
+<section class="slide" data-acto="II · El arte de no caerse" data-min="1">
+  <h2>Sentir, pensar, mover… 200 veces por segundo</h2>
+  <div class="ciclo">
+    <div class="paso p1"><div class="burbuja">👂</div><h3>Sentir</h3><p>Un «oído interno» (IMU) mide <b>inclinación y giro</b>; los contadores de rueda miden <b>posición y velocidad</b>.</p></div>
+    <div class="flecha">→</div>
+    <div class="paso p2"><div class="burbuja">🧠</div><h3>Pensar</h3><p>El control <b>LQR</b> combina esos <b>4 datos</b> en una sola cuenta y filtra las vibraciones del chasis.</p></div>
+    <div class="flecha">→</div>
+    <div class="paso p3"><div class="burbuja">⚙️</div><h3>Mover</h3><p>Los motores llevan las ruedas <b>debajo del peso</b> en apenas <b>2,3 milésimas de segundo</b>.</p></div>
+  </div>
+  <p class="pie-grande">Una vuelta completa cada <span class="resalta">5 milésimas de segundo</span></p>
+  <aside class="notas">
+    <b>~1 min.</b> Cuando sostenemos una escoba no la empujamos desde arriba: movemos la mano por debajo.
+    El robot mira cuatro números en cada vuelta y decide cuánta fuerza mandar a las ruedas.
+  </aside>
+</section>
+
+<section class="slide" data-acto="II · El arte de no caerse" data-min="2" data-anim="lqr">
+  <h2>¿Cómo piensa? Una sola cuenta con 4 ingredientes (LQR)</h2>
+  <div class="ecuacion-caja">
+    <span class="eq-lhs">Motor <b>u</b> =</span>
+    <span class="eq-term t-phi"><b>3,21</b> · inclinación <i>φ</i></span>
+    <span class="eq-mas">+</span>
+    <span class="eq-term t-om"><b>0,38</b> · giro <i>ω</i></span>
+    <span class="eq-mas">+</span>
+    <span class="eq-term t-x"><b>1,08</b> · posición <i>x</i></span>
+    <span class="eq-mas">+</span>
+    <span class="eq-term t-v"><b>1,82</b> · velocidad <i>v</i></span>
+  </div>
+  <div class="sim-con-texto lqr-grid">
+    <div class="lqr-controles">
+      <div class="slider-fila">
+        <label>Inclinación <i>φ</i>: <b id="lqr-val-phi">3,0°</b></label>
+        <input type="range" id="lqr-phi" min="-10" max="10" step="0.5" value="3">
+      </div>
+      <div class="slider-fila">
+        <label>Velocidad de caída <i>ω</i>: <b id="lqr-val-om">0 °/s</b></label>
+        <input type="range" id="lqr-om" min="-60" max="60" step="5" value="0">
+      </div>
+      <div class="slider-fila">
+        <label>Posición <i>x</i>: <b id="lqr-val-x">0 cm</b></label>
+        <input type="range" id="lqr-x" min="-20" max="20" step="1" value="0">
+      </div>
+      <div class="slider-fila">
+        <label>Velocidad <i>v</i>: <b id="lqr-val-v">0,00 m/s</b></label>
+        <input type="range" id="lqr-v" min="-0.4" max="0.4" step="0.05" value="0">
+      </div>
+      <div class="botones">
+        <button data-accion="lqr-inclinado">Se inclinó 5°</button>
+        <button data-accion="lqr-corrido">Se corrió 12 cm</button>
+        <button data-accion="lqr-reset">En equilibrio</button>
+      </div>
+    </div>
+    <div class="texto-lateral">
+      <canvas id="cv-lqr" width="640" height="310"></canvas>
+      <p class="sorpresa"><b>Regla de Bryson:</b> para elegir esos 4 pesos le dijimos a la computadora qué nos molesta igual: <b>8° de inclinación importan lo mismo que correrse 10 cm del lugar</b>.</p>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~2 min.</b> Esta es la única ecuación de toda la charla y es todo lo que calcula el robot 200 veces por segundo:
+    4 multiplicaciones y 3 sumas. Mostrar con los deslizadores que la inclinación (amarillo) manda sobre todo lo demás,
+    el giro (rojo) frena antes de pasarse, y la posición (celeste) actúa como una correa elástica suave.
+    Además, a medida que estira las patas, el robot sube automáticamente los pesos de inclinación y giro (tabla LQR por altura).
+  </aside>
+</section>
+
+<section class="slide" data-acto="II · El arte de no caerse" data-min="1.5" data-anim="balanceo">
+  <h2>Empujalo y mirá cómo se recupera</h2>
+  <canvas id="cv-balanceo" width="1300" height="480"></canvas>
+  <div class="botones centrados">
+    <button data-accion="bal-empujar">Empujón</button>
+    <button data-accion="bal-control">Control: encendido</button>
+    <button data-accion="bal-reiniciar">Reiniciar</button>
+  </div>
+  <p class="aclaracion">Simulación en vivo con la ley LQR y la velocidad de caída del robot real.</p>
+  <aside class="notas">
+    <b>~1,5 min.</b> Dar un par de empujones: el robot se va un poco para atrás y vuelve a su lugar.
+    Después apagar el control y empujar: se cae enseguida.
+  </aside>
+</section>
+
+<section class="slide" data-acto="II · El arte de no caerse" data-min="1.5" data-anim="avance">
+  <h2>La paradoja: para ir hacia adelante, primero va hacia atrás</h2>
+  <canvas id="cv-avance" width="1300" height="480"></canvas>
+  <div class="botones centrados">
+    <button data-accion="av-ir">Ir 30 cm hacia adelante</button>
+    <button data-accion="av-reiniciar">Volver</button>
+  </div>
+  <p class="aclaracion">Nuestro robot retrocede 14 mm antes de avanzar 30 cm (sistema de «fase no mínima»).</p>
+  <aside class="notas">
+    <b>~1,5 min.</b> Pedir que miren la rueda al apretar el botón: arranca para atrás.
+    Para avanzar tiene que inclinarse hacia adelante, y la única forma de inclinarse es sacar las ruedas de debajo del peso.
+  </aside>
+</section>
+
+<section class="slide" data-acto="II · El arte de no caerse" data-min="1.5" data-anim="pata">
+  <h2>¿Y las patas para qué sirven?</h2>
+  <div class="sim-con-texto">
+    <canvas id="cv-pata" width="700" height="560"></canvas>
+    <div class="texto-lateral">
+      <input type="range" id="pata-slider" min="10" max="40" step="0.5" value="10" aria-label="Postura de la pata">
+      <p class="dato-sub">Altura de la cabina: <b id="pata-altura">—</b></p>
+      <p>Esperábamos que estirarlas lo hiciera más fácil de equilibrar, como una escoba más larga.</p>
+      <p class="sorpresa">Sorpresa: el centro de masa sube al doble, pero cae <b>casi igual de rápido</b> (cambia un 7&nbsp;%).</p>
+      <p>Las patas sirven para <b>pasar obstáculos</b>, <b>amortiguar los golpes</b> y <b>agacharse</b>.</p>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~1,5 min.</b> Mover el deslizador: la rueda baja casi en línea recta gracias al mecanismo de cuatro barras.
+    Aunque el polo cambia solo 7 %, en el robot real las patas bien estiradas se acercan al límite geométrico,
+    así que el control LQR consulta una tabla y aumenta un 30 % su firmeza cuando el robot se para alto.
+  </aside>
+</section>
+
+<!-- ======================= ACTO III: ANATOMÍA ======================= -->
+
+<section class="slide titular" data-acto="III · Anatomía" data-min="0.5">
+  <p class="sobretitulo">Acto III</p>
+  <h1>Huesos, músculos, nervios y cerebro</h1>
+  <p class="subtitulo">De la maqueta de banco al robot definitivo (<code>segway_v02</code>)</p>
+  <aside class="notas"><b>~0,5 min.</b> Transición: ahora vamos a abrir el robot por dentro.</aside>
+</section>
+
+<section class="slide" data-acto="III · Anatomía" data-min="1.5" data-anim="barras">
+  <h2>Huesos: plástico impreso en 3D que se dobla a propósito</h2>
+  <div class="sim-con-texto">
+    <div class="caja-barras">
+      <p class="titulo-barras">Golpe sobre el motor de la pata al caer 18 cm</p>
+      <div class="barra-fila"><span>Si la pata fuera rígida</span><div class="barra"><div class="relleno rojo" style="--v:100%"></div></div><b>421 N</b></div>
+      <div class="barra-fila"><span>Con el plástico que se flexiona</span><div class="barra"><div class="relleno verde" style="--v:46%"></div></div><b>~190 N</b></div>
+      <p class="aclaracion">421 N es como apoyarle encima 43 kg.</p>
+    </div>
+    <div class="texto-lateral">
+      <p>Tres iteraciones en SolidWorks más el <b>nuevo chasis con tapa</b> para proteger las placas y la batería.</p>
+      <p>El plástico y las ruedas con relleno de gomaespuma se flexionan al aterrizar y <b>reducen el golpe a menos de la mitad</b>.</p>
+      <p class="sorpresa">Como caer de un salto con las rodillas flojas en vez de trabadas.</p>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~1,5 min.</b> Joaquín se preguntó si 421 N no era demasiado. Tenía razón: ese número suponía que el plástico
+    era rígido como acero. Además medimos las ruedas apretándolas contra una balanza: ceden 3,5 mm con 3 kg (8.500 N/m).
+  </aside>
+</section>
+
+<section class="slide" data-acto="III · Anatomía" data-min="1.5">
+  <h2>Músculos: cuatro motores</h2>
+  <div class="dos-columnas">
+    <div class="tarjeta">
+      <div class="icono-grande">🔄</div>
+      <h3>2 motores de rueda</h3>
+      <p>Mantienen el equilibrio y lo hacen avanzar (hasta <b>315 RPM</b> con los nuevos drivers).</p>
+      <p>Cada uno cuenta cuánto giró su rueda: <b>un paso cada 0,3 mm</b>.</p>
+    </div>
+    <div class="tarjeta con-imagen">
+      <img src="assets/servo.png" alt="Servo de 40 kg·cm">
+      <h3>2 servos de pata</h3>
+      <p>Mueven las rodillas. Cada uno levanta <b>40 kg</b> con una palanca de 1 cm y tiene su propia fuente de energía.</p>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~1,5 min.</b> El servo se eligió con el cálculo de la caída de un escalón. En la placa definitiva cada servo
+    tiene su propio regulador de 6 V para que un tirón de las patas nunca deje sin tensión al resto.
+  </aside>
+</section>
+
+<section class="slide" data-acto="III · Anatomía" data-min="1.5">
+  <h2>Nervios: placas electrónicas hechas por nosotros</h2>
+  <div class="placas">
+    <div class="placa potencia">
+      <div class="placa-titulo">Potencia v0.7</div>
+      <div class="pista p-a"></div><div class="pista p-b"></div><div class="pista p-c"></div>
+      <div class="chip c1"></div><div class="chip c2"></div><div class="fusible f1"></div><div class="fusible f2"></div><div class="fusible f3"></div>
+      <div class="medida">12,4 × 7,7 cm · 2× DRV8871 + 3× INA</div>
+    </div>
+    <div class="cable-plano"></div>
+    <div class="placa logica">
+      <div class="placa-titulo">Lógica v0.6</div>
+      <div class="pista p-a"></div><div class="pista p-b"></div>
+      <div class="chip grande"></div><div class="chip c1"></div>
+      <div class="medida">9,5 × 6,0 cm · ESP32-S3 + IMU</div>
+    </div>
+  </div>
+  <ul class="lista-simple">
+    <li>Diseñadas a medida, <b>pasadas al cobre con una plancha</b>, atacadas con ácido y soldadas en el laboratorio.</li>
+    <li><b>3 medidores digitales de energía (INA219/INA226):</b> sabemos cuánta corriente gasta cada rueda en vivo.</li>
+    <li><b>5 fusibles independientes</b> y pines codificados para que nada pueda enchufarse al revés.</li>
+  </ul>
+  <aside class="notas">
+    <b>~1,5 min.</b> Matías puede contar el proceso de fabricación y mostrar cómo separar potencia de lógica evita
+    que el ruido eléctrico de los motores afecte al microcontrolador.
+  </aside>
+</section>
+
+<section class="slide" data-acto="III · Anatomía" data-min="2" data-anim="barras">
+  <h2>El salto a <code>segway_v02</code>: más fuerza y dos filtros antitemblor</h2>
+  <div class="dos-columnas">
+    <div class="caja-barras">
+      <p class="titulo-barras">1. Cambio de drivers: L298N → DRV8871 (MOSFET)</p>
+      <div class="barra-fila"><span>Zona muerta antes (L298N)</span><div class="barra"><div class="relleno rojo" style="--v:90%"></div></div><b>18 %</b></div>
+      <div class="barra-fila"><span>Zona muerta hoy (DRV8871)</span><div class="barra"><div class="relleno verde" style="--v:15%"></div></div><b>3 %</b></div>
+      <p>El driver viejo desperdiciaba <b>2 V en calor</b>. El nuevo aprovecha toda la batería y da <b>44 % más de fuerza</b>.</p>
+    </div>
+    <div class="caja-barras">
+      <p class="titulo-barras">2. Dos filtros «Notch» contra la vibración (7,7 y 11,6 Hz)</p>
+      <div class="barra-fila"><span>Sin filtros (el chasis tiembla)</span><div class="barra"><div class="relleno rojo" style="--v:100%"></div></div><b>21 °/s</b></div>
+      <div class="barra-fila"><span>Con doble filtro Notch</span><div class="barra"><div class="relleno verde" style="--v:8%"></div></div><b>1,7 °/s</b></div>
+      <p class="sorpresa">«Ensordecemos» al control justo en las 2 frecuencias donde vibra el plástico: <b>12 veces menos temblor</b>.</p>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~2 min.</b> Contar esta historia porque muestra qué pasa en la ingeniería real: cuando pusimos las placas nuevas
+    con drivers MOSFET mucho mejores, el robot tenía tanta respuesta cerca de cero que empezó a excitar la vibración natural
+    de las patas (a ~8 y ~11 sacudidas por segundo). Lo resolvimos sin tocar el hardware agregando dos filtros digitales
+    rechaza-banda (Notch) que ignoran exactamente esas dos frecuencias.
+  </aside>
+</section>
+
+<section class="slide" data-acto="III · Anatomía" data-min="1.5">
+  <h2>Cerebro de doble núcleo y tablero de mando</h2>
+  <div class="sim-con-texto">
+    <img src="assets/interfaz.png" alt="Interfaz web del robot" class="captura">
+    <div class="texto-lateral">
+      <p><b>Núcleo 1 (tiempo real):</b> lee sensores, filtra y actualiza motores en <b>2,3 ms</b> (sobra la mitad del tiempo).</p>
+      <p><b>Núcleo 0 (comunicaciones):</b> manda telemetría por <b>WiFi</b> a 50 Hz y graba ráfagas a 200 Hz en memoria.</p>
+      <p>Se maneja con un <b>joystick de PlayStation 4</b> e incluye bloqueo de seguridad si las patas están flojas.</p>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~1,5 min.</b> Mostrar la estación de mando web. Destacar que todo el código matemático del control está escrito
+    en C puro y corre idéntico adentro del robot y en el simulador de la PC.
+  </aside>
+</section>
+
+<!-- ======================= ACTO IV: REALIDAD Y ESCALERA ======================= -->
+
+<section class="slide" data-acto="IV · La realidad y la escalera" data-min="2" data-anim="barras">
+  <h2>La balanza no miente: el robot se mide a sí mismo</h2>
+  <div class="dos-columnas">
+    <div class="caja-barras">
+      <p class="titulo-barras">Una de las barras de la pata</p>
+      <div class="barra-fila"><span>Lo que calculamos</span><div class="barra"><div class="relleno gris" style="--v:24%"></div></div><b>5,6 g</b></div>
+      <div class="barra-fila"><span>Lo que pesó</span><div class="barra"><div class="relleno rojo" style="--v:100%"></div></div><b>23 g</b></div>
+      <p class="sorpresa">¡Cuatro veces más! Y la pata real estaba <b>10,4° más estirada</b>.</p>
+    </div>
+    <div class="caja-barras">
+      <p class="titulo-barras">Error del modelo al predecir el equilibrio</p>
+      <div class="barra-fila"><span>Antes de medir</span><div class="barra"><div class="relleno rojo" style="--v:100%"></div></div><b>1,5°</b></div>
+      <div class="barra-fila"><span>Después de ajustar</span><div class="barra"><div class="relleno verde" style="--v:5%"></div></div><b>0,08°</b></div>
+      <p class="sorpresa">Veinte veces más preciso</p>
+    </div>
+  </div>
+  <p class="pie-grande">Con la suite automática <span class="resalta">ensayos/ (E0 a E5)</span> el robot mide por WiFi sus motores, su consumo y su equilibrio sin tocar un cable.</p>
+  <aside class="notas">
+    <b>~2 min.</b> Contar cómo pasamos de adivinar parámetros a medirlos automáticamente por WiFi: 48 mediciones de
+    equilibrio en distintas alturas de pata, ensayos de motores en el aire midiendo corriente con los INA219, y pruebas
+    automatizadas (E0 a E5) que verifican sensores, simetría entre ruedas (trim) y respuesta en frecuencia.
+  </aside>
+</section>
+
+<section class="slide" data-acto="IV · La realidad y la escalera" data-min="1.5">
+  <h2>El desafío final: la escalera</h2>
+  <div class="escalera-dibujo">
+    <div class="esc e1"></div><div class="esc e2"></div><div class="esc e3"></div><div class="esc e4"></div><div class="esc e5"></div><div class="esc e6"></div><div class="esc e7"></div>
+  </div>
+  <div class="dos-columnas">
+    <div class="tarjeta chica"><h3>6 escalones</h3><p>de 16,6 cm de alto y 29 cm de pisada, y uno último de 3 cm</p></div>
+    <div class="tarjeta chica"><h3>El problema</h3><p>Si baja despacio, el frente de la cabina <b>golpea el borde</b>. Si baja rápido, <b>no le alcanza el escalón para frenar</b>.</p></div>
+  </div>
+  <aside class="notas">
+    <b>~1,5 min.</b> Es la escalera real que usamos de referencia, medida por el equipo.
+    El robot baja de espaldas: la cabina sobresale hacia adelante y es lo último que pasa por el borde.
+  </aside>
+</section>
+
+<section class="slide" data-acto="IV · La realidad y la escalera" data-min="2" data-anim="escalera">
+  <h2>Tres maneras de bajar</h2>
+  <canvas id="cv-escalera" width="1400" height="520"></canvas>
+  <div class="botones centrados">
+    <button data-accion="esc-despacio">Despacio</button>
+    <button data-accion="esc-frenando">Frenando en cada escalón</button>
+    <button data-accion="esc-corrido">De corrido</button>
+  </div>
+  <p class="aclaracion" id="esc-mensaje">Animación ilustrativa de lo que dio la simulación. En el robot real todavía no se probó la escalera completa.</p>
+  <aside class="notas">
+    <b>~2 min.</b> Mostrar las tres en orden. «Despacio»: la cabina pega en el borde. «Frenando»: pasa el primer
+    borde pero aterriza a 13 cm del escalón y le quedan 15 cm para frenar: no alcanza. «De corrido»: la que
+    encontró la computadora, baja los 7 sin frenar en el medio.
+  </aside>
+</section>
+
+<section class="slide" data-acto="IV · La realidad y la escalera" data-min="2" data-anim="evolucion">
+  <h2>Evolución artificial: 5.300 caídas en la computadora</h2>
+  <div class="sim-con-texto">
+    <canvas id="cv-evolucion" width="760" height="420"></canvas>
+    <div class="texto-lateral">
+      <p class="dato-enorme" id="evo-contador">0</p>
+      <p class="dato-sub">intentos simulados</p>
+      <p>Como la selección natural: las maniobras que bajan mejor «tienen hijos» que se parecen a ellas.</p>
+      <p>Cada candidata se probó en <b>24 situaciones</b>: batería baja, piso resbaloso, ruedas más blandas…</p>
+      <p class="sorpresa">La ganadora bajó en las 24. Tardó unos 50 minutos.</p>
+    </div>
+  </div>
+  <aside class="notas">
+    <b>~2 min.</b> Cada punto es un intento: rojo se cae o choca, verde baja los 7 escalones.
+    Usamos un «algoritmo genético»: mezcla las mejores maniobras y les introduce pequeños cambios.
+    Romper el robot 5.300 veces en la computadora es gratis; en la vida real, no.
+  </aside>
+</section>
+
+<section class="slide" data-acto="IV · La realidad y la escalera" data-min="0.5">
+  <h2>Y la computadora nos dio una idea de diseño</h2>
+  <div class="recorte">
+    <div class="cabina-recorte"><div class="corte"></div></div>
+    <div class="texto-lateral">
+      <p>Con la cabina como está, pasa a <b>2 cm</b> del borde.</p>
+      <p>Recortando <b>2 cm la punta de abajo</b> de la cabina, pasa a más de <span class="resalta">3,5 cm</span> en todas las pruebas.</p>
+    </div>
+  </div>
+  <aside class="notas"><b>~0,5 min.</b> La simulación no solo elige la maniobra: también dice qué cambiar en el robot.</aside>
+</section>
+
+<!-- ======================= ACTO V: DEMO Y CIERRE ======================= -->
+
+<section class="slide titular demo" data-acto="V · Demo" data-min="4">
+  <p class="sobretitulo">Acto V</p>
+  <h1>Ahora, en vivo</h1>
+  <ul class="checklist">
+    <li>Parado solo y quieto con las placas definitivas (<code>segway_v02</code>)</li>
+    <li>Un empujón suave: cómo responde el LQR</li>
+    <li>Agacharse y estirarse cambiando las ganancias en vivo</li>
+    <li>Paseo con el joystick de PS4</li>
+  </ul>
+  <aside class="notas">
+    <b>~4 min.</b> Antes de empezar: LiPo cargada, patas activas (<code>servo on</code>), piso libre de 1 m, alguien cerca para atajarlo.
+    Botón ◯ del joystick corta todo. Si algo falla, no improvisar arreglos: mostrar la telemetría o simulación y seguir.
+  </aside>
+</section>
+
+<section class="slide" data-acto="V · Cierre" data-min="1">
+  <h2>El proyecto en números</h2>
+  <div class="numeros">
+    <div><span class="num">1.208 g</span><p>listo para andar con LiPo</p></div>
+    <div><span class="num">4</span><p>multiplicaciones cada 5 ms (LQR)</p></div>
+    <div><span class="num">2</span><p>filtros Notch antitemblor</p></div>
+    <div><span class="num">2</span><p>placas hechas a mano + 3 INA</p></div>
+    <div><span class="num">8</span><p>protocolos automáticos por WiFi</p></div>
+    <div><span class="num">+5.300</span><p>bajadas simuladas</p></div>
+  </div>
+  <aside class="notas"><b>~1 min.</b> Resumen rápido de cierre y pasar a preguntas.</aside>
+</section>
+
+<section class="slide portada final" data-acto="V · Cierre" data-min="1">
+  <div class="portada-texto">
+    <h1>¡Gracias!</h1>
+    <p class="subtitulo">¿Preguntas?</p>
+    <p class="autores">Joaquín Calderón · Francisco Castel · Matías Armani</p>
+  </div>
+  <img class="portada-robot flota" src="assets/robot.png" alt="Diseño 3D del robot">
+  <aside class="notas"><b>Preguntas.</b> Preguntas técnicas detalladas: derivar al informe técnico o volver a la diapositiva del LQR.</aside>
+</section>
+
+</main>
+
+<div id="panel-notas" class="oculto"></div>
+
+<script src="animaciones.js"></script>
+<script src="presentacion.js"></script>
+</body>
+</html>

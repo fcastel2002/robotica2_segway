@@ -200,6 +200,12 @@ function o = parametros_fisicos(variante)
   % grados en la referencia a cuatro alturas, repetida en el simulador con el codigo del firmware.
   % Cada linea: el valor nuevo, el de antes y de donde sale.
   if strcmpi(variante, 'ajustada')
+    o.m_carga = 246;        % 7/11, con las PCB: 1208 g (antes 234: el 5/11 pesaba 1196 g). El modelo
+                            % pesa 962 sin esto: lo que falta, seguramente la LiPo (los 542 g de la
+                            % caja se pesaron el 21/10 sin ella), los cables y las placas. Va en la
+                            % cabina, y la caja se corre (corr_caja) para que el centro de masa de todo
+                            % siga dando la curva de equilibrio medida con la IMU. corr_caja es la del
+                            % 5/11 hasta medir de nuevo el equilibrio con las PCB (MED-007)
     o.pata_cero = 20.4;     % antes 10 (supuesto). La curva de equilibrio solo cierra (0.10 grados rms
                             % contra 1.17) con la pata real 10.4 grados mas estirada que la supuesta, y la
                             % onda cuadrada lo confirma (sobre todo con las patas bajas). VERIFICAR con una
@@ -207,14 +213,77 @@ function o = parametros_fisicos(variante)
     o.th = [309.5 339.7];  % antes [320 350]: el recorrido 0-30 del firmware cae en 20.4-50.4 del
                             % modelo, cerca del punto muerto del cuatro barras (~57): por eso con 30 se
                             % sacude y se cae
-    o.corr_caja = [19.3 0]; % antes [0 0]: el centro de masa de la caja 19 mm mas atras que el reparto
-                            % estimado de los 542 g (pesar la LiPo y ver donde va)
-    o.imu_delta_deg = 4.2;  % antes 9.8: con la pata y la caja corregidas, la IMU esta 4.2 grados inclinada
+    o.corr_caja = [24.7 -8.2]; % antes [0 0]: el centro de masa de la caja (con los 234 g) 24,7 mm mas
+                            % atras y 8,2 mas abajo que el del reparto estimado, para que con 1196 g el
+                            % equilibrio siga dando lo medido (0.12 grados rms) con la IMU y la pata del
+                            % 3/11 (ajustar_equilibrio.m). (3/11, sin los 234 g: [19.3 0])
+    o.imu_delta_deg = 4.8;  % 7/11, la IMU en la PCB: la curva de equilibrio del 7/11 con la caja del 5/11
+                            % y 1208 g (ajustar_equilibrio.m, 'solo la IMU': 4.77, 0.69 grados rms;
+                            % PROVISORIO hasta medir la IMU contra la caja). Antes 4.2 (3/11) y 9.8
+    o.k_contacto = 8500;    % antes 30e3 (supuesto): 5/11, rueda de 80 mm con goma espuma apretada
+                            % contra una balanza: 78,2 mm con 1,5 kg y 76,5 con 3 kg (8,2-8,7 kN/m, lineal)
+    o.c_contacto = 20;      % antes 60. SUPUESTO (falta la prueba de soltarlo y ver cuanto rebota):
+                            % ~15 % del critico con el robot encima; las simulaciones lo barren de 4 a 100
     o.N = 899/(4*11);       % antes 20 (nominal): 20.43, medido con el encoder (FW-009)
-    o.w_nl_motor_rpm = 7000;% antes 6000: es la version de 350 rpm (STEP "DC12V350RPM"); MED-005 midio
-                            % 1.37 veces la velocidad por PWM del modelo
-    o.V_bat = 11.9;         % antes 11.1 (nominal): medido por el equipo el 3/11. Con la caida del L298N de
-                            % siempre (2.0 V) llegan 9.9 V al motor, lo que pide la onda cuadrada (9.8)
-    o.zona_muerta_motor = 0.14; % antes 0.17: ajustado con la onda cuadrada (MED-005 en el aire: 0.17-0.19)
+    % 7/11, con el DRV8871 de la placa en lugar del L298N (MED-006, firmware/docs/comparacion_L298N_DRV8871.md):
+    % en el aire la rueda da 26 RPM por voltio de bateria con los dos drivers; el L298N le restaba ~2 V
+    % como una zona muerta (0.17-0.19 de PWM; con el DRV8871, 0.02-0.03), no como menos ganancia. La
+    % onda cuadrada del 3/11 (L298N) la sigue igual con este motor, 11.9 V al motor y el L298N como
+    % zona muerta de 0.16 (costo 7.05 contra 7.19: modelado/ajuste/ajustar_onda.py vm=11.9 zm=0.16)
+    o.w_nl_motor_rpm = 6060;% antes 7000 (350 rpm) y 6000 (300 rpm, nominal): la de 26 RPM/V medida (MED-006)
+    o.V_bat = 12.3;         % antes 11.9 (3/11): LiPo el 6/11 (voltimetro de panel; INA219 12.2)
+    o.caida_driver = 0;     % antes 2.0 (L298N): el DRV8871 tiene salidas MOSFET (~0.6 ohm, despreciable)
+    o.zona_muerta_motor = 0.026; % antes 0.14 (L298N): donde se anula la velocidad en el aire con el DRV8871
+                            % (0.031 izq., 0.021 der.; desde parada arranca con 0.06-0.08)
+    % 7/11 (MED-007), el motor MEDIDO con los INA219 (modelado/ajuste/ajustar_motor.py, fig_motor.png;
+    % datos en modelado/ajuste/ensayos_motor_2026-11-07/): la rueda sostenida da la resistencia, las
+    % ruedas en el aire la constante y el roce, y los escalones a 200 Hz la inercia. El rendimiento
+    % del reductor (eta_reductor) sigue SUPUESTO: falta levantar un peso.
+    o.R_m = 7.81;           % antes 10.28 (deducida de la ficha): 8.06 izq., 7.55 der., con el DRV8871 y los
+                            % cables (rueda quieta, 8-30 % de PWM; casi sin caída de escobillas, 0.02-0.05 V)
+    o.i_vacio = 0.042;      % antes 0.060 (ficha): en el aire, 40-45 mA a velocidad cero + 0.2-0.55 mA por rad/s
+    o.w_nl_motor_rpm = 6348;% antes 6060: Ke = 0.359 V s/rad en la rueda (0.349-0.368), con R e i_vacio medidos
+    o.tau_c = 0.00074;      % antes 0.0015: Kt * i_vacio
+    o.b_m = 3.3e-7;         % antes 1e-6: Kt * la pendiente de la corriente en vacío, en el rotor
+    o.J_r = 8.2e-7;         % antes 6e-7 (típico): la rueda libre en el aire tarda 24-25 ms (4.0e-4 kg m2 en la
+                            % rueda con la rueda incluida)
+    o.zona_muerta_motor = 0.027; % la recta de velocidad en el aire se anula en 0.025-0.028 (antes 0.026)
+    % 10-11/11 (MED-008): el robot con 1327 g. Centro de masa e inercia MEDIDOS en patas 30° dejándolo caer
+    % sin motores y con la prueba de inclinación (modelado/ajuste/ajustar_caidas.py: cuerpo a 140 mm del eje,
+    % inercia propia 0,0124 kg m2), y el equilibrio en 0/15/30° de los barridos del 11/11; ajustado con
+    % modelado/ajuste/ajustar_modelo_11nov.m (equilibrio 0,2-0,7° de error, l en 30° exacto)
+    o.m_carga = 365;        % antes 246: el robot pesa 1327 g (no se sabe qué se agregó: va en la cabina)
+    o.corr_caja = [21.2 -26.1]; % antes [24.7 -8.2]: con la altura medida, la caja 18 mm más abajo
+    o.imu_delta_deg = 4.06; % antes 4.8 (provisorio): sale junto con la caja, de las tres alturas
+    o.J_extra = 0.0060;     % [kg m2] lo que les falta a las piezas: dan 0,0064 en 30° y se midió 0,0124
+    % Solo para el modelo LINEAL (LQR, respuesta en frecuencia): con poca amplitud el roce seco de la
+    % reductora frena como un amortiguador en el eje rueda-cuerpo; los barridos del 11/11 en las tres alturas
+    % dan esto (junto con el retardo). Las simulaciones no lineales ya tienen el roce seco: no sumarlo ahí.
+    o.b_roce_equivalente = 0.0203;  % [N m s/rad], los dos motores
+    % 11/11, más tarde: le sacaron la tapa nueva (87 g, arriba, a ~260 mm del eje en patas 30): pesa 1240 g. Lo
+    % medido con 1327 g menos la tapa da el cuerpo (1,140 kg) a 131 mm del eje y 0,0110 kg m2 de inercia
+    % propia en 30°; se corrige la carga, la altura de la caja y J_extra (el equilibrio de las tres alturas
+    % falta medirlo de nuevo sin la tapa)
+    o.m_carga = 278;            % 1240 g
+    % 11/11, MEDIDO: con 1,5 kg arriba de la caja, robot desarmado parado en patas 30°, el eje del servo baja
+    % 20 mm (Joaquín). Menos 0,9 mm de la goma, la pata gira 0,095 rad (dpz/da = 0,202 m/rad en 30°) con 2,97 N m
+    % más: el conjunto hace 31 N m/rad, visto como giro de la pata (el banco suponía 92: el servo a fondo con 5°
+    % de error). OJO (Joaquín): no es el servo, que casi no cede; es el plástico de los agarres que flexiona. O
+    % sea un resorte ELÁSTICO (devuelve la energía) en serie con un servo duro, no un servo que se deja llevar.
+    % En el banco va hoy como ganancia del servo (PE_SERVO_GANANCIA); falta separarlo
+    o.k_servo_medido = 31.4;    % [N m/rad] los dos: el plástico de los agarres + el servo
+    o.corr_caja = [15.8 -35.1]; % con la curva de equilibrio sin la tapa (firmware/docs/equilibrio_patas_2026-11-11_1240g.csv)
+    o.J_extra = 0.0051;
+    o.imu_delta_deg = 9.27;     % sale junto con la caja (0,44° rms en las 13 alturas). Con la tapa daba 4,06: ¿se movió la IMU?
+    o.retardo_s = 0.0047;   % retardo de la planta (del comando al cabeceo medido) que falta en el modelo
+    % El modelo lineal con lo que cede (modelado/ajuste/ajustar_pata_flexible.m, mismos barridos): la caja gira
+    % respecto de la pata con un resorte de torsión (el servo, su reductora y las barras) y el rotor respecto de
+    % la rueda (la reductora del motor), los dos vistos alrededor del eje de la rueda. Con esto el modelo sigue
+    % a la planta medida de 2 a 9 Hz en las tres alturas (la joroba de ~6 Hz) y pone el pico de sensibilidad en
+    % ~5 Hz como el robot, aunque más bajo (1,5-1,7 contra 2,4-2,9). En este modelo el roce y el retardo son
+    % otros (el retardo lo absorbe la reductora que cede): usar estos juntos, no con los de arriba.
+    o.modelo_flexible = struct('k_s', 5.3, 'c_s', 0.136, ...   % [N m/rad], [N m s/rad] caja-pata
+                               'k_g', 3.66, 'c_g', 0.0131, ... % [N m/rad], [N m s/rad] reductoras (las dos), del lado de la rueda
+                               'b_roce', 0.0309, 'retardo_s', 0);
   end
 end

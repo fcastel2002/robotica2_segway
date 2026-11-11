@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visor del escalón</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="visor.css">
+</head>
+<body>
+<header>
+  <h1>Bajada de un escalón hacia atrás · simulación</h1>
+  <label class="planta">Planta
+    <select id="planta"></select>
+  </label>
+  <span id="aviso" role="status"></span>
+</header>
+
+<main>
+  <aside id="panel">
+    <div class="acciones">
+      <button id="simular" class="primario" title="Correr el banco con estos parámetros (Enter)">Simular</button>
+      <button id="probar-robustez" title="Correr estos parámetros contra las 27 variaciones de la planta">Robustez</button>
+      <button id="por-defecto" title="Volver a los valores por defecto de la maniobra (maniobra.c) y vaciar el programa">Por defecto</button>
+    </div>
+    <p class="ayuda">Los valores por defecto son los de <code>maniobra_params_por_defecto</code>. Lo que
+      cambiás queda resaltado. Pasá el mouse por cada nombre para ver qué hace.</p>
+
+    <details id="programa">
+      <summary>Programar patas y velocidad <span id="programa-estado" class="marca"></span></summary>
+      <p class="ayuda">Con acciones, desde que larga las patas (o la velocidad) siguen esta lista en
+        lugar de los parámetros de abajo. Cada acción se dispara una vez, cuando pasa lo que dice, y
+        manda la última que se disparó. Antes de la primera, las patas quedan en las de largar y la
+        velocidad, como estaba. Vacío: la maniobra de siempre.</p>
+      <h3>Patas</h3>
+      <table class="prog" id="prog-patas"></table>
+      <div class="acciones-chicas">
+        <button data-prog="patas" data-hacer="mas">+ acción</button>
+        <button data-prog="patas" data-hacer="defecto" title="Las acciones que hace la maniobra con los parámetros de abajo">como la de por defecto</button>
+        <button data-prog="patas" data-hacer="nunca" title="Las patas quedan en las de largar todo el tiempo">nunca subirlas</button>
+        <button data-prog="patas" data-hacer="vaciar">vaciar</button>
+      </div>
+      <h3>Velocidad hacia atrás</h3>
+      <table class="prog" id="prog-vel"></table>
+      <div class="acciones-chicas">
+        <button data-prog="vel" data-hacer="mas">+ acción</button>
+        <button data-prog="vel" data-hacer="defecto" title="Acelerar a la velocidad de salida y frenar al tocar">como la de por defecto</button>
+        <button data-prog="vel" data-hacer="vaciar">vaciar</button>
+      </div>
+    </details>
+
+    <div id="formulario"></div>
+    <details class="comando">
+      <summary>El mismo caso en la terminal</summary>
+      <code id="comando"></code>
+      <button id="copiar">Copiar</button>
+    </details>
+  </aside>
+
+  <section id="centro">
+    <nav class="pestanas">
+      <button data-vista="corrida" class="activa">Corrida</button>
+      <button data-vista="comparar">Comparar <span id="n-comparar"></span></button>
+      <button data-vista="barrido">Barrido</button>
+    </nav>
+
+    <div id="vista-corrida" class="vista">
+      <div class="tarjeta escena-cont">
+        <canvas id="escena" aria-label="El robot animado sobre el escalón"></canvas>
+        <div id="vacio">Tocá <b>Simular</b> para ver una corrida.</div>
+        <div class="controles">
+          <button id="play" title="Reproducir / pausar (espacio)">▶</button>
+          <input type="range" id="tiempo" min="0" max="1" step="0.005" value="0" aria-label="Tiempo">
+          <span id="reloj">—</span>
+          <label>velocidad
+            <select id="velocidad">
+              <option value="0.05">×0,05</option>
+              <option value="0.1">×0,1</option>
+              <option value="0.25" selected>×0,25</option>
+              <option value="0.5">×0,5</option>
+              <option value="1">×1</option>
+            </select>
+          </label>
+          <label><input type="checkbox" id="estela" checked> estela</label>
+          <label><input type="checkbox" id="ver-haz" checked> haz del sensor</label>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div id="resumen"></div>
+        <div class="ventana">
+          Gráficos:
+          <label><input type="radio" name="ventana" value="largada" checked> desde que larga</label>
+          <label><input type="radio" name="ventana" value="toda"> toda la corrida</label>
+          <span class="ayuda">(clic en un gráfico para ir a ese instante; ← → mueven 5 ms)</span>
+        </div>
+        <canvas id="estados" height="26" aria-label="Estados de la maniobra"></canvas>
+        <div id="graficos" class="graficos"></div>
+      </div>
+    </div>
+
+    <div id="vista-comparar" class="vista" hidden>
+      <div class="tarjeta">
+        <div id="comp-chips" class="fila"></div>
+        <div class="fila">
+          <label>alinear en
+            <select id="alinear">
+              <option value="largada">cuando larga</option>
+              <option value="borde">cuando la rueda pasa el borde</option>
+              <option value="despegue">cuando despega</option>
+              <option value="toque">cuando toca</option>
+            </select>
+          </label>
+          <label>ventana
+            <select id="comp-ventana">
+              <option value="corta">de −1 a +3 s</option>
+              <option value="toda">toda la corrida</option>
+            </select>
+          </label>
+        </div>
+        <p class="ayuda">Se comparan la corrida que se ve y las marcadas con «comparar» en la lista de
+          corridas, cada una con su color. En negrita, la mejor de cada fila.</p>
+        <div id="comp-tabla"></div>
+      </div>
+      <div class="tarjeta">
+        <h2>En números</h2>
+        <div id="comp-barras" class="barras"></div>
+      </div>
+      <div class="tarjeta">
+        <h2>Trayectorias</h2>
+        <p class="ayuda">El eje de la rueda (línea llena) y el centro de masa del cuerpo (punteada),
+          desde poco antes de largar; círculo donde toca, cruz donde termina.</p>
+        <canvas id="comp-tray"></canvas>
+      </div>
+      <div class="tarjeta">
+        <h2>Señales</h2>
+        <div id="comp-senales" class="chips-sel"></div>
+        <div id="comp-graficos" class="graficos"></div>
+      </div>
+    </div>
+
+    <div id="vista-barrido" class="vista" hidden>
+      <div class="tarjeta">
+        <div class="fila">
+          <label>parámetro <select id="barrer-param"></select></label>
+          <label>desde <input id="barrer-desde" type="number" step="any"></label>
+          <label>hasta <input id="barrer-hasta" type="number" step="any"></label>
+          <label>pasos <input id="barrer-pasos" type="number" min="2" max="40" value="11"></label>
+          <button id="barrer" class="primario">Barrer</button>
+        </div>
+        <p class="ayuda">Corre los parámetros de la izquierda (y el programa, si hay) cambiando solo
+          este. El color dice cómo terminó; clic en un punto para ver esa corrida.</p>
+        <div class="fila">
+          <label>mostrar <select id="barrer-metrica"></select></label>
+          <button id="barrido-comparar" title="Agrega hasta 10 corridas del barrido a la comparación">comparar todas</button>
+        </div>
+        <canvas id="barrido-graf"></canvas>
+        <div id="barrido-tabla"></div>
+      </div>
+    </div>
+  </section>
+
+  <aside id="derecha">
+    <div class="tarjeta">
+      <h2>Corridas</h2>
+      <p class="ayuda">Clic para verla; <b>comparar</b> la suma a la pestaña Comparar y a la escena;
+        ↺ pone sus parámetros a la izquierda; ✎ le pone nombre.</p>
+      <div id="historial"></div>
+    </div>
+    <div class="tarjeta">
+      <h2>Robustez</h2>
+      <div id="tabla-robustez"><p class="ayuda">Con <b>Robustez</b> los parámetros de la izquierda
+        se prueban con la batería de 10,5 a 12,6 V, más o menos roce, piso resbaloso, el equilibrio
+        corrido, otro escalón, otras inercias y otro ruido (27 casos). Las últimas cuatro quedan lado
+        a lado para ver si mejoró.</p></div>
+    </div>
+  </aside>
+</main>
+
+<script src="visor.js"></script>
+</body>
+</html>

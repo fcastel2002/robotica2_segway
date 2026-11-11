@@ -8,12 +8,17 @@
 #include "attitude.h"
 #include "balance.h"
 #include "board_config.h"
+#include "dist_sharp.h"
 #include "encoder.h"
 #include "imu_mpu6050.h"
+#include "led_estado.h"
+#include "maniobra.h"
 #include "messages.h"
 #include "motor.h"
 #include "movimiento.h"
 #include "odometry.h"
+#include "parada.h"
+#include "sensor_piso.h"
 #include "servo.h"
 #include "supervisor.h"
 
@@ -21,6 +26,7 @@
 #define PERIOD_US           (CONTROL_PERIOD_MS * 1000)
 #define CAL_SAMPLES         ((int)(GYRO_CAL_TIME_S * 1000 / CONTROL_PERIOD_MS))
 #define WINDOW_CYCLES       (200 / CONTROL_PERIOD_MS)
+#define BAJA_G_CICLOS       ((int)(IMU_BAJA_G_MAX_S * 1000 / CONTROL_PERIOD_MS))
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -29,12 +35,42 @@ typedef struct {
 
 static control_ctx_t s_ctx;
 
+// Constante del filtro de inclinación: "set tau" la cambia en vivo (auditoría del 5/11: comparar 0,5 y
+// 1 s en el robot; al reiniciar vuelve a ATTITUDE_TAU_S)
+static float s_tau_att = ATTITUDE_TAU_S;
+
+// Registro de la bajada (control_task.h): lo escribe control mientras graba; comms lo lee
+// cuando s_reg_listo (sin escritura en curso)
+static registro_t s_reg[REGISTRO_N];
+static volatile int s_reg_n;
+static volatile bool s_reg_listo;
+
+const registro_t *control_registro(int *n)
+{
+    *n = s_reg_n;
+    return s_reg_listo ? s_reg : NULL;
+}
+
+static int16_t a_i16(float v)
+{
+    if (isnan(v)) return INT16_MIN;
+    return (int16_t)fminf(fmaxf(roundf(v), -32767.0f), 32767.0f);
+}
+
+// Sensor de distancia al piso: calibración y dónde está montado (en vivo con "set", para no tener
+// que regrabar mientras se mide)
+typedef struct {
+    float k, v0, div;           // d = k / (v - v0), con v la salida del Sharp (antes del divisor)
+    float sx, sz, ang;          // sensor respecto del eje del servo [m] y haz desde la vertical [rad]
+} sensor_cfg_t;
+
 // Aplica un comando recibido y devuelve lo que el supervisor tiene que saber de él.
 static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_params_t *mp,
                                float *db_quieto, lqr_gains_t *lqr_fijas,
                                float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
                                bool servo_free[SERVO_COUNT], float servo_lim[SERVO_COUNT][2],
-                               float motor_manual[MOTOR_COUNT])
+                               float motor_manual[MOTOR_COUNT], float *giro_max, sensor_cfg_t *sc,
+                               parada_params_t *pp)
 {
     switch (c->type) {
     case CMD_ARM:
@@ -59,11 +95,12 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         }
         break;
     case CMD_SERVO_LIMITS:
-        // Solo cambia los próximos pedidos: no mueve un servo que haya quedado afuera
+        // Solo cambia los próximos pedidos: no mueve un servo que haya quedado afuera. Siempre dentro
+        // de SERVO_HARD_* (comms ya lo controla; acá también, por si llega algo raro)
         for (int i = 0; i < SERVO_COUNT; i++) {
             if (c->servo == SERVO_BOTH || c->servo == i) {
-                servo_lim[i][0] = c->value;
-                servo_lim[i][1] = c->value2;
+                servo_lim[i][0] = fmaxf(c->value, SERVO_HARD_MIN_DEG);
+                servo_lim[i][1] = fminf(c->value2, SERVO_HARD_MAX_DEG);
             }
         }
         break;
@@ -96,10 +133,15 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
     case CMD_ENC_RESET:
         encoder_reset();
         break;
-    case CMD_MOVE:      // lo atiende control_task antes de llamar acá
+    case CMD_MOVE:      // estos los atiende control_task antes de llamar acá
+    case CMD_ESCALON:
+    case CMD_PARAR:
+    case CMD_GRABAR:
+    case CMD_MAN_PARAM:
         break;
     case CMD_SET:
         switch (c->param) {
+        case PARAM_TAU:      s_tau_att = fminf(fmaxf(c->value, 0.1f), 3.0f); break;
         case PARAM_REF:      p->theta_ref = c->value * DEG2RAD; break;
         case PARAM_UMAX:     p->u_max = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
         case PARAM_DEADBAND: *db_quieto = fminf(fmaxf(c->value, 0.0f), 0.5f); break;
@@ -121,6 +163,15 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_VELPATA:  mp->vel_pata_dps = fminf(fmaxf(c->value, 1.0f), 300.0f); break;
         case PARAM_MARGEN:   mp->u_margen = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
         case PARAM_PRIO:     mp->prio_theta = fminf(fmaxf(c->value, 0.0f), 30.0f) * DEG2RAD; break;
+        case PARAM_GIROMAX:  *giro_max = fminf(fmaxf(c->value, 0.0f), 0.6f); break;
+        case PARAM_SHARPK:   sc->k = fminf(fmaxf(c->value, 0.01f), 2.0f); break;
+        case PARAM_SHARPV0:  sc->v0 = fminf(fmaxf(c->value, -1.0f), 2.0f); break;
+        case PARAM_SHARPDIV: sc->div = fminf(fmaxf(c->value, 0.1f), 1.0f); break;
+        case PARAM_SENSX:    sc->sx = fminf(fmaxf(c->value, -30.0f), 30.0f) * 0.01f; break;
+        case PARAM_SENSZ:    sc->sz = fminf(fmaxf(c->value, -30.0f), 30.0f) * 0.01f; break;
+        case PARAM_SENSANG:  sc->ang = fminf(fmaxf(c->value, 0.0f), 80.0f) * DEG2RAD; break;
+        case PARAM_PARINC:   pp->inclina_deg = fminf(fmaxf(c->value, 0.0f), 15.0f); break;
+        case PARAM_PARSUELTA: pp->suelta_deg = fminf(fmaxf(c->value, 0.5f), 10.0f); break;
         default: break;
         }
         break;
@@ -139,6 +190,21 @@ static void update_servos(float pos[SERVO_COUNT], const float target[SERVO_COUNT
         if (free[i] || isnan(diff) || diff == 0.0f) continue;
         pos[i] += fminf(fmaxf(diff, -max_step), max_step);
         servo_set_deg(i, pos[i]);
+    }
+}
+
+// La maniobra o la parada piden una altura de patas: las dos van ahí, dentro de sus límites. Un
+// servo suelto se agarra (sin posición conocida va directo, a la velocidad del servo).
+static void pedir_patas(float deg, float servo_pos[SERVO_COUNT], float servo_target[SERVO_COUNT],
+                        bool servo_free[SERVO_COUNT], float servo_lim[SERVO_COUNT][2])
+{
+    for (int i = 0; i < SERVO_COUNT; i++) {
+        servo_target[i] = fminf(fmaxf(deg, servo_lim[i][0]), servo_lim[i][1]);
+        servo_free[i] = false;
+        if (isnan(servo_pos[i])) {
+            servo_pos[i] = servo_target[i];
+            servo_set_deg(i, servo_pos[i]);
+        }
     }
 }
 
@@ -219,7 +285,7 @@ static void control_task(void *arg)
     mov_t mov;
     mov_reset(&mov, 0.0f);
     float db_quieto = DEFAULT_DEADBAND;     // zona muerta quieto; andando, mov_p.deadband_mov
-    float giro = 0.0f;
+    float giro = 0.0f, giro_max = MOV_GIRO_MAX;
     for (int i = 0; i < SERVO_COUNT; i++) {
         servo_pos[i] = servo_target[i] = NAN;   // desconocida hasta el primer ángulo pedido
         servo_free[i] = true;
@@ -231,6 +297,28 @@ static void control_task(void *arg)
     params.theta_ref = ref_de_patas(servo_pos);
     uint32_t overruns_total = 0, exec_max = 0, window_max = 0;
     int window_n = 0;
+
+    // Sensor de distancia al piso y bajada de escalón (△), parada controlada (□)
+    static const float eje_patas[] = PATA_TABLA_DEG, eje_x[] = PATA_EJE_X_M, eje_z[] = PATA_EJE_Z_M;
+    const int n_eje = sizeof eje_patas / sizeof eje_patas[0];
+    sensor_cfg_t sc = { SHARP_K, SHARP_V0, SHARP_DIVISOR, SENSOR_PISO_X_M, SENSOR_PISO_Z_M,
+                        SENSOR_PISO_ANG_DEG * DEG2RAD };
+    maniobra_t man = { .estado = MAN_INACTIVA, .d_largada = NAN };
+    man_params_t man_p;
+    maniobra_params_por_defecto(&man_p);
+    man_p.d_borde = MAN_D_BORDE_M;
+    man_salida_t ms = { 0 };
+    parada_t par = { 0 };
+    parada_params_t par_p;
+    parada_params_por_defecto(&par_p);
+    parada_salida_t ps = { 0 };
+    bool pedir_desarme = false;
+    float ref_vuelo = 0.0f;         // la referencia al despegar (la que queda en el vuelo)
+    bool grabando = false;
+    int fin_reg = 0;                // ciclos que quedan por grabar después de que terminó
+    int n_baja_g = 0;
+    float acc_norma = 9.81f;        // |a| en el plano del robot (adelante-arriba), la última válida
+    bool led_guia = false;
 
     ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
     TickType_t last_wake = xTaskGetTickCount();
@@ -244,17 +332,67 @@ static void control_task(void *arg)
         esp_task_wdt_reset();
 
         // 1. Comandos: los parámetros solo cambian entre ciclos
-        sup_cmd_t cmd = SUP_CMD_NONE;
+        sup_cmd_t cmd = pedir_desarme ? SUP_CMD_DISARM : SUP_CMD_NONE;
+        pedir_desarme = false;
         command_t c;
         while (xQueueReceive(ctx->command_q, &c, 0) == pdTRUE) {
+            // Auditoría del 5/11: un nan o inf no es un valor (comms ya no los deja pasar; esto es por
+            // las dudas). Motores a mano y encoders a cero, solo desarmado o en falla: equilibrando,
+            // un "motor" quedaba guardado y se aplicaba al desarmar, y "enc reset" hacía saltar la
+            // odometría todo lo recorrido (un tirón a fondo).
+            if (!isfinite(c.value) || !isfinite(c.value2)) continue;
+            if ((c.type == CMD_MOTOR || c.type == CMD_ENC_RESET)
+                && sup.state != SUP_DISARMED && sup.state != SUP_FAULT) {
+                continue;
+            }
             if (c.type == CMD_MOVE) {
                 mov_fwd = c.value;
                 mov_turn = c.value2;
                 mov_us = t0;
                 continue;
             }
+            if (c.type == CMD_ESCALON) {
+                // Solo equilibrando y sin otra cosa en curso; arranca donde está
+                if (sup.state == SUP_BALANCING && par.estado == PARADA_INACTIVA
+                    && (man.estado == MAN_INACTIVA || man.estado == MAN_FIN)) {
+                    // value: 0 como está, < 0 solo medir el borde, > 0 sin sensor con el borde ahí [m]
+                    man_p.solo_medir = c.value < 0.0f;
+                    if (c.value > 0.0f) man_p.d_borde = c.value;
+                    maniobra_iniciar(&man, odo.x);
+                    s_reg_listo = false;
+                    s_reg_n = 0;
+                    grabando = true;
+                    fin_reg = 200;          // 1 s después de que termine
+                }
+                continue;
+            }
+            if (c.type == CMD_PARAR) {
+                if (sup.state == SUP_BALANCING) {
+                    maniobra_abortar(&man, "parada (cuadrado)");
+                    man.estado = MAN_INACTIVA;
+                    parada_iniciar(&par);
+                }
+                continue;
+            }
+            if (c.type == CMD_GRABAR) {
+                // REGISTRO_N muestras (8 s) desde ya, armado o no (fuera de una bajada, "termino" es
+                // cierto en cada ciclo y fin_reg cuenta hasta el final)
+                if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) {
+                    s_reg_listo = false;
+                    s_reg_n = 0;
+                    grabando = true;
+                    fin_reg = REGISTRO_N;
+                }
+                continue;
+            }
+            if (c.type == CMD_MAN_PARAM) {
+                // Los parámetros no cambian en plena maniobra (comms avisa)
+                if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) maniobra_poner(&man_p, c.param, c.value);
+                continue;
+            }
             sup_cmd_t r = apply_command(&c, &params, &mov_p, &db_quieto, &lqr_fijas, servo_pos,
-                                        servo_target, servo_free, servo_lim, motor_manual);
+                                        servo_target, servo_free, servo_lim, motor_manual, &giro_max,
+                                        &sc, &par_p);
             if (r != SUP_CMD_NONE) cmd = r;
             if (c.type == CMD_SET && c.param == PARAM_REF) {
                 ref_correccion = ref_centro = params.theta_ref - ref_de_patas(servo_pos);
@@ -262,27 +400,41 @@ static void control_task(void *arg)
         }
         // La referencia sigue a las patas mientras se mueven (update_servos las lleva a 90 °/s)
         params.theta_ref = ref_de_patas(servo_pos) + ref_correccion;
+        // En el vuelo la tabla de equilibrio no vale (no está apoyado): queda la de antes de despegar.
+        // 3/11: al estirar las patas a 30° en el aire saltó de 13 a 8° y el LQR llevó las ruedas a
+        // fondo hacia adelante; tocó con las ruedas al revés del piso y se cayó de espaldas.
+        if (man.estado == MAN_VUELO) params.theta_ref = ref_vuelo;
+        else ref_vuelo = params.theta_ref;
         // Y las ganancias, según la pata o las fijas (get muestra las que se están usando)
         if (params.lqr_por_pata) lqr_de_patas(servo_pos, &params.lqr);
         else params.lqr = lqr_fijas;
 
-        // 2. Sensores y estimación, en los ejes del robot
+        // 2. Sensores y estimación, en los ejes del robot. En caída libre (bajando un escalón) la
+        // IMU lee bien pero la inclinación sigue solo con el giróscopo; demasiado tiempo así es una
+        // falla (un sensor que no mide). La maniobra también pide solo giróscopo al largar y al tocar.
         imu_sample_t s;
         bool imu_ok = imu_read(&s) == ESP_OK;
+        if (imu_ok) {
+            n_baja_g = s.baja_g ? n_baja_g + 1 : 0;
+            if (n_baja_g > BAJA_G_CICLOS) imu_ok = false;
+        }
         if (imu_ok) {
             float acc_fwd = IMU_SIGN_FWD * s.accel[IMU_AXIS_FWD];
             float acc_up  = IMU_SIGN_UP * s.accel[IMU_AXIS_UP];
             float gyro    = IMU_SIGN_PITCH * s.gyro[IMU_AXIS_PITCH];
+            acc_norma = sqrtf(acc_fwd * acc_fwd + acc_up * acc_up);
             if (!calibrated) {
                 if (sup.state == SUP_CALIBRATING) {
                     calibrated = attitude_calibrate(&att, gyro, CAL_SAMPLES, GYRO_CAL_MAX_RATE);
                 }
+            } else if (s.baja_g || (ms.activa && ms.solo_giroscopo)) {
+                attitude_update_gyro(&att, gyro, dt);
             } else {
-                attitude_update(&att, acc_fwd, acc_up, gyro, dt, ATTITUDE_TAU_S);
+                attitude_update(&att, acc_fwd, acc_up, gyro, dt, s_tau_att);
             }
         }
 
-        // 3. Supervisor
+        // 3. Supervisor. En el vuelo de la maniobra la inclinación no dice que se cayó.
         sup_state_t prev = sup.state;
         sup_input_t in = {
             .imu_ok     = imu_ok,
@@ -290,10 +442,12 @@ static void control_task(void *arg)
             .overrun    = overrun,
             .tilt_err   = att.theta - params.theta_ref,
             .saturated  = sup.state == SUP_BALANCING && fabsf(u) >= 0.98f * params.u_max,
+            .en_el_aire = man.estado == MAN_VUELO,
             .cmd        = cmd,
         };
         sup_state_t st = supervisor_step(&sup, &in, TILT_LIMIT_DEG * DEG2RAD,
                                          ARM_WINDOW_DEG * DEG2RAD);
+        led_guia = led_guia_paso(led_guia, st, cmd);
         if (st == SUP_CALIBRATING && (prev == SUP_DISARMED || prev == SUP_FAULT)) {
             // Recalibración pedida con "cal": se descarta el sesgo y el ángulo anteriores
             calibrated = false;
@@ -305,6 +459,24 @@ static void control_task(void *arg)
         if (st == SUP_BALANCING && prev != SUP_BALANCING) odometry_reset(&odo);
         float cuentas = 0.5f * ((float)encoder_get(ENC_LEFT) + (float)encoder_get(ENC_RIGHT));
         odometry_update(&odo, cuentas, att.theta, ENC_COUNTS_PER_REV, WHEEL_RADIUS_M, dt, tau_vel);
+
+        // Sensor de distancia: cuánto mide y dónde pega el haz respecto del apoyo de la rueda
+        // (sensor_piso.h), con la pata y el cabeceo del cuerpo (la IMU marca IMU_DELTA_DEG de más)
+        int mv;
+        float sharp_mv = NAN, dist = NAN, haz_x = NAN, haz_z = NAN, haz_x_piso = NAN;
+        if (dist_sharp_read_mv(&mv)) {
+            sharp_mv = (float)mv;
+            dist = sharp_distancia_m(mv * 1e-3f / sc.div, sc.k, sc.v0, SHARP_D_MIN_M, SHARP_D_MAX_M);
+        }
+        haz_t haz = haz_para_pata(pata_actual(servo_pos), eje_patas, eje_x, eje_z, n_eje, sc.sx, sc.sz,
+                                  sc.ang);
+        float th_cuerpo = att.theta - IMU_DELTA_DEG * DEG2RAD;
+        if (!isnan(dist)) haz_punto(&haz, th_cuerpo, WHEEL_RADIUS_M, dist, &haz_x, &haz_z);
+        float d_plano = haz_distancia_plano(&haz, th_cuerpo, WHEEL_RADIUS_M);
+        if (!isnan(d_plano)) {
+            float z0;
+            haz_punto(&haz, th_cuerpo, WHEEL_RADIUS_M, d_plano, &haz_x_piso, &z0);
+        }
 
         // 4. Control y actuación. Fuera de BALANCING se apaga en cada ciclo, no solo al salir.
         float applied[MOTOR_COUNT] = { 0.0f };      // para la telemetría
@@ -319,31 +491,74 @@ static void control_task(void *arg)
             ramp = fminf(ramp + dt / ARM_RAMP_S, 1.0f);
             float u_limit = ramp * params.u_max;
 
+            // La bajada del escalón (△): manda en las consignas, las patas y el filtro; el
+            // joystick no. Termina quieta, con la posición donde quedó.
+            man_entrada_t me = {
+                .dt = dt, .x = odo.x, .v = odo.v, .rate = att.rate, .acc = acc_norma,
+                .pata_deg = pata_actual(servo_pos), .haz_valido = !isnan(dist), .haz_z = haz_z,
+                .haz_x_piso = haz_x_piso,
+            };
+            maniobra_paso(&man, &man_p, &me, &ms);
+            // La parada (□): baja, corre la referencia hacia atrás y desarma
+            parada_entrada_t pe = {
+                .dt = dt, .v = odo.v, .pata_deg = pata_actual(servo_pos),
+                .tilt_err = att.theta - params.theta_ref,
+            };
+            parada_paso(&par, &par_p, &pe, &ps);
+            if (ps.activa) {
+                // Frenando, las patas quedan donde están; después van al mínimo (dentro de sus límites)
+                params.theta_ref += ps.ref_extra;
+                pedir_desarme = ps.desarmar;
+                pedir_patas(ps.pata_deg, servo_pos, servo_target, servo_free, servo_lim);
+            }
+            bool manda_otro = ms.activa || ps.activa;
+
             // "mov": el avance pasa a una velocidad pedida con rampas de subida (acel) y de
             // frenado (fren); con x libre, la posición se fija recién cuando terminó de frenar
             // (movimiento.c). El giro suma y resta PWM entre las ruedas. Un pedido vencido vale
-            // cero: frena con la rampa y se queda parado donde termine.
-            bool mov_ok = t0 - mov_us < (int64_t)MOV_TIMEOUT_MS * 1000;
+            // cero: frena con la rampa y se queda parado donde termine. Con la maniobra no cuenta
+            // (y queda en la posición del robot, para seguir desde ahí); con la parada, frena.
+            bool mov_ok = t0 - mov_us < (int64_t)MOV_TIMEOUT_MS * 1000 && !manda_otro;
             float avance = mov_ok ? mov_fwd : 0.0f;
-            float g_target = mov_ok ? mov_turn * MOV_GIRO_MAX : 0.0f;
-            mov_entrada_t me = {
+            float g_target = mov_ok ? mov_turn * giro_max : 0.0f;
+            mov_entrada_t me_mov = {
                 .avance = avance, .x = odo.x, .v = odo.v,
                 .tilt_err = att.theta - params.theta_ref, .rate = att.rate, .u = u,
             };
-            params.u_ff = mov_paso(&mov, &mov_p, &me, dt);
-            // Quieto (posición fija) la zona muerta de siempre, que hace que las correcciones chicas
-            // venzan la fricción y sostiene la x; andando, la de andar
-            params.deadband = mov.x_fijada ? db_quieto : mov_p.deadband_mov;
+            if (ms.activa) {
+                mov_reset(&mov, odo.x);
+                params.u_ff = ms.u_ff;
+                params.deadband = db_quieto;        // como en la simulación
+            } else {
+                params.u_ff = mov_paso(&mov, &mov_p, &me_mov, dt);
+                // Quieto (posición fija) la zona muerta de siempre, que hace que las correcciones chicas
+                // venzan la fricción y sostiene la x; andando, la de andar
+                params.deadband = mov.x_fijada ? db_quieto : mov_p.deadband_mov;
+            }
             giro  += fminf(fmaxf(g_target - giro, -MOV_GIRO_RATE * dt), MOV_GIRO_RATE * dt);
+            if (manda_otro) giro = 0.0f;
 
+            if (ms.activa) {
+                pedir_patas(ms.pata_deg, servo_pos, servo_target, servo_free, servo_lim);
+            }
             if (imu_ok) {   // con una lectura fallida aislada se mantiene el último comando
-                u = balance_lqr_step(&bal, &params, odo.x - mov.x_ref, odo.v - mov.v_ref,
-                                     att.theta, att.rate, dt, u_limit);
+                balance_params_t pm = params;
+                float x_ref = mov.x_ref, v_ref = mov.v_ref;
+                if (ms.activa) {
+                    pm.lqr.kx *= ms.kx_factor;
+                    x_ref = ms.x_ref;
+                    v_ref = ms.v_ref;
+                }
+                u = balance_lqr_step(&bal, &pm, odo.x - x_ref, odo.v - v_ref, att.theta, att.rate, dt, u_limit);
+                if (ms.activa && ms.u_directo_activo) {
+                    // En el aire, la rueda a la velocidad del piso (o en cero) sin el LQR
+                    u = balance_compensar(&pm, ms.u_directo, u_limit);
+                }
             }
             // Referencia automática: si se queda corrido de su consigna, la referencia no es el
             // equilibrio real y se corrige despacio (la corrección sobre la tabla). Solo parado
             // (sin "mov", con la posición ya fija) y con la IMU bien.
-            if (params.ref_auto && imu_ok && avance == 0.0f && mov.v_ref == 0.0f && mov.x_fijada) {
+            if (params.ref_auto && imu_ok && !manda_otro && avance == 0.0f && mov.v_ref == 0.0f && mov.x_fijada) {
                 ref_correccion = balance_ref_auto(ref_correccion, ref_centro,
                                                   REF_AUTO_RANGE_DEG * DEG2RAD, odo.x - mov.x_ref,
                                                   odo.v, REF_AUTO_V_MAX,
@@ -373,9 +588,45 @@ static void control_task(void *arg)
         if (st != SUP_BALANCING) {
             mov_reset(&mov, 0.0f);
             giro = 0.0f;
+            // Sin equilibrio no hay maniobra ni parada: las patas quedan donde estén
+            if (man.estado != MAN_INACTIVA && man.estado != MAN_FIN && man.estado != MAN_ABORTADA) {
+                maniobra_abortar(&man, st == SUP_FALLEN ? "se cayo" : "desarmado");
+            }
+            if (man.estado != MAN_INACTIVA || par.estado != PARADA_INACTIVA || ms.activa || ps.activa) {
+                for (int i = 0; i < SERVO_COUNT; i++) servo_target[i] = servo_pos[i];
+            }
+            if (man.estado == MAN_ABORTADA || man.estado == MAN_FIN) man.estado = MAN_INACTIVA;
+            parada_cancelar(&par);
+            ms.activa = ps.activa = false;
         }
-        // Los servos no dependen del estado: todavía no participan del equilibrio
-        update_servos(servo_pos, servo_target, servo_free, mov_p.vel_pata_dps, dt);
+        // Registro de la bajada, cada ciclo
+        if (grabando) {
+            int n = s_reg_n;
+            s_reg[n] = (registro_t){
+                .ciclo = (uint16_t)n, .estado = (uint8_t)man.estado,
+                .marcas = (imu_ok ? REG_IMU_OK : 0) | (imu_ok && s.baja_g ? REG_BAJA_G : 0)
+                          | (ms.activa && ms.solo_giroscopo ? REG_SOLO_GIRO : 0)
+                          | (ms.activa && ms.u_directo_activo ? REG_U_DIRECTO : 0),
+                .theta_cdeg = a_i16(att.theta * 5729.578f), .rate_ddps = a_i16(att.rate * 572.9578f),
+                .x_mm = a_i16(odo.x * 1e3f), .v_mms = a_i16(odo.v * 1e3f),
+                .vref_mms = a_i16((ms.activa ? ms.v_ref : mov.v_ref) * 1e3f), .u_mil = a_i16(u * 1e3f),
+                .pata_cdeg = a_i16(pata_actual(servo_pos) * 100.0f), .acc_cms2 = a_i16(acc_norma * 100.0f),
+                .dist_mm = isnan(dist) ? -1 : a_i16(dist * 1e3f), .ref_cdeg = a_i16(params.theta_ref * 5729.578f),
+            };
+            s_reg_n = n + 1;
+            bool termino = man.estado == MAN_INACTIVA || man.estado == MAN_FIN || st != SUP_BALANCING;
+            if (termino) fin_reg--;
+            if (s_reg_n >= REGISTRO_N || fin_reg <= 0) {
+                grabando = false;
+                s_reg_listo = true;
+            }
+        }
+
+        // Los servos no dependen del estado: la maniobra y la parada piden su velocidad
+        float vel_patas = mov_p.vel_pata_dps;
+        if (ms.activa && ms.vel_pata_dps > 0.0f) vel_patas = ms.vel_pata_dps;
+        if (ps.activa && ps.vel_pata_dps > 0.0f) vel_patas = ps.vel_pata_dps;
+        update_servos(servo_pos, servo_target, servo_free, vel_patas, dt);
 
         // 5. Telemetría y medición del ciclo
         uint32_t exec_us = (uint32_t)(esp_timer_get_time() - t0);
@@ -405,10 +656,27 @@ static void control_task(void *arg)
             .motor_cmd   = { applied[MOTOR_LEFT], applied[MOTOR_RIGHT] },
             .x           = odo.x,
             .v           = odo.v,
-            .v_ref       = mov.v_ref,
+            .v_ref       = ms.activa ? ms.v_ref : mov.v_ref,
             .mov         = mov_p,
             .deadband_quieto = db_quieto,
             .giro        = giro,
+            .sharp_mv    = sharp_mv,
+            .dist        = dist,
+            .haz_x       = haz_x,
+            .haz_z       = haz_z,
+            .sharp_k     = sc.k, .sharp_v0 = sc.v0, .sharp_div = sc.div,
+            .sens_x      = sc.sx, .sens_z = sc.sz, .sens_ang = sc.ang,
+            .man_estado  = man.estado,
+            .man_motivo  = man.motivo,
+            .man_borde   = man.estado >= MAN_PREPARAR && man.estado <= MAN_FIN ? odo.x - man.borde_x : NAN,
+            .man_d_largada = man.d_largada,
+            .parada_estado = par.estado,
+            .registrando = grabando,
+            .giro_max    = giro_max,
+            .par_inclina = par_p.inclina_deg * DEG2RAD,
+            .par_suelta  = par_p.suelta_deg * DEG2RAD,
+            .tau_att     = s_tau_att,
+            .led_guia    = led_guia,
         };
         for (int i = 0; i < 3; i++) {
             t.accel[i] = imu_ok ? s.accel[i] : NAN;

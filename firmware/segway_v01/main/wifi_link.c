@@ -15,6 +15,24 @@
 
 static const char *TAG = "wifi_link";
 
+// Hasta tres redes (wifi_secrets.h: WIFI_SSID, y si hacen falta WIFI_SSID2 y WIFI_SSID3 con sus
+// claves): si una no aparece o no conecta, prueba la siguiente (5/11: la casa, la facultad, el celular)
+#ifndef WIFI_SSID2
+#define WIFI_SSID2      ""
+#define WIFI_PASSWORD2  ""
+#endif
+#ifndef WIFI_SSID3
+#define WIFI_SSID3      ""
+#define WIFI_PASSWORD3  ""
+#endif
+static const char *const REDES[][2] = {
+    { WIFI_SSID, WIFI_PASSWORD }, { WIFI_SSID2, WIFI_PASSWORD2 }, { WIFI_SSID3, WIFI_PASSWORD3 },
+};
+#define N_REDES ((int)(sizeof REDES / sizeof REDES[0]))
+static int s_redes[N_REDES];            // las configuradas (índices de REDES)
+static int s_n_redes;
+static volatile int s_red;              // la que se está usando o probando (índice de s_redes)
+
 // Escritos por el manejador de eventos del WiFi, leídos por comms: palabras de 32 bits
 static volatile wifi_state_t s_state = WIFI_OFF;
 static volatile uint32_t s_ip;          // orden de red, como lo da esp_netif
@@ -33,14 +51,30 @@ static bool client_valid(void)
         && esp_timer_get_time() - s_client_us < (int64_t)WIFI_CLIENT_TIMEOUT_S * 1000000;
 }
 
+// La red i (de s_redes): nombre y clave. Sin clave, también las abiertas con cifrado (OWE)
+static esp_err_t usar_red(int i)
+{
+    const char *const *red = REDES[s_redes[i]];
+    wifi_config_t cfg = { 0 };
+    strncpy((char *)cfg.sta.ssid, red[0], sizeof cfg.sta.ssid);
+    strncpy((char *)cfg.sta.password, red[1], sizeof cfg.sta.password);
+    // Con clave, WPA2 o más (si no, el driver lo cambia solo y lo avisa en la consola cada vez)
+    cfg.sta.threshold.authmode = red[1][0] != '\0' ? WIFI_AUTH_WPA2_PSK : WIFI_AUTH_OPEN;
+    cfg.sta.owe_enabled = red[1][0] == '\0';
+    s_red = i;
+    return esp_wifi_set_config(WIFI_IF_STA, &cfg);
+}
+
 static void on_event(void *arg, esp_event_base_t base, int32_t id, void *data)
 {
     if (base == WIFI_EVENT && id == WIFI_EVENT_STA_START) {
         esp_wifi_connect();
     } else if (base == WIFI_EVENT && id == WIFI_EVENT_STA_DISCONNECTED) {
-        // Se perdió la red (o no se encontró): se reintenta siempre, el robot sigue por cable
+        // Se perdió la red (o no se encontró): se reintenta siempre, con la siguiente si hay más de
+        // una; el robot sigue por cable
         s_reason = ((wifi_event_sta_disconnected_t *)data)->reason;
         s_state = WIFI_CONNECTING;
+        if (s_n_redes > 1) usar_red((s_red + 1) % s_n_redes);
         esp_wifi_connect();
     } else if (base == IP_EVENT && id == IP_EVENT_STA_GOT_IP) {
         const esp_netif_ip_info_t *ip = &((ip_event_got_ip_t *)data)->ip_info;
@@ -63,7 +97,10 @@ void wifi_link_start(void)
         err = nvs_flash_init();
     }
     TRY(err);
-    if (strlen(WIFI_SSID) == 0) {
+    for (int i = 0; i < N_REDES; i++) {
+        if (strlen(REDES[i][0]) > 0) s_redes[s_n_redes++] = i;
+    }
+    if (s_n_redes == 0) {
         return;     // sin red configurada: comms lo informa
     }
 
@@ -82,12 +119,9 @@ void wifi_link_start(void)
     TRY(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, on_event, NULL));
     TRY(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, on_event, NULL));
 
-    wifi_config_t cfg = { 0 };
-    strncpy((char *)cfg.sta.ssid, WIFI_SSID, sizeof cfg.sta.ssid);
-    strncpy((char *)cfg.sta.password, WIFI_PASSWORD, sizeof cfg.sta.password);
     TRY(esp_wifi_set_mode(WIFI_MODE_STA));
-    TRY(esp_wifi_set_config(WIFI_IF_STA, &cfg));
     TRY(esp_wifi_set_storage(WIFI_STORAGE_RAM));    // la red sale de wifi_secrets.h, no de la NVS
+    TRY(usar_red(0));
 
     // Socket antes de conectar: queda escuchando en WIFI_CMD_PORT de cualquier interfaz
     s_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -152,7 +186,7 @@ wifi_state_t wifi_link_state(void)
 wifi_info_t wifi_link_info(void)
 {
     wifi_info_t info = { .state = s_state, .reason = s_reason };
-    strncpy(info.ssid, WIFI_SSID, sizeof info.ssid - 1);
+    if (s_n_redes > 0) strncpy(info.ssid, REDES[s_redes[s_red]][0], sizeof info.ssid - 1);
     if (info.state == WIFI_CONNECTED) {
         esp_ip4_addr_t ip = { .addr = s_ip };
         snprintf(info.ip, sizeof info.ip, IPSTR, IP2STR(&ip));
