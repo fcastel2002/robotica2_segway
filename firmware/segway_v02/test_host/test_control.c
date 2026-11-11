@@ -983,48 +983,95 @@ static void test_maniobra_espera_quieto_antes_del_borde(void)
 }
 
 // ---------------------------------------------------------------- nivel de costado (11/11)
-// El robot de frente en un piso inclinado `piso` grados de costado: el rolido es el del piso menos lo
-// que enderezan las patas (0,95° por grado de diferencia, con `signo_planta`: para qué lado, que en el
-// robot depende de cómo está la IMU; las patas van a 20 °/s). La IMU marca
-// `cero` de más y su acelerómetro tiene algo de ruido. Devuelve cuánto queda inclinado [°].
-static float simular_nivel(float piso, float ganancia, float signo_planta, float cero, float *delta_final)
+// El robot de frente en un piso inclinado de costado: rolido > 0 es el lado izquierdo abajo, y delta > 0
+// (pata izquierda más larga) lo levanta: rolido = piso − 0,95·delta. Las patas van a 20 °/s y además el
+// servo real llega con un retardo de primer orden de 0,1 s. La IMU marca `cero` de más y su acelerómetro
+// tiene algo de ruido. El piso es `piso_a` hasta t_cambio y `piso_b` después.
+typedef struct {
+    float rol_final;        // [°] lo que queda inclinado al final (20 s)
+    float delta_final;      // [°] patas izq − der al final
+    float rol_1s;           // [°] inclinado 1 s después de cada cambio de piso (el último)
+    float sobrepaso;        // [°] lo que más pasó para el otro lado después del último cambio
+} sim_nivel_t;
+
+static sim_nivel_t simular_nivel(float piso_a, float piso_b, float t_cambio, float escala, float cero)
 {
     const float dt = 0.005f;
-    const nivel_params_t p = { .ganancia = ganancia, .cero_deg = cero, .banda_deg = 0.5f,
+    const nivel_params_t p = { .escala = escala, .kp = 0.5f, .ki = 2.5f, .cero_deg = cero, .banda_deg = 0.3f,
                                .delta_max_deg = 16.0f, .tau = 0.5f };
     nivel_t n;
     nivel_reset(&n);
-    float izq = 15.0f, der = 15.0f, rol = piso, rol_ant = piso;
+    sim_nivel_t r = { 0 };
+    float izq = 15.0f, der = 15.0f, cmd_i = 15.0f, cmd_d = 15.0f, rol = piso_a, rol_ant = piso_a;
     for (int i = 0; i < 4000; i++) {
-        rol = piso - signo_planta * 0.95f * (izq - der);
+        float t = (float)i * dt, piso = t < t_cambio ? piso_a : piso_b;
+        float desde = t < t_cambio ? 0.0f : t_cambio;
+        rol = piso - 0.95f * (izq - der);
+        if (fabsf(t - desde - 1.0f) < 0.5f * dt) r.rol_1s = rol;
+        if (t >= desde && rol * piso < 0.0f && fabsf(rol) > r.sobrepaso) r.sobrepaso = fabsf(rol);
         float ruido = 0.05f * sinf(0.7f * (float)i);
         float medido = (rol + cero) * DEG;
         nivel_medir(&n, &p, 9.81f * sinf(medido) + ruido, 9.81f * cosf(medido), (rol - rol_ant) * DEG / dt, true, dt);
         rol_ant = rol;
         float obj_i, obj_d;
         nivel_patas(15.0f, 15.0f, nivel_paso(&n, &p, true, dt), 0.0f, 30.0f, &obj_i, &obj_d);
-        izq += fminf(fmaxf(obj_i - izq, -20.0f * dt), 20.0f * dt);
-        der += fminf(fmaxf(obj_d - der, -20.0f * dt), 20.0f * dt);
+        cmd_i += fminf(fmaxf(obj_i - cmd_i, -20.0f * dt), 20.0f * dt);
+        cmd_d += fminf(fmaxf(obj_d - cmd_d, -20.0f * dt), 20.0f * dt);
+        izq += (cmd_i - izq) * dt / 0.1f;
+        der += (cmd_d - der) * dt / 0.1f;
     }
-    *delta_final = izq - der;
-    return rol;
+    r.rol_final = rol;
+    r.delta_final = izq - der;
+    return r;
 }
 
 static void test_nivel_de_costado(void)
 {
-    float delta;
+    sim_nivel_t r;
     // Piso plano: no toca las patas, aunque la IMU marque 3,9° de más (su cero)
-    CHECK(fabsf(simular_nivel(0.0f, 1.0f, -1.0f, 3.9f, &delta)) < 0.01f && delta == 0.0f);
-    // 5° de costado: queda dentro de la banda y con las patas a ~5° una de la otra
-    CHECK(fabsf(simular_nivel(5.0f, 1.0f, -1.0f, 3.9f, &delta)) < 0.8f);
-    CHECK(fabsf(delta + 5.0f / 0.95f) < 1.0f);
-    CHECK(fabsf(simular_nivel(-5.0f, 1.0f, -1.0f, 3.9f, &delta)) < 0.8f && delta > 0.0f);
+    r = simular_nivel(0.0f, 0.0f, 0.0f, 1.0f, 3.9f);
+    CHECK(fabsf(r.rol_final) < 0.01f && fabsf(r.delta_final) < 0.01f);
+    // Plano y de golpe 5° de costado (izquierda abajo): estira la izquierda, ~5/0,95° entre las patas,
+    // en 1 s ya está casi y sin pasarse para el otro lado
+    r = simular_nivel(0.0f, 5.0f, 2.0f, 1.0f, 3.9f);
+    CHECK(fabsf(r.rol_final) <= 0.31f && r.delta_final > 0.0f && fabsf(r.delta_final - 5.0f / 0.95f) < 0.4f);
+    CHECK(fabsf(r.rol_1s) < 1.0f && r.sobrepaso < 0.2f);
+    // Al revés, igual
+    r = simular_nivel(0.0f, -5.0f, 2.0f, 1.0f, 3.9f);
+    CHECK(fabsf(r.rol_final) <= 0.31f && r.delta_final < 0.0f && fabsf(r.rol_1s) < 1.0f && r.sobrepaso < 0.2f);
     // 20°: no alcanza; llega al tope (16° entre las patas) y se queda ahí
-    CHECK(simular_nivel(20.0f, 1.0f, -1.0f, 3.9f, &delta) > 4.0f && fabsf(delta + 16.0f) < 0.01f);
+    r = simular_nivel(20.0f, 20.0f, 0.0f, 1.0f, 3.9f);
+    CHECK(r.rol_final > 4.0f && fabsf(r.delta_final - 16.0f) < 0.01f);
+    // Anti-windup: 10 s en el tope por un piso de 20° y vuelve a plano: de los 15° que quedan por las patas
+    // baja a ~1° en 1 s (con la integral acumulada se quedaría trabado en el tope varios segundos)
+    r = simular_nivel(20.0f, 0.0f, 10.0f, 1.0f, 3.9f);
+    CHECK(fabsf(r.rol_1s) < 1.5f &&fabsf(r.rol_final) <= 0.31f && fabsf(r.delta_final) < 0.4f);
     // Apagado: nada
-    CHECK(fabsf(simular_nivel(5.0f, 0.0f, -1.0f, 3.9f, &delta) - 5.0f) < 0.01f && delta == 0.0f);
-    // Con el signo al revés se inclina más, pero hasta el tope y no más (por eso se prueba agarrado)
-    CHECK(simular_nivel(5.0f, -1.0f, -1.0f, 3.9f, &delta) > 15.0f && fabsf(delta - 16.0f) < 0.01f);
+    r = simular_nivel(5.0f, 5.0f, 0.0f, 0.0f, 3.9f);
+    CHECK(fabsf(r.rol_final - 5.0f) < 0.01f && r.delta_final == 0.0f);
+    // Proporcional: sin integral, delta = Kp·(error − banda) en el mismo ciclo, y para el lado que endereza
+    {
+        const nivel_params_t pp = { .escala = 1.0f, .kp = 1.0f, .ki = 0.0f, .cero_deg = 3.9f, .banda_deg = 0.3f,
+                                    .delta_max_deg = 16.0f, .tau = 0.5f };
+        nivel_t n;
+        nivel_reset(&n);
+        n.iniciado = true;
+        n.rolido = (3.9f + 4.0f) * DEG;                 // 4° con la izquierda abajo
+        CHECK(fabsf(nivel_paso(&n, &pp, true, 0.005f) - 3.7f) < 1e-3f);
+        n.rolido = (3.9f - 2.0f) * DEG;                 // 2° con la derecha abajo
+        CHECK(fabsf(nivel_paso(&n, &pp, true, 0.005f) + 1.7f) < 1e-3f);
+        // Congelado (girando): delta queda, y al volver con el mismo error no salta
+        const nivel_params_t pi = { .escala = 1.0f, .kp = 0.5f, .ki = 2.5f, .cero_deg = 3.9f, .banda_deg = 0.3f,
+                                    .delta_max_deg = 16.0f, .tau = 0.5f };
+        nivel_reset(&n);
+        n.iniciado = true;
+        n.rolido = (3.9f + 3.0f) * DEG;
+        for (int k = 0; k < 100; k++) nivel_paso(&n, &pi, true, 0.005f);
+        float antes = n.delta_deg;
+        n.rolido = (3.9f + 1.0f) * DEG;
+        CHECK(nivel_paso(&n, &pi, false, 0.005f) == antes);
+        CHECK(fabsf(nivel_paso(&n, &pi, true, 0.005f) - antes) < 0.01f);
+    }
     // Una pata en su tope: la otra hace el resto
     float i, d;
     nivel_patas(28.0f, 28.0f, 10.0f, 0.0f, 30.0f, &i, &d);
@@ -1034,7 +1081,7 @@ static void test_nivel_de_costado(void)
     nivel_patas(15.0f, 15.0f, -6.0f, 0.0f, 30.0f, &i, &d);
     CHECK(fabsf(i - 12.0f) < 1e-4f && fabsf(d - 18.0f) < 1e-4f);
     // En caída o en un golpe el acelerómetro no cuenta: el rolido sigue con el giróscopo
-    const nivel_params_t p = { .ganancia = 1.0f, .tau = 0.5f };
+    const nivel_params_t p = { .escala = 1.0f, .kp = 0.5f, .ki = 2.5f, .tau = 0.5f };
     nivel_t n;
     nivel_reset(&n);
     nivel_medir(&n, &p, 0.0f, 9.81f, 0.0f, true, 0.005f);

@@ -24,7 +24,7 @@ Controles configurados para el mando de PS4 (DualShock 4):
 - Botón □ (Cuadrado): parada controlada (`parar`): frena, baja las patas al mínimo y se deja caer
   apenas para atrás con los motores apagados.
 - Gatillo L2 (11/11): prende y apaga el nivel de costado (`set nivel`): en un piso inclinado de lado acorta
-  una pata y estira la otra hasta quedar derecho. El signo, en NIVEL_GANANCIA. R2 no hace nada.
+  una pata y estira la otra hasta quedar derecho (un PI en el firmware). R2 no hace nada.
 
 Expone `GET http://localhost:8001/estado`, `POST /mando` y `POST /accion` con `Access-Control-Allow-Origin: *`.
 Solo usa la biblioteca estándar de Python (`ctypes` en Windows).
@@ -54,7 +54,7 @@ SONY_VID = 0x054C        # DualShock 4 / DualSense
 SERVO_MIN_DEG = 0
 SERVO_MAX_DEG = 30
 SERVO_PASO_DEG = 2       # 3/11: antes 10; el equipo los quiere de a poco (los botones de la página)
-NIVEL_GANANCIA = 1.0     # lo que manda L2 con "set nivel": si al prenderlo se inclina más, poner -1.0
+NIVEL_GANANCIA = 1.0     # lo que manda L2 con "set nivel": escala del PI (1 = las de fábrica; el signo es fijo)
 SERVO_VEL_DPS = 20.0     # «velpata» del firmware: solo para estimar dónde quedaron al soltar R1/L1
 
 MODOS_VALIDOS = ("opcion_1", "opcion_2")

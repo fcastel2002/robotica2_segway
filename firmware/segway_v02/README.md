@@ -27,6 +27,16 @@ terminal de ESP-IDF. La compilación va a `build/`, dentro de esta carpeta.
 idf.py -p COM5 build flash monitor
 ```
 
+**Con solo el USB (sin batería)** `idf.py flash` falla: la ESP32 se reinicia por baja tensión
+(`BROWNOUT_RST`, "Invalid head of packet") con el stub de esptool. Sin stub anda, pero el 11/11 se
+grababa a 115200 baudios y sin compresión: ~95 s solo de cable. Usar el script, que graba sin stub a
+921600 (baja a 460800 y 115200 si falla) y reescribe solo los sectores que cambiaron:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ..\herramientas\grabar.ps1 -Puerto COM7 -Compilar
+# con batería: -ConStub (el de siempre, comprimido); sin stub, -Comprimir para probar la compresión
+```
+
 ## Consola
 
 Al arrancar imprime una línea CSV cada 20 ms. Las líneas que empiezan con `#` son mensajes.
@@ -295,24 +305,35 @@ se reiniciaba con los golpes (pines flojos): con las PCB, repetirlo.
 
 ## Nivel de costado (11/11)
 
-**Apagado de fábrica y sin probar en el robot.** En un piso inclinado hacia un lado, acorta la pata de
-arriba y estira la de abajo hasta que el cuerpo queda derecho ([`nivel.c`](components/control/nivel.c)).
-Estima el rolido con la IMU (acelerómetro de costado + giróscopo del eje hacia adelante) y mueve la
-diferencia entre las patas despacio (integral, con banda muerta de 0,5°; las patas van a `velpata`):
-1° de diferencia endereza ~0,95°, y con el tope de 16° entre patas corrige hasta ~7,5° de piso. Solo
-equilibrando, sin maniobra ni parada, y no corrige mientras gira a más de 20 °/s. La altura que se pide
-con R1/L1 es la media de las dos; si una llega a su tope (0 o 30°), la otra hace el resto.
+**Apagado de fábrica** (`set nivel 1` o L2 del mando lo prende). En un piso inclinado hacia un lado,
+acorta la pata de arriba y estira la de abajo hasta que el rolido vuelve a la referencia `rolcero`
+([`nivel.c`](components/control/nivel.c)). Estima el rolido con la IMU (acelerómetro de costado +
+giróscopo del eje hacia adelante) y lo controla con un **PI** sobre la diferencia entre las patas:
+
+    delta (izq − der) = Kp·e + Ki·∫e,   e = rolido − rolcero (menos una banda muerta de 0,3°)
+
+Kp = 0,5 (`set nivelkp`) y Ki = 2,5 /s (`set nivelki`); `set nivel 0.5` o `2` escala las dos. 1° de
+diferencia endereza ~0,95°, así que el error baja con una constante de tiempo de ~0,6 s, sin sobrepaso
+(en la simulación de `test_host`, con las patas a 20 °/s y 0,1 s de retardo del servo). Con el tope de
+16° entre patas corrige hasta ~7,5° de piso, con anti-windup: al salir del tope no se queda pegado.
+Solo equilibrando, sin maniobra ni parada; girando a más de 20 °/s congela delta y al volver sigue
+sin salto. La altura que se pide con R1/L1 es la media de las dos; si una llega a su tope (0 o 30°),
+la otra hace el resto.
+
+**El signo está fijo por la geometría** (no hay `set nivel -1`): el eje 0 de la IMU apunta a la derecha,
+así que rolido > 0 es el lado izquierdo abajo, y más ángulo de pata es pata más larga, así que hay que
+estirar la izquierda. La primera versión (11/11) lo hacía al revés y con `set nivel 1` se inclinaba más.
 
 **No es para el golpe de caer con una rueda antes que la otra:** eso dura 0,1 s y las patas tardan
 medio segundo en moverse 10°. Sirve para un plano inclinado de costado.
 
 Para probarlo (agarrado, de menor a mayor):
-1. `get` muestra `# nivel=... rolido=... rolcero=...`. Con el robot derecho en piso plano y las patas
-   iguales, `set nivelcero 1` toma ese rolido como cero (de fábrica 3,9°, lo medido el 11/11).
+1. `get` muestra `# nivel=... nivelkp=... nivelki=... rolido=... rolcero=...`. Con el robot derecho en
+   piso plano y las patas iguales, `set nivelcero 1` toma ese rolido como referencia (de fábrica 3,9°).
 2. `set nivel 1` y poner un libro de 1-2 cm debajo de una rueda: la pata de ese lado tiene que
-   acortarse. **Si se inclina más, es el otro signo:** `set nivel -1` (depende de cómo está la IMU). Con
-   el signo al revés llega al tope de 8° por pata y se queda ahí.
-3. `set nivel 0` lo apaga y las patas vuelven a quedar iguales.
+   acortarse y el "inclinado" de `get` volver a menos de 0,3°.
+3. Si oscila, bajar `nivelkp`; si tarda, subir `nivelki`. `set nivel 0` lo apaga y las patas vuelven a
+   quedar iguales.
 
 ## Medición de energía (INA)
 
