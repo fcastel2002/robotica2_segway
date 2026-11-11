@@ -9,12 +9,18 @@ Controles configurados para el mando de PS4 (DualShock 4):
   «velpata» grados por segundo, 20 por defecto); al soltarlo quedan donde están (`servo on`). Un toque
   corto las mueve ~2°. Tope en 30° (SERVO_MAX_DEG).
 - Botón L1: lo mismo hacia abajo (`servo 0`), tope en 0°.
+- Flechas izquierda / derecha (11/11): cada toque gira 1° para ese lado (`girar -1` / `girar 1`), para
+  alinearlo a mano. Las flechas arriba / abajo siguen siendo avance al 50 %.
+- R3 + L3 a la vez, sostenidos 0,7 s (11/11, pedido del equipo): demostración de un control mal ajustado.
+  Sube las ganancias del LQR al máximo y saca los dos filtros (`set lqrfac 1.5`, `set notch 0`,
+  `set notch2 0`): el robot vibra y puede caerse. Al soltar vuelven los valores de fábrica (0,87, 11,6 y
+  7,7 Hz). Queda avisado en la consola y en la página.
 - R3 / L3 (apretar el stick derecho / izquierdo), 11/11: mientras está apretado gira sobre su eje a la
   derecha / a la izquierda (`eje 1` / `eje -1`, a «weje» grados por segundo, con el giróscopo).
 - Botón ✕ (Equis): arma el robot (`arm`; el LQR es el único control del firmware).
 - Botón ◯ (Círculo): desarme de emergencia inmediato (`mov 0 0` + `disarm`).
 - Botón △ (Triángulo): baja el escalón que tiene atrás (`escalon`; sin el sensor, con el borde a
-  la distancia que tiene el firmware: `man d_borde`, 30 cm por defecto). Solo equilibrando.
+  la distancia que tiene el firmware: `man d_borde`; `get` la muestra). Solo equilibrando.
 - Botón □ (Cuadrado): parada controlada (`parar`): frena, baja las patas al mínimo y se deja caer
   apenas para atrás con los motores apagados.
 - Gatillos R2 / L2: no hacen nada (3/11: el giro sobre su eje con los gatillos se sacó).
@@ -94,7 +100,7 @@ def calcular_mando(ejes: dict, modo: str, escala: float = 1.0) -> tuple[float, f
     lx = float(ejes.get("lx", 0.0))
     ly = float(ejes.get("ly", 0.0))
     rx = float(ejes.get("rx", 0.0))
-    dx = float(ejes.get("dpad_x", 0.0)) * FLECHAS_FRACCION
+    dx = 0.0    # 11/11: las flechas izquierda/derecha ya no giran con "mov": cada toque es "girar ±1" (1°)
     dy = float(ejes.get("dpad_y", 0.0)) * FLECHAS_FRACCION
 
     if modo == "opcion_2":
@@ -552,6 +558,9 @@ class PuenteJoystick:
         self._patas_desde = 0.0
         self._agarrar_pendientes = 0
         self._eje_previo = 0.0      # R3/L3: lo último mandado con "eje"
+        self._r3l3_desde = None     # R3 + L3 a la vez: desde cuándo (demostración de control mal ajustado)
+        self._demo_mal = False
+        self._demo_usada = False    # alguna vez en esta sesión: al armar se reponen los valores de fábrica
 
     def _resolver_destino(self) -> tuple[str | None, bool, str]:
         """Devuelve (ip_udp, es_simulado, texto_destino)."""
@@ -593,7 +602,7 @@ class PuenteJoystick:
             if accion == "toggle_modo":
                 self.modo = "opcion_2" if self.modo == "opcion_1" else "opcion_1"
                 etiqueta = "Opción 1 (1 Stick + Flechitas)" if self.modo == "opcion_1" else "Opción 2 (2 Sticks Izq/Der)"
-                self._ultimo_evento = f"OPTIONS → {etiqueta}"
+                self._ultimo_evento = f"Modo cambiado a {etiqueta}"
             elif accion in ("modo_1", "opcion_1"):
                 self.modo = "opcion_1"
                 self._ultimo_evento = "Modo cambiado a Opción 1 (1 Stick + Flechitas)"
@@ -639,6 +648,10 @@ class PuenteJoystick:
                 comandos_a_enviar.append(f"servo {self.servo_deg}")
                 self._ultimo_evento = f"Servos ajustados a {self.servo_deg}° (rango 0°..{SERVO_MAX_DEG}°)"
             elif accion == "armar":
+                # Si se usó la demostración (R3 + L3), antes de armar vuelve el control de fábrica: que arme
+                # siempre bien aunque el "soltar" se haya perdido
+                if self._demo_usada:
+                    comandos_a_enviar.extend(["set lqrfac 0.87", "set notch 11.6", "set notch2 7.7"])
                 comandos_a_enviar.append("arm")
                 self._ultimo_evento = "✕ → Armar robot (arm)"
             elif accion == "desarmar":
@@ -648,6 +661,19 @@ class PuenteJoystick:
             elif accion == "escalon":
                 comandos_a_enviar.append("escalon")
                 self._ultimo_evento = "△ → Bajar el escalón de atrás (escalon)"
+            elif accion == "demo_mal_control":
+                # Con el 100 % de la tabla el robot ya vibraba fuerte (7/11) y los dos notch son lo que saca la
+                # vibración de ~10 Hz: al máximo y sin filtros, vibra y puede caerse
+                comandos_a_enviar.extend(["set lqrfac 1.5", "set notch 0", "set notch2 0"])
+                self._demo_usada = True
+                self._ultimo_evento = "R3 + L3 → DEMOSTRACIÓN: control mal ajustado (vibra y puede caerse). Soltar para volver"
+            elif accion == "demo_mal_control_fin":
+                comandos_a_enviar.extend(["set lqrfac 0.87", "set notch 11.6", "set notch2 7.7"])
+                self._ultimo_evento = "R3 + L3 sueltos → control de fábrica otra vez (lqrfac 0,87, notch 11,6 y 7,7 Hz)"
+            elif accion == "girar" and valor is not None:
+                grados = max(-30.0, min(30.0, float(valor)))
+                comandos_a_enviar.append(f"girar {grados:g}")
+                self._ultimo_evento = f"Flecha → gira {abs(grados):g}° a la {'derecha' if grados > 0 else 'izquierda'} (girar {grados:g})"
             elif accion == "alinear":
                 comandos_a_enviar.append("escalon alinear")
                 self._ultimo_evento = "OPTIONS → Alinearse con el borde y bajar (escalon alinear)"
@@ -694,6 +720,12 @@ class PuenteJoystick:
         elif (prev.get("r1") and not r1) or (prev.get("l1") and not l1):
             # se soltó uno: si el otro sigue apretado, manda ese; si no, paran
             self.ejecutar_accion("patas_subir" if r1 else "patas_bajar" if l1 else "patas_parar")
+
+        # Flechas izquierda/derecha: 1° por toque, para alinearlo a mano
+        if botones_actuales.get("right") and not prev.get("right"):
+            self.ejecutar_accion("girar", 1)
+        elif botones_actuales.get("left") and not prev.get("left"):
+            self.ejecutar_accion("girar", -1)
 
         if botones_actuales.get("triangulo") and not prev.get("triangulo"):
             self.ejecutar_accion("escalon")
@@ -784,6 +816,9 @@ class PuenteJoystick:
                     self._mando = {"avance": avance, "giro": giro}
             else:
                 self.ejecutar_accion("patas_parar")     # se desconectó con R1/L1 apretado: que no sigan
+                if self._demo_mal:                      # ... o en plena demostración: vuelve el control
+                    self._demo_mal = False
+                    self.ejecutar_accion("demo_mal_control_fin")
                 with self._lock:
                     self._botones_previos = dict(BOTONES_VACIOS)
                     self._estado_joy = {"conectado": False, "nombre": None, "bateria": None}
@@ -802,6 +837,20 @@ class PuenteJoystick:
                 # R3/L3: giro sobre su eje mientras estén apretados (los dos a la vez se anulan)
                 eje = (1.0 if self._botones.get("r3") else 0.0) - (1.0 if self._botones.get("l3") else 0.0)
                 eje_previo, self._eje_previo = self._eje_previo, eje
+                # Los dos a la vez, sostenidos: la demostración de control mal ajustado; al soltar, se va
+                los_dos = bool(self._botones.get("r3") and self._botones.get("l3"))
+                if not los_dos:
+                    self._r3l3_desde = None
+                elif self._r3l3_desde is None:
+                    self._r3l3_desde = t0
+                empezar_demo = los_dos and not self._demo_mal and t0 - self._r3l3_desde >= 0.7
+                terminar_demo = self._demo_mal and not los_dos
+            if empezar_demo:
+                self._demo_mal = True
+                self.ejecutar_accion("demo_mal_control")
+            elif terminar_demo:
+                self._demo_mal = False
+                self.ejecutar_accion("demo_mal_control_fin")
             if repetir_agarre:
                 self._enviar_comando_robot("servo on")
             if conectado and (eje != 0.0 or eje_previo != 0.0):

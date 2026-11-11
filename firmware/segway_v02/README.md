@@ -246,14 +246,17 @@ se reiniciaba con los golpes (pines flojos): con las PCB, repetirlo.
 - **`eje <-1..1>`** (R3/L3 del joystick): gira sobre su eje a `weje` grados por segundo (90; `set weje`),
   + a la derecha. Vence como `mov` (300 ms sin repetirlo y frena el giro con su rampa).
 - **Infrarrojos del borde**: los **dos Sharp** (ELE-049: el de J27 en GPIO3 y el segundo por la
-  expansión en **GPIO1**, los dos con su divisor × 0,6), uno de cada lado, mirando el piso **detrás** de
-  las ruedas (del lado hacia el que baja). Para alinearse alcanza con saber si cada uno ve el piso de
-  arriba: pasado el borde el piso queda más lejos y la tensión **baja**, así que "sin piso" es por debajo
-  del umbral (`irinv 1`, de fábrica). `get` muestra los dos (`# infrarrojos: izq=... mV (piso) der=... mV
-  (SIN PISO)`). **Antes de usarlos:** leerlos sobre el piso y asomados al escalón y poner el umbral al
-  medio (`set irumbral <mV>`; 800 de fábrica es una cuenta, no una medida); y tapar uno para ver cuál
-  es el izquierdo: se supone que el de J27 (`IR_SHARP1_ES_IZQ` en `board_config.h`; si están al revés
-  gira para el otro lado y aborta por «muy torcido»).
+  expansión en **GPIO1**), en el piso del chasis, paralelos a la IMU, uno de cada lado. La distancia la da
+  la biblioteca **SharpDistSensor** sin modificar (`components/sharpdistsensor/`, modelo
+  `GP2Y0A60SZLF_5V`, mediana de 15 muestras) y la altura es esa distancia por el coseno de θ. Cada uno
+  tiene su divisor (`set sharpdiv` el de J27, `set sharpdiv2` el segundo): **hay que cargar el que quedó
+  armado de verdad** (11/11: el segundo medía bien recién con 0,116 en lugar de 0,6). "Sin piso" (pasó el
+  borde) es ver el piso a más de `irumbral` cm (20). `get` muestra tensión, distancia y altura de los dos;
+  `set ircal 1`, parado en piso plano, corrige cada uno a la altura que corresponde a las patas. Tapar uno
+  para ver cuál es el izquierdo: se supone que el de J27 (`IR_SHARP1_ES_IZQ` en `board_config.h`; si
+  están al revés gira para el otro lado y aborta por «muy torcido»).
+- **`girar <grados>`** (flechas izquierda/derecha del joystick: 1° por toque): un giro corto medido con el
+  giróscopo, para alinearlo a mano. Sin ajustar en el robot (`GIRAR_*` en `board_config.h`).
 - **GPIO1 era la habilitación del motor izquierdo** (`PIN_MOTOR_L_EN`, que el DRV8871 no usa): pasó a
   `-1` para dejarle el pin al segundo Sharp. **Al grabar, comprobar la rueda izquierda** (`motor l 30`,
   `motor l -30`) antes de armar.
@@ -289,6 +292,27 @@ se reiniciaba con los golpes (pines flojos): con las PCB, repetirlo.
 - El registro de 200 Hz trae al final `ir_l` e `ir_r` (1 = sin piso). Con `escalon alinear` empieza
   cuando ya está alineado y a `d_carrera` (lo anterior no entra en 8 s); con `escalon alinear medir`,
   desde el principio.
+
+## Nivel de costado (11/11)
+
+**Apagado de fábrica y sin probar en el robot.** En un piso inclinado hacia un lado, acorta la pata de
+arriba y estira la de abajo hasta que el cuerpo queda derecho ([`nivel.c`](components/control/nivel.c)).
+Estima el rolido con la IMU (acelerómetro de costado + giróscopo del eje hacia adelante) y mueve la
+diferencia entre las patas despacio (integral, con banda muerta de 0,5°; las patas van a `velpata`):
+1° de diferencia endereza ~0,95°, y con el tope de 16° entre patas corrige hasta ~7,5° de piso. Solo
+equilibrando, sin maniobra ni parada, y no corrige mientras gira a más de 20 °/s. La altura que se pide
+con R1/L1 es la media de las dos; si una llega a su tope (0 o 30°), la otra hace el resto.
+
+**No es para el golpe de caer con una rueda antes que la otra:** eso dura 0,1 s y las patas tardan
+medio segundo en moverse 10°. Sirve para un plano inclinado de costado.
+
+Para probarlo (agarrado, de menor a mayor):
+1. `get` muestra `# nivel=... rolido=... rolcero=...`. Con el robot derecho en piso plano y las patas
+   iguales, `set nivelcero 1` toma ese rolido como cero (de fábrica 3,9°, lo medido el 11/11).
+2. `set nivel 1` y poner un libro de 1-2 cm debajo de una rueda: la pata de ese lado tiene que
+   acortarse. **Si se inclina más, es el otro signo:** `set nivel -1` (depende de cómo está la IMU). Con
+   el signo al revés llega al tope de 8° por pata y se queda ahí.
+3. `set nivel 0` lo apaga y las patas vuelven a quedar iguales.
 
 ## Medición de energía (INA)
 

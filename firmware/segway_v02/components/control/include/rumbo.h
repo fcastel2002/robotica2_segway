@@ -38,11 +38,3 @@ float rumbo_paso(rumbo_t *r, const rumbo_params_t *p, float wz, float w_pedido, 
 
 // El giro pedido ya terminó (la rampa llegó a cero)
 static inline bool rumbo_girando(const rumbo_t *r) { return r->w_ref != 0.0f; }
-
-// Un infrarrojo que mira el piso: true si NO lo ve (pasó el borde). mv: tensión de su salida;
-// invertido = false: sin piso la salida sube por encima del umbral (módulos de obstáculos con salida
-// digital: bajo = ve algo); invertido = true: sin piso baja (sensores analógicos de distancia).
-static inline bool ir_sin_piso(float mv, float umbral_mv, bool invertido)
-{
-    return invertido ? mv < umbral_mv : mv > umbral_mv;
-}

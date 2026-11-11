@@ -38,6 +38,8 @@
               {../firmware/docs/}%
               {../Aplicacion/capturas/}%
               {../Aplicacion/diagramas/}%
+              {../gui_hmi/capturas/}%
+              {presentacion/assets/}%
               {../docs/diagramas/}}
 
 \setlength{\parskip}{5pt}
@@ -69,7 +71,7 @@ y el descenso autónomo de escaleras\\[18pt]
 Simulink, diseño mecánico CAD, electrónica y PCB, firmware ESP-IDF, ajuste con el robot real\\
 y optimización de maniobras con algoritmos genéticos}
 \author{Grupo 4 --- Robótica II, Facultad de Ingeniería, UNCUYO\\[4pt]
-\small Joaquín Calderón \quad\textbullet\quad Francisco Castel \quad\textbullet\quad Matías Armani}
+\small Joaquín Calderón \quad\textbullet\quad Francisco Castel \quad\textbullet\quad Matías Armani \quad\textbullet\quad Ignacio Bartolini \quad\textbullet\quad Mariano Gimenez}
 \date{11 de noviembre de 2026}
 
 \begin{document}
@@ -1591,6 +1593,20 @@ desde dos puntos separados $130\ud{mm}$ mediante un balancín ecualizador. La ge
 verificó libre de interferencias en STEP/STL con una precarga controlada de $12{,}6\ud{mm^3}$
 en la lámina elástica de retención.
 
+\begin{center}
+\includegraphics[width=0.48\textwidth]{cad_cabeza_v4.png}\hfill
+\includegraphics[width=0.48\textwidth]{cad_tapa_chasis.png}\\[6pt]
+\includegraphics[width=0.48\textwidth]{cad_eslabon_ad.png}\hfill
+\includegraphics[width=0.48\textwidth]{cad_eslabon_bc.png}\\[6pt]
+\includegraphics[width=0.48\textwidth]{cad_eslabon_cdp_v4.png}\hfill
+\includegraphics[width=0.48\textwidth]{cad_abrazadera_motor.png}
+\captionof{figure}{Modelos CAD 3D de la tercera iteración constructiva (\texttt{diseño\_mecanico/}):
+cabina portante (\texttt{cabeza\_v4\_v2.STEP}), tapa superior desmontable (\texttt{tapa chasis.STEP}),
+manivela activa (\texttt{eslabon\_AD\_v2.STEP}), balancín doble (\texttt{asml\_eslabon\_BCv4.STEP}),
+acoplador inferior (\texttt{eslabon\_cdp\_v4\_idea1.STEP}) y abrazadera del motorreductor
+(\texttt{abrazadera\_motor\_jga25.STEP}).}\label{fig:cad_piezas_v4}
+\end{center}
+
 % ===========================================================================
 \chapter{Arquitectura electrónica y diseño de PCB}\label{cap:elec}
 % ===========================================================================
@@ -1851,42 +1867,239 @@ arquitectura completa del lazo digital a $200\ud{Hz}$:
       retención de orden cero de medio período ($2{,}5\ud{ms}$), el \textbf{retardo total
       equivalente entre el movimiento físico y el par motor es de $\approx 10\ud{ms}$} ($13^\circ$
       de desfasaje a $3{,}5\ud{Hz}$ y $18^\circ$ a $5\ud{Hz}$).
-\item \textbf{Nuevas funciones operativas de \texttt{segway\_v02}:} compensación de asimetría
-      entre ruedas izquierda y derecha (\texttt{set trim}), cambio en vivo del ancho de banda
-      interno de la IMU (\texttt{set dlpf}), bloqueo de seguridad que impide armar el LQR si los
-      servos de las patas están desenergizados (\texttt{servo off}), grabación en RAM de ráfagas
-      de $8\ud{s}$ a $200\ud{Hz}$ (\texttt{grabar}) y reconexión automática sobre tres redes WiFi
-      configurables.
+\item \textbf{Nuevas funciones operativas de \texttt{segway\_v02} (\texttt{FW-021} a \texttt{FW-028}):}
+      \begin{itemize}[leftmargin=1.4em]
+      \item \textbf{Bus $\text{I}^2\text{C}$ a $400\ud{kHz}$ y telemetría de tiempos de ciclo (\texttt{\# ciclo}):}
+            al elevar la frecuencia del bus de $100\ud{kHz}$ a $400\ud{kHz}$ (\texttt{I2C\_FREQ\_HZ}),
+            la lectura de los 14 bytes de la IMU bajó de $2{,}03\ud{ms}$ a $\mathbf{0{,}89\ud{ms}}$,
+            la lectura de un registro INA bajó a $\mathbf{0{,}76\ud{ms}}$ y el tiempo medio total
+            de \texttt{control\_task} descendió de $3{,}26\ud{ms}$ a $\mathbf{2{,}04\ud{ms}}$
+            (máximo $3{,}1\text{--}3{,}5\ud{ms}$ sobre $5{,}0\ud{ms}$ disponibles, con $0$ excesos).
+      \item \textbf{Filtro interno DLPF configurable en caliente (\texttt{set dlpf}):} mediante el
+            protocolo experimental \texttt{A2\_filtro\_imu} se compararon en el robot los modos
+            \texttt{dlpf 3} ($42\ud{Hz}$, retardo $\sim 4{,}8\ud{ms}$), \texttt{dlpf 2} ($98\ud{Hz}$,
+            $\sim 2{,}8\ud{ms}$) y \texttt{dlpf 1} ($188\ud{Hz}$, $\sim 1{,}9\ud{ms}$). El ajuste
+            \texttt{dlpf 1} adelantó la fase de la planta entre $+5^\circ$ y $+7^\circ$ de $2{,}3$ a
+            $4{,}7\ud{Hz}$ ($4{,}4\text{--}5{,}7\ud{ms}$ menos de retardo) y redujo el pico de
+            sensibilidad $|S|$ de $3{,}94$ a $\mathbf{3{,}34}$ sin incrementar la vibración en reposo.
+      \item \textbf{Compensación diferencial entre motores (\texttt{set trim 0.03}):} calibrada con
+            el ensayo \texttt{A1\_trim\_motores} (\texttt{analizar\_trim.py}) para corregir la
+            asimetría de $0{,}6\text{--}0{,}8\ud{rad/s}$ entre la rueda izquierda y la derecha.
+            La función \texttt{balance\_trim} reparte $\pm\texttt{trim}/2$ con una rampa lineal hasta
+            $|u| = 0{,}05$ para evitar saltos al cruzar por cero.
+      \item \textbf{Filtro de velocidad en vivo (\texttt{set velf}) y constante de actitud (\texttt{set tau}):}
+            permite ajustar la frecuencia de corte de la velocidad de rueda entre $2$ y $80\ud{Hz}$
+            ($20\ud{Hz}$ por defecto) y la constante $\tau$ del filtro complementario ($0{,}5\ud{s}$).
+      \item \textbf{Bloqueo de seguridad de patas al armar (\texttt{patas\_para\_armar}):} el
+            supervisor en \texttt{supervisor.c} prohíbe pasar a \texttt{BALANCING} si algún servo
+            está suelto (\texttt{nan}), y en el primer armado desde el encendido exige que ambas
+            patas estén comandadas al mismo ángulo ($\pm 0{,}5^\circ$); si no se cumple, rechaza
+            el armado, envía ambas patas a $15^\circ$ (\texttt{ARM\_PATAS\_DEG}) e informa el
+            motivo por consola.
+      \item \textbf{Ráfagas de $8\ud{s}$ a $200\ud{Hz}$ (\texttt{grabar}) y código de colores LED RGB (\texttt{led\_estado.c}):}
+            almacena en RAM $1.600$ muestras con IMU cruda, ángulo, odometría, corrientes de
+            entrada a cada driver (\texttt{i\_l\_ma}, \texttt{i\_r\_ma}), PWM y cuentas de encoder,
+            mientras que el LED RGB integrado indica el estado operativo y guía visualmente al
+            operador hacia la ventana de equilibrio (ámbar si está inclinado hacia adelante, cian
+            hacia atrás, parpadeo dentro de $\pm 5^\circ$, verde en \texttt{BALANCING} con destellos
+            amarillos cerca de la saturación y violeta durante maniobras automáticas).
+      \end{itemize}
 \end{enumerate}
 
-\section{Estación de mando, telemetría web y control por DualShock 4}
+\section{Estación de mando, telemetría web y las 5 pantallas de \texttt{Aplicacion/}}\label{sec:pantallas_app}
 
-Para operar el robot, diagnosticar sensores/actuadores y registrar ensayos a $200\ud{Hz}$, se
-desarrolló una estación de tierra 100\% portable en Python estándar y HTML5/Canvas
-(\texttt{Aplicacion/}, figura \ref{fig:hmi_banco}):
-
+Para operar el robot, diagnosticar cada subsistema y registrar ensayos a $50\ud{Hz}$ continuos y
+ráfagas a $200\ud{Hz}$, se desarrolló una estación de tierra 100\% portable en Python estándar
+y HTML5/Canvas sin dependencias externas (\texttt{Aplicacion/}). La arquitectura de software se
+divide en dos procesos locales coordinados:
 \begin{itemize}[leftmargin=1.5em]
-\item \textbf{Arquitectura de doble puente (\texttt{puente.py} + \texttt{joystick.py}):} el
-      servidor HTTP (\texttt{:8000}) recibe la telemetría UDP del robot (\texttt{:4210}), la
-      distribuye al navegador por Server-Sent Events (SSE) y almacena automáticamente en disco
-      los registros de alta velocidad (\texttt{registros/bajada\_*.csv}) que el robot transmite
-      al finalizar cada maniobra de escalón. En paralelo, \texttt{joystick.py} (\texttt{:8001})
-      lee el mando \textbf{PS4 DualShock 4 directamente por protocolo nativo HID}
-      (\texttt{hid.dll} en Windows), lo que garantiza una tasa constante de $25\ud{Hz}$ por UDP
-      incluso si el navegador pasa a segundo plano.
-\item \textbf{Interfaz en cinco vistas:} \emph{Mando/Conducción} (HUD interactivo con modos de
-      1 o 2 sticks conmutables con \texttt{OPTIONS}, pasos de $2^\circ$ en las patas entre
-      $0^\circ$ y $30^\circ$ con \texttt{L1}/\texttt{R1}, armado con $\times$, corte de
-      emergencia con $\bigcirc$, bajada de escalón con $\triangle$ y parada controlada con
-      $\square$), \emph{Banco de pruebas} (prueba individual de cada sensor y actuador),
-      \emph{Energía} (estado de carga SoC, autonomía restante y corrientes de los tres INA),
-      \emph{Gráficos} (osciloscopio multicanal con cursor) y \emph{Configuración}.
+\item \textbf{Servidor de telemetría y puente UDP (\texttt{Aplicacion/puente.py}, puerto \texttt{:8000}):}
+      envía latidos \texttt{hola} cada $1\ud{s}$ al robot, recibe las \textbf{39 columnas CSV} de
+      telemetría por UDP (\texttt{:4210}) o USB (Web Serial), las retransmite al navegador mediante
+      Server-Sent Events (\texttt{/eventos}), encamina los comandos hacia el puerto UDP \texttt{:4211}
+      e intercepta las descargas de alta velocidad (líneas \texttt{\#r}) para guardarlas
+      automáticamente en \texttt{Aplicacion/registros/bajada\_YYYYMMDD\_HHMMSS.csv}. Incluye además
+      un simulador físico completo (\texttt{--simular}) para verificar la interfaz sin robot.
+\item \textbf{Puente nativo HID del mando DualShock 4 (\texttt{Aplicacion/joystick.py}, puerto \texttt{:8001}):}
+      lee los reportes extendidos Bluetooth/USB del mando de PS4 directamente a través de
+      \texttt{hid.dll} en Windows (con respaldo en \texttt{winmm.dll} y Web Gamepad API). Esto
+      resolvió el problema detectado el 3/11 donde el navegador ponía el mando en modo extendido
+      (\#\texttt{0x11} de 547 bytes a $280\ud{Hz}$) y bloqueaba la lectura si se minimizaba la
+      pestaña: ahora el mando mantiene una transmisión ininterrumpida de $25\ud{Hz}$ por UDP hacia
+      el robot aunque el navegador esté en segundo plano.
+\end{itemize}
+
+La interfaz web (\texttt{Aplicacion/web/index.html}) comparte una barra superior permanente de
+seguridad (selector de fuente \emph{Puente WiFi} / \emph{USB directo}, botón \textbf{Grabar CSV},
+indicador de estado del supervisor, \textbf{Armar}, \textbf{Rearmar}, \textbf{Parar motores} y
+\textbf{Desarmar (Esc)}) y un pie de página desplegable con la consola de mensajes del robot y
+línea de comandos con autocompletado. El menú lateral organiza la operación en \textbf{cinco
+pantallas especializadas}, documentadas a continuación (figuras \ref{fig:app_mando} a
+\ref{fig:app_configuracion}):
+
+\subsection*{1. Pantalla de Mando / Conducción (\texttt{web/mando.js})}
+
+Es la vista principal de manejo en tiempo real (figura \ref{fig:app_mando}). Presenta un
+\textbf{esquema vectorial interactivo en vivo del mando PS4 DualShock 4} que ilumina cada botón
+presionado y desplaza los puntos de ambos sticks analógicos según las lecturas reales de
+\texttt{joystick.py}:
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Modos de conducción conmutables (\texttt{OPTIONS}):} permite alternar en vivo entre
+      la \emph{Opción 1} (el stick izquierdo y las flechitas D-Pad gobiernan tanto el avance como
+      el giro) y la \emph{Opción 2} (stick izquierdo exclusivo para avance y stick derecho para
+      giro diferencial), mostrando debajo las barras normalizadas de \texttt{avance} y \texttt{giro}
+      enviadas a $25\ud{Hz}$ al puerto UDP \texttt{:4211}.
+\item \textbf{Control sincronizado de los servos de las patas (\texttt{L1} / \texttt{R1}):} cada
+      pulsación de \texttt{R1} sube ambas patas $+2^\circ$ y \texttt{L1} las baja $-2^\circ$ a la
+      velocidad suave configurada en \texttt{velpata} ($20\ud{^\circ/s}$), además de ofrecer cuatro
+      botones de postura rápida ($0^\circ$, $10^\circ$, $20^\circ$ y $30^\circ$) y barras de
+      posición real reportada por el robot (\texttt{servo\_l\_deg} y \texttt{servo\_r\_deg},
+      acotadas estrictamente entre $0^\circ$ y $30^\circ$ de pata).
+\item \textbf{HUD de equilibrio y botonera de maniobras:} agrupa los botones de armado ($\times$,
+      \texttt{arm}), desarme de emergencia ($\bigcirc$, \texttt{mov 0 0} + \texttt{disarm}),
+      bajada automática de escalón ($\triangle$, \texttt{escalon}), parada controlada ($\square$,
+      \texttt{parar}) y captura a $200\ud{Hz}$ (\texttt{SHARE}, \texttt{grabar}), junto con
+      medidores bidireccionales de inclinación actual ($\theta$), referencia activa de la tabla de
+      patas ($\theta_{\text{ref}}$), velocidad de consigna ($v_{\text{ref}}$), velocidad real
+      ($v_{\text{real}}$), comando de giro y esfuerzo porcentual de cada puente H (\texttt{motor L/R}).
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=0.95\textwidth]{banco_de_pruebas.png}
-\captionof{figure}{Interfaz web de telemetría, diagnóstico y conducción (\texttt{Aplicacion/}):
-vista del banco de pruebas e inspección de sensores y actuadores en tiempo real.}\label{fig:hmi_banco}
+\includegraphics[width=0.96\textwidth]{app_mando.png}
+\captionof{figure}{Pantalla 1 de \texttt{Aplicacion/}: \textbf{Mando / Conducción}. Mapa
+interactivo en vivo del DualShock 4 por protocolo HID, selector de modo de sticks, control de
+altura de patas ($0^\circ\text{--}30^\circ$) y HUD de equilibrio y tracción.}\label{fig:app_mando}
+\end{center}
+
+\subsection*{2. Pantalla de Banco de Pruebas (\texttt{web/banco.js})}
+
+Diseñada para la verificación individual de cada sensor y actuador antes de cerrar el lazo y para
+la sintonía en caliente de los parámetros de control (figura \ref{fig:app_banco}). Sus tarjetas se
+distribuyen en tres columnas fijas para evitar saltos visuales:
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Columna 1 — Sensores (IMU y Encoders):} la tarjeta \textbf{IMU} dibuja un esquema
+      dinámico de la inclinación del péndulo respecto del equilibrio ($\theta - \theta_{\text{ref}}$),
+      indica si el robot se encuentra dentro de la ventana de $\pm 5^\circ$ habilitada para armar
+      y despliega las barras de las tres componentes crudas del acelerómetro ($a_x, a_y, a_z$ y
+      módulo $|\boldsymbol{a}| \approx 9{,}81\ud{m/s^2}$) y del giróscopo ($g_x, g_y, g_z$ en
+      $\ud{^\circ/s}$). La tarjeta \textbf{Encoders} calcula en tiempo real cuentas acumuladas,
+      vueltas, RPM (derivada sobre ventana móvil de $0{,}2\ud{s}$ con $899\;	ext{cuentas/vuelta}$)
+      y distancia recorrida en milímetros por cada rueda, con botón de puesta a cero (\texttt{enc reset},
+      bloqueado por seguridad si el robot está equilibrando).
+\item \textbf{Columna 2 — Actuadores (Motores y Servos):} la tarjeta \textbf{Motores} (habilitada
+      únicamente en \texttt{DISARMED} o \texttt{FAULT}) permite comandar ambas ruedas por separado
+      o sincronizadas (casilla \emph{juntos}), frenando automáticamente al soltar el deslizador o
+      al cambiar de pestaña, e incorpora un \textbf{generador de ensayos de escalón} que aplica el
+      porcentaje de PWM elegido durante $T$ segundos y promedia las RPM estacionarias de la segunda
+      mitad. La tarjeta \textbf{Servos de las patas} ofrece deslizadores, pasos de $\pm 5^\circ/\pm 10^\circ$,
+      formulario \emph{Ir a}, botón \emph{Soltar} (\texttt{servo off}) y la casilla \emph{juntos}
+      que vincula ambas patas para cumplir la regla de armado de \texttt{segway\_v02}.
+\item \textbf{Columna 3 — Control y Sistema:} expone las \textbf{21 casillas de configuración en
+      vivo} del firmware (ganancias \texttt{kx, kv, kphi, kw}, \texttt{ref}, zonas muertas
+      \texttt{deadband} y \texttt{dbmov}, filtros \texttt{notch}, \texttt{notch2} y \texttt{lp},
+      \texttt{refauto}, selector de tabla \texttt{lqrpata}, y parámetros de conducción
+      \texttt{vmax, acel, fren, ff, xlibre, velpata, margen, prio}), que se autocompletan al
+      recibir la respuesta del comando \texttt{get}. Debajo, la tarjeta \textbf{Sistema} monitorea
+      el estado del supervisor, tiempo de actividad, frecuencia de recepción ($50\ud{Hz}$),
+      contador de excesos (\texttt{overruns}) y barra del peor ciclo de control sobre los
+      $5.000\ud{\mu s}$ disponibles.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.96\textwidth]{app_banco.png}
+\captionof{figure}{Pantalla 2 de \texttt{Aplicacion/}: \textbf{Banco de pruebas}. Inspección de
+IMU cruda y relativa, odometría de encoders, generador de escalones de motor, posicionamiento de
+servos y sintonía en caliente de los parámetros LQR y filtros de \texttt{segway\_v02}.}\label{fig:app_banco}
+\end{center}
+
+\subsection*{3. Pantalla de Energía (\texttt{web/energia.js})}
+
+Incorporada específicamente para la versión final \texttt{segway\_v02} (ítem \texttt{FW-021},
+figura \ref{fig:app_energia}), centraliza las mediciones de los tres monitores digitales
+$\text{I}^2\text{C}$ montados en la Placa de Potencia v0.7:
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Tarjeta Batería (INA226 en \texttt{0x44}):} muestra en tipografía destacada la
+      tensión actual de la LiPo 3S ($v_{\text{bat}}$, corregida con \texttt{INA226\_V\_GANANCIA = 0.951}),
+      la etiqueta de estado (\texttt{NORMAL}, \texttt{BAJA} $< 11{,}2\ud{V}$, \texttt{CRITICA}
+      $< 10{,}5\ud{V}$), la barra de estado de carga ($\text{SoC}\%$, filtrada con constante de
+      $20\ud{s}$ sobre la tabla de descarga LiPo), los \textbf{minutos de autonomía restantes}
+      calculados a partir de la pendiente de caída de tensión de los últimos $5\ud{min}$ y el
+      gráfico histórico de tendencia de tensión de toda la sesión (una muestra cada $5\ud{s}$).
+\item \textbf{Tarjeta Motores (dos INA219 en \texttt{0x40} y \texttt{0x41}):} presenta en tabla y
+      barras comparativas la corriente de entrada a cada driver DRV8871 (\texttt{i\_l\_ma},
+      \texttt{i\_r\_ma}, donde un valor negativo indica regeneración durante el frenado), la
+      tensión en bornes de cada puente H (\texttt{v\_l}, \texttt{v\_r}), la potencia eléctrica
+      instantánea ($P = V\cdot I$ en watts) y el comando PWM aplicado. Incluye detección automática
+      de fusible abierto (\texttt{avisoMotores}): si hay tensión de batería pero $v_l < 6\ud{V}$ o
+      $v_r < 6\ud{V}$, alerta inmediatamente que saltó el fusible \texttt{F2} o \texttt{F3}.
+\item \textbf{Tarjetas Consumo medido y Medidores:} totaliza el consumo de la rama lógica
+      ($49\ud{mA} \approx 0{,}6\ud{W}$ medidos por el shunt del INA226) y la potencia total del
+      robot, ofreciendo botones para consultar el diagnóstico de fábrica de cada chip en el bus
+      $\text{I}^2\text{C}$ (\texttt{ina}), pausar o reanudar la lectura escalonada (\texttt{set ina 0/1})
+      y vigilar el impacto sobre el tiempo máximo del ciclo de control (\texttt{loop\_us\_max}).
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.96\textwidth]{app_energia.png}
+\captionof{figure}{Pantalla 3 de \texttt{Aplicacion/}: \textbf{Energía}. Monitoreo en vivo de
+tensión, estado de carga (SoC), autonomía estimada y curva de descarga de la batería LiPo 3S,
+junto con corrientes y potencias individuales de ambos drivers DRV8871 y de la lógica.}\label{fig:app_energia}
+\end{center}
+
+\subsection*{4. Pantalla de Gráficos / Osciloscopio Multicanal (\texttt{web/app.js})}
+
+Proporciona visualización temporal de alta velocidad para las \textbf{39 columnas de telemetría}
+(figura \ref{fig:app_graficos}):
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Panel lateral de variables y selección dinámica:} lista todas las señales recibidas
+      con su valor numérico instantáneo. Al tildar cualquier casilla se instancia en vivo su lienzo
+      \texttt{<canvas>} dedicado, manteniendo hasta $60\ud{s}$ de historia en memoria circular.
+\item \textbf{Eje temporal del microcontrolador y cursor de inspección:} las curvas se grafican
+      contra el reloj interno \texttt{t\_ms} del ESP32-S3 (y no contra la hora de llegada a la PC),
+      eliminando cualquier deformación por latencia de paquetes WiFi UDP. El selector superior
+      ajusta la ventana visible ($5, 10, 30$ o $60\ud{s}$), el botón \textbf{Pausar} congela la
+      pantalla sin detener la captura en segundo plano, y al apoyar el mouse sobre cualquier curva
+      un cursor vertical muestra el valor exacto y el instante relativo ($\Delta t$ en segundos).
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.96\textwidth]{app_graficos.png}
+\captionof{figure}{Pantalla 4 de \texttt{Aplicacion/}: \textbf{Gráficos}. Osciloscopio multicanal
+a $60\ud{fps}$ mostrando la respuesta del ángulo $\theta$, la velocidad angular $\dot{\theta}$, la
+acción de control $u$, el tiempo de ciclo \texttt{loop\_us\_max} y el contador \texttt{overruns}.}\label{fig:app_graficos}
+\end{center}
+
+\subsection*{5. Pantalla de Configuración y Calibración Guiada de IMU (\texttt{web/configuracion.js})}
+
+Reúne los ajustes de puesta en marcha que se realizan una sola vez (figura \ref{fig:app_configuracion}):
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Diagnóstico del puente del joystick (\texttt{http://localhost:8001/estado}):}
+      verifica la comunicación con \texttt{joystick.py}, informa el modelo del mando conectado y su
+      porcentaje de batería, el modo activo de sticks, el ángulo objetivo de los servos, la
+      dirección IP/puerto UDP de destino y la edad de la última trama recibida.
+\item \textbf{Asistente de calibración de la IMU en tres etapas:} opera directamente sobre la
+      telemetría cruda a $50\ud{Hz}$ y valida automáticamente que el robot no se haya movido durante
+      la captura (rechaza la toma si el desvío estándar supera $1{,}0\ud{^\circ/s}$ en giróscopo o
+      $0{,}15\ud{m/s^2}$ en acelerómetro):
+      \begin{enumerate}[leftmargin=1.5em]
+      \item \emph{Sesgo del giróscopo ($3\ud{s}$ en reposo):} calcula el vector de sesgo medio
+            $(g_{x0}, g_{y0}, g_{z0})$ y el piso de ruido en $\ud{^\circ/s}$.
+      \item \emph{Acelerómetro en 6 posiciones ($2\ud{s}$ por cara):} al apoyar el robot sobre cada
+            una de sus seis caras ortogonales ($+x, -x, +y, -y, +z, -z$), detecta automáticamente
+            qué eje apunta hacia arriba (exigiendo alineación $\le 14^\circ$) y determina el
+            \emph{offset} $(a_{\text{arriba}} + a_{\text{abajo}})/2$ y el factor de escala
+            $(a_{\text{arriba}} - a_{\text{abajo}})/(2g)$ de cada eje.
+      \item \emph{Cero de inclinación ($3\ud{s}$ en el punto de equilibrio):} mide el ángulo medio
+            $\theta_0$ y habilita el botón \textbf{Usar como ref} para enviarlo de inmediato al
+            controlador mediante \texttt{set ref}.
+      \end{enumerate}
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.96\textwidth]{app_configuracion.png}
+\captionof{figure}{Pantalla 5 de \texttt{Aplicacion/}: \textbf{Configuración}. Diagnóstico en vivo
+del servidor puente HID del mando PS4 y asistente de calibración de 6 caras de la IMU con consola
+de telemetría desplegada en el pie de página.}\label{fig:app_configuracion}
 \end{center}
 
 % ===========================================================================
@@ -2302,6 +2515,31 @@ bajada real del robot contra la predicción del banco híbrido (figura \ref{fig:
 banco en C.}\label{fig:bajada_real}
 \end{center}
 
+\section{Reemplazo del ultrasonido por telémetro infrarrojo Sharp \texttt{GP2Y0A60SZLF} para predecir «La Caída»}\label{sec:sharp_caida}
+
+Originalmente se contempló un módulo ultrasónico \texttt{HC-SR04} (\texttt{diseño\_mecanico/utilidades/HC-SR04\_UltraSonic Sensor.step}), pero durante el cierre del diseño mecatrónico y electrónico (\texttt{ELE-044}) se lo reemplazó por el \textbf{telémetro óptico infrarrojo por triangulación Sharp \texttt{GP2Y0A60SZLF}} montado sobre el \emph{carrier} \textbf{Pololu \#2474} ($5\ud{V}$, rango continuo de $10$ a $150\ud{cm}$, tasa de refresco interna de $16{,}5\ud{ms}$, figura \ref{fig:sharp_gp2y0a60szlf}). Esta decisión resolvió tres limitaciones críticas para la predicción de «La Caída»:
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Haz óptico puntual y lectura analógica sin bloqueos (\texttt{dist\_sharp.c}):} a diferencia del cono acústico de $40\ud{kHz}$ del \texttt{HC-SR04} (propenso a reflexiones especulares en el canto del escalón y a esperas de pulso \texttt{ECHO}), el \texttt{GP2Y0A60SZLF} proyecta un haz infrarrojo estrecho y entrega una tensión analógica continua en el conector \texttt{J27} (\texttt{EN, OUT, VCC, GND}). El divisor resistivo \texttt{R41 = 10 k$\Omega$} / \texttt{R42 = 15 k$\Omega$} ($\times 0{,}6$) atenúa la señal a un rango seguro ($\le 2{,}2\ud{V}$ en operación normal, $\le 3{,}0\ud{V}$ ante falla) hacia \texttt{GPIO3} (\texttt{ADC1}, atenuación de $12\ud{dB}$), donde \texttt{dist\_sharp\_read\_mv()} adquiere una muestra calibrada por ciclo de $5\ud{ms}$ sin interferir con el WiFi ni alargar el tiempo de cómputo del lazo.
+\item \textbf{Proyección geométrica del punto de impacto en función de las patas y el cabeceo (\texttt{sensor\_piso.c}):} a partir de la tensión del sensor $v_{\text{sensor}}$, el módulo en C puro calcula primero la distancia radial sobre el haz mediante la ley hiperbólica calibrada:
+      \[
+      d = \frac{k}{v_{\text{sensor}} - v_0}, \qquad d \in [d_{\min},\, d_{\max}]
+      \]
+      Dado que el sensor es solidario a la cabina pero el eje de la rueda se desplaza al cambiar la postura $\theta_{\text{pata}}$, la función \texttt{haz\_para\_pata()} interpola las coordenadas $(e_x, e_z)$ del eje respecto de la cabina y obtiene la posición relativa $(h_{sx}, h_{sz})$ del emisor óptico. Luego, \texttt{haz\_punto()} rota ese vector con el ángulo de cabeceo $\theta$ de la IMU y proyecta las coordenadas en el marco del mundo respecto del punto de apoyo de la rueda de radio $r$:
+      \[
+      s_x = h_{sx}\cos\theta + h_{sz}\sin\theta, \qquad s_z = r - h_{sx}\sin\theta + h_{sz}\cos\theta, \qquad \beta = \alpha_{\text{haz}} + \theta
+      \]
+      \[
+      x_{\text{piso}} = -\bigl(s_x - d\sin\beta\bigr), \qquad z_{\text{piso}} = s_z - d\cos\beta
+      \]
+      Mientras el robot rueda sobre piso plano ($z_{\text{piso}} \approx 0$), la distancia medida coincide con $d_{\text{plano}}(\theta_{\text{pata}}, \theta) = s_z / \cos\beta$; en cuanto el haz óptico asoma más allá de la arista del escalón, $d$ salta abruptamente y $z_{\text{piso}}$ cae a $-\Delta h$, anticipando el borde entre $300$ y $450\ud{ms}$ antes de que la rueda llegue al vacío.
+\item \textbf{Extensión anticipada en vuelo y amortiguación activa al aterrizar:} al confirmarse la detección del borde y el inicio de la caída, el supervisor congela $\theta_{\text{ref}}$, desacopla la corrección gravitatoria del acelerómetro durante la fase balística y comanda la extensión de las patas hacia $30^\circ$ para maximizar el recorrido disponible. Al registrarse el impacto contra el escalón inferior, los servos flexionan las rodillas de forma controlada, combinando la absorción activa con la elasticidad en serie del PLA ($k_{\text{pata}} \approx 8\ud{kN/m}$) y de los neumáticos ($8.500\ud{N/m}$) para limitar el pico de fuerza sobre el eje del servo a $\approx 190\ud{N}$ (frente a los $421\ud{N}$ sin anticipación).
+\end{enumerate}
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{sharp_gp2y0a60szlf.png}
+\captionof{figure}{Módulo infrarrojo Pololu \#2474 (Sharp \texttt{GP2Y0A60SZLF}, izquierda) y curva hiperbólica de conversión analógica implementada en \texttt{dist\_sharp.c} y \texttt{sensor\_piso.c} tras el divisor resistivo \texttt{R41/R42} hacia \texttt{GPIO3} (\texttt{ADC1}, derecha).}\label{fig:sharp_gp2y0a60szlf}
+\end{center}
 
 % ===========================================================================
 \chapter{Conclusiones técnicas y lecciones de ingeniería}\label{cap:concl}

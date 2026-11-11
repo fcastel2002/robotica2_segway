@@ -7,6 +7,6 @@ endif()
 
 idf_component_register(SRCS "bateria.c" "led_estado.c" "main.c" "control_task.c" "comms_task.c" "supervisor.c" "wifi_link.c"
                        INCLUDE_DIRS "."
-                       REQUIRES control dist_sharp encoder imu_mpu6050 ina led_rgb motor servo
+                       REQUIRES control dist_sharp sharpdistsensor encoder imu_mpu6050 ina led_rgb motor servo
                                 esp_driver_i2c esp_driver_uart esp_timer esp_system
                                 esp_wifi esp_netif esp_event nvs_flash lwip)

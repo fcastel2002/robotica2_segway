@@ -1,6 +1,6 @@
 # Informe y presentación — Segway con patas extensibles
 
-Carpeta central con los dos entregables finales del proyecto (**Robótica II, UNCUYO — Grupo 4**: Joaquín Calderón, Francisco Castel, Matías Armani):
+Carpeta central con los dos entregables finales del proyecto (**Robótica II, UNCUYO — Grupo 4**: Joaquín Calderón, Francisco Castel, Matías Armani, Ignacio Bartolini, Mariano Gimenez):
 1. **El Informe Técnico Final** (riguroso, matemático y experimental, dirigido al profesor/cátedra).
 2. **La Presentación Web Interactiva** (atractiva y visual para público general, con un toque técnico accesible sobre la ley de control LQR y los filtros de `segway_v02`).
 
@@ -16,14 +16,16 @@ Carpeta central con los dos entregables finales del proyecto (**Robótica II, UN
   - `N`: mostrar / ocultar **notas de orador** con el guion y el tiempo sugerido de cada pantalla.
   - `T`: iniciar / mostrar el **reloj de exposición** (cuenta hacia los 25:00 min).
   - `F`: activar / salir de **pantalla completa**.
-- **Simulaciones interactivas incluidas en las diapositivas:**
+- **Simulaciones interactivas, galerías CAD y pantallas de firmware/aplicación (17 diapositivas en 5 actos):**
   - *La regla de los 94 ms (escoba):* botón para soltar y cámara lenta con marcas en 2°, 4°, 8°, 16°, 32° y 64°.
-  - *Mezclador en vivo del control LQR (`segway_v02`):* la única ecuación de la charla ($u = k_\varphi \varphi + k_\omega \omega + k_x x + k_v v$) con 4 deslizadores interactivos, regla de Bryson explicada en lenguaje llano y barras en vivo del aporte de cada término al motor.
-  - *Equilibrio ante empujones:* botón para darle un empujón al robot con el control encendido o apagado.
+  - *Arquitectura del lazo de control (`segway_v02` a 200 Hz):* diagrama visual de bloques paso a paso (sensores y odometría compensada por cabeceo $x = r(\theta_{\text{enc}} + \varphi) \to$ LQR programado por altura $\to$ doble filtro *Notch* a 7,7 y 11,6 Hz + `deadband = 0,03` $\to$ drivers MOSFET DRV8871 en 2,3 ms).
+  - *Mezclador en vivo del control LQR (`segway_v02`):* ley $u = k_x x + k_v v + k_\varphi \varphi + k_\omega \omega$ con 4 deslizadores en tiempo real (`input`), selector de altura de pata (`10°`, `15°`, `30°`), regla de Bryson explicada en lenguaje llano y barras en vivo del aporte de cada término al motor.
+  - *Equilibrio y osciloscopio en vivo:* simulación física con golpes de $\pm 8^\circ$, comparación con control apagado y trazador en tiempo real de $\varphi(t)$ y comando $u(t)$.
   - *La paradoja de avanzar (cero de fase no mínima):* muestra cómo las ruedas patean 14 mm hacia atrás para inclinar el cuerpo antes de ir 30 cm hacia adelante.
   - *Mecanismo de cuatro barras en vivo:* deslizador de 10° a 40° que muestra cómo el eje de la rueda sube y baja casi en línea recta duplicando la altura de la cabina.
-  - *Salto a `segway_v02`:* comparativa visual del cambio de drivers (L298N $\to$ DRV8871 MOSFET, zona muerta de 18 % a 3 % y +44 % de par) y del doble filtro rechaza-banda (*Notch* a 7,7 y 11,6 Hz) que redujo el temblor 12 veces (de 21 °/s a 1,7 °/s).
-  - *La escalera de 7 escalones:* comparador animado de los tres modos (*Despacio*, *Frenando en cada escalón* y *De corrido*) y visualización de las +5.300 corridas del algoritmo genético.
+  - *Galerías de Diseño Mecánico (`diseño_mecanico/`) y Electrónica (`electronica/`):* renders 3D generados directamente desde los modelos `.STEP` de SolidWorks (`cad_cabeza_v4.png`, `cad_tapa_chasis.png`, `cad_eslabon_cdp_v4.png`, `cad_abrazadera_motor.png`, `cad_eslabon_ad.png`, `cad_eslabon_bc.png`, `cad_ultrasonido.png`) y placas PCB en KiCad (`potencia_3d.png`, `logica_3d.png`).
+  - *Predicción de «La caída» con telémetro infrarrojo (`Sharp GP2Y0A60SZLF`, Pololu #2474):* simulación interactiva del sistema que reemplazó al ultrasonido por un haz óptico puntual analógico (`GPIO3` ADC1, `dist_sharp.c` + `sensor_piso.c`) que anticipa el borde del escalón, extiende las patas en vuelo y flexiona las rodillas al aterrizar, reduciendo el impacto en el servo de 421 N a ~190 N.
+  - *Firmware `segway_v02` en doble núcleo y Selector interactivo de las 5 Pantallas de `Aplicacion/`:* arquitectura FreeRTOS (`control_task` a 200 Hz en 2,04 ms con bus I²C a 400 kHz, `set dlpf 1`, `set trim 0,03`, `set velf`, `patas_para_armar`, lectura escalonada de INA y LED RGB; `comms_task` a 50 Hz con 39 columnas CSV y ráfagas `grabar` a 200 Hz) + explorador interactivo de las **5 pantallas** de la estación de mando (`1. Mando / Conducción`, `2. Banco de pruebas`, `3. Energía`, `4. Gráficos`, `5. Configuración e IMU`).
 
 ---
 

@@ -41,7 +41,7 @@
 #define CSV_HEADER  "t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r," \
                     "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps," \
                     "x_mm,v_mms,vref_mms,giro,ref_deg,sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm," \
-                    "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria\n"
+                    "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria,alt_mm,alt2_mm\n"
 #define REG_POR_VUELTA  2       // líneas del registro de la bajada por vuelta (100/s de ~120 caracteres:
                                 // entra justo en 115200; 7/11, con corrientes y encoders)
 #define REG_POR_VUELTA_WIFI 6   // 10/11: con una PC escuchando por WiFi, solo por WiFi y en un paquete por
@@ -67,7 +67,9 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_PARSUELTA] = "parsuelta", [PARAM_TAU] = "tau", [PARAM_INA] = "ina",
     [PARAM_INACADA] = "inacada", [PARAM_LQRFAC] = "lqrfac", [PARAM_LQRFACX] = "lqrfacx", [PARAM_DBRAMPA] = "dbrampa", [PARAM_EXC] = "exc",
     [PARAM_VELF] = "velf", [PARAM_TRIM] = "trim", [PARAM_DLPF] = "dlpf",
-    [PARAM_RUMBO] = "rumbo", [PARAM_IRUMBRAL] = "irumbral", [PARAM_IRINV] = "irinv", [PARAM_WEJE] = "weje",
+    [PARAM_RUMBO] = "rumbo", [PARAM_IRUMBRAL] = "irumbral", [PARAM_WEJE] = "weje",
+    [PARAM_NIVEL] = "nivel", [PARAM_ROLCERO] = "rolcero", [PARAM_NIVELCERO] = "nivelcero",
+    [PARAM_SHARPDIV2] = "sharpdiv2", [PARAM_IRCAL] = "ircal",
 };
 
 // Los parámetros de la bajada como los tiene control (empiezan igual y cambian con los mismos
@@ -116,6 +118,7 @@ static void print_help(void)
         "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n"
         "# mov <avance> <giro>: de -1 a 1, solo armado; sin otro en %d ms vuelven a 0; sin ok\n"
         "# eje <giro>: de -1 a 1, gira sobre su eje a weje grados/s (+ a la derecha; R3/L3); vence como mov\n"
+        "# girar <grados>: un giro corto medido con el giroscopo (+ a la derecha; flechas del joystick: 1 grado)\n"
         "# escalon: baja el escalon de atras (triangulo); escalon <cm>: sin sensor, con el borde a esos\n"
         "#   cm detras del apoyo de la rueda; escalon medir: busca el borde con el sensor y frena;\n"
         "#   escalon datos: vuelve a mandar el registro de la ultima (200 Hz, lineas #r)\n"
@@ -126,7 +129,7 @@ static void print_help(void)
         "#   la bajada (lineas #r):\n"
         "#   para soltar el robot desde unos cm y medir cuanto rebota la goma\n"
         "# man: parametros de la bajada; man <nombre> <valor> los cambia (no en plena bajada)\n"
-        "# param tambien: giromax (giro con R2/L2) | sharpk sharpv0 sharpdiv (calibracion del Sharp)\n"
+        "# param tambien: giromax | sharpdiv sharpdiv2 (divisor de cada Sharp: J27 0.4, segundo 0.6)\n"
         "#        sensx sensz (cm) sensang (grados): donde esta el sensor respecto del eje del servo\n"
         "#        parinc parsuelta (grados): cuanto se tira atras la parada y cuando suelta\n"
         "#        tau (s): constante del filtro de inclinacion (0,5 al arrancar; probar 1)\n"
@@ -137,9 +140,14 @@ static void print_help(void)
         "#        dlpf: filtro interno de la IMU, 1 = 188 Hz (al arrancar), 2 = 98, 3 = 42, 4 = 20\n"
         "#        rumbo: en la bajada (triangulo), cuanto corrige el giro con el giroscopo para llegar\n"
         "#        derecho al borde [PWM por rad]; 0 = no lo corrige\n"
-        "#        irumbral (mV) irinv: infrarrojos del borde (los dos Sharp); sin piso la tension queda por\n"
-        "#        debajo del umbral (irinv 1, al arrancar) o por encima (irinv 0); get los muestra\n"
+        "#        irumbral (cm): sensores de piso (los dos Sharp); ven el piso mas abajo que esto = sin piso\n"
+        "#        (paso el borde); 20 al arrancar; get muestra las dos alturas\n"
+        "#        ircal 1: calibra los sensores de piso (robot parado y quieto en piso plano, 1 s); ircal 0:\n"
+        "#        sin calibrar; get dice como quedo\n"
         "#        weje: grados/s del giro sobre su eje (R3/L3)\n"
+        "#        nivel: nivel de costado, 0 = apagado (al arrancar); 1 o -1: en un piso inclinado de lado\n"
+        "#        acorta una pata y estira la otra hasta quedar derecho (si se inclina mas, el otro signo)\n"
+        "#        rolcero (grados): lo que marca el rolido derecho en piso plano; nivelcero 1: toma el de ahora\n"
         "#        ina (1: lee los INA; 0: no los toca, para descartarlos ante problemas en el bus)\n"
         "#        inacada (cada cuantos ciclos de 5 ms lee un registro de los INA: 5 al arrancar,\n"
         "#        13 Hz cada motor; 1 para los ensayos del modelo, 67 Hz)\n"
@@ -237,19 +245,26 @@ static void print_params(const telemetry_t *t)
     imu_stats_t e = imu_stats();
     out("# imu fallas: i2c=%lu cero=%lu; en caida libre (no fallan): %lu\n", (unsigned long)e.i2c_errors,
         (unsigned long)e.zero_reads, (unsigned long)e.low_reads);
-    out("# sharp: pin=%.0f mV dist=%.1f cm haz atras=%.1f cm alto=%.1f cm | sharpk=%.4f sharpv0=%.3f "
-        "sharpdiv=%.2f sensx=%.1f sensz=%.1f sensang=%.1f\n", t->sharp_mv, t->dist * 100.0f,
-        t->haz_x * 100.0f, t->haz_z * 100.0f, t->sharp_k, t->sharp_v0, t->sharp_div, t->sens_x * 100.0f,
-        t->sens_z * 100.0f, t->sens_ang * RAD2DEG);
+    out("# sharp (formula y mediana de SharpDistSensor): J27 pin=%.0f mV dist=%.1f cm | segundo pin=%.0f mV "
+        "dist=%.1f cm | sharpdiv=%.2f sharpdiv2=%.2f sensx=%.1f sensz=%.1f sensang=%.1f\n", t->sharp_mv,
+        t->dist * 100.0f, t->sharp2_mv, t->dist2 * 100.0f, t->sharp_div, t->sharp_div2, t->sens_x * 100.0f,
+        t->sens_z * 100.0f,
+        t->sens_ang * RAD2DEG);
     out("# giromax=%.2f parinc=%.1f parsuelta=%.1f tau=%.2f velf=%.1f | bajada: %s, d_borde=%.0f cm (0: con el sensor)\n",
         t->giro_max, t->par_inclina * RAD2DEG, t->par_suelta * RAD2DEG, t->tau_att, t->vel_hz,
         maniobra_nombre(t->man_estado), s_man.d_borde * 100.0f);
     out("# trim=%.3f dlpf=%u (filtro de la IMU: 1 es 188 Hz, 2 es 98, 3 es 42, 4 es 20)\n", t->trim,
         (unsigned)t->dlpf);
-    out("# infrarrojos: izq=%.0f mV (%s) der=%.0f mV (%s) | irumbral=%.0f irinv=%d | weje=%.0f\n",
-        t->ir_mv[0], isnan(t->ir_mv[0]) ? "no se lee" : t->ir_sin_piso[0] ? "SIN PISO" : "piso",
-        t->ir_mv[1], isnan(t->ir_mv[1]) ? "no se lee" : t->ir_sin_piso[1] ? "SIN PISO" : "piso",
-        t->ir_umbral, t->ir_invertido ? 1 : 0, t->w_eje * RAD2DEG);
+    static const char *const CAL[] = { "sin calibrar", "calibrando", "calibrado", "NO PUDO (no veian el piso)" };
+    out("# ircal: %s; J27 x %.3f, segundo x %.3f (set ircal 1 parado en piso plano; set ircal 0 lo saca)\n",
+        CAL[t->ir_cal < 4 ? t->ir_cal : 0], t->ir_gan[0], t->ir_gan[1]);
+    out("# sensores de piso (altura = distancia x cos de theta): izq=%.1f cm (%s) der=%.1f cm (%s) | "
+        "irumbral=%.0f cm | weje=%.0f\n",
+        t->ir_altura[0] * 100.0f, isnan(t->ir_altura[0]) ? "no se lee" : t->ir_sin_piso[0] ? "SIN PISO" : "piso",
+        t->ir_altura[1] * 100.0f, isnan(t->ir_altura[1]) ? "no se lee" : t->ir_sin_piso[1] ? "SIN PISO" : "piso",
+        t->ir_umbral * 100.0f, t->w_eje * RAD2DEG);
+    out("# nivel=%.1f rolido=%.1f rolcero=%.1f (inclinado %.1f grados de costado) patas izq-der=%.1f\n",
+        t->nivel_gan, t->rolido * RAD2DEG, t->rol_cero, t->rolido * RAD2DEG - t->rol_cero, t->nivel_delta);
     out("# ciclo, ultimo segundo: ciclo_medio_us=%lu ciclo_max_us=%lu imu_medio_us=%lu imu_max_us=%lu "
         "ina_medio_us=%lu ina_max_us=%lu periodo_max_us=%lu\n", (unsigned long)t->ciclo.total_medio,
         (unsigned long)t->ciclo.total_max, (unsigned long)t->ciclo.imu_medio, (unsigned long)t->ciclo.imu_max,
@@ -433,6 +448,17 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
                            .value2 = fminf(fmaxf(turn, -1.0f), 1.0f) };
         xQueueSend(ctx->command_q, &cmd, 0);
         return;
+    } else if (strcmp(word, "girar") == 0) {
+        float g;
+        if (!parse_float(strtok(NULL, " \t"), &g) || g < -30.0f || g > 30.0f || g == 0.0f) {
+            out("# error: girar <grados>, de -30 a 30 (+ a la derecha)\n");
+            return;
+        }
+        if (last->state != SUP_BALANCING) {
+            out("# girar: no esta equilibrando\n");
+            return;
+        }
+        cmd = (command_t){ .type = CMD_GIRAR, .value = g };
     } else if (strcmp(word, "eje") == 0) {
         // Como "mov": lo manda el joystick mientras R3 o L3 están apretados, sin "ok"
         float g;
@@ -466,14 +492,14 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
                 return;
             }
             // Va marcha atrás hacia el borde: si los infrarrojos no están viendo el piso, ni empieza
-            if (isnan(last->ir_mv[0]) || isnan(last->ir_mv[1])) {
+            if (isnan(last->ir_altura[0]) || isnan(last->ir_altura[1])) {
                 out("# escalon alinear: los infrarrojos no se leen; no se mueve\n");
                 return;
             }
             if (last->ir_sin_piso[0] || last->ir_sin_piso[1]) {
-                out("# escalon alinear: un infrarrojo no ve el piso (izq %.0f mV, der %.0f mV, irumbral %.0f, "
-                    "irinv %d); no se mueve\n", last->ir_mv[0], last->ir_mv[1], last->ir_umbral,
-                    last->ir_invertido ? 1 : 0);
+                out("# escalon alinear: un sensor no ve el piso (izq %.1f cm, der %.1f cm, irumbral %.0f cm); "
+                    "no se mueve\n", last->ir_altura[0] * 100.0f, last->ir_altura[1] * 100.0f,
+                    last->ir_umbral * 100.0f);
                 return;
             }
             cmd = (command_t){ .type = CMD_ESCALON, .value = medir ? -1.0f : 0.0f, .value2 = 1.0f };
@@ -843,7 +869,7 @@ static void comms_task(void *arg)
             out("%lu,%s,%.2f,%.1f,%.3f,%lu,%lu,%ld,%ld,"
                 "%.2f,%.2f,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%.1f,%.0f,%.0f,%.3f,%.2f,"
                 "%.0f,%.0f,%.0f,%.0f,%s,%.0f,"
-                "%.2f,%.0f,%.0f,%.0f,%.0f,%.0f,%.1f,%.1f,%s\n",
+                "%.2f,%.0f,%.0f,%.0f,%.0f,%.0f,%.1f,%.1f,%s,%.0f,%.0f\n",
                 (unsigned long)last.t_ms, supervisor_state_name(last.state),
                 last.theta * RAD2DEG, last.theta_rate * RAD2DEG, last.u,
                 (unsigned long)last.loop_us_max, (unsigned long)last.overruns,
@@ -857,7 +883,8 @@ static void comms_task(void *arg)
                 v_bat, s_bat.soc, s_bat.autonomia_s / 60.0f,
                 last.ina.corriente[INA_MOTOR_L] * 1e3f, last.ina.corriente[INA_MOTOR_R] * 1e3f,
                 last.ina.corriente[INA_LOGICA] * 1e3f, last.ina.tension[INA_MOTOR_L],
-                last.ina.tension[INA_MOTOR_R], bateria_nombre(s_bat.nivel));
+                last.ina.tension[INA_MOTOR_R], bateria_nombre(s_bat.nivel),
+                last.altura[0] * 1e3f, last.altura[1] * 1e3f);
         }
         fflush(stdout);
     }
