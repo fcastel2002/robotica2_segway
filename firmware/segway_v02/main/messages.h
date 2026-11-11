@@ -55,6 +55,10 @@ typedef enum {
     PARAM_VELF,         // Hz del pasabajos de la velocidad de las ruedas (VEL_FILTER_HZ al arrancar; 0 = sin filtro)
     PARAM_TRIM,         // compensación entre motores: fracción de PWM de más a la izquierda (balance_trim)
     PARAM_DLPF,         // filtro interno de la IMU: 1 = 188 Hz, 2 = 98, 3 = 42, 4 = 20 (imu_set_dlpf)
+    PARAM_RUMBO,        // en la bajada (△), ganancia del rumbo con el giróscopo vertical [PWM/rad]; 0 = no lo sostiene
+    PARAM_IRUMBRAL,     // infrarrojos del borde: tensión [mV] que separa "ve el piso" de "sin piso"
+    PARAM_IRINV,        // 0: sin piso la tensión sube (salida digital); 1: sin piso baja (analógicos)
+    PARAM_WEJE,         // velocidad del giro sobre su eje con R3/L3 [°/s]
     PARAM_COUNT,
 } param_id_t;
 
@@ -71,7 +75,9 @@ typedef enum {
     CMD_MOTOR_STOP,
     CMD_ENC_RESET,      // cuentas de los encoders a cero
     CMD_MOVE,           // "mov": value = avance, value2 = giro, de -1 a 1 (vencen a MOV_TIMEOUT_MS)
-    CMD_ESCALON,        // "escalon" (△): baja el escalón de atrás; value = 1: solo mide el borde
+    CMD_ESCALON,        // "escalon" (△): baja el escalón de atrás; value < 0: solo mide el borde;
+                        // value2 = 1: se alinea antes con los infrarrojos ("escalon alinear", OPTIONS)
+    CMD_EJE,            // "eje": value de -1 a 1, giro sobre su eje (+ a la derecha); vence como "mov"
     CMD_PARAR,          // "parar" (□): parada controlada (parada.h)
     CMD_GRABAR,         // "grabar": el registro de 200 Hz durante 8 s, armado o no (soltarlo y medir
                         // cuánto rebota la goma)
@@ -133,6 +139,15 @@ typedef struct {
     const char      *man_motivo;    // por qué abortó (texto fijo de maniobra.c) o NULL
     float            man_borde;     // [m] rueda-borde visto (NAN si no lo vio)
     float            man_d_largada; // [m] rueda-borde cuando quedó quieto para largar o medir
+    float            man_giro_alinear;  // [rad] cuánto giró en total para alinearse con el borde
+    float            man_torcido;   // [rad] lo último que midió respecto del borde (NAN: no midió)
+    uint8_t          man_n_alinear; // giros que hizo para alinearse
+    float            ir_mv[2];      // infrarrojos del borde, izquierdo y derecho [mV] (NAN si no se leen)
+    bool             ir_sin_piso[2];    // lo que se entiende de cada uno
+    float            ir_umbral;     // [mV] ("set irumbral")
+    bool             ir_invertido;  // ("set irinv")
+    float            rumbo;         // [rad] giro acumulado mientras se sostiene el rumbo o se gira
+    float            w_eje;         // [rad/s] ("set weje")
     parada_estado_t  parada_estado;
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;

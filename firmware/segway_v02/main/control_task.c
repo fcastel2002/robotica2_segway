@@ -18,6 +18,7 @@
 #include "movimiento.h"
 #include "odometry.h"
 #include "parada.h"
+#include "rumbo.h"
 #include "sensor_piso.h"
 #include "servo.h"
 #include "supervisor.h"
@@ -52,6 +53,11 @@ static float s_vel_hz = VEL_FILTER_HZ;
 // para ajustarlos con los ensayos sin regrabar (9/11, VAL-303)
 static float s_trim = DEFAULT_MOTOR_TRIM;
 static int s_dlpf = IMU_DLPF_DEFAULT;
+static float s_rumbo_kp = RUMBO_KP;         // "set rumbo": la bajada derecha (0 = no corrige)
+// Infrarrojos del borde ("set irumbral", "set irinv") y giro sobre su eje ("set weje"), en vivo
+static float s_ir_umbral = IR_UMBRAL_MV;
+static bool s_ir_invertido = IR_INVERTIDO;
+static float s_w_eje = EJE_W_DPS * DEG2RAD;
 #define CICLO_VENTANA   (1000 / CONTROL_PERIOD_MS)     // ciclos por cada resumen de tiempos (1 s)
 // "set exc <amp>": un barrido senoidal de EXC_F0 a EXC_F1 Hz (logarítmico, EXC_T s) que se suma al comando
 // del LQR, para medir en el robot cómo responde a cada frecuencia y el margen del lazo (7/11: el modelo
@@ -156,6 +162,7 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         encoder_reset();
         break;
     case CMD_MOVE:      // estos los atiende control_task antes de llamar acá
+    case CMD_EJE:
     case CMD_ESCALON:
     case CMD_PARAR:
     case CMD_GRABAR:
@@ -204,6 +211,10 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_VELF:     s_vel_hz = c->value <= 0.0f ? 0.0f : fminf(fmaxf(c->value, 2.0f), 80.0f); break;
         case PARAM_TRIM:     s_trim = fminf(fmaxf(c->value, -0.10f), 0.10f); break;
         case PARAM_DLPF:     s_dlpf = (int)fminf(fmaxf(roundf(c->value), 1.0f), 4.0f); break;
+        case PARAM_RUMBO:    s_rumbo_kp = fminf(fmaxf(c->value, 0.0f), 3.0f); break;
+        case PARAM_IRUMBRAL: s_ir_umbral = fminf(fmaxf(c->value, 50.0f), 3200.0f); break;
+        case PARAM_IRINV:    s_ir_invertido = c->value != 0.0f; break;
+        case PARAM_WEJE:     s_w_eje = fminf(fmaxf(c->value, 10.0f), 240.0f) * DEG2RAD; break;
         default: break;
         }
         break;
@@ -339,6 +350,15 @@ static void control_task(void *arg)
     sensor_cfg_t sc = { SHARP_K, SHARP_V0, SHARP_DIVISOR, SENSOR_PISO_X_M, SENSOR_PISO_Z_M,
                         SENSOR_PISO_ANG_DEG * DEG2RAD };
     maniobra_t man = { .estado = MAN_INACTIVA, .d_largada = NAN };
+    // Rumbo con el giróscopo vertical (rumbo.h): la bajada derecha, alinearse con el borde y girar
+    // sobre su eje con R3/L3
+    rumbo_t rum = { 0 };
+    bool rumbo_activo = false, rumbo_man = false;
+    float eje_cmd = 0.0f;                   // "eje": último pedido y cuándo llegó (vence como "mov")
+    int64_t eje_us = INT64_MIN / 2;
+    // Infrarrojos del borde: los dos Sharp. El primero se lee siempre (sharp_mv); del segundo, la última
+    float sharp2_mv = NAN;
+    int ir_espera = 0;
     man_params_t man_p;
     maniobra_params_por_defecto(&man_p);
     man_p.d_borde = MAN_D_BORDE_M;
@@ -397,18 +417,26 @@ static void control_task(void *arg)
                 mov_us = t0;
                 continue;
             }
+            if (c.type == CMD_EJE) {
+                eje_cmd = c.value;
+                eje_us = t0;
+                continue;
+            }
             if (c.type == CMD_ESCALON) {
                 // Solo equilibrando y sin otra cosa en curso; arranca donde está
                 if (sup.state == SUP_BALANCING && par.estado == PARADA_INACTIVA
                     && (man.estado == MAN_INACTIVA || man.estado == MAN_FIN)) {
                     // value: 0 como está, < 0 solo medir el borde, > 0 sin sensor con el borde ahí [m]
                     man_p.solo_medir = c.value < 0.0f;
+                    man_p.alinear = c.value2 != 0.0f;
                     if (c.value > 0.0f) man_p.d_borde = c.value;
                     maniobra_iniciar(&man, odo.x);
+                    // El registro (8 s): con alinear empieza recién al PREPARAR (buscar el borde y
+                    // alinearse lleva más que eso), salvo que sea solo para medir
                     s_reg_listo = false;
                     s_reg_n = 0;
-                    grabando = true;
-                    fin_reg = 200;          // 1 s después de que termine
+                    grabando = !man_p.alinear || man_p.solo_medir;
+                    fin_reg = 200;              // 1 s después de que termine
                 }
                 continue;
             }
@@ -421,13 +449,14 @@ static void control_task(void *arg)
                 continue;
             }
             if (c.type == CMD_GRABAR) {
-                // REGISTRO_N muestras (8 s) desde ya, armado o no (fuera de una bajada, "termino" es
-                // cierto en cada ciclo y fin_reg cuenta hasta el final)
+                // c.value segundos (hasta REGISTRO_N muestras, 8 s) desde ya, armado o no (fuera de una
+                // bajada, "termino" es cierto en cada ciclo y fin_reg cuenta hasta el final)
                 if (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) {
                     s_reg_listo = false;
                     s_reg_n = 0;
                     grabando = true;
-                    fin_reg = REGISTRO_N;
+                    int pedidas = (int)lroundf(c.value * 200.0f);
+                    fin_reg = (pedidas > 0 && pedidas < REGISTRO_N) ? pedidas : REGISTRO_N;
                 }
                 continue;
             }
@@ -546,6 +575,19 @@ static void control_task(void *arg)
             float z0;
             haz_punto(&haz, th_cuerpo, WHEEL_RADIUS_M, d_plano, &haz_x_piso, &z0);
         }
+        // Infrarrojos del borde: los dos Sharp, uno de cada lado. El primero ya se leyó (sharp_mv); el
+        // segundo, alineándose en cada ciclo (cada lectura del ADC lleva ~0,5 ms) y si no cada 10, solo
+        // para mostrarlo ("get")
+        if ((man_p.alinear && maniobra_en_curso(man.estado)) || ++ir_espera >= 10) {
+            int leido;
+            ir_espera = 0;
+            sharp2_mv = dist_sharp2_read_mv(&leido) ? (float)leido : NAN;
+        }
+        const float ir_mv[2] = { IR_SHARP1_ES_IZQ ? sharp_mv : sharp2_mv,      // izquierdo, derecho
+                                 IR_SHARP1_ES_IZQ ? sharp2_mv : sharp_mv };
+        bool ir_valido = !isnan(ir_mv[0]) && !isnan(ir_mv[1]);
+        bool ir_izq = ir_valido && ir_sin_piso(ir_mv[0], s_ir_umbral, s_ir_invertido);
+        bool ir_der = ir_valido && ir_sin_piso(ir_mv[1], s_ir_umbral, s_ir_invertido);
 
         // 4. Control y actuación. Fuera de BALANCING se apaga en cada ciclo, no solo al salir.
         float applied[MOTOR_COUNT] = { 0.0f };      // para la telemetría
@@ -567,8 +609,16 @@ static void control_task(void *arg)
                 .dt = dt, .x = odo.x, .v = odo.v, .rate = att.rate, .acc = acc_norma,
                 .pata_deg = pata_actual(servo_pos), .haz_valido = !isnan(dist), .haz_z = haz_z,
                 .haz_x_piso = haz_x_piso,
+                .ir_valido = ir_valido, .ir_izq = ir_izq, .ir_der = ir_der, .rumbo = rum.rumbo,
             };
+            man_estado_t man_antes = man.estado;
             maniobra_paso(&man, &man_p, &me, &ms);
+            if (man_p.alinear && !man_p.solo_medir && man.estado == MAN_PREPARAR && man_antes != MAN_PREPARAR) {
+                s_reg_listo = false;        // alineado y a d_carrera: desde acá, el registro de la bajada
+                s_reg_n = 0;
+                grabando = true;
+                fin_reg = 200;
+            }
             // La parada (□): baja, corre la referencia hacia atrás y desarma
             parada_entrada_t pe = {
                 .dt = dt, .v = odo.v, .pata_deg = pata_actual(servo_pos),
@@ -607,6 +657,29 @@ static void control_task(void *arg)
             }
             giro  += fminf(fmaxf(g_target - giro, -MOV_GIRO_RATE * dt), MOV_GIRO_RATE * dt);
             if (manda_otro) giro = 0.0f;
+            // La bajada derecha (RUMBO_KP, rumbo.h): desde △ hasta que cae sostiene el rumbo con el
+            // giróscopo vertical. Quieto (AGACHAR, PREPARAR) mide su sesgo; giro > 0 frena la izquierda
+            // marcha atrás y gira el robot en sentido horario visto de arriba, o sea w < 0. Con OPTIONS
+            // ("escalon alinear") la maniobra además pide girar (ms.w_ref) para alinearse con el borde.
+            // Fuera de la maniobra, R3/L3 ("eje") giran sobre su eje con el mismo lazo: eje > 0 es a la
+            // derecha (horario, w < 0); al soltar, la rampa lleva el giro a cero y el lazo se suelta
+            bool man_rumbo = ms.activa && maniobra_en_el_piso_de_arriba(man.estado);
+            bool eje_ok = t0 - eje_us < (int64_t)MOV_TIMEOUT_MS * 1000 && !manda_otro && eje_cmd != 0.0f;
+            bool rumbo_ahora = man_rumbo || eje_ok || (rumbo_activo && !manda_otro && rumbo_girando(&rum));
+            if (man_rumbo && !rumbo_man) rumbo_empezar(&rum, true);         // △ u OPTIONS: como el 11/11
+            else if (rumbo_ahora && !rumbo_activo) rumbo_empezar(&rum, false);
+            rumbo_man = man_rumbo;
+            rumbo_activo = rumbo_ahora;
+            if (rumbo_ahora && imu_ok) {
+                const rumbo_params_t rp = {
+                    .kp = s_rumbo_kp, .kw = RUMBO_KW, .ff = RUMBO_FF, .giro_max = RUMBO_GIRO_MAX,
+                    .giro_max_girando = RUMBO_GIRO_MAX_GIRANDO, .acel = RUMBO_ACEL_DPS2 * DEG2RAD,
+                };
+                float w_pedido = man_rumbo ? ms.w_ref : (eje_ok ? -eje_cmd * s_w_eje : 0.0f);
+                bool quieto = man_rumbo && (man.estado == MAN_AGACHAR || man.estado == MAN_PREPARAR);
+                float g = rumbo_paso(&rum, &rp, IMU_SIGN_UP * s.gyro[IMU_AXIS_UP], w_pedido, quieto, dt);
+                if (s_rumbo_kp > 0.0f || w_pedido != 0.0f || rumbo_girando(&rum)) giro = g;
+            }
 
             if (ms.activa) {
                 pedir_patas(ms.pata_deg, servo_pos, servo_target, servo_free, servo_lim);
@@ -689,7 +762,8 @@ static void control_task(void *arg)
                 .ciclo = (uint16_t)n, .estado = (uint8_t)man.estado,
                 .marcas = (imu_ok ? REG_IMU_OK : 0) | (imu_ok && s.baja_g ? REG_BAJA_G : 0)
                           | (ms.activa && ms.solo_giroscopo ? REG_SOLO_GIRO : 0)
-                          | (ms.activa && ms.u_directo_activo ? REG_U_DIRECTO : 0),
+                          | (ms.activa && ms.u_directo_activo ? REG_U_DIRECTO : 0)
+                          | (ir_izq ? REG_IR_IZQ : 0) | (ir_der ? REG_IR_DER : 0),
                 .theta_cdeg = a_i16(att.theta * 5729.578f), .rate_ddps = a_i16(att.rate * 572.9578f),
                 .x_mm = a_i16(odo.x * 1e3f), .v_mms = a_i16(odo.v * 1e3f),
                 .vref_mms = a_i16((ms.activa ? ms.v_ref : mov.v_ref) * 1e3f), .u_mil = a_i16(u * 1e3f),
@@ -789,8 +863,18 @@ static void control_task(void *arg)
             .sens_x      = sc.sx, .sens_z = sc.sz, .sens_ang = sc.ang,
             .man_estado  = man.estado,
             .man_motivo  = man.motivo,
-            .man_borde   = man.estado >= MAN_PREPARAR && man.estado <= MAN_FIN ? odo.x - man.borde_x : NAN,
+            .man_borde   = (man.estado >= MAN_PREPARAR && man.estado <= MAN_FIN) || man.estado == MAN_ALEJAR
+                           ? odo.x - man.borde_x : NAN,
             .man_d_largada = man.d_largada,
+            .man_giro_alinear = man.giro_alinear,
+            .man_torcido = man.torcido,
+            .man_n_alinear = (uint8_t)man.n_alinear,
+            .ir_mv       = { ir_mv[0], ir_mv[1] },
+            .ir_sin_piso = { ir_izq, ir_der },
+            .ir_umbral   = s_ir_umbral,
+            .ir_invertido = s_ir_invertido,
+            .rumbo       = rum.rumbo,
+            .w_eje       = s_w_eje,
             .parada_estado = par.estado,
             .registrando = grabando,
             .giro_max    = giro_max,

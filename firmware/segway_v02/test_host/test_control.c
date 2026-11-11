@@ -12,9 +12,11 @@
 #include "bateria.h"
 #include "board_config.h"
 #include "led_estado.h"
+#include "maniobra.h"
 #include "movimiento.h"
 #include "odometry.h"
 #include "parada.h"
+#include "rumbo.h"
 #include "sensor_piso.h"
 #include "supervisor.h"
 
@@ -752,8 +754,247 @@ static void test_bateria_autonomia(void)
     CHECK(isnan(b.autonomia_s));
 }
 
+// ---------------------------------------------------------------- rumbo y alineación (11/11)
+static const rumbo_params_t RUMBO_P = {
+    .kp = RUMBO_KP, .kw = RUMBO_KW, .ff = RUMBO_FF, .giro_max = RUMBO_GIRO_MAX,
+    .giro_max_girando = RUMBO_GIRO_MAX_GIRANDO, .acel = RUMBO_ACEL_DPS2 * DEG,
+};
+
+// El robot visto de arriba, como lo ve el giróscopo: la velocidad de giro sigue a -K·(giro + empuje
+// desparejo) con un retardo; el giróscopo tiene sesgo
+typedef struct { float psi, w; } giro_planta_t;
+static float giro_planta_paso(giro_planta_t *g, float giro, float desparejo, float dt)
+{
+    const float K = 13.7f, tau = 0.1f, sesgo = 0.02f;
+    g->w += (-K * (giro + desparejo) - g->w) * dt / tau;
+    g->psi += g->w * dt;
+    return g->w + sesgo;
+}
+
+static void test_rumbo_sostiene_la_direccion(void)
+{
+    const float dt = 0.005f;
+    rumbo_t r = { 0 };
+    giro_planta_t g = { 0 };
+    rumbo_empezar(&r, true);
+    float giro = 0.0f;
+    // 1 s quieto: mide el sesgo y no corrige nada que valga la pena
+    for (int i = 0; i < 200; i++) giro = rumbo_paso(&r, &RUMBO_P, giro_planta_paso(&g, giro, 0.0f, dt), 0.0f, true, dt);
+    CHECK(fabsf(r.sesgo - 0.02f) < 0.002f);
+    CHECK(fabsf(g.psi) < 0.2f * DEG);
+    // Sin giro pedido es la cuenta del 11/11: giro = kp·rumbo + kw·w, con el tope de sostener
+    float esperado = RUMBO_KP * r.rumbo + RUMBO_KW * (g.w + 0.02f - r.sesgo);
+    CHECK(fabsf(giro - fminf(fmaxf(esperado, -RUMBO_GIRO_MAX), RUMBO_GIRO_MAX)) < 1e-3f);
+    // 2 s yendo al borde con un motor que empuja 0,03 de más: sin el lazo se torcería 47°
+    for (int i = 0; i < 400; i++) giro = rumbo_paso(&r, &RUMBO_P, giro_planta_paso(&g, giro, 0.03f, dt), 0.0f, false, dt);
+    CHECK(fabsf(g.psi) < 3.0f * DEG);
+    CHECK(fabsf(giro) <= RUMBO_GIRO_MAX + 1e-6f);
+    // con kp = 0 no corrige (set rumbo 0)
+    rumbo_params_t sin = RUMBO_P;
+    sin.kp = 0.0f;
+    CHECK(rumbo_paso(&r, &sin, 0.5f, 0.0f, false, dt) == 0.0f);
+}
+
+static void test_rumbo_gira_y_suelta(void)
+{
+    const float dt = 0.005f, w_pedido = -90.0f * DEG;      // R3: a la derecha, horario
+    rumbo_t r = { 0 };
+    giro_planta_t g = { 0 };
+    rumbo_empezar(&r, false);
+    float giro = 0.0f, giro_max = 0.0f;
+    for (int i = 0; i < 400; i++) {
+        giro = rumbo_paso(&r, &RUMBO_P, giro_planta_paso(&g, giro, 0.0f, dt), w_pedido, false, dt);
+        giro_max = fmaxf(giro_max, fabsf(giro));
+    }
+    CHECK(giro > 0.0f);                                     // más PWM a la izquierda: gira a la derecha
+    CHECK(fabsf(g.w - w_pedido) < 0.15f * fabsf(w_pedido)); // a los 2 s gira a lo pedido
+    CHECK(giro_max <= RUMBO_GIRO_MAX_GIRANDO + 1e-6f);
+    CHECK(rumbo_girando(&r));
+    // Se suelta: la rampa lleva el giro pedido a cero en 0,25 s y el lazo se puede soltar
+    int n = 0;
+    while (rumbo_girando(&r) && n < 1000) {
+        giro = rumbo_paso(&r, &RUMBO_P, giro_planta_paso(&g, giro, 0.0f, dt), 0.0f, false, dt);
+        n++;
+    }
+    CHECK(n > 30 && n < 70);
+}
+
+static void test_ir_sin_piso(void)
+{
+    CHECK(!ir_sin_piso(200.0f, 1500.0f, false) && ir_sin_piso(3000.0f, 1500.0f, false));   // salida digital
+    CHECK(ir_sin_piso(200.0f, 1500.0f, true) && !ir_sin_piso(3000.0f, 1500.0f, true));     // analógico
+}
+
+// El robot visto de arriba para alinearse: de espaldas a un borde (el vacío es X < 0), torcido psi0.
+// La velocidad sigue a la que pide la maniobra con un retardo; el giro lo hace el lazo de rumbo.h sobre
+// la planta de arriba, como en control_task. Devuelve el estado en que
+// terminó (LARGAR: llegó a largar; INACTIVA: abortó) y deja lo que pasó en *r.
+typedef struct {
+    float psi_final;        // [rad] cuánto quedó torcido cuando larga
+    float d_final;          // [m] centro del eje al borde cuando larga
+    float rueda_min;        // [m] lo más cerca del borde que estuvo una rueda (< 0: se cayó)
+    float recorrido;        // [m] camino hecho por la odometría
+    float d_largada;        // [m] lo que cree la maniobra
+    const char *motivo;
+} alinear_res_t;
+
+static man_estado_t simular_alinear(float psi0, float d0, bool ir_roto, bool solo_medir, float dx_izq,
+                                    alinear_res_t *r)
+{
+    const float dt = 0.005f, sep = 0.17f;       // (la maniobra cree 0,15: una medida con 2 cm de error)
+    man_params_t p;
+    maniobra_params_por_defecto(&p);
+    p.alinear = true;
+    p.solo_medir = solo_medir;
+    p.ir_x = 0.06f;
+    p.ir_dx = dx_izq;
+    maniobra_t m = { 0 };
+    man_salida_t s = { 0 };
+    float px = d0, py = 0.0f, v = 0.0f, x_odo = 0.0f, giro = 0.0f;
+    giro_planta_t g = { .psi = psi0 };
+    rumbo_t rum = { 0 };
+    rumbo_empezar(&rum, true);
+    *r = (alinear_res_t){ .rueda_min = 1e9f };
+    maniobra_iniciar(&m, x_odo);
+    for (int i = 0; i < 12000; i++) {
+        float psi = g.psi;
+        float fx = cosf(psi), fy = sinf(psi), lx = -fy;         // adelante y a la izquierda
+        (void)py;
+        float ir_izq_x = px - p.ir_x * fx + 0.5f * sep * lx - dx_izq * fx;
+        float ir_der_x = px - p.ir_x * fx - 0.5f * sep * lx;
+        r->rueda_min = fminf(r->rueda_min, px - 0.5f * 0.194f * fabsf(lx));
+        man_entrada_t e = {
+            .dt = dt, .x = x_odo, .v = v, .acc = 9.81f, .pata_deg = p.pata_busqueda_deg,
+            .ir_valido = true, .ir_izq = ir_roto || ir_izq_x < 0.0f, .ir_der = ir_der_x < 0.0f,
+            .rumbo = rum.rumbo,
+        };
+        maniobra_paso(&m, &p, &e, &s);
+        r->recorrido += fabsf(v) * dt;
+        if (m.estado == MAN_LARGAR || m.estado == MAN_FIN || m.estado == MAN_INACTIVA) {
+            r->psi_final = psi;
+            r->d_final = px;
+            r->d_largada = m.d_largada;
+            r->motivo = m.motivo;
+            return m.estado;
+        }
+        v += (s.v_ref - v) * dt / 0.15f;
+        bool quieto = m.estado == MAN_AGACHAR || m.estado == MAN_PREPARAR;
+        // un motor empuja más que el otro cuando anda (quieto no): 0,03 de PWM a 0,2 m/s
+        float desparejo = 0.15f * v;
+        giro = rumbo_paso(&rum, &RUMBO_P, giro_planta_paso(&g, giro, desparejo, dt), s.w_ref, quieto, dt);
+        px += v * fx * dt;
+        py += v * fy * dt;
+        x_odo += v * dt;
+    }
+    return m.estado;
+}
+
+static void test_maniobra_alinear_con_el_borde(void)
+{
+    // Torcido hasta 20° para cualquier lado, a 25 cm del borde: se alinea a menos de 2° (lo que sostiene
+    // el rumbo), las ruedas nunca llegan a menos de 2 cm del borde y larga desde d_carrera (50 cm)
+    const float torcido[] = { -20.0f, -8.0f, -2.0f, 0.0f, 2.0f, 8.0f, 20.0f };
+    for (int i = 0; i < 7; i++) {
+        alinear_res_t r;
+        man_estado_t fin = simular_alinear(torcido[i] * DEG, 0.25f, false, false, 0.0f, &r);
+        CHECK(fin == MAN_LARGAR);
+        CHECK(fabsf(r.psi_final) < 2.0f * DEG);
+        CHECK(r.rueda_min > 0.02f);
+        CHECK(fabsf(r.d_final - 0.50f) < 0.03f);
+        CHECK(fabsf(r.d_largada - r.d_final) < 0.02f);       // lo que cree es lo que es
+    }
+    alinear_res_t r;
+    // Solo medir: se alinea, se aleja y se queda ahí
+    CHECK(simular_alinear(8.0f * DEG, 0.25f, false, true, 0.0f, &r) == MAN_FIN);
+    CHECK(fabsf(r.psi_final) < 2.0f * DEG && fabsf(r.d_final - 0.50f) < 0.03f);
+    // El infrarrojo izquierdo montado 6 mm más atrás que el derecho, con ir_dx que lo dice: igual
+    CHECK(simular_alinear(-8.0f * DEG, 0.25f, false, false, 0.006f, &r) == MAN_LARGAR);
+    CHECK(fabsf(r.psi_final) < 2.0f * DEG && r.rueda_min > 0.02f);
+    // Un infrarrojo que no ve el piso desde el principio: no se mueve
+    CHECK(simular_alinear(0.0f, 0.25f, true, false, 0.0f, &r) == MAN_INACTIVA);
+    CHECK(r.recorrido < 0.005f && r.motivo != NULL);
+    // Demasiado torcido (45°): aborta sin que una rueda llegue al borde
+    CHECK(simular_alinear(45.0f * DEG, 0.30f, false, false, 0.0f, &r) == MAN_INACTIVA);
+    CHECK(r.rueda_min > 0.0f && r.motivo != NULL);
+    // Sin borde a la vista (a 3 m): aborta después de busqueda_max
+    CHECK(simular_alinear(0.0f, 3.0f, false, false, 0.0f, &r) == MAN_INACTIVA);
+    CHECK(r.recorrido > 1.4f && r.recorrido < 1.8f);
+}
+
+static void test_maniobra_estados_nuevos(void)
+{
+    // Los estados de antes conservan su número (registros ya grabados) y los nuevos tienen nombre
+    CHECK(MAN_ABORTADA == 9 && MAN_ATERRIZAR == 7);
+    CHECK(maniobra_nombre(MAN_ALINEAR)[0] == 'a' && maniobra_nombre(MAN_ALEJAR)[1] == 'l');
+    CHECK(maniobra_en_curso(MAN_ALINEAR) && maniobra_en_curso(MAN_VUELO) && !maniobra_en_curso(MAN_ABORTADA));
+    CHECK(maniobra_en_el_piso_de_arriba(MAN_LARGAR) && maniobra_en_el_piso_de_arriba(MAN_ALEJAR)
+          && !maniobra_en_el_piso_de_arriba(MAN_VUELO) && !maniobra_en_el_piso_de_arriba(MAN_FIN));
+    CHECK(maniobra_campo("d_carrera") >= 0 && maniobra_campo("ir_x") >= 0);
+}
+
+// Antes de ir hacia el borde espera a que el robot esté quieto en su lugar. forma 0: se acomoda 5 cm
+// hacia el borde y se queda (el equilibrio de la tabla un poco corrido); forma 1: va y viene ±2 cm.
+// Devuelve el estado al que llegó y deja el sesgo que midió.
+static man_estado_t simular_espera(int forma, float *sesgo, const char **motivo)
+{
+    const float dt = 0.005f;
+    man_params_t p;
+    maniobra_params_por_defecto(&p);
+    p.alinear = true;
+    p.ir_x = 0.06f;
+    maniobra_t m = { 0 };
+    man_salida_t s = { 0 };
+    maniobra_iniciar(&m, 0.0f);
+    for (int i = 0; i < 2000 && m.estado == MAN_AGACHAR; i++) {
+        float t = i * dt;
+        float x = forma == 0 ? -0.05f * (1.0f - expf(-t / 0.5f)) : 0.02f * sinf(6.2832f * 0.5f * t);
+        man_entrada_t e = { .dt = dt, .x = x, .acc = 9.81f, .pata_deg = p.pata_busqueda_deg, .ir_valido = true };
+        maniobra_paso(&m, &p, &e, &s);
+    }
+    *sesgo = m.x_sesgo;
+    *motivo = m.motivo;
+    return m.estado;
+}
+
+static void test_maniobra_espera_quieto_antes_del_borde(void)
+{
+    float sesgo;
+    const char *motivo;
+    // Se acomoda y se queda: empieza a buscar sabiendo que el LQR lo deja 5 cm más allá de su consigna
+    CHECK(simular_espera(0, &sesgo, &motivo) == MAN_BUSCAR);
+    CHECK(fabsf(sesgo + 0.05f) < 0.006f);
+    // Va y viene: no va hacia el borde
+    CHECK(simular_espera(1, &sesgo, &motivo) == MAN_ABORTADA);
+    CHECK(motivo != NULL);
+    // Infrarrojos demasiado cerca de las ruedas para la velocidad de búsqueda (4 cm), o sin medir dónde
+    // miran (de fábrica, 0): tampoco
+    const float mal[] = { 0.04f, 0.0f };
+    for (int k = 0; k < 2; k++) {
+        man_params_t p;
+        maniobra_params_por_defecto(&p);
+        p.alinear = true;
+        if (k == 0) p.ir_x = mal[k];
+        CHECK(p.ir_x == mal[k]);
+        maniobra_t m = { 0 };
+        man_salida_t s = { 0 };
+        maniobra_iniciar(&m, 0.0f);
+        for (int i = 0; i < 400; i++) {
+            man_entrada_t e = { .dt = 0.005f, .acc = 9.81f, .pata_deg = p.pata_busqueda_deg, .ir_valido = true };
+            maniobra_paso(&m, &p, &e, &s);
+        }
+        CHECK(m.estado == MAN_ABORTADA || m.estado == MAN_INACTIVA);
+        CHECK(m.motivo != NULL);
+    }
+}
+
 int main(void)
 {
+    test_maniobra_espera_quieto_antes_del_borde();
+    test_rumbo_sostiene_la_direccion();
+    test_rumbo_gira_y_suelta();
+    test_ir_sin_piso();
+    test_maniobra_alinear_con_el_borde();
+    test_maniobra_estados_nuevos();
     test_attitude_from_accel();
     test_attitude_rejects_gyro_bias();
     test_attitude_unbiased_under_vibration();

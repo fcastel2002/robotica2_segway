@@ -77,7 +77,7 @@ Conexión de la IMU y orientación de sus ejes: [`../docs/prueba_imu.md`](../doc
 | `get` | Ver los parámetros vigentes, la posición y los límites de los servos y el estado del WiFi (contesta 40 ms después, con los `set` ya aplicados) |
 | `mov 0.5 -0.2` | Avance y giro, de −1 a 1 (ver [Movimiento](#movimiento)). Sin respuesta, para que el joystick pueda mandarlo seguido |
 | `tlm on` / `tlm off` | Activar o pausar la telemetría (`tlm on` reimprime el encabezado) |
-| `grabar` | Graba 8 s a 200 Hz (armado o no) y los manda como el registro de la bajada (líneas `#r`); SHARE en el joystick |
+| `grabar [s]` | Graba `s` segundos (8 sin número) a 200 Hz (armado o no) y los manda como el registro de la bajada (líneas `#r`); SHARE en el joystick graba 4 s. Con la PC por WiFi lo manda solo por WiFi y 3 veces más rápido |
 | `enc reset` | Poner en cero las cuentas de los dos encoders. Solo desarmado (o en falla): equilibrando, la odometría saltaría todo lo recorrido y el robot pegaría un tirón |
 | `set tau 1` | Constante del filtro de inclinación, en s (0,5 al arrancar, `ATTITUDE_TAU_S`). La auditoría de un amigo propone 1 s: menos vaivén lento, a cambio de que un error del giróscopo pese el doble. Para compararlas en el robot (auditoría del 5/11) |
 | `set velf 10` | Pasabajos de la velocidad de las ruedas, en Hz (20 al arrancar, `VEL_FILTER_HZ`; de 2 a 80; `0` = sin filtro). En el modelo, 10 Hz deja más margen que 20 (×3,1 contra ×2,5, margen de fase 41° contra 37°) y la mitad del ruido del encoder en el comando; sin filtro queda en ×1,55 ([explicación](../docs/lazo_equilibrio_explicado.md)). Para compararlo en el robot (7/11) |
@@ -102,8 +102,8 @@ sigue por el cable). Completarlo y volver a compilar. Al conectarse informa por 
 ```
 
 Si no encuentra la red: `# wifi: buscando la red MiRed (último motivo de desconexión: N)`, y sigue
-reintentando sola. `get` también muestra esa línea. Se pueden poner hasta cuatro redes (`WIFI_SSID2` a
-`WIFI_SSID4` con sus claves): si una no aparece, prueba la siguiente. Las abiertas van sin clave,
+reintentando sola. `get` también muestra esa línea. Se pueden poner hasta siete redes (`WIFI_SSID2` a
+`WIFI_SSID7` con sus claves): si una no aparece, prueba la siguiente. Las abiertas van sin clave,
 también las abiertas con cifrado (OWE). Motivo 201: no la encuentra (por ejemplo, una red solo de
 5 GHz, como «Facultad de Ingeniería» donde se probó el 5/11; ahí anduvo el celular como punto de acceso
 en 2,4 GHz).
@@ -233,6 +233,62 @@ se reiniciaba con los golpes (pines flojos): con las PCB, repetirlo.
    15, 175; 20, 202).
 5. `python simulacion/escalon/rebote.py Aplicacion/registros/bajada_<fecha>.csv`: la misma caída en
    el banco, y con qué goma y qué servos se parece más.
+
+## Alinearse con el borde (OPTIONS), rumbo y giro sobre su eje (11/11)
+
+**Sin probar en el robot todavía** (compila y pasa las pruebas en PC). Qué hay:
+
+- **Rumbo** ([`rumbo.c`](components/control/rumbo.c)): el LQR no sabe nada del rumbo, así que se integra
+  el giróscopo vertical y se corrige sumando y restando PWM entre las ruedas:
+  `giro = kp·(rumbo − ref) + kw·(w − w_ref) − ff·w_ref`. Con la referencia quieta es lo que △ ya hacía
+  desde el 11/11 (llegar derecho al borde, `set rumbo`); con la referencia girando sirve para alinearse
+  y para girar a pedido.
+- **`eje <-1..1>`** (R3/L3 del joystick): gira sobre su eje a `weje` grados por segundo (90; `set weje`),
+  + a la derecha. Vence como `mov` (300 ms sin repetirlo y frena el giro con su rampa).
+- **Infrarrojos del borde**: los **dos Sharp** (ELE-049: el de J27 en GPIO3 y el segundo por la
+  expansión en **GPIO1**, los dos con su divisor × 0,6), uno de cada lado, mirando el piso **detrás** de
+  las ruedas (del lado hacia el que baja). Para alinearse alcanza con saber si cada uno ve el piso de
+  arriba: pasado el borde el piso queda más lejos y la tensión **baja**, así que "sin piso" es por debajo
+  del umbral (`irinv 1`, de fábrica). `get` muestra los dos (`# infrarrojos: izq=... mV (piso) der=... mV
+  (SIN PISO)`). **Antes de usarlos:** leerlos sobre el piso y asomados al escalón y poner el umbral al
+  medio (`set irumbral <mV>`; 800 de fábrica es una cuenta, no una medida); y tapar uno para ver cuál
+  es el izquierdo: se supone que el de J27 (`IR_SHARP1_ES_IZQ` en `board_config.h`; si están al revés
+  gira para el otro lado y aborta por «muy torcido»).
+- **GPIO1 era la habilitación del motor izquierdo** (`PIN_MOTOR_L_EN`, que el DRV8871 no usa): pasó a
+  `-1` para dejarle el pin al segundo Sharp. **Al grabar, comprobar la rueda izquierda** (`motor l 30`,
+  `motor l -30`) antes de armar.
+- **`escalon alinear`** (OPTIONS): de espaldas al escalón, a 20-40 cm y más o menos derecho.
+  1. Patas a 15° y espera a estar **quieto en su lugar** (de paso mide cuánto lo corre el LQR de su
+     consigna de posición). Si un infrarrojo no ve el piso, si no se queda quieto en 6 s o si los
+     infrarrojos miran demasiado cerca de las ruedas para frenar, **no se mueve**.
+  2. Retrocede a 5 cm/s (`v_buscar_ir`) y anota con la odometría dónde deja de ver el piso cada
+     infrarrojo. La diferencia sobre la separación entre los dos (`ir_sep`) es cuánto está torcido. Si
+     el segundo no llega a verlo sin acercar más la rueda (lo que puede seguir es `ir_x` menos 2 cm de
+     margen menos los 3 cm que necesita para frenar), está torcido por lo menos lo que da ese recorrido.
+  3. Frena **sosteniendo la posición** y gira en el lugar ese ángulo (con el giróscopo), avanza 4 cm y
+     vuelve a medir. Repite hasta quedar a menos de `ir_tol` (1°), 6 giros como mucho.
+  4. Avanza hasta `d_carrera` (50 cm) del borde y baja como con △.
+
+  En el banco del escalón (`simulacion/escalon/alinear_banco.py`, llegando derecho): la rueda queda a
+  4-5 cm del borde y nunca a menos de 2,2 cm en 18 variaciones; con una zona muerta mal compensada no
+  arranca. Alinearse girando: pruebas en PC, torcido hasta ±20° queda a menos de 2°.
+
+  **`escalon alinear medir`** hace todo menos bajar: para las primeras pruebas, con el robot agarrado.
+  La consola cuenta cada paso (`# bajada: torcido 6.2 grados...`, `# bajada: alineado...`).
+- **Lo que hay que medir cuando estén montados** (`man <nombre> <valor>`, y después a
+  `maniobra_params_por_defecto`): **`ir_x`**, a cuántos metros detrás del apoyo de la rueda miran, con
+  las patas en 15° (**sin valor de fábrica: con 0 no arranca**; con menos de 5,4 cm tampoco, no le
+  alcanza para frenar; con 9 cm o más se puede buscar a 8 cm/s). Cómo medirlo: el robot parado con las
+  patas en 15°, acercarlo de espaldas al borde hasta que `get` pase a «SIN PISO» y medir con una regla
+  del apoyo de la rueda al borde. Importa: si se pone más chico de lo que es, el robot cree el borde
+  más cerca, larga desde más lejos y frena justo encima («pasó el borde sin caer»);
+  **`ir_sep`**, la separación entre los dos (0,15 supuesto); **`ir_dx`**, si uno mira más atrás que el
+  otro (poner el robot a escuadra contra el borde, `escalon alinear medir` y ver cuánto dice que está
+  torcido). Los demás: `ir_tol`, `w_alinear` (20 °/s), `alinear_max` (40° en total), `d_carrera`,
+  `v_alejar` (0,20 m/s), `v_buscar_ir` (0,05 m/s).
+- El registro de 200 Hz trae al final `ir_l` e `ir_r` (1 = sin piso). Con `escalon alinear` empieza
+  cuando ya está alineado y a `d_carrera` (lo anterior no entra en 8 s); con `escalon alinear medir`,
+  desde el principio.
 
 ## Medición de energía (INA)
 

@@ -44,6 +44,8 @@
                     "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria\n"
 #define REG_POR_VUELTA  2       // líneas del registro de la bajada por vuelta (100/s de ~120 caracteres:
                                 // entra justo en 115200; 7/11, con corrientes y encoders)
+#define REG_POR_VUELTA_WIFI 6   // 10/11: con una PC escuchando por WiFi, solo por WiFi y en un paquete por
+                                // vuelta (300 líneas/s): 4 s de registro se mandan en ~3 s en lugar de 8
 
 typedef struct {
     QueueHandle_t telemetry_q;
@@ -65,6 +67,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_PARSUELTA] = "parsuelta", [PARAM_TAU] = "tau", [PARAM_INA] = "ina",
     [PARAM_INACADA] = "inacada", [PARAM_LQRFAC] = "lqrfac", [PARAM_LQRFACX] = "lqrfacx", [PARAM_DBRAMPA] = "dbrampa", [PARAM_EXC] = "exc",
     [PARAM_VELF] = "velf", [PARAM_TRIM] = "trim", [PARAM_DLPF] = "dlpf",
+    [PARAM_RUMBO] = "rumbo", [PARAM_IRUMBRAL] = "irumbral", [PARAM_IRINV] = "irinv", [PARAM_WEJE] = "weje",
 };
 
 // Los parámetros de la bajada como los tiene control (empiezan igual y cambian con los mismos
@@ -112,11 +115,15 @@ static void print_help(void)
         "# servo lim: límites en vivo, entre %.0f y %.0f; se pierden al reiniciar (copiarlos a board_config.h)\n"
         "# motor: %% de PWM con signo, solo en DISARMED o FAULT; limitado por umax; disarm lo corta\n"
         "# mov <avance> <giro>: de -1 a 1, solo armado; sin otro en %d ms vuelven a 0; sin ok\n"
+        "# eje <giro>: de -1 a 1, gira sobre su eje a weje grados/s (+ a la derecha; R3/L3); vence como mov\n"
         "# escalon: baja el escalon de atras (triangulo); escalon <cm>: sin sensor, con el borde a esos\n"
         "#   cm detras del apoyo de la rueda; escalon medir: busca el borde con el sensor y frena;\n"
         "#   escalon datos: vuelve a mandar el registro de la ultima (200 Hz, lineas #r)\n"
+        "#   escalon alinear (OPTIONS): retrocede hasta que un infrarrojo ve el borde, gira hasta que lo ve\n"
+        "#   el otro, se aleja d_carrera y baja; escalon alinear medir: lo mismo sin bajar\n"
         "# parar: parada controlada (cuadrado): frena, baja las patas al minimo y se deja caer atras\n"
-        "# grabar: graba 8 s a 200 Hz (armado o no) y los manda como el de la bajada (lineas #r):\n"
+        "# grabar [s]: graba s segundos (8 sin numero) a 200 Hz (armado o no) y los manda como el de\n"
+        "#   la bajada (lineas #r):\n"
         "#   para soltar el robot desde unos cm y medir cuanto rebota la goma\n"
         "# man: parametros de la bajada; man <nombre> <valor> los cambia (no en plena bajada)\n"
         "# param tambien: giromax (giro con R2/L2) | sharpk sharpv0 sharpdiv (calibracion del Sharp)\n"
@@ -128,6 +135,11 @@ static void print_help(void)
         "#        trim: compensacion entre motores, fraccion de PWM de mas a la izquierda y de menos a la\n"
         "#        derecha (-0.10 a 0.10; 0.03 al arrancar)\n"
         "#        dlpf: filtro interno de la IMU, 1 = 188 Hz (al arrancar), 2 = 98, 3 = 42, 4 = 20\n"
+        "#        rumbo: en la bajada (triangulo), cuanto corrige el giro con el giroscopo para llegar\n"
+        "#        derecho al borde [PWM por rad]; 0 = no lo corrige\n"
+        "#        irumbral (mV) irinv: infrarrojos del borde (los dos Sharp); sin piso la tension queda por\n"
+        "#        debajo del umbral (irinv 1, al arrancar) o por encima (irinv 0); get los muestra\n"
+        "#        weje: grados/s del giro sobre su eje (R3/L3)\n"
         "#        ina (1: lee los INA; 0: no los toca, para descartarlos ante problemas en el bus)\n"
         "#        inacada (cada cuantos ciclos de 5 ms lee un registro de los INA: 5 al arrancar,\n"
         "#        13 Hz cada motor; 1 para los ensayos del modelo, 67 Hz)\n"
@@ -234,6 +246,10 @@ static void print_params(const telemetry_t *t)
         maniobra_nombre(t->man_estado), s_man.d_borde * 100.0f);
     out("# trim=%.3f dlpf=%u (filtro de la IMU: 1 es 188 Hz, 2 es 98, 3 es 42, 4 es 20)\n", t->trim,
         (unsigned)t->dlpf);
+    out("# infrarrojos: izq=%.0f mV (%s) der=%.0f mV (%s) | irumbral=%.0f irinv=%d | weje=%.0f\n",
+        t->ir_mv[0], isnan(t->ir_mv[0]) ? "no se lee" : t->ir_sin_piso[0] ? "SIN PISO" : "piso",
+        t->ir_mv[1], isnan(t->ir_mv[1]) ? "no se lee" : t->ir_sin_piso[1] ? "SIN PISO" : "piso",
+        t->ir_umbral, t->ir_invertido ? 1 : 0, t->w_eje * RAD2DEG);
     out("# ciclo, ultimo segundo: ciclo_medio_us=%lu ciclo_max_us=%lu imu_medio_us=%lu imu_max_us=%lu "
         "ina_medio_us=%lu ina_max_us=%lu periodo_max_us=%lu\n", (unsigned long)t->ciclo.total_medio,
         (unsigned long)t->ciclo.total_max, (unsigned long)t->ciclo.imu_medio, (unsigned long)t->ciclo.imu_max,
@@ -417,6 +433,16 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
                            .value2 = fminf(fmaxf(turn, -1.0f), 1.0f) };
         xQueueSend(ctx->command_q, &cmd, 0);
         return;
+    } else if (strcmp(word, "eje") == 0) {
+        // Como "mov": lo manda el joystick mientras R3 o L3 están apretados, sin "ok"
+        float g;
+        if (!parse_float(strtok(NULL, " \t"), &g)) {
+            out("# error: eje <giro>, de -1 a 1 (+ a la derecha)\n");
+            return;
+        }
+        cmd = (command_t){ .type = CMD_EJE, .value = fminf(fmaxf(g, -1.0f), 1.0f) };
+        xQueueSend(ctx->command_q, &cmd, 0);
+        return;
     } else if (strcmp(word, "escalon") == 0) {
         char *arg = strtok(NULL, " \t");
         float cm = 0.0f;
@@ -432,13 +458,34 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             out("# escalon: ya esta bajando (%s)\n", maniobra_nombre(last->man_estado));
             return;
         }
-        if (arg != NULL && strcmp(arg, "medir") == 0) {
+        if (arg != NULL && strcmp(arg, "alinear") == 0) {
+            char *arg2 = strtok(NULL, " \t");
+            bool medir = arg2 != NULL && strcmp(arg2, "medir") == 0;
+            if (arg2 != NULL && !medir) {
+                out("# error: escalon alinear [medir]\n");
+                return;
+            }
+            // Va marcha atrás hacia el borde: si los infrarrojos no están viendo el piso, ni empieza
+            if (isnan(last->ir_mv[0]) || isnan(last->ir_mv[1])) {
+                out("# escalon alinear: los infrarrojos no se leen; no se mueve\n");
+                return;
+            }
+            if (last->ir_sin_piso[0] || last->ir_sin_piso[1]) {
+                out("# escalon alinear: un infrarrojo no ve el piso (izq %.0f mV, der %.0f mV, irumbral %.0f, "
+                    "irinv %d); no se mueve\n", last->ir_mv[0], last->ir_mv[1], last->ir_umbral,
+                    last->ir_invertido ? 1 : 0);
+                return;
+            }
+            cmd = (command_t){ .type = CMD_ESCALON, .value = medir ? -1.0f : 0.0f, .value2 = 1.0f };
+            out("# escalon alinear: busca el borde con los infrarrojos, se alinea, se aleja a %.0f cm y %s\n",
+                s_man.d_carrera * 100.0f, medir ? "se queda ahi (medir)" : "baja");
+        } else if (arg != NULL && strcmp(arg, "medir") == 0) {
             cmd = (command_t){ .type = CMD_ESCALON, .value = -1.0f };
         } else if (arg != NULL && parse_float(arg, &cm) && cm >= 5.0f && cm <= 100.0f) {
             cmd = (command_t){ .type = CMD_ESCALON, .value = cm * 0.01f };
             s_man.d_borde = cm * 0.01f;
         } else if (arg != NULL) {
-            out("# error: escalon [medir | datos | <cm del borde, 5-100>]\n");
+            out("# error: escalon [medir | datos | alinear [medir] | <cm del borde, 5-100>]\n");
             return;
         } else {
             cmd = (command_t){ .type = CMD_ESCALON };
@@ -462,9 +509,14 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             out("# grabar: ya esta grabando la bajada\n");
             return;
         }
-        cmd = (command_t){ .type = CMD_GRABAR };
+        // "grabar [s]": 10/11, los segundos a elección (hasta 8); sin número, 8
+        char *seg = strtok(NULL, " \t");
+        float segundos = seg ? strtof(seg, NULL) : REGISTRO_N / 200.0f;
+        if (!(segundos > 0.0f)) segundos = REGISTRO_N / 200.0f;
+        segundos = fminf(fmaxf(segundos, 0.5f), REGISTRO_N / 200.0f);
+        cmd = (command_t){ .type = CMD_GRABAR, .value = segundos };
         s_grabar = 1;
-        out("# grabar: %d s a 200 Hz desde ahora; al terminar manda el registro\n", REGISTRO_N / 200);
+        out("# grabar: %.1f s a 200 Hz desde ahora; al terminar manda el registro\n", segundos);
     } else if (strcmp(word, "man") == 0) {
         char *name = strtok(NULL, " \t");
         char *val  = strtok(NULL, " \t");
@@ -546,6 +598,15 @@ static void explain_maniobra(const telemetry_t *t, man_estado_t *man_antes, para
     if (t->man_estado != *man_antes) {
         if (t->man_estado == MAN_ABORTADA) {
             out("# bajada: abortada (%s)\n", t->man_motivo ? t->man_motivo : "?");
+        } else if (t->man_estado == MAN_ALINEAR) {
+            out("# bajada: torcido %.1f grados respecto del borde (giro %d): gira para alinearse\n",
+                t->man_torcido * RAD2DEG, (int)t->man_n_alinear);
+        } else if (t->man_estado == MAN_ALEJAR && *man_antes == MAN_BUSCAR) {
+            out("# bajada: alineado (quedo a %.1f grados; giro %.1f en %d veces), el borde a %.1f cm de la "
+                "rueda; se aleja\n", t->man_torcido * RAD2DEG, t->man_giro_alinear * RAD2DEG,
+                (int)t->man_n_alinear, t->man_borde * 100.0f);
+        } else if (t->man_estado == MAN_ALEJAR) {
+            out("# bajada: avanza un poco para volver a medir\n");
         } else if (t->man_estado == MAN_PREPARAR) {
             out("# bajada: preparar, el borde a %.1f cm detras del apoyo de la rueda\n", t->man_borde * 100.0f);
         } else if (t->man_estado == MAN_LARGAR) {
@@ -577,10 +638,32 @@ static double crudo(int16_t v, float escala)
     return v == INT16_MIN ? NAN : v * escala;
 }
 
+// Una línea del registro: a dst (si no es NULL, para juntarlas en un paquete de WiFi) o, con dst NULL,
+// por out() como siempre. Devuelve lo escrito en dst.
+static int linea_registro(char *dst, int lugar, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int n;
+    if (dst != NULL) {
+        n = vsnprintf(dst, (size_t)lugar, fmt, args);
+        if (n >= lugar) n = lugar - 1;
+    } else {
+        char buf[300];
+        n = vsnprintf(buf, sizeof buf, fmt, args);
+        if (n > 0) out("%s", buf);
+        n = 0;
+    }
+    va_end(args);
+    return n;
+}
+
 // Manda el registro de la bajada de a REG_POR_VUELTA líneas ("#r," y los valores). *reg_i: -1 nada,
 // -2 esperando que esté listo (deja de esperar si no hay ninguno), >= 0 la próxima línea.
 static void send_registro(int *reg_i, bool grabando)
 {
+    static bool por_wifi;           // 10/11: con una PC escuchando por WiFi, el registro solo por WiFi
+    static char paquete[REG_POR_VUELTA_WIFI * 220];
     if (*reg_i == -1) return;
     int n;
     const registro_t *r = control_registro(&n);
@@ -590,14 +673,19 @@ static void send_registro(int *reg_i, bool grabando)
     }
     if (*reg_i < 0) {
         *reg_i = 0;
+        por_wifi = wifi_link_state() == WIFI_CONNECTED && wifi_link_info().client[0] != '\0';
         out("# registro de la bajada: %d muestras a 200 Hz, bateria %.2f V\n", n, s_bat.v_filt);
         out("#r,t_s,maniobra,theta_deg,rate_dps,x_mm,v_mms,vref_mms,u,pata_deg,acc_ms2,dist_mm,ref_deg,"
-            "imu_ok,baja_g,solo_giro,u_directo,i_l_ma,i_r_ma,m_l,m_r,enc_l,enc_r,exc,ax,ay,az,gx,gy,gz\n");
+            "imu_ok,baja_g,solo_giro,u_directo,i_l_ma,i_r_ma,m_l,m_r,enc_l,enc_r,exc,ax,ay,az,gx,gy,gz,ir_l,ir_r\n");
     }
-    for (int k = 0; k < REG_POR_VUELTA && *reg_i < n; k++, (*reg_i)++) {
+    int largo = 0;
+    for (int k = 0; k < (por_wifi ? REG_POR_VUELTA_WIFI : REG_POR_VUELTA) && *reg_i < n; k++, (*reg_i)++) {
         const registro_t *m = &r[*reg_i];
-        out("#r,%.3f,%s,%.2f,%.1f,%d,%d,%d,%.3f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d,%.0f,%.0f,%.3f,%.3f,%ld,%ld,%.3f,"
-            "%.2f,%.2f,%.2f,%.1f,%.1f,%.1f\n",
+        char *dst = por_wifi ? paquete + largo : NULL;
+        int lugar = (int)sizeof paquete - largo;
+        if (por_wifi && lugar < 220) break;
+        int escrito = linea_registro(dst, lugar, "#r,%.3f,%s,%.2f,%.1f,%d,%d,%d,%.3f,%.2f,%.2f,%d,%.2f,%d,%d,%d,%d,%.0f,%.0f,%.3f,%.3f,%ld,%ld,%.3f,"
+            "%.2f,%.2f,%.2f,%.1f,%.1f,%.1f,%d,%d\n",
             m->ciclo * 0.005,
             maniobra_nombre((man_estado_t)m->estado), m->theta_cdeg * 0.01, m->rate_ddps * 0.1, m->x_mm,
             m->v_mms, m->vref_mms, m->u_mil * 0.001, m->pata_cdeg * 0.01, m->acc_cms2 * 0.01, m->dist_mm,
@@ -606,8 +694,11 @@ static void send_registro(int *reg_i, bool grabando)
             m->i_l_ma == INT16_MIN ? NAN : (float)m->i_l_ma, m->i_r_ma == INT16_MIN ? NAN : (float)m->i_r_ma,
             m->m_l_mil * 0.001, m->m_r_mil * 0.001, (long)m->enc_l, (long)m->enc_r, m->exc_mil * 0.001,
             crudo(m->imu_acc_cms2[0], 0.01f), crudo(m->imu_acc_cms2[1], 0.01f), crudo(m->imu_acc_cms2[2], 0.01f),
-            crudo(m->imu_gyro_ddps[0], 0.1f), crudo(m->imu_gyro_ddps[1], 0.1f), crudo(m->imu_gyro_ddps[2], 0.1f));
+            crudo(m->imu_gyro_ddps[0], 0.1f), crudo(m->imu_gyro_ddps[1], 0.1f), crudo(m->imu_gyro_ddps[2], 0.1f),
+            (m->marcas & REG_IR_IZQ) != 0, (m->marcas & REG_IR_DER) != 0);
+        if (escrito > 0) largo += escrito;
     }
+    if (por_wifi && largo > 0) wifi_link_send(paquete, (size_t)largo);
     if (*reg_i >= n) {
         out("# fin del registro\n");
         *reg_i = -1;
@@ -724,8 +815,7 @@ static void comms_task(void *arg)
             .guia = last.led_guia,
             .tilt_err_deg = (last.theta - last.params.theta_ref) * RAD2DEG,
             .t_ms = last.t_ms,
-            .maniobra = (last.man_estado >= MAN_AGACHAR && last.man_estado <= MAN_ATERRIZAR)
-                        || last.parada_estado != PARADA_INACTIVA,
+            .maniobra = maniobra_en_curso(last.man_estado) || last.parada_estado != PARADA_INACTIVA,
             .motor_limite = led_motor_limite(&led_motor_t,
                                              fmaxf(fabsf(last.motor_cmd[MOTOR_LEFT]),
                                                    fabsf(last.motor_cmd[MOTOR_RIGHT])),

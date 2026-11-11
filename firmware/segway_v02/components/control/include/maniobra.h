@@ -16,6 +16,19 @@
 //   FIN        quieto: vuelve el control normal donde quedó
 // Cualquier problema: ABORTADA (frena y se queda donde está).
 //
+// Con `alinear` (OPTIONS en el joystick, "escalon alinear"; 11/11): dos infrarrojos que miran el piso
+// detrás de las ruedas, uno de cada lado. Después de AGACHAR:
+//   BUSCAR     retrocede despacio y anota con la odometría dónde deja de ver el piso cada infrarrojo:
+//              la diferencia entre los dos, sobre lo que están separados, es cuánto está torcido
+//              respecto del borde. Si el segundo no llega a verlo sin acercar la rueda a menos de
+//              IR_MARGEN del borde, está torcido por lo menos lo que da ese recorrido
+//   ALINEAR    frena y gira en el lugar ese ángulo (con el giróscopo vertical)
+//   ALEJAR     avanza unos cm hasta que los dos vuelven a ver el piso y BUSCA otra vez, para comprobar;
+//              cuando la diferencia ya es chica (ir_tol), avanza hasta d_carrera del borde
+// y sigue como siempre: PREPARAR, LARGAR, VUELO, ATERRIZAR. El giro lo hace control_task con el
+// giróscopo vertical (w_ref); acá se decide cuánto. Medir con la odometría (y no "girar hasta que el
+// otro lo vea") no depende de sobre qué punto gira ni de que el robot vaya y venga un cm equilibrando.
+//
 // El LQR del firmware sigue mal una consigna de posición que se mueve (para moverse, el robot se
 // adelanta ~10 cm a su consigna y al parar se pasa): por eso la maniobra usa velocidad con
 // realimentación anticipada (ff) y no posiciones, y frena donde está.
@@ -34,7 +47,21 @@ typedef enum {
     MAN_ATERRIZAR,
     MAN_FIN,
     MAN_ABORTADA,
+    MAN_ALINEAR,                // los dos nuevos van al final: los números de los de antes no cambian
+    MAN_ALEJAR,                 // (registros y telemetría ya grabados)
 } man_estado_t;
+
+// La maniobra está en curso (ni inactiva, ni terminada, ni frenando por un aborto)
+static inline bool maniobra_en_curso(man_estado_t e)
+{
+    return (e >= MAN_AGACHAR && e <= MAN_ATERRIZAR) || e == MAN_ALINEAR || e == MAN_ALEJAR;
+}
+
+// Antes de caer: de espaldas al borde, quieto o yendo hacia él. Ahí control_task sostiene el rumbo
+static inline bool maniobra_en_el_piso_de_arriba(man_estado_t e)
+{
+    return (e >= MAN_AGACHAR && e <= MAN_LARGAR) || e == MAN_ALINEAR || e == MAN_ALEJAR;
+}
 
 typedef enum {
     MAN_MOTOR_VELOCIDAD = 0,    // en el aire las ruedas siguen girando como al salir: al tocar,
@@ -105,6 +132,20 @@ typedef struct {
                                 // comprobar con una regla dónde ve el borde
     float d_borde;              // [m] > 0: SIN sensor, el borde está a esto detrás del apoyo de la
                                 // rueda cuando arranca (se pone el robot a esa distancia); 0: lo busca
+    // Alinearse con el borde con los dos infrarrojos (ver arriba)
+    bool  alinear;              // esta bajada busca el borde y se alinea ("escalon alinear")
+    float ir_x;                 // [m] dónde miran los infrarrojos: detrás del apoyo de la rueda, con las
+                                // patas en la de búsqueda. MEDIRLO con una regla cuando se monten (0: sin
+                                // medir, "escalon alinear" no arranca)
+    float ir_sep;               // [m] separación entre los dos infrarrojos (de lado a lado). MEDIRLA
+    float v_buscar_ir;          // [m/s] hacia atrás mientras busca el borde con los infrarrojos: despacio,
+                                // porque para frenar el robot primero sigue (banco, 11/11: 5 cm a 0,08 m/s)
+    float ir_dx;                // [m] el izquierdo mira esto más atrás que el derecho (0 si están parejos)
+    float ir_tol_deg;           // [°] torcido menos que esto: ya está alineado
+    float w_alinear_dps;        // [°/s] velocidad del giro para alinearse
+    float alinear_max_deg;      // [°] si en total hace falta girar más que esto, aborta
+    float d_carrera;            // [m] rueda-borde desde donde larga después de alinearse
+    float v_alejar;             // [m/s] hacia adelante al alejarse del borde
     int n_patas, n_vel;         // > 0: las patas / la velocidad siguen el programa (man_accion_t)
     man_accion_t patas[MAN_MAX_ACCIONES];
     man_accion_t vel[MAN_MAX_ACCIONES];
@@ -119,6 +160,10 @@ typedef struct {                // lo que mide el robot en este ciclo
     bool  haz_valido;           // el sensor midió algo en su rango
     float haz_z;                // altura del punto del haz respecto del piso de la rueda [m]
     float haz_x_piso;           // [m] hacia atrás: donde el haz corta el nivel del piso de la rueda
+    // Para alinearse (alinear): los infrarrojos y cuánto giró el robot desde que empezó la maniobra
+    bool  ir_valido;            // los dos infrarrojos se pudieron leer
+    bool  ir_izq, ir_der;       // ese lado NO ve el piso (el borde ya pasó por debajo)
+    float rumbo;                // [rad] giro acumulado (giróscopo vertical), + antihorario visto de arriba
 } man_entrada_t;
 
 typedef struct {
@@ -131,6 +176,7 @@ typedef struct {
     bool  solo_giroscopo;       // el filtro de inclinación no usa el acelerómetro
     bool  u_directo_activo;     // el comando de los motores es u_directo, no el del LQR
     float u_directo;            // en las unidades del LQR (antes de la zona muerta)
+    float w_ref;                // [rad/s] giro pedido sobre el eje vertical, + antihorario (0 = sostener el rumbo)
 } man_salida_t;
 
 typedef struct {
@@ -147,6 +193,25 @@ typedef struct {
     float t_tocar;              // [s] desde que tocó
     float t_apoyo;              // [s] desde la última muestra en el aire (la rueda rebota)
     int   n_borde, n_vuelo, n_sin_haz, n_quieto;     // muestras seguidas
+    int   n_rebote;             // muestras seguidas en caída libre ya en el piso (un rebote de la rueda)
+    // Alinearse con el borde
+    int   n_ir[2];              // muestras seguidas sin piso de cada infrarrojo (izquierdo, derecho)
+    float x_ir[2];              // [m] odometría donde cada uno dejó de ver el piso (NAN: todavía lo ve)
+    float giro_falta;           // [rad] lo que falta pedir del giro en curso
+    float t_giro;               // [s] desde que terminó de pedirlo (esperando que el rumbo llegue)
+    float rumbo_obj;            // [rad] el rumbo al terminar el giro en curso
+    float giro_alinear;         // [rad] lo girado en total para alinearse
+    float torcido;              // [rad] lo último medido respecto del borde (NAN: todavía no midió)
+    int   n_alinear;            // giros hechos
+    bool  alineado;             // la última medición dio menos que ir_tol: ALEJAR es el definitivo
+    bool  alejando;             // ALEJAR: ya frenó y está avanzando
+    // Antes de ir hacia el borde: quieto en su lugar, y cuánto se corre de su consigna de posición
+    float x_suma;               // [m] suma de x en el bloque en curso (para su promedio)
+    int   x_n, x_bloques;       // muestras del bloque y bloques seguidos iguales al anterior
+    float x_bloque_ant;         // [m] promedio del bloque anterior
+    float x_sesgo;              // [m] x menos su consigna con el robot quieto: con la referencia de
+                                // equilibrio un poco corrida, el LQR lo deja ahí y no en la consigna
+    float x_alejar;             // [m] hasta dónde avanza en ALEJAR
     const char *motivo;         // por qué abortó (o NULL)
     float d_largada;            // [m] rueda-borde cuando quedó quieto para largar (o para medir); NAN antes
     // Programa

@@ -255,6 +255,15 @@ def simular(frecuencia_hz: float) -> None:
                 except (AssertionError, ValueError):
                     difundir("# error: mov <avance> <giro>, de -1 a 1")
                 continue  # sin "ok", igual que comms_task.c
+            elif palabras[:1] == ["eje"]:
+                # R3/L3 (11/11): giro sobre su eje, vence como "mov"; acá, el doble de giro que el stick
+                try:
+                    assert len(palabras) == 2
+                    mov_fwd, mov_turn = 0.0, 2.0 * max(-1.0, min(1.0, float(palabras[1])))
+                    mov_t = time.monotonic()
+                except (AssertionError, ValueError):
+                    difundir("# error: eje <giro>, de -1 a 1")
+                continue
             elif palabras == ["enc", "reset"]:
                 enc = [0.0, 0.0]
             elif palabras == ["ina"]:
