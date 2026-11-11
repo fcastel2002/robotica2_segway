@@ -37,7 +37,8 @@
               {../../simulacion/escalon/resultados/pruebas/}%
               {../../firmware/docs/}%
               {../../Aplicacion/capturas/}%
-              {../../Aplicacion/diagramas/}}
+              {../../Aplicacion/diagramas/}%
+              {../../docs/diagramas/}}
 
 \setlength{\parskip}{5pt}
 \setlength{\parindent}{0pt}
@@ -69,7 +70,7 @@ Simulink, diseño mecánico CAD, electrónica y PCB, firmware ESP-IDF, ajuste co
 y optimización de maniobras con algoritmos genéticos}
 \author{Grupo 4 --- Robótica II, Facultad de Ingeniería, UNCUYO\\[4pt]
 \small Joaquín Calderón \quad\textbullet\quad Francisco Castel \quad\textbullet\quad Matías Armani}
-\date{7 de noviembre de 2026}
+\date{11 de noviembre de 2026}
 
 \begin{document}
 \maketitle
@@ -1525,7 +1526,11 @@ En la tercera iteración (\texttt{diseño\_mecanico/3er\_iteracion/} y \texttt{c
 balancín $BC$ se desdobló en dos caras paralelas (\texttt{eslabon\_BC\_interna} y
 \texttt{eslabon\_BC\_externa}) que abrazan tanto la cabina como el acoplador $CDP$, trabajando a
 corte doble sobre los pasadores y aumentando drásticamente la rigidez frente al alabeo cuando
-una rueda pisa desparejo respecto de la otra.
+una rueda pisa desparejo respecto de la otra. Asimismo, en \texttt{diseño\_mecanico/chasis nuevo/}
+se incorporó el cierre superior desmontable de la cabina (\texttt{tapa chasis.SLDPRT} /
+\texttt{tapa chasis.STEP}, ensamblado en \texttt{chasis con tapa.SLDASM}), que protege la
+Placa de Lógica v0.6 y la batería LiPo 3S ante eventuales vuelcos sin interferir con el
+cableado hacia las patas ni con la ventilación de la etapa de potencia.
 
 \section{Elasticidad estructural en serie: por qué el PLA protege al servo}
 
@@ -1614,9 +1619,16 @@ incluyen en el apéndice \ref{ap:pcb}:
 
 \begin{enumerate}[leftmargin=1.6em]
 \item \textbf{Etapa de tracción por rueda (2 $\times$ DRV8871):} un puente H MOSFET por motor
-      (\texttt{A3} y \texttt{A4}) con límite de corriente interno y una caída mucho menor que la del
-      L298N bipolar, operados con PWM a $20\ud{kHz}$ en modo de decaimiento lento (\emph{slow decay} /
-      frenado activo), que linealiza la respuesta par-comando cerca del origen.
+      (\texttt{A3} y \texttt{A4}) con límite de corriente interno operado con PWM a $20\ud{kHz}$ en
+      modo de decaimiento lento (\emph{slow decay} / frenado activo). Los ensayos comparativos
+      con las ruedas en el aire (\texttt{MED-006}, \texttt{firmware/docs/comparacion\_L298N\_DRV8871.md})
+      demostraron que ambos drivers presentan la misma pendiente incremental ($26\ud{RPM/V}$,
+      $\approx 314/323\ud{RPM}$ por unidad de PWM entre $30\%$ y $90\%$), pero el L298N bipolar
+      restaba $\approx 2\ud{V}$ fijos que se manifestaban como una zona muerta de $0{,}17\text{--}0{,}19$
+      de PWM, mientras que con el DRV8871 la caída es prácticamente nula, la zona muerta baja a
+      $\mathbf{0{,}021\text{--}0{,}031}$ de PWM ($0{,}26\text{--}0{,}38\ud{V}$), la velocidad máxima en
+      vacío sube un $\mathbf{13\%}$ ($304/316\ud{RPM}$ frente a $268/279\ud{RPM}$) y el par
+      disponible a igual comando aumenta un $\mathbf{44\%}$.
 \item \textbf{Alimentación independiente por servo (2 $\times$ UBEC de 6,0 V):} en la revisión
       v0.7 se asignó un regulador conmutado UBEC exclusivo para cada servo DS3240 MG
       (columnas \texttt{DER} en \texttt{J16}/\texttt{J14} e \texttt{IZQ} en \texttt{J19}/\texttt{J13}),
@@ -1771,6 +1783,80 @@ enseñanzas de ingeniería de control que no aparecen en un modelo ideal de libr
       en ingravidez aparente), eso apagaba los motores en el aire. Desde el 3/11 una aceleración
       baja inferior a $0{,}6\ud{s}$ continuos no dispara falla: el estimador congela la
       corrección del acelerómetro y propaga la actitud exclusivamente con el giróscopo.
+\end{enumerate}
+
+\section{Evolución a \texttt{segway\_v02}: ley LQR, doble filtro rechaza banda y presupuesto temporal}\label{sec:v02_lazo}
+
+Al migrar el firmware a la versión definitiva \texttt{firmware/segway\_v02/} sobre las placas
+soldadas con drivers MOSFET DRV8871 y sensores INA219/INA226 (documentado en detalle en
+\texttt{firmware/docs/lazo\_equilibrio\_explicado.md}, ítem \texttt{DOC-117}), se consolidó la
+arquitectura completa del lazo digital a $200\ud{Hz}$:
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Ley de control LQR y función de costo de Bryson:} en cada período de $5\ud{ms}$
+      el controlador calcula la acción normalizada $u \in [-1, 1]$ mediante cuatro productos y
+      tres sumas sobre el estado estimado:
+      \[
+      u = k_x\,(x - x_{\text{ref}}) + k_v\,(v - v_{\text{ref}}) + k_\varphi\,(\theta - \theta_{\text{ref}}) + k_\omega\,\omega
+      \]
+      Las ganancias de la tabla \texttt{LQR\_TABLA\_DRV} se obtuvieron minimizando el funcional
+      cuadrático continuo con la regla de Bryson (\texttt{ganancias\_ajustadas.m}):
+      \[
+      J = \int_0^\infty \left[
+        \left(\frac{x}{0{,}10\ud{m}}\right)^{\!2} +
+        \left(\frac{v}{0{,}30\ud{m/s}}\right)^{\!2} +
+        \left(\frac{\varphi}{8^\circ}\right)^{\!2} +
+        \left(\frac{\omega}{1{,}0\ud{rad/s}}\right)^{\!2} +
+        64\,u^2
+      \right]\dd t
+      \]
+      donde $R = 64 = (1/0{,}125)^2$ expresa que un comando de motor de $0{,}125$ penaliza lo
+      mismo que $10\ud{cm}$ de error de posición o $8^\circ$ de inclinación. Por propiedad del
+      regulador óptimo, el primer elemento vale siempre $k_x = \sqrt{100/64} = 1{,}25\ud{m^{-1}}$
+      en cualquier postura de pata. En operación real sobre el prototipo (\texttt{segway\_v02}),
+      la tabla se escala en vivo por los factores $\texttt{lqrfacx} = 0{,}86$ (sobre $k_x, k_v$)
+      y $\texttt{lqrfac} = 0{,}87$ (sobre $k_\varphi, k_\omega$), dando en la postura nominal de
+      $15^\circ$ los valores efectivos $k_x = 1{,}075\ud{m^{-1}}$, $k_v = 1{,}815\ud{s/m}$,
+      $k_\varphi = 3{,}210\ud{rad^{-1}}$ y $k_\omega = 0{,}378\ud{s/rad}$.
+\item \textbf{Por qué el DRV8871 exigió dos filtros rechaza banda (11,6 Hz y 7,7 Hz) y bajar la zona muerta a 0,03:}
+      con el puente bipolar L298N, la caída interna de $\approx 2\ud{V}$ actuaba como un filtro
+      no lineal gratuito alrededor de $u = 0$ que absorbía tanto el ruido de cuantización del
+      encoder ($\pm 1\;\text{cuenta en }5\ud{ms} \equiv \pm 0{,}019$ de PWM a través de $k_v$)
+      como las vibraciones estructurales devueltas por $k_\omega$. Con el DRV8871 esa caída
+      desaparece: la compensación de zona muerta debió reducirse de $0{,}16$ a
+      $\mathbf{\texttt{deadband} = 0{,}03}$ ($\pm 0{,}37\ud{V}$ en bornes del motor en cada cruce
+      por cero, manteniendo $\texttt{dbmov} = 0$ al desplazarse con el joystick), y la mayor
+      ganancia efectiva cerca del origen excitó una vibración de estructura y transmisión de
+      $17\text{--}21\ud{^\circ/s}$ a $10{,}4\ud{Hz}$. Se dispusieron entonces \textbf{dos filtros
+      biquad rechaza banda (\emph{notch}) en cascada sobre $u$} antes del saturador: uno ancho en
+      $\mathbf{11{,}6\ud{Hz}}$ ($Q = 0{,}7$) y otro selectivo en $\mathbf{7{,}7\ud{Hz}}$ ($Q = 2{,}0$),
+      que redujeron la vibración angular doce veces (de $21\ud{^\circ/s}$ a $\mathbf{1{,}7\ud{^\circ/s}}$).
+      El compromiso de fase asociado es de $-41^\circ$ a $3{,}5\ud{Hz}$, dejando el modo crítico
+      de lazo cerrado en $\approx 5{,}3\ud{Hz}$.
+\item \textbf{Efecto del filtro complementario ($\tau = 0{,}5\ud{s}$) sobre el hamaqueo lento ($0{,}45\ud{Hz}$):}
+      dado que la IMU se ubica $\approx 15\ud{cm}$ por encima del eje de rueda, ante una
+      aceleración horizontal $a$ el acelerómetro mide $\theta_{\text{acc}} \approx \theta - a/g$.
+      Por debajo de $f_c = 1/(2\pi\tau) = 0{,}32\ud{Hz}$ el filtro complementario vectorial sigue
+      al acelerómetro y contamina el ángulo visto por el LQR con la propia aceleración del
+      robot, generando el modo lento de vaivén de $\approx 0{,}45\ud{Hz}$ ($\zeta \approx 0{,}25$)
+      analizado en \texttt{vaiven\_complementario.m}.
+\item \textbf{Presupuesto temporal medido en el ciclo de 5 ms y retardo equivalente ($\approx 10\ud{ms}$):}
+      en cada despertar de \texttt{control\_task} en el Núcleo 1, la lectura de los 14 bytes de
+      la IMU por $\text{I}^2\text{C}$ insume $\approx 1{,}7\ud{ms}$, la conversión ADC del sensor
+      Sharp $\approx 0{,}5\ud{ms}$ y el cálculo completo de filtro, odometría, LQR, doble notch y
+      escritura de PWM concluye a los $\mathbf{2{,}3\ud{ms}}$ del inicio del ciclo, reservando el
+      margen restante para leer de forma escalonada un registro de los tres INA ($\approx 1\ud{ms}$
+      cada 5 ciclos). Sumando el filtro interno DLPF del MPU-6050 a $44\ud{Hz}$ ($\approx 4{,}8\ud{ms}$),
+      la edad media de la muestra ($0{,}5\ud{ms}$), los $2{,}3\ud{ms}$ hasta escribir el PWM y la
+      retención de orden cero de medio período ($2{,}5\ud{ms}$), el \textbf{retardo total
+      equivalente entre el movimiento físico y el par motor es de $\approx 10\ud{ms}$} ($13^\circ$
+      de desfasaje a $3{,}5\ud{Hz}$ y $18^\circ$ a $5\ud{Hz}$).
+\item \textbf{Nuevas funciones operativas de \texttt{segway\_v02}:} compensación de asimetría
+      entre ruedas izquierda y derecha (\texttt{set trim}), cambio en vivo del ancho de banda
+      interno de la IMU (\texttt{set dlpf}), bloqueo de seguridad que impide armar el LQR si los
+      servos de las patas están desenergizados (\texttt{servo off}), grabación en RAM de ráfagas
+      de $8\ud{s}$ a $200\ud{Hz}$ (\texttt{grabar}) y reconexión automática sobre tres redes WiFi
+      configurables.
 \end{enumerate}
 
 \section{Estación de mando, telemetría web y control por DualShock 4}
@@ -1958,6 +2044,110 @@ $30$ & $1{,}50$ & $2{,}41$ & $4{,}88$ & $0{,}662$ & $\mathbf{0{,}31}$ \\
 con las patas en $20^\circ$, comparando el modelo ajustado contra el registro experimental.}
 \end{center}
 
+\section{Segunda campaña (5--7/11): masa con LiPo, rigidez de neumáticos e identificación de motores con INA219}\label{sec:campana_drv}
+
+Una vez integradas las placas definitivas v0.7/v0.6 y la batería LiPo 3S dentro de la cabina
+cerrada (\texttt{segway\_v02}), entre el 5 y el 7 de noviembre se completó una segunda campaña de
+caracterización física directa (\texttt{modelado/ajuste/ajuste\_del\_modelo.md}, secciones 7 a 9):
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Masa real completa y baricentro con batería LiPo:} mientras que los $962\ud{g}$
+      iniciales correspondían a la estructura impresa y los cuatro actuadores sin batería, el
+      pesaje del robot completo listo para operar arrojó $\mathbf{1196\ud{g}}$ el 5/11 y
+      $\mathbf{1208\ud{g}}$ el 7/11 con la tornillería y cableado final ($\texttt{m\_carga} = 246\ud{g}$
+      alojados en la cabina). Con una nueva pasada de equilibrio estático en las 13 alturas de
+      pata (\texttt{equilibrio\_patas\_2026-11-07.png}), el corrimiento del baricentro de la
+      cabina respecto de la cadera $A$ quedó determinado en $\texttt{corr\_caja} = (-24{,}7\ud{mm},\; -8{,}2\ud{mm})$
+      con $\texttt{imu\_delta\_deg} = 4{,}8^\circ$ (error residual de $0{,}69^\circ\;\text{rms}$).
+\item \textbf{Rigidez radial medida de las ruedas con gomaespuma (\texttt{rebote.py}):} se
+      midió la deformación radial de cada neumático de $\varnothing 80\ud{mm}$ (interior de
+      gomaespuma y banda de goma) comprimiéndolo contra una balanza: el radio bajo carga se
+      redujo a $78{,}2\ud{mm}$ con $1{,}5\ud{kg}$ y a $76{,}5\ud{mm}$ con $3{,}0\ud{kg}$, lo que
+      determina una rigidez de contacto real de $\mathbf{k_{\text{contacto}} = 8.500\ud{N/m}}$
+      por rueda (tres veces y media más blanda que los $30.000\ud{N/m}$ supuestos antes de
+      medir). Se complementó con ensayos de impacto dejando caer el robot desde $5$, $10$, $15$ y
+      $20\ud{cm}$ con adquisición a $200\ud{Hz}$.
+\item \textbf{Identificación electromecánica de los motores con los sensores INA219 (\texttt{ajustar\_motor.py}):}
+      aprovechando los monitores de corriente y tensión montados en la placa de potencia, se
+      ensayaron ambos motorreductores en el aire y a rotor bloqueado (figura \ref{fig:motor_ina}):
+\end{enumerate}
+
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Parámetro (\texttt{'ajustada'})} & \textbf{Valor previo} & \textbf{Medido el 7/11} & \textbf{Método experimental} \\
+\midrule
+Masa total (\texttt{m\_carga}) & $1196\ud{g}$ ($234\ud{g}$) & $\mathbf{1208\ud{g}}$ ($\mathbf{246\ud{g}}$) & Balanza electrónica con LiPo y placas v0.7/v0.6 \\
+Resistencia total $R_m$ & $10{,}28\ud{\Omega}$ (ficha) & $\mathbf{7{,}81\ud{\Omega}}$ ($8{,}06$ izq., $7{,}55$ der.) & Rueda trabada ($8\text{--}30\%$ PWM), incluye driver y cables \\
+$K_e$ en rueda (\texttt{w\_nl\_motor\_rpm}) & $0{,}3665\ud{V\cdot s/rad}$ ($6060$) & $\mathbf{0{,}359\ud{V\cdot s/rad}}$ ($\mathbf{6348}$) & Regresión en vacío con $R_m$, $V$ e $I$ medidas por INA219 \\
+$i_{\text{vacío}}$, $\tau_c$, $b_m$ & $60\ud{mA}$, $1{,}5\ud{mN\cdot m}$ & $\mathbf{42\ud{mA}}$, $\mathbf{0{,}74\ud{mN\cdot m}}$ & Corriente en vacío: $40\text{--}45\ud{mA} + 0{,}35\ud{mA/(rad/s)}$ \\
+Inercia de rotor $J_r$ & $6{,}0\times 10^{-7}\ud{kg\cdot m^2}$ & $\mathbf{8{,}2\times 10^{-7}\ud{kg\cdot m^2}}$ & Escalones a $200\ud{Hz}$ en el aire ($\tau_{\text{mec}} = 24\text{--}25\ud{ms}$) \\
+Zona muerta (\texttt{DRV8871}) & $0{,}14$ (con L298N) & $\mathbf{0{,}027\;\text{PWM}}$ & Intersección de la recta velocidad--PWM en el aire \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Con la resistencia real de $7{,}81\ud{\Omega}$ y los puentes MOSFET DRV8871, el modelo entrega
+un $\mathbf{29\%}$ \textbf{más de par por voltio} ($\beta_V$: $0{,}0535 \to 0{,}0689$) y reproduce
+casi exactamente las curvas de velocidad, corriente y aceleración de ambas ruedas en el aire
+(figura \ref{fig:motor_ina}).
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{fig_motor.png}
+\captionof{figure}{Identificación experimental de los motorreductores GA25-370 sobre la placa
+definitiva con DRV8871 e INA219 (\texttt{ajustar\_motor.py}): velocidad de régimen, corriente en
+vacío, ensayo a rotor bloqueado y respuesta transitoria a escalones de tensión.}\label{fig:motor_ina}
+\end{center}
+
+\section{Cosimulación robot--Simulink y campaña repetible \texttt{ensayos/} (\texttt{VAL-303})}\label{sec:ensayos_val303}
+
+Para sistematizar la verificación entre cada cambio de firmware o modelo sin depender de pruebas
+manuales aisladas, el 9 de noviembre se construyó el marco declarativo \texttt{ensayos/}
+(ítem \texttt{VAL-303}, respaldado por 90 pruebas unitarias en PC) junto con una arquitectura de
+\textbf{cosimulación bloque por bloque} entre los registros del robot real y los subsistemas de
+\texttt{segway\_ajustado.slx} (figura \ref{fig:cosim_bloques}).
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{cosim_planta_por_bloques.png}
+\captionof{figure}{Arquitectura de cosimulación bloque por bloque entre el registro experimental
+a $200\ud{Hz}$ del robot y el modelo en Simulink/C: permite inyectar las señales medidas en cada
+etapa (actitud, odometría, LQR, filtros y planta electromecánica) para aislar discrepancias.}\label{fig:cosim_bloques}
+\end{center}
+
+El corredor automatizado (\texttt{ensayos/correr.py} y \texttt{revisar.py}) ejecuta por WiFi o
+USB ocho protocolos estandarizados en JSON con criterios automáticos de aprobación (\texttt{PASA}/\texttt{FALLA}):
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{\texttt{E0\_reposo} y \texttt{A2\_filtro\_imu}:} verifica en $10\ud{s}$ el nivel de
+      ruido basal de la IMU, la tasa efectiva de los tres INA y el efecto del filtro digital
+      interno DLPF del MPU-6050 (\texttt{set dlpf}).
+\item \textbf{\texttt{E1\_motores\_aire} y \texttt{A1\_trim\_motores}:} aplica escalones
+      simétricos de PWM con las ruedas suspendidas, identifica ganancia, zona muerta y constante
+      de tiempo de cada motor y calcula el ajuste diferencial \texttt{set trim} para igualar
+      ambas ruedas.
+\item \textbf{\texttt{E2\_quieto}, \texttt{E3\_barrido}, \texttt{E4\_onda\_ref} y \texttt{E5\_andar}:}
+      evalúa el equilibrio estacionario, la respuesta en frecuencia mediante barrido senoidal
+      inyectado en el comando ($\texttt{set exc}$, procesado con \texttt{identificar\_lazo.py}),
+      el seguimiento de onda cuadrada en inclinación y el desplazamiento con consigna de
+      velocidad.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{fig_lazo.png}
+\captionof{figure}{Identificación en frecuencia del lazo cerrado sobre \texttt{segway\_v02}
+(\texttt{E3\_barrido}, \texttt{fig\_lazo.png}): comparación entre la sensibilidad medida en el
+prototipo y la predicha por el modelo rígido con doble filtro notch.}\label{fig:lazo_freq}
+\end{center}
+
+La campaña experimental \texttt{E0--E5} sobre \texttt{segway\_v02} (figura \ref{fig:lazo_freq})
+permitió cuantificar con precisión la diferencia dinámica restante entre la teoría de cuerpo
+rígido y el prototipo físico: el pico de sensibilidad medido alcanza $|S| = 4{,}02$ en
+$4{,}7\ud{Hz}$ frente a $|S| = 1{,}43$ en $5{,}1\ud{Hz}$ en el modelo rígido, lo que equivale a
+$\approx 15\text{--}17\ud{ms}$ de retardo o fase adicional hacia $8\ud{Hz}$ atribuible al juego
+de transmisión, el rebote elástico de los neumáticos de gomaespuma ($8{,}5\ud{kN/m} \Rightarrow
+\sim 13\ud{Hz}$) y la dinámica de contacto rueda-suelo (registrado como línea de mejora
+\texttt{CTL-311}).
+
 % ===========================================================================
 \chapter{Maniobra de descenso de escalón y escalera con algoritmo genético}\label{cap:escalon}
 % ===========================================================================
@@ -2119,7 +2309,7 @@ banco en C.}\label{fig:bajada_real}
 
 \begin{idea}
 El diseño basado en modelo permitió anticipar comportamientos físicos no intuitivos, dimensionar
-actuadores sin sobredimensionar la masa total ($962\ud{g}$) y, cuando el robot real se apartó
+actuadores sin sobredimensionar la masa ($962\ud{g}$ de estructura y motores, $1208\ud{g}$ completo con batería LiPo y placas) y, cuando el robot real se apartó
 del CAD nominal, identificar con pocos ensayos qué parámetros estaban mal y cuánto.
 \end{idea}
 

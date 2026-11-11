@@ -555,6 +555,117 @@
     }
   }
 
+  // -------------------- 7. MEZCLADOR INTERACTIVO LQR (segway_v02) --------------------
+  function setLqrSliders(phiDeg, omDeg, xCm, vMs) {
+    const sPhi = document.getElementById("lqr-phi");
+    const sOm = document.getElementById("lqr-om");
+    const sX = document.getElementById("lqr-x");
+    const sV = document.getElementById("lqr-v");
+    if (sPhi) sPhi.value = String(phiDeg);
+    if (sOm) sOm.value = String(omDeg);
+    if (sX) sX.value = String(xCm);
+    if (sV) sV.value = String(vMs);
+  }
+
+  function stepLqr() {
+    const cv = document.getElementById("cv-lqr");
+    const sPhi = document.getElementById("lqr-phi");
+    const sOm = document.getElementById("lqr-om");
+    const sX = document.getElementById("lqr-x");
+    const sV = document.getElementById("lqr-v");
+    if (!cv || !sPhi || !sOm || !sX || !sV) return;
+
+    const phiDeg = parseFloat(sPhi.value);
+    const omDeg = parseFloat(sOm.value);
+    const xCm = parseFloat(sX.value);
+    const vMs = parseFloat(sV.value);
+
+    const elPhi = document.getElementById("lqr-val-phi");
+    const elOm = document.getElementById("lqr-val-om");
+    const elX = document.getElementById("lqr-val-x");
+    const elV = document.getElementById("lqr-val-v");
+    if (elPhi) elPhi.textContent = phiDeg.toFixed(1).replace(".", ",") + "°";
+    if (elOm) elOm.textContent = Math.round(omDeg) + " °/s";
+    if (elX) elX.textContent = Math.round(xCm) + " cm";
+    if (elV) elV.textContent = vMs.toFixed(2).replace(".", ",") + " m/s";
+
+    // Ganancias reales en segway_v02 (pata en 15°, con lqrfac=0,87 y lqrfacx=0,86)
+    const kx = 1.075;
+    const kv = 1.815;
+    const kphi = 3.210;
+    const kom = 0.378;
+
+    const uPhi = kphi * ((phiDeg * Math.PI) / 180);
+    const uOm = kom * ((omDeg * Math.PI) / 180);
+    const uX = kx * (xCm / 100);
+    const uV = kv * vMs;
+    const uTotal = Math.max(-1, Math.min(1, uPhi + uOm + uX + uV));
+
+    const ctx = cv.getContext("2d");
+    const W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const filas = [
+      { nom: "Inclinación (kφ·φ)", val: uPhi, col: "#fbbf24" },
+      { nom: "Giro (kω·ω)", val: uOm, col: "#f87171" },
+      { nom: "Posición (kx·x)", val: uX, col: "#38bdf8" },
+      { nom: "Velocidad (kv·v)", val: uV, col: "#34d399" },
+      { nom: "TOTAL MOTOR (u)", val: uTotal, col: "#f8fafc", total: true }
+    ];
+
+    const cx = W * 0.56;
+    const escala = W * 0.36;
+
+    // Línea central (0 % de motor)
+    ctx.strokeStyle = "#475569";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, 18);
+    ctx.lineTo(cx, H - 18);
+    ctx.stroke();
+
+    filas.forEach((f, idx) => {
+      const y = 34 + idx * 54;
+      const alto = f.total ? 28 : 20;
+      const w = Math.max(-1, Math.min(1, f.val)) * escala;
+
+      if (f.total) {
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+        ctx.beginPath();
+        ctx.moveTo(20, y - 14);
+        ctx.lineTo(W - 20, y - 14);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = f.total ? "#f8fafc" : "#cbd5e1";
+      ctx.font = (f.total ? "800 16px " : "600 15px ") + "Segoe UI, sans-serif";
+      ctx.fillText(f.nom, 20, y + alto * 0.72);
+
+      // Fondo de barra
+      ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
+      ctx.beginPath();
+      ctx.roundRect(cx - escala, y, escala * 2, alto, 8);
+      ctx.fill();
+
+      // Barra activa desde el centro
+      ctx.fillStyle = f.col;
+      ctx.beginPath();
+      if (w >= 0) {
+        ctx.roundRect(cx, y, Math.max(3, w), alto, 6);
+      } else {
+        ctx.roundRect(cx + w, y, Math.max(3, -w), alto, 6);
+      }
+      ctx.fill();
+
+      // Porcentaje numérico
+      const pct = Math.round(f.val * 100);
+      const txt = (pct > 0 ? "+" : "") + pct + " %";
+      ctx.fillStyle = f.col;
+      ctx.font = "700 15px Segoe UI, sans-serif";
+      ctx.fillText(txt, W - 66, y + alto * 0.74);
+    });
+  }
+
   // -------------------- BUCLE Y EVENTOS --------------------
   let animActiva = null;
   let tPrev = performance.now();
@@ -563,6 +674,7 @@
     const dt = Math.min(0.05, (now - tPrev) / 1000);
     tPrev = now;
     if (animActiva === "escoba") stepEscoba(dt);
+    else if (animActiva === "lqr") stepLqr();
     else if (animActiva === "balanceo") stepBalanceo(dt);
     else if (animActiva === "avance") stepAvance(dt);
     else if (animActiva === "pata") stepPata();
@@ -581,6 +693,12 @@
     } else if (acc === "escoba-lento") {
       escoba.lento = !escoba.lento;
       btn.textContent = "Cámara lenta: " + (escoba.lento ? "sí" : "no");
+    } else if (acc === "lqr-inclinado") {
+      setLqrSliders(5, 15, 0, 0);
+    } else if (acc === "lqr-corrido") {
+      setLqrSliders(0, 0, 12, 0.15);
+    } else if (acc === "lqr-reset") {
+      setLqrSliders(0, 0, 0, 0);
     } else if (acc === "bal-empujar") {
       bal.omega += 1.45;
       bal.empujonT = 0.45;
@@ -606,6 +724,7 @@
   window.activarAnimacionSlide = function (nombre) {
     animActiva = nombre || null;
     if (nombre === "escoba") resetEscoba();
+    else if (nombre === "lqr") stepLqr();
     else if (nombre === "balanceo") resetBalanceo();
     else if (nombre === "avance") resetAvance();
     else if (nombre === "pata") stepPata();
