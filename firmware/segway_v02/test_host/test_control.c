@@ -14,6 +14,7 @@
 #include "led_estado.h"
 #include "maniobra.h"
 #include "movimiento.h"
+#include "nivel.h"
 #include "odometry.h"
 #include "parada.h"
 #include "rumbo.h"
@@ -819,12 +820,6 @@ static void test_rumbo_gira_y_suelta(void)
     CHECK(n > 30 && n < 70);
 }
 
-static void test_ir_sin_piso(void)
-{
-    CHECK(!ir_sin_piso(200.0f, 1500.0f, false) && ir_sin_piso(3000.0f, 1500.0f, false));   // salida digital
-    CHECK(ir_sin_piso(200.0f, 1500.0f, true) && !ir_sin_piso(3000.0f, 1500.0f, true));     // analógico
-}
-
 // El robot visto de arriba para alinearse: de espaldas a un borde (el vacío es X < 0), torcido psi0.
 // La velocidad sigue a la que pide la maniobra con un retardo; el giro lo hace el lazo de rumbo.h sobre
 // la planta de arriba, como en control_task. Devuelve el estado en que
@@ -987,12 +982,72 @@ static void test_maniobra_espera_quieto_antes_del_borde(void)
     }
 }
 
+// ---------------------------------------------------------------- nivel de costado (11/11)
+// El robot de frente en un piso inclinado `piso` grados de costado: el rolido es el del piso menos lo
+// que enderezan las patas (0,95° por grado de diferencia, con `signo_planta`: para qué lado, que en el
+// robot depende de cómo está la IMU; las patas van a 20 °/s). La IMU marca
+// `cero` de más y su acelerómetro tiene algo de ruido. Devuelve cuánto queda inclinado [°].
+static float simular_nivel(float piso, float ganancia, float signo_planta, float cero, float *delta_final)
+{
+    const float dt = 0.005f;
+    const nivel_params_t p = { .ganancia = ganancia, .cero_deg = cero, .banda_deg = 0.5f,
+                               .delta_max_deg = 16.0f, .tau = 0.5f };
+    nivel_t n;
+    nivel_reset(&n);
+    float izq = 15.0f, der = 15.0f, rol = piso, rol_ant = piso;
+    for (int i = 0; i < 4000; i++) {
+        rol = piso - signo_planta * 0.95f * (izq - der);
+        float ruido = 0.05f * sinf(0.7f * (float)i);
+        float medido = (rol + cero) * DEG;
+        nivel_medir(&n, &p, 9.81f * sinf(medido) + ruido, 9.81f * cosf(medido), (rol - rol_ant) * DEG / dt, true, dt);
+        rol_ant = rol;
+        float obj_i, obj_d;
+        nivel_patas(15.0f, 15.0f, nivel_paso(&n, &p, true, dt), 0.0f, 30.0f, &obj_i, &obj_d);
+        izq += fminf(fmaxf(obj_i - izq, -20.0f * dt), 20.0f * dt);
+        der += fminf(fmaxf(obj_d - der, -20.0f * dt), 20.0f * dt);
+    }
+    *delta_final = izq - der;
+    return rol;
+}
+
+static void test_nivel_de_costado(void)
+{
+    float delta;
+    // Piso plano: no toca las patas, aunque la IMU marque 3,9° de más (su cero)
+    CHECK(fabsf(simular_nivel(0.0f, 1.0f, -1.0f, 3.9f, &delta)) < 0.01f && delta == 0.0f);
+    // 5° de costado: queda dentro de la banda y con las patas a ~5° una de la otra
+    CHECK(fabsf(simular_nivel(5.0f, 1.0f, -1.0f, 3.9f, &delta)) < 0.8f);
+    CHECK(fabsf(delta + 5.0f / 0.95f) < 1.0f);
+    CHECK(fabsf(simular_nivel(-5.0f, 1.0f, -1.0f, 3.9f, &delta)) < 0.8f && delta > 0.0f);
+    // 20°: no alcanza; llega al tope (16° entre las patas) y se queda ahí
+    CHECK(simular_nivel(20.0f, 1.0f, -1.0f, 3.9f, &delta) > 4.0f && fabsf(delta + 16.0f) < 0.01f);
+    // Apagado: nada
+    CHECK(fabsf(simular_nivel(5.0f, 0.0f, -1.0f, 3.9f, &delta) - 5.0f) < 0.01f && delta == 0.0f);
+    // Con el signo al revés se inclina más, pero hasta el tope y no más (por eso se prueba agarrado)
+    CHECK(simular_nivel(5.0f, -1.0f, -1.0f, 3.9f, &delta) > 15.0f && fabsf(delta - 16.0f) < 0.01f);
+    // Una pata en su tope: la otra hace el resto
+    float i, d;
+    nivel_patas(28.0f, 28.0f, 10.0f, 0.0f, 30.0f, &i, &d);
+    CHECK(i == 30.0f && fabsf(d - 20.0f) < 1e-4f);
+    nivel_patas(2.0f, 2.0f, 10.0f, 0.0f, 30.0f, &i, &d);
+    CHECK(d == 0.0f && fabsf(i - 10.0f) < 1e-4f);
+    nivel_patas(15.0f, 15.0f, -6.0f, 0.0f, 30.0f, &i, &d);
+    CHECK(fabsf(i - 12.0f) < 1e-4f && fabsf(d - 18.0f) < 1e-4f);
+    // En caída o en un golpe el acelerómetro no cuenta: el rolido sigue con el giróscopo
+    const nivel_params_t p = { .ganancia = 1.0f, .tau = 0.5f };
+    nivel_t n;
+    nivel_reset(&n);
+    nivel_medir(&n, &p, 0.0f, 9.81f, 0.0f, true, 0.005f);
+    for (int k = 0; k < 40; k++) nivel_medir(&n, &p, 30.0f, 1.0f, 0.5f, false, 0.005f);
+    CHECK(fabsf(n.rolido - 0.5f * 0.2f) < 1e-3f);
+}
+
 int main(void)
 {
+    test_nivel_de_costado();
     test_maniobra_espera_quieto_antes_del_borde();
     test_rumbo_sostiene_la_direccion();
     test_rumbo_gira_y_suelta();
-    test_ir_sin_piso();
     test_maniobra_alinear_con_el_borde();
     test_maniobra_estados_nuevos();
     test_attitude_from_accel();

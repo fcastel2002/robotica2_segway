@@ -1,4 +1,4 @@
-// Parámetros del prototipo v0.1. Convención del modelo (modelado/planta/pendulo_invertido):
+﻿// Parámetros del prototipo v0.1. Convención del modelo (modelado/planta/pendulo_invertido):
 // el ángulo es positivo cuando el robot se inclina hacia adelante, y u > 0 mueve las ruedas
 // hacia adelante. Unidades SI salvo donde se indica.
 #pragma once
@@ -301,14 +301,39 @@
 #define RUMBO_GIRO_MAX_GIRANDO  0.30f       // fracción de PWM con un giro pedido (3/11: con 0,30 giraba en el lugar)
 #define RUMBO_ACEL_DPS2         360.0f      // [°/s2] rampa de la velocidad de giro pedida
 #define EJE_W_DPS               90.0f       // [°/s] giro sobre su eje con R3/L3 (en vivo: set weje)
+// "girar <grados>" (flechas izquierda/derecha): un giro corto y medido, para alinearlo a mano. El lazo de
+// rumbo no sirve para 1° (0,8 PWM/rad x 1° = 0,014 de PWM: no vence el roce): acá el giro arranca en
+// GIRAR_PWM_MIN, crece GIRAR_PWM_RAMPA por segundo hasta que el giróscopo ve lo pedido, y se corta
+// GIRAR_ANTICIPO antes (sigue un poco por inercia). SIN PROBAR en el robot: si se pasa o se queda corto,
+// son estos cuatro números
+#define GIRAR_PWM_MIN           0.06f
+#define GIRAR_PWM_RAMPA         0.50f       // por segundo
+#define GIRAR_PWM_MAX           0.30f
+#define GIRAR_ANTICIPO          0.80f       // corta cuando giró esta fracción de lo pedido
+#define GIRAR_T_MAX_S           1.0f        // si en este tiempo no llegó, lo deja
 // Infrarrojos del borde: los dos Sharp (ELE-049; el de J27 y el de la expansión), uno de cada lado,
 // mirando el piso detrás de las ruedas. Para alinearse alcanza con saber si cada uno ve el piso de
-// arriba o no: con el piso más lejos (pasó el borde) la tensión BAJA, así que "sin piso" es por debajo
-// del umbral (irinv 1). El umbral depende de dónde queden montados: 800 mV es una cuenta (a 19 cm del
-// piso y 48° de la vertical: ~920 mV en el pin sobre el piso de arriba y ~650 con el piso 12 cm más
-// abajo). CALIBRARLO: "get" muestra los dos sobre el piso y asomados al escalón; el umbral, al medio.
-#define IR_UMBRAL_MV            800.0f      // en vivo: set irumbral
-#define IR_INVERTIDO            1           // en vivo: set irinv (0: sin piso la tensión sube)
+// arriba o no. La distancia de cada uno sale de la fórmula y el filtro de mediana de la biblioteca
+// SharpDistSensor (components/sharpdistsensor), y la altura es esa distancia por el coseno de theta (van paralelos a
+// la IMU). "Sin piso" (pasó el borde) es ver el piso más abajo que IR_ALTURA_BORDE_CM: 20 cm queda a
+// mitad de camino entre los ~14 cm del piso de arriba con las patas en 15 y los ~26 con un escalón de
+// 12 cm. COMPROBARLO: "get" muestra las dos alturas sobre el piso y asomados al escalón.
+#define IR_ALTURA_BORDE_CM      20.0f       // en vivo: set irumbral <cm>
+// Nivel de costado (nivel.h, 11/11): en un piso inclinado hacia un lado, una pata se acorta y la otra se
+// estira hasta que el cuerpo queda derecho. APAGADO de fábrica (sin probar en el robot): "set nivel 1"
+// (o -1: el signo depende de cómo está la IMU; si al probarlo se inclina más, es el otro).
+#define NIVEL_GANANCIA          0.0f        // [° de pata/s por ° de rolido]; para probar, 1 (en vivo: set nivel)
+#define NIVEL_CERO_DEG          3.9f        // lo que marca el rolido derecho en piso plano: 3,9 ± 0,8 en las 26
+                                            // bajadas del 11/11 (parado, patas en 15). En vivo: set rolcero, o
+                                            // "set nivelcero 1" con el robot derecho en piso plano (toma el de ahora)
+#define NIVEL_BANDA_DEG         0.5f
+#define NIVEL_DELTA_MAX_DEG     16.0f       // ±8° cada pata: endereza hasta ~7,5° de piso inclinado
+#define NIVEL_TAU_S             0.5f
+#define NIVEL_W_MAX_DPS         20.0f       // girando más rápido que esto no corrige (el giro tira de costado)
+// El rolido: acelerómetro del eje de costado (el del cabeceo, IMU_AXIS_PITCH) y giróscopo del eje hacia
+// adelante con este signo. Medido con los registros del 11/11: la derivada del rolido del acelerómetro
+// y el giróscopo van al revés en 19 de 19 (los otros 18, sin movimiento que alcance)
+#define IMU_SIGN_ROL            -1.0f
 #define IR_SHARP1_ES_IZQ        1           // SUPUESTO: el Sharp de J27 va a la izquierda y el segundo a la
                                             // derecha. Si se montan al revés, 0 (si no, gira para el otro lado)
 
@@ -316,7 +341,12 @@
 // Sharp GP2Y0A60SZLF (pin en board_pins.h): d = SHARP_K / (v_sensor - SHARP_V0), con v_sensor la
 // tensión antes del divisor. Valores de la ficha (3,6 V a 10 cm, 0,6 V a 150 cm): CALIBRAR contra
 // el piso real (sesion_placa.py calibrar_sensor). Debajo de 10 cm la curva se dobla: no vale.
-#define SHARP_DIVISOR           0.6f        // R42 / (R41 + R42) = 15k / 25k. SIN el divisor la salida
+// 11/11 (Joaquín): en el de J27 (GPIO3) las dos resistencias quedaron al revés: 15k en serie y 10k a
+// masa, o sea x 0,4 y no x 0,6 (la salida llega al pin más chica: no hay riesgo, solo otra escala). El
+// segundo (GPIO1, divisor armado en el cable) va como estaba pensado, x 0,6. En vivo: set sharpdiv
+// (el de J27) y set sharpdiv2 (el segundo)
+#define SHARP2_DIVISOR          0.6f        // 15k / 25k
+#define SHARP_DIVISOR           0.4f        // 10k / 25k (pensado: 15k / 25k = 0,6). SIN el divisor la salida
                                             // llega a 3,6 V a 10 cm: más de lo que aguanta el pin (3,3 V)
 #define SHARP_K                 0.3214f     // [V m]
 #define SHARP_V0                0.386f      // [V]
@@ -330,11 +360,15 @@
 #define PATA_TABLA_DEG          { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f }
 #define PATA_EJE_X_M            { -0.0002f, -0.0001f, 0.0001f, 0.0002f, -0.0002f, -0.0020f, -0.0072f }
 #define PATA_EJE_Z_M            { -0.0785f, -0.0963f, -0.1132f, -0.1295f, -0.1455f, -0.1614f, -0.1781f }
-// Sensor respecto de A y ángulo del haz desde la vertical del cuerpo hacia atrás. PROPUESTA del
-// 3/11 (cara de atrás de la cabina, 2 cm arriba de A, 40°): MEDIRLO cuando se monte.
+// Sensor respecto de A y ángulo del haz desde la vertical del cuerpo hacia atrás. 11/11 (Joaquín): está
+// en el piso del chasis, por afuera, PARALELO A LA IMU: el haz sale por el eje de abajo de la IMU, o sea
+// que respecto de la vertical del mundo está inclinado lo que marca la IMU (theta), y respecto de la del
+// cuerpo del modelo, IMU_DELTA_DEG. La altura del sensor sobre el piso que ve es distancia·cos(theta)
+// (telemetría alt_mm). El piso del chasis queda ~3 cm debajo de A; cuánto adelante o atrás de A está,
+// SIN MEDIR (set sensx): solo cambia dónde pega el haz, no la altura.
 #define SENSOR_PISO_X_M         -0.0525f
-#define SENSOR_PISO_Z_M         0.020f
-#define SENSOR_PISO_ANG_DEG     40.0f
+#define SENSOR_PISO_Z_M         -0.030f
+#define SENSOR_PISO_ANG_DEG     IMU_DELTA_DEG
 // Mientras el sensor no esté conectado (3/11), △ baja el escalón SIN buscarlo: el robot se pone con
 // el apoyo de la rueda a MAN_D_BORDE_M del borde (de espaldas al escalón). 0 = lo busca con el
 // sensor. En vivo: "man d_borde <m>" o "escalon <cm>"

@@ -16,10 +16,12 @@
 #include "messages.h"
 #include "motor.h"
 #include "movimiento.h"
+#include "nivel.h"
 #include "odometry.h"
 #include "parada.h"
 #include "rumbo.h"
 #include "sensor_piso.h"
+#include "sharp_lib.h"
 #include "servo.h"
 #include "supervisor.h"
 
@@ -55,9 +57,23 @@ static float s_trim = DEFAULT_MOTOR_TRIM;
 static int s_dlpf = IMU_DLPF_DEFAULT;
 static float s_rumbo_kp = RUMBO_KP;         // "set rumbo": la bajada derecha (0 = no corrige)
 // Infrarrojos del borde ("set irumbral", "set irinv") y giro sobre su eje ("set weje"), en vivo
-static float s_ir_umbral = IR_UMBRAL_MV;
-static bool s_ir_invertido = IR_INVERTIDO;
+static float s_ir_umbral = IR_ALTURA_BORDE_CM * 0.01f;      // [m]
 static float s_w_eje = EJE_W_DPS * DEG2RAD;
+// Nivel de costado ("set nivel", "set rolcero", "set nivelcero"), en vivo
+static nivel_params_t s_nivel_p = {
+    .ganancia = NIVEL_GANANCIA, .cero_deg = NIVEL_CERO_DEG, .banda_deg = NIVEL_BANDA_DEG,
+    .delta_max_deg = NIVEL_DELTA_MAX_DEG, .tau = NIVEL_TAU_S,
+};
+static bool s_nivel_tomar_cero;
+// Calibración de los sensores de piso ("set ircal 1", con el robot parado y quieto en piso plano): durante
+// 1 s promedia lo que mide cada Sharp y lo compara con lo que tendría que medir según la altura de las
+// patas y la inclinación (haz_distancia_plano); de ahí sale una ganancia para cada uno. Los deja iguales
+// entre sí, que es lo que importa para alinearse con el borde. "set ircal 0" vuelve a 1,00 los dos.
+#define IRCAL_CICLOS    200
+static float s_ir_gan[2] = { 1.0f, 1.0f };
+static uint8_t s_ir_cal;            // 0 sin calibrar, 1 calibrando, 2 calibrado, 3 no pudo
+static int s_ircal_n;
+static float s_ircal_suma[2], s_ircal_plano;
 #define CICLO_VENTANA   (1000 / CONTROL_PERIOD_MS)     // ciclos por cada resumen de tiempos (1 s)
 // "set exc <amp>": un barrido senoidal de EXC_F0 a EXC_F1 Hz (logarítmico, EXC_T s) que se suma al comando
 // del LQR, para medir en el robot cómo responde a cada frecuencia y el margen del lazo (7/11: el modelo
@@ -89,6 +105,7 @@ static int16_t a_i16(float v)
 // que regrabar mientras se mide)
 typedef struct {
     float k, v0, div;           // d = k / (v - v0), con v la salida del Sharp (antes del divisor)
+    float div2;                 // divisor del segundo Sharp (cada uno tiene el suyo)
     float sx, sz, ang;          // sensor respecto del eje del servo [m] y haz desde la vertical [rad]
 } sensor_cfg_t;
 
@@ -163,6 +180,7 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         break;
     case CMD_MOVE:      // estos los atiende control_task antes de llamar acá
     case CMD_EJE:
+    case CMD_GIRAR:
     case CMD_ESCALON:
     case CMD_PARAR:
     case CMD_GRABAR:
@@ -196,6 +214,17 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_SHARPK:   sc->k = fminf(fmaxf(c->value, 0.01f), 2.0f); break;
         case PARAM_SHARPV0:  sc->v0 = fminf(fmaxf(c->value, -1.0f), 2.0f); break;
         case PARAM_SHARPDIV: sc->div = fminf(fmaxf(c->value, 0.1f), 1.0f); break;
+        case PARAM_SHARPDIV2: sc->div2 = fminf(fmaxf(c->value, 0.1f), 1.0f); break;
+        case PARAM_IRCAL:
+            if (c->value != 0.0f) {
+                s_ir_cal = 1;
+                s_ircal_n = 0;
+                s_ircal_suma[0] = s_ircal_suma[1] = s_ircal_plano = 0.0f;
+            } else {
+                s_ir_cal = 0;
+                s_ir_gan[0] = s_ir_gan[1] = 1.0f;
+            }
+            break;
         case PARAM_SENSX:    sc->sx = fminf(fmaxf(c->value, -30.0f), 30.0f) * 0.01f; break;
         case PARAM_SENSZ:    sc->sz = fminf(fmaxf(c->value, -30.0f), 30.0f) * 0.01f; break;
         case PARAM_SENSANG:  sc->ang = fminf(fmaxf(c->value, 0.0f), 80.0f) * DEG2RAD; break;
@@ -212,9 +241,11 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_TRIM:     s_trim = fminf(fmaxf(c->value, -0.10f), 0.10f); break;
         case PARAM_DLPF:     s_dlpf = (int)fminf(fmaxf(roundf(c->value), 1.0f), 4.0f); break;
         case PARAM_RUMBO:    s_rumbo_kp = fminf(fmaxf(c->value, 0.0f), 3.0f); break;
-        case PARAM_IRUMBRAL: s_ir_umbral = fminf(fmaxf(c->value, 50.0f), 3200.0f); break;
-        case PARAM_IRINV:    s_ir_invertido = c->value != 0.0f; break;
+        case PARAM_IRUMBRAL: s_ir_umbral = fminf(fmaxf(c->value, 5.0f), 100.0f) * 0.01f; break;
         case PARAM_WEJE:     s_w_eje = fminf(fmaxf(c->value, 10.0f), 240.0f) * DEG2RAD; break;
+        case PARAM_NIVEL:    s_nivel_p.ganancia = fminf(fmaxf(c->value, -5.0f), 5.0f); break;
+        case PARAM_ROLCERO:  s_nivel_p.cero_deg = fminf(fmaxf(c->value, -15.0f), 15.0f); break;
+        case PARAM_NIVELCERO: s_nivel_tomar_cero = true; break;
         default: break;
         }
         break;
@@ -347,7 +378,7 @@ static void control_task(void *arg)
     // Sensor de distancia al piso y bajada de escalón (△), parada controlada (□)
     static const float eje_patas[] = PATA_TABLA_DEG, eje_x[] = PATA_EJE_X_M, eje_z[] = PATA_EJE_Z_M;
     const int n_eje = sizeof eje_patas / sizeof eje_patas[0];
-    sensor_cfg_t sc = { SHARP_K, SHARP_V0, SHARP_DIVISOR, SENSOR_PISO_X_M, SENSOR_PISO_Z_M,
+    sensor_cfg_t sc = { SHARP_K, SHARP_V0, SHARP_DIVISOR, SHARP2_DIVISOR, SENSOR_PISO_X_M, SENSOR_PISO_Z_M,
                         SENSOR_PISO_ANG_DEG * DEG2RAD };
     maniobra_t man = { .estado = MAN_INACTIVA, .d_largada = NAN };
     // Rumbo con el giróscopo vertical (rumbo.h): la bajada derecha, alinearse con el borde y girar
@@ -356,9 +387,14 @@ static void control_task(void *arg)
     bool rumbo_activo = false, rumbo_man = false;
     float eje_cmd = 0.0f;                   // "eje": último pedido y cuándo llegó (vence como "mov")
     int64_t eje_us = INT64_MIN / 2;
-    // Infrarrojos del borde: los dos Sharp. El primero se lee siempre (sharp_mv); del segundo, la última
-    float sharp2_mv = NAN;
-    int ir_espera = 0;
+    // "girar <grados>": lo que falta girar [rad, + antihorario], lo girado y el tiempo de este giro
+    float girar_obj = 0.0f, girar_hecho = 0.0f, girar_t = 0.0f;
+    // Los dos Sharp: se lee uno por ciclo (cada lectura del ADC lleva ~0,5 ms; cada uno queda a 100 Hz) y
+    // la distancia la da la biblioteca SharpDistSensor, sin modificar (components/sharpdistsensor)
+    float sharp_pin_mv[2] = { NAN, NAN }, sharp_dist_m[2] = { NAN, NAN };
+    int sharp_turno = 0;
+    nivel_t nivel;                          // nivel de costado (nivel.h)
+    nivel_reset(&nivel);
     man_params_t man_p;
     maniobra_params_por_defecto(&man_p);
     man_p.d_borde = MAN_D_BORDE_M;
@@ -420,6 +456,15 @@ static void control_task(void *arg)
             if (c.type == CMD_EJE) {
                 eje_cmd = c.value;
                 eje_us = t0;
+                continue;
+            }
+            if (c.type == CMD_GIRAR) {
+                // + es a la derecha (horario, w < 0). Varios seguidos se suman a lo que falta
+                if (sup.state == SUP_BALANCING) {
+                    girar_obj = (girar_obj - girar_hecho) - c.value * DEG2RAD;
+                    girar_hecho = 0.0f;
+                    girar_t = 0.0f;
+                }
                 continue;
             }
             if (c.type == CMD_ESCALON) {
@@ -519,6 +564,15 @@ static void control_task(void *arg)
             float acc_up  = IMU_SIGN_UP * s.accel[IMU_AXIS_UP];
             float gyro    = IMU_SIGN_PITCH * s.gyro[IMU_AXIS_PITCH];
             acc_norma = sqrtf(acc_fwd * acc_fwd + acc_up * acc_up);
+            // Rolido (nivel de costado): el acelerómetro solo cuenta si mide ~1 g (ni caída ni golpe)
+            float acc_lado = s.accel[IMU_AXIS_PITCH];
+            float acc_total = sqrtf(acc_lado * acc_lado + acc_norma * acc_norma);
+            nivel_medir(&nivel, &s_nivel_p, acc_lado, acc_norma, IMU_SIGN_ROL * s.gyro[IMU_AXIS_FWD],
+                        !s.baja_g && acc_total > 0.7f * 9.81f && acc_total < 1.3f * 9.81f, dt);
+            if (s_nivel_tomar_cero && nivel.iniciado) {
+                s_nivel_p.cero_deg = nivel.rolido / DEG2RAD;
+                s_nivel_tomar_cero = false;
+            }
             if (!calibrated) {
                 if (sup.state == SUP_CALIBRATING) {
                     calibrated = attitude_calibrate(&att, gyro, CAL_SAMPLES, GYRO_CAL_MAX_RATE);
@@ -561,33 +615,54 @@ static void control_task(void *arg)
         // Sensor de distancia: cuánto mide y dónde pega el haz respecto del apoyo de la rueda
         // (sensor_piso.h), con la pata y el cabeceo del cuerpo (la IMU marca IMU_DELTA_DEG de más)
         int mv;
-        float sharp_mv = NAN, dist = NAN, haz_x = NAN, haz_z = NAN, haz_x_piso = NAN;
-        if (dist_sharp_read_mv(&mv)) {
-            sharp_mv = (float)mv;
-            dist = sharp_distancia_m(mv * 1e-3f / sc.div, sc.k, sc.v0, SHARP_D_MIN_M, SHARP_D_MAX_M);
+        if (sharp_turno == 0 ? dist_sharp_read_mv(&mv) : dist_sharp2_read_mv(&mv)) {
+            sharp_pin_mv[sharp_turno] = (float)mv;
+            sharp_dist_m[sharp_turno] = 1e-3f * sharp_lib_mm(sharp_turno, mv * 1e-3f / (sharp_turno == 0 ? sc.div : sc.div2));
+        } else {
+            sharp_pin_mv[sharp_turno] = sharp_dist_m[sharp_turno] = NAN;
         }
+        sharp_turno = 1 - sharp_turno;
+        float sharp_mv = sharp_pin_mv[0], dist = sharp_dist_m[0] * s_ir_gan[0], haz_x = NAN, haz_z = NAN, haz_x_piso = NAN;
+        float sharp2_mv = sharp_pin_mv[1], dist2 = sharp_dist_m[1] * s_ir_gan[1];
         haz_t haz = haz_para_pata(pata_actual(servo_pos), eje_patas, eje_x, eje_z, n_eje, sc.sx, sc.sz,
                                   sc.ang);
         float th_cuerpo = att.theta - IMU_DELTA_DEG * DEG2RAD;
         if (!isnan(dist)) haz_punto(&haz, th_cuerpo, WHEEL_RADIUS_M, dist, &haz_x, &haz_z);
         float d_plano = haz_distancia_plano(&haz, th_cuerpo, WHEEL_RADIUS_M);
+        if (s_ir_cal == 1) {
+            // Calibrando: lo medido (sin la ganancia) contra lo que tendría que medir en piso plano
+            if (isnan(d_plano) || isnan(sharp_dist_m[0]) || isnan(sharp_dist_m[1])) {
+                s_ir_cal = 3;
+            } else {
+                s_ircal_suma[0] += sharp_dist_m[0];
+                s_ircal_suma[1] += sharp_dist_m[1];
+                s_ircal_plano += d_plano;
+                if (++s_ircal_n >= IRCAL_CICLOS) {
+                    float g0 = s_ircal_plano / s_ircal_suma[0], g1 = s_ircal_plano / s_ircal_suma[1];
+                    // Una corrección de más del doble no es calibrar: no estaban viendo el piso
+                    if (g0 > 0.5f && g0 < 2.0f && g1 > 0.5f && g1 < 2.0f) {
+                        s_ir_gan[0] = g0;
+                        s_ir_gan[1] = g1;
+                        s_ir_cal = 2;
+                    } else {
+                        s_ir_cal = 3;
+                    }
+                }
+            }
+        }
         if (!isnan(d_plano)) {
             float z0;
             haz_punto(&haz, th_cuerpo, WHEEL_RADIUS_M, d_plano, &haz_x_piso, &z0);
         }
-        // Infrarrojos del borde: los dos Sharp, uno de cada lado. El primero ya se leyó (sharp_mv); el
-        // segundo, alineándose en cada ciclo (cada lectura del ADC lleva ~0,5 ms) y si no cada 10, solo
-        // para mostrarlo ("get")
-        if ((man_p.alinear && maniobra_en_curso(man.estado)) || ++ir_espera >= 10) {
-            int leido;
-            ir_espera = 0;
-            sharp2_mv = dist_sharp2_read_mv(&leido) ? (float)leido : NAN;
-        }
-        const float ir_mv[2] = { IR_SHARP1_ES_IZQ ? sharp_mv : sharp2_mv,      // izquierdo, derecho
-                                 IR_SHARP1_ES_IZQ ? sharp2_mv : sharp_mv };
-        bool ir_valido = !isnan(ir_mv[0]) && !isnan(ir_mv[1]);
-        bool ir_izq = ir_valido && ir_sin_piso(ir_mv[0], s_ir_umbral, s_ir_invertido);
-        bool ir_der = ir_valido && ir_sin_piso(ir_mv[1], s_ir_umbral, s_ir_invertido);
+        // Altura de cada Sharp sobre el piso que ve: están paralelos a la IMU, así que el haz está
+        // inclinado lo que marca la IMU (theta) y la altura es distancia·cos(theta). Para alinearse con
+        // el borde, cada uno "no ve el piso" cuando esa altura pasa de s_ir_umbral
+        const float altura[2] = { dist * cosf(att.theta), dist2 * cosf(att.theta) };
+        const float ir_altura[2] = { altura[IR_SHARP1_ES_IZQ ? 0 : 1],          // izquierdo, derecho
+                                     altura[IR_SHARP1_ES_IZQ ? 1 : 0] };
+        bool ir_valido = !isnan(ir_altura[0]) && !isnan(ir_altura[1]);
+        bool ir_izq = ir_valido && ir_altura[0] > s_ir_umbral;
+        bool ir_der = ir_valido && ir_altura[1] > s_ir_umbral;
 
         // 4. Control y actuación. Fuera de BALANCING se apaga en cada ciclo, no solo al salir.
         float applied[MOTOR_COUNT] = { 0.0f };      // para la telemetría
@@ -679,6 +754,23 @@ static void control_task(void *arg)
                 bool quieto = man_rumbo && (man.estado == MAN_AGACHAR || man.estado == MAN_PREPARAR);
                 float g = rumbo_paso(&rum, &rp, IMU_SIGN_UP * s.gyro[IMU_AXIS_UP], w_pedido, quieto, dt);
                 if (s_rumbo_kp > 0.0f || w_pedido != 0.0f || rumbo_girando(&rum)) giro = g;
+            }
+            // "girar <grados>" (flechas): giro corto medido con el giróscopo, solo si no manda otra cosa
+            if (girar_obj != 0.0f) {
+                if (manda_otro || rumbo_ahora || !imu_ok) {
+                    girar_obj = 0.0f;
+                } else {
+                    girar_hecho += (IMU_SIGN_UP * s.gyro[IMU_AXIS_UP] - rum.sesgo) * dt;
+                    girar_t += dt;
+                    bool llego = girar_hecho * (girar_obj > 0.0f ? 1.0f : -1.0f) >= GIRAR_ANTICIPO * fabsf(girar_obj);
+                    if (llego || girar_t > GIRAR_T_MAX_S) {
+                        girar_obj = 0.0f;
+                        giro = 0.0f;
+                    } else {
+                        float pwm = fminf(GIRAR_PWM_MIN + GIRAR_PWM_RAMPA * girar_t, GIRAR_PWM_MAX);
+                        giro = girar_obj > 0.0f ? -pwm : pwm;       // giro > 0 es horario (w < 0)
+                    }
+                }
             }
 
             if (ms.activa) {
@@ -791,7 +883,23 @@ static void control_task(void *arg)
         float vel_patas = mov_p.vel_pata_dps;
         if (ms.activa && ms.vel_pata_dps > 0.0f) vel_patas = ms.vel_pata_dps;
         if (ps.activa && ps.vel_pata_dps > 0.0f) vel_patas = ps.vel_pata_dps;
-        update_servos(servo_pos, servo_target, servo_free, vel_patas, dt);
+        // Nivel de costado: equilibrando y sin maniobra ni parada, la diferencia entre las patas sigue al
+        // rolido (despacio); girando rápido no corrige. Fuera de eso, las patas como se pidieron
+        float patas_obj[SERVO_COUNT] = { [SERVO_LEFT] = servo_target[SERVO_LEFT], [SERVO_RIGHT] = servo_target[SERVO_RIGHT] };
+        bool nivelar = st == SUP_BALANCING && !ms.activa && !ps.activa && imu_ok
+                       && !servo_free[SERVO_LEFT] && !servo_free[SERVO_RIGHT]
+                       && !isnan(servo_target[SERVO_LEFT]) && !isnan(servo_target[SERVO_RIGHT]);
+        if (nivelar) {
+            bool gira = fabsf(s.gyro[IMU_AXIS_UP]) > NIVEL_W_MAX_DPS * DEG2RAD;
+            float delta = nivel_paso(&nivel, &s_nivel_p, !gira, dt);
+            nivel_patas(servo_target[SERVO_LEFT], servo_target[SERVO_RIGHT], delta,
+                        fmaxf(servo_lim[SERVO_LEFT][0], servo_lim[SERVO_RIGHT][0]),
+                        fminf(servo_lim[SERVO_LEFT][1], servo_lim[SERVO_RIGHT][1]),
+                        &patas_obj[SERVO_LEFT], &patas_obj[SERVO_RIGHT]);
+        } else {
+            nivel.delta_deg = 0.0f;         // al volver, empieza de las patas iguales
+        }
+        update_servos(servo_pos, patas_obj, servo_free, vel_patas, dt);
 
         // Medición de energía: el comando ya salió, así que no le agrega retardo, y sin competir por
         // el bus con la IMU. Si este ciclo vino justo se deja para el próximo.
@@ -859,7 +967,9 @@ static void control_task(void *arg)
             .dist        = dist,
             .haz_x       = haz_x,
             .haz_z       = haz_z,
-            .sharp_k     = sc.k, .sharp_v0 = sc.v0, .sharp_div = sc.div,
+            .sharp_k     = sc.k, .sharp_v0 = sc.v0, .sharp_div = sc.div, .sharp_div2 = sc.div2,
+            .ir_gan      = { s_ir_gan[0], s_ir_gan[1] },
+            .ir_cal      = s_ir_cal,
             .sens_x      = sc.sx, .sens_z = sc.sz, .sens_ang = sc.ang,
             .man_estado  = man.estado,
             .man_motivo  = man.motivo,
@@ -869,12 +979,18 @@ static void control_task(void *arg)
             .man_giro_alinear = man.giro_alinear,
             .man_torcido = man.torcido,
             .man_n_alinear = (uint8_t)man.n_alinear,
-            .ir_mv       = { ir_mv[0], ir_mv[1] },
+            .sharp2_mv   = sharp2_mv,
+            .dist2       = dist2,
+            .altura      = { altura[0], altura[1] },
+            .ir_altura   = { ir_altura[0], ir_altura[1] },
             .ir_sin_piso = { ir_izq, ir_der },
             .ir_umbral   = s_ir_umbral,
-            .ir_invertido = s_ir_invertido,
             .rumbo       = rum.rumbo,
             .w_eje       = s_w_eje,
+            .rolido      = nivel.rolido,
+            .nivel_delta = nivel.delta_deg,
+            .nivel_gan   = s_nivel_p.ganancia,
+            .rol_cero    = s_nivel_p.cero_deg,
             .parada_estado = par.estado,
             .registrando = grabando,
             .giro_max    = giro_max,

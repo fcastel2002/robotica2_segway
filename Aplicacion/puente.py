@@ -3,7 +3,7 @@ los comandos de la página van al robot por UDP.
 
 Solo usa la biblioteca estándar de Python (no hace falta `pip install`).
 
-    python Aplicacion/puente.py              # sirve la interfaz en http://localhost:8000 y la abre (USB directo)
+    python Aplicacion/puente.py              # sirve la interfaz en http://localhost:8000 y la abre (--usb: en USB directo)
     python Aplicacion/puente.py --simular    # sin robot: genera datos falsos para probar la interfaz
 
 Abre la página en Chrome o Edge (los que tienen Web Serial). Para todo junto, incluido grabar el
@@ -108,9 +108,9 @@ def escuchar_udp() -> None:
 ENCABEZADO = ("t_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,"
               "m_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,"
               "vref_mms,giro,ref_deg,sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm,"
-              "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria")
+              "v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria,alt_mm,alt2_mm")
 RADIO_MM = 40.0
-SERVO_LIM, SERVO_DPS = (0.0, 30.0), 90.0  # board_config.h: 0-30° estricto (cuatro barras) y velocidad
+SERVO_LIM, SERVO_DPS = (0.0, 30.0), 20.0  # board_config.h: 0-30° estricto (cuatro barras) y velocidad (velpata)
 # Batería simulada: la tabla de board_config.h y una descarga acelerada, para ver los avisos enseguida
 TABLA_V_CELDA = (3.50, 3.61, 3.69, 3.73, 3.77, 3.80, 3.84, 3.87, 3.95, 4.02, 4.11, 4.20)
 TABLA_SOC = (0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
@@ -144,8 +144,10 @@ def simular(frecuencia_hz: float) -> None:
     enc = [0.0, 0.0]
     pwm = [0.0, 0.0]  # -1..1, como motor_manual del firmware
     # Parámetros de "set": los mismos nombres que el firmware; "get" los devuelve
-    par = dict(kp=0.0, ki=0.0, kd=0.0, ref=1.0, umax=1.0, deadband=0.18,
-               lqr=1.0, kx=6.10, kv=5.84, kphi=9.91, kw=1.26, notch=7.5)
+    par = dict(ref=0.0, umax=1.0, deadband=0.03, dbrampa=0.0, dbmov=0.0, refauto=1,
+               kx=1.08, kv=1.81, kphi=3.3, kw=0.38, lqrpata=2, lqrfac=0.87, lqrfacx=0.86,
+               notch=11.6, notch2=7.7, lp=0.0,
+               vmax=0.40, acel=0.50, fren=0.50, ff=1.15, xlibre=1, velpata=20, margen=0.85, prio=0.0)
     servo = [0.0, 0.0]
     servo_objetivo = [0.0, 0.0]
     servo_suelto = [False, False]
@@ -231,6 +233,7 @@ def simular(frecuencia_hz: float) -> None:
                             difundir(f"# error: servo {'lr'[i]} sin posición conocida, no se agarra")
                         else:
                             servo_suelto[i] = False
+                            servo_objetivo[i] = servo[i]  # como el firmware: queda donde está (R1/L1 al soltar)
                     else:
                         # Tope estricto 0..30° igual que SERVO_HARD_MIN_DEG / SERVO_HARD_MAX_DEG en board_config.h
                         grados_seguros = max(SERVO_LIM[0], min(SERVO_LIM[1], grados))
@@ -273,10 +276,15 @@ def simular(frecuencia_hz: float) -> None:
                 difundir("# " + ENCABEZADO)
                 continue
             elif palabras[:1] == ["get"]:
-                difundir(f"# kp={par['kp']:.4f} ki={par['ki']:.4f} kd={par['kd']:.4f} ref={par['ref']:.2f} "
-                         f"umax={par['umax']:.2f} deadband={par['deadband']:.3f}")
-                difundir(f"# lqr={int(par['lqr'] != 0)} kx={par['kx']:.3f} kv={par['kv']:.3f} "
-                         f"kphi={par['kphi']:.3f} kw={par['kw']:.3f} notch={par['notch']:.1f}")
+                # las mismas líneas que print_params de comms_task.c (la página llena sus casillas con ellas)
+                difundir(f"# ref={par['ref']:.2f} umax={par['umax']:.2f} deadband={par['deadband']:.3f} "
+                         f"dbrampa={par['dbrampa']:.3f} dbmov={par['dbmov']:.3f} refauto={int(par['refauto'])}")
+                difundir(f"# kx={par['kx']:.3f} kv={par['kv']:.3f} kphi={par['kphi']:.3f} kw={par['kw']:.3f} "
+                         f"lqrpata={int(par['lqrpata'])} lqrfac={par['lqrfac']:.2f} lqrfacx={par['lqrfacx']:.2f} "
+                         f"notch={par['notch']:.1f} notch2={par['notch2']:.1f} lp={par['lp']:.1f}")
+                difundir(f"# vmax={par['vmax']:.2f} acel={par['acel']:.2f} fren={par['fren']:.2f} ff={par['ff']:.2f} "
+                         f"xlibre={int(par['xlibre'])} velpata={par['velpata']:.0f} margen={par['margen']:.2f} "
+                         f"prio={par['prio']:.1f}")
                 difundir(f"# servo l={servo[0]:.1f} r={servo[1]:.1f} lim_l={lim[0][0]:.1f}..{lim[0][1]:.1f} "
                          f"lim_r={lim[1][0]:.1f}..{lim[1][1]:.1f}")
                 continue
@@ -324,6 +332,9 @@ def simular(frecuencia_hz: float) -> None:
         soc = soc_simulado(v_bat)
         autonomia = soc / ((soc_inicial - soc) / t) / 60 if t > 60 and soc < soc_inicial else math.nan
         nivel = "CRITICA" if v_bat < 10.5 else "BAJA" if v_bat < 11.2 else "NORMAL"
+        # sensores de piso: el piso del chasis a ~9 cm con las patas en 0 y ~19 cm en 30
+        alturas = ",".join("nan" if math.isnan(servo[i]) else f"{90 + 3.3 * servo[i] + random.gauss(0, 1):.0f}"
+                           for i in (0, 1))
         corriente = [abs(a) * 700 + random.gauss(0, 3) for a in aplicado]
         difundir(f"{int(t * 1000)},{estado},{theta + random.gauss(0, 0.05):.2f},{dtheta:.1f},{u:.3f},"
                  f"{random.randint(180, 260)},0,{round(enc[0])},{round(enc[1])},"
@@ -331,7 +342,7 @@ def simular(frecuencia_hz: float) -> None:
                  f"{v_ref_mms:.0f},{giro:.3f},{par['ref']:.2f},nan,nan,nan,nan,inactiva,nan,"
                  f"{v_bat - sum(corriente) * 5e-5:.2f},{soc:.0f},{autonomia:.0f},"
                  f"{corriente[0]:.0f},{corriente[1]:.0f},{90 + random.gauss(0, 2):.0f},"
-                 f"{v_bat - 0.1:.1f},{v_bat - 0.1:.1f},{nivel}")
+                 f"{v_bat - 0.1:.1f},{v_bat - 0.1:.1f},{nivel},{alturas}")
         n += 1
         time.sleep(max(0.0, t0 + n * dt - time.monotonic()))
 
@@ -431,13 +442,14 @@ def main() -> None:
     p.add_argument("--simular", action="store_true", help="generar datos falsos en lugar de escuchar al robot")
     p.add_argument("--hz", type=float, default=100, help="frecuencia de los datos simulados (100)")
     p.add_argument("--sin-navegador", action="store_true", help="no abrir la página al arrancar")
+    p.add_argument("--usb", action="store_true", help="abrir la página en USB directo (Web Serial) y no por este puente")
     p.add_argument("--sin-joystick", action="store_true", help="no iniciar la aplicación puente del joystick en :8001")
     args = p.parse_args()
     global simulando, sock_udp, robot
     simulando = args.simular
     robot = args.robot
-    # Sin --simular la página arranca en USB directo: el firmware todavía no tiene WiFi
-    url = f"http://localhost:{args.http}/?fuente={'puente' if args.simular else 'usb'}"
+    # La página arranca conectada a este puente (WiFi o simulador); con --usb, en USB directo
+    url = f"http://localhost:{args.http}/?fuente={'usb' if args.usb else 'puente'}"
 
     if puerto_ocupado(args.http):
         print(f"Ya hay un puente en el puerto {args.http}: abro la página y salgo.")

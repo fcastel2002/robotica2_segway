@@ -11,7 +11,8 @@ const MAX_MENSAJES = 300;
 // encabezado, lo reemplaza.
 const COLUMNAS_FIRMWARE = 't_ms,estado,theta_deg,theta_dot_dps,u,loop_us_max,overruns,enc_l,enc_r,'
   + 'm_l,m_r,servo_l_deg,servo_r_deg,ax_ms2,ay_ms2,az_ms2,gx_dps,gy_dps,gz_dps,x_mm,v_mms,vref_mms,giro,ref_deg,'
-  + 'sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm,v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria';
+  + 'sharp_mv,dist_mm,haz_x_mm,haz_z_mm,maniobra,borde_mm,v_bat,soc,autonomia_min,i_l_ma,i_r_ma,i_log_ma,v_l,v_r,bateria,'
+  + 'alt_mm,alt2_mm';
 const CLAVES_TIEMPO = ['t', 't_ms'];  // milisegundos del robot
 // Funciones (muestra, t, textos) llamadas con cada muestra antes de guardarla: pueden agregar
 // columnas calculadas a la muestra, que se grafican y graban como las demás (banco.js).
@@ -36,7 +37,7 @@ const $ = (id) => document.getElementById(id);
 
 // ---------- Entrada de datos ----------
 
-const NUMERO = String.raw`[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?|nan|[-+]?inf`;
+const NUMERO = String.raw`[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?|[-+]?nan|[-+]?inf`;
 const PAR = new RegExp(String.raw`^([A-Za-z_][\w.]*):(${NUMERO})$`, 'i');
 const ES_NUMERO = new RegExp(`^(?:${NUMERO})$`, 'i');
 const ENCABEZADO = /^[A-Za-z_]\w*(?:,[A-Za-z_]\w*)+$/;
@@ -69,6 +70,10 @@ function leerCsv(linea) {
 function procesarLinea(linea) {
   linea = linea.trim();
   if (!linea) return;
+  // El registro de 200 Hz de la bajada o de "grabar" ("#r,..."; lo guarda el puente): ni es telemetría ni
+  // su encabezado ("#r,t_s,maniobra,...") es el de la telemetría. Antes lo tomaba por el encabezado y,
+  // al terminar el registro, descartaba todas las líneas: la página quedaba sin datos hasta un "tlm on"
+  if (linea.startsWith('#r,')) return;
   if (linea.startsWith('#')) { // el firmware marca con '#' todo lo que no es dato
     const texto = linea.replace(/^#\s*/, '');
     if (ENCABEZADO.test(texto)) columnas = texto.split(',');
@@ -547,7 +552,10 @@ function leerParametros(texto) {
   if (!/^(kp|lqr|ref|kx|vmax)=/.test(texto)) return;
   for (const [, nombre, valor] of texto.matchAll(/(\w+)=([-+\d.eE]+)/g)) {
     const casilla = $('ganancias').elements[nombre] ?? document.querySelector(`[data-param="${nombre}"]`);
-    if (casilla && document.activeElement !== casilla) casilla.value = Number(valor);
+    if (casilla && document.activeElement !== casilla) {
+      casilla.value = Number(valor);
+      casilla.dataset.leido = casilla.value;   // lo que tiene el robot: "Cargar" manda solo lo que cambió
+    }
   }
 }
 
@@ -578,8 +586,12 @@ $('linea-comando').onsubmit = (e) => {
 };
 $('ganancias').onsubmit = async (e) => {
   e.preventDefault();
+  // Solo lo que se cambió respecto del último "get": mandar todo pisaba, por ejemplo, la referencia que
+  // el firmware corrige sola (refauto) con el valor viejo que había quedado en la casilla
   for (const casilla of $('ganancias').querySelectorAll('input, select')) {
-    if (casilla.value !== '') await enviar(`set ${casilla.name} ${casilla.value}`);
+    if (casilla.value !== '' && casilla.value !== casilla.dataset.leido) {
+      await enviar(`set ${casilla.name} ${casilla.value}`);
+    }
   }
   await enviar('get');
 };
@@ -601,7 +613,7 @@ document.addEventListener('keydown', (e) => { // Esc desarma desde cualquier lad
 
 async function cerrarFuente() { // frena antes de soltar el puerto: después ya no se puede
   await frenarMotores();
-  fuente.cerrar();
+  fuente?.cerrar();     // mientras frenaba se pudo haber caído sola
   desconectado();
 }
 

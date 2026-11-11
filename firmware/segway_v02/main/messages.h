@@ -39,7 +39,7 @@ typedef enum {
     PARAM_GIROMAX,      // fracción de PWM sumada y restada con giro = 1 (R2/L2 del joystick)
     PARAM_SHARPK,       // calibración del Sharp: d = sharpk / (v - sharpv0) [V m], [V]
     PARAM_SHARPV0,
-    PARAM_SHARPDIV,     // divisor entre la salida del Sharp y el pin (0,6 con 10k/15k; 1 sin divisor)
+    PARAM_SHARPDIV,     // divisor entre la salida del Sharp de J27 y el pin (0,6 con 10k/15k; 0,4 al revés; 1 sin)
     PARAM_SENSX,        // sensor respecto del eje del servo, ejes del cuerpo [cm] y haz desde la
     PARAM_SENSZ,        // vertical del cuerpo hacia atrás [grados]: medidos con el sensor montado
     PARAM_SENSANG,
@@ -56,9 +56,13 @@ typedef enum {
     PARAM_TRIM,         // compensación entre motores: fracción de PWM de más a la izquierda (balance_trim)
     PARAM_DLPF,         // filtro interno de la IMU: 1 = 188 Hz, 2 = 98, 3 = 42, 4 = 20 (imu_set_dlpf)
     PARAM_RUMBO,        // en la bajada (△), ganancia del rumbo con el giróscopo vertical [PWM/rad]; 0 = no lo sostiene
-    PARAM_IRUMBRAL,     // infrarrojos del borde: tensión [mV] que separa "ve el piso" de "sin piso"
-    PARAM_IRINV,        // 0: sin piso la tensión sube (salida digital); 1: sin piso baja (analógicos)
+    PARAM_IRUMBRAL,     // sensores de piso: altura [cm] desde la que es "sin piso" (pasó el borde)
     PARAM_WEJE,         // velocidad del giro sobre su eje con R3/L3 [°/s]
+    PARAM_NIVEL,        // nivel de costado: ganancia con signo [° de pata/s por ° de rolido]; 0 = apagado
+    PARAM_ROLCERO,      // rolido que marca la IMU con el robot derecho en piso plano [°]
+    PARAM_NIVELCERO,    // (cualquier valor) toma como cero el rolido de este momento
+    PARAM_SHARPDIV2,    // divisor del segundo Sharp
+    PARAM_IRCAL,        // 1: calibra los sensores de piso (robot parado en piso plano); 0: sin calibrar
     PARAM_COUNT,
 } param_id_t;
 
@@ -78,6 +82,7 @@ typedef enum {
     CMD_ESCALON,        // "escalon" (△): baja el escalón de atrás; value < 0: solo mide el borde;
                         // value2 = 1: se alinea antes con los infrarrojos ("escalon alinear", OPTIONS)
     CMD_EJE,            // "eje": value de -1 a 1, giro sobre su eje (+ a la derecha); vence como "mov"
+    CMD_GIRAR,          // "girar": value en grados (+ a la derecha), un giro corto medido con el giróscopo
     CMD_PARAR,          // "parar" (□): parada controlada (parada.h)
     CMD_GRABAR,         // "grabar": el registro de 200 Hz durante 8 s, armado o no (soltarlo y medir
                         // cuánto rebota la goma)
@@ -134,6 +139,9 @@ typedef struct {
     float            haz_x, haz_z;  // dónde pega el haz respecto del apoyo de la rueda: hacia atrás
                                     // y de alto [m] (en piso plano, haz_z ~ 0)
     float            sharp_k, sharp_v0, sharp_div;  // calibración vigente, para "get"
+    float            sharp_div2;    // divisor del segundo Sharp
+    float            ir_gan[2];     // calibración de cada Sharp (J27, segundo): por cuánto se multiplica su distancia
+    uint8_t          ir_cal;        // 0 sin calibrar, 1 calibrando, 2 calibrado, 3 no pudo (no veían el piso)
     float            sens_x, sens_z, sens_ang;      // geometría vigente [m], [m], [rad]
     man_estado_t     man_estado;
     const char      *man_motivo;    // por qué abortó (texto fijo de maniobra.c) o NULL
@@ -142,12 +150,19 @@ typedef struct {
     float            man_giro_alinear;  // [rad] cuánto giró en total para alinearse con el borde
     float            man_torcido;   // [rad] lo último que midió respecto del borde (NAN: no midió)
     uint8_t          man_n_alinear; // giros que hizo para alinearse
-    float            ir_mv[2];      // infrarrojos del borde, izquierdo y derecho [mV] (NAN si no se leen)
+    float            sharp2_mv;     // tensión en el pin del segundo Sharp [mV] (NAN si no se lee)
+    float            dist2;         // lo que mide el segundo Sharp [m] (NAN si no se lee)
+    float            altura[2];     // [m] altura de cada Sharp sobre el piso que ve: distancia·cos(theta de
+                                    // la IMU), porque están paralelos a la IMU (NAN si no mide)
+    float            ir_altura[2];  // sensores de piso, izquierdo y derecho: altura que ven [m] (NAN si no se leen)
     bool             ir_sin_piso[2];    // lo que se entiende de cada uno
-    float            ir_umbral;     // [mV] ("set irumbral")
-    bool             ir_invertido;  // ("set irinv")
+    float            ir_umbral;     // [m] ("set irumbral", en cm)
     float            rumbo;         // [rad] giro acumulado mientras se sostiene el rumbo o se gira
     float            w_eje;         // [rad/s] ("set weje")
+    float            rolido;        // [rad] inclinación de costado estimada (sin restarle el cero)
+    float            nivel_delta;   // [°] diferencia entre las patas que pide el nivel (izquierda - derecha)
+    float            nivel_gan;     // ("set nivel")
+    float            rol_cero;      // [°] ("set rolcero")
     parada_estado_t  parada_estado;
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;

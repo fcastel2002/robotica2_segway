@@ -154,6 +154,14 @@ tr.texto { cursor: default; }
   gap: 12px;
   align-items: start;
 }
+/* Banco de pruebas: cuatro columnas angostas arriba (entra en una pantalla); abajo, el sistema y los
+   parámetros de control, que ocupan el resto del ancho */
+.banco .tablero { grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); }
+.tablero > .abajo { grid-column: 1 / -1; display: grid; gap: 12px; align-items: start; }
+.abajo .parametros fieldset { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
+@media (min-width: 900px) {
+  .tablero > .abajo { grid-template-columns: minmax(240px, 1fr) 3fr; }
+}
 .mando .tablero, .configuracion .tablero {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   max-width: 1240px;
