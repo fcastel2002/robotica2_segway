@@ -17,7 +17,8 @@ Controles configurados para el mando de PS4 (DualShock 4):
   7,7 Hz). Queda avisado en la consola y en la página.
 - R3 / L3 (apretar el stick derecho / izquierdo), 11/11: mientras está apretado gira sobre su eje a la
   derecha / a la izquierda (`eje 1` / `eje -1`, a «weje» grados por segundo, con el giróscopo).
-- Botón ✕ (Equis): arma el robot (`arm`; el LQR es el único control del firmware).
+- Botón ✕ (Equis): arma el robot (`arm`; el LQR es el único control del firmware). 11/11: con el robot
+  ya equilibrando, SALTA (`salto`: patas a 0° y a 30° a fondo).
 - Botón ◯ (Círculo): desarme de emergencia inmediato (`mov 0 0` + `disarm`).
 - Botón △ (Triángulo): baja el escalón que tiene atrás (`escalon`; sin el sensor, con el borde a
   la distancia que tiene el firmware: `man d_borde`; `get` la muestra). Solo equilibrando.
@@ -650,13 +651,20 @@ class PuenteJoystick:
                 self.servo_deg = acotar_servo_estricto(valor)
                 comandos_a_enviar.append(f"servo {self.servo_deg}")
                 self._ultimo_evento = f"Servos ajustados a {self.servo_deg}° (rango 0°..{SERVO_MAX_DEG}°)"
-            elif accion == "armar":
+            elif accion in ("armar", "armar_o_saltar"):
                 # Si se usó la demostración (R3 + L3), antes de armar vuelve el control de fábrica: que arme
                 # siempre bien aunque el "soltar" se haya perdido
                 if self._demo_usada:
                     comandos_a_enviar.extend(["set lqrfac 0.87", "set notch 11.6", "set notch2 7.7"])
-                comandos_a_enviar.append("arm")
-                self._ultimo_evento = "✕ → Armar robot (arm)"
+                if accion == "armar_o_saltar":
+                    # 11/11: ✕ del mando, equilibrando, salta. Decide el firmware con su estado: "salto"
+                    # desarmado no hace nada y "arm" equilibrando tampoco (con un firmware sin "salto", ✕
+                    # sigue armando). El botón "Armar" de la página solo arma
+                    comandos_a_enviar.extend(["salto", "arm"])
+                    self._ultimo_evento = "✕ → Armar; si ya está equilibrando, SALTA (salto / arm)"
+                else:
+                    comandos_a_enviar.append("arm")
+                    self._ultimo_evento = "✕ → Armar robot (arm)"
             elif accion == "desarmar":
                 self._mando = {"avance": 0.0, "giro": 0.0}
                 comandos_a_enviar.extend(["mov 0.000 0.000", "disarm"])
@@ -712,7 +720,7 @@ class PuenteJoystick:
         if botones_actuales.get("o") and not prev.get("o"):
             self.ejecutar_accion("desarmar")
         elif botones_actuales.get("x") and not prev.get("x"):
-            self.ejecutar_accion("armar")
+            self.ejecutar_accion("armar_o_saltar")      # equilibrando, salta
 
         if botones_actuales.get("options") and not prev.get("options"):
             self.ejecutar_accion("alinear")         # 11/11: antes cambiaba el modo de sticks

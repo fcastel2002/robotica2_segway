@@ -185,6 +185,7 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
     case CMD_PARAR:
     case CMD_GRABAR:
     case CMD_MAN_PARAM:
+    case CMD_SALTO:
         break;
     case CMD_SET:
         switch (c->param) {
@@ -405,6 +406,10 @@ static void control_task(void *arg)
     parada_params_t par_p;
     parada_params_por_defecto(&par_p);
     parada_salida_t ps = { 0 };
+    salto_t sal = { 0 };                // salto (✕ equilibrando)
+    salto_params_t sal_p;
+    salto_params_por_defecto(&sal_p);
+    salto_salida_t ss = { 0 };
     bool pedir_desarme = false;
     bool armo_alguna_vez = false;   // desde que se prendió: el primer armado pide las patas iguales
     patas_arm_t arm_patas = PATAS_OK;   // por qué no armó el último "arm" por las patas (para comms)
@@ -469,9 +474,20 @@ static void control_task(void *arg)
                 }
                 continue;
             }
+            if (c.type == CMD_SALTO) {
+                // Solo equilibrando del todo (terminó la rampa del armado) y sin otra cosa en curso
+                if (sup.state == SUP_BALANCING && ramp >= 1.0f && par.estado == PARADA_INACTIVA
+                    && (man.estado == MAN_INACTIVA || man.estado == MAN_FIN) && salto_iniciar(&sal)) {
+                    s_reg_listo = false;        // el registro de 200 Hz, 3 s desde que empieza
+                    s_reg_n = 0;
+                    grabando = true;
+                    fin_reg = 600;
+                }
+                continue;
+            }
             if (c.type == CMD_ESCALON) {
                 // Solo equilibrando y sin otra cosa en curso; arranca donde está
-                if (sup.state == SUP_BALANCING && par.estado == PARADA_INACTIVA
+                if (sup.state == SUP_BALANCING && par.estado == PARADA_INACTIVA && sal.estado == SALTO_INACTIVO
                     && (man.estado == MAN_INACTIVA || man.estado == MAN_FIN)) {
                     // value: 0 como está, < 0 solo medir el borde, > 0 sin sensor con el borde ahí [m]
                     man_p.solo_medir = c.value < 0.0f;
@@ -488,7 +504,7 @@ static void control_task(void *arg)
                 continue;
             }
             if (c.type == CMD_PARAR) {
-                if (sup.state == SUP_BALANCING) {
+                if (sup.state == SUP_BALANCING && sal.estado == SALTO_INACTIVO) {
                     maniobra_abortar(&man, "parada (cuadrado)");
                     man.estado = MAN_INACTIVA;
                     parada_iniciar(&par);
@@ -536,7 +552,7 @@ static void control_task(void *arg)
         // En el vuelo la tabla de equilibrio no vale (no está apoyado): queda la de antes de despegar.
         // 3/11: al estirar las patas a 30° en el aire saltó de 13 a 8° y el LQR llevó las ruedas a
         // fondo hacia adelante; tocó con las ruedas al revés del piso y se cayó de espaldas.
-        if (man.estado == MAN_VUELO) params.theta_ref = ref_vuelo;
+        if (man.estado == MAN_VUELO || sal.estado == SALTO_VUELO) params.theta_ref = ref_vuelo;
         else ref_vuelo = params.theta_ref;
         // Y las ganancias, según la pata o las fijas (get muestra las que se están usando)
         if (params.lqr_por_pata) {
@@ -579,7 +595,7 @@ static void control_task(void *arg)
                 if (sup.state == SUP_CALIBRATING) {
                     calibrated = attitude_calibrate(&att, gyro, CAL_SAMPLES, GYRO_CAL_MAX_RATE);
                 }
-            } else if (s.baja_g || (ms.activa && ms.solo_giroscopo)) {
+            } else if (s.baja_g || (ms.activa && ms.solo_giroscopo) || (ss.activa && ss.solo_giroscopo)) {
                 attitude_update_gyro(&att, gyro, dt);
             } else {
                 attitude_update(&att, acc_fwd, acc_up, gyro, dt, s_tau_att);
@@ -594,7 +610,7 @@ static void control_task(void *arg)
             .overrun    = overrun,
             .tilt_err   = att.theta - params.theta_ref,
             .saturated  = sup.state == SUP_BALANCING && fabsf(u) >= 0.98f * params.u_max,
-            .en_el_aire = man.estado == MAN_VUELO,
+            .en_el_aire = man.estado == MAN_VUELO || sal.estado == SALTO_VUELO,
             .cmd        = cmd,
         };
         sup_state_t st = supervisor_step(&sup, &in, TILT_LIMIT_DEG * DEG2RAD,
@@ -708,7 +724,14 @@ static void control_task(void *arg)
                 pedir_desarme = ps.desarmar;
                 pedir_patas(ps.pata_deg, servo_pos, servo_target, servo_free, servo_lim);
             }
-            bool manda_otro = ms.activa || ps.activa;
+            // El salto (✕): patas a 0 y a 30 a fondo; en el aire, la rueda como al despegar
+            salto_entrada_t se = { .dt = dt, .pata_deg = pata_actual(servo_pos), .acc = acc_norma, .v = odo.v };
+            bool salto_estaba = sal.estado != SALTO_INACTIVO;
+            salto_paso(&sal, &sal_p, &se, &ss);
+            if (ss.activa || salto_estaba) {
+                pedir_patas(ss.pata_deg, servo_pos, servo_target, servo_free, servo_lim);
+            }
+            bool manda_otro = ms.activa || ps.activa || ss.activa;
 
             // "mov": el avance pasa a una velocidad pedida con rampas de subida (acel) y de
             // frenado (fren); con x libre, la posición se fija recién cuando terminó de frenar
@@ -790,6 +813,8 @@ static void control_task(void *arg)
                 if (ms.activa && ms.u_directo_activo) {
                     // En el aire, la rueda a la velocidad del piso (o en cero) sin el LQR
                     u = balance_compensar(&pm, ms.u_directo, u_limit);
+                } else if (ss.activa && ss.u_directo_activo) {
+                    u = balance_compensar(&pm, ss.u_directo, u_limit);
                 }
             }
             // Referencia automática: si se queda corrido de su consigna, la referencia no es el
@@ -842,12 +867,14 @@ static void control_task(void *arg)
             if (man.estado != MAN_INACTIVA && man.estado != MAN_FIN && man.estado != MAN_ABORTADA) {
                 maniobra_abortar(&man, st == SUP_FALLEN ? "se cayo" : "desarmado");
             }
-            if (man.estado != MAN_INACTIVA || par.estado != PARADA_INACTIVA || ms.activa || ps.activa) {
+            if (man.estado != MAN_INACTIVA || par.estado != PARADA_INACTIVA || ms.activa || ps.activa
+                || sal.estado != SALTO_INACTIVO || ss.activa) {
                 for (int i = 0; i < SERVO_COUNT; i++) servo_target[i] = servo_pos[i];
             }
             if (man.estado == MAN_ABORTADA || man.estado == MAN_FIN) man.estado = MAN_INACTIVA;
             parada_cancelar(&par);
-            ms.activa = ps.activa = false;
+            salto_cancelar(&sal);
+            ms.activa = ps.activa = ss.activa = false;
         }
         // Registro de la bajada, cada ciclo
         if (grabando) {
@@ -885,10 +912,11 @@ static void control_task(void *arg)
         float vel_patas = mov_p.vel_pata_dps;
         if (ms.activa && ms.vel_pata_dps > 0.0f) vel_patas = ms.vel_pata_dps;
         if (ps.activa && ps.vel_pata_dps > 0.0f) vel_patas = ps.vel_pata_dps;
+        if (ss.activa && ss.vel_pata_dps > 0.0f) vel_patas = ss.vel_pata_dps;
         // Nivel de costado: equilibrando y sin maniobra ni parada, la diferencia entre las patas sigue al
         // rolido (despacio); girando rápido no corrige. Fuera de eso, las patas como se pidieron
         float patas_obj[SERVO_COUNT] = { [SERVO_LEFT] = servo_target[SERVO_LEFT], [SERVO_RIGHT] = servo_target[SERVO_RIGHT] };
-        bool nivelar = st == SUP_BALANCING && !ms.activa && !ps.activa && imu_ok
+        bool nivelar = st == SUP_BALANCING && !ms.activa && !ps.activa && !ss.activa && imu_ok
                        && !servo_free[SERVO_LEFT] && !servo_free[SERVO_RIGHT]
                        && !isnan(servo_target[SERVO_LEFT]) && !isnan(servo_target[SERVO_RIGHT]);
         if (nivelar) {
@@ -996,6 +1024,9 @@ static void control_task(void *arg)
             .nivel_ki    = s_nivel_p.ki,
             .rol_cero    = s_nivel_p.cero_deg,
             .parada_estado = par.estado,
+            .salto_estado = sal.estado,
+            .salto_t_vuelo = sal.t_vuelo,
+            .salto_despego = sal.despego,
             .registrando = grabando,
             .giro_max    = giro_max,
             .par_inclina = par_p.inclina_deg * DEG2RAD,

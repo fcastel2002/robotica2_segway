@@ -303,6 +303,31 @@ se reiniciaba con los golpes (pines flojos): con las PCB, repetirlo.
   cuando ya está alineado y a `d_carrera` (lo anterior no entra en 8 s); con `escalon alinear medir`,
   desde el principio.
 
+## Salto (11/11)
+
+**Sin probar en el robot.** Con el robot equilibrando, `salto` (✕ del joystick) baja las patas a 0° y
+las estira a 30° a 330 °/s, lo que da el servo ([`salto.c`](components/control/salto.c)). Al frenar
+arriba el cuerpo sigue subiendo y levanta las ruedas. Etapas (`# salto: ...` en la consola):
+
+| Etapa | Qué hace |
+|---|---|
+| agachar | patas a 0° a fondo |
+| abajo | 0,3 s quieto abajo: el equilibrio se acomoda a la altura nueva (`t_abajo_s`) |
+| empujar | patas a 30° a fondo; si el acelerómetro marca caída libre (< 0,4 g, 10 ms), despegó |
+| vuelo | inclinación solo con el giróscopo, la referencia de antes de despegar y la rueda a la velocidad que tenía (no el LQR); el supervisor no lo da por caído |
+| aterrizar | golpe (> 1,6 g) o 0,5 s en el aire: 0,15 s más sin el acelerómetro y vuelve el control normal |
+
+Si con las patas arriba no despega en 0,3 s, termina igual (`# salto: no despego`). Las patas quedan en
+30°. Solo arranca equilibrando del todo (terminó la rampa del armado) y sin bajada ni parada en curso;
+△ y □ no hacen nada mientras salta. Graba 3 s a 200 Hz y manda el registro al terminar (como `grabar`).
+
+El joystick manda `salto` y `arm` con cada ✕: desarmado, `salto` no hace nada y arma; equilibrando,
+`arm` no hace nada y salta. El botón «Armar» de la página solo arma.
+
+**Para probarlo:** primero agarrado (que no despegue): ver que baja y sube y que el equilibrio aguanta
+el agachado a fondo. Los valores están en `salto_params_por_defecto`; si con 0,3 s abajo se hamaca
+al empujar, alargar `t_abajo_s`.
+
 ## Nivel de costado (11/11)
 
 **Apagado de fábrica** (`set nivel 1` o L2 del mando lo prende). En un piso inclinado hacia un lado,

@@ -125,6 +125,7 @@ static void print_help(void)
         "#   escalon alinear (OPTIONS): retrocede hasta que un infrarrojo ve el borde, gira hasta que lo ve\n"
         "#   el otro, se aleja d_carrera y baja; escalon alinear medir: lo mismo sin bajar\n"
         "# parar: parada controlada (cuadrado): frena, baja las patas al minimo y se deja caer atras\n"
+        "# salto: equilibrando (cruz), patas a 0 y a 30 a 330 grados/s y salta; graba 3 s\n"
         "# grabar [s]: graba s segundos (8 sin numero) a 200 Hz (armado o no) y los manda como el de\n"
         "#   la bajada (lineas #r):\n"
         "#   para soltar el robot desde unos cm y medir cuanto rebota la goma\n"
@@ -534,6 +535,18 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
             return;
         }
         cmd = (command_t){ .type = CMD_PARAR };
+    } else if (strcmp(word, "salto") == 0) {
+        // ✕ del joystick manda "salto" y "arm": equilibrando salta, desarmado arma (el "arm" equilibrando
+        // y el "salto" desarmado no hacen nada). Por eso desarmado no se avisa
+        if (last->state != SUP_BALANCING) return;
+        if (last->salto_estado != SALTO_INACTIVO || maniobra_en_curso(last->man_estado)
+            || last->parada_estado != PARADA_INACTIVA) {
+            out("# salto: hay otra cosa en curso\n");
+            return;
+        }
+        cmd = (command_t){ .type = CMD_SALTO };
+        s_grabar = 1;           // control graba 3 s y comms manda el registro al terminar
+        out("# salto: patas a 0 y a 30 a fondo; graba 3 s a 200 Hz\n");
     } else if (strcmp(word, "grabar") == 0) {
         if (last->man_estado != MAN_INACTIVA && last->man_estado != MAN_FIN) {
             out("# grabar: ya esta grabando la bajada\n");
@@ -662,6 +675,24 @@ static void explain_maniobra(const telemetry_t *t, man_estado_t *man_antes, para
     }
 }
 
+// Lo que pasa en el salto, cuando cambia
+static void explain_salto(const telemetry_t *t, salto_estado_t *antes)
+{
+    if (t->salto_estado == *antes) return;
+    if (t->salto_estado == SALTO_INACTIVO) {
+        if (t->state != SUP_BALANCING) {
+            out("# salto: cortado (%s)\n", supervisor_state_name(t->state));
+        } else if (t->salto_despego) {
+            out("# salto: listo, estuvo %.0f ms en el aire\n", t->salto_t_vuelo * 1000.0f);
+        } else {
+            out("# salto: no despego (el acelerometro no marco caida libre)\n");
+        }
+    } else {
+        out("# salto: %s\n", salto_nombre(t->salto_estado));
+    }
+    *antes = t->salto_estado;
+}
+
 // Un valor del registro guardado en entero, en sus unidades (INT16_MIN: no había dato)
 static double crudo(int16_t v, float escala)
 {
@@ -774,6 +805,7 @@ static void comms_task(void *arg)
     int reg_i = -1;                 // registro de la bajada: -1 nada, -2 esperando, >= 0 mandando
     man_estado_t man_antes = MAN_INACTIVA;
     parada_estado_t par_antes = PARADA_INACTIVA;
+    salto_estado_t salto_antes = SALTO_INACTIVO;
     uint32_t led_motor_t = 0;
     bateria_reset(&s_bat);
     maniobra_params_por_defecto(&s_man);
@@ -845,7 +877,8 @@ static void comms_task(void *arg)
             .guia = last.led_guia,
             .tilt_err_deg = (last.theta - last.params.theta_ref) * RAD2DEG,
             .t_ms = last.t_ms,
-            .maniobra = maniobra_en_curso(last.man_estado) || last.parada_estado != PARADA_INACTIVA,
+            .maniobra = maniobra_en_curso(last.man_estado) || last.parada_estado != PARADA_INACTIVA
+                        || last.salto_estado != SALTO_INACTIVO,
             .motor_limite = led_motor_limite(&led_motor_t,
                                              fmaxf(fabsf(last.motor_cmd[MOTOR_LEFT]),
                                                    fabsf(last.motor_cmd[MOTOR_RIGHT])),
@@ -859,6 +892,7 @@ static void comms_task(void *arg)
         if (get_wait > 0 && --get_wait == 0) print_params(&last);
         if (arm_wait > 0 && --arm_wait == 0) explain_arm(&last);
         explain_maniobra(&last, &man_antes, &par_antes, &reg_i);
+        explain_salto(&last, &salto_antes);
         if (s_grabar == 1 && last.registrando) {
             s_grabar = 2;
         } else if (s_grabar == 2 && !last.registrando) {
