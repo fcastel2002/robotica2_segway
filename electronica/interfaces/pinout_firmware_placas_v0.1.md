@@ -24,12 +24,15 @@ Placa: Heemol ESP32-S3-DevKitC-1-N16R8 (16 MB de flash, 8 MB de PSRAM octal). To
 | 12 | IN1_DER | salida | MCPWM o LEDC | DRV8871 DER (A4), por el cable (J20.8) | Motor DER en J12 |
 | 11 | IN2_DER | salida | MCPWM o LEDC | DRV8871 DER (A4), por el cable (J20.6) | |
 | 3 | DIST_SUELO | entrada analógica | ADC1_CH2, atenuación de 12 dB | Sharp GP2Y0A60SZLF en J27.2, por el divisor R41/R42 (× 0,6) | Distancia al piso: 3,6 V a 10 cm y 0,6 V a 150 cm en el sensor (2,2 y 0,36 V en el pin); se actualiza cada 16,5 ms. Promediar varias lecturas |
+| 1 | DIST_SUELO_2 | entrada analógica | ADC1_CH0, atenuación de 12 dB | Segundo Sharp GP2Y0A60SZLF, por cable a J25.4 (5 V de J26.5, GND de J26.3), con divisor 10k/15k en el cable (× 0,6) | Igual que DIST_SUELO: misma fórmula y mismo tratamiento (ELE-049) |
 | 48 | LED RGB | salida | RMT (WS2812) | En la DevKitC | Indicador de estado |
 | 0 | BOOT | entrada | GPIO | Botón de la DevKitC | Se puede leer como botón después del arranque |
 
 Sensor de distancia en J27 (v0.4, ELE-044): Sharp GP2Y0A60SZLF en el carrier Pololu #2474, mirando al piso para detectar escalones. Su salida entra a **GPIO3** por un divisor 10k/15k: la distancia es aproximadamente proporcional a 1 / (V_pin / 0,6 − 0,4); calibrar contra el piso real. Debajo de 10 cm la lectura se dobla: con el sensor a la altura correcta, una lectura menor a la del piso indica un obstáculo y una mayor, un escalón. **GPIO47 y GPIO21 quedan libres** (el HC-SR04 ya no se usa).
 
-Pines libres para sensores nuevos: **1, 2, 21, 38, 39, 40, 41, 42 y 47**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.6.md)). GPIO3 ya no está libre: lee el Sharp de J27. GPIO1 y GPIO2 tienen ADC1.
+Segundo sensor de distancia (ELE-049, 11/11/2026): otro Sharp GP2Y0A60SZLF (Pololu #2474), tratado igual que el de J27: 5 V y divisor 10k/15k, pero cableado por la expansión porque la placa v0.6 no cambia. VCC a J26.5, GND a J26.3, OUT por 10 kΩ al punto medio, 15 kΩ del punto medio a GND y el punto medio a **J25.4 (GPIO1, ADC1_CH0)**; las resistencias van en el cable. Diagrama: [sharp2_divisor_cable.bob](diagramas/sharp2_divisor_cable.bob). Los dos se leen con la misma fórmula (V_sensor = V_pin / 0,6). En la ESP32-S3 solo GPIO1 a GPIO20 tienen ADC, en pines fijos: GPIO21, 38-42 y 47 no sirven para un Sharp.
+
+Pines libres para sensores nuevos: **2, 21, 38, 39, 40, 41, 42 y 47**. Están en la tira de expansión J25 de la placa de lógica ([mapa y cuidados](../cad/segway_logica/pcb_v0.6.md)). GPIO3 lee el Sharp de J27 y GPIO1 el segundo Sharp. GPIO2 es el único libre que queda con ADC1.
 
 No usar: 35, 36 y 37 (PSRAM), 19 y 20 (USB nativo), 43 y 44 (UART0 del USB-serie; el pin 24 del módulo, GPIO43, se corta para codificar el zócalo), 45 y 46 (strapping). No grabar el eFuse `STRAP_JTAG_SEL`, porque GPIO3 es un pin de strapping de JTAG (queda libre en J24.13; SUP-24).
 
@@ -109,6 +112,7 @@ Copiar como un juego de pines aparte, por ejemplo con `#if BOARD_PCB_V01`, si se
 #define PIN_ARM_BUTTON      0       // botón BOOT
 #define PIN_LED_RGB         48
 #define PIN_DIST_SUELO      3       // Sharp GP2Y0A60SZLF en J27, ADC1_CH2, divisor 10k/15k (x 0,6)
+#define PIN_DIST_SUELO_2    1       // segundo Sharp por J25.4, ADC1_CH0, divisor 10k/15k en el cable (x 0,6)
 #define I2C_ADDR_MPU6050    0x68
 #define I2C_ADDR_INA219_L   0x41
 #define I2C_ADDR_INA219_R   0x44

@@ -76,6 +76,23 @@ Pololu #2474 (Sharp GP2Y0A60SZLF, versión de 5 V), mirando al piso para detecta
 - **Cable girado o corrido un pin:** la ESP32 queda protegida por el divisor (como máximo 3,0 V en GPIO3). El sensor sí puede dañarse en dos casos: **cable girado** (su salida queda en 5 V con su GND suelto) y **corrido hacia el pin 4** (su VCC en GND y su salida en 5 V). Marcar el pin 1 en las dos puntas del cable. **Ojo:** en el carrier el pad cuadrado es GND (su pin 4), y en J27 el pad cuadrado es el pin 1 (EN): unir «cuadrado con cuadrado» lo deja girado.
 - **Sin sensor o con el cable suelto,** GPIO3 lee unos 0 V, lo mismo que «muy lejos»: el firmware lo interpreta como escalón y frena, que es la falla segura.
 
+### Segundo sensor Sharp (por la expansión, con divisor en el cable)
+
+Otro Pololu #2474, tratado igual que el de J27 (5 V y divisor 10k/15k), pero conectado por las tiras de la placa de lógica v0.6, que no cambia (ELE-049). Diagrama: [sharp2_divisor_cable.bob](../interfaces/diagramas/sharp2_divisor_cable.bob).
+
+| Pin del sensor | Va a |
+|---|---|
+| 1 EN | Sin conexión |
+| 2 OUT | Resistencia de **10 kΩ** → punto medio |
+| Punto medio | **J25.4** (GPIO1: 4.º pin de la hilera derecha de la ESP32 desde la antena, serigrafía «1») y resistencia de **15 kΩ** a GND |
+| 3 VCC | **J26.5** (5 V) |
+| 4 GND (pad cuadrado) | **J26.3** (GND), junto con el extremo libre de la 15 kΩ |
+
+- Resistencias de 1/4 W comunes, soldadas en el cable y cubiertas con termocontraíble. **Sin el divisor no se conecta:** a 10 cm el sensor da 3,6 V, más de lo que tolera la ESP32. Con él, GPIO1 recibe como máximo unos 2,2 V (3,2 V en el peor caso de la hoja de datos).
+- Antes de enchufarlo a J25.4, alimentar el sensor y medir el punto medio con el téster: con una mano a 10 cm, unos 2,2 V; apuntando a más de 1 m, menos de 0,7 V.
+- J25.4 está al lado de la antena de la ESP32: sacar el cable hacia el costado, no por encima de la placa.
+- Mismas reglas de altura y de falla segura que el Sharp de J27.
+
 ### Encoders de los motores (J7 y J8, placa de lógica)
 
 Se alimentan con **3,3 V** desde la placa (el vendedor indica 3,3–5 V; sin hoja de datos, SUP-53). Colores según el vendedor: azul = + del encoder, negro = GND, amarillo y verde = señales A y B (rojo y blanco son del motor y van a J11/J12 de la potencia).

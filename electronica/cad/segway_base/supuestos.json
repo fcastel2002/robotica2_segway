@@ -1,8 +1,8 @@
 {
  "archivo": "electronica/cad/segway_base/supuestos.json",
  "espejo_legible": "electronica/cad/segway_base/supuestos.md",
- "revision_lista": 23,
- "fecha": "01/11/2026",
+ "revision_lista": 24,
+ "fecha": "11/11/2026",
  "aplica_a": {
   "especificacion_base": "especificacion_v0.3.json",
   "especificacion_destino": "especificacion_v0.4.json",
@@ -3741,13 +3741,13 @@
   },
   {
    "grupo": "I",
-   "tema": "Conector del sensor de distancia (J27)",
-   "supuesto": "J27, tira hembra de 1 × 4 en el orden del carrier Pololu #2474 (Sharp GP2Y0A60SZLF, versión de 5 V): 1 EN (sin conexión; el carrier lo sube a VCC con 10 kΩ), 2 OUT, 3 VCC (5V_MCU), 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C, con EN arriba. OUT pasa por R41 de 10 kΩ y R42 de 15 kΩ a GND (× 0,6) antes de GPIO3 (ADC1_CH2): 3,6 V a 10 cm quedan en 2,2 V, y 5 V en el peor caso, en 3,0 V. El sensor mira al piso para detectar escalones y va a más de 12 cm del piso en todas las posiciones. Cable Dupont de 4 hilos, pin n con pin n. Sin rótulos de cobre: el orden está en la guía de montaje.",
-   "base": "Decisión de Matías del 31/10/2026 [M] (reemplaza al HC-SR04). Orden de pines de la foto del carrier [M]. Ficha de Pololu: 2,7-5,5 V, 33 mA, salida de 3,6 V a 10 cm a 0,6 V a 150 cm con 5 V, actualización cada 16,5 ms, EN con pull-up de 10 kΩ [V].",
-   "impacto_si_cambia": "Con el cable girado (salida en 5 V, GND suelto) o corrido hacia el pin 4 (VCC en GND, salida en 5 V) el sensor puede dañarse; la ESP32 queda protegida por el divisor (3,0 V como máximo). El pad cuadrado del carrier es GND y el de J27 es EN: unirlos deja el cable girado. Si el piso queda a menos de 10 cm, la lectura se dobla y no sirve.",
-   "como_se_confirma": "Con el sensor montado: medir GPIO3 con el piso a la altura de trabajo y con un escalón; comprobar que la tensión baja al pasar el borde.",
+   "tema": "Sensores de distancia Sharp (J27 y segundo sensor por la expansión)",
+   "supuesto": "Dos Pololu #2474 (Sharp GP2Y0A60SZLF, modo 5 V), tratados igual: alimentados con 5 V y salida por un divisor 10 kΩ / 15 kΩ a GND (× 0,6) hacia un ADC1. Sharp 1: J27, tira hembra de 1 × 4 en el orden del carrier: 1 EN (sin conexión; el carrier lo sube a VCC con 10 kΩ), 2 OUT, 3 VCC (5V_MCU), 4 GND; divisor R41/R42 en la placa, a GPIO3 (ADC1_CH2). Sharp 2: sin cambiar la placa v0.6, VCC a J26.5, GND a J26.3 y OUT por un divisor 10k/15k armado en el cable hacia J25.4 (GPIO1, ADC1_CH0). Con 5 V, 3,6 V a 10 cm quedan en 2,2 V en el pin; el peor caso (Vcc + 0,3 V) queda en 3,2 V. Los sensores miran al piso para detectar escalones, a más de 12 cm del piso en todas las posiciones. Sin rótulos de cobre: el orden está en la guía de montaje.",
+   "base": "Decisión de Matías del 31/10/2026 [M] (reemplaza al HC-SR04) y del 11/11/2026 [M] (segundo sensor, igual al primero, con divisor). Orden de pines de la foto del carrier [M]. Ficha de Pololu: 33 mA, 3,6 V a 10 cm y 0,6 V a 150 cm con 5 V, EN con pull-up de 10 kΩ [V]. Hoja de datos de Sharp [D]: modo 5 V recomendado de 4,5 a 5,5 V (alimentar el #2474 con 3,3 V queda fuera de ella). En la ESP32-S3 solo GPIO1-20 tienen ADC; GPIO1 y GPIO2 son los únicos libres con ADC1.",
+   "impacto_si_cambia": "Sin divisor, a menos de unos 15 cm la salida supera los 3,6 V que tolera un pin de la ESP32. Con el cable girado o corrido el sensor puede dañarse; la ESP32 queda protegida por el divisor. El pad cuadrado del carrier es GND y el de J27 es EN: unirlos deja el cable girado. El divisor del Sharp 2 depende de una soldadura en el cable: si se corta la 15 kΩ, GPIO1 recibe la salida completa. Si el piso queda a menos de 10 cm, la lectura se dobla y no sirve.",
+   "como_se_confirma": "Antes de enchufar el Sharp 2, medir su punto medio: unos 2,2 V con una mano a 10 cm. Con los sensores montados: medir GPIO3 y GPIO1 con el piso a la altura de trabajo y con un escalón; comprobar que la tensión baja al pasar el borde.",
    "estado": "CAMBIADO",
-   "fecha": "31/10/2026",
+   "fecha": "11/11/2026",
    "refs": [],
    "afecta": [
     "pcb",
@@ -3756,8 +3756,8 @@
    "alias": [],
    "id": "SUP-82",
    "valor": {
-    "TRIG": "GPIO47",
-    "ECHO": "GPIO21"
+    "SHARP_1": "GPIO3 (J27, R41/R42)",
+    "SHARP_2": "GPIO1 (J25.4, divisor en el cable)"
    },
    "historial": [
     {
@@ -3795,6 +3795,17 @@
       "estado": "ASUMIDO"
      },
      "fuente": "Matías, 31/10/2026 [M]: Pololu #2474 en lugar del HC-SR04, mirando al piso para detectar escalones; foto del carrier con el orden EN, OUT, VCC, GND"
+    },
+    {
+     "fecha": "11/11/2026",
+     "antes": {
+      "tema": "Conector del sensor de distancia (J27)",
+      "supuesto": "J27, tira hembra de 1 × 4 en el orden del carrier Pololu #2474 (Sharp GP2Y0A60SZLF, versión de 5 V): 1 EN (sin conexión; el carrier lo sube a VCC con 10 kΩ), 2 OUT, 3 VCC (5V_MCU), 4 GND. Está al oeste de la ESP32-S3, fuera del paso de sus USB-C, con EN arriba. OUT pasa por R41 de 10 kΩ y R42 de 15 kΩ a GND (× 0,6) antes de GPIO3 (ADC1_CH2): 3,6 V a 10 cm quedan en 2,2 V, y 5 V en el peor caso, en 3,0 V. El sensor mira al piso para detectar escalones y va a más de 12 cm del piso en todas las posiciones. Cable Dupont de 4 hilos, pin n con pin n. Sin rótulos de cobre: el orden está en la guía de montaje.",
+      "base": "Decisión de Matías del 31/10/2026 [M] (reemplaza al HC-SR04). Orden de pines de la foto del carrier [M]. Ficha de Pololu: 2,7-5,5 V, 33 mA, salida de 3,6 V a 10 cm a 0,6 V a 150 cm con 5 V, actualización cada 16,5 ms, EN con pull-up de 10 kΩ [V].",
+      "impacto_si_cambia": "Con el cable girado (salida en 5 V, GND suelto) o corrido hacia el pin 4 (VCC en GND, salida en 5 V) el sensor puede dañarse; la ESP32 queda protegida por el divisor (3,0 V como máximo). El pad cuadrado del carrier es GND y el de J27 es EN: unirlos deja el cable girado. Si el piso queda a menos de 10 cm, la lectura se dobla y no sirve.",
+      "como_se_confirma": "Con el sensor montado: medir GPIO3 con el piso a la altura de trabajo y con un escalón; comprobar que la tensión baja al pasar el borde."
+     },
+     "fuente": "Matías, 11/11/2026 [M]: dos sensores Sharp, tratados igual, por los pines de expansión; 'haremos lo del divisor de tensión'. Hoja de datos de Sharp GP2Y0A60SZ enviada por Matías [D]: modo 5 V de 4,5 a 5,5 V; Vo a 150 cm 0,15-1,15 V; ΔVo de 10 a 150 cm 2,75-3,25 V; Vo máximo absoluto Vcc + 0,3 V"
     }
    ]
   }
