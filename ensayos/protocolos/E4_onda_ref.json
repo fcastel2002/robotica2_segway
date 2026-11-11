@@ -1,0 +1,93 @@
+{
+  "esquema": 1,
+  "id": "E4",
+  "nombre": "onda_ref",
+  "titulo": "Onda cuadrada de ±1° en la referencia, equilibrando",
+  "pregunta": "El lazo cerrado de 0,25 a 2 Hz, donde el barrido casi no excita y vive el polo inestable (~1,2 Hz): la planta en baja frecuencia (gravedad, acople) y cuánto va y viene el robot.",
+  "criterio": "El gemelo con el mismo control sigue x y theta dentro de lo que se repite entre las tres ondas.",
+  "requisitos": {
+    "estado": "BALANCING",
+    "confirmar": [
+      "atajando"
+    ],
+    "patas_deg": 15.0,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.6,
+    "quieto_s": 5.0,
+    "espera_max_s": 180
+  },
+  "config": {
+    "inacada": 1,
+    "refauto": 0
+  },
+  "limites": {},
+  "abortar": {
+    "theta_err_deg": 8.0,
+    "x_desde_inicio_mm": 400
+  },
+  "pasos": [
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "repetir",
+      "veces": 3,
+      "pasos": [
+        {
+          "hacer": "set_rel",
+          "param": "ref",
+          "delta": 1.0,
+          "s": 2.0
+        },
+        {
+          "hacer": "set_rel",
+          "param": "ref",
+          "delta": -1.0,
+          "s": 2.0
+        },
+        {
+          "hacer": "grabar",
+          "etiqueta": "onda_{i}"
+        },
+        {
+          "hacer": "set_rel",
+          "param": "ref",
+          "delta": 1.0,
+          "s": 2.0
+        },
+        {
+          "hacer": "set_rel",
+          "param": "ref",
+          "delta": -1.0,
+          "s": 2.0
+        },
+        {
+          "hacer": "set_rel",
+          "param": "ref",
+          "delta": 1.0,
+          "s": 2.0
+        },
+        {
+          "hacer": "set_rel",
+          "param": "ref",
+          "delta": -1.0,
+          "s": 2.0
+        },
+        {
+          "hacer": "set_rel",
+          "param": "ref",
+          "delta": 0.0,
+          "s": 0
+        },
+        {
+          "hacer": "esperar_registro"
+        },
+        {
+          "hacer": "esperar",
+          "s": 4
+        }
+      ]
+    }
+  ]
+}

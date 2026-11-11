@@ -51,11 +51,17 @@ tabla_theta = [18.25 17.04 16.01 15.13 14.36 13.67 13.02 12.37 11.69 10.94 10.09
 m = 1e-3*[f.m_cabina; f.m_tapa; n*f.m_servo; f.m_bateria; f.m_electronica; f.m_tornilleria; f.m_carga];
 r = 1e-3*[f.r_cabina; f.r_tapa; f.r_servo; f.r_bateria; f.r_electronica; f.r_tornilleria; f.r_carga];
 r = r + 1e-3*f.corr_caja;               % la caja corrida (ajuste del 3/11)
-r(:, 1) = -r(:, 1);                     % x adelante
 Jp = [f.J_cabina; f.J_tapa; 0; 0; 0; 0; 0];
+if isfield(f, 'quitado') && f.quitado.m > 0     % 11/11: la tapa que se sacó, como masa negativa en su lugar
+    m(end + 1) = -1e-3*f.quitado.m;  r(end + 1, :) = 1e-3*f.quitado.r;  Jp(end + 1) = 0;
+end
+r(:, 1) = -r(:, 1);                     % x adelante
 m_cuerpo = sum(m);
 rG = sum(m.*r, 1)/m_cuerpo;             % centro de masa del cuerpo respecto de A
 I_cuerpo = sum(Jp + m.*sum((r - rG).^2, 2)) + n*(f.J_AD + f.J_BC);
+if isfield(f, 'J_extra')                % 11/11: lo que les falta a las piezas para la inercia medida (caídas)
+    I_cuerpo = I_cuerpo + f.J_extra;
+end
 
 %% 2. Eslabones y eje
 m_esl = n*1e-3*(f.m_AD + f.m_BC + f.m_CDP);
@@ -94,8 +100,12 @@ fprintf('Tabla medida - eso: %s (rms %.2f)\n', ...
 p = parametros_pendulo_invertido(f, PATA_REF + f.pata_cero);
 [~, motor] = motor_pendulo_invertido(p, f);
 N_med = f.N;                            % 20,4: reductor medido con el encoder (FW-009)
-V_motor = f.V_bat - f.caida_driver;     % batería menos la caída del L298N
+V_motor = f.V_bat - f.caida_driver;     % batería menos la caída del driver (0 con el DRV8871; 2 V el L298N)
 servo_par = n*41*0.0981;                % DS3240 a 6 V (ficha: 36 kg cm a 5 V, 45 a 6,8 V; la placa da 6 V, SUP-40)
+servo_gan = 1/deg2rad(5);               % a fondo con 5 grados de error (supuesto)
+if isfield(f, 'k_servo_medido')          % 11/11: la rigidez medida con un peso arriba (31 N m/rad)
+    servo_gan = f.k_servo_medido/servo_par;
+end
 servo_vel = deg2rad(327);               % [rad/s] en vacío a 6 V (ficha: 300 grados/s a 5 V, 353 a 6,8 V)
 servo_J = n*0.004;                      % SUPUESTO: inercia del motor del servo vista en la pata
 
@@ -137,7 +147,7 @@ v = {
     'PE_V_MOTOR', V_motor, 'lo que llega al motor con PWM 1 [V]'
     'PE_SERVO_PAR_MAX', servo_par, 'de calado, los dos [N m]'
     'PE_SERVO_VEL_MAX', servo_vel, 'en vacio [rad/s]'
-    'PE_SERVO_GANANCIA', 1/deg2rad(5), 'a fondo con 5 grados de error [1/rad]'
+    'PE_SERVO_GANANCIA', servo_gan, 'error que lleva el servo a fondo [1/rad] (11/11: medido, f.k_servo_medido)'
     'PE_SERVO_B', 0.02, 'friccion viscosa del reductor [N m s/rad]'
     'PE_K_RUEDA', n*f.k_contacto, 'las dos ruedas [N/m]'
     'PE_C_RUEDA', n*f.c_contacto, '[N s/m]'

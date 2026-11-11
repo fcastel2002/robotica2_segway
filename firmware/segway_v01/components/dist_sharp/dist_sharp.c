@@ -5,7 +5,8 @@
 #include "esp_adc/adc_oneshot.h"
 #include "esp_check.h"
 
-#define MUESTRAS    4       // ~4 x 10 us: no pesa en el ciclo de 5 ms
+#define MUESTRAS    1       // una por ciclo de 5 ms (el sensor renueva cada 16,5 ms); 3/11: con 4 el
+                            // peor ciclo de control pasaba de ~1,9 a ~3,6 ms
 
 static const char *TAG = "dist_sharp";
 static adc_oneshot_unit_handle_t s_adc;

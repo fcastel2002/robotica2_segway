@@ -1,0 +1,99 @@
+{
+  "esquema": 1,
+  "id": "E3",
+  "nombre": "barrido",
+  "titulo": "Barrido del comando de 1 a 20 Hz, equilibrando (el ensayo central)",
+  "pregunta": "La respuesta de cada bloque de 2 a 20 Hz: exc→u (margen del lazo), m y w→corriente (eléctrico en carga), par→giróscopo (el cuerpo), y cuánto retardo hay y dónde. Cuatro barridos iguales para promediar y medir cuánto se repite; 0,04 y 0,08 para ver si es lineal.",
+  "criterio": "Planta rígida + retardo alcanza si sigue al robot de 2 a 8 Hz dentro de lo que se repite entre barridos iguales y da el pico de sensibilidad. Si no, se agrega un solo modo.",
+  "requisitos": {
+    "estado": "BALANCING",
+    "confirmar": [
+      "atajando"
+    ],
+    "patas_deg": 15.0,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.6,
+    "quieto_s": 5.0,
+    "espera_max_s": 180
+  },
+  "config": {
+    "inacada": 1,
+    "refauto": 0
+  },
+  "limites": {
+    "exc_max": 0.08
+  },
+  "abortar": {
+    "theta_err_deg": 8.0,
+    "x_desde_inicio_mm": 500
+  },
+  "pasos": [
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "a04_1"
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set exc 0.04"
+    },
+    {
+      "hacer": "esperar",
+      "s": 8
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 4
+    },
+    {
+      "hacer": "repetir",
+      "veces": 4,
+      "pasos": [
+        {
+          "hacer": "grabar",
+          "etiqueta": "a06_{i}"
+        },
+        {
+          "hacer": "cmd",
+          "texto": "set exc 0.06"
+        },
+        {
+          "hacer": "esperar",
+          "s": 8
+        },
+        {
+          "hacer": "esperar_registro"
+        },
+        {
+          "hacer": "esperar",
+          "s": 4
+        }
+      ]
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "a08_1"
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set exc 0.08"
+    },
+    {
+      "hacer": "esperar",
+      "s": 8
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 4
+    }
+  ]
+}

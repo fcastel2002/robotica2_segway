@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="840" viewBox="0 0 1480 840" font-family="Segoe UI, Arial, sans-serif">
+  <!-- Planta por bloques para la cosimulación (VAL-303, 9/11/2026). Fuente editable: este archivo.
+       El PNG se saca con Edge sin ventana (headless), captura de 1480 x 840 a escala 2.
+       Ver docs/gestion/2026-11-09-plan-cosimulacion-planta.md -->
+
+  <defs>
+    <marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="1480" height="840" fill="#ffffff"/>
+
+  <!-- Título -->
+  <text x="40" y="52" font-size="27" font-weight="700" fill="#222">La corriente corta la planta en dos bloques que se ajustan por separado</text>
+  <text x="40" y="84" font-size="17" fill="#555">Cada bloque tiene su entrada y su salida medidas en el robot: se ajusta sin que lo tape el lazo cerrado</text>
+
+  <!-- CONTROL -->
+  <rect x="40" y="160" width="250" height="150" rx="14" fill="#f1f1f1" stroke="#666" stroke-width="2"/>
+  <text x="165" y="212" font-size="21" font-weight="700" text-anchor="middle" fill="#333">CONTROL</text>
+  <text x="165" y="242" font-size="16" text-anchor="middle" fill="#444">el del firmware, tal cual</text>
+  <text x="165" y="266" font-size="16" text-anchor="middle" fill="#444">(lo que dice el get)</text>
+
+  <!-- DRIVER Y MOTOR -->
+  <rect x="440" y="140" width="350" height="190" rx="14" fill="#fdebd6" stroke="#c2620a" stroke-width="2.5"/>
+  <text x="615" y="186" font-size="21" font-weight="700" text-anchor="middle" fill="#8a4306">DRIVER Y MOTOR</text>
+  <text x="615" y="222" font-size="17" text-anchor="middle" fill="#333">i_motor = (m·V − Ke·w) / R</text>
+  <text x="615" y="252" font-size="17" text-anchor="middle" fill="#333">par = η·Ke·(i_izq + i_der) − roce</text>
+  <text x="615" y="290" font-size="15" text-anchor="middle" fill="#8a4306">números: R, Ke, η, roce</text>
+  <rect x="690" y="122" width="96" height="30" rx="15" fill="#c2620a"/>
+  <text x="738" y="143" font-size="15" font-weight="700" text-anchor="middle" fill="#fff">E1 · E3</text>
+
+  <!-- CUERPO -->
+  <rect x="940" y="140" width="340" height="190" rx="14" fill="#dde9fb" stroke="#1f5fbf" stroke-width="2.5"/>
+  <text x="1110" y="186" font-size="21" font-weight="700" text-anchor="middle" fill="#123f84">CUERPO</text>
+  <text x="1110" y="211" font-size="15" text-anchor="middle" fill="#123f84">péndulo sobre ruedas, patas fijas</text>
+  <text x="1110" y="243" font-size="17" text-anchor="middle" fill="#333">a·ẍ + b·θ'' = par/r − c·ẋ</text>
+  <text x="1110" y="270" font-size="17" text-anchor="middle" fill="#333">b·ẍ + d·θ'' − e·θ = −par</text>
+  <text x="1110" y="304" font-size="15" text-anchor="middle" fill="#123f84">4 números: a, b, d, e</text>
+  <rect x="1150" y="122" width="126" height="30" rx="15" fill="#1f5fbf"/>
+  <text x="1213" y="143" font-size="15" font-weight="700" text-anchor="middle" fill="#fff">E3 · E4 · E5</text>
+
+  <!-- SENSORES Y RETARDOS -->
+  <rect x="440" y="490" width="840" height="130" rx="14" fill="#e2f2e6" stroke="#2e7d4f" stroke-width="2.5"/>
+  <text x="860" y="530" font-size="21" font-weight="700" text-anchor="middle" fill="#1d5a37">SENSORES Y RETARDOS</text>
+  <text x="860" y="562" font-size="16" text-anchor="middle" fill="#333">IMU con filtro de 44 Hz · encoder de 899 cuentas por vuelta · ciclo de 5 ms · PWM a los ~2,3 ms del ciclo</text>
+  <text x="860" y="594" font-size="16" text-anchor="middle" fill="#1d5a37">retardo T: dónde están los 12-17 ms que el modelo no tiene</text>
+  <rect x="1180" y="472" width="96" height="30" rx="15" fill="#2e7d4f"/>
+  <text x="1228" y="493" font-size="15" font-weight="700" text-anchor="middle" fill="#fff">E0 · E3</text>
+
+  <!-- Flecha CONTROL -> MOTOR: m -->
+  <line x1="290" y1="235" x2="436" y2="235" stroke="#333" stroke-width="2.5" marker-end="url(#flecha)"/>
+  <circle cx="362" cy="235" r="7" fill="#b3122e"/>
+  <text x="362" y="218" font-size="17" font-weight="700" text-anchor="middle" fill="#222">m (PWM)</text>
+  <text x="362" y="262" font-size="14" text-anchor="middle" fill="#b3122e">200 Hz, exacto</text>
+
+  <!-- Flecha MOTOR -> CUERPO: i, par -->
+  <line x1="790" y1="235" x2="936" y2="235" stroke="#333" stroke-width="2.5" marker-end="url(#flecha)"/>
+  <text x="863" y="218" font-size="17" font-weight="700" text-anchor="middle" fill="#222">par</text>
+  <text x="863" y="262" font-size="14" text-anchor="middle" fill="#555">calculado</text>
+  <text x="863" y="280" font-size="14" text-anchor="middle" fill="#555">a 200 Hz</text>
+
+  <!-- Flecha CUERPO -> SENSORES: theta, x -->
+  <polyline points="1280,235 1350,235 1350,555 1284,555" fill="none" stroke="#333" stroke-width="2.5" marker-end="url(#flecha)"/>
+  <text x="1362" y="370" font-size="18" font-weight="700" fill="#222">θ, x</text>
+  <circle cx="1350" cy="420" r="7" fill="#b3122e"/>
+  <text x="1362" y="414" font-size="14" fill="#b3122e">IMU cruda</text>
+  <text x="1362" y="432" font-size="14" fill="#b3122e">200 Hz</text>
+
+  <!-- Flecha SENSORES -> CONTROL -->
+  <polyline points="440,555 165,555 165,314" fill="none" stroke="#333" stroke-width="2.5" marker-end="url(#flecha)"/>
+  <text x="300" y="545" font-size="17" font-weight="700" text-anchor="middle" fill="#222">θ, ω, x, v</text>
+  <text x="300" y="578" font-size="14" text-anchor="middle" fill="#555">ya filtrados</text>
+
+  <!-- Encoder -> MOTOR: w -->
+  <line x1="490" y1="490" x2="490" y2="334" stroke="#333" stroke-width="2.5" marker-end="url(#flecha)"/>
+  <circle cx="490" cy="412" r="7" fill="#b3122e"/>
+  <text x="505" y="398" font-size="17" font-weight="700" fill="#222">w (encoder)</text>
+  <text x="505" y="420" font-size="14" fill="#555">rueda respecto del cuerpo:</text>
+  <text x="505" y="438" font-size="14" fill="#555">la contraelectromotriz</text>
+  <text x="505" y="456" font-size="14" fill="#b3122e">200 Hz</text>
+
+  <!-- Corriente medida: sale del bloque del motor y lo valida -->
+  <line x1="750" y1="330" x2="750" y2="396" stroke="#b3122e" stroke-width="2.5" stroke-dasharray="6 5"/>
+  <circle cx="750" cy="404" r="7" fill="#b3122e"/>
+  <text x="768" y="382" font-size="17" font-weight="700" fill="#222">i_ina = i_q + m · i_motor</text>
+  <text x="768" y="404" font-size="14" fill="#b3122e">INA219 en la entrada del driver:</text>
+  <text x="768" y="422" font-size="14" fill="#b3122e">~67 lecturas/s, mA enteros</text>
+  <text x="768" y="440" font-size="14" fill="#555">valida y ajusta el bloque; no lo alimenta</text>
+
+  <!-- Lazo cerrado -->
+  <rect x="80" y="410" width="170" height="30" rx="15" fill="#666"/>
+  <text x="165" y="431" font-size="15" font-weight="700" text-anchor="middle" fill="#fff">lazo cerrado: E2 a E8</text>
+
+  <!-- Leyenda: cómo se cosimula cada parte -->
+  <line x1="40" y1="660" x2="1440" y2="660" stroke="#ddd" stroke-width="1.5"/>
+  <text x="40" y="694" font-size="18" font-weight="700" fill="#222">Cómo se cosimula cada parte</text>
+  <circle cx="1080" cy="688" r="7" fill="#b3122e"/>
+  <text x="1094" y="694" font-size="16" fill="#b3122e">medido en el robot</text>
+
+  <rect x="40" y="712" width="22" height="22" rx="5" fill="#fdebd6" stroke="#c2620a" stroke-width="2"/>
+  <text x="74" y="730" font-size="16" fill="#333"><tspan font-weight="700">Driver y motor:</tspan> se reproduce la grabación entera con m y w, y se compara con la corriente medida</text>
+  <rect x="40" y="748" width="22" height="22" rx="5" fill="#dde9fb" stroke="#1f5fbf" stroke-width="2"/>
+  <text x="74" y="766" font-size="16" fill="#333"><tspan font-weight="700">Cuerpo:</tspan> con el par calculado; regresión de la ecuación de momentos y tramos de 0,4 s desde el estado medido</text>
+  <rect x="40" y="784" width="22" height="22" rx="5" fill="#f1f1f1" stroke="#666" stroke-width="2"/>
+  <text x="74" y="802" font-size="16" fill="#333"><tspan font-weight="700">Lazo cerrado:</tspan> el Simulink con el mismo control; se compara espectro, barrido y onda cuadrada, contra lo que se repite el robot</text>
+</svg>

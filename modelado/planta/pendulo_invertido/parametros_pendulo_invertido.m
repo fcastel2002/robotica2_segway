@@ -51,6 +51,13 @@ function p = parametros_pendulo_invertido(fisicos, theta_pata_deg)
     if isfield(fisicos, 'corr_caja')        % variante 'ajustada': la caja corrida (3/11)
         posicion_A_mm(1:7, :) = posicion_A_mm(1:7, :) + fisicos.corr_caja;
     end
+    if isfield(fisicos, 'quitado') && fisicos.quitado.m > 0
+        % 11/11: algo que se le sacó al robot (la tapa nueva, de frente y techo), como masa NEGATIVA en su lugar
+        % (respecto de A, sin corr_caja: x hacia atrás, y arriba)
+        nombre(end + 1) = {'quitado'};
+        masa_kg(end + 1) = -1e-3 * fisicos.quitado.m;
+        posicion_A_mm(end + 1, :) = fisicos.quitado.r;
+    end
     posicion_A_m = 1e-3 * posicion_A_mm;
     posicion_A_m(:, 1) = -posicion_A_m(:, 1);
 
@@ -58,7 +65,8 @@ function p = parametros_pendulo_invertido(fisicos, theta_pata_deg)
     % inercia propia. El termino de Steiner SI se conserva para todas.
     inercia_propia_kgm2 = [fisicos.J_cabina; fisicos.J_tapa; 0; 0; 0; 0; 0; ...
         n * fisicos.J_AD; n * fisicos.J_BC; n * fisicos.J_CDP; 0];
-    assert(all(isfinite(masa_kg)) && all(masa_kg >= 0), ...
+    inercia_propia_kgm2(end + 1:numel(masa_kg)) = 0;
+    assert(all(isfinite(masa_kg)) && all(masa_kg(~strcmp(nombre, 'quitado')) >= 0), ...
         'Las masas deben ser finitas y no negativas.');
     assert(all(isfinite(posicion_A_m(:))), 'Las posiciones deben ser finitas.');
     assert(all(isfinite(inercia_propia_kgm2)) && all(inercia_propia_kgm2 >= 0), ...
@@ -76,6 +84,12 @@ function p = parametros_pendulo_invertido(fisicos, theta_pata_deg)
     if isempty(fisicos.J_cuerpo)
         p.J_cuerpo = p.J_cuerpo_estimado;
         p.fuente_inercia = 'Piezas + Steiner; faltan algunas inercias propias';
+        if isfield(fisicos, 'J_extra') && fisicos.J_extra ~= 0
+            % variante 'ajustada' (11/11): lo que les falta a las piezas para dar la inercia medida
+            % dejando caer el robot (modelado/ajuste/ajustar_caidas.py)
+            p.J_cuerpo = p.J_cuerpo + fisicos.J_extra;
+            p.fuente_inercia = 'Piezas + Steiner + J_extra (medido con las caídas)';
+        end
     else
         p.J_cuerpo = fisicos.J_cuerpo;
         p.fuente_inercia = 'J_cuerpo indicado en parametros_fisicos';

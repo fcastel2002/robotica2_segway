@@ -1,0 +1,51 @@
+{
+  "esquema": 1,
+  "id": "E0",
+  "nombre": "reposo",
+  "titulo": "Reposo: sensores en cero y tiempo del ciclo (desarmado, sin tocarlo)",
+  "pregunta": "Ruido y sesgo del giróscopo y del acelerómetro; corriente en cero; ¿cuentan los encoders solos?; ¿cuánto tarda el ciclo de control con inacada 5 y con 1, y cuántos ciclos se exceden?",
+  "criterio": "Sale el ruido medido para el bloque de sensores. Si con inacada 1 suben los ciclos excedidos (overruns) o loop_us_max pasa de 5000, los demás ensayos se hacen con inacada 2.",
+  "requisitos": {
+    "estado": "DISARMED",
+    "confirmar": [
+      "quieto"
+    ],
+    "patas_deg": null,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.0,
+    "quieto_s": 3.0,
+    "espera_max_s": 60
+  },
+  "config": {
+    "inacada": 5
+  },
+  "limites": {},
+  "abortar": {},
+  "pasos": [
+    {
+      "hacer": "tramo",
+      "nombre": "ina5",
+      "s": 30
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set inacada 1"
+    },
+    {
+      "hacer": "tramo",
+      "nombre": "ina1",
+      "s": 30
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "reposo_ina1"
+    },
+    {
+      "hacer": "esperar",
+      "s": 8
+    },
+    {
+      "hacer": "esperar_registro"
+    }
+  ]
+}

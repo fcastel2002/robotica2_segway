@@ -1,7 +1,10 @@
 # Simulación de la bajada de un escalón hacia atrás (FW-016)
 
-Para elegir cómo bajar un escalón de **18 cm** a una pisada de **25 cm** antes de probarlo en el
-robot. Plan y decisiones en [`docs/gestion/2026-11-03-plan-maniobra-escalon.md`](../../docs/gestion/2026-11-03-plan-maniobra-escalon.md).
+Para elegir cómo bajar la escalera del equipo antes de probarlo en el robot: **6 escalones de
+16,6 cm de alto y 29 cm de pisada, y uno último de 3 cm** (medida el 3/11; no cambia más: ver
+[«La escalera del equipo»](#la-escalera-del-equipo-algoritmo-genético-311-noche)). Los primeros
+estudios fueron con un escalón de 18 cm y pisada de 25 cm. Plan y decisiones en
+[`docs/gestion/2026-11-03-plan-maniobra-escalon.md`](../../docs/gestion/2026-11-03-plan-maniobra-escalon.md).
 
 ## Qué es
 
@@ -30,9 +33,9 @@ Desde la raíz del repo (MATLAB solo para regenerar la planta):
 
 ```text
 matlab: run simulacion/escalon/exportar_planta_escalon.m      (escribe planta_escalon.h)
-gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v01/components/control/include ^
-    -Ifirmware/segway_v01/main simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
-    simulacion/escalon/pata_tabla.c firmware/segway_v01/components/control/*.c -lm ^
+gcc -std=c11 -O2 -Wall -Wextra -Isimulacion/escalon -Ifirmware/segway_v02/components/control/include ^
+    -Ifirmware/segway_v02/main simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
+    simulacion/escalon/pata_tabla.c firmware/segway_v02/components/control/*.c -lm ^
     -o simulacion/escalon/banco_escalon.exe
 simulacion/escalon/banco_escalon.exe caso pata_largada=30 v_salida=0.55 pata_final=15 csv=prueba
 python simulacion/escalon/graficar_escalon.py prueba          (resultados/prueba.png)
@@ -40,7 +43,8 @@ python simulacion/escalon/graficar_escalon.py prueba          (resultados/prueba
 
 `caso nombre=valor ...` cambia la estrategia (`pata_busqueda`, `pata_largada`, `v_salida`,
 `d_salto`, `pata_vuelo`, `pata_final`, `vel_pata_final`, `t_mantener`, `a_frenado`,
-`motor_vuelo`, `t_continuo`, ...) o el escenario (`alto`, `pisada`, `servo`, `mu`, `x0`).
+`motor_vuelo`, `t_continuo`, ...) o el escenario (`alto`, `pisada`, `servo`, `mu`, `x0`). Sin
+escenario corre la escalera del equipo; `escalones=1 alto=0.18 ultimo=0` es el escalón de antes.
 `caida <pata> <alto> <vx> [pata_al_tocar]` suelta el robot en el aire sin control, para ver el
 golpe. `barrido` recorre patas × velocidad de salida.
 
@@ -119,3 +123,367 @@ ajustada sigue lo medido a 0,7-1,2° rms de cabeceo y 11-16 mm rms de x (la orig
 [LQR por altura](resultados/ajustada_lqr/resumen_estrategias.png)): A, B y C chocan igual; D y E,
 que antes pasaban, se caen (ganancias de hoy) o chocan (LQR por altura, se pasan al escalón
 siguiente). La maniobra hay que volver a ajustarla con este modelo.
+
+## Visor: probar maniobras a mano
+
+Una página para cambiar los parámetros, programar la maniobra, correr el banco y ver el robot
+animado, sus señales y la comparación con otras corridas ([`visor/`](visor/)). Hace falta Python
+(solo la biblioteca estándar) y gcc:
+
+```text
+python simulacion/escalon/visor/visor.py        (o doble clic en simulacion/escalon/visor/abrir_visor.bat)
+```
+
+Abre http://127.0.0.1:8020 (`--puerto` para otro; si ya hay un visor abierto en ese puerto, avisa
+y no arranca). Compila el banco si falta o si cambió algún fuente (también el de la planta
+original, si se la elige arriba) y atiende solo a la propia PC.
+
+- **Parámetros**, a la izquierda: los de la maniobra (búsqueda, largada, borde y vuelo,
+  aterrizaje), el escenario y la planta (batería, zona muerta, piso, servos, equilibrio corrido,
+  inercias, ruido; y lo que puede cambiar el equipo: peso de la caja, roce y recorte de la cabina,
+  dejar que se apoye). Arrancan en los valores por defecto de `maniobra.c`; lo cambiado queda
+  resaltado y el navegador lo recuerda. Pasando el mouse por cada nombre se ve qué hace.
+- **La escalera del equipo:** los botones arriba de «Escalones» ponen un escalón, la escalera
+  frenando en cada escalón o la escalera de largo (6 de 16,6 x 29 cm y uno de 3 cm), y «Las
+  mejores para la escalera» carga lo que encontró el algoritmo genético (lee
+  `resultados/escalera_real/genetico.json`, así que se actualiza si se vuelve a correr). El
+  resumen dice cuántos escalones bajó y lo más cerca que pasó la cabina de la escalera.
+- **Programar patas y velocidad:** desde que larga, las patas y/o la velocidad pueden seguir una
+  lista de acciones en lugar de los parámetros: *cuándo* (al largar, a tantos metros del borde, al
+  despegar o al tocar, más una demora), *a qué valor* (ángulo de las patas o velocidad hacia atrás)
+  y *qué tan rápido* (°/s o m/s²). Cada acción se dispara una vez y manda la última que se
+  disparó. Botones para empezar: «como la de por defecto» (las acciones que hace la maniobra con
+  los parámetros de abajo), «nunca subirlas», «+ acción», «vaciar». Lo hace el mismo código del
+  firmware (`n_patas`/`patas` y `n_vel`/`vel` de `man_params_t`; sin acciones, la maniobra de
+  siempre) y en el banco son `patas=...` y `vel=...`, por ejemplo
+  `"vel=larga:0:0.25:0.5/borde:0.12:0.6:3/toca:0:0:1"`.
+- **Simular** corre un caso (~1 s). Pestaña **Corrida**: el robot animado (de ×0,05 a ×1, con la
+  estela, el haz del sensor y la rueda girando), el resumen (cómo termina, velocidad al borde,
+  dónde toca y dónde termina, desvío, golpes) y ocho gráficos que siguen a la animación (clic en
+  uno para ir a ese instante; espacio y ← → también).
+- **Corridas**, a la derecha: cada una con su color; *comparar* la suma a la comparación (y a la
+  escena), ↺ pone sus parámetros y su programa a la izquierda, ✎ le pone nombre, × la saca.
+- Pestaña **Comparar:** la corrida que se ve y las marcadas, alineadas en el momento que se elija
+  (al largar, al pasar el borde, al despegar o al tocar): una tabla con los números (en negrita, el
+  mejor entre las que quedan paradas), barras, las trayectorias del eje y del centro de masa sobre
+  el escalón, y las señales que se elijan, cada corrida de su color.
+- Pestaña **Barrido:** los mismos parámetros cambiando uno solo de «desde» a «hasta» (2 a 40
+  corridas); el gráfico muestra cómo termina cada una y el número que se elija. «comparar todas»
+  pasa hasta 10 a la comparación.
+- **Robustez** prueba los parámetros de la izquierda con las 27 variaciones de `un_escalon.py`
+  ([`variaciones.py`](variaciones.py)) en unos segundos. Las últimas cuatro quedan lado a lado
+  para ver si mejoró; clic en una celda para ver esa corrida.
+- Abajo a la izquierda está el mismo caso como línea de comando del banco. El visor usa
+  `banco_escalon parametros` (los parámetros de `caso` con sus valores por defecto) y la línea
+  `json {...}` con el resultado que `caso` imprime al final.
+
+## La escalera entera: frenando en cada escalón o de largo (3/11)
+
+Con las medidas provisorias de la escalera (4 escalones de 18 cm con pisada de 25 cm); la real,
+medida después, está en [«La escalera del equipo»](#la-escalera-del-equipo-algoritmo-genético-311-noche).
+De las dos maneras que pidió Joaquín ([figura](resultados/escalera/resumen_escalera.png); corre todo
+[`escalera.py`](escalera.py), ~20 s). En el banco: `escalones=4 pisada=0.25` y `repetir=1`
+(frenando: al terminar un escalón la maniobra empieza otra vez, como apretar △ de nuevo) o
+`t_continuo=0.8` (de largo: sigue a la velocidad de salida y en cada borde vuelve a volar; frena
+cuando pasan 0,8 s en el piso sin caer). En el visor, los botones arriba de «Escalones». El
+resultado dice cuántos escalones bajó (`bajados`); `A MEDIAS` es que quedó parado sin llegar abajo.
+
+- **Frenando en cada escalón no entra en 25 cm.** Toca a ~13 cm de la contrahuella a ~0,5 m/s y no
+  frena en los 12 cm que quedan: se pasa al escalón siguiente sin la maniobra y la cabina pega.
+  De 104 combinaciones de frenado (hasta 12 m/s²), patas al tocar, motor en el aire y programas
+  de velocidad, solo 2 quedan paradas en la pisada (frenado de 8-12 m/s², patas en 30°, 0,48 m/s
+  pedidos, justo encima de donde la cabina pega), a 8 cm del borde siguiente y sin lugar para
+  tomar envión para el otro (habría que volver hacia la contrahuella, y la cabina sobresale
+  ~11 cm). Con la maniobra de siempre alcanza con pisadas de **60 cm** (de 45 cm con frenado de
+  3 m/s²).
+- **De largo llega abajo, pero justo.** Con la maniobra por defecto se cae en el tercero: en cada
+  aterrizaje el cuerpo queda atrás de su equilibrio, el LQR acelera hacia atrás para alcanzarlo y la
+  velocidad crece de escalón en escalón (0,45 → 0,53 → 0,61 → 0,65 m/s) hasta que no se recupera.
+  En el aire conviene la **rueda sostenida** (con el LQR, en cada vuelo la rueda termina girando
+  para el otro lado). La mejor que se encontró (búsqueda al azar de 120 y unas cuantas a mano):
+  0,62 m/s, rueda sostenida, patas 26° al tocar; baja los 4 y queda parado, pero en **15 de 27**
+  variaciones ([tabla](resultados/escalera/robustez.csv)): se cae con la LiPo a 11,1 V, con más
+  roce o con el equilibrio corrido. Frena recién ~90 cm después del último escalón (`t_continuo`).
+- El programa de la maniobra sirve para probar más: en la escalera de largo, las acciones de
+  «al despegar» y «al tocar» se vuelven a disparar en cada escalón.
+
+## Un escalón con el modelo ajustado (3/11, tarde)
+
+Un escalón de 18 cm con piso de sobra abajo (`escalones=1`), la primera prueba en el robot.
+[`un_escalon.py`](un_escalon.py) corre todo y deja las figuras en `resultados/un_escalon/`:
+
+```text
+gcc -std=c11 -O2 -Wall -DPLANTA_AJUSTADA -Isimulacion/escalon ^
+    -Ifirmware/segway_v02/components/control/include -Ifirmware/segway_v02/main ^
+    simulacion/escalon/banco_escalon.c simulacion/escalon/planta_plana.c ^
+    simulacion/escalon/pata_tabla.c firmware/segway_v02/components/control/*.c -lm ^
+    -o simulacion/escalon/banco_escalon_ajustada.exe
+python simulacion/escalon/un_escalon.py          (~30 s; 122 casos)
+```
+
+**La elegida** (ahora los valores por defecto de la maniobra, `maniobra_params_por_defecto`): busca
+el borde y larga con las patas en **15°**, pide **0,54 m/s**, estira a 30° a 3 cm del borde,
+**en el aire el LQR sigue mandando** (`motor_vuelo` 1), al tocar lleva las patas a **25°** a
+300 °/s y frena a 1 m/s². Con la LiPo a 11,9 V pasa el borde a 0,50 m/s, toca a 13 cm de la
+contrahuella, se aparta 8,6° de su equilibrio y queda parado a 30 cm del borde
+([el robot y las señales](resultados/un_escalon/elegida.png)).
+
+- **Robustez** ([tabla](resultados/un_escalon/robustez.png), [datos](resultados/un_escalon/robustez.csv)):
+  queda parada en 25 de 27 variaciones de a una o de a dos (batería de 10,5 a 12,6 V, zona
+  muerta 0,10-0,18, piso con mu 0,4, servos al 80 %, arranque a 35-60 cm, equilibrio corrido
+  ±0,75°, escalón de 16-20 cm, inercias de rotores × 0,5-2 y del cuerpo × 0,7-1,5, otro ruido).
+  Falla con el equilibrio corrido +1,5° (sale a 0,46 y la cabina pega en el borde) y con 10,5 V
+  más el equilibrio corrido −0,75° (sale a 0,61 y se cae). La misma con la rueda sostenida en el
+  aire queda en 22 de 27; la idea del equipo, en 0 (la cabina pega siempre).
+- **Ventana** ([figura](resultados/un_escalon/ventana.png)): la velocidad real al borde depende
+  de la batería (pidiendo 0,54: 0,47 con 12,6 V y 0,58 con 10,5 V). Por debajo de ~0,45 la cabina
+  pega en el borde; por encima de ~0,58 con la batería baja no se recupera al tocar. Pedir 0,52 o
+  0,54 es lo único que anda con las cuatro baterías; 0,54 deja más margen si el equilibrio está
+  corrido hacia adelante.
+- **Por qué el LQR en el aire:** al pasar el borde el cuerpo queda ~2° detrás de su equilibrio y
+  cabeceando hacia atrás. El LQR acelera la rueda hacia atrás (a ~1 m/s): la reacción lo endereza
+  un poco en el aire y, al tocar, la rueda más rápida que el piso empuja la base hacia atrás y el
+  cuerpo vuelve adelante. Con la rueda sostenida a la velocidad del piso toca con el cuerpo atrás
+  y, si la batería no da, el motor satura y se cae de espaldas
+  ([lado a lado](resultados/un_escalon/resumen_un_escalon.png)). Ojo con lo de más arriba («en el
+  aire la rueda tiene que seguir girando a la velocidad del piso»): era con la maniobra de antes.
+  Con la de ahora y la elegida, también en el modelo original el LQR en el aire queda parado (a
+  1 m) y la rueda sostenida se cae. Igual es lo primero a mirar en el robot: `motor_vuelo` es un
+  parámetro.
+- **Escalones más bajos:** igual anda de 8 a 18 cm con la LiPo de 11,1 a 12,6 V. El de 5 cm no lo
+  ve (`desnivel` es 6 cm); con `desnivel=0.03` lo baja a 0,30, 0,40 o 0,54 m/s.
+- **Para el robot:** batería de 11,1 V o más; la tabla de equilibrio medida (un corrimiento de
+  1,5° de la IMU, como los de las caídas del 3/11, ya la hace chocar); el driver de la IMU no tiene
+  que tomar la caída libre como falla (arriba). Para la escalera no alcanza: frena recién a ~30 cm
+  del borde y la pisada es de 25.
+
+**Cambios en la maniobra** ([`maniobra.c`](../../firmware/segway_v01/components/control/maniobra.c)),
+cada uno probado en el banco:
+
+1. **En el aire, la velocidad del piso es la pedida, no la de la odometría:** apenas la rueda se
+   descarga en el borde gira en vacío (0,9 m/s con el robot a 0,48), y sostener eso en el aire lo
+   hacía cabecear 20° adelante al tocar.
+2. **Al tocar, frena con el comando anticipado** (`u_ff = ff · v_ref`), como antes de caer: sin él,
+   para seguir andando el LQR necesita el cuerpo ~4° atrás (el roce del reductor) y lo toma como
+   error; con la batería baja saturaba.
+3. **«Quieto» para largar es |v| < 0,06 m/s** (era 0,03): con más roce que el que compensa el
+   firmware el robot va y viene a ±0,05 m/s y no largaba nunca.
+4. Probados y descartados: un integrador de la velocidad de salida (se pasaba a 0,6-1,05 m/s y se
+   caía) y llegar a la velocidad antes del borde para pasarlo a velocidad constante (no cambió nada).
+
+**En el banco:** al cambiar la batería el roce seco queda fijo (escalaba con la tensión y hacía
+ver mejor la batería baja); con `escalones=1` no hay escalón siguiente al que «pasarse»; y casos
+nuevos: `escalones`, `v_motor`, `d_ref` (equilibrio corrido, en grados), `f_rotor`, `f_inercia`,
+`semilla` (ruido) y `desnivel`.
+
+## La escalera del equipo: algoritmo genético (3/11, noche)
+
+La escalera que hay que bajar, medida por el equipo el 3/11 y que no cambia más: **6 escalones de
+16,6 cm de alto y 29 cm de pisada, y uno último de 3 cm**. Es el escenario por defecto del banco
+(`escalones=7 alto=0.166 pisada=0.29 ultimo=0.03`). Siempre con la LiPo cargada (12,6 V,
+`v_motor=10.6`), el robot como está hoy y **sin salto antes del borde** (`d_salto=-1`: Joaquín no
+lo ve viable en el robot real). La maniobra es a propósito para esta escalera.
+
+```text
+python simulacion/escalon/genetico.py 25     (minutos; deja resultados/escalera_real/genetico.json)
+python simulacion/escalon/escalera_real.py   (~11 min: robustez, escalón por escalón y cambios)
+```
+
+- **El genético** ([`genetico.py`](genetico.py)): una isla por manera de bajar (frenando en cada
+  escalón, `repetir=1`; de largo, `t_continuo`), 18-20 genes con la resolución que se puede poner
+  en el robot (patas de a 1°, velocidades de a 0,01 m/s, aceleraciones de a 0,1 m/s², tiempos de
+  a 0,01 s, servos de a 10 °/s). Primera generación grande y al azar más las maniobras que ya
+  bajaban, torneo de 3, cruza uniforme, mutación de a pasos chicos (de 25 % a 8 % de los genes),
+  sobreviven los mejores entre padres e hijos y entran 5 al azar por generación.
+- **Puntaje:** primero que en la nominal baje los 7 sin pegar la cabina ni caerse; después el
+  promedio pesado de las 24 variaciones del ensayo ([`variaciones.py`](variaciones.py): LiPo 12,2 y
+  11,8 V, zona muerta, goma ±20 %, servos al 80 %, equilibrio corrido ±0,5° y ±1°, arranque a 35 y
+  60 cm, escalón ±5 mm, pisada ±1 cm, inercias, ruido; pesa más lo que más puede pasar). Cada
+  variación vale 1 si baja todo y **la cabina pasa siempre a 3 cm o más** de la escalera (pedido
+  de Joaquín: un margen, no se premia pasar más lejos); si pasa más justo, de 0,6 a 0,95; si no
+  baja, hasta 0,4. Frenar antes casi no cuenta. Para ahorrar tiempo, la nominal primero, después 5
+  variaciones y, si anda en 4, las 24.
+- **La holgura** (`holgura` en el resultado del banco, en mm, y en el resumen del visor): la menor
+  distancia entre el rectángulo de la cabina y la escalera desde que larga. Lo más justo es **la
+  esquina de abajo del frente de la cabina** (sobresale ~10 cm del eje y, como baja hacia atrás, es
+  lo último que pasa): contra la punta del escalón que acaba de dejar, en el aire o al tocar la
+  pisada de abajo.
+
+**Resultados** (más de 5.300 corridas del banco, ~50 min de genético; [robustez](resultados/escalera_real/robustez.png),
+[escalón por escalón](resultados/escalera_real/por_escalon.png), [cambios](resultados/escalera_real/cambios.png),
+[la elegida dibujada](resultados/escalera_real/largo_robusta.png); lo que dejó el genético en
+[`genetico.json`](resultados/escalera_real/genetico.json)):
+
+- **Frenando en cada escalón no encontró ninguna** que baje la escalera con la cabina como está:
+  para que la cabina no pegue tiene que pasar el borde a ~0,7 m/s, toca a ~14 cm de la contrahuella
+  y en los ~15 cm que quedan no llega a frenar: se pasa al escalón siguiente sin la maniobra.
+- **De largo, la más robusta** baja los 7 y queda parada en **las 24 variaciones y en las 6 de
+  validación** que el genético no vio (otro ruido, LiPo 12,2 V con el equilibrio corrido ±0,5°,
+  arrancar a 45 cm). Pide **0,77 m/s** con 1,2 m/s² (pasa los bordes a 0,61-0,70 m/s), larga con
+  las patas en 10°, en el aire las lleva a 30° (180 °/s) y las ruedas siguen girando como al
+  salir (`motor_vuelo` 0), al tocar patas a 27° (230 °/s) y vuelve a 0,78 m/s con 7,3 m/s² (el
+  programa `toca`), `ff` 1,1, `kx` 0,8 al largar y 0,5 al tocar; frena 0,65 s después del último
+  (con 3,8 m/s²) y queda parada a ~2,4 m del borde de arriba. Toca a 12-15 cm de cada contrahuella y le quedan
+  14-17 cm hasta el borde siguiente. Pero **la cabina pasa a 17-27 mm** (mediana 21): no llega a
+  los 3 cm.
+- **Lo que más rinde para los 3 cm es recortar el frente de la cabina:** con la misma maniobra,
+  1 cm de recorte deja 3 cm o más en 17 de 24 variaciones y **2 cm, en las 24** (lo más cerca,
+  35 mm; mediana 40), sin cambiar en nada lo demás. Sin recortar, el genético solo llega a los 3 cm
+  pidiendo más velocidad (0,81 m/s), y entonces se cae o pega en 4 de 24 variaciones (goma −20 %,
+  equilibrio +0,5°, servos al 80 %, rotores ×0,5) y pasa a 3 cm en 10 de 24.
+- **Lo demás que se puede cambiar:** con la goma con mu 0,5 baja en 20 de 24 (con 0,7, que es la
+  del modelo, y más, en las 24); la caja más liviana (× 0,8) no ayuda (22 de 24); apoyar la cabina
+  no cambia nada porque no la toca.
+- **Por qué «en cada escalón hacía algo distinto»:** de largo, cada aterrizaje deja el cuerpo
+  fuera de su equilibrio y el LQR acelera para alcanzarlo; en 29 cm (~0,4 s) no llega a asentarse,
+  así que el robot llega a cada borde con otra velocidad y otra inclinación. Con la maniobra por
+  defecto eso se acumula (0,47 → 0,48 → 0,63 → 1,22 m/s) y se cae en el cuarto; la elegida lo
+  mantiene acotado (0,61-0,70 m/s en los siete). Frenando en cada escalón no se arrastra, pero no
+  entra en la pisada.
+- **Para el robot:** cargar la LiPo antes de cada ensayo; recortar 2 cm el frente de la cabina (en
+  el modelo se recortó todo el frente; como lo que pasa cerca es la esquina de abajo, quizás alcance
+  con achaflanarla, pero eso no está simulado); los parámetros de la elegida están en
+  `genetico.json` (la de más corridas bien, `bajan` 24) y en el visor («Las mejores para la
+  escalera»). Faltan los mismos pendientes del escalón: el driver de la IMU con la caída libre,
+  llamarla con △ y probar primero un escalón con alguien atajando.
+
+## Con el peso y la goma medidos (5/11)
+
+El equipo pesó el robot entero (**1196 g** con la LiPo; el modelo pesaba 962) y apretó una rueda
+con goma espuma contra una balanza (**8500 N/m** cada una). Están en la variante `'ajustada'` de
+`parametros_fisicos.m` y en `planta_escalon_ajustada.h`: los 234 g van en la cabina y la caja se
+corre para que el centro de masa de todo siga dando la curva de equilibrio medida con la IMU (que
+no cambia); la IMU y el cero de la pata quedan como estaban
+([`ajuste_del_modelo.md`](../../modelado/ajuste/ajuste_del_modelo.md), sección 7). La goma nominal
+de las simulaciones (`GOMA_NOMINAL` en [`variaciones.py`](variaciones.py)) es la medida, 17000 N/m
+las dos, con 40 N s/m supuesto (falta medir cuánto rebota).
+
+```text
+matlab: run simulacion/escalon/exportar_planta_ajustada.m       (escribe planta_escalon_ajustada.h)
+gcc ... -DPLANTA_AJUSTADA ... -o simulacion/escalon/banco_escalon_ajustada.exe   (como arriba)
+python simulacion/escalon/barrido_goma.py        (~1 min; resultados/un_escalon/defecto.csv, goma.csv, goma.png)
+python simulacion/escalon/rebote.py [registro]   (soltarlo: lo que predice el modelo, o el robot contra el modelo)
+```
+
+[`barrido_goma.py`](barrido_goma.py) prueba la maniobra del firmware (la del genético «que no se
+caiga» del 4/11) en el ensayo de 10,5 cm, a 30 cm del borde, con la LiPo cargada:
+
+- **En 37 de 38 variaciones baja y queda parado** ([`defecto.csv`](resultados/un_escalon/defecto.csv)):
+  pasa el borde a 0,49-0,55 m/s, toca a 5-9 cm, se aparta de su equilibrio 5-7,5° y la goma se
+  aplasta 4-8 mm (14 con la goma blanda de antes de medirla). Falla con el escalón de 16,6 cm (la
+  cabina pega en el borde). La rueda llega a 34-56 cm del borde con la goma medida, y hasta 57 cm
+  con las gomas más blandas.
+- **La goma barrida** ([figura](resultados/un_escalon/goma.png)): de 6000 a 40000 N/m y de 4 a 100
+  N s/m, en el ensayo nominal, con el robot que arranca lento y con el equilibrio corrido ±1°:
+  **anda en las 288**, apartándose 5-8° (14° en la más blanda con poco amortiguamiento y el
+  equilibrio corrido -1°).
+- Con el peso medido, si al motor le cuesta mucho arrancar (zona muerta de 0,23 o más) el robot del
+  modelo ya no se queda quieto antes de largar y la maniobra aborta sin largar («no se quedó
+  quieto»); por eso la variación «arranca lento» pasó de 0,25 a 0,21. En el robot real se midió
+  0,17-0,19.
+- **Lo de la escalera (arriba) es con el modelo de 962 g y la goma casi rígida:** hay que volver a
+  correr el genético de la escalera con este modelo.
+
+**Con el DRV8871 (7/11).** Las PCB traen DRV8871 en lugar del L298N, y el firmware pasó a
+[`segway_v02`](../../firmware/segway_v02/README.md) (`DEFAULT_DEADBAND` 0,05, INA, LED). El banco y el
+visor compilan ahora el control de `segway_v02` (los fuentes del control son los mismos que en v01), y
+la planta es la del DRV8871 ([`ajuste_del_modelo.md`](../../modelado/ajuste/ajuste_del_modelo.md),
+sección 8): 12,3 V al motor sin caída, zona muerta 0,026 y el motor de 26 RPM/V. **La LiPo llega entera
+al motor:** `v_motor` es la tensión de la LiPo (12,6 cargada; antes, la LiPo menos 2 V), en el
+genético, el visor y las variaciones; la zona muerta de las variaciones es la del DRV8871 (0,015 y 0,05;
+«arranca lento», 0,08). `comparar_prueba.py --caida 2` para los registros con el L298N (hasta el 5/11).
+Con todo eso, la bajada del firmware en el ensayo de 10,5 cm sigue andando en **37 de 38 variaciones**
+(falla con 16,6 cm: la cabina pega) y en las 288 gomas, apartándose 4-11° de su equilibrio; la rueda
+llega hasta 58 cm del borde.
+
+**Soltarlo, para ver cuánto rebota** ([`rebote.py`](rebote.py), `banco_escalon rebote`): el robot
+desarmado, con las patas en 30° (como al tocar) y sostenido derecho, se suelta desde 5, 10, 15 y
+20 cm (idea de Joaquín: cubre los escalones de 10,5 y 16,6 cm); en el robot con `grabar` (el
+registro de 200 Hz durante 8 s, armado o no). La IMU ve la caída (|a| ~ 0: su duración
+da la altura), el golpe (recortado a 4 g) y lo que sigue. Con el registro, `rebote.py` simula la
+misma caída con el amortiguamiento de la goma de 4 a 100 N s/m y el par de los servos de ×0,5 a ×6,
+y dice con cuál la |a| simulada sigue mejor a la del robot (probado con un registro armado desde el
+banco con 15 N s/m y servos ×3: los encuentra). Lo que predice el modelo de hoy, de 5 a 20 cm: **las patas ceden
+4-8° y la rueda casi no se despega** (0-3 mm), sea cual sea la goma, que se aplasta 5-11 mm; con
+servos 4 veces más duros, las patas ceden 1,5-3° y el robot salta 5-59 mm según la altura y el
+amortiguamiento. En el golpe los dos servos llegan a 10-21 N m (el doble y medio de lo que dan
+quietos, ~8 N m: los empuja la caída) y, si fueran más duros, a 15-33 N m.
+
+## El escalón final: uno de 12 cm (11/11)
+
+El escenario quedó en **un escalón de 12 cm con lugar de sobra abajo**. El robot lo bajó parado 3 de 3 a
+0,65 m/s (△, sin sensor, puesto a ~55 cm del borde). Lo que se hizo con el banco, con el control de hoy
+(`LQR_TABLA_DRV` por los factores de fábrica; hasta el 11/11 el banco corría la tabla vieja sin factores:
+`GANANCIAS=vieja LQRFAC=1 LQRFACX=1` da lo de antes) y el `maniobra.c` de hoy:
+
+**Ojo con `ultimo`.** `banco_escalon caso escalones=1 alto=0.12` baja un escalón de **3 cm** si no se
+agrega `ultimo=0` (de fábrica el último escalón de la escalera es de 3 cm).
+
+**El aterrizaje, contra el robot** ([`aterrizaje_12cm.py`](aterrizaje_12cm.py), las tres bajadas a
+0,65 m/s). En el robot, después de tocar, el cuerpo cabecea **+8° hacia adelante en 40 ms**, vuelve hasta
+**−8° a los 150 ms** (el LQR contesta a fondo y la rueda se despega ~50 ms) y se asienta en ~0,6 s. El
+banco rígido da la misma forma con la mitad de amplitud o menos (+3,8°, −1,6°). Lo mismo en las
+**soltadas** sin motores ([`golpe_soltadas.py`](golpe_soltadas.py), 11 del 11/11): +4 a +12° en 40 ms en
+el robot, +0,4 a +3,7° en el banco.
+
+**De dónde sale ese cabeceo.** Al tocar, la pata cede; cerca de 30° el cuatro barras está casi en su punto
+muerto y un poco de pata es mucho giro del eslabón que lleva el motor. La rueda está engranada al rotor
+(que visto desde el eje pesa varias veces más que ella), así que gira con el eslabón, empuja el piso hacia
+adelante y el piso tira del pie hacia atrás: el cuerpo cabecea hacia adelante. Está en el banco, pero
+corto. Lo que lo acerca al robot (variables de entorno del banco, `planta_del_entorno` en
+`banco_escalon.c`): la pata más blanda y **elástica** (`K_PATA=20 C_PATA=0.8`: el plástico de los agarres,
+no la recta par-velocidad del servo) y **3° más cerca del punto muerto** (`A_EXTRA=3`). Con eso el banco
+da +6,6° a los 40 ms y −4,5° a los 200 ms, y el error contra las soltadas baja de 7,7° a 4,4°. **Es un
+ajuste, no una medida**, y sigue corto: una búsqueda libre de los parámetros se va a los topes (rotor ×5,
+la pata en el final de la tabla), o sea que falta algo en el modelo. Para cerrarlo hace falta medir a qué
+ángulo de pata se traba derecho el cuatro barras. También se agregó la torsión del eslabón del motor contra
+la caja (`K_TORSION`, la coordenada `s` de `planta_plana.c`, el k_s de los barridos): al golpe no le
+cambia nada y queda apagada.
+
+**Robustez de la bajada con △** ([`escalon_12cm.py`](escalon_12cm.py), 32 variaciones de la planta y de
+cómo se lo pone × 6 maniobras × las dos plantas; tablas en
+[`resultados/escalon_12cm/`](resultados/escalon_12cm/)):
+
+| maniobra | planta rígida | con la pata que cede: bien y cuánto se aparta (mediana / la peor) |
+|---|---|---|
+| 0,55 m/s | 31 de 32 (falla con 15 cm) | 32 de 32; 5,7° / 13,1° |
+| **0,65 m/s (la de hoy)** | 32 de 32 | 32 de 32; 5,7° / **12,8°** |
+| 0,75 m/s | 32 de 32 | 32 de 32; 5,7° / 13,3° |
+| 0,85 m/s | 32 de 32 | 32 de 32; 6,8° / 16,8° |
+| 0,65 m/s, patas 25° al tocar | 32 de 32 | 32 de 32; 6,5° / 15,5° |
+| 0,65 m/s, larga con patas 20° | 31 de 32 | 31 de 32; 7,6° / 14,2° (no larga si arranca lento) |
+
+La de hoy es la que menos se aparta; ni las patas a 25° al tocar ni largar con 20° la mejoran. **El
+banco es optimista con la velocidad:** dice que a 0,85 m/s anda siempre y en el robot se cayó 1 de 2 (el
+motor a fondo sin margen); en el banco el robot sale además a 0,59 m/s cuando se piden 0,65 (el de verdad,
+a 0,65).
+
+**Caer de lado** ([`caida_de_lado.py`](caida_de_lado.py), [figura](resultados/caida_de_lado.png)). El
+banco es plano; esto es el robot visto de atrás, sin control, llegando torcido al borde: una rueda se queda
+sin piso antes, rola, y toca primero con esa. Por cada grado torcido rola ~2° al tocar (a 0,65 m/s: 5°
+torcido son 7,5°; a 0,75 m/s, 10 % menos) y **recién vuelca de costado llegando torcido más de ~19-25°**
+(más margen cuanto más rápido), casi igual con la inercia de rolido a la mitad o al doble, las patas el
+doble de duras o el piso resbaloso. En el robot, las 16 bajadas del 11/11 (giróscopo): hasta 20° de rolido
+al tocar, y esas quedaron paradas; **las 4 caídas de esas 16 fueron con poco rolido** (0 a 6°): se cayó de
+cabeceo, no de costado. Lo que el modelo no dice es si el LQR lo sostiene después de tocar con una rueda
+sola (eso pediría un modelo en tres dimensiones).
+
+**La bajada autónoma (OPTIONS, `escalon alinear`)** ([`alinear_banco.py`](alinear_banco.py); el banco tiene
+ahora los dos infrarrojos: `caso alinear=1`, `ir_x`, `ir_x_real`, `v_buscar_ir`, `d_carrera`). Como el
+banco es plano llega derecho; lo que se prueba es el robot equilibrando cerca del borde. Lo que mostró, y
+cómo quedó el firmware:
+
+- **Para frenar, primero sigue.** Buscando a 0,08 m/s y frenando con la consigna de velocidad, la rueda
+  seguía 4,8 cm después de ver el borde (con los infrarrojos a 6 cm de la rueda quedaba a 1 cm). Ahora
+  busca a **0,05 m/s** y frena **sosteniendo la posición** donde lo vio: queda a 4-5 cm del borde.
+- **El equilibrio de la tabla un poco corrido lo tiraba del escalón.** Con −0,75° el LQR deja al robot
+  7 cm más allá de su consigna de posición: frenaba "en su lugar" y seguía hasta caerse. Ahora, antes de
+  ir hacia el borde, espera a estar quieto (tres promedios de 0,4 s que no cambien más de 4 mm; un robot
+  que va y viene no arranca) y mide ese corrimiento; frena y se aleja descontándolo.
+- Con eso, **16 de 18 variaciones bajan bien y 2 abortan sin moverse** (zona muerta mal compensada: no se
+  queda quieto), en las dos plantas; la rueda nunca llega a menos de 2,2 cm del borde, ni con los
+  infrarrojos mirando 1,5 cm más cerca de lo que se cree ni con el equilibrio corrido ±1,5°.
+
+Alinearse girando no está en el banco (no tiene guiñada): está en las pruebas de PC del firmware
+(`test_host/test_control.c`), con el robot visto de arriba y el lazo de rumbo: torcido hasta ±20° queda a
+menos de 2° (6 giros como mucho) y larga desde 50 cm.

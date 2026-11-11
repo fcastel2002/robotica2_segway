@@ -1,0 +1,74 @@
+{
+  "esquema": 1,
+  "id": "E2",
+  "nombre": "quieto",
+  "titulo": "Quieto, equilibrando: la huella del robot",
+  "pregunta": "Cuánto cabecea y se corre quieto, a qué frecuencias vibra (0,4 Hz del filtro de inclinación; 4-6, 8 y 11 Hz), cuánta corriente usa, y si leer la corriente más seguido (inacada 1) cambia algo de eso.",
+  "criterio": "Lo que el gemelo tiene que reproducir: desvíos de theta, x, u y corriente, y los picos del espectro. Los tramos ina5 e ina1 tienen que dar lo mismo (si no, medir cambia lo medido).",
+  "requisitos": {
+    "estado": "BALANCING",
+    "confirmar": [
+      "atajando"
+    ],
+    "patas_deg": 15.0,
+    "patas_tol_deg": 0.6,
+    "v_bat_min": 11.6,
+    "quieto_s": 5.0,
+    "espera_max_s": 180
+  },
+  "config": {
+    "refauto": 0,
+    "inacada": 5
+  },
+  "limites": {},
+  "abortar": {
+    "theta_err_deg": 8.0,
+    "x_desde_inicio_mm": 400
+  },
+  "pasos": [
+    {
+      "hacer": "tramo",
+      "nombre": "ina5",
+      "s": 30
+    },
+    {
+      "hacer": "cmd",
+      "texto": "set inacada 1"
+    },
+    {
+      "hacer": "tramo",
+      "nombre": "ina1",
+      "s": 60
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "quieto_1"
+    },
+    {
+      "hacer": "esperar",
+      "s": 8
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 3
+    },
+    {
+      "hacer": "grabar",
+      "etiqueta": "quieto_2"
+    },
+    {
+      "hacer": "esperar",
+      "s": 8
+    },
+    {
+      "hacer": "esperar_registro"
+    },
+    {
+      "hacer": "esperar",
+      "s": 2
+    }
+  ]
+}

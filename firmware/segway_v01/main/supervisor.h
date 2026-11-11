@@ -26,6 +26,8 @@ typedef struct {
     bool      overrun;      // el ciclo anterior se pasó del periodo
     float     tilt_err;     // theta - theta_ref, rad
     bool      saturated;    // el comando del ciclo anterior estaba en el tope (u_max)
+    bool      en_el_aire;   // bajando un escalón, en el vuelo: la inclinación y el tope del
+                            // comando no dicen que se cayó (la maniobra lo resuelve al tocar)
     sup_cmd_t cmd;
 } sup_input_t;
 

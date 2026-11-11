@@ -1,0 +1,28 @@
+variacion,final,bajados,toques,sale,toca,fin,desvio,motivo
+"nominal (LiPo 11,9 V)",PARADO,4,4,0.57,-137,-1640,9.69,
+"LiPo 11,1 V (9,1 V al motor)",SE CAE,2,2,0.614,-143,-431,29.83,supervisor: inclinacion
+"LiPo 10,5 V (8,5 V al motor)",SE CAE,1,1,0.643,-143,-246,29.53,supervisor: inclinacion
+"LiPo 12,6 V (10,6 V al motor)",PARADO,4,4,0.542,-134,-1618,11.19,
+"zona muerta 0,10 (no 0,14)",PARADO,4,4,0.539,-133,-1653,10.62,
+"zona muerta 0,18",SE CAE,4,4,0.603,-144,-941,30.14,supervisor: inclinacion
+"piso resbaloso (mu 0,5)",PARADO,4,4,0.572,-139,-1633,10.14,
+"piso muy resbaloso (mu 0,4)",PARADO,4,4,0.576,-143,-1709,12.18,
+servos con 80 % del par,PARADO,4,4,0.575,-139,-1634,10.5,
+arranca a 35 cm del borde,PARADO,4,4,0.565,-140,-1719,9.38,
+arranca a 60 cm del borde,PARADO,4,4,0.569,-138,-1616,10.97,
+"equilibrio corrido +0,75°",PARADO,4,4,0.562,-138,-1501,10.66,
+"equilibrio corrido -0,75°",SE CAE,3,3,0.619,-150,-701,31.43,supervisor: inclinacion
+"equilibrio +1,5° (IMU movida)",CHOCA,4,4,0.542,-133,-930,32.39,supervisor: inclinacion
+"equilibrio -1,5° (IMU movida)",SE CAE,3,3,0.614,-148,-684,56.32,supervisor: inclinacion
+escalón de 16 cm,PARADO,4,4,0.57,-132,-1633,9.65,
+escalón de 20 cm,PARADO,4,4,0.57,-143,-1654,9.05,
+inercia de los rotores x 2,SE CAE,2,2,0.582,-132,-481,29.57,supervisor: inclinacion
+"inercia de los rotores x 0,5",CHOCA,4,6,0.565,-144,-1210,64.68,supervisor: inclinacion
+"inercia del cuerpo x 1,5",PARADO,4,4,0.566,-136,-1669,8.74,
+"inercia del cuerpo x 0,7",PARADO,4,4,0.576,-143,-1656,9.63,
+otro ruido en los sensores,PARADO,4,4,0.575,-140,-1677,10.29,
+"11,1 V y equilibrio -0,75°",SE CAE,2,2,0.653,-150,-411,30.66,supervisor: inclinacion
+"12,6 V y equilibrio +0,75°",PARADO,4,4,0.538,-134,-1504,11.59,
+"12,6 V y zona muerta 0,10",CHOCA,4,4,0.518,-131,-1586,12.81,
+"11,1 V y zona muerta 0,18",SE CAE,2,2,0.66,-148,-400,34.98,supervisor: inclinacion
+"10,5 V y equilibrio -0,75°",SE CAE,1,1,0.688,-148,-239,30.69,supervisor: inclinacion
