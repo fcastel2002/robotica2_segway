@@ -73,6 +73,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_SPORT] = "sport", [PARAM_SPORTVMAX] = "sportvmax",
     [PARAM_LEVPATA] = "levpata", [PARAM_LEVU] = "levu", [PARAM_LEVVENT] = "levvent", [PARAM_LEVT] = "levt",
     [PARAM_LEVPATA0] = "levpata0", [PARAM_LEVVEL] = "levvel", [PARAM_LEVESPERA] = "levespera",
+    [PARAM_SALTOBAJAR] = "saltobajar", [PARAM_SALTOABAJO] = "saltoabajo",
 };
 
 // Los parámetros de la bajada como los tiene control (empiezan igual y cambian con los mismos
@@ -128,7 +129,8 @@ static void print_help(void)
         "#   escalon alinear (OPTIONS): retrocede hasta que un infrarrojo ve el borde, gira hasta que lo ve\n"
         "#   el otro, se aleja d_carrera y baja; escalon alinear medir: lo mismo sin bajar\n"
         "# parar: parada controlada (cuadrado): frena, baja las patas al minimo y se deja caer atras\n"
-        "# salto: equilibrando (cruz), patas a 0 y a 30 de golpe (el servo a su maximo) y salta; graba 3 s\n"
+        "# salto: equilibrando (cruz), se agacha despacio a 0, espera y estira a 30 de golpe (el servo a su\n"
+        "#   maximo); graba 3 s. set saltobajar (grados/s al agacharse, 20), set saltoabajo (s abajo, 0.3)\n"
         "# levantar: desarmado o caido y acostado hacia atras, se para solo: patas a levpata0 grados, de golpe\n"
         "#   (levvel grados/s) a levpata y, apenas llegan (mas levespera s), motores hacia atras con levu de\n"
         "#   PWM; cuando le faltan menos de levvent grados para la referencia arma solo; si en levt segundos\n"
@@ -608,7 +610,8 @@ static void handle_line(char *line, const comms_ctx_t *ctx, const telemetry_t *l
         }
         cmd = (command_t){ .type = CMD_SALTO };
         s_grabar = 1;           // control graba 3 s y comms manda el registro al terminar
-        out("# salto: patas a 0 y a 30 a fondo; graba 3 s a 200 Hz\n");
+        out("# salto: se agacha a %.0f grados/s, %.1f s abajo y salta; graba 3 s a 200 Hz\n",
+            last->salto_bajar_dps, last->salto_abajo_s);
     } else if (strcmp(word, "grabar") == 0) {
         if (last->man_estado != MAN_INACTIVA && last->man_estado != MAN_FIN) {
             out("# grabar: ya esta grabando la bajada\n");

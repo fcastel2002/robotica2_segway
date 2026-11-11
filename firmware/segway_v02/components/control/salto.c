@@ -11,9 +11,10 @@ void salto_params_por_defecto(salto_params_t *p)
     *p = (salto_params_t){
         .pata_baja_deg = 0.0f,
         .pata_alta_deg = 30.0f,
+        .vel_bajar_dps = 20.0f,         // como las patas con R1/L1 ("velpata"): de 15° a 0° en 0,75 s
         .vel_pata_dps = 3000.0f,        // un escalón (15° por ciclo): el servo va a su velocidad MÁXIMA. Lo
                                         // comprobó el levantarse de segway_v03 (12/11): ~40-60 ms para 15°
-        .t_abajo_s = 0.3f,              // incluye lo que tarda el servo real en llegar abajo (~0,1 s)
+        .t_abajo_s = 0.3f,              // quieto abajo antes de empujar
         .t_despegue_max_s = 0.4f,       // desde que se PIDIÓ arriba: el servo real tarda ~0,1 s
         .g_vuelo = 0.4f * 9.81f,        // como la bajada del escalón
         .g_golpe = 1.6f * 9.81f,
@@ -64,6 +65,7 @@ void salto_paso(salto_t *sa, const salto_params_t *p, const salto_entrada_t *e, 
         break;
     case SALTO_AGACHAR:
         s->pata_deg = p->pata_baja_deg;
+        s->vel_pata_dps = p->vel_bajar_dps;
         if (fabsf(e->pata_deg - p->pata_baja_deg) < TOL_PATA_DEG) cambiar(sa, SALTO_ABAJO);
         break;
     case SALTO_ABAJO:

@@ -539,6 +539,14 @@ static void control_task(void *arg)
                 }
                 continue;
             }
+            if (c.type == CMD_SET && (c.param == PARAM_SALTOBAJAR || c.param == PARAM_SALTOABAJO)) {
+                // Los del salto: no en pleno salto
+                if (sal.estado == SALTO_INACTIVO) {
+                    if (c.param == PARAM_SALTOBAJAR) sal_p.vel_bajar_dps = fminf(fmaxf(c.value, 5.0f), 3000.0f);
+                    else sal_p.t_abajo_s = fminf(fmaxf(c.value, 0.0f), 3.0f);
+                }
+                continue;
+            }
             if (c.type == CMD_SALTO) {
                 // Solo equilibrando del todo (terminó la rampa del armado) y sin otra cosa en curso
                 if (sup.state == SUP_BALANCING && ramp >= 1.0f && par.estado == PARADA_INACTIVA
@@ -1182,6 +1190,8 @@ static void control_task(void *arg)
             .rol_cero    = s_nivel_p.cero_deg,
             .parada_estado = par.estado,
             .salto_estado = sal.estado,
+            .salto_bajar_dps = sal_p.vel_bajar_dps,
+            .salto_abajo_s = sal_p.t_abajo_s,
             .salto_t_vuelo = sal.t_vuelo,
             .salto_despego = sal.despego,
             .registrando = grabando,

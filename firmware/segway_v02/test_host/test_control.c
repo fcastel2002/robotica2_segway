@@ -1037,6 +1037,7 @@ typedef struct {
     int   n_aire;               // ciclos con en_el_aire
     bool  aire_fuera_de_vuelo;  // en_el_aire en un estado que no es VUELO
     float u_directo;            // el del vuelo
+    float t_bajar, t_subir;     // [s] de 15 a 0 y de 0 a 30
 } sim_salto_t;
 
 static sim_salto_t simular_salto(bool vuela, float t_aire, bool golpe, float v)
@@ -1071,7 +1072,10 @@ static sim_salto_t simular_salto(bool vuela, float t_aire, bool golpe, float v)
             if (sa.estado != SALTO_VUELO) r.aire_fuera_de_vuelo = true;
         }
         float paso = s.vel_pata_dps * dt;
+        float antes = pata;
         pata += fminf(fmaxf(s.pata_deg - pata, -paso), paso);
+        if (pata < antes) r.t_bajar += dt;
+        if (pata > antes) r.t_subir += dt;
         if (pata < r.pata_min) r.pata_min = pata;
         if (t_arriba < 0.0f && pata >= 30.0f) t_arriba = t;
     }
@@ -1088,11 +1092,12 @@ static void test_salto(void)
     CHECK(r.termino && r.despego && r.pata_min <= 0.01f && r.pata_final == 30.0f);
     CHECK(fabsf(r.t_vuelo - 0.12f) < 0.02f && r.n_aire > 0 && !r.aire_fuera_de_vuelo);
     CHECK(fabsf(r.u_directo - 0.05f) < 1e-4f);      // en el aire, la rueda como al despegar
-    // 15 → 0 → 30 de golpe con 0,3 s abajo: ~0,32 s hasta arriba, + vuelo, + 0,15 s sin acelerómetro
-    CHECK(r.t_total > 0.55f && r.t_total < 0.7f);
+    // 15 → 0 DESPACIO (20 °/s: 0,75 s), 0,3 s abajo, → 30 de golpe, + vuelo, + 0,15 s sin acelerómetro
+    CHECK(r.t_total > 1.3f && r.t_total < 1.45f);
+    CHECK(r.t_bajar > 0.7f && r.t_bajar < 0.8f && r.t_subir < 0.02f);
     // No despega: con las patas arriba espera 0,4 s y termina
     r = simular_salto(false, 0.0f, false, 0.0f);
-    CHECK(r.termino && !r.despego && r.n_aire == 0 && r.pata_final == 30.0f && r.t_total < 1.0f);
+    CHECK(r.termino && !r.despego && r.n_aire == 0 && r.pata_final == 30.0f && r.t_total < 2.0f);
     // Vuela y no se ve el golpe: a los 0,5 s en el aire lo da por tocado
     r = simular_salto(true, 2.0f, false, 0.0f);
     CHECK(r.termino && r.despego && fabsf(r.t_vuelo - 0.5f) < 0.02f);

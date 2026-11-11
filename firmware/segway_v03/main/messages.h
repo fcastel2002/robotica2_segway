@@ -76,6 +76,8 @@ typedef enum {
     PARAM_LEVPATA0,     // levantarse: patas antes de empezar [°] (de ahí bajan de golpe a levpata)
     PARAM_LEVVEL,       // levantarse: velocidad pedida de esa bajada [°/s]
     PARAM_LEVESPERA,    // levantarse: espera entre que las patas llegaron abajo y el empuje [s]
+    PARAM_SALTOBAJAR,   // salto: velocidad al agacharse [°/s] (despacio; el empuje es siempre a fondo)
+    PARAM_SALTOABAJO,   // salto: tiempo quieto abajo antes de empujar [s]
     PARAM_COUNT,
 } param_id_t;
 
@@ -183,6 +185,7 @@ typedef struct {
     float            rol_cero;      // [°] ("set rolcero")
     parada_estado_t  parada_estado;
     salto_estado_t   salto_estado;
+    float            salto_bajar_dps, salto_abajo_s;  // ("set saltobajar", "set saltoabajo")
     float            salto_t_vuelo; // [s] lo que estuvo en el aire el último salto (0: no despegó)
     bool             salto_despego;
     bool             registrando;   // grabando el registro de la bajada (control_task.h)

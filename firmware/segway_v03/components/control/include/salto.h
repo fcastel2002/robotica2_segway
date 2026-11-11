@@ -1,8 +1,9 @@
-// Salto (✕ del joystick con el robot equilibrando, comando "salto"; pedido de Joaquín del 11/11): baja
-// las patas a 0° y las estira a 30° lo más rápido que da el servo. Al frenar arriba, el cuerpo sigue
-// subiendo y levanta las ruedas del piso. C puro: no depende de ESP-IDF.
+// Salto (✕ del joystick con el robot equilibrando, comando "salto"; pedido de Joaquín del 11/11): se
+// agacha DESPACIO a 0° y estira las patas a 30° lo más rápido que da el servo. Al frenar arriba, el
+// cuerpo sigue subiendo y levanta las ruedas del piso. C puro: no depende de ESP-IDF.
+// 12/11 (Joaquín): agachándose a fondo no servía; se agacha lento y después salta.
 //
-//   AGACHAR    patas a pata_baja a vel_pata (a fondo)
+//   AGACHAR    patas a pata_baja a vel_bajar (despacio)
 //   ABAJO      t_abajo quieto abajo: el equilibrio se acomoda a la altura nueva (0 = sin pausa)
 //   EMPUJAR    patas a pata_alta a vel_pata. Si el acelerómetro marca caída libre, despegó
 //   VUELO      en el aire: el filtro de inclinación sigue con el giróscopo solo, la referencia queda la
@@ -27,7 +28,8 @@ typedef enum {
 typedef struct {
     float pata_baja_deg;        // [°] a dónde se agacha
     float pata_alta_deg;        // [°] a dónde estira para saltar
-    float vel_pata_dps;         // [°/s] las dos carreras (3000: un escalón, el servo va a su máximo)
+    float vel_bajar_dps;        // [°/s] al agacharse: DESPACIO, para que el equilibrio lo acompañe
+    float vel_pata_dps;         // [°/s] al empujar (3000: un escalón, el servo va a su máximo)
     float t_abajo_s;            // [s] quieto abajo antes de empujar
     float t_despegue_max_s;     // [s] con las patas arriba, si no despegó en esto, termina
     float g_vuelo;              // [m/s2] |a| por debajo = en el aire
