@@ -26,6 +26,21 @@ Controles configurados para el mando de PS4 (DualShock 4):
   apenas para atrás con los motores apagados.
 - Gatillo L2 (11/11): prende y apaga el nivel de costado (`set nivel`): en un piso inclinado de lado acorta
   una pata y estira la otra hasta quedar derecho (un PI en el firmware). R2 no hace nada.
+- Botón □ sin equilibrar (11/11, solo con el firmware segway_v03): se para solo. El mando manda `parar`
+  igual que antes y el firmware elige: equilibrando, la parada; desarmado o caído, `levantar`.
+- MODO SPORT (11/11, solo segway_v03), huevo de pascua: con el robot desarmado y sin poder armar (acostado,
+  por ejemplo), apretar ✕ TRES VECES SEGUIDAS (menos de 1,5 s entre una y otra) lo prende; otra vez, lo
+  apaga. Lo reconoce el FIRMWARE (cuenta los `arm` que no armaron) y lo avisa con el LED en naranja, con
+  «# sport: PRENDIDO» en la consola y con la columna `sport` de la telemetría; este puente solo lo sigue
+  (puente.py le pasa lo que dice el robot, `linea_del_robot`). Velocidad a fondo 0,8 m/s (12/11: se
+  sacó la inclinación en las curvas).
+  En modo sport los gatillos son los del GTA y dejan de hacer lo de arriba: R2 es el acelerador y L2 la
+  marcha atrás, analógicos (cuanto más se aprieta, más rápido); el stick sigue doblando. Si este puente
+  arrancó con el robot ya prendido, el robot no le repite el encabezado de la telemetría: el puente le
+  pide `tlm on` para conocer las columnas (si no, no sabría que está en sport).
+- PAD TÁCTIL (apretar el touchpad; 12/11, solo segway_v03): prende y apaga el modo baile (`bailar 600` /
+  `bailar 0`): equilibrando, gira en el lugar y hamaca las patas. El stick o ◯ también lo cortan. Por
+  XInput (DS4Windows, Steam) el touchpad no llega.
 
 Expone `GET http://localhost:8001/estado`, `POST /mando` y `POST /accion` con `Access-Control-Allow-Origin: *`.
 Solo usa la biblioteca estándar de Python (`ctypes` en Windows).
@@ -68,7 +83,7 @@ BOTONES_VACIOS = {
     "x": False, "o": False, "cuadrado": False, "triangulo": False,
     "l1": False, "r1": False, "l2": False, "r2": False,
     "l3": False, "r3": False,
-    "share": False, "options": False,
+    "share": False, "options": False, "touchpad": False,
     "up": False, "down": False, "left": False, "right": False,
 }
 
@@ -93,6 +108,17 @@ def mayor_magnitud(*valores: float) -> float:
         if abs(v) > abs(mejor):
             mejor = v
     return mejor
+
+
+def gatillos_a_avance(lectura: dict, escala: float = 1.0) -> float:
+    """Modo sport: R2 acelera y L2 va marcha atrás, cuanto más apretados más rápido (de -1 a 1). Sin
+    lectura analógica del gatillo (algunos caminos solo dan el botón), el botón vale a fondo."""
+    gat = {}
+    for g in ("l2", "r2"):
+        gat[g] = float(lectura.get("ejes", {}).get(g, 0.0) or 0.0)
+        if gat[g] == 0.0 and lectura.get("botones", {}).get(g):
+            gat[g] = 1.0
+    return aplicar_zona_muerta(gat["r2"] - gat["l2"], 0.05) * max(0.1, min(1.0, escala))
 
 
 def calcular_mando(ejes: dict, modo: str, escala: float = 1.0) -> tuple[float, float]:
@@ -359,7 +385,7 @@ if sys.platform == "win32":
             else:
                 return None
             eje = lambda v: max(-1.0, min(1.0, (v - 127.5) / 127.5))
-            b1, b2 = b[o + 4], b[o + 5]
+            b1, b2, b3 = b[o + 4], b[o + 5], b[o + 6]
             av, gi = self.CRUCETA.get(b1 & 0x0F, (0, 0))
             bateria = None
             if len(b) > o + 29:
@@ -368,13 +394,16 @@ if sys.platform == "win32":
                 "conectado": True,
                 "nombre": nombre + " (HID)",
                 "bateria": bateria,
+                # gatillos analógicos (0-255) en datos+7 (L2) y datos+8 (R2)
                 "crudo": {"lx": eje(b[o]), "ly": -eje(b[o + 1]), "rx": eje(b[o + 2]), "ry": -eje(b[o + 3]),
-                          "dpad_x": float(gi), "dpad_y": float(av)},
+                          "dpad_x": float(gi), "dpad_y": float(av),
+                          "l2": b[o + 7] / 255.0, "r2": b[o + 8] / 255.0},
                 "botones": {
                     "cuadrado": bool(b1 & 0x10), "x": bool(b1 & 0x20), "o": bool(b1 & 0x40),
                     "triangulo": bool(b1 & 0x80),
                     "l1": bool(b2 & 0x01), "r1": bool(b2 & 0x02), "l2": bool(b2 & 0x04),
                     "r2": bool(b2 & 0x08), "share": bool(b2 & 0x10), "options": bool(b2 & 0x20),
+                    "touchpad": bool(b3 & 0x02),
                     "l3": bool(b2 & 0x40), "r3": bool(b2 & 0x80),
                     "up": av > 0, "down": av < 0, "left": gi < 0, "right": gi > 0,
                 },
@@ -407,6 +436,8 @@ if sys.platform == "win32":
             ejes = {k: round(aplicar_zona_muerta(crudo[k], zona_muerta), 3) for k in ("lx", "ly", "rx", "ry")}
             ejes["dpad_x"] = crudo["dpad_x"]
             ejes["dpad_y"] = crudo["dpad_y"]
+            ejes["l2"] = round(crudo["l2"], 3)
+            ejes["r2"] = round(crudo["r2"], 3)
             return {"conectado": True, "nombre": hid_estado["nombre"], "bateria": hid_estado["bateria"],
                     "ejes": ejes, "botones": dict(hid_estado["botones"])}
         return _leer_mando_windows_sin_hid(zona_muerta)
@@ -452,7 +483,8 @@ if sys.platform == "win32":
                         "nombre": "Wireless Controller (XInput)",
                         "bateria": bateria,
                         "ejes": {"lx": round(lx, 3), "ly": round(ly, 3), "rx": round(rx, 3), "ry": round(ry, 3),
-                                 "dpad_x": dpad_x, "dpad_y": dpad_y},
+                                 "dpad_x": dpad_x, "dpad_y": dpad_y,
+                                 "l2": round(gp.bLeftTrigger / 255.0, 3), "r2": round(gp.bRightTrigger / 255.0, 3)},
                         "botones": botones,
                     }
 
@@ -487,6 +519,7 @@ if sys.platform == "win32":
                     "r2": bool(b & 0x0080),
                     "share": bool(b & 0x0100),
                     "options": bool(b & 0x0200),
+                    "touchpad": bool(b & 0x2000),
                     "l3": bool(b & 0x0400), "r3": bool(b & 0x0800),
                     "up": dpad_y > 0.5, "down": dpad_y < -0.5,
                     "left": dpad_x < -0.5, "right": dpad_x > 0.5,
@@ -544,7 +577,8 @@ class PuenteJoystick:
         self._lock = threading.Lock()
         self._estado_joy: dict = {"conectado": False, "nombre": None, "bateria": None}
         self._mando: dict = {"avance": 0.0, "giro": 0.0}
-        self._ejes: dict = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry": 0.0, "dpad_x": 0.0, "dpad_y": 0.0}
+        self._ejes: dict = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry": 0.0, "dpad_x": 0.0, "dpad_y": 0.0,
+                            "l2": 0.0, "r2": 0.0}
         self._botones: dict = dict(BOTONES_VACIOS)
         self._botones_previos: dict = dict(BOTONES_VACIOS)
         self._web_mando: dict | None = None
@@ -553,7 +587,7 @@ class PuenteJoystick:
         self._destino_texto: str | None = None
         self._ultimo_evento: str = ("Listo (R1/L1 apretado: sube/baja las patas [0..30°] · R3/L3: gira sobre su eje"
                                     " · ✕: armar · ◯: desarmar · △: bajar escalón · OPTIONS: alinearse y bajar"
-                                    " · □: parada)")
+                                    " · □: parada, o pararse solo si está desarmado)")
         # R1/L1 apretado: hacia dónde van las patas (+1, -1 o 0), desde cuándo y desde qué ángulo (para
         # estimar dónde quedan al soltar), y cuántos "servo on" faltan repetir (UDP: por si uno se pierde)
         self._patas_dir = 0
@@ -565,6 +599,12 @@ class PuenteJoystick:
         self._demo_mal = False
         self._nivel = False         # nivel de costado prendido con L2
         self._demo_usada = False    # alguna vez en esta sesión: al armar se reponen los valores de fábrica
+        self._sport = False         # modo sport, como lo informa el robot: R2 acelera, L2 marcha atrás
+        self._col_sport = None      # columna "sport" de la telemetría (según el último encabezado)
+        self._col_baile = None      # columna "baile"
+        self._baile = False         # modo baile, como lo informa el robot (pad táctil)
+        self._encabezado_visto = False
+        self._tlm_pedida_t = -1e9   # última vez que se pidió "tlm on" para conocer las columnas
 
     def _resolver_destino(self) -> tuple[str | None, bool, str]:
         """Devuelve (ip_udp, es_simulado, texto_destino)."""
@@ -696,6 +736,22 @@ class PuenteJoystick:
             elif accion == "parar":
                 comandos_a_enviar.append("parar")
                 self._ultimo_evento = "□ → Parada controlada (parar)"
+            elif accion == "cuadrado":
+                # Manda "parar", como siempre. segway_v03 elige según su estado: equilibrando, parada
+                # controlada; desarmado o caído (apoyado hacia atrás), se levanta solo y arma. segway_v02
+                # solo hace la parada (desarmado contesta que no está equilibrando)
+                comandos_a_enviar.append("parar")
+                self._ultimo_evento = "□ → Equilibrando: parada controlada · desarmado (segway_v03): se para solo (parar)"
+            elif accion == "sport":
+                # Desde la página: se le pide al firmware; self._sport cambia cuando el robot lo confirma
+                pedido = not self._sport if valor is None else bool(valor)
+                comandos_a_enviar.append(f"set sport {1 if pedido else 0}")
+                self._ultimo_evento = f"Modo sport: pedido {'prender' if pedido else 'apagar'} (set sport)"
+            elif accion == "bailar":
+                # Pad táctil: prende y apaga (el robot dice si está bailando; 600 s es "hasta que se toque")
+                comandos_a_enviar.append("bailar 0" if self._baile else "bailar 600")
+                self._ultimo_evento = ("PAD TÁCTIL → termina el baile (bailar 0)" if self._baile else
+                                       "PAD TÁCTIL → ¡a bailar! gira en el lugar y hamaca las patas (bailar)")
             elif accion == "grabar":
                 comandos_a_enviar.append("grabar 4")      # 10/11: 4 s alcanzan para soltarlo o dejarlo caer
                 self._ultimo_evento = "SHARE → Grabar 4 s a 200 Hz (grabar 4)"
@@ -704,6 +760,48 @@ class PuenteJoystick:
         for cmd in comandos_a_enviar:
             self._enviar_comando_robot(cmd, mostrar=( not cmd.startswith("mov ") ))
         return evento
+
+    def linea_del_robot(self, linea: str) -> None:
+        """Lo que manda el robot (se lo pasa puente.py): de ahí sale si está en modo sport. Lo dice la
+        columna `sport` de la telemetría (según el encabezado) y las líneas «# sport: ...»."""
+        sport = baile = None
+        if linea.startswith("# t_ms,"):
+            columnas = linea[2:].strip().split(",")
+            self._col_sport = columnas.index("sport") if "sport" in columnas else None
+            self._col_baile = columnas.index("baile") if "baile" in columnas else None
+            self._encabezado_visto = True
+        elif linea.startswith("# sport: PRENDIDO"):
+            sport = True
+        elif linea.startswith("# sport: apagado"):
+            sport = False
+        elif linea.startswith("# baile: empezo"):
+            baile = True
+        elif linea.startswith("# baile: termino"):
+            baile = False
+        elif linea[:1].isdigit():
+            if not self._encabezado_visto:
+                # Llega telemetría sin saber las columnas (el puente arrancó con el robot ya prendido: el
+                # robot no repite el encabezado). "tlm on" lo repite; cada 5 s como mucho
+                ahora = time.monotonic()
+                if ahora - self._tlm_pedida_t > 5.0:
+                    self._tlm_pedida_t = ahora
+                    self._enviar_comando_robot("tlm on")
+                return
+            campos = linea.strip().split(",")
+            if self._col_sport is not None and len(campos) > self._col_sport and campos[self._col_sport] in ("0", "1"):
+                sport = campos[self._col_sport] == "1"
+            if self._col_baile is not None and len(campos) > self._col_baile and campos[self._col_baile] in ("0", "1"):
+                baile = campos[self._col_baile] == "1"
+        if baile is not None:
+            with self._lock:
+                self._baile = baile
+        if sport is None:
+            return
+        with self._lock:
+            if sport != self._sport:
+                self._sport = sport
+                self._ultimo_evento = ("TRUCO ACTIVADO → MODO SPORT: 0,8 m/s, R2 acelera y L2 marcha atrás" if sport else
+                                       "Modo sport apagado (L2 vuelve a ser el nivel de costado)")
 
     def _patas_estimar(self) -> None:
         """Con R1/L1 apretado, dónde van las patas (estimado con la velocidad del firmware). Con el lock."""
@@ -716,6 +814,7 @@ class PuenteJoystick:
         with self._lock:
             prev = dict(self._botones_previos)
             self._botones_previos = dict(botones_actuales)
+            sport = self._sport
 
         if botones_actuales.get("o") and not prev.get("o"):
             self.ejecutar_accion("desarmar")
@@ -724,6 +823,8 @@ class PuenteJoystick:
 
         if botones_actuales.get("options") and not prev.get("options"):
             self.ejecutar_accion("alinear")         # 11/11: antes cambiaba el modo de sticks
+        if botones_actuales.get("touchpad") and not prev.get("touchpad"):
+            self.ejecutar_accion("bailar")          # 12/11: modo baile, se prende y se apaga
         if botones_actuales.get("share") and not prev.get("share"):
             self.ejecutar_accion("grabar")          # 5/11: soltar el robot y medir el rebote
 
@@ -737,7 +838,8 @@ class PuenteJoystick:
             # se soltó uno: si el otro sigue apretado, manda ese; si no, paran
             self.ejecutar_accion("patas_subir" if r1 else "patas_bajar" if l1 else "patas_parar")
 
-        if botones_actuales.get("l2") and not prev.get("l2"):
+        # En modo sport L2 es la marcha atrás (y R2 el acelerador): no toca el nivel de costado
+        if botones_actuales.get("l2") and not prev.get("l2") and not sport:
             self.ejecutar_accion("nivel")
         # Flechas izquierda/derecha: 1° por toque, para alinearlo a mano
         if botones_actuales.get("right") and not prev.get("right"):
@@ -748,7 +850,7 @@ class PuenteJoystick:
         if botones_actuales.get("triangulo") and not prev.get("triangulo"):
             self.ejecutar_accion("escalon")
         elif botones_actuales.get("cuadrado") and not prev.get("cuadrado"):
-            self.ejecutar_accion("parar")
+            self.ejecutar_accion("cuadrado")
 
     def actualizar_desde_web(self, datos: dict) -> None:
         """Recibe estado del mando y configuración desde navigator.getGamepads() del navegador."""
@@ -779,6 +881,8 @@ class PuenteJoystick:
                 }
                 bot_in = datos.get("botones") or {}
                 botones = {k: bool(bot_in.get(k, False)) for k in BOTONES_VACIOS}
+                for g in ("l2", "r2"):      # gatillos analógicos, si la página los manda
+                    ejes[g] = round(max(0.0, min(1.0, float(ejes_in.get(g, 0.0)))), 3)
                 self._web_mando = {
                     "conectado": True,
                     "nombre": str(datos.get("nombre") or "Wireless Controller"),
@@ -802,7 +906,7 @@ class PuenteJoystick:
                 if lectura is not None and web is not None:
                     ejes_comb = {
                         k: round(mayor_magnitud(lectura["ejes"].get(k, 0.0), web["ejes"].get(k, 0.0)), 3)
-                        for k in ("lx", "ly", "rx", "ry", "dpad_x", "dpad_y")
+                        for k in ("lx", "ly", "rx", "ry", "dpad_x", "dpad_y", "l2", "r2")
                     }
                     bot_comb = {
                         k: bool(lectura["botones"].get(k, False) or web["botones"].get(k, False))
@@ -824,6 +928,9 @@ class PuenteJoystick:
                     modo = self.modo
                     escala = self.escala
                     avance, giro = calcular_mando(lectura["ejes"], modo, escala)
+                    if self._sport:
+                        # Como en el GTA: R2 acelera y L2 va marcha atrás. El stick sigue valiendo
+                        avance = round(mayor_magnitud(avance, gatillos_a_avance(lectura, escala)), 3)
                     self._estado_joy = {
                         "conectado": True,
                         "nombre": lectura["nombre"],
@@ -840,7 +947,8 @@ class PuenteJoystick:
                 with self._lock:
                     self._botones_previos = dict(BOTONES_VACIOS)
                     self._estado_joy = {"conectado": False, "nombre": None, "bateria": None}
-                    self._ejes = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry": 0.0, "dpad_x": 0.0, "dpad_y": 0.0}
+                    self._ejes = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry": 0.0, "dpad_x": 0.0, "dpad_y": 0.0,
+                                  "l2": 0.0, "r2": 0.0}
                     self._botones = dict(BOTONES_VACIOS)
                     self._mando = {"avance": 0.0, "giro": 0.0}
 
@@ -927,6 +1035,8 @@ class PuenteJoystick:
                     "escala": self.escala,
                     "zona_muerta": self.zona_muerta,
                 },
+                "sport": self._sport,
+                "baile": self._baile,
                 "ultimo_evento": self._ultimo_evento,
             }
 
