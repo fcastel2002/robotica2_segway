@@ -1088,9 +1088,9 @@ static void test_salto(void)
     CHECK(r.termino && r.despego && r.pata_min <= 0.01f && r.pata_final == 30.0f);
     CHECK(fabsf(r.t_vuelo - 0.12f) < 0.02f && r.n_aire > 0 && !r.aire_fuera_de_vuelo);
     CHECK(fabsf(r.u_directo - 0.05f) < 1e-4f);      // en el aire, la rueda como al despegar
-    // 15 → 0 → 30 a 330 °/s con 0,3 s abajo: ~0,44 s hasta arriba, + vuelo, + 0,15 s sin acelerómetro
-    CHECK(r.t_total > 0.6f && r.t_total < 0.9f);
-    // No despega: con las patas arriba espera 0,3 s y termina
+    // 15 → 0 → 30 de golpe con 0,3 s abajo: ~0,32 s hasta arriba, + vuelo, + 0,15 s sin acelerómetro
+    CHECK(r.t_total > 0.55f && r.t_total < 0.7f);
+    // No despega: con las patas arriba espera 0,4 s y termina
     r = simular_salto(false, 0.0f, false, 0.0f);
     CHECK(r.termino && !r.despego && r.n_aire == 0 && r.pata_final == 30.0f && r.t_total < 1.0f);
     // Vuela y no se ve el golpe: a los 0,5 s en el aire lo da por tocado

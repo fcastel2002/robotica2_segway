@@ -1,4 +1,4 @@
-﻿# Graba segway_v02 por el cable USB (CH343) rápido y sin que la ESP32 se reinicie por baja tensión.
+﻿# Graba el firmware (segway_v03 salvo -Proyecto segway_v02) por el cable USB (CH343) rápido y sin que la ESP32 se reinicie por baja tensión.
 #
 #   powershell -ExecutionPolicy Bypass -File firmware\herramientas\grabar.ps1 [-Puerto COM7] [-Compilar]
 #
@@ -12,6 +12,7 @@
 # cambiaron. Si falla a 921600 baja a 460800 y después a 115200. Con batería, -ConStub usa lo de siempre.
 param(
     [string]$Puerto = 'COM7',
+    [string]$Proyecto = 'segway_v03',   # 12/11: la versión con todo (la de Francisco + el salto)
     [int[]]$Baudios = @(921600, 460800, 115200),
     [switch]$Compilar,
     [switch]$ConStub,        # con batería: el stub con compresión es lo más rápido
@@ -20,7 +21,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $perfil = Get-ChildItem 'C:\Espressif\tools\Microsoft.v*.PowerShell_profile.ps1' | Sort-Object Name | Select-Object -Last 1
 . $perfil.FullName *> $null
-$fw = Join-Path $PSScriptRoot '..\segway_v02' | Resolve-Path
+$fw = Join-Path $PSScriptRoot "..\$Proyecto" | Resolve-Path
 $py = 'C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe'
 
 if ($Compilar) {
@@ -37,7 +38,7 @@ Set-Location (Join-Path $fw 'build')
 $pares = @(
     @('bootloader/bootloader.bin', 'bootloader/bootloader_flashed.bin'),
     @('partition_table/partition-table.bin', 'partition_table/partition-table_flashed.bin'),
-    @('segway_v02.bin', 'segway_v02_flashed.bin')
+    @("$Proyecto.bin", "$Proyecto`_flashed.bin")
 )
 $diff = @()
 if (($pares | Where-Object { -not (Test-Path $_[1]) }).Count -eq 0) {
@@ -65,4 +66,4 @@ foreach ($b in $Baudios) {
 }
 if (-not $ok) { throw 'no se pudo grabar a ninguna velocidad' }
 foreach ($p in $pares) { Copy-Item $p[0] $p[1] -Force }
-& $py -m esptool --chip esp32s3 merge-bin -o segway_v02_completo.bin '@flash_args' *> $null
+& $py -m esptool --chip esp32s3 merge-bin -o "$Proyecto`_completo.bin" '@flash_args' *> $null

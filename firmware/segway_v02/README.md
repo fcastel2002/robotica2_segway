@@ -305,19 +305,21 @@ se reiniciaba con los golpes (pines flojos): con las PCB, repetirlo.
 
 ## Salto (11/11)
 
-**Sin probar en el robot.** Con el robot equilibrando, `salto` (✕ del joystick) baja las patas a 0° y
-las estira a 30° a 330 °/s, lo que da el servo ([`salto.c`](components/control/salto.c)). Al frenar
-arriba el cuerpo sigue subiendo y levanta las ruedas. Etapas (`# salto: ...` en la consola):
+**Sin probar en el robot. Desde el 12/11 la versión que se usa es la de [`segway_v03`](../segway_v03/README.md)
+(la de Francisco, con pararse solo); esta queda igual.** Con el robot equilibrando, `salto` (✕ del
+joystick) baja las patas a 0° y las estira a 30° de golpe ([`salto.c`](components/control/salto.c)): se
+piden a 3000 °/s, un escalón, así el servo va a su velocidad máxima (lo comprobó el pararse solo de v03:
+~40-60 ms para 15°). Al frenar arriba el cuerpo sigue subiendo y levanta las ruedas. Etapas (`# salto: ...`):
 
 | Etapa | Qué hace |
 |---|---|
-| agachar | patas a 0° a fondo |
-| abajo | 0,3 s quieto abajo: el equilibrio se acomoda a la altura nueva (`t_abajo_s`) |
-| empujar | patas a 30° a fondo; si el acelerómetro marca caída libre (< 0,4 g, 10 ms), despegó |
+| agachar | patas a 0° de golpe |
+| abajo | 0,3 s abajo (incluye lo que tarda el servo, ~0,1 s): el equilibrio se acomoda (`t_abajo_s`) |
+| empujar | patas a 30° de golpe; si el acelerómetro marca caída libre (< 0,4 g, 10 ms), despegó |
 | vuelo | inclinación solo con el giróscopo, la referencia de antes de despegar y la rueda a la velocidad que tenía (no el LQR); el supervisor no lo da por caído |
 | aterrizar | golpe (> 1,6 g) o 0,5 s en el aire: 0,15 s más sin el acelerómetro y vuelve el control normal |
 
-Si con las patas arriba no despega en 0,3 s, termina igual (`# salto: no despego`). Las patas quedan en
+Si 0,4 s después de pedirlas arriba no despegó, termina igual (`# salto: no despego`). Las patas quedan en
 30°. Solo arranca equilibrando del todo (terminó la rampa del armado) y sin bajada ni parada en curso;
 △ y □ no hacen nada mientras salta. Graba 3 s a 200 Hz y manda el registro al terminar (como `grabar`).
 

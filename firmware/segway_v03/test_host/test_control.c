@@ -16,6 +16,7 @@
 #include "maniobra.h"
 #include "movimiento.h"
 #include "nivel.h"
+#include "salto.h"
 #include "odometry.h"
 #include "parada.h"
 #include "rumbo.h"
@@ -1026,6 +1027,83 @@ static sim_nivel_t simular_nivel(float piso_a, float piso_b, float t_cambio, flo
     return r;
 }
 
+// ---------------------------------------------------------------- salto (11/11)
+// Las patas siguen lo pedido a la velocidad pedida (como update_servos), arrancan en 15°. El
+// acelerómetro marca 1 g en el piso; si `vuela`, desde que las patas llegan arriba marca 0,1 g durante
+// `t_aire` s y después un golpe de 2,5 g (si `golpe`). Devuelve en qué terminó y llena lo visto.
+typedef struct {
+    bool  despego, termino;
+    float t_vuelo, pata_final, t_total;
+    float pata_min;             // lo más abajo que llegaron
+    int   n_aire;               // ciclos con en_el_aire
+    bool  aire_fuera_de_vuelo;  // en_el_aire en un estado que no es VUELO
+    float u_directo;            // el del vuelo
+} sim_salto_t;
+
+static sim_salto_t simular_salto(bool vuela, float t_aire, bool golpe, float v)
+{
+    const float dt = 0.005f;
+    salto_params_t p;
+    salto_params_por_defecto(&p);
+    salto_t sa = { 0 };
+    salto_salida_t s = { 0 };
+    sim_salto_t r = { .pata_min = 99.0f };
+    float pata = 15.0f, t_arriba = -1.0f;
+    CHECK(salto_iniciar(&sa));
+    CHECK(!salto_iniciar(&sa));             // ya en curso
+    for (int i = 0; i < 1000; i++) {
+        float t = (float)i * dt;
+        float acc = 9.81f;
+        if (vuela && t_arriba >= 0.0f) {
+            float ta = t - t_arriba;
+            if (ta < t_aire) acc = 0.1f * 9.81f;
+            else if (golpe && ta < t_aire + 0.02f) acc = 2.5f * 9.81f;
+        }
+        salto_entrada_t e = { .dt = dt, .pata_deg = pata, .acc = acc, .v = v };
+        salto_paso(&sa, &p, &e, &s);
+        if (!s.activa) {
+            r.termino = true;
+            r.t_total = t;
+            break;
+        }
+        if (s.en_el_aire) {
+            r.n_aire++;
+            r.u_directo = s.u_directo;
+            if (sa.estado != SALTO_VUELO) r.aire_fuera_de_vuelo = true;
+        }
+        float paso = s.vel_pata_dps * dt;
+        pata += fminf(fmaxf(s.pata_deg - pata, -paso), paso);
+        if (pata < r.pata_min) r.pata_min = pata;
+        if (t_arriba < 0.0f && pata >= 30.0f) t_arriba = t;
+    }
+    r.despego = sa.despego;
+    r.t_vuelo = sa.t_vuelo;
+    r.pata_final = s.pata_deg;
+    return r;
+}
+
+static void test_salto(void)
+{
+    // Despega 0,12 s y toca con un golpe: baja a 0, sube a 30, vuela y vuelve el control normal
+    sim_salto_t r = simular_salto(true, 0.12f, true, 0.05f);
+    CHECK(r.termino && r.despego && r.pata_min <= 0.01f && r.pata_final == 30.0f);
+    CHECK(fabsf(r.t_vuelo - 0.12f) < 0.02f && r.n_aire > 0 && !r.aire_fuera_de_vuelo);
+    CHECK(fabsf(r.u_directo - 0.05f) < 1e-4f);      // en el aire, la rueda como al despegar
+    // 15 → 0 → 30 de golpe con 0,3 s abajo: ~0,32 s hasta arriba, + vuelo, + 0,15 s sin acelerómetro
+    CHECK(r.t_total > 0.55f && r.t_total < 0.7f);
+    // No despega: con las patas arriba espera 0,4 s y termina
+    r = simular_salto(false, 0.0f, false, 0.0f);
+    CHECK(r.termino && !r.despego && r.n_aire == 0 && r.pata_final == 30.0f && r.t_total < 1.0f);
+    // Vuela y no se ve el golpe: a los 0,5 s en el aire lo da por tocado
+    r = simular_salto(true, 2.0f, false, 0.0f);
+    CHECK(r.termino && r.despego && fabsf(r.t_vuelo - 0.5f) < 0.02f);
+    // Cancelado (se cayó o desarmó): inactivo
+    salto_t sa = { 0 };
+    salto_iniciar(&sa);
+    salto_cancelar(&sa);
+    CHECK(sa.estado == SALTO_INACTIVO && salto_iniciar(&sa));
+}
+
 static void test_nivel_de_costado(void)
 {
     sim_nivel_t r;
@@ -1233,6 +1311,7 @@ static void test_levantar_y_armado_automatico(void)
 
 int main(void)
 {
+    test_salto();
     test_levantar_y_armado_automatico();
     test_nivel_de_costado();
     test_maniobra_espera_quieto_antes_del_borde();

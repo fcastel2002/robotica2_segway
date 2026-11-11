@@ -27,7 +27,7 @@ typedef enum {
 typedef struct {
     float pata_baja_deg;        // [°] a dónde se agacha
     float pata_alta_deg;        // [°] a dónde estira para saltar
-    float vel_pata_dps;         // [°/s] las dos carreras (330: lo que da el servo)
+    float vel_pata_dps;         // [°/s] las dos carreras (3000: un escalón, el servo va a su máximo)
     float t_abajo_s;            // [s] quieto abajo antes de empujar
     float t_despegue_max_s;     // [s] con las patas arriba, si no despegó en esto, termina
     float g_vuelo;              // [m/s2] |a| por debajo = en el aire

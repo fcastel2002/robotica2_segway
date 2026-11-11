@@ -11,9 +11,10 @@ void salto_params_por_defecto(salto_params_t *p)
     *p = (salto_params_t){
         .pata_baja_deg = 0.0f,
         .pata_alta_deg = 30.0f,
-        .vel_pata_dps = 330.0f,         // lo que da el servo (maniobra.c, vel_pata_dps del vuelo)
-        .t_abajo_s = 0.3f,
-        .t_despegue_max_s = 0.3f,
+        .vel_pata_dps = 3000.0f,        // un escalón (15° por ciclo): el servo va a su velocidad MÁXIMA. Lo
+                                        // comprobó el levantarse de segway_v03 (12/11): ~40-60 ms para 15°
+        .t_abajo_s = 0.3f,              // incluye lo que tarda el servo real en llegar abajo (~0,1 s)
+        .t_despegue_max_s = 0.4f,       // desde que se PIDIÓ arriba: el servo real tarda ~0,1 s
         .g_vuelo = 0.4f * 9.81f,        // como la bajada del escalón
         .g_golpe = 1.6f * 9.81f,
         .t_vuelo_max_s = 0.5f,

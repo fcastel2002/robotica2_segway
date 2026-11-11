@@ -13,6 +13,7 @@
 #include "movimiento.h"
 #include "maniobra.h"
 #include "parada.h"
+#include "salto.h"
 #include "levantar.h"
 
 typedef enum {
@@ -101,6 +102,7 @@ typedef enum {
     CMD_MAN_PARAM,      // "man <nombre> <valor>": param = campo de maniobra_campo(), value
     CMD_LEVANTAR,       // "levantar" (□ desarmado o caído): se levanta solo y arma (levantar.h)
     CMD_BAILAR,         // "bailar [s]": value = segundos de baile (0 = termina); solo equilibrando
+    CMD_SALTO,          // "salto" (✕ equilibrando): patas a 0 y a 30 de golpe (salto.h)
 } command_type_t;
 
 #define SERVO_BOTH  (-1)
@@ -180,6 +182,9 @@ typedef struct {
     float            nivel_ki;      // ("set nivelki")
     float            rol_cero;      // [°] ("set rolcero")
     parada_estado_t  parada_estado;
+    salto_estado_t   salto_estado;
+    float            salto_t_vuelo; // [s] lo que estuvo en el aire el último salto (0: no despegó)
+    bool             salto_despego;
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;
     float            par_inclina, par_suelta;       // [rad]
