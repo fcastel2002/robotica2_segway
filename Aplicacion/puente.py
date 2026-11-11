@@ -86,6 +86,9 @@ def guardar_registro(linea: str) -> None:
         _registro = None
 
 
+joy_puente = None  # el puente del joystick (joystick.PuenteJoystick), si está andando
+
+
 def escuchar_udp() -> None:
     global robot
     origenes = set()
@@ -102,6 +105,8 @@ def escuchar_udp() -> None:
             if linea.strip():
                 guardar_registro(linea.strip())
                 difundir(linea.strip())
+                if joy_puente is not None:      # el modo sport lo decide el robot (✕ tres veces)
+                    joy_puente.linea_del_robot(linea.strip())
 
 
 # Columnas de firmware/segway_v02 (CSV_HEADER en main/comms_task.c)
@@ -479,6 +484,8 @@ def main() -> None:
             notificar_consola=difundir,
         )
         if joy.iniciar_en_segundo_plano():
+            global joy_puente
+            joy_puente = joy
             print("Puente de joystick activo en http://localhost:8001/estado")
 
     # 0.0.0.0: también se puede abrir desde otra compu o un celular de la misma red.

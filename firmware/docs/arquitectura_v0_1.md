@@ -111,6 +111,9 @@ solo dueño, y cuando las patas entren en el control ya estarán en el lugar cor
 | `FALLEN` | apagados | `DISARMED` | Comando `disarm` (rearmado manual, nunca automático) |
 | cualquiera | apagados | `FAULT` | 5 lecturas seguidas de IMU fallidas, o 10 ciclos seguidos excedidos |
 | `FAULT` | apagados | — | Requiere reinicio |
+| `DISARMED`, `FALLEN` | apagados | `STANDUP` | Comando `levantar` (□ del mando sin equilibrar) **y** θ − θref < 5° (apoyado hacia atrás, no caído hacia adelante). Solo en `segway_v03`, 11/11 |
+| `STANDUP` | patas a 6°, después los dos motores hacia atrás (`levantar.c`) | `BALANCING` | **Armado automático**: empujando y con θ − θref > −10° (`levvent`). El LQR entra sin rampa de arranque |
+| `STANDUP` | ídem | `DISARMED` | `disarm`, se venció una etapa (patas 4 s, empuje 1 s) o pasó de largo hacia adelante (θ − θref > 5°) |
 
 Reglas de seguridad de la v0.1:
 
