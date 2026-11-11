@@ -1,7 +1,7 @@
 # Plan Maestro: Informe Técnico Final (Profesor) y Presentación Interactiva (Público General)
 
 **Fecha:** 2026-11-07  
-**Proyecto:** Segway con patas extensibles — Robótica II, UNCUYO (Grupo 4: Joaquín Calderón, Francisco Castel, Matías Armani)  
+**Proyecto:** Segway con patas extensibles — Robótica II, UNCUYO (Grupo 4: Joaquín Calderón, Francisco Castel, Matías Armani, Ignacio Bartolini, Mariano Gimenez)  
 **Regla de oro:** Un mismo proyecto, **dos idiomas completamente distintos**.
 - **El Informe Técnico (`LaTeX`):** Rigor de ingeniería, trazabilidad matemática e instrumental, contraste honesto entre modelo teórico y mediciones reales en el prototipo. Dirigido al profesor/cátedra.
 - **La Presentación Interactiva (`Web / HTML5` — 25 a 30 min):** Cero ecuaciones pesadas, *storytelling* visual, analogías físicas intuitivas, animaciones en vivo (visor del escalón, HMI, videos del robot) y foco en **por qué es difícil y cómo cobró vida**. Dirigida a "simples mortales" (público general, familiares, alumnos de otras carreras).

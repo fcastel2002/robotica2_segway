@@ -98,11 +98,11 @@ html, body {
 .slide {
   position: absolute;
   inset: 0;
-  padding: 72px 6vw 56px;
+  padding: 68px 5.5vw 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 28px;
+  gap: 22px;
   opacity: 0;
   pointer-events: none;
   transform: translateY(18px) scale(0.985);
@@ -120,29 +120,45 @@ html, body {
 }
 
 h1 {
-  font-size: clamp(2.6rem, 4.8vw, 4.4rem);
+  font-size: clamp(2.5rem, 4.6vw, 4.2rem);
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 h2 {
-  font-size: clamp(1.9rem, 3.1vw, 2.9rem);
+  font-size: clamp(1.75rem, 2.8vw, 2.6rem);
   line-height: 1.15;
   font-weight: 800;
   letter-spacing: -0.015em;
 }
 
 h3 {
-  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  font-size: clamp(1.3rem, 1.9vw, 1.75rem);
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+}
+
+h4 {
+  font-size: clamp(1.1rem, 1.45vw, 1.35rem);
+  font-weight: 700;
+  color: #f8fafc;
 }
 
 p, li {
-  font-size: clamp(1.15rem, 1.65vw, 1.5rem);
-  line-height: 1.45;
+  font-size: clamp(1.05rem, 1.45vw, 1.35rem);
+  line-height: 1.42;
   color: #e2e8f0;
+}
+
+code {
+  font-family: Consolas, "Courier New", monospace;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  color: #7dd3fc;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.92em;
 }
 
 .sobretitulo {
@@ -154,7 +170,7 @@ p, li {
 }
 
 .subtitulo {
-  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
   color: var(--muted);
 }
 
@@ -216,7 +232,7 @@ p, li {
 .dos-columnas {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  gap: 28px;
   width: 100%;
 }
 
@@ -224,28 +240,15 @@ p, li {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 22px;
-  padding: 32px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
 }
 
-.tarjeta.chica {
-  padding: 24px 28px;
-}
-
-.tarjeta.con-imagen img {
-  height: 150px;
-  object-fit: contain;
-  align-self: flex-start;
-  border-radius: 12px;
-  background: #fff;
-  padding: 6px 14px;
-}
-
 .icono-grande {
-  font-size: 3.2rem;
+  font-size: 3rem;
   margin-bottom: 4px;
 }
 
@@ -261,13 +264,14 @@ p, li {
   border-left: 4px solid var(--accent-2);
   padding: 10px 14px;
   border-radius: 8px;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
 }
 
 .pregunta, .pie-grande {
   text-align: center;
-  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  font-size: clamp(1.3rem, 1.9vw, 1.75rem);
   font-weight: 700;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 /* Robot y datos */
@@ -289,13 +293,13 @@ p, li {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .datos-grandes li {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 16px 24px;
+  padding: 15px 22px;
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -303,28 +307,32 @@ p, li {
 }
 
 .num {
-  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-size: clamp(1.85rem, 2.7vw, 2.5rem);
   font-weight: 800;
   color: var(--accent);
-  min-width: 115px;
+  min-width: 125px;
 }
 
 /* Simulaciones y canvas */
 .sim-con-texto {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  gap: 36px;
+  grid-template-columns: 1.22fr 1fr;
+  gap: 30px;
   align-items: center;
+}
+
+.caida-layout {
+  grid-template-columns: 1.3fr 1fr;
 }
 
 .texto-lateral {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .dato-enorme {
-  font-size: clamp(2.8rem, 4.4vw, 4rem);
+  font-size: clamp(2.6rem, 4vw, 3.6rem);
   font-weight: 800;
   color: var(--accent);
   line-height: 1;
@@ -332,7 +340,7 @@ p, li {
 }
 
 .dato-sub {
-  font-size: 1.35rem;
+  font-size: 1.22rem;
   color: var(--muted);
 }
 
@@ -348,8 +356,8 @@ canvas {
 .botones {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 6px;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .botones.centrados {
@@ -360,8 +368,8 @@ button {
   background: var(--bg-card-2);
   color: var(--text);
   border: 1px solid rgba(56, 189, 248, 0.4);
-  padding: 11px 22px;
-  font-size: 1.08rem;
+  padding: 10px 18px;
+  font-size: 1.02rem;
   font-weight: 600;
   border-radius: 12px;
   cursor: pointer;
@@ -369,7 +377,7 @@ button {
 }
 
 button:hover {
-  background: rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.22);
   border-color: var(--accent);
   transform: translateY(-1px);
 }
@@ -388,148 +396,130 @@ input[type="range"] {
 }
 
 .aclaracion {
-  font-size: 1rem;
+  font-size: 0.98rem;
   color: var(--muted);
   text-align: center;
 }
 
-/* Ciclo sentir-pensar-mover */
-.ciclo {
+/* Diagrama de bloques de control */
+.diagrama-control {
   display: flex;
   align-items: stretch;
-  justify-content: center;
-  gap: 18px;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
 }
 
-.paso {
+.bloque-ctrl {
   flex: 1;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px 24px;
-  text-align: center;
+  border-top: 4px solid var(--accent);
+  border-radius: 18px;
+  padding: 20px 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
-.burbuja {
-  font-size: 3rem;
-  margin-bottom: 6px;
+.bloque-ctrl.b-lqr { border-top-color: var(--accent-2); }
+.bloque-ctrl.b-filt { border-top-color: #a78bfa; }
+.bloque-ctrl.b-act { border-top-color: var(--good); }
+
+.bloque-ctrl p {
+  font-size: 1.02rem;
+  color: #cbd5e1;
 }
 
-.flecha {
+.etiqueta-t {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.flecha-ctrl {
   display: flex;
   align-items: center;
-  font-size: 2.6rem;
+  font-size: 2rem;
   color: var(--accent);
   font-weight: 800;
 }
 
-/* Barras comparativas */
-.caja-barras {
+/* Galerías de Diseño Mecánico CAD y PCBs */
+.tres-columnas-cad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  width: 100%;
+}
+
+.cuatro-columnas-cad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  width: 100%;
+}
+
+.tarjeta-cad {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
+  border-radius: 18px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 8px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
 }
 
-.titulo-barras {
-  font-weight: 700;
-  color: var(--accent);
+.tarjeta-cad img {
+  width: 100%;
+  height: 250px;
+  object-fit: contain;
+  background: #0f172a;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
-.barra-fila {
+.tarjeta-cad.compacta img {
+  height: 215px;
+}
+
+.tarjeta-cad.pcb-card img {
+  height: 290px;
+  object-fit: cover;
+}
+
+.tarjeta-cad p {
+  font-size: 0.98rem;
+  line-height: 1.36;
+  color: #cbd5e1;
+}
+
+.mini-cad-us {
   display: grid;
-  grid-template-columns: 1.1fr 1.6fr auto;
-  align-items: center;
+  grid-template-columns: 150px 1fr;
   gap: 14px;
-  font-size: 1.15rem;
-}
-
-.barra {
-  height: 24px;
-  background: rgba(255, 255, 255, 0.07);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.relleno {
-  height: 100%;
-  width: var(--v, 50%);
-  border-radius: 999px;
-  transition: width 0.7s ease;
-}
-
-.relleno.rojo { background: linear-gradient(90deg, #ef4444, #f87171); }
-.relleno.verde { background: linear-gradient(90deg, #10b981, #34d399); }
-.relleno.gris { background: #64748b; }
-
-/* Placas */
-.placas {
-  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-}
-
-.placa {
-  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 22px 26px;
-  background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
-  border: 3px solid #f59e0b;
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45);
-  min-width: 310px;
-  min-height: 195px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  padding: 12px 14px;
 }
 
-.placa.logica {
-  min-width: 260px;
-  min-height: 170px;
-  background: linear-gradient(135deg, #14532d 0%, #166534 100%);
-  border-color: #34d399;
+.mini-cad-us img {
+  width: 100%;
+  height: 105px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #0f172a;
 }
 
-.placa-titulo {
-  font-size: 1.45rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.medida {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
-  align-self: flex-end;
-}
-
-.cable-plano {
-  width: 72px;
-  height: 36px;
-  background: repeating-linear-gradient(
-    0deg,
-    #475569 0px,
-    #475569 4px,
-    #1e293b 4px,
-    #1e293b 7px
-  );
-  border-left: 6px solid #0f172a;
-  border-right: 6px solid #0f172a;
-}
-
-.lista-simple {
-  max-width: 920px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.mini-cad-us p {
+  font-size: 0.96rem;
+  color: #cbd5e1;
 }
 
 .captura {
@@ -539,64 +529,7 @@ input[type="range"] {
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
-}
-
-/* Escalera dibujo esquemático */
-.escalera-dibujo {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 4px;
-  height: 160px;
-}
-
-.escalera-dibujo .esc {
-  width: 78px;
-  background: linear-gradient(180deg, #334155, #1e293b);
-  border-top: 3px solid var(--accent);
-  border-right: 3px solid var(--accent);
-}
-.esc.e1 { height: 155px; }
-.esc.e2 { height: 132px; }
-.esc.e3 { height: 109px; }
-.esc.e4 { height: 86px; }
-.esc.e5 { height: 63px; }
-.esc.e6 { height: 40px; }
-.esc.e7 { height: 16px; }
-
-/* Recorte cabina */
-.recorte {
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  align-items: center;
-  gap: 36px;
-}
-
-.cabina-recorte {
-  position: relative;
-  width: 260px;
-  height: 190px;
-  margin: 0 auto;
-  background: #1e293b;
-  border: 3px solid var(--accent);
-  border-radius: 16px;
-}
-
-.cabina-recorte .corte {
-  position: absolute;
-  bottom: -3px;
-  left: -3px;
-  width: 64px;
-  height: 64px;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(248, 113, 113, 0.35),
-    rgba(248, 113, 113, 0.35) 8px,
-    transparent 8px,
-    transparent 16px
-  );
-  border-top: 3px dashed var(--bad);
-  border-right: 3px dashed var(--bad);
+  background: #fff;
 }
 
 /* Demo y cierre */
@@ -617,14 +550,14 @@ input[type="range"] {
 .numeros {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 22px;
 }
 
 .numeros > div {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 26px;
+  padding: 24px;
   text-align: center;
 }
 
@@ -638,7 +571,7 @@ input[type="range"] {
   border: 1px solid var(--accent);
   border-radius: 16px;
   padding: 18px 24px;
-  font-size: 1.1rem;
+  font-size: 1.08rem;
   line-height: 1.45;
   color: #f8fafc;
   z-index: 60;
@@ -655,8 +588,8 @@ input[type="range"] {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 18px;
-  padding: 14px 22px;
-  font-size: clamp(1.1rem, 1.55vw, 1.42rem);
+  padding: 12px 20px;
+  font-size: clamp(1.05rem, 1.45vw, 1.35rem);
 }
 
 .eq-lhs {
@@ -671,7 +604,7 @@ input[type="range"] {
 }
 
 .eq-term {
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 10px;
   font-weight: 600;
 }
@@ -701,18 +634,18 @@ input[type="range"] {
 }
 
 .lqr-grid {
-  grid-template-columns: 1fr 1.25fr;
-  gap: 28px;
+  grid-template-columns: 0.95fr 1.25fr;
+  gap: 26px;
 }
 
 .lqr-controles {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 18px;
-  padding: 20px 24px;
+  padding: 18px 22px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 .slider-fila {
@@ -722,9 +655,130 @@ input[type="range"] {
 }
 
 .slider-fila label {
-  font-size: 1.08rem;
+  font-size: 1.04rem;
   color: #e2e8f0;
   display: flex;
   justify-content: space-between;
 }
 
+/* Diapositiva de Firmware y Pestañas de Aplicación */
+.fw-columnas {
+  align-items: stretch;
+}
+
+.fw-columnas .bloque-ctrl {
+  padding: 22px 24px;
+  gap: 12px;
+}
+
+.fw-columnas .bloque-ctrl h4 {
+  font-size: 1.32rem;
+  color: var(--accent-2);
+}
+
+.app-tabs-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: -4px;
+}
+
+.app-tab {
+  padding: 9px 16px;
+  font-size: 0.98rem;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: #cbd5e1;
+}
+
+.app-tab.activo {
+  background: var(--accent);
+  color: #08101d;
+  border-color: var(--accent);
+  font-weight: 800;
+}
+
+.app-showcase {
+  grid-template-columns: 1.38fr 0.92fr;
+  gap: 24px;
+  width: 100%;
+}
+
+.app-img-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-captura {
+  background: #111110;
+  max-height: 49vh;
+  cursor: zoom-in;
+  transition: transform 0.18s ease, border-color 0.2s ease;
+}
+
+.app-captura:hover {
+  border-color: var(--accent);
+  transform: scale(1.01);
+}
+
+.zoom-hint {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.app-info-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px 22px;
+  gap: 12px;
+}
+
+.app-info-box h4 {
+  font-size: 1.28rem;
+  color: var(--accent);
+}
+
+.app-info-box p {
+  font-size: 1.02rem;
+  line-height: 1.42;
+}
+
+/* Visor Lightbox para ampliar imágenes CAD, PCBs y Pantallas de la App */
+#lightbox-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 9, 18, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 200;
+  padding: 28px;
+  cursor: zoom-out;
+}
+
+#lightbox-modal.oculto {
+  display: none !important;
+}
+
+#lightbox-modal img {
+  max-width: 94vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+  background: #0f172a;
+}
+
+#lightbox-modal span {
+  font-size: 1rem;
+  color: #cbd5e1;
+}

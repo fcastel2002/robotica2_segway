@@ -3,7 +3,7 @@
 ![Logo del robot](assets/logo.png)
 
 Trabajo final de **Robótica II**, Universidad Nacional de Cuyo (UNCUYO). Grupo 4: Joaquín Calderón
-(modelado), Francisco Castel (diseño mecánico), Matías Armani (simulación en Simulink).
+(modelado), Francisco Castel (diseño mecánico), Matías Armani (simulación en Simulink y electrónica), Ignacio Bartolini y Mariano Gimenez.
 
 **Este archivo describe el robot tal como es hoy.** Todo lo que había de propuestas anteriores
 (mecanismo de Hoeken, motores N20, plantas de simulación de agosto y principios de septiembre) se
