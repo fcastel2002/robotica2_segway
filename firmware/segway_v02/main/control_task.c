@@ -61,7 +61,7 @@ static float s_ir_umbral = IR_ALTURA_BORDE_CM * 0.01f;      // [m]
 static float s_w_eje = EJE_W_DPS * DEG2RAD;
 // Nivel de costado ("set nivel", "set rolcero", "set nivelcero"), en vivo
 static nivel_params_t s_nivel_p = {
-    .ganancia = NIVEL_GANANCIA, .cero_deg = NIVEL_CERO_DEG, .banda_deg = NIVEL_BANDA_DEG,
+    .escala = NIVEL_ESCALA, .kp = NIVEL_KP, .ki = NIVEL_KI, .cero_deg = NIVEL_CERO_DEG, .banda_deg = NIVEL_BANDA_DEG,
     .delta_max_deg = NIVEL_DELTA_MAX_DEG, .tau = NIVEL_TAU_S,
 };
 static bool s_nivel_tomar_cero;
@@ -243,7 +243,9 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_RUMBO:    s_rumbo_kp = fminf(fmaxf(c->value, 0.0f), 3.0f); break;
         case PARAM_IRUMBRAL: s_ir_umbral = fminf(fmaxf(c->value, 5.0f), 100.0f) * 0.01f; break;
         case PARAM_WEJE:     s_w_eje = fminf(fmaxf(c->value, 10.0f), 240.0f) * DEG2RAD; break;
-        case PARAM_NIVEL:    s_nivel_p.ganancia = fminf(fmaxf(c->value, -5.0f), 5.0f); break;
+        case PARAM_NIVEL:    s_nivel_p.escala = fminf(fmaxf(c->value, 0.0f), 3.0f); break;
+        case PARAM_NIVELKP:  s_nivel_p.kp = fminf(fmaxf(c->value, 0.0f), 3.0f); break;
+        case PARAM_NIVELKI:  s_nivel_p.ki = fminf(fmaxf(c->value, 0.0f), 10.0f); break;
         case PARAM_ROLCERO:  s_nivel_p.cero_deg = fminf(fmaxf(c->value, -15.0f), 15.0f); break;
         case PARAM_NIVELCERO: s_nivel_tomar_cero = true; break;
         default: break;
@@ -989,7 +991,9 @@ static void control_task(void *arg)
             .w_eje       = s_w_eje,
             .rolido      = nivel.rolido,
             .nivel_delta = nivel.delta_deg,
-            .nivel_gan   = s_nivel_p.ganancia,
+            .nivel_gan   = s_nivel_p.escala,
+            .nivel_kp    = s_nivel_p.kp,
+            .nivel_ki    = s_nivel_p.ki,
             .rol_cero    = s_nivel_p.cero_deg,
             .parada_estado = par.estado,
             .registrando = grabando,

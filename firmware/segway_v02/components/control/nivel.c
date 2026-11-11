@@ -25,20 +25,30 @@ void nivel_medir(nivel_t *n, const nivel_params_t *p, float acc_lado, float acc_
 
 float nivel_paso(nivel_t *n, const nivel_params_t *p, bool corregir, float dt)
 {
-    if (p->ganancia == 0.0f || !n->iniciado) {
+    if (p->escala <= 0.0f || !n->iniciado) {
+        n->error_deg = 0.0f;
+        n->integral_deg = 0.0f;
         n->delta_deg = 0.0f;
         return 0.0f;
     }
-    if (corregir) {
-        float error = n->rolido * GRADOS - p->cero_deg;
-        if (fabsf(error) > p->banda_deg) {
-            // fuera de la banda corrige lo que sobra: sin escalón al entrar ni al salir de ella
-            error -= copysignf(p->banda_deg, error);
-            n->delta_deg -= p->ganancia * error * dt;
-        }
+    // Banda muerta continua: dentro, error 0; fuera, lo que sobra (sin escalón al cruzarla)
+    float e = n->rolido * GRADOS - p->cero_deg;
+    e = fabsf(e) > p->banda_deg ? e - copysignf(p->banda_deg, e) : 0.0f;
+    n->error_deg = e;
+
+    float kp = p->escala * p->kp, ki = p->escala * p->ki;
+    if (!corregir) {
+        // Congelado: delta queda donde estaba y la integral se acomoda para que al volver no salte
+        n->integral_deg = n->delta_deg - kp * e;
+        return n->delta_deg;
     }
-    n->delta_deg = fminf(fmaxf(n->delta_deg, -p->delta_max_deg), p->delta_max_deg);
-    return n->delta_deg;
+    n->integral_deg += ki * e * dt;
+    float u = kp * e + n->integral_deg;
+    float u_lim = fminf(fmaxf(u, -p->delta_max_deg), p->delta_max_deg);
+    // Anti-windup: en el tope, la integral es la que deja la salida justo en el tope
+    if (u_lim != u) n->integral_deg = u_lim - kp * e;
+    n->delta_deg = u_lim;
+    return u_lim;
 }
 
 void nivel_patas(float base_izq, float base_der, float delta_deg, float min_deg, float max_deg,

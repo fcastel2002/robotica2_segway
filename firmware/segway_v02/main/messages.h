@@ -58,7 +58,9 @@ typedef enum {
     PARAM_RUMBO,        // en la bajada (△), ganancia del rumbo con el giróscopo vertical [PWM/rad]; 0 = no lo sostiene
     PARAM_IRUMBRAL,     // sensores de piso: altura [cm] desde la que es "sin piso" (pasó el borde)
     PARAM_WEJE,         // velocidad del giro sobre su eje con R3/L3 [°/s]
-    PARAM_NIVEL,        // nivel de costado: ganancia con signo [° de pata/s por ° de rolido]; 0 = apagado
+    PARAM_NIVEL,        // nivel de costado: escala de Kp y Ki (0 = apagado, 1 = las de fábrica)
+    PARAM_NIVELKP,      // nivel de costado: Kp [° de delta entre patas por ° de rolido]
+    PARAM_NIVELKI,      // nivel de costado: Ki [° de delta por s, por ° de rolido]
     PARAM_ROLCERO,      // rolido que marca la IMU con el robot derecho en piso plano [°]
     PARAM_NIVELCERO,    // (cualquier valor) toma como cero el rolido de este momento
     PARAM_SHARPDIV2,    // divisor del segundo Sharp
@@ -161,7 +163,9 @@ typedef struct {
     float            w_eje;         // [rad/s] ("set weje")
     float            rolido;        // [rad] inclinación de costado estimada (sin restarle el cero)
     float            nivel_delta;   // [°] diferencia entre las patas que pide el nivel (izquierda - derecha)
-    float            nivel_gan;     // ("set nivel")
+    float            nivel_gan;     // escala de Kp y Ki ("set nivel")
+    float            nivel_kp;      // ("set nivelkp")
+    float            nivel_ki;      // ("set nivelki")
     float            rol_cero;      // [°] ("set rolcero")
     parada_estado_t  parada_estado;
     bool             registrando;   // grabando el registro de la bajada (control_task.h)

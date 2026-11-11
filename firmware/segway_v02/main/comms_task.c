@@ -68,7 +68,7 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_INACADA] = "inacada", [PARAM_LQRFAC] = "lqrfac", [PARAM_LQRFACX] = "lqrfacx", [PARAM_DBRAMPA] = "dbrampa", [PARAM_EXC] = "exc",
     [PARAM_VELF] = "velf", [PARAM_TRIM] = "trim", [PARAM_DLPF] = "dlpf",
     [PARAM_RUMBO] = "rumbo", [PARAM_IRUMBRAL] = "irumbral", [PARAM_WEJE] = "weje",
-    [PARAM_NIVEL] = "nivel", [PARAM_ROLCERO] = "rolcero", [PARAM_NIVELCERO] = "nivelcero",
+    [PARAM_NIVEL] = "nivel", [PARAM_NIVELKP] = "nivelkp", [PARAM_NIVELKI] = "nivelki", [PARAM_ROLCERO] = "rolcero", [PARAM_NIVELCERO] = "nivelcero",
     [PARAM_SHARPDIV2] = "sharpdiv2", [PARAM_IRCAL] = "ircal",
 };
 
@@ -145,8 +145,10 @@ static void print_help(void)
         "#        ircal 1: calibra los sensores de piso (robot parado y quieto en piso plano, 1 s); ircal 0:\n"
         "#        sin calibrar; get dice como quedo\n"
         "#        weje: grados/s del giro sobre su eje (R3/L3)\n"
-        "#        nivel: nivel de costado, 0 = apagado (al arrancar); 1 o -1: en un piso inclinado de lado\n"
-        "#        acorta una pata y estira la otra hasta quedar derecho (si se inclina mas, el otro signo)\n"
+        "#        nivel: nivel de costado (PI), 0 = apagado (al arrancar); 1: en un piso inclinado de lado\n"
+        "#        acorta una pata y estira la otra hasta volver al rolido de referencia (rolcero);\n"
+        "#        0,5 o 2: la mitad o el doble de las dos ganancias\n"
+        "#        nivelkp (0,5): grados de diferencia entre patas por grado de rolido; nivelki (2,5): por s\n"
         "#        rolcero (grados): lo que marca el rolido derecho en piso plano; nivelcero 1: toma el de ahora\n"
         "#        ina (1: lee los INA; 0: no los toca, para descartarlos ante problemas en el bus)\n"
         "#        inacada (cada cuantos ciclos de 5 ms lee un registro de los INA: 5 al arrancar,\n"
@@ -263,8 +265,10 @@ static void print_params(const telemetry_t *t)
         t->ir_altura[0] * 100.0f, isnan(t->ir_altura[0]) ? "no se lee" : t->ir_sin_piso[0] ? "SIN PISO" : "piso",
         t->ir_altura[1] * 100.0f, isnan(t->ir_altura[1]) ? "no se lee" : t->ir_sin_piso[1] ? "SIN PISO" : "piso",
         t->ir_umbral * 100.0f, t->w_eje * RAD2DEG);
-    out("# nivel=%.1f rolido=%.1f rolcero=%.1f (inclinado %.1f grados de costado) patas izq-der=%.1f\n",
-        t->nivel_gan, t->rolido * RAD2DEG, t->rol_cero, t->rolido * RAD2DEG - t->rol_cero, t->nivel_delta);
+    out("# nivel=%.2f nivelkp=%.2f nivelki=%.2f rolido=%.1f rolcero=%.1f (inclinado %.1f grados de costado,"
+        " + = izquierda abajo) patas izq-der=%.1f\n",
+        t->nivel_gan, t->nivel_kp, t->nivel_ki, t->rolido * RAD2DEG, t->rol_cero,
+        t->rolido * RAD2DEG - t->rol_cero, t->nivel_delta);
     out("# ciclo, ultimo segundo: ciclo_medio_us=%lu ciclo_max_us=%lu imu_medio_us=%lu imu_max_us=%lu "
         "ina_medio_us=%lu ina_max_us=%lu periodo_max_us=%lu\n", (unsigned long)t->ciclo.total_medio,
         (unsigned long)t->ciclo.total_max, (unsigned long)t->ciclo.imu_medio, (unsigned long)t->ciclo.imu_max,

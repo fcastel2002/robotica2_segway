@@ -23,7 +23,8 @@ Controles configurados para el mando de PS4 (DualShock 4):
   la distancia que tiene el firmware: `man d_borde`; `get` la muestra). Solo equilibrando.
 - Botón □ (Cuadrado): parada controlada (`parar`): frena, baja las patas al mínimo y se deja caer
   apenas para atrás con los motores apagados.
-- Gatillos R2 / L2: no hacen nada (3/11: el giro sobre su eje con los gatillos se sacó).
+- Gatillo L2 (11/11): prende y apaga el nivel de costado (`set nivel`): en un piso inclinado de lado acorta
+  una pata y estira la otra hasta quedar derecho. El signo, en NIVEL_GANANCIA. R2 no hace nada.
 
 Expone `GET http://localhost:8001/estado`, `POST /mando` y `POST /accion` con `Access-Control-Allow-Origin: *`.
 Solo usa la biblioteca estándar de Python (`ctypes` en Windows).
@@ -53,6 +54,7 @@ SONY_VID = 0x054C        # DualShock 4 / DualSense
 SERVO_MIN_DEG = 0
 SERVO_MAX_DEG = 30
 SERVO_PASO_DEG = 2       # 3/11: antes 10; el equipo los quiere de a poco (los botones de la página)
+NIVEL_GANANCIA = 1.0     # lo que manda L2 con "set nivel": si al prenderlo se inclina más, poner -1.0
 SERVO_VEL_DPS = 20.0     # «velpata» del firmware: solo para estimar dónde quedaron al soltar R1/L1
 
 MODOS_VALIDOS = ("opcion_1", "opcion_2")
@@ -560,6 +562,7 @@ class PuenteJoystick:
         self._eje_previo = 0.0      # R3/L3: lo último mandado con "eje"
         self._r3l3_desde = None     # R3 + L3 a la vez: desde cuándo (demostración de control mal ajustado)
         self._demo_mal = False
+        self._nivel = False         # nivel de costado prendido con L2
         self._demo_usada = False    # alguna vez en esta sesión: al armar se reponen los valores de fábrica
 
     def _resolver_destino(self) -> tuple[str | None, bool, str]:
@@ -674,6 +677,11 @@ class PuenteJoystick:
                 grados = max(-30.0, min(30.0, float(valor)))
                 comandos_a_enviar.append(f"girar {grados:g}")
                 self._ultimo_evento = f"Flecha → gira {abs(grados):g}° a la {'derecha' if grados > 0 else 'izquierda'} (girar {grados:g})"
+            elif accion == "nivel":
+                self._nivel = not self._nivel
+                comandos_a_enviar.append(f"set nivel {NIVEL_GANANCIA if self._nivel else 0:g}")
+                self._ultimo_evento = ("L2 → nivel de costado PRENDIDO (las patas lo enderezan en un piso inclinado)"
+                                       if self._nivel else "L2 → nivel de costado apagado (patas iguales)")
             elif accion == "alinear":
                 comandos_a_enviar.append("escalon alinear")
                 self._ultimo_evento = "OPTIONS → Alinearse con el borde y bajar (escalon alinear)"
@@ -721,6 +729,8 @@ class PuenteJoystick:
             # se soltó uno: si el otro sigue apretado, manda ese; si no, paran
             self.ejecutar_accion("patas_subir" if r1 else "patas_bajar" if l1 else "patas_parar")
 
+        if botones_actuales.get("l2") and not prev.get("l2"):
+            self.ejecutar_accion("nivel")
         # Flechas izquierda/derecha: 1° por toque, para alinearlo a mano
         if botones_actuales.get("right") and not prev.get("right"):
             self.ejecutar_accion("girar", 1)

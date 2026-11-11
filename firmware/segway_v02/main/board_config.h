@@ -319,14 +319,16 @@
 // mitad de camino entre los ~14 cm del piso de arriba con las patas en 15 y los ~26 con un escalón de
 // 12 cm. COMPROBARLO: "get" muestra las dos alturas sobre el piso y asomados al escalón.
 #define IR_ALTURA_BORDE_CM      20.0f       // en vivo: set irumbral <cm>
-// Nivel de costado (nivel.h, 11/11): en un piso inclinado hacia un lado, una pata se acorta y la otra se
-// estira hasta que el cuerpo queda derecho. APAGADO de fábrica (sin probar en el robot): "set nivel 1"
-// (o -1: el signo depende de cómo está la IMU; si al probarlo se inclina más, es el otro).
-#define NIVEL_GANANCIA          0.0f        // [° de pata/s por ° de rolido]; para probar, 1 (en vivo: set nivel)
+// Nivel de costado (nivel.h): en un piso inclinado hacia un lado, una pata se acorta y la otra se estira
+// hasta que el rolido vuelve a la referencia (NIVEL_CERO_DEG). Es un PI con el signo fijo por la
+// geometría (ver nivel.h; el del 11/11 estaba al revés). APAGADO de fábrica: "set nivel 1" (L2 del mando).
+#define NIVEL_ESCALA            0.0f        // multiplica Kp y Ki: 0 = apagado, 1 = las de abajo (en vivo: set nivel)
+#define NIVEL_KP                0.5f        // [° de delta entre patas por ° de rolido] (en vivo: set nivelkp)
+#define NIVEL_KI                2.5f        // [° de delta por s, por ° de rolido] (en vivo: set nivelki)
 #define NIVEL_CERO_DEG          3.9f        // lo que marca el rolido derecho en piso plano: 3,9 ± 0,8 en las 26
                                             // bajadas del 11/11 (parado, patas en 15). En vivo: set rolcero, o
                                             // "set nivelcero 1" con el robot derecho en piso plano (toma el de ahora)
-#define NIVEL_BANDA_DEG         0.5f
+#define NIVEL_BANDA_DEG         0.3f
 #define NIVEL_DELTA_MAX_DEG     16.0f       // ±8° cada pata: endereza hasta ~7,5° de piso inclinado
 #define NIVEL_TAU_S             0.5f
 #define NIVEL_W_MAX_DPS         20.0f       // girando más rápido que esto no corrige (el giro tira de costado)
