@@ -25,10 +25,19 @@
 
 \graphicspath{{../../modelado/}{../../modelado/cinematica/}{../../modelado/dcl/}%
               {../../modelado/dinamica/}{../../modelado/geometria/}%
+              {../../modelado/ajuste/}%
               {../../modelado/planta/pendulo_invertido/}%
               {../../modelado/planta/pendulo_invertido/diagramas/}%
               {../../simulacion/pendulo_invertido/resultados/}%
-              {../../simulacion/segway_completo/resultados/}}
+              {../../simulacion/segway_completo/resultados/}%
+              {../../simulacion/segway_ajustado/resultados/}%
+              {../../simulacion/escalon/resultados/}%
+              {../../simulacion/escalon/resultados/un_escalon/}%
+              {../../simulacion/escalon/resultados/escalera_real/}%
+              {../../simulacion/escalon/resultados/pruebas/}%
+              {../../firmware/docs/}%
+              {../../Aplicacion/capturas/}%
+              {../../Aplicacion/diagramas/}}
 
 \setlength{\parskip}{5pt}
 \setlength{\parindent}{0pt}
@@ -52,39 +61,47 @@
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\ud}[1]{\,\mathrm{#1}}
 
-\title{\vspace{-1.5cm}\Huge El modelo del Segway con patas extensibles\\[10pt]
-\large De la geometría de la pata al controlador que lo mantiene parado\\[18pt]
-\normalsize Documento único: ata los cuatro informes que ya existían y agrega\\
-el péndulo invertido, el motor, el LQR y la simulación en Simulink}
+\title{\vspace{-1.5cm}\Huge Informe Técnico Final: Segway con patas extensibles\\[10pt]
+\large Del modelado físico y el diseño mecatrónico a la identificación experimental\\
+y el descenso autónomo de escaleras\\[18pt]
+\normalsize Memoria técnica integral: geometría, cinemática, dinámica de Lagrange, control LQR,\\
+Simulink, diseño mecánico CAD, electrónica y PCB, firmware ESP-IDF, ajuste con el robot real\\
+y optimización de maniobras con algoritmos genéticos}
 \author{Grupo 4 --- Robótica II, Facultad de Ingeniería, UNCUYO\\[4pt]
 \small Joaquín Calderón \quad\textbullet\quad Francisco Castel \quad\textbullet\quad Matías Armani}
-\date{21 de octubre de 2026}
+\date{7 de noviembre de 2026}
 
 \begin{document}
 \maketitle
 
 \begin{idea}
-Este documento explica, de abajo hacia arriba, cómo está modelado el robot y por qué
-cada pieza del modelo es como es. No supone que el lector haya seguido el proyecto.
-Las cuentas largas están en los apéndices, que son los informes originales; los capítulos
-de adelante cuentan la historia y dan los números que importan.
+Este documento es la memoria técnica completa del proyecto. Explica, de abajo hacia arriba,
+cómo se concibió, modeló, dimensionó, fabricó, programó y ensayó el robot, y por qué cada
+decisión ingenieril es como es. No supone que el lector haya seguido el proyecto: los
+capítulos principales desarrollan la física, la arquitectura y la validación experimental
+sobre el prototipo construido, mientras que los apéndices conservan las deducciones
+algebraicas completas y la documentación constructiva de las placas electrónicas.
 \end{idea}
 
 \vspace{4pt}
-{\large\bfseries Cómo leer esto}
+{\large\bfseries Cómo leer este informe}
 
 \begin{center}
-\begin{tabular}{@{}p{4.3cm}p{10.4cm}@{}}
+\begin{tabular}{@{}p{5.2cm}p{9.5cm}@{}}
 \toprule
 \textbf{Si querés\ldots} & \textbf{andá a\ldots} \\
 \midrule
-entender el robot en diez minutos & capítulos \ref{cap:mapa2} y \ref{cap:pend} \\
-dimensionar el servo & capítulo \ref{cap:din} y apéndices \ref{ap:dcl} y \ref{ap:dinres} \\
-entender el control & capítulos \ref{cap:motor} y \ref{cap:lqr} \\
-correr la simulación & capítulo \ref{cap:simulink} \\
-saber si mover las patas rompe algo & capítulo \ref{cap:patasmov} \\
-saber qué no está medido & capítulo \ref{cap:falta} \\
-ver las cuentas completas & los apéndices, que son los informes originales \\
+entender el robot y su física en diez minutos & capítulos \ref{cap:mapa2} y \ref{cap:pend} \\
+dimensionar los servos y las cargas de impacto & capítulo \ref{cap:din} y apéndices \ref{ap:dcl} y \ref{ap:dinres} \\
+entender los motores, la adherencia y el LQR & capítulos \ref{cap:motor} y \ref{cap:lqr} \\
+correr y auditar el banco en Simulink & capítulo \ref{cap:simulink} \\
+analizar el acople al mover las patas en vivo & capítulo \ref{cap:patasmov} \\
+ver el diseño mecánico en CAD y el chasis final & capítulo \ref{cap:mec} \\
+revisar la electrónica, protecciones y PCB v0.7 & capítulo \ref{cap:elec} y apéndice \ref{ap:pcb} \\
+estudiar el firmware en tiempo real y la HMI/Joystick & capítulo \ref{cap:fw} \\
+comparar la teoría contra las mediciones del robot & capítulo \ref{cap:ajuste} \\
+analizar la bajada de escalón y escalera (algoritmo genético) & capítulo \ref{cap:escalon} \\
+ver las deducciones algebraicas paso a paso & apéndices \ref{ap:cin} a \ref{ap:dinapo} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1466,6 +1483,675 @@ El plan completo de ensayos, con los siete y en qué orden hacerlos, está en
 \texttt{docs/gestion/2026-10-21-plan-de-ensayos.md}
 \end{center}
 
+
+% ===========================================================================
+\chapter{Diseño mecánico e iteración constructiva}\label{cap:mec}
+% ===========================================================================
+
+\begin{idea}
+El diseño mecánico en SolidWorks pasó por tres iteraciones completas hasta converger en una
+arquitectura modular impresa en PLA: mecanismo de cuatro barras a escala 80 con eslabón
+acoplador rígido en horquilla, cabina central portante para los dos servos DS3240 MG y las
+dos placas electrónicas (potencia y lógica), y sujeción rígida de los motorreductores
+GA25-370 con encoder en el extremo inferior de cada pata.
+\end{idea}
+
+\section{Evolución geométrica: de Hoeken al cuatro barras de 3.ª iteración}
+
+El proyecto comenzó explorando un mecanismo de línea aproximada de Hoeken con eslabón
+flexible. Esa primera aproximación se descartó en agosto de 2026 por dos razones técnicas:
+la concentración de tensiones en la bisagra flexible impresa en FDM y la dificultad de
+garantizar simetría bilateral entre ambas patas bajo carga dinámica.
+
+Se adoptó en su lugar un \textbf{mecanismo plano de cuatro barras articuladas} $ABCD$ con
+extensión rígida del acoplador hasta el eje de rueda $P$ (\texttt{eslabon\_cdp}). A partir de un
+barrido numérico de proporciones adimensionales se seleccionó la familia
+$1{,}40 : 1{,}35 : 0{,}51 : 1{,}40$ con ángulo interno del acoplador $\delta = 164^\circ$ y
+bancada $AB$ inclinada $45^\circ$ respecto de la horizontal:
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Iteración} & \textbf{Escala y rasgos constructivos} & \textbf{Hallazgo de ingeniería} & \textbf{Estado} \\
+\midrule
+1.ª iteración & Bancada $AB = 80\ud{mm}$, barras a escala 100 & Al mezclar escalas se perdía la trayectoria cuasi-rectilínea de $P$ & Descartada \\
+2.ª iteración & Barras llevadas a escala 80 ($AD=112$, $BC=108$, $CD=40{,}8$, $DP=112\ud{mm}$) & Recupera la trayectoria casi recta del eje de rueda ($107\ud{mm}$ de carrera vertical) & Base de \texttt{parametros\_fisicos.m} \\
+\textbf{3.ª iteración} & Rediseño estructural de \texttt{eslabon\_cdp} (v4), \texttt{eslabon\_BC} doble (interno/externo) y \texttt{cabeza\_v4} & Elimina torsión fuera del plano, aloja el GA25-370 real y reserva el volumen \texttt{pcb\_max\_size} & \textbf{Construida y ensayada} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+En la tercera iteración (\texttt{diseño\_mecanico/3er\_iteracion/} y \texttt{chasis nuevo/}), el
+balancín $BC$ se desdobló en dos caras paralelas (\texttt{eslabon\_BC\_interna} y
+\texttt{eslabon\_BC\_externa}) que abrazan tanto la cabina como el acoplador $CDP$, trabajando a
+corte doble sobre los pasadores y aumentando drásticamente la rigidez frente al alabeo cuando
+una rueda pisa desparejo respecto de la otra.
+
+\section{Elasticidad estructural en serie: por qué el PLA protege al servo}
+
+En el capítulo \ref{cap:din} se calculó que, si toda la estructura de la pata fuera
+infinitamente rígida y el único elemento elástico fuera la banda de rodadura del neumático
+($k_n \approx 30\ud{kN/m}$), la fase A del aterrizaje desde un escalón de $18\ud{cm}$ (los
+primeros $\sim 3\ud{ms}$ en que se frena en seco la masa no suspendida de $146\ud{g}$ de rueda y
+motor) generaría un pico impulsivo de hasta $\mathbf{421\ud{N}}$ sobre el eje del servo $A$.
+
+Sin embargo, una estructura impresa en PLA no es un cuerpo rígido frente a impactos de
+milisegundos. A partir de la masa medida de la manivela $AD$ ($30\ud{g}$ en $112\ud{mm}$ de
+longitud) se deduce una sección transversal efectiva media de $233\ud{mm^2}$. Considerando el
+módulo elástico efectivo del PLA impreso con perímetros y relleno ($E \approx 2{,}0\text{--}2{,}8\ud{GPa}$)
+y la flexión combinada de la manivela, los pasadores y la carcasa, la rigidez estructural
+equivalente vista desde el contacto resulta del orden de:
+\[
+k_{\text{pata}} \in [4,\; 15]\ud{kN/m}
+\]
+es decir, \textbf{del mismo orden o más blanda que el propio neumático}. Al actuar ambos
+elementos como resortes en serie, la rigidez efectiva $k_{\text{eq}}$ queda dominada por el
+término más flexible:
+\[
+k_{\text{eq}} = \frac{k_n\,k_{\text{pata}}}{k_n + k_{\text{pata}}}
+\qquad\Longrightarrow\qquad
+F_{\text{pico}} = \sqrt{2\,E_{\text{imp}}\,k_{\text{eq}}}
+\]
+
+\begin{center}
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+\textbf{Rigidez de la pata $k_{\text{pata}}$} & \textbf{Escalón de 2 cm} & \textbf{Escalón de 5 cm} & \textbf{Escalón de 18 cm} \\
+\midrule
+$\infty$ (cota rígida teórica) & $140\ud{N}$ & $221\ud{N}$ & $421\ud{N}$ \\
+$15\ud{kN/m}$ (estructura rígida en PLA) & $81\ud{N}$ & $128\ud{N}$ & $243\ud{N}$ \\
+$\mathbf{8\ud{kN/m}}$ \textbf{(valor nominal estimado)} & $\mathbf{64\ud{N}}$ & $\mathbf{101\ud{N}}$ & $\mathbf{193\ud{N}}$ \\
+$5\ud{kN/m}$ (estructura más flexible) & $53\ud{N}$ & $84\ud{N}$ & $159\ud{N}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{idea}
+La elasticidad propia de los eslabones impresos en PLA reduce la fuerza pico de impacto sobre
+el eje del servo a \textbf{menos de la mitad} ($193\ud{N}$ frente a $421\ud{N}$ en un escalón de
+$18\ud{cm}$, y apenas $64\ud{N}$ en un desnivel de $2\ud{cm}$). Aun así, $193\ud{N}$ equivale a
+quince veces la carga estática en reposo ($12{,}2\ud{N}$), por lo que la regla constructiva se
+mantiene intacta: el pasador en $A$ debe descargar radialmente sobre la pared de la cabina y
+dejar que el estriado del servo transmita únicamente par torsor.
+\end{idea}
+
+\section{Dispositivo de banco y retención por trinquete}
+
+Para realizar los ensayos de identificación, ajuste de signos de encoders y verificación del
+lazo en vacío sin arriesgar la integridad del prototipo ante caídas, se diseñó un soporte de
+mesa paramétrico en Python (\texttt{build123d}, ítem \texttt{BAN-001} del registro de ingeniería):
+una prensa tipo sargento fijada al borde de la mesa con un brazo voladizo de $100\ud{mm}$, una
+polea superior y un malacate con rueda de trinquete y uñeta elástica que suspende al robot
+desde dos puntos separados $130\ud{mm}$ mediante un balancín ecualizador. La geometría se
+verificó libre de interferencias en STEP/STL con una precarga controlada de $12{,}6\ud{mm^3}$
+en la lámina elástica de retención.
+
+% ===========================================================================
+\chapter{Arquitectura electrónica y diseño de PCB}\label{cap:elec}
+% ===========================================================================
+
+\begin{idea}
+La electrónica se dividió físicamente en dos placas impresas de una sola faz fabricadas por
+transferencia térmica (\emph{plancha}): una \textbf{Placa de Potencia v0.7} ($124 \times 77\ud{mm}$)
+y una \textbf{Placa de Lógica v0.6} ($95{,}25 \times 59{,}6\ud{mm}$), vinculadas por un cable
+plano IDC de 16 vías (\texttt{J20}). Todos los integrados complejos se montan como módulos
+comerciales verificados sobre zócalos codificados o pines soldados, reduciendo al mínimo los
+componentes discretos y aislando las corrientes de potencia del microcontrolador.
+\end{idea}
+
+\section{Criterio de partición y evolución del hardware}
+
+Durante las primeras pruebas de equilibrio y levantamiento de datos se utilizó un prototipo
+de banco con un puente bipolar doble \textbf{L298N}. Ese ensayo permitió cuantificar en
+condiciones reales su limitación principal: una caída interna de tensión de $\approx 2{,}0\ud{V}$
+que reducía la excursión útil sobre los motores a $\sim 9{,}1\ud{V}$ con tensión nominal de
+batería ($11{,}1\ud{V}$), obligando a incrementar las ganancias del LQR un $22\%$ (capítulo
+\ref{cap:lqr} y sección \ref{sec:lqr_ajustado}).
+
+Para la versión definitiva montada en la cabina (\texttt{segway\_v02} sobre placas v0.7/v0.6) se
+migró a una arquitectura de potencia distribuida cuyos planos completos y guías de montaje se
+incluyen en el apéndice \ref{ap:pcb}:
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Etapa de tracción por rueda (2 $\times$ DRV8871):} un puente H MOSFET por motor
+      (\texttt{A3} y \texttt{A4}) con límite de corriente interno y una caída mucho menor que la del
+      L298N bipolar, operados con PWM a $20\ud{kHz}$ en modo de decaimiento lento (\emph{slow decay} /
+      frenado activo), que linealiza la respuesta par-comando cerca del origen.
+\item \textbf{Alimentación independiente por servo (2 $\times$ UBEC de 6,0 V):} en la revisión
+      v0.7 se asignó un regulador conmutado UBEC exclusivo para cada servo DS3240 MG
+      (columnas \texttt{DER} en \texttt{J16}/\texttt{J14} e \texttt{IZQ} en \texttt{J19}/\texttt{J13}),
+      respaldado cada uno por un capacitor electrolítico de baja ESR de $470\ud{\mu F}/16\ud{V}$
+      (\texttt{C8} y \texttt{C9}). Esto evita que los picos de corriente de hasta $\sim 2{,}5\ud{A}$
+      por servo al amortiguar un aterrizaje provoquen caídas de tensión cruzadas.
+\item \textbf{Regulación lógica en doble escalón:} un convertidor \emph{buck} de $5\ud{V}$
+      (\texttt{A8}) en la placa de potencia alimenta los sensores ópticos y envía el bus
+      intermedio por el cable plano \texttt{J20} hacia la placa de lógica, donde un segundo
+      \emph{buck} de $3{,}3\ud{V}$ (\texttt{A9}) alimenta el módulo \textbf{ESP32-S3 DevKitC-1
+      N16R8} (\texttt{A1}), la IMU \textbf{MPU-6050} (\texttt{A2}) y los encoders magnéticos de
+      cuadratura (\texttt{J7} y \texttt{J8}).
+\end{enumerate}
+
+\section{Esquema de protecciones y seguridad eléctrica}
+
+Siguiendo el criterio de diseño adoptado por el equipo el 31/10/2026, se conservaron en placa
+únicamente los componentes pasivos y de protección con función crítica demostrada:
+
+\begin{center}
+\small
+\begin{tabular}{@{}llp{8.8cm}@{}}
+\toprule
+\textbf{Elemento} & \textbf{Valor / Tipo} & \textbf{Función de protección en el circuito} \\
+\midrule
+Fusible en línea + \texttt{F1} & $20\ud{A}$ cable / $15\ud{A}$ lento ATO & Protección general de la batería LiPo 3S contra cortocircuitos francos en barras, soportando el transitorio de arranque \\
+\texttt{F2}, \texttt{F3} & $4\ud{A}$ mini (uno por rueda) & Corte individual ante rotor bloqueado o falla en corto de cada módulo DRV8871 \\
+\texttt{F4} & $7{,}5\ud{A}$ mini & Protección conjunta de la entrada de ambos UBEC (\texttt{J15}) ante bloqueo mecánico simultáneo de los dos servos ($\sim 5\ud{A}$) \\
+\texttt{F5} & $1\ud{A}$ mini & Protección dedicada de la rama de lógica, medidor \texttt{INA226} y cable plano \texttt{J20} \\
+\texttt{D1} & TVS \texttt{SA15A} (\texttt{VM\_BUS}) & Supresión de sobretensiones transitorias regeneradas por los motores durante inversiones bruscas de marcha \\
+\texttt{C1}, \texttt{C3} & $470\ud{\mu F}/35\ud{V}$ + $10\ud{\mu F}$ cer. & Reserva local exigida por los DRV8871 y filtrado de alta frecuencia en terminales de salida del BMS \\
+\texttt{R5}, \texttt{R6} & $1\ud{k\Omega}$ en serie (PWM servos) & Limita la corriente hacia los GPIO de la ESP32 si un conector JR de servo se enchufa desplazado un pin (evita inyectar $6\ud{V}$ directos al riel de $3{,}3\ud{V}$) \\
+\texttt{R41}, \texttt{R42} & Divisor $10\ud{k\Omega} / 15\ud{k\Omega}$ (1\%) & Atenúa la salida analógica del sensor de distancia Sharp GP2Y0A60SZLF (hasta $3{,}6\ud{V}$ en operación o $5\ud{V}$ ante falla de cableado) a un máximo seguro de $2{,}2\text{--}3{,}0\ud{V}$ en \texttt{GPIO3} \\
+Codificación física & Pin cortado en \texttt{A1} y \texttt{A2} & Se corta el pin 24 (\texttt{GPIO43}) de la ESP32-S3 y el pin 5 del MPU-6050 cegando el zócalo para impedir mecánicamente la inserción invertida \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{ojo}
+Los módulos reguladores \texttt{A8}/\texttt{A9} y los sensores de corriente \texttt{A5}--\texttt{A7}
+no admiten inversión de montaje sin destruirse; por decisión de diseño van \textbf{soldados en
+forma permanente} tras verificar continuidad y orientación. Asimismo, si se emplea un
+interruptor de parada sin contacto auxiliar, el conector \texttt{J4} de aviso a la ESP32 debe
+puentearse: abierto, el firmware interpreta parada de emergencia activa e inhibe el armado.
+\end{ojo}
+
+\section{Instrumentación de energía en el bus $\text{I}^2\text{C}$}
+
+En la placa de potencia se integraron tres monitores digitales sobre el mismo bus $\text{I}^2\text{C}$
+de $400\ud{kHz}$ (\texttt{SDA=GPIO8}, \texttt{SCL=GPIO9}) que utiliza la IMU:
+
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Dos módulos INA219 (\texttt{A5} en \texttt{0x40} y \texttt{A6} en \texttt{0x41}, puente \texttt{A0}):}
+      ubicados aguas arriba de cada DRV8871, miden la tensión de entrada al driver y la
+      corriente absorbida (positiva en tracción, negativa durante frenado regenerativo).
+\item \textbf{Un módulo INA226 (\texttt{A7} en \texttt{0x44}):} mide la tensión general de la
+      batería LiPo y el consumo de la rama lógica (hasta $0{,}82\ud{A}$). Durante la puesta en
+      marcha del 6/11 se detectó un desvío sistemático en la lectura de tensión del módulo
+      INA226 ($12{,}86\ud{V}$ frente a $12{,}20\text{--}12{,}25\ud{V}$ reales medidos por ambos
+      INA219), originado en la continuidad interna entre \texttt{VBS} e \texttt{IN-} de la placa
+      comercial; se corrigió por software mediante calibración afín
+      (\texttt{INA226\_V\_GANANCIA} e \texttt{INA226\_V\_CERO}) contrastada contra los INA219.
+\end{itemize}
+
+% ===========================================================================
+\chapter{Firmware en tiempo real (ESP-IDF) y estación de mando}\label{cap:fw}
+% ===========================================================================
+
+\begin{idea}
+El software embebido se desarrolló en C sobre ESP-IDF v6.1 y FreeRTOS con tick de $1\ud{kHz}$.
+Toda la matemática de estimación, odometría, control LQR, movimiento y maniobra de escalón está
+escrita en \textbf{C puro sin dependencias del hardware} (\texttt{components/control/}), lo que
+permite compilar exactamente el mismo código fuente en la PC para correr suites de pruebas
+unitarias y simulaciones no lineales antes de tocar el robot.
+\end{idea}
+
+\section{Arquitectura concurrente en FreeRTOS y determinismo temporal}
+
+Para garantizar que el período de muestreo $T_s = 5\ud{ms}$ ($200\ud{Hz}$) no sufra
+variaciones (\emph{jitter}) por el tráfico WiFi o la impresión por consola USB, el firmware
+separa estrictamente el procesamiento en los dos núcleos del ESP32-S3:
+
+\begin{center}
+\begin{tabular}{@{}llllp{6.6cm}@{}}
+\toprule
+\textbf{Tarea} & \textbf{Núcleo} & \textbf{Período} & \textbf{Prioridad} & \textbf{Secuencia determinística de ejecución} \\
+\midrule
+\texttt{control\_task} & Core 1 & $5\ud{ms}$ ($200\ud{Hz}$) & Máxima ($\text{MAX}-2$) & Vacía cola de comandos $\to$ lee IMU y Sharp $\to$ actualiza filtro de actitud y odometría $\to$ evalúa supervisor $\to$ ejecuta LQR / maniobra $\to$ actualiza PWM de motores y rampas de servos $\to$ si sobran $> \text{INA\_MARGEN\_US}$, lee un registro INA $\to$ publica telemetría \\
+\texttt{comms\_task} & Core 0 & $20\ud{ms}$ ($50\ud{Hz}$) & Baja ($\text{IDLE}+2$) & Lee último estado del buzón sin bloquear $\to$ transmite línea CSV por USB-Serial-JTAG y UDP (\texttt{:4210}) $\to$ parsea comandos entrantes por USB y UDP (\texttt{:4211}) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La comunicación inter-tareas prescinde por completo de variables globales compartidas y de
+\emph{mutex}: los comandos bajan por una cola FIFO de 8 elementos que \texttt{control\_task}
+consume únicamente al comienzo del ciclo, y la telemetría sube por una cola de 1 elemento con
+sobrescritura (\texttt{xQueueOverwrite}). Cada ciclo mide su duración real en microsegundos con
+\texttt{esp\_timer\_get\_time()} e informa en vivo el peor tiempo de ventana (\texttt{loop\_us\_max})
+y el contador de excesos (\texttt{overruns}). Incluso sumando la lectura escalonada de los
+medidores INA a 40 registros por segundo, el peor tiempo de ciclo medido en placa es de
+$4{,}3\ud{ms}$ sobre los $5{,}0\ud{ms}$ disponibles, con \textbf{0 excesos de ciclo}.
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{banco_lqr.png}
+\captionof{figure}{Verificación en PC (\texttt{banco\_lqr.c}): el código C exacto del firmware
+(filtro complementario, odometría y LQR discreto a $200\ud{Hz}$) corriendo contra la planta
+exportada desde MATLAB.}
+\end{center}
+
+\section{Estimación, odometría compensada y hallazgos del lazo real}
+
+El cierre exitoso del lazo sobre el prototipo físico entre el 29/10 y el 3/11 dejó cinco
+enseñanzas de ingeniería de control que no aparecen en un modelo ideal de libro:
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Odometría respecto del piso (\texttt{odometry.c}):} los encoders en cuadratura
+      (leídos por hardware mediante el periférico \texttt{PCNT} en modo $\times 4$) miden el
+      giro de la rueda \emph{respecto de la pata}, no respecto del piso. Si el robot se inclina
+      un ángulo $\varphi$ sin desplazarse, el encoder cuenta giro. Por ello, la posición real
+      del contacto se reconstruye sumando la inclinación del cuerpo:
+      \[
+      x = r\,\bigl(\theta_{\text{enc}} + \varphi\bigr)
+      \]
+      Por la misma razón física (cero de fase no mínima), en las pruebas con las ruedas en el
+      aire \textbf{deben anularse $k_x$ y $k_v$}: sin la reacción del suelo que invierta el
+      cabeceo, el lazo de posición acelera las ruedas indefinidamente en el mismo sentido.
+\item \textbf{Filtro rechaza banda (\emph{notch}) a 7,5 Hz:} en el primer ensayo de equilibrio
+      real (29/10), el robot presentaba una oscilación estructural propia de $7\text{--}8\ud{Hz}$
+      que la derivada $\omega$ realimentaba hasta saturar el puente H de tope a tope. Un
+      pasabajos convencional a $9\text{--}11\ud{Hz}$ introducía retardo de fase y hacía
+      hamacarse al robot; la solución definitiva fue un \textbf{filtro rechaza banda centrado en
+      $7{,}5\ud{Hz}$} (\texttt{set notch 7.5}), que suprimió la resonancia sin degradar el
+      margen de fase del LQR.
+\item \textbf{Doble zona muerta estática/dinámica (\texttt{deadband} vs.\ \texttt{dbmov}):} los
+      motorreductores requieren un comando mínimo de $\approx 0{,}14\text{--}0{,}16$ de PWM
+      para vencer la fricción seca en reposo. Sin compensación de zona muerta, el robot no
+      sostiene la posición $x$ cuando está quieto; pero al desplazarse con el joystick, aplicar
+      ese salto discontinuo en cada cruce por cero de $u$ generaba sacudones. Desde el 3/11 el
+      firmware implementa dos umbrales: \texttt{deadband = 0.16} con el robot quieto y
+      \texttt{dbmov = 0} en movimiento.
+\item \textbf{Seguimiento de velocidad con consigna flotante (\texttt{xlibre = 1}) y prealimentación (\texttt{ff}):}
+      cuando la referencia de posición se calculaba como la integral rígida de la velocidad
+      pedida, el robot debía adelantarse $10\text{--}22\ud{cm}$ a la consigna para poder
+      inclinarse y avanzar, y al soltar el stick retrocedía bruscamente para devolver esa
+      diferencia. Con \texttt{xlibre = 1}, durante el movimiento el LQR regula únicamente la
+      velocidad (la referencia $x_{\text{ref}}$ acompaña al robot) más un término anticipado
+      $u_{\text{ff}} = \texttt{ff}\cdot v_{\text{ref}}$, y recién fija la posición final cuando
+      la rampa de frenado termina y $|v|$ cae a cero.
+\item \textbf{Inmunidad a caída libre en la IMU:} originalmente el driver del MPU-6050
+      interpretaba $\|\boldsymbol{a}\| < 1\ud{m/s^2}$ como desconexión del sensor y pasaba a
+      \texttt{FAULT} en $25\ud{ms}$. Durante el vuelo balístico al bajar un escalón ($\sim 190\ud{ms}$
+      en ingravidez aparente), eso apagaba los motores en el aire. Desde el 3/11 una aceleración
+      baja inferior a $0{,}6\ud{s}$ continuos no dispara falla: el estimador congela la
+      corrección del acelerómetro y propaga la actitud exclusivamente con el giróscopo.
+\end{enumerate}
+
+\section{Estación de mando, telemetría web y control por DualShock 4}
+
+Para operar el robot, diagnosticar sensores/actuadores y registrar ensayos a $200\ud{Hz}$, se
+desarrolló una estación de tierra 100\% portable en Python estándar y HTML5/Canvas
+(\texttt{Aplicacion/}, figura \ref{fig:hmi_banco}):
+
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Arquitectura de doble puente (\texttt{puente.py} + \texttt{joystick.py}):} el
+      servidor HTTP (\texttt{:8000}) recibe la telemetría UDP del robot (\texttt{:4210}), la
+      distribuye al navegador por Server-Sent Events (SSE) y almacena automáticamente en disco
+      los registros de alta velocidad (\texttt{registros/bajada\_*.csv}) que el robot transmite
+      al finalizar cada maniobra de escalón. En paralelo, \texttt{joystick.py} (\texttt{:8001})
+      lee el mando \textbf{PS4 DualShock 4 directamente por protocolo nativo HID}
+      (\texttt{hid.dll} en Windows), lo que garantiza una tasa constante de $25\ud{Hz}$ por UDP
+      incluso si el navegador pasa a segundo plano.
+\item \textbf{Interfaz en cinco vistas:} \emph{Mando/Conducción} (HUD interactivo con modos de
+      1 o 2 sticks conmutables con \texttt{OPTIONS}, pasos de $2^\circ$ en las patas entre
+      $0^\circ$ y $30^\circ$ con \texttt{L1}/\texttt{R1}, armado con $\times$, corte de
+      emergencia con $\bigcirc$, bajada de escalón con $\triangle$ y parada controlada con
+      $\square$), \emph{Banco de pruebas} (prueba individual de cada sensor y actuador),
+      \emph{Energía} (estado de carga SoC, autonomía restante y corrientes de los tres INA),
+      \emph{Gráficos} (osciloscopio multicanal con cursor) y \emph{Configuración}.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{banco_de_pruebas.png}
+\captionof{figure}{Interfaz web de telemetría, diagnóstico y conducción (\texttt{Aplicacion/}):
+vista del banco de pruebas e inspección de sensores y actuadores en tiempo real.}\label{fig:hmi_banco}
+\end{center}
+
+% ===========================================================================
+\chapter{Identificación experimental y ajuste del modelo (Teoría vs.\ Realidad)}\label{cap:ajuste}
+% ===========================================================================
+
+\begin{idea}
+El 3 de noviembre de 2026 se enfrentó el modelo teórico contra el robot real equilibrando en el
+piso por WiFi. Con dos experimentos sistemáticos ---la curva estática de equilibrio en 13
+alturas de pata y la respuesta dinámica a una onda cuadrada en 4 posturas--- se identificaron
+los desvíos constructivos reales del prototipo. El error de predicción del ángulo de
+equilibrio bajó veinte veces: de $\mathbf{1{,}52^\circ}$ a $\mathbf{0{,}08^\circ\;\text{rms}}$.
+\end{idea}
+
+\section{Protocolo de ensayo en lazo cerrado}
+
+Usando la herramienta automatizada \texttt{firmware/herramientas/sesion\_placa.py}, con la
+batería LiPo medida en $11{,}9\ud{V}$, se ejecutaron dos campañas de adquisición sin intervención
+manual:
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Identificación estática (\texttt{medir\_equilibrio}):} con el robot equilibrando en
+      el lugar, se barrió el ángulo comandado de las patas desde $0^\circ$ hasta $30^\circ$ en
+      pasos de $2{,}5^\circ$ (13 posturas), realizando cuatro pasadas completas (dos subiendo y
+      dos bajando, 48 registros de $12\ud{s}$ cada uno). Promediar las ramas ascendente y
+      descendente permitió separar la curva geométrica pura de la \textbf{histéresis mecánica}
+      ($\sim 0{,}9^\circ$ de diferencia entre subir y bajar, causada por la banda muerta de
+      $3\ud{\mu s} \equiv 0{,}27^\circ$ del servo DS3240 y la holgura de los pasadores).
+\item \textbf{Identificación dinámica (\texttt{identificar}):} se inyectó una onda cuadrada de
+      $\pm 1{,}5^\circ$ en la referencia de inclinación ($2{,}08\ud{s}$ por semiperíodo, 5 ciclos
+      completos) manteniendo las patas fijas en $25^\circ$, $20^\circ$, $10^\circ$ y $0^\circ$,
+      provocando excursiones de $\pm 60\text{--}80\ud{mm}$ en posición y $\pm 3\text{--}5^\circ$
+      en cabeceo.
+\end{enumerate}
+
+\begin{center}
+\includegraphics[width=0.88\textwidth]{equilibrio_patas_2026-11-03.png}
+\captionof{figure}{Medición experimental del ángulo de equilibrio en función de la postura de
+las patas (48 ensayos por WiFi, dos pasadas subiendo y dos bajando) y curva cúbica central
+incorporada al firmware.}
+\end{center}
+
+\section{Deducción de los parámetros físicos reales}
+
+En equilibrio estático ($\ddot{x}=0$, $\ddot{\varphi}=0$), el centro de masa total del robot
+debe ubicarse exactamente sobre la vertical del eje de la rueda, por lo que el ángulo leído
+por la IMU responde a la ley geométrica:
+\[
+\theta_{\text{IMU}}^{\text{eq}}(\theta_{\text{pata}}) =
+\delta_{\text{imu}} + \operatorname{atan2}\!\bigl(-c_x(\theta_{\text{pata}}),\; c_z(\theta_{\text{pata}})\bigr)
+\]
+donde $(c_x, c_z)$ son las coordenadas del baricentro conjunto respecto del eje $P$. La curva
+medida en el robot resultó significativamente más empinada hacia los $30^\circ$ que la predicha
+por el modelo nominal. Como se demuestra en \texttt{modelado/ajuste/ajustar\_equilibrio.m}, ni
+un simple offset de montaje de la IMU ni un corrimiento del centro de masa de la cabina pueden
+curvar la pendiente de esa manera; \textbf{lo único que explica el aumento de pendiente cerca
+de $30^\circ$ es que la pata real trabaja $10{,}4^\circ$ más estirada que lo supuesto},
+acercándose antes a la singularidad geométrica (punto muerto) del cuadrilátero articulado:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrrrl@{}}
+\toprule
+\textbf{Hipótesis de ajuste estático} & \textbf{IMU [$^\circ$]} & \textbf{Caja $x$ [mm]} & \textbf{Caja $z$ [mm]} & \textbf{Cero pata [$^\circ$]} & \textbf{Error rms / máx [$^\circ$]} \\
+\midrule
+Modelo nominal previo & $9{,}80$ & $0{,}0$ & $0{,}0$ & $0{,}00$ & $1{,}52^\circ$ / $3{,}65^\circ$ \\
+Ajustando solo offset de IMU & $8{,}82$ & $0{,}0$ & $0{,}0$ & $0{,}00$ & $1{,}17^\circ$ / $2{,}67^\circ$ \\
+IMU + corrimiento horizontal de caja & $6{,}70$ & $-4{,}3$ & $0{,}0$ & $0{,}00$ & $0{,}90^\circ$ / $1{,}86^\circ$ \\
+IMU + cero de la pata & $8{,}27$ & $0{,}0$ & $0{,}0$ & $-1{,}86$ & $1{,}06^\circ$ / $2{,}37^\circ$ \\
+\textbf{IMU + caja $x$ + cero de la pata (elegido)} & $\mathbf{4{,}17}$ & $\mathbf{-19{,}3}$ & $\mathbf{0{,}0}$ & $\mathbf{+10{,}41}$ & $\mathbf{0{,}10^\circ}$ / $\mathbf{0{,}22^\circ}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A continuación, se replicó el ensayo de onda cuadrada en \texttt{banco\_identificacion.c}
+(ejecutando el código C exacto del firmware con su filtro de actitud, odometría, rechaza banda
+y zona muerta) y se barrió una grilla sobre los parámetros electromecánicos. El ajuste dinámico
+confirmó de manera independiente el mismo corrimiento de $+10{,}4^\circ$ en el cero de las patas
+y cerró los parámetros del tren de tracción (variante \texttt{'ajustada'} en
+\texttt{parametros\_fisicos.m}):
+
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Parámetro físico} & \textbf{Modelo nominal} & \textbf{Modelo ajustado} & \textbf{Evidencia experimental} \\
+\midrule
+Postura del modelo con pata en $0^\circ$ (\texttt{pata\_cero}) & $10{,}0^\circ$ & $\mathbf{20{,}4^\circ}$ & Curvatura de equilibrio + respuesta en $0^\circ$ \\
+Baricentro horizontal de la caja (\texttt{corr\_caja}) & $+7{,}4\ud{mm}$ (delante de $A$) & $\mathbf{-11{,}9\ud{mm}}$ ($19{,}3\ud{mm}$ atrás) & Equilibrio estático en 13 alturas \\
+Inclinación de montaje de la IMU (\texttt{imu\_delta\_deg}) & $9{,}8^\circ$ & $\mathbf{4{,}2^\circ}$ & Regresión conjunta de equilibrio \\
+Velocidad de vacío del motor (\texttt{w\_nl\_motor\_rpm}) & $300\ud{rpm}$ ($K_t$ mayor) & $\mathbf{350\ud{rpm}}$ ($K_t, K_e$ $-14\%$) & Ensayo en vacío \texttt{MED-005} y onda cuadrada \\
+Relación de reducción del motorreductor ($N$) & $20{,}00$ & $\mathbf{20{,}43}$ & Conteo de pulsos de encoder en 10 vueltas \\
+Tensión real de ensayo ($V_{\text{bat}}$ / motor con L298N) & $11{,}1\ud{V}$ / $9{,}1\ud{V}$ & $\mathbf{11{,}9\ud{V}}$ / $\mathbf{9{,}9\ud{V}}$ & Multímetro y amplitud de onda cuadrada \\
+Zona muerta efectiva de tracción (\texttt{zona\_muerta\_motor}) & $0{,}17$ PWM & $\mathbf{0{,}14\;\text{PWM}}$ & Amplitud de ciclo límite en onda cuadrada \\
+Banda muerta de posición del servo (\texttt{banda\_servo\_deg}) & $0^\circ$ & $\mathbf{0{,}27^\circ}$ ($3\ud{\mu s}$) & Hoja de datos DS3240 y escalones a $4\ud{^\circ/s}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.98\textwidth]{fig_ajuste.png}
+\captionof{figure}{Comparación entre las mediciones experimentales del robot (negro), el modelo
+original (rojo) y el modelo ajustado (azul): curva estática de equilibrio (arriba) y respuesta
+dinámica a la onda cuadrada de $\pm 1{,}5^\circ$ en las cuatro alturas de pata.}
+\end{center}
+
+Con estos ocho parámetros físicos actualizados, el error RMS del modelo frente a la onda
+cuadrada medida cayó sistemáticamente en todas las posturas:
+
+\begin{center}
+\begin{tabular}{@{}rrr@{}}
+\toprule
+\textbf{Altura de patas} & \textbf{Error RMS de cabeceo (antes $\to$ ahora)} & \textbf{Error RMS de posición $x$ (antes $\to$ ahora)} \\
+\midrule
+$25^\circ$ & $1{,}45^\circ \;\longrightarrow\; \mathbf{0{,}78^\circ}$ & $21{,}4\ud{mm} \;\longrightarrow\; \mathbf{16{,}2\ud{mm}}$ \\
+$20^\circ$ & $1{,}05^\circ \;\longrightarrow\; \mathbf{0{,}68^\circ}$ & $13{,}7\ud{mm} \;\longrightarrow\; \mathbf{11{,}1\ud{mm}}$ \\
+$10^\circ$ & $1{,}32^\circ \;\longrightarrow\; \mathbf{0{,}96^\circ}$ & $15{,}6\ud{mm} \;\longrightarrow\; \mathbf{12{,}3\ud{mm}}$ \\
+$0^\circ$  & $1{,}71^\circ \;\longrightarrow\; \mathbf{1{,}24^\circ}$ & $33{,}9\ud{mm} \;\longrightarrow\; \mathbf{11{,}6\ud{mm}}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Rediseño del LQR por altura de pata (\texttt{LQR\_TABLA})}\label{sec:lqr_ajustado}
+
+Al estar las patas reales $10{,}4^\circ$ más extendidas y tener el motor de $350\ud{rpm}$ un
+$27\%$ menos de amortiguamiento contraelectromotriz ($K_e K_t/R$), mantener las ganancias fijas
+originales provocaba que el factor de amortiguamiento del modo de cabeceo cayera de
+$\zeta = 0{,}98$ en $0^\circ$ a apenas $\mathbf{\zeta = 0{,}31}$ en $30^\circ$ (lo que explicó
+las tres caídas sufridas por el robot real al ensayar la onda cuadrada en $30^\circ$).
+
+Recalculando el regulador LQR con la planta ajustada (\texttt{simulacion/segway\_ajustado/ganancias\_ajustadas.m})
+e incorporando la tabla \texttt{LQR\_TABLA} en el firmware (\texttt{set lqrpata 1} por defecto),
+las ganancias de ángulo y velocidad angular crecen suavemente con la extensión de las patas y
+mantienen la excursión de cabeceo acotada entre $5{,}1^\circ$ y $5{,}7^\circ$ en todo el rango:
+
+\begin{center}
+\begin{tabular}{@{}rrrrrr@{}}
+\toprule
+\textbf{Pata [$^\circ$]} & $\boldsymbol{k_x}$ \textbf{[1/m]} & $\boldsymbol{k_v}$ \textbf{[s/m]} & $\boldsymbol{k_\varphi}$ \textbf{[1/rad]} & $\boldsymbol{k_\omega}$ \textbf{[s/rad]} & \textbf{$\zeta$ con $K$ fijo anterior} \\
+\midrule
+$0$  & $1{,}50$ & $2{,}38$ & $3{,}73$ & $0{,}416$ & $0{,}98$ \\
+$5$  & $1{,}50$ & $2{,}38$ & $3{,}96$ & $0{,}456$ & $1{,}00$ \\
+$10$ & $1{,}50$ & $2{,}38$ & $4{,}17$ & $0{,}496$ & $0{,}91$ \\
+$15$ & $1{,}50$ & $2{,}39$ & $4{,}36$ & $0{,}537$ & $0{,}72$ \\
+$20$ & $1{,}50$ & $2{,}40$ & $4{,}54$ & $0{,}577$ & $0{,}57$ \\
+$25$ & $1{,}50$ & $2{,}40$ & $4{,}71$ & $0{,}618$ & $0{,}43$ \\
+$30$ & $1{,}50$ & $2{,}41$ & $4{,}88$ & $0{,}662$ & $\mathbf{0{,}31}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.88\textwidth]{onda_pata_20.png}
+\captionof{figure}{Simulación en \texttt{segway\_ajustado.slx} de la respuesta a la onda cuadrada
+con las patas en $20^\circ$, comparando el modelo ajustado contra el registro experimental.}
+\end{center}
+
+% ===========================================================================
+\chapter{Maniobra de descenso de escalón y escalera con algoritmo genético}\label{cap:escalon}
+% ===========================================================================
+
+\begin{idea}
+Bajar un escalón o una escalera es un problema dinámico híbrido donde el robot acelera hacia
+atrás, pierde el contacto con el suelo, vuela en caída libre, impacta contra el escalón
+inferior y debe absorber la energía con las patas sin que el frente de la cabina golpee el
+borde saliente ni se sature el motor al recuperar la vertical. Para resolverlo sin romper el
+prototipo, se construyó un simulador híbrido en C acoplado al código real de \texttt{maniobra.c},
+un visor web interactivo y un optimizador evolutivo de dos islas.
+\end{idea}
+
+\section{Planta híbrida plana y validación de un escalón individual}
+
+El banco \texttt{simulacion/escalon/banco\_escalon.c} integra las ecuaciones de cuerpo,
+eslabones móviles de las patas y eje de ruedas con contacto unilateral viscoelástico y fricción
+de Coulomb tanto para los neumáticos como para el contorno rectangular de la cabina, usando
+la curva par-velocidad de los dos servos DS3240 ($2 \times 41\ud{kg\cdot cm}$, $327\ud{^\circ/s}$,
+actualizados a $50\ud{Hz}$) y el modelo ajustado del capítulo \ref{cap:ajuste}.
+
+Para el descenso de \textbf{un escalón aislado de 18 cm} (\texttt{un\_escalon.py}), el barrido
+paramétrico y el análisis de robustez frente a 27 variaciones (tensión de batería de $10{,}5$
+a $12{,}6\ud{V}$, zona muerta $0{,}10\text{--}0{,}18$, adherencia $\mu = 0{,}4$, servos al $80\%$,
+corrimiento de equilibrio $\pm 0{,}75^\circ$, alturas de $16\text{--}20\ud{cm}$ e inercias
+alteradas) demostraron una propiedad física fundamental:
+
+\begin{ojo}
+\textbf{En un escalón individual conviene mantener el LQR activo durante el vuelo
+(\texttt{motor\_vuelo = 1}):} al abandonar el borde, el cuerpo queda $\sim 2^\circ$ detrás de
+su equilibrio cabeceando hacia atrás. El LQR acelera las ruedas hacia atrás en el aire (hasta
+$\sim 1\ud{m/s}$); por conservación del momento angular, el par de reacción endereza el chasis
+durante la caída y, en el instante del toque, las ruedas más rápidas que el suelo empujan la
+base hacia atrás devolviendo el centro de masa sobre el apoyo. Con esa estrategia (largada con
+patas en $15^\circ$, velocidad pedida $0{,}54\ud{m/s}$, extensión a $30^\circ$ en el vuelo y
+plegado amortiguado a $25^\circ$ a $300\ud{^\circ/s}$ al tocar), el robot supera con éxito
+\textbf{25 de las 27 variaciones} y se detiene a $30\ud{cm}$ de la contrahuella.
+\end{ojo}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{elegida.png}
+\captionof{figure}{Descenso de un escalón de $18\ud{cm}$ con la maniobra por defecto sobre el
+modelo ajustado: secuencia cinemática del robot y evolución temporal de ángulos, velocidades y
+comandos.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.82\textwidth]{ventana.png}
+\captionof{figure}{Ventana operativa de velocidad de salida para un escalón: por debajo de
+$0{,}45\ud{m/s}$ la esquina inferior frontal de la cabina golpea el borde; por encima de
+$0{,}58\ud{m/s}$ con batería baja el motor satura en la recepción.}
+\end{center}
+
+\section{La escalera real del equipo: por qué no entra frenar en cada escalón}
+
+El objetivo final de maniobra se definió sobre la escalera real medida por el equipo el
+3/11/2026: \textbf{6 escalones de 16,6 cm de alto por 29 cm de pisada, seguidos de un séptimo
+escalón final de 3 cm}. Se plantearon dos estrategias posibles: bajar \emph{frenando en cada
+escalón} (\texttt{repetir = 1}) o bajar \emph{de corrido} (\texttt{t\_continuo}).
+
+El análisis físico y numérico demostró que \textbf{frenar en cada escalón es geométrica y
+dinámicamente inviable en una pisada de 29 cm}:
+\begin{itemize}[leftmargin=1.5em]
+\item Como la cabina sobresale $\sim 9\text{--}10\ud{cm}$ por delante del eje de los servos y el
+      robot desciende hacia atrás, la esquina inferior delantera de la cabina es el último punto
+      en cruzar la nariz del escalón superior.
+\item Para que esa esquina libre el borde sin chocar, el eje de la rueda debe abandonar el
+      escalón a una velocidad horizontal mínima de $\approx 0{,}6\text{--}0{,}7\ud{m/s}$.
+\item A esa velocidad, tras un vuelo balístico de $\Delta z = 16{,}6\ud{cm}$ ($\approx 185\ud{ms}$),
+      las ruedas aterrizan a $13\text{--}14\ud{cm}$ de la contrahuella, dejando apenas
+      $\mathbf{15\ud{cm}}$ de pisada restante antes del próximo precipicio. Ninguna ley de
+      frenado compatible con el límite de adherencia y el par del motor puede disipar
+      $0{,}7\ud{m/s}$ y reacomodar el péndulo invertido en $15\ud{cm}$ (se requieren al menos
+      $45\text{--}60\ud{cm}$ de huella).
+\end{itemize}
+
+\section{Optimización con algoritmo genético de dos islas (5.300+ corridas)}
+
+En el descenso continuo (\emph{de largo}), el problema cambia de naturaleza: como en $29\ud{cm}$
+($\sim 0{,}4\ud{s}$ entre bordes) el péndulo no llega a asentarse en régimen permanente, con
+una maniobra ingenua la velocidad crece de escalón en escalón ($0{,}47 \to 0{,}48 \to 0{,}63
+\to 1{,}22\ud{m/s}$) hasta que el robot se estrella en el cuarto escalón. Además, en vuelos
+sucesivos el LQR en el aire acumula velocidad inversa en las ruedas, por lo que en la escalera
+continua resulta indispensable mantener las ruedas girando a la velocidad de salida durante el
+vuelo (\texttt{motor\_vuelo = 0}) y disparar acciones sincronizadas con los eventos de
+\emph{despegue} y \emph{toque} en cada escalón.
+
+Para hallar una parametrización capaz de estabilizar el ciclo límite escalón tras escalón, se
+implementó en \texttt{simulacion/escalon/genetico.py} un \textbf{algoritmo genético de dos islas}
+con cromosomas de $18\text{--}20$ genes discretizados a la resolución exacta del firmware
+(ángulos de pata de a $1^\circ$, velocidades de a $0{,}01\ud{m/s}$, aceleraciones de a
+$0{,}1\ud{m/s^2}$, tiempos de a $0{,}01\ud{s}$ y velocidades de servo de a $10\ud{^\circ/s}$):
+
+\begin{itemize}[leftmargin=1.5em]
+\item \textbf{Función de aptitud (\emph{fitness}) multiobjetivo jerárquica:} evalúa primero el
+      caso nominal (debe bajar los 7 escalones sin tocar con la cabina y quedar detenido abajo);
+      si aprueba, evalúa 5 variaciones filtro y, si supera al menos 4, corre la batería completa
+      de \textbf{24 variaciones ponderadas de robustez} (\texttt{variaciones.py}), premiando con
+      puntaje máximo aquellos individuos cuya holgura mínima cabina-escalera supere el margen de
+      seguridad de $\mathbf{30\ud{mm}}$ pedido por el equipo.
+\item \textbf{Resultado tras $> 5.300$ simulaciones ($\sim 50\ud{min}$ de cómputo):} la
+      maniobra continua óptima (largada con patas en $10^\circ$, velocidad objetivo $0{,}77\ud{m/s}$
+      con rampa de $1{,}2\ud{m/s^2}$, extensión en vuelo a $30^\circ$ a $180\ud{^\circ/s}$ con
+      ruedas sostenidas, recepción a $27^\circ$ a $230\ud{^\circ/s}$ retomando $0{,}78\ud{m/s}$
+      a $7{,}3\ud{m/s^2}$, y frenado final a $3{,}8\ud{m/s^2}$ tras $0{,}65\ud{s}$ en el llano
+      inferior) logra un ciclo periódico estable donde el robot cruza los siete bordes entre
+      $\mathbf{0{,}61}$ y $\mathbf{0{,}70\ud{m/s}}$, completando con éxito \textbf{las 24
+      variaciones del diseño y las 6 pruebas adicionales de validación ciega}.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.98\textwidth]{largo_robusta.png}
+\captionof{figure}{Maniobra continua más robusta hallada por el algoritmo genético descendiendo
+los 7 escalones de la escalera real del equipo ($6 \times 16{,}6\ud{cm} + 1 \times 3\ud{cm}$) y
+frenando en el descanso inferior.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{por_escalon.png}
+\captionof{figure}{Estabilidad del ciclo límite escalón por escalón: velocidad en el borde,
+punto de aterrizaje sobre la huella de $29\ud{cm}$ y holgura mínima de la cabina.}
+\end{center}
+
+\section{Compromiso geométrico de holgura y recorte frontal de la cabina}
+
+El análisis de sensibilidad geométrica (\texttt{escalera\_real.py}, figura \ref{fig:cambios_esc})
+reveló el último resultado clave para el diseño mecánico: con el contorno original de la cabina,
+la maniobra más robusta (que acierta 24/24 variaciones) pasa con la esquina inferior delantera
+a entre $\mathbf{17\text{ y }27\ud{mm}}$ de la nariz del escalón (mediana $21\ud{mm}$). Si se
+exige al algoritmo genético alcanzar los $30\ud{mm}$ de holgura sin tocar el CAD, el optimizador
+se ve forzado a subir la velocidad de salida a $0{,}81\ud{m/s}$, perdiendo robustez (falla en
+4 de las 24 variaciones). En cambio, \textbf{recortando o achaflanando apenas $2\ud{cm}$ la
+arista inferior delantera de la cabina}, la misma maniobra robusta de $0{,}77\ud{m/s}$ supera los
+$\mathbf{35\ud{mm}}$ de holgura en las 24 variaciones sin sacrificar margen de estabilidad.
+
+\begin{center}
+\includegraphics[width=0.88\textwidth]{cambios.png}
+\captionof{figure}{Estudio de sensibilidad constructiva sobre la escalera real: efecto de
+recortar $1\ud{cm}$ o $2\ud{cm}$ el frente de la cabina, variar el coeficiente de fricción del
+neumático y reducir un $20\%$ la masa de la caja.}\label{fig:cambios_esc}
+\end{center}
+
+Finalmente, todas las herramientas desarrolladas convergen en el visor web interactivo
+(\texttt{simulacion/escalon/visor/visor.py}) y en el script de contraste experimental
+\texttt{comparar\_prueba.py}, que superpone la telemetría grabada a $200\ud{Hz}$ durante una
+bajada real del robot contra la predicción del banco híbrido (figura \ref{fig:bajada_real}).
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{bajada_20261103_210235.png}
+\captionof{figure}{Registro experimental a $200\ud{Hz}$ de una prueba de bajada en el prototipo
+(\texttt{bajada\_20261103\_210235.csv}) contrastado automáticamente contra la simulación del
+banco en C.}\label{fig:bajada_real}
+\end{center}
+
+
+% ===========================================================================
+\chapter{Conclusiones técnicas y lecciones de ingeniería}\label{cap:concl}
+% ===========================================================================
+
+\begin{idea}
+El diseño basado en modelo permitió anticipar comportamientos físicos no intuitivos, dimensionar
+actuadores sin sobredimensionar la masa total ($962\ud{g}$) y, cuando el robot real se apartó
+del CAD nominal, identificar con pocos ensayos qué parámetros estaban mal y cuánto.
+\end{idea}
+
+\section{Síntesis de hallazgos físicos y de control}
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Dominio de la inercia baricéntrica sobre el efecto péndulo:} duplicar la altura del
+      centro de masa (de $7{,}9$ a $15{,}8\ud{cm}$) varía el polo inestable apenas un $7\%$
+      ($6{,}91$ a $7{,}43\ud{s^{-1}}$), porque la inercia rotacional propia de la cabina y las
+      patas domina frente a $m\ell^2$. En consecuencia, las patas no están para facilitar el
+      equilibrio, sino para aportar despeje geométrico y actuar como suspensión activa en el
+      aterrizaje.
+\item \textbf{Amortiguamiento electromagnético dominante:} la fuerza contraelectromotriz del
+      motorreductor GA25-370 aporta un amortiguamiento viscoso reflejado cien veces superior al
+      rozamiento mecánico y baja el polo inestable de $\approx 13\ud{s^{-1}}$ a
+      $7{,}35\ud{s^{-1}}$: el tiempo en que se duplica la inclinación pasa de $\sim 53$ a
+      $\sim 94\ud{ms}$.
+\item \textbf{Fuerza real en el contacto vs.\ $\tau/r$:} al acelerar, gran parte del par del
+      motor se invierte en acelerar angularmente el rotor multiplicado por $N^2$ y la propia
+      rueda; la fuerza horizontal que exige adherencia al suelo es el $87\text{--}94\%$ del
+      límite de Coulomb ($\mu = 0{,}7$), dejando a motor y neumático prácticamente empatados.
+\item \textbf{Límite de linealización gobernado por el coseno del acople:} en las ecuaciones de
+      Euler-Lagrange, la aproximación $\cos\varphi \approx 1$ en el término inercial cruzado
+      introduce un error de orden $\mathcal{O}(\varphi^2)$, rompiendo la aproximación lineal
+      mucho antes que $\sin\varphi \approx \varphi$, que falla recién a orden $\mathcal{O}(\varphi^3)$.
+\item \textbf{Cierre del ciclo Teoría--Experimento--Control:} la arquitectura de software con el
+      núcleo de control en C puro permitió que exactamente las mismas funciones corrieran en el
+      ESP32-S3 a $200\ud{Hz}$, en el banco de identificación experimental y en las más de $5.300$
+      corridas del algoritmo genético, garantizando trazabilidad directa entre simulación y
+      prototipo físico.
+\end{enumerate}
+
 % ===========================================================================
 \appendix
 \chapter{Cinemática de la pata: desarrollo completo}\label{ap:cin}
@@ -1480,5 +2166,8 @@ El plan completo de ensayos, con los siete y en qué orden hacerlos, está en
 
 \chapter{Dinámica de la pata con el robot apoyado}\label{ap:dinapo}
 \includepdf[pages=-,scale=0.92,pagecommand={}]{../../modelado/dinamica/dinamica_apoyado.pdf}
+
+\chapter{Documentación constructiva de las placas electrónicas (Potencia v0.7 y Lógica v0.6)}\label{ap:pcb}
+\includepdf[pages=-,scale=0.92,pagecommand={}]{../placas_v0.7_completo.pdf}
 
 \end{document}
