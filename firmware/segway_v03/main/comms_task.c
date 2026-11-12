@@ -73,6 +73,8 @@ static const char *PARAM_NAMES[PARAM_COUNT] = {
     [PARAM_SPORT] = "sport", [PARAM_SPORTVMAX] = "sportvmax",
     [PARAM_LEVPATA] = "levpata", [PARAM_LEVU] = "levu", [PARAM_LEVVENT] = "levvent", [PARAM_LEVT] = "levt",
     [PARAM_LEVPATA0] = "levpata0", [PARAM_LEVVEL] = "levvel", [PARAM_LEVESPERA] = "levespera",
+    [PARAM_LEVXLIBRE] = "levxlibre", [PARAM_LEVXRAMPA] = "levxrampa",
+    [PARAM_LEVPATAFIN] = "levpatafin", [PARAM_LEVVELSUBE] = "levvelsube",
     [PARAM_SALTOBAJAR] = "saltobajar", [PARAM_SALTOABAJO] = "saltoabajo",
 };
 
@@ -284,10 +286,12 @@ static void print_params(const telemetry_t *t)
         t->nivel_gan, t->nivel_kp, t->nivel_ki, t->rolido * RAD2DEG, t->rol_cero,
         t->rolido * RAD2DEG - t->rol_cero, t->nivel_delta);
     out("# sport=%d sportvmax=%.2f | levantar: "
-        "levpata0=%.1f levpata=%.1f levvel=%.0f levespera=%.2f levu=%.2f levvent=%.0f levt=%.1f, %s%s%s\n",
+        "levpata0=%.1f levpata=%.1f levvel=%.0f levespera=%.2f levu=%.2f levvent=%.0f levt=%.1f levxlibre=%.1f levxrampa=%.1f levpatafin=%.1f levvelsube=%.0f, %s%s%s\n",
         t->sport ? 1 : 0, t->sport_v_max, t->lev.pata_inicio_deg, t->lev.pata_deg,
         t->lev.vel_bajada_dps, t->lev.espera_s, t->lev.u_empuje,
-        t->lev_ventana * RAD2DEG, t->lev.t_empuje_max_s, lev_nombre(t->lev_estado),
+        t->lev_ventana * RAD2DEG, t->lev.t_empuje_max_s, t->lev.x_libre_s, t->lev.x_rampa_s,
+        t->lev.pata_final_deg, t->lev.vel_subida_dps,
+        lev_nombre(t->lev_estado),
         t->lev_motivo ? "; el ultimo no armo: " : "", t->lev_motivo ? t->lev_motivo : "");
     out("# ciclo, ultimo segundo: ciclo_medio_us=%lu ciclo_max_us=%lu imu_medio_us=%lu imu_max_us=%lu "
         "ina_medio_us=%lu ina_max_us=%lu periodo_max_us=%lu\n", (unsigned long)t->ciclo.total_medio,
@@ -940,8 +944,11 @@ static void comms_task(void *arg)
             if (shown_state == SUP_STANDUP) {
                 // Cómo terminó el intento de levantarse solo
                 if (last.state == SUP_BALANCING) {
-                    out("# levantar: ARMADO solo a %.1f grados de la referencia, girando a %.0f grados/s\n",
-                        (last.theta - last.params.theta_ref) * RAD2DEG, last.theta_rate * RAD2DEG);
+                    out("# levantar: ARMADO solo a %.1f grados de la referencia, girando a %.0f grados/s; "
+                        "%.1f s sin mirar la posicion (kx = 0) y %.1f s de rampa; despues las patas suben a "
+                        "%.0f grados a %.0f grados/s\n",
+                        (last.theta - last.params.theta_ref) * RAD2DEG, last.theta_rate * RAD2DEG,
+                        last.lev.x_libre_s, last.lev.x_rampa_s, last.lev.pata_final_deg, last.lev.vel_subida_dps);
                 } else {
                     out("# levantar: no armo (%s); quedo a %.1f grados de la referencia\n",
                         last.lev_motivo ? last.lev_motivo : "?",

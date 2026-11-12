@@ -1299,6 +1299,26 @@ static void test_levantar_y_armado_automatico(void)
     CHECK(supervisor_step(&sup, &in, lim, arm) == SUP_BALANCING);
     CHECK(supervisor_state_name(SUP_STANDUP)[0] == 'S');
 
+    // Después de armar: kx en 0 durante x_libre_s y vuelve en x_rampa_s, sin saltos (12/11)
+    lev_params_t px;
+    lev_params_por_defecto(&px);
+    px.x_libre_s = 1.0f;
+    px.x_rampa_s = 1.5f;
+    CHECK(lev_factor_x(&px, -1.0f) == 1.0f);            // no viene de levantarse: todo el kx
+    CHECK(lev_factor_x(&px, 0.0f) == 0.0f && lev_factor_x(&px, 0.99f) == 0.0f);
+    CHECK(fabsf(lev_factor_x(&px, 1.75f) - 0.5f) < 1e-5f);
+    CHECK(lev_factor_x(&px, 2.5f) == 1.0f && lev_factor_x(&px, 10.0f) == 1.0f);
+    float f_antes = 0.0f, salto_max = 0.0f;
+    for (float tx = 0.0f; tx < 3.0f; tx += 0.005f) {
+        float f = lev_factor_x(&px, tx);
+        CHECK(f >= f_antes);                                // nunca baja
+        if (f - f_antes > salto_max) salto_max = f - f_antes;
+        f_antes = f;
+    }
+    CHECK(salto_max < 0.01f);
+    px.x_rampa_s = 0.0f;                                    // sin rampa: de golpe al terminar
+    CHECK(lev_factor_x(&px, 0.5f) == 0.0f && lev_factor_x(&px, 1.0f) == 1.0f);
+
     // LED en modo sport: naranja desarmado; equilibrando alterna verde y naranja; sin sport, como siempre
     led_entrada_t li = { .st = SUP_DISARMED, .sport = true, .t_ms = 0 };
     led_color_t c = led_color(&li);

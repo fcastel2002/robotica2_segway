@@ -18,7 +18,19 @@ void lev_params_por_defecto(lev_params_t *p)
         .rampa_s = 0.0f,
         .t_patas_max_s = 4.0f,
         .t_empuje_max_s = 1.0f,
+        .x_libre_s = 1.0f,
+        .x_rampa_s = 1.5f,
+        .pata_final_deg = 15.0f,
+        .vel_subida_dps = 10.0f,
     };
+}
+
+float lev_factor_x(const lev_params_t *p, float t)
+{
+    if (t < 0.0f) return 1.0f;
+    if (t < p->x_libre_s) return 0.0f;
+    if (p->x_rampa_s <= 0.0f) return 1.0f;
+    return fminf((t - p->x_libre_s) / p->x_rampa_s, 1.0f);
 }
 
 const char *lev_nombre(lev_estado_t e)
