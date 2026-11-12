@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Segway · Energía</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="pantalla">
+  <nav class="lateral"></nav>
+  <header class="barra"></header>
+  <main class="contenido amplia" style="--zoom:1.36;grid-template-columns: 1fr 1.9fr">
+
+    <div class="columna">
+      <section class="tarjeta">
+        <h2>Batería <span>bien</span></h2>
+        <div class="grande">12,12 V</div>
+        <p class="nota" style="margin:.3rem 0 .8rem">LiPo de 3 celdas · 4,04 V por celda</p>
+        <div class="fila" style="grid-template-columns:4rem 1fr 3.6rem"><span>carga</span><div class="medidor"><i style="left:0;width:82%"></i></div><b>82 %</b></div>
+      </section>
+      <section class="tarjeta">
+        <h2>Motores <span class="tenue">quieto en su lugar</span></h2>
+        <table>
+          <tr><th></th><th>izquierdo</th><th>derecho</th></tr>
+          <tr><td>corriente</td><td>11 mA</td><td>6 mA</td></tr>
+          <tr><td>pico al frenar</td><td>639 mA</td><td>623 mA</td></tr>
+        </table>
+        <p class="nota" style="margin-top:.7rem">Cada motor y la electrónica tienen su medidor de corriente en la placa de potencia.</p>
+      </section>
+    </div>
+
+    <section class="tarjeta">
+      <h2>Corriente de cada motor al bajar el escalón
+        <span class="tenue leyenda"><span><i style="background:#3987e5"></i>izquierdo</span><span><i style="background:#e0a437"></i>derecho</span></span></h2>
+      <svg id="g-corriente"></svg>
+      <p class="nota" style="margin-top:.5rem">En miliamperes. La franja marca el vuelo. El pico es la frenada después de tocar el piso; cuando la corriente es negativa, el motor está devolviendo energía a la batería.</p>
+    </section>
+
+  </main>
+</div>
+<script src="datos.js"></script>
+<script src="comun.js"></script>
+<script>
+  grafico("g-corriente", [[REGISTRO.il, "#3987e5"], [REGISTRO.ir, "#e0a437"]], { alto: 520, min: -150, max: 700, paso: 150, ejeT: true, letra: 19 });
+</script>
+</body>
+</html>

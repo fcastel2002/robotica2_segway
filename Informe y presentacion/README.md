@@ -1,5 +1,8 @@
 # Informe y presentación — Segway con patas extensibles
 
+> **Para exponer se usa [`presentacion_final/`](presentacion_final/README.md)** (PowerPoint, guía y pantallas de la
+> telemetría, 11/11/2026). La presentación web de más abajo queda como estaba.
+
 Carpeta central con los dos entregables finales del proyecto (**Robótica II, UNCUYO — Grupo 4**: Joaquín Calderón, Francisco Castel, Matías Armani, Ignacio Bartolini, Mariano Gimenez):
 1. **El Informe Técnico Final** (riguroso, matemático y experimental, dirigido al profesor/cátedra).
 2. **La Presentación Web Interactiva** (atractiva y visual para público general, con un toque técnico accesible sobre la ley de control LQR y los filtros de `segway_v02`).

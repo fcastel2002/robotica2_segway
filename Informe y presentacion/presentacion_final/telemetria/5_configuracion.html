@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Segway · Configuración</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="pantalla">
+  <nav class="lateral"></nav>
+  <header class="barra"></header>
+  <main class="contenido dos amplia" style="--zoom:1.52;">
+
+    <section class="tarjeta">
+      <h2>Joystick <span>conectado</span></h2>
+      <p class="nota" style="margin-bottom:.8rem">El joystick se conecta por Bluetooth a la notebook. Un programa lo lee y le manda las órdenes al robot por WiFi.</p>
+      <table>
+        <tr><td>joystick</td><td>Wireless Controller · 85 % de batería</td></tr>
+        <tr><td>modo</td><td>una palanca: avance y giro</td></tr>
+        <tr><td>patas</td><td>20° (de 0° a 30°)</td></tr>
+        <tr><td>envío al robot</td><td>25 veces por segundo</td></tr>
+        <tr><td>última respuesta</td><td>hace 0 s</td></tr>
+      </table>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Calibración de la IMU <span class="tenue">se hace una vez</span></h2>
+      <ol class="pasos">
+        <li>Giróscopo<small>El robot quieto 3 segundos: se mide cuánto marca cuando no gira.</small></li>
+        <li>Acelerómetro, 6 posiciones<small>Se apoya con cada cara hacia arriba y hacia abajo; la página detecta cuál.</small></li>
+        <li>Cero de inclinación<small>Se sostiene el robot en su punto de equilibrio y se guarda ese ángulo.</small></li>
+      </ol>
+    </section>
+
+  </main>
+</div>
+<script src="comun.js"></script>
+</body>
+</html>

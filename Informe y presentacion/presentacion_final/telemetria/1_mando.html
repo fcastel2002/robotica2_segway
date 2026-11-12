@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Segway · Mando / Conducción</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="pantalla">
+  <nav class="lateral"></nav>
+  <header class="barra"></header>
+  <main class="contenido dos amplia" style="--zoom:1.28;">
+
+    <section class="tarjeta">
+      <h2>Joystick de PS4 <span>conectado por Bluetooth</span></h2>
+      <svg viewBox="0 0 400 236" style="width:100%;display:block">
+        <g fill="none" stroke="#c3c2b7" stroke-width="2">
+          <path d="M70,58 Q200,38 330,58 Q372,68 380,138 Q386,213 350,220 Q322,224 300,178 Q292,163 270,163 L130,163 Q108,163 100,178 Q78,224 50,220 Q14,213 20,138 Q28,68 70,58 Z" fill="#111110"/>
+          <rect x="150" y="60" width="100" height="50" rx="8"/>
+          <rect x="62" y="24" width="70" height="20" rx="6"/><rect x="268" y="24" width="70" height="20" rx="6" fill="#3987e5" stroke="#3987e5"/>
+          <rect x="128" y="66" width="11" height="22" rx="4"/><rect x="261" y="66" width="11" height="22" rx="4"/>
+          <rect x="87" y="82" width="17" height="17" rx="3"/><rect x="87" y="116" width="17" height="17" rx="3"/>
+          <rect x="70" y="99" width="17" height="17" rx="3"/><rect x="104" y="99" width="17" height="17" rx="3"/>
+          <circle cx="305" cy="84" r="12"/><circle cx="281" cy="108" r="12"/>
+          <circle cx="329" cy="108" r="12" stroke="#e66767"/><circle cx="305" cy="132" r="12" stroke="#2fae2f"/>
+          <circle cx="150" cy="150" r="23"/><circle cx="250" cy="150" r="23"/>
+        </g>
+        <circle cx="154" cy="140" r="10" fill="#3987e5"/><circle cx="250" cy="150" r="10" fill="#6b6a64"/>
+        <g text-anchor="middle" style="font-size:12px">
+          <text x="97" y="39" style="fill:#fff">L1</text><text x="303" y="39" style="fill:#fff;font-weight:700">R1</text>
+          <text x="305" y="88" style="fill:#fff">△</text><text x="281" y="112" style="fill:#fff">□</text>
+          <text x="329" y="112.5" style="fill:#e66767">○</text><text x="305" y="136.5" style="fill:#2fae2f">✕</text>
+          <text x="133" y="58" style="font-size:9px">SHARE</text><text x="268" y="58" style="font-size:9px">OPTIONS</text>
+          <text x="150" y="192" style="font-size:10px">avance y giro</text>
+        </g>
+      </svg>
+      <div class="fila"><span>avance</span><div class="medidor centro"><i style="left:50%;width:19%"></i></div><b>0,38</b></div>
+      <div class="fila"><span>giro</span><div class="medidor centro"><i style="left:50%;width:6%"></i></div><b>0,11</b></div>
+      <p class="nota" style="margin-top:.5rem">La palanca manda avance y giro 25 veces por segundo. R1 apretado: las patas suben.</p>
+    </section>
+
+    <div class="columna">
+      <section class="tarjeta">
+        <h2>Patas <span class="tenue">de 0° a 30°</span></h2>
+        <div class="opciones"><span>0°</span><span>10°</span><span class="activa">20°</span><span>30°</span></div>
+        <div class="fila"><span>pata izquierda</span><div class="medidor"><i style="left:0;width:66.7%"></i></div><b>20,0°</b></div>
+        <div class="fila"><span>pata derecha</span><div class="medidor"><i style="left:0;width:66.7%"></i></div><b>20,0°</b></div>
+      </section>
+      <section class="tarjeta">
+        <h2>Equilibrio y manejo <span>equilibrando</span></h2>
+        <div class="fila"><span>inclinación</span><div class="medidor centro"><i style="left:50%;width:11.6%"></i></div><b>11,6°</b></div>
+        <div class="fila"><span>de equilibrio</span><div class="medidor centro"><i style="left:50%;width:11.4%"></i></div><b>11,4°</b></div>
+        <div class="fila"><span>velocidad pedida</span><div class="medidor centro"><i style="left:50%;width:19%"></i></div><b>150 mm/s</b></div>
+        <div class="fila"><span>velocidad real</span><div class="medidor centro"><i style="left:50%;width:18%"></i></div><b>145 mm/s</b></div>
+        <div class="fila" style="margin-top:.5rem"><span>motor izquierdo</span><div class="medidor centro"><i style="left:50%;width:5%"></i></div><b>10 %</b></div>
+        <div class="fila"><span>motor derecho</span><div class="medidor centro"><i style="left:50%;width:3.5%"></i></div><b>7 %</b></div>
+      </section>
+    </div>
+
+  </main>
+</div>
+<script src="comun.js"></script>
+</body>
+</html>
