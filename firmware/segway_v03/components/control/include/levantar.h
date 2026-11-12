@@ -36,6 +36,14 @@ typedef struct {
     float rampa_s;          // [s] el empuje sube de 0 a u_empuje en este tiempo (0 = de golpe)
     float t_patas_max_s;    // [s] si en este tiempo las patas no llegaron (cada etapa), aborta
     float t_empuje_max_s;   // [s] si empujando este tiempo no entró en la ventana, aborta
+    // Después de armar (12/11, Francisco: con todo el peso de la posición el LQR se ponía agresivo por
+    // volver a la x y lo desestabilizaba): durante x_libre_s el LQR no mira la posición (kx = 0 y la
+    // consigna de x sigue al robot); después la x queda fija donde está y kx vuelve en x_rampa_s
+    float x_libre_s;        // [s]
+    float x_rampa_s;        // [s] (0 = de golpe)
+    // Ya equilibrando (terminados los x_libre_s), las patas suben despacio a la altura de andar
+    float pata_final_deg;   // [°]
+    float vel_subida_dps;   // [°/s]
 } lev_params_t;
 
 typedef struct {
@@ -63,3 +71,7 @@ void lev_iniciar(lev_t *l);
 void lev_cancelar(lev_t *l);        // conserva el motivo
 void lev_paso(lev_t *l, const lev_params_t *p, const lev_entrada_t *e, lev_salida_t *s);
 const char *lev_nombre(lev_estado_t e);
+
+// Cuánto del kx usa el LQR t segundos después de armar desde el levantarse: 0 hasta x_libre_s, sube
+// hasta 1 en x_rampa_s, y 1 de ahí en adelante (t < 0: no viene de levantarse, 1)
+float lev_factor_x(const lev_params_t *p, float t);

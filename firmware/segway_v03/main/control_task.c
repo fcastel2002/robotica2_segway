@@ -267,6 +267,10 @@ static sup_cmd_t apply_command(const command_t *c, balance_params_t *p, mov_para
         case PARAM_LEVPATA0: s_lev_p.pata_inicio_deg = fminf(fmaxf(c->value, SERVO_HARD_MIN_DEG), SERVO_HARD_MAX_DEG); break;
         case PARAM_LEVVEL:   s_lev_p.vel_bajada_dps = fminf(fmaxf(c->value, 5.0f), 6000.0f); break;
         case PARAM_LEVESPERA: s_lev_p.espera_s = fminf(fmaxf(c->value, 0.0f), 1.0f); break;
+        case PARAM_LEVXLIBRE: s_lev_p.x_libre_s = fminf(fmaxf(c->value, 0.0f), 10.0f); break;
+        case PARAM_LEVXRAMPA: s_lev_p.x_rampa_s = fminf(fmaxf(c->value, 0.0f), 10.0f); break;
+        case PARAM_LEVPATAFIN: s_lev_p.pata_final_deg = fminf(fmaxf(c->value, SERVO_HARD_MIN_DEG), SERVO_HARD_MAX_DEG); break;
+        case PARAM_LEVVELSUBE: s_lev_p.vel_subida_dps = fminf(fmaxf(c->value, 1.0f), 300.0f); break;
         default: break;
         }
         break;
@@ -460,6 +464,13 @@ static void control_task(void *arg)
     float baile_t = -1.0f, baile_dur = 0.0f, baile_delta = 0.0f;
     s_lev_p.rampa_s = LEV_RAMPA_S;
     s_lev_p.t_empuje_max_s = LEV_T_EMPUJE_MAX_S;
+    s_lev_p.x_libre_s = LEV_X_LIBRE_S;
+    s_lev_p.x_rampa_s = LEV_X_RAMPA_S;
+    s_lev_p.pata_final_deg = LEV_PATA_FINAL_DEG;
+    s_lev_p.vel_subida_dps = LEV_VEL_SUBIDA_DPS;
+    bool lev_subiendo = false;      // recién levantado: las patas van despacio a pata_final_deg
+    float t_lev_armado = -1.0f;     // [s] desde que armó viniendo de levantarse (< 0: no viene de ahí)
+    float lev_kx = 1.0f;            // cuánto del kx usa el LQR (lev_factor_x)
     lev_t lev = { 0 };
     lev_salida_t ls = { 0 };
     float servo_enviado[SERVO_COUNT] = { NAN, NAN };
@@ -802,6 +813,7 @@ static void control_task(void *arg)
                 ramp = prev == SUP_STANDUP ? 1.0f : 0.0f;
                 mov_reset(&mov, 0.0f);
                 if (prev == SUP_STANDUP) mov.x_fijada = false;
+                t_lev_armado = prev == SUP_STANDUP ? 0.0f : -1.0f;
                 giro = 0.0f;
                 ref_centro = ref_correccion;
             }
@@ -866,6 +878,27 @@ static void control_task(void *arg)
                 mov_params_t mov_ef = mov_p;
                 if (s_sport) mov_ef.v_max = s_sport_vmax;
                 params.u_ff = mov_paso(&mov, &mov_ef, &me_mov, dt);
+                // Recién armado desde el levantarse: el LQR no mira la posición (kx = 0) y la consigna de
+                // x sigue al robot; pasado x_libre_s la x queda fija donde esté (mov_paso la fija en el
+                // ciclo siguiente: ya pasó su espera) y kx vuelve con la rampa (lev_factor_x)
+                if (t_lev_armado >= 0.0f) {
+                    lev_kx = lev_factor_x(&s_lev_p, t_lev_armado);
+                    if (t_lev_armado < s_lev_p.x_libre_s) {
+                        mov.x_ref = odo.x;
+                        mov.x_fijada = false;
+                    }
+                    float t_antes = t_lev_armado;
+                    t_lev_armado += dt;
+                    // Ya equilibrado (terminó el rato sin mirar la posición): las patas suben despacio a
+                    // la altura de andar
+                    if (t_antes <= s_lev_p.x_libre_s && t_lev_armado > s_lev_p.x_libre_s && !manda_otro) {
+                        pedir_patas(s_lev_p.pata_final_deg, servo_pos, servo_target, servo_free, servo_lim);
+                        lev_subiendo = true;
+                    }
+                    if (lev_kx >= 1.0f) t_lev_armado = -1.0f;
+                } else {
+                    lev_kx = 1.0f;
+                }
                 // Quieto (posición fija) la zona muerta de siempre, que hace que las correcciones chicas
                 // venzan la fricción y sostiene la x; andando, la de andar
                 params.deadband = mov.x_fijada ? db_quieto : mov_p.deadband_mov;
@@ -928,6 +961,7 @@ static void control_task(void *arg)
             }
             if (imu_ok) {   // con una lectura fallida aislada se mantiene el último comando
                 balance_params_t pm = params;
+                pm.lqr.kx *= lev_kx;        // recién levantado: sin (o con poco) peso de la posición
                 float x_ref = mov.x_ref, v_ref = mov.v_ref;
                 if (ms.activa) {
                     pm.lqr.kx *= ms.kx_factor;
@@ -1017,6 +1051,8 @@ static void control_task(void *arg)
         }
         if (st != SUP_BALANCING) {
             baile_t = -1.0f;                // sin equilibrio no hay baile
+            t_lev_armado = -1.0f;
+            lev_kx = 1.0f;
             s_exc_t = -1.0f;                // el barrido de "set exc" se corta
             mov_reset(&mov, 0.0f);
             giro = 0.0f;
@@ -1068,6 +1104,16 @@ static void control_task(void *arg)
 
         // Los servos no dependen del estado: la maniobra y la parada piden su velocidad
         float vel_patas = mov_p.vel_pata_dps;
+        // Recién levantado, la subida a la altura de andar va a su velocidad hasta que llegan (o hasta que
+        // otra cosa pida las patas, o deje de equilibrar)
+        if (lev_subiendo) {
+            bool llegaron = true;
+            for (int i = 0; i < SERVO_COUNT; i++) {
+                if (!servo_free[i] && fabsf(servo_target[i] - servo_pos[i]) > 0.01f) llegaron = false;
+            }
+            if (llegaron || st != SUP_BALANCING) lev_subiendo = false;
+            else vel_patas = s_lev_p.vel_subida_dps;
+        }
         if (ms.activa && ms.vel_pata_dps > 0.0f) vel_patas = ms.vel_pata_dps;
         if (ps.activa && ps.vel_pata_dps > 0.0f) vel_patas = ps.vel_pata_dps;
         if (ls.activa && ls.vel_pata_dps > 0.0f) vel_patas = ls.vel_pata_dps;

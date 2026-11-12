@@ -76,6 +76,10 @@ typedef enum {
     PARAM_LEVPATA0,     // levantarse: patas antes de empezar [°] (de ahí bajan de golpe a levpata)
     PARAM_LEVVEL,       // levantarse: velocidad pedida de esa bajada [°/s]
     PARAM_LEVESPERA,    // levantarse: espera entre que las patas llegaron abajo y el empuje [s]
+    PARAM_LEVXLIBRE,    // levantarse: después de armar, segundos sin mirar la posición (kx = 0)
+    PARAM_LEVXRAMPA,    // levantarse: después, segundos en que kx vuelve a su valor
+    PARAM_LEVPATAFIN,   // levantarse: ya equilibrado, las patas suben despacio a esto [°]
+    PARAM_LEVVELSUBE,   // levantarse: velocidad de esa subida [°/s]
     PARAM_SALTOBAJAR,   // salto: velocidad al agacharse [°/s] (despacio; el empuje es siempre a fondo)
     PARAM_SALTOABAJO,   // salto: tiempo quieto abajo antes de empujar [s]
     PARAM_COUNT,

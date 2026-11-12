@@ -385,10 +385,15 @@ controlada de siempre; desarmado o caído, `levantar` (`cuadrado` es un sinónim
 
 | Etapa | Qué hace | Termina |
 |---|---|---|
-| `preparar` ([`levantar.c`](components/control/levantar.c)) | Las dos patas a `levpata0` (15°), a 20 °/s | Llegaron y pasaron 0,5 s; si en 4 s no llegaron, aborta |
-| `bajar` | Las patas **de golpe** a `levpata` (4°): un escalón (`levvel` 3000 °/s), el servo a su velocidad máxima, para que el tirón le dé una rotación al cuerpo | Enseguida (más `levespera`, 0 s) |
-| `empujar` | Los dos motores hacia atrás con `levu` (1,0 = a fondo, de golpe), en el mismo instante en que se piden los 4°. La inclinación sigue solo con el giróscopo (el acelerómetro ve la aceleración de las ruedas) | El supervisor arma, o a `levt` (1 s) aborta y apaga |
-| armado automático ([`supervisor.c`](main/supervisor.c)) | Con los motores empujando, apenas θ − θref > −`levvent` (10°) pasa a `BALANCING`: el LQR entra **sin la rampa de 0,5 s** (llega girando y con las ruedas a fondo) y la posición se fija recién cuando frenó | — |
+| `preparar` ([`levantar.c`](components/control/levantar.c)) | Las dos patas a `levpata0` (20°), a 20 °/s | Llegaron y pasaron 0,5 s; si en 4 s no llegaron, aborta |
+| `bajar` | Las patas **de golpe** a `levpata` (5°): casi un escalón (`levvel` 1500 °/s), el servo a su velocidad máxima, para que el tirón le dé una rotación al cuerpo | Enseguida (más `levespera`, 0 s) |
+| `empujar` | Los dos motores hacia atrás con `levu` (1,0 = a fondo, de golpe), en el mismo instante en que se piden las patas abajo. La inclinación sigue solo con el giróscopo (el acelerómetro ve la aceleración de las ruedas) | El supervisor arma, o a `levt` (1 s) aborta y apaga |
+| armado automático ([`supervisor.c`](main/supervisor.c)) | Con los motores empujando, apenas θ − θref > −`levvent` (6°) pasa a `BALANCING`: el LQR entra **sin la rampa de 0,5 s** (llega girando y con las ruedas a fondo) | — |
+| después de armar ([`control_task.c`](main/control_task.c)) | Durante `levxlibre` (1 s) el LQR **no mira la posición** (kx = 0 y la consigna de x sigue al robot); después la x queda fija donde esté y kx vuelve en `levxrampa` (1,5 s). 12/11 (Francisco): con todo el kx desde el principio el LQR se ponía agresivo para volver a la x y lo desestabilizaba | — |
+| subir las patas | Terminado `levxlibre`, ya equilibrado, las patas suben **despacio** de `levpata` a `levpatafin` (15°) a `levvelsube` (10 °/s, 1 s); la referencia de equilibrio y las ganancias siguen a la pata como siempre | Llegaron, otra cosa pidió las patas, o dejó de equilibrar |
+
+Los valores de fábrica (20 → 5°, 1500 °/s, sin espera, empuje 1, ventana 6°, 1 s) son los que mejor
+anduvieron el 12/11 probando desde la página.
 
 `disarm` (◯) lo corta en cualquier momento; si pasa de largo hacia adelante sin armar, desarmado.
 No arranca si está caído hacia adelante, calibrando o en falla. La consola cuenta cómo terminó
@@ -400,7 +405,8 @@ o `levpata0`; para que empuje recién con las patas ya abajo (el servo tarda ~40
 **La primera vez, con alguien atajando y lugar libre atrás**: las ruedas salen a fondo hacia atrás.
 
 Todos se cambian en caliente desde la página: tarjeta «Parámetros de control», sección «Levantarse
-solo» (apertura = `levpata0`, cierre = `levpata`, bajada, espera, empuje, ventana, empuje máx), con
+solo» (apertura = `levpata0`, cierre = `levpata`, bajada, espera, empuje, ventana, empuje máx, x libre,
+x rampa, patas final, subida), con
 «Leer parámetros» para ver los del robot, «Cargar» para mandar los cambiados y el botón «Levantar».
 
 ### Modo sport: `set sport 1`

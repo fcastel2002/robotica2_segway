@@ -418,21 +418,30 @@
 // hacia atrás a fondo). En vivo: set levpata, set levu, set levvent, set levt
 // 11/11, segunda versión (Francisco): acostado hacia atrás, primero las patas a 15°, después bajan de
 // golpe a 4° y, apenas llegan, los motores al máximo.
-// 12/11: con 15 -> 4 no se paraba; con 20 -> 3 se paró (Francisco, desde la página): quedan esos
+// 12/11: con 15 -> 4 no se paraba; con 20 -> 3 se paró (Francisco, desde la página). Más tarde, los que
+// mejor anduvieron probando desde la página: 20 -> 5 a 1500 °/s, ventana 6°, empuje 1 s como mucho
 #define LEV_PATA_INICIO_DEG     20.0f       // patas antes de empezar (en vivo: set levpata0)
-#define LEV_PATA_DEG            3.0f        // patas para levantarse: bajan de golpe a esto (set levpata)
-#define LEV_VEL_BAJADA_DPS      3000.0f     // velocidad pedida de esa bajada (set levvel): 15° por ciclo, o sea
-                                            // un escalón: el servo va a su velocidad MÁXIMA (pedido de
-                                            // Francisco: el tirón de las patas tiene que generar una rotación)
+#define LEV_PATA_DEG            5.0f        // patas para levantarse: bajan de golpe a esto (set levpata)
+#define LEV_VEL_BAJADA_DPS      1500.0f     // velocidad pedida de esa bajada (set levvel): 7,5° por ciclo, casi
+                                            // un escalón: el servo va a su velocidad máxima (el tirón de las
+                                            // patas tiene que generar una rotación)
 #define LEV_ESPERA_S            0.0f        // entre que se pidieron los 4° y el empuje (set levespera). Con 0 el
                                             // empuje arranca junto con el tirón; el servo real tarda ~40-60 ms
                                             // en llegar: para empujar recién con las patas abajo, 0.05
 #define LEV_U_EMPUJE            1.0f        // fracción de PWM hacia atrás ("máximo torque")
 #define LEV_RAMPA_S             0.0f        // 0: el empuje arranca al máximo de golpe
-#define LEV_VENTANA_DEG         10.0f       // arma solo cuando le faltan menos de estos grados para la
+#define LEV_VENTANA_DEG         6.0f        // arma solo cuando le faltan menos de estos grados para la
                                             // referencia (llega girando rápido: el LQR lo frena con kw)
-#define LEV_T_EMPUJE_MAX_S      2.0f        // si empujando este tiempo no entró en la ventana, apaga. 12/11: de 1 a
-                                            // 2 s (con 20 -> 3° se paró pero no armó: ¿tardó más de 1 s?)
+#define LEV_T_EMPUJE_MAX_S      1.0f        // si empujando este tiempo no entró en la ventana, apaga
+// Al armar, el LQR no mira la posición (12/11, Francisco: se paraba pero con poca repetibilidad: el LQR
+// se ponía agresivo para volver a la x y lo desestabilizaba). Durante LEV_X_LIBRE_S kx = 0 y la consigna
+// de x sigue al robot; después la x queda fija donde está y kx vuelve en LEV_X_RAMPA_S
+#define LEV_X_LIBRE_S           1.0f        // en vivo: set levxlibre
+#define LEV_X_RAMPA_S           1.5f        // en vivo: set levxrampa
+// Ya equilibrando, pasados los LEV_X_LIBRE_S, las patas suben despacio de levpata (5°) a la altura de
+// andar (12/11, Francisco)
+#define LEV_PATA_FINAL_DEG      15.0f       // en vivo: set levpatafin
+#define LEV_VEL_SUBIDA_DPS      10.0f       // en vivo: set levvelsube (10 °/s: de 5 a 15° en 1 s)
 
 // --- LED RGB de estado (main/led_estado.c; tabla en el README) ---
 // Brillo de 0 a 255. El WS2812 encandila: con 20 ya se ve bien de cerca.
