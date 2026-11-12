@@ -4,7 +4,7 @@ Lo que se usa para exponer el proyecto (armado el 11/11/2026).
 
 | Qué | Dónde |
 |---|---|
-| Las diapositivas (20, sin animaciones, con notas de orador) | [`Segway_presentacion.pptx`](Segway_presentacion.pptx) |
+| Las diapositivas (21, sin animaciones, con notas de orador) | [`Segway_presentacion.pptx`](Segway_presentacion.pptx) |
 | Qué decir en cada una, la demostración y las preguntas | [`guia_de_la_presentacion.md`](guia_de_la_presentacion.md) |
 | Las pantallas de la aplicación, rehechas para proyectar | [`telemetria/`](telemetria/1_mando.html): abrir `1_mando.html` con doble clic; flechas para pasar de una a otra |
 | Con qué se armó todo | [`fuente/`](fuente/) |

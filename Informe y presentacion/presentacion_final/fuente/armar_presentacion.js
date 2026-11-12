@@ -189,6 +189,29 @@ function ficha(s, filas, x, y, w, parte = 0.42) {
     0.6, 6.42, 12.1, 0.4, { fontSize: 14, color: GRIS });
 }
 
+// ================================================================ 6b. batería y corriente
+{
+  const s = nueva("Batería y corriente",
+    "Para qué sirvieron los medidores de corriente de la placa de potencia. " +
+    "AUTONOMÍA: la batería es una LiPo de 3 celdas y 2200 mAh. El robot mide su tensión, calcula la carga y estima los minutos que quedan. En las pruebas del 9/11, equilibrando en el lugar, marcó entre 2 y 3 horas; en una hora y cuarto de pruebas la carga bajó de 79 a 66 %. Es una estimación: manejándolo dura menos, y el consumo de los servos no se mide. " +
+    "RESISTENCIA: con la rueda frenada y el medidor de corriente se midió cada motor: 8,1 ohm el izquierdo y 7,6 el derecho. De la ficha del vendedor salían 10,3. Con el valor medido se corrigió el modelo. " +
+    "PROTECCIÓN: un fusible en cada rama (4 A por motor), la protección propia del driver, y por programa los motores se apagan si quedan un segundo a fondo o si el robot se cae.");
+  const filas = [
+    ["2 a 3 horas", "Autonomía",
+     "La batería es una LiPo de 2200 mAh. El robot mide su tensión, calcula cuánta carga le queda y estima los minutos de autonomía. Equilibrando en el lugar marcó entre 2 y 3 horas."],
+    ["7,8 Ω", "La resistencia real de los motores",
+     "Con la rueda frenada y los medidores de corriente de la placa se midió cada motor. De la ficha salían 10,3 Ω. Con el valor medido se corrigió el modelo."],
+    ["3 protecciones", "La corriente tiene límite",
+     "Un fusible en cada rama; el driver, que se corta solo si la corriente se pasa; y el programa, que apaga los motores si quedan un segundo a fondo o si el robot se cae."],
+  ];
+  filas.forEach(([valor, titulo, detalle], i) => {
+    const y = 1.65 + i * 1.72;
+    texto(s, valor, 0.6, y, 3.4, 0.7, { fontSize: 30, bold: true, color: NARANJA });
+    texto(s, titulo, 4.3, y + 0.03, 8.4, 0.45, { fontSize: 20, bold: true });
+    texto(s, detalle, 4.3, y + 0.55, 8.4, 1.0, { fontSize: 16, color: GRIS });
+  });
+}
+
 // ================================================================ 7. cómo no se cae
 seccion = "El control"; pres.addSection({ title: seccion });
 {
@@ -280,7 +303,7 @@ pantalla("La aplicación: probar cada parte por separado", "tele_2_banco_de_prue
   ["Cada sensor y cada motor, uno por uno.", "Sirve para revisar el robot antes de pararlo.", "Las ganancias del control se cambian desde acá, sin volver a grabar el programa."],
   "Banco de pruebas: la IMU, los encoders, los motores y los servos por separado. Es lo primero que se mira cuando algo no anda.");
 pantalla("La aplicación: batería y consumo", "tele_3_energia",
-  ["La placa de potencia mide la corriente de cada motor y la tensión de la batería.", "Avisa cuando la batería está baja.", "El gráfico es de una bajada real del escalón: el pico es la frenada."],
+  ["La placa de potencia mide la corriente de cada motor y la tensión de la batería.", "Con la tensión calcula la carga y estima los minutos de autonomía; avisa cuando está baja.", "El gráfico es de una bajada real del escalón: el pico es la frenada."],
   "Energía: tensión y carga de la batería y corriente de cada motor. El gráfico es de una bajada de escalón grabada el 11/11.");
 pantalla("La aplicación: ver qué pasó en cada prueba", "tele_4_graficos",
   ["Todo lo que mide el robot, en el momento.", "Además graba 8 segundos con 200 datos por segundo.", "Con esas grabaciones comparamos el robot contra la simulación."],

@@ -1,6 +1,6 @@
 # Guía de la presentación
 
-Para los cinco que presentan. Acompaña a [`Segway_presentacion.pptx`](Segway_presentacion.pptx) (20 diapositivas) y a las
+Para los cinco que presentan. Acompaña a [`Segway_presentacion.pptx`](Segway_presentacion.pptx) (21 diapositivas) y a las
 pantallas de [`telemetria/`](telemetria/1_mando.html).
 
 La idea: contar qué hicimos y por qué, sin teoría fina, y cerrar con el robot andando. Son unos 15 minutos de
@@ -30,16 +30,17 @@ La columna «quién» es una propuesta según lo que hizo cada uno; cámbienla.
 | 5 | Tres versiones del diseño | 1:30 | Francisco | Por qué cambió cada vez. Primera: barras largas, la rueda no bajaba derecha. Segunda: barras a escala 80. Tercera: acoplador nuevo y cabina con lugar para las placas. | Si hay piezas viejas impresas, mostrarlas. |
 | 6 | Motores y servos | 1:30 | Matías | Motor con encoder, porque sin medir la rueda no se puede avanzar ni frenar en un lugar. Servo de 40 kg·cm, porque el golpe del escalón le pide unos 20. | La rueda con su motor; el servo en el robot. |
 | 7 | La electrónica | 1:30 | Matías | Dos placas hechas por nosotros con el método de la plancha. Potencia y lógica separadas para que el ruido de los motores no llegue al micro. Con cables, el ESP32 se reiniciaba en cada golpe. | Las placas dentro de la cabina. |
-| 8 | Cómo hace para no caerse | 1:00 | Joaquín | Es como sostener una escoba parada en la mano. Si se inclina, las ruedas avanzan hasta quedar debajo del cuerpo. Lo decide 200 veces por segundo mirando cuatro cosas. | El dibujo. |
-| 9 | Por qué un LQR y no un PID | 1:30 | Joaquín | Con un PID sobre el ángulo se sostiene pero se va y se cae. Las cuatro variables están atadas entre sí y hay un solo actuador. El LQR calcula las cuatro ganancias juntas, y las recalcula para cada altura de las patas. | La tabla. |
-| 10 | El control se diseñó en la computadora | 1:30 | Joaquín | **Lo más importante del control:** se diseñó entero sobre un modelo, en Simulink, y las ganancias que usa el robot salieron de ahí. Se puede diseñar en simulación algo que anda en la realidad. | El diagrama y la curva. |
-| 11 | Lo que no anduvo a la primera | 1:30 | Joaquín y Matías | Tres problemas: vibraba solo (filtro); las placas nuevas le dieron más fuerza y hubo que recalcular; un driver quemado a medias, que para un lado andaba y para el otro no. | — |
-| 12 a 15 | La aplicación | 2:00 | Ignacio | Una página hecha por nosotros: manejarlo con el joystick, probar cada parte, ver la batería y graficar lo que pasó. No leer las pantallas: una frase por cada una. | Las cuatro pantallas y el joystick en la mano. Si se quiere, abrirlas en el navegador. |
-| 16 | Bajar un escalón de 12 cm | 1:00 | Joaquín | Lo baja de espaldas, con un botón: toma carrera, pasa el borde, estira las patas en el aire, toca y frena. | El dibujo, de 1 a 5. |
-| 17 | Primero en la simulación | 1:00 | Joaquín | No se probó tirando el robot. El simulador corre el mismo programa que el robot; ahí se probaron 32 variantes. Después, en el robot: 3 de 3. | El gráfico: azul la simulación, naranja el robot. |
-| 18 | Lo que le agregaríamos | 0:45 | a definir | Que suba escalones, sensores para andar solo, otro material para llevar carga. | — |
-| 19 | ¿Preguntas? | — | todos | Las preguntas van antes de prender el robot. | — |
-| 20 | Demostración en vivo | 5:00 | todos | Ver abajo. | El robot. |
+| 8 | Batería y corriente | 1:00 | Matías | Para qué sirvió medir la corriente. Autonomía: el robot calcula la carga y estima cuánto le queda; equilibrando en el lugar marcó entre 2 y 3 horas. Con los mismos medidores se midió la resistencia real de los motores (7,8 Ω contra los 10,3 de la ficha) y se corrigió el modelo. Y la corriente tiene límite: fusibles, el driver y el programa. | La pantalla de Energía, si se quiere. |
+| 9 | Cómo hace para no caerse | 1:00 | Joaquín | Es como sostener una escoba parada en la mano. Si se inclina, las ruedas avanzan hasta quedar debajo del cuerpo. Lo decide 200 veces por segundo mirando cuatro cosas. | El dibujo. |
+| 10 | Por qué un LQR y no un PID | 1:30 | Joaquín | Con un PID sobre el ángulo se sostiene pero se va y se cae. Las cuatro variables están atadas entre sí y hay un solo actuador. El LQR calcula las cuatro ganancias juntas, y las recalcula para cada altura de las patas. | La tabla. |
+| 11 | El control se diseñó en la computadora | 1:30 | Joaquín | **Lo más importante del control:** se diseñó entero sobre un modelo, en Simulink, y las ganancias que usa el robot salieron de ahí. Se puede diseñar en simulación algo que anda en la realidad. | El diagrama y la curva. |
+| 12 | Lo que no anduvo a la primera | 1:30 | Joaquín y Matías | Tres problemas: vibraba solo (filtro); las placas nuevas le dieron más fuerza y hubo que recalcular; un driver quemado a medias, que para un lado andaba y para el otro no. | — |
+| 13 a 16 | La aplicación | 2:00 | Ignacio | Una página hecha por nosotros: manejarlo con el joystick, probar cada parte, ver la batería y graficar lo que pasó. No leer las pantallas: una frase por cada una. | Las cuatro pantallas y el joystick en la mano. Si se quiere, abrirlas en el navegador. |
+| 17 | Bajar un escalón de 12 cm | 1:00 | Joaquín | Lo baja de espaldas, con un botón: toma carrera, pasa el borde, estira las patas en el aire, toca y frena. | El dibujo, de 1 a 5. |
+| 18 | Primero en la simulación | 1:00 | Joaquín | No se probó tirando el robot. El simulador corre el mismo programa que el robot; ahí se probaron 32 variantes. Después, en el robot: 3 de 3. | El gráfico: azul la simulación, naranja el robot. |
+| 19 | Lo que le agregaríamos | 0:45 | a definir | Que suba escalones, sensores para andar solo, otro material para llevar carga. | — |
+| 20 | ¿Preguntas? | — | todos | Las preguntas van antes de prender el robot. | — |
+| 21 | Demostración en vivo | 5:00 | todos | Ver abajo. | El robot. |
 
 ## La demostración
 
@@ -73,15 +74,24 @@ Lo que conviene **no** decir: que el LQR «es mejor que un PID» en general, ni 
 
 Cosas que decidí yo al armarla y que tienen que mirar ustedes:
 
-1. **Diapositiva 10, las ganancias.** Dice que salieron de la simulación y que en el robot se ajustó un factor de
+1. **Diapositiva 11, las ganancias.** Dice que salieron de la simulación y que en el robot se ajustó un factor de
    escala (87 %) y los filtros. En el firmware figura ese factor (`DEFAULT_LQR_FACTOR` 0,87 y 0,86, del ajuste del
    7/11). Si ustedes lo cuentan como «no se tocó nunca», pónganse de acuerdo en la frase antes de que lo pregunten.
 2. **Diapositiva 5, las imágenes del CAD.** Están generadas de los archivos STEP del repositorio, no son capturas
    de SolidWorks. Se pueden cambiar por capturas. Revisar que el motivo de cada cambio sea el que van a contar.
-3. **Diapositivas 12 a 15, las pantallas de la aplicación.** Están rehechas para que se lean en un proyector. Los
-   datos de Banco de pruebas, Energía y Gráficos son de la bajada del 11/11 a las 13:23; los de Mando son de ejemplo.
+3. **Diapositivas 13 a 16, las pantallas de la aplicación.** Están rehechas para que se lean en un proyector. Los
+   datos de Banco de pruebas, Energía y Gráficos son de la bajada del 11/11 a las 13:23; los de Mando son de ejemplo, y la
+   autonomía de la pantalla de Energía es una lectura del 9/11 con una carga parecida.
 4. **Diapositiva 2, los ejemplos.** Handle y Ascento están puestos de memoria: si los van a nombrar, confirmarlos.
 5. **Diapositiva 6, el par del motor.** Los 4 kg·cm están calculados con la resistencia medida y un rendimiento
    supuesto del reductor (75 %).
-6. **Los dibujos del robot** (diapositivas 4, 8, 16 y las dos del final). La cabina y los pivotes están tomados del
+6. **Los dibujos del robot** (diapositivas 4, 9, 17 y las dos del final). La cabina y los pivotes están tomados del
    CAD del chasis nuevo, y el recorrido de la pata es el del robot (lo que el modelo ajustado llama 20° a 50°).
+7. **Diapositiva 8, la autonomía.** «Entre 2 y 3 horas» es lo que estimó el propio robot el 9/11 equilibrando en el
+   lugar (con la tensión de la batería; en una hora y cuarto de pruebas la carga bajó de 79 a 66 %). No es una
+   medición de punta a punta: manejándolo dura menos y el consumo de los servos no se mide. Si tienen un dato mejor,
+   cámbienlo.
+8. **Diapositiva 8, el límite de corriente.** El programa no limita la corriente: no hay nada en el firmware que la
+   mida y la recorte. Lo que sí hace es apagar los motores si quedan un segundo a fondo o si el robot se cae; la
+   corriente la limitan los fusibles y la protección del driver. La diapositiva dice eso, que es lo que se puede
+   defender si preguntan dónde está el límite.
