@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Segway · Banco de pruebas</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="pantalla">
+  <nav class="lateral"></nav>
+  <header class="barra"></header>
+  <main class="contenido tres amplia" style="--zoom:1.12;">
+
+    <section class="tarjeta">
+      <h2>IMU <span>ok</span></h2>
+      <div class="grande">8,1°<small>inclinación</small></div>
+      <p class="nota" style="margin:.3rem 0 .7rem">a 0,1° de su punto de equilibrio (8,2°)</p>
+      <table>
+        <tr><th></th><th>x</th><th>y</th><th>z</th></tr>
+        <tr><td>acelerómetro (m/s²)</td><td>0,62</td><td>−0,95</td><td>8,80</td></tr>
+        <tr><td>giróscopo (°/s)</td><td>−1,7</td><td>−1,4</td><td>4,0</td></tr>
+      </table>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Encoders</h2>
+      <table>
+        <tr><th></th><th>izquierdo</th><th>derecho</th></tr>
+        <tr><td>cuentas</td><td>−21.947</td><td>−22.940</td></tr>
+        <tr><td>vueltas</td><td>−24,4</td><td>−25,5</td></tr>
+        <tr><td>distancia</td><td colspan="2">−951 mm</td></tr>
+      </table>
+      <p class="nota" style="margin-top:.7rem">899 cuentas por vuelta de rueda. Con esto el robot sabe dónde está y a qué velocidad va.</p>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Servos de las patas <span class="tenue">0° a 30°</span></h2>
+      <div class="fila"><span>izquierda</span><div class="medidor"><i style="left:0;width:96.7%"></i></div><b>29,0°</b></div>
+      <div class="fila"><span>derecha</span><div class="medidor"><i style="left:0;width:96.7%"></i></div><b>29,0°</b></div>
+      <p class="nota" style="margin-top:.7rem">El programa no deja pasar de 30°: más allá se rompe el mecanismo.</p>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Motores</h2>
+      <div class="fila"><span>izquierdo</span><div class="medidor centro"><i style="right:50%;width:3.3%"></i></div><b>−6,5 %</b></div>
+      <div class="fila"><span>derecho</span><div class="medidor centro"><i style="right:50%;width:3%"></i></div><b>−6,0 %</b></div>
+      <p class="nota" style="margin-top:.7rem">Lo que se le manda a cada motor. Quieto en su lugar usa menos del 10 %.</p>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Control</h2>
+      <table>
+        <tr><td>ganancia de posición</td><td>1,08</td></tr>
+        <tr><td>ganancia de velocidad</td><td>1,81</td></tr>
+        <tr><td>ganancia de inclinación</td><td>3,30</td></tr>
+        <tr><td>ganancia de giro</td><td>0,38</td></tr>
+        <tr><td>filtros</td><td>7,7 y 11,6 Hz</td></tr>
+      </table>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Sistema</h2>
+      <table>
+        <tr><td>estado</td><td style="color:var(--ok)">equilibrando</td></tr>
+        <tr><td>ciclos por segundo</td><td>200</td></tr>
+        <tr><td>tiempo de cada ciclo</td><td>2,0 de 5 ms</td></tr>
+        <tr><td>ciclos fuera de tiempo</td><td>0</td></tr>
+      </table>
+    </section>
+
+  </main>
+</div>
+<script src="comun.js"></script>
+</body>
+</html>

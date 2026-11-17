@@ -67,6 +67,7 @@ function leerGamepadNavegador() {
         options: btn(9),
         l3: btn(10),
         r3: btn(11),
+        touchpad: btn(17),
         up, down, left, right,
       }
     : {
@@ -82,6 +83,7 @@ function leerGamepadNavegador() {
         options: btn(9),
         l3: btn(10),
         r3: btn(11),
+        touchpad: btn(13),
         up, down, left, right,
       };
 

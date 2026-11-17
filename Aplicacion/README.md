@@ -49,10 +49,11 @@ El mando de PS4 se conecta por Bluetooth o USB a la PC. `Aplicacion/puente.py` i
 | **Opción 2** | **2 Sticks separados**: **Stick Izquierdo** = `avance`, **Stick Derecho** = `giro` (+ **Flechitas**) | `mov <avance> <giro>` |
 | **Botón `R1`** (11/11) | **Mientras está apretado** las patas suben, suave; al soltarlo quedan donde están. Un toque las mueve ~2° (**tope: 30°**) | `servo 30` y, al soltar, `servo on` |
 | **Botón `L1`** (11/11) | Lo mismo hacia abajo (**tope mínimo: 0°**) | `servo 0` y, al soltar, `servo on` |
+| **Gatillo `L2`** (11/11) | Prende y apaga el **nivel de costado**: en un piso inclinado de lado, acorta una pata y estira la otra hasta quedar derecho | `set nivel 1` / `set nivel 0` |
 | **Flechas izquierda / derecha** (11/11) | Cada toque **gira 1°** para ese lado, medido con el giróscopo: para alinearlo a mano (arriba / abajo siguen siendo avance) | `girar -1` / `girar 1` |
 | **`R3` + `L3` a la vez**, sostenidos 0,7 s (11/11) | **Demostración de un control mal ajustado**: sube las ganancias al máximo y saca los filtros; el robot vibra y puede caerse. Al soltar vuelve a los valores de fábrica | `set lqrfac 1.5`, `set notch 0`, `set notch2 0`; al soltar, 0.87, 11.6 y 7.7 |
 | **`R3` / `L3`** (apretar el stick derecho / izquierdo), 11/11 | **Mientras está apretado gira sobre su eje** a la derecha / a la izquierda (90 °/s, `set weje`) | `eje 1` / `eje -1` |
-| **Botón `✕` (Equis)** | Arma el robot (el LQR es el único control desde el 2/11) | `arm` |
+| **Botón `✕` (Equis)** | Arma el robot (el LQR es el único control desde el 2/11). **Equilibrando, salta** (11/11): patas a 0° y a 30° a fondo | `salto` + `arm` (el firmware hace el que corresponde) |
 | **Botón `◯` (Círculo)** | **Desarme de emergencia** inmediato (corta motores y movimiento) | `mov 0.000 0.000` + `disarm` |
 | **Botón `△` (Triángulo)** | **Baja el escalón que tiene atrás** (solo equilibrando). Sin el sensor, con el borde a 30 cm detrás del apoyo de la rueda (`man d_borde` en el firmware) | `escalon` |
 | **Botón `□` (Cuadrado)** | **Parada controlada**: frena, baja las patas al mínimo y se deja caer apenas para atrás con los motores apagados | `parar` |

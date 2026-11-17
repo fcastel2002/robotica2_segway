@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Segway · Gráficos</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="pantalla">
+  <nav class="lateral"></nav>
+  <header class="barra"></header>
+  <main class="contenido" style="gap:.55rem;padding-top:.8rem">
+    <p class="nota" style="font-size:.95rem">Bajada del escalón de 12 cm grabada por el robot, 200 datos por segundo. La franja marca el vuelo.</p>
+    <div class="grafico"><h3>Inclinación del cuerpo <span>grados</span></h3><svg id="g-theta"></svg></div>
+    <div class="grafico"><h3>Velocidad <span class="leyenda"><span><i style="background:#3987e5"></i>real</span><span><i style="background:#8a8980"></i>pedida</span><span>m/s</span></span></h3><svg id="g-v"></svg></div>
+    <div class="grafico"><h3>Lo que se le manda a los motores <span>de −1 a 1</span></h3><svg id="g-u"></svg></div>
+    <div class="grafico"><h3>Patas <span>grados</span></h3><svg id="g-pata"></svg></div>
+  </main>
+</div>
+<script src="datos.js"></script>
+<script src="comun.js"></script>
+<script>
+  grafico("g-theta", [[REGISTRO.theta, "#3987e5"]], { alto: 118, min: -5, max: 20, paso: 5 });
+  grafico("g-v", [[REGISTRO.vref, "#8a8980", 1.6], [REGISTRO.v, "#3987e5"]], { alto: 118, min: -0.2, max: 0.9, paso: 0.2 });
+  grafico("g-u", [[REGISTRO.u, "#3987e5"]], { alto: 96, min: -1.05, max: 1.05, paso: 0.5 });
+  grafico("g-pata", [[REGISTRO.pata, "#3987e5"]], { alto: 100, min: 10, max: 32, paso: 5, ejeT: true });
+</script>
+</body>
+</html>

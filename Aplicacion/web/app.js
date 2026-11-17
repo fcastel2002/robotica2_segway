@@ -549,7 +549,7 @@ addEventListener('pagehide', () => frenarMotores());
 // Control y las que tengan data-param (umax en Motores).
 function leerParametros(texto) {
   // firmware viejo (kp=, lqr=), desde el 2/11 (ref=, kx=) y desde el 3/11 (vmax=: manejo)
-  if (!/^(kp|lqr|ref|kx|vmax)=/.test(texto)) return;
+  if (!/^(kp|lqr|ref|kx|vmax|sport)=/.test(texto)) return;     // sport=: segway_v03 (levantarse, sport)
   for (const [, nombre, valor] of texto.matchAll(/(\w+)=([-+\d.eE]+)/g)) {
     const casilla = $('ganancias').elements[nombre] ?? document.querySelector(`[data-param="${nombre}"]`);
     if (casilla && document.activeElement !== casilla) {

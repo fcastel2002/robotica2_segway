@@ -1,0 +1,104 @@
+// Firmware prototipo v0.1 del Segway: equilibrio solo con IMU.
+// Arquitectura y orden de puesta en marcha: firmware/docs/arquitectura_v0_1.md
+//
+// app_main inicializa el hardware, crea las colas y lanza las dos tareas:
+//   control (núcleo 1, 200 Hz)  IMU -> filtro -> supervisor -> LQR -> motores; servos; encoders
+//   comms   (núcleo 0, 50 Hz)   telemetría CSV y comandos por UART0 y, si hay red, por WiFi (UDP)
+// Si la IMU no responde, igual se lanzan las tareas: el supervisor pasa a FAULT y
+// la telemetría lo muestra.
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "driver/i2c_master.h"
+#include "esp_log.h"
+
+#include "board_config.h"
+#include "board_pins.h"
+#include "comms_task.h"
+#include "control_task.h"
+#include "dist_sharp.h"
+#include "encoder.h"
+#include "imu_mpu6050.h"
+#include "ina.h"
+#include "led_rgb.h"
+#include "messages.h"
+#include "motor.h"
+#include "servo.h"
+#include "wifi_link.h"
+
+static const char *TAG = "main";
+
+void app_main(void)
+{
+    // Motores primero: deja las salidas en bajo (motores libres) lo antes posible
+    const motor_pins_t motors[MOTOR_COUNT] = {
+        [MOTOR_LEFT]  = { PIN_MOTOR_L_IN1, PIN_MOTOR_L_IN2, PIN_MOTOR_L_EN, MOTOR_L_INVERT },
+        [MOTOR_RIGHT] = { PIN_MOTOR_R_IN1, PIN_MOTOR_R_IN2, PIN_MOTOR_R_EN, MOTOR_R_INVERT },
+    };
+    ESP_ERROR_CHECK(motor_init(motors, MOTOR_PWM_FREQ_HZ, MOTOR_SLOW_DECAY));
+    motor_stop_all();
+
+    // Servos sin pulsos: quedan sueltos hasta el primer comando "servo"
+    const servo_pins_t servos[SERVO_COUNT] = {
+        [SERVO_LEFT]  = { PIN_SERVO_L, SERVO_L_INVERT, SERVO_L_ZERO_DEG },
+        [SERVO_RIGHT] = { PIN_SERVO_R, SERVO_R_INVERT, SERVO_R_ZERO_DEG },
+    };
+    ESP_ERROR_CHECK(servo_init(servos, SERVO_FREQ_HZ, SERVO_US_AT_0_DEG, SERVO_US_AT_180_DEG));
+
+    const enc_pins_t encoders[ENC_COUNT] = {
+        [ENC_LEFT]  = { PIN_ENC_L_A, PIN_ENC_L_B, ENC_L_INVERT },
+        [ENC_RIGHT] = { PIN_ENC_R_A, PIN_ENC_R_B, ENC_R_INVERT },
+    };
+    ESP_ERROR_CHECK(encoder_init(encoders, ENC_GLITCH_NS));
+
+    // Bus I2C compartido. Los pull-ups internos son débiles: los módulos suelen traer los suyos.
+    i2c_master_bus_config_t bus_cfg = {
+        .i2c_port          = -1,
+        .sda_io_num        = PIN_I2C_SDA,
+        .scl_io_num        = PIN_I2C_SCL,
+        .clk_source        = I2C_CLK_SRC_DEFAULT,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
+    };
+    i2c_master_bus_handle_t bus;
+    ESP_ERROR_CHECK(i2c_new_master_bus(&bus_cfg, &bus));
+    if (imu_init(bus, I2C_FREQ_HZ) != ESP_OK) {
+        ESP_LOGE(TAG, "IMU no inicializada: el robot quedará en FAULT");
+    }
+
+    // Medición de energía: si falta un módulo solo se pierde su dato ("ina" dice quién respondió)
+    const uint8_t ina_dir[INA_COUNT] = {
+        [INA_MOTOR_L] = I2C_ADDR_INA219_L,
+        [INA_MOTOR_R] = I2C_ADDR_INA219_R,
+        [INA_LOGICA]  = I2C_ADDR_INA226,
+    };
+    const float ina_cero[INA_COUNT] = INA_I_CERO_A;
+    if (ina_init(bus, I2C_FREQ_HZ, ina_dir, INA_SHUNT_OHM, ina_cero) != ESP_OK) {
+        ESP_LOGW(TAG, "falta algún INA: se sigue sin ese dato");
+    }
+
+    // Sensor de distancia al piso (Sharp, entrada analógica): sin él conectado la bajada usa la
+    // distancia al borde que se le dice ("escalon <cm>", MAN_D_BORDE_M)
+    if (dist_sharp_init(PIN_DIST_SUELO) != ESP_OK) {
+        ESP_LOGE(TAG, "ADC del sensor de distancia no inicializado");
+    }
+    // Segundo Sharp: sin él "escalon alinear" (OPTIONS) aborta antes de moverse
+    if (dist_sharp2_init(PIN_DIST_SUELO_2) != ESP_OK) {
+        ESP_LOGE(TAG, "ADC del segundo sensor de distancia no inicializado");
+    }
+
+    // Solo informa: si falla, el robot anda igual
+    if (led_rgb_init(PIN_LED_RGB) != ESP_OK) {
+        ESP_LOGE(TAG, "LED RGB no inicializado");
+    }
+
+    QueueHandle_t telemetry_q = xQueueCreate(1, sizeof(telemetry_t));
+    QueueHandle_t command_q   = xQueueCreate(8, sizeof(command_t));
+    configASSERT(telemetry_q && command_q);
+
+    comms_task_start(telemetry_q, command_q);
+    control_task_start(telemetry_q, command_q);
+
+    // Último: conectar a la red tarda y puede fallar; el robot ya anda por el cable
+    wifi_link_start();
+}

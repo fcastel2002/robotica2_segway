@@ -13,6 +13,7 @@
 #include "movimiento.h"
 #include "maniobra.h"
 #include "parada.h"
+#include "salto.h"
 
 typedef enum {
     PARAM_REF = 0,      // en grados para el usuario, en radianes internamente
@@ -58,7 +59,9 @@ typedef enum {
     PARAM_RUMBO,        // en la bajada (△), ganancia del rumbo con el giróscopo vertical [PWM/rad]; 0 = no lo sostiene
     PARAM_IRUMBRAL,     // sensores de piso: altura [cm] desde la que es "sin piso" (pasó el borde)
     PARAM_WEJE,         // velocidad del giro sobre su eje con R3/L3 [°/s]
-    PARAM_NIVEL,        // nivel de costado: ganancia con signo [° de pata/s por ° de rolido]; 0 = apagado
+    PARAM_NIVEL,        // nivel de costado: escala de Kp y Ki (0 = apagado, 1 = las de fábrica)
+    PARAM_NIVELKP,      // nivel de costado: Kp [° de delta entre patas por ° de rolido]
+    PARAM_NIVELKI,      // nivel de costado: Ki [° de delta por s, por ° de rolido]
     PARAM_ROLCERO,      // rolido que marca la IMU con el robot derecho en piso plano [°]
     PARAM_NIVELCERO,    // (cualquier valor) toma como cero el rolido de este momento
     PARAM_SHARPDIV2,    // divisor del segundo Sharp
@@ -87,6 +90,7 @@ typedef enum {
     CMD_GRABAR,         // "grabar": el registro de 200 Hz durante 8 s, armado o no (soltarlo y medir
                         // cuánto rebota la goma)
     CMD_MAN_PARAM,      // "man <nombre> <valor>": param = campo de maniobra_campo(), value
+    CMD_SALTO,          // "salto" (✕ equilibrando): patas a 0 y a 30 a fondo (salto.h)
 } command_type_t;
 
 #define SERVO_BOTH  (-1)
@@ -161,9 +165,14 @@ typedef struct {
     float            w_eje;         // [rad/s] ("set weje")
     float            rolido;        // [rad] inclinación de costado estimada (sin restarle el cero)
     float            nivel_delta;   // [°] diferencia entre las patas que pide el nivel (izquierda - derecha)
-    float            nivel_gan;     // ("set nivel")
+    float            nivel_gan;     // escala de Kp y Ki ("set nivel")
+    float            nivel_kp;      // ("set nivelkp")
+    float            nivel_ki;      // ("set nivelki")
     float            rol_cero;      // [°] ("set rolcero")
     parada_estado_t  parada_estado;
+    salto_estado_t   salto_estado;
+    float            salto_t_vuelo; // [s] lo que estuvo en el aire el último salto (0: no despegó)
+    bool             salto_despego;
     bool             registrando;   // grabando el registro de la bajada (control_task.h)
     float            giro_max;
     float            par_inclina, par_suelta;       // [rad]
